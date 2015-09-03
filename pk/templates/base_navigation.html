@@ -1,0 +1,28 @@
+<div id='sitenav' class='navbar'>
+  <div class='navbar-inner'>
+    <a class='brand' data-toggle='collapse' data-target='.nav-collapse'>PushingKarma</a>
+    <a class='btn btn-navbar' data-toggle='collapse' data-target='.nav-collapse'>
+      <span class='icon-bar'></span>
+      <span class='icon-bar'></span>
+      <span class='icon-bar'></span>
+    </a>
+    <div class='nav-collapse'>
+      <ul class='nav pull-left'>
+        <li class='social home'><a href='{% url "index" %}' data-tooltip title='Home'><span></span></a></li>
+        <li class='site'><a href='{% url "notebook" %}'>
+          <span class='title'>Notebook</span>
+          <span class='subtitle'>Thoughts and writings from my journey</span>
+        </a></li>
+        <li class='site'><a href='{% url "projects" %}'>
+          <span class='title'>Projects</span>
+          <span class='subtitle'>My works shared with the community</span>
+        </a></li>
+      </ul>
+      <ul class='nav pull-right'>
+        <li class='social linkedin'><a href='http://linkedin.com/in/shepanski' data-tooltip title='LinkedIn'><span></span></a></li>
+        <li class='social facebook'><a href='http://facebook.com/mshepanski' data-tooltip title='Facebook'><span></span></a></li>
+        <li class='social picasa'><a href='http://picasaweb.google.com/mjs7231' data-tooltip title='Picasa'><span></span></a></li>
+      </ul>
+    </div>
+  </div>
+</div>

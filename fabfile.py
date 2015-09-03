@@ -1,5 +1,7 @@
+#!/usr/bin/env python
+# encoding: utf-8
 """
-Deploy code from the BitBucket repo on the production server.
+Copyright (c) 2015 PushingKarma. All rights reserved.
 """
 import os
 from fabric.api import cd, env, run, sudo

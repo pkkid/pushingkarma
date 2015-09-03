@@ -1,0 +1,10 @@
+#!/bin/bash
+# This hook is run after this virtualenv is activated.
+
+PS1="[pk] $_OLD_VIRTUAL_PS1"
+export PYTHONPATH="$HOME/Projects/pushingkarma:$PYTHONPATH"
+export DJANGO_SETTINGS_MODULE="pk.settings.settings"
+export BOWER_DIRECTORY="$HOME/Projects/pushingkarma/pk/static/bower/"
+source /home/mjs7231/Sources/django/extras/django_bash_completion
+alias cdproject="cd ~/Projects/pushingkarma"
+cdproject

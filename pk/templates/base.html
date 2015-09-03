@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang='en'>
+  <head>
+    <meta charset='UTF-8'>
+    <title>{% block title %}{{SITE_NAME}}{% endblock %}</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <link rel='shortcut icon' href='/static/pushingkarma/img/favicon.ico'/>
+    {% block css %}{% endblock %}
+  </head>
+  <body>
+    <div id='layoutborder'>
+      <div id='layoutwrap'>
+        <header>
+          <canvas id='particles'></canvas>
+          <div id='logo'>
+            <a href='{% url "index" %}'>
+              <div class='title'>PushingKarma</div>
+              <div class='subtitle'>Website for Michael Shepanski</div>
+            </a>
+          </div>
+        </header>
+        {% include 'base_navigation.html' %}
+        <div class='row-fluid'>
+          <div class='span12'>{% block content %}[block:content]{% endblock %}</div>
+        </div>
+      </div>
+    </div>
+    <script src='/static/jquery/jquery-2.1.4.min.js'></script>
+    <script src='/static/bootstrap/bootstrap-4.0.0-alpha.min.js'></script>
+    {% block js %}{% endblock %}
+  </body>
+</html>
