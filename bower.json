@@ -1,0 +1,21 @@
+{
+  "name": "pushingkarma",
+  "version": "0.0.0",
+  "homepage": "https://github.com/mjs7231/pushingkarma",
+  "authors": [
+    "Michael Shepanski <mjs7231@gmail.com>"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "pk/static/bower/",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "4.0.0-alpha",
+    "jquery": "~2.1.4"
+  }
+}

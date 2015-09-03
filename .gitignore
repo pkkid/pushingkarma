@@ -3,3 +3,4 @@
 *.sqlite3
 *.sublime-*
 settings/secrets.py
+pk/static/bower/*
