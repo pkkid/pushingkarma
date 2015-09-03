@@ -8,7 +8,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.http import HttpResponseRedirect
 from django.views.decorators.http import require_POST
-from pushingkarma import utils
+from pk import utils
 
 
 @require_POST

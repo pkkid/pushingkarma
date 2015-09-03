@@ -3,8 +3,8 @@
 """
 Copyright (c) 2015 PushingKarma. All rights reserved.
 """
-from pushingkarma.apps.notebook.models import Note
-from pushingkarma.utils import context, response
+from pk.apps.notebook.models import Note
+from pk.utils import context, response
 
 
 def overview(request, template='notebook/overview.html'):

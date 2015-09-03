@@ -13,10 +13,10 @@ HOSTNAME = platform.node()
 ALLOWED_HOSTS = []
 BASE_DIR = dirname(dirname(abspath(__file__)))
 DEBUG = HOSTNAME in ['pkkid-mint', 'pkkid-work']
-ROOT_URLCONF = 'pushingkarma.urls'
+ROOT_URLCONF = 'pk.urls'
 STATIC_URL = '/static/'
 STATIC_ROOT = '%s/static/' % BASE_DIR
-WSGI_APPLICATION = 'pushingkarma.wsgi.application'
+WSGI_APPLICATION = 'pk.wsgi.application'
 
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
@@ -32,7 +32,7 @@ INSTALLED_APPS = (
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
-    'pushingkarma.apps.notebook',
+    'pk.apps.notebook',
 )
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',

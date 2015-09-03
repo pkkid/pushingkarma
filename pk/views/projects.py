@@ -3,7 +3,7 @@
 """
 Copyright (c) 2015 PushingKarma. All rights reserved.
 """
-from pushingkarma.utils import context, response
+from pk.utils import context, response
 
 
 def overview(request, template='projects/projects.html'):

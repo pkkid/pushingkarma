@@ -19,14 +19,14 @@ urlpatterns = [
     # Misc Utils
     url(r'^404/$', template('404.html'), name='404'),
     url(r'^500/$', template('500.html'), name='500'),
-    url(r'^auth/login/$', 'pushingkarma.utils.auth.user_login', name='auth_login'),
-    url(r'^auth/logout/$', 'pushingkarma.utils.auth.user_logout', name='auth_logout'),
+    url(r'^auth/login/$', 'pk.utils.auth.user_login', name='auth_login'),
+    url(r'^auth/logout/$', 'pk.utils.auth.user_logout', name='auth_logout'),
     url(r'^favicon\.ico$', redirect('/static/img/icon/favicon.ico'), name='favicon'),
 
     # PushingKarma
-    url(r'^$', 'pushingkarma.views.notebook.overview', name='index'),
-    url(r'^notebook/$', 'pushingkarma.views.notebook.overview', name='notebook'),
-    url(r'^projects/$', 'pushingkarma.views.projects.overview', name='projects'),
+    url(r'^$', 'pk.views.notebook.overview', name='index'),
+    url(r'^notebook/$', 'pk.views.notebook.overview', name='notebook'),
+    url(r'^projects/$', 'pk.views.projects.overview', name='projects'),
 ]
 
 
