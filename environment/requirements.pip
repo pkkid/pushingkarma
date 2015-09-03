@@ -4,6 +4,9 @@
 # Requirements for this project
 #   Get versions:  >> pip freeze
 #   Install:       >> pip install -U -r requirements.pip
+#
+# Install Sass:
+#   sudo su -c "gem install sass"
 #---------------------------------------------------------
 
 django
