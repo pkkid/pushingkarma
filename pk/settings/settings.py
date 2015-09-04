@@ -60,7 +60,7 @@ TEMPLATES = [{
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': join(BASE_DIR, 'db.sqlite3'),
+        'NAME': join(dirname(BASE_DIR), 'db.sqlite3'),
     }
 }
 CACHES = {'default': {

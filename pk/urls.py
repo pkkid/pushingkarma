@@ -21,7 +21,7 @@ urlpatterns = [
     url(r'^500/$', template('500.html'), name='500'),
     url(r'^auth/login/$', 'pk.utils.auth.user_login', name='auth_login'),
     url(r'^auth/logout/$', 'pk.utils.auth.user_logout', name='auth_logout'),
-    url(r'^favicon\.ico$', redirect('/static/img/icon/favicon.ico'), name='favicon'),
+    url(r'^favicon\.ico$', redirect('/static/img/favicon.ico'), name='favicon'),
 
     # PushingKarma
     url(r'^$', 'pk.views.notebook.overview', name='index'),
