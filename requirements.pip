@@ -1,13 +1,5 @@
-#---------------------------------------------------------
-# Copyright (c) 2015 Pushingkarma. All rights reserved.
-#
-# Requirements for this project
-#   Get versions:  >> pip freeze
-#   Install:       >> pip install -U -r requirements.pip
-#
-# Install Sass:
-#   sudo su -c "gem install sass"
-#---------------------------------------------------------
+# Python requirements for Pushingkarma.com
+# Copyright (c) 2015 PushingKarma. All rights reserved.
 
 django
 django-debug-toolbar

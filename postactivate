@@ -1,5 +1,6 @@
 #!/bin/bash
-# This hook is run after this virtualenv is activated.
+# Virtualenv setup for Pushingkarma.com
+# Copyright (c) 2015 PushingKarma. All rights reserved.
 
 PS1="[pk] $_OLD_VIRTUAL_PS1"
 export PYTHONPATH="$HOME/Projects/pushingkarma:$PYTHONPATH"
