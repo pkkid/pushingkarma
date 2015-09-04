@@ -16,7 +16,7 @@ __Setup the virtualenv__
     > ln -s ~/Projects/pushingkarma/postactivate ~/.virtualenvs/pushingkarma/bin/postactivate
     > workon pushingkarma
 
-__Install Requirements__
+__Install Third-Party Resources__
 
     > pip install -U pip
     > pip install -r  ~/Projects/pushingkarma/requirements.pip
