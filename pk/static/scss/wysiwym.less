@@ -1,0 +1,56 @@
+//------------------------------------------------------------------------
+// PushingKarma - jQuery Wysiwym
+//------------------------------------------------------------------------
+
+.wysiwym-editor {
+  textarea { margin-bottom: 0px; }
+
+  // Decrease margin on Bootstrap toolbar
+  .btn-toolbar {
+    height: 28px;
+    margin-bottom: 0px;
+  }
+
+  .btn-group {
+    margin-bottom: 2px;
+    [class^="icon-"], [class*=" icon-"] {
+      background-image: url("../shared/wysiwym/wysiwym/buttons.dark.png");
+      line-height: 14px;
+      opacity: 0.9;
+    }
+    .text { display: none; }
+    .btn { height: 14px; line-height: 14px; }
+    .icon-bold { background-position: -5px -5px; }
+    .icon-italic { background-position: -5px -32px; }
+    .icon-link { background-position: -5px -57px; }
+    .icon-bulletlist { background-position: -5px -83px; }
+    .icon-numberlist { background-position: -5px -109px; }
+    .icon-quote { background-position: -5px -135px; }
+    .icon-code { background-position: -5px -162px; }
+  }
+
+  // Help Table
+  a.wysiwym-help-toggle {
+    float: left;
+    font-size: 10px;
+    line-height: 18px;
+  }
+  div.wysiwym-help {
+    .border-radius(4px);
+    background-color: rgba(0,0,0,0.5);
+    clear: left;
+    float: left;
+    font-size: 10px;
+    line-height: 18px;
+    padding: 0px 5px;
+    text-shadow: none;
+    color: #eee;
+    th {
+      color: #fff;
+      padding-right: 10px;
+      text-align: left;
+    }
+    td, th { border-bottom: 1px dotted rgba(0,0,0,0.2); }
+    tr:last-child td, tr:last-child th { border-width: 0px; }
+  }
+}

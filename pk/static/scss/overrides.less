@@ -1,0 +1,93 @@
+//------------------------------------------------------------------------
+// PushingKarma - Bootstrap Overrides
+//------------------------------------------------------------------------
+
+// Buttons - Update font, text align, etc..
+// Add new btn-wrap class to outline the buttons
+.btn-wrap {
+  .border-radius(5px);
+  background-color: rgba(0,0,0,0.1);
+  padding: 5px;
+}
+.btn-primary {
+  .border-radius(3px);
+  color: #ddd;
+  display: block;
+  font-family: @sansFontFamily;
+  font-size: 15px;
+  font-weight: bold;
+  padding: 5px 10px;
+  text-align: left;
+  width: 100%;
+  .subtitle {
+    color: #ccc;
+    font-size: 10px;
+    font-weight: normal;
+  }
+}
+
+
+// Icons & Tooltips
+// Icons: Default too dark (add a bit of transparency)
+// Tooltips: Default is too transparent
+[class^="icon-"], [class*=" icon-"] { opacity:0.7; }
+.tooltip.in { opacity:0.9; }
+
+
+// Tabs - Default is pretty unstyled
+// Add semi-transparent BG to seperate it from the rest of the content.
+.nav-tabs {
+  border-bottom: none;
+  margin-bottom: 0px;
+}
+.nav-tabs > li > a,
+.nav-tabs > .active > a,
+.nav-tabs > .active > a:hover {
+  background-color: rgba(0,0,0,0.1);
+  border-width: 0px;
+  color: #333;
+  height: 16px;
+  line-height: 16px;
+  padding: 4px 50px;
+}
+.nav-tabs > .active > a,
+.nav-tabs > .active > a:hover {
+  background-color: rgba(0,0,0,0.2);
+}
+.nav-tabs > li > a:hover {
+  color: #222;
+  background-color: rgba(0,0,0,0.3);
+}
+.tab-content {
+  .border-right-radius(5px);
+  .border-bottom-radius(5px);
+  background-color: rgba(0,0,0,0.05);
+  padding: 10px;
+  border-top: 1px solid rgba(0,0,0,0.2);
+}
+
+
+// Webkit Scrollbar - Fancier scrollbar. Unfortunatly, it only
+// works in Webkit (Chrome & Safari) for now.
+body *::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+body *::-webkit-scrollbar-button:start:decrement,
+body *::-webkit-scrollbar-button:end:increment {
+  display: none;
+}
+body *::-webkit-scrollbar-track-piece {
+  background-color: rgba(0,0,0,0.1);
+  box-shadow: 0px 0px 5px rgba(0,0,0,0.2) inset;
+}
+body *::-webkit-scrollbar-thumb:horizontal {
+  background: -webkit-gradient(linear, left top, left bottom, from(#999), to(#666));
+  border-radius: 5px;
+  width: 25px;
+}
+body *::-webkit-scrollbar-thumb:vertical {
+  background: -webkit-gradient(linear, left top, right top, from(#999), to(#666));
+  border-radius: 5px;
+  height: 25px;
+}
