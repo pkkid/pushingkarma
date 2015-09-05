@@ -6,7 +6,7 @@
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     <link rel='shortcut icon' href='/static/img/favicon.ico'/>
     <link rel='stylesheet' type='text/css' href='/static/bower/bootstrap/dist/css/bootstrap.min.css'/>
-    <link rel='stylesheet' type='text/css' href='/static/css/pushingkarma.min.css'/>
+    <link rel='stylesheet' type='text/css' href='/static/css/pushingkarma.css'/>
     {% block css %}{% endblock %}
   </head>
   <body>
@@ -14,12 +14,10 @@
       <div id='layoutwrap'>
         <header>
           <canvas id='particles'></canvas>
-          <div id='logo'>
-            <a href='{% url "index" %}'>
-              <div class='title'>PushingKarma</div>
-              <div class='subtitle'>Website for Michael Shepanski</div>
-            </a>
-          </div>
+          <a id='logo' href='{% url "index" %}'>
+            <div class='title'>PushingKarma</div>
+            <div class='subtitle'>Website for Michael Shepanski</div>
+          </a>
         </header>
         {% include 'base_navigation.html' %}
         <div class='row-fluid'>

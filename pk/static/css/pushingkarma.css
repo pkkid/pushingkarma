@@ -1,0 +1,82 @@
+html {
+  background-attachment: fixed;
+  background-color: #301c0f;
+  background-image: url("/static/img/layout/background-hardwood-dark.jpg");
+  background-position: center top;
+  color: #eee;
+  font-size: 14px;
+}
+
+body {
+  background-color: transparent;
+  font-family: Georgia, "Times New Roman", Times, serif;
+}
+
+header {
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  background-color: #252525;
+  background-image: url("/static/img/layout/banner-china.jpg");
+  background-repeat: no-repeat;
+  background-position: 0px -20px;
+  box-shadow: inset 0px 0px 60px rgba(0, 0, 0, 0.6);
+  height: 220px;
+  margin: -20px -20px 0px -20px;
+  position: relative;
+}
+
+footer {
+  color: #ccc;
+  margin: 15px;
+}
+
+#layoutborder {
+  border-radius: 18px;
+  background-image: url("/static/img/transparent/black-30.png");
+  margin: 25px auto;
+  max-width: 980px;
+  padding: 13px;
+}
+
+#layoutwrap {
+  border-radius: 8px;
+  background-color: #DAD5C1;
+  background-image: url("/static/img/layout/background-noise.jpg");
+  background-position: center top;
+  border: 2px solid #111;
+  color: #504E41;
+  font-family: Georgia, "Times New Roman", Times, serif;
+  padding: 20px;
+  position: relative;
+  text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.4);
+  z-index: 0;
+}
+
+#logo {
+  background-color: rgba(0, 0, 0, 0.5);
+  background-image: url("/static/img/layout/logo.png");
+  background-repeat: no-repeat;
+  background-position: 17px 5px;
+  border-bottom-right-radius: 5px;
+  border-top-right-radius: 5px;
+  display: block;
+  float: left;
+  margin-top: 120px;
+  position: relative;
+  width: 277px;
+  height: 65px;
+}
+#logo:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+#logo .title, #logo .subtitle {
+  display: none;
+}
+
+#particles {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}
+
+/*# sourceMappingURL=pushingkarma.css.map */

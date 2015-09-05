@@ -2,5 +2,6 @@
 *.pyc
 *.sqlite3
 *.sublime-*
+*.sass-cache*
 settings/secrets.py
 pk/static/bower/*
