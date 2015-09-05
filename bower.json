@@ -17,6 +17,6 @@
   "dependencies": {
     "angular": "~1.4.5",
     "bootstrap": "4.0.0-alpha",
-    "jquery": "~2.1.4"
+    "jquery": "3.0.0-alpha1"
   }
 }

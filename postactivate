@@ -5,8 +5,6 @@
 PS1="[pk] $_OLD_VIRTUAL_PS1"
 export PYTHONPATH="$HOME/Projects/pushingkarma:$PYTHONPATH"
 export DJANGO_SETTINGS_MODULE="pk.settings.settings"
-export BOWER_CWD="$HOME/Projects/pushingkarma/"
-export BOWER_DIRECTORY="pk/static/bower/"
 source /home/mjs7231/Sources/django/extras/django_bash_completion
 alias cdproject="cd $HOME/Projects/pushingkarma"
 cdproject
