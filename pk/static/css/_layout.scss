@@ -8,16 +8,15 @@ html {
   background-image: url('#{$imgroot}/layout/background-hardwood-dark.jpg');
   background-position: center top;
   color: #eee;
-  font-size: 14px;
+  font-size: 14px; 
 }
 body {
   background-color: transparent;
   font-family: $font-family-serif;
 }
 header {
-  //.shine(0.8);
-  border-top-left-radius: 5px;
-  border-top-right-radius: 5px;
+  @include shine(0.8);
+  @include border-top-radius(5px);
   background-color: #252525;
   background-image: url('#{$imgroot}/layout/banner-china.jpg');
   background-repeat: no-repeat;
@@ -56,20 +55,20 @@ footer {
 
 // Header Logo
 #logo {
-  // .transition(background-color 1s ease-out);
-  // .shine(0.3);
+  @include shine(0.3);
   background-color: rgba(0,0,0,0.5);
   background-image: url('#{$imgroot}/layout/logo.png');
-  background-repeat: no-repeat;
   background-position: 17px 5px;
+  background-repeat: no-repeat;
   border-bottom-right-radius: 5px;
   border-top-right-radius: 5px;
   display: block;
   float: left;
+  height: 65px;
   margin-top: 120px;
   position: relative;
+  transition: background-color 0.5s;
   width: 277px;
-  height: 65px;
 
   &:hover { background-color: rgba(0,0,0,0.8); }
   .title, .subtitle { display: none; }

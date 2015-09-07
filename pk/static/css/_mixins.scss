@@ -1,0 +1,83 @@
+//--------------------------------------------------------
+// Copyright (c) 2015 PushingKarma. All rights reserved.
+//--------------------------------------------------------
+
+// Border radius
+@mixin border-top-radius($radius) {
+  border-top-left-radius: $radius;
+  border-top-right-radius: $radius;
+}
+@mixin border-right-radius($radius) {
+  border-top-right-radius: $radius;
+  border-bottom-right-radius: $radius;
+}
+@mixin border-bottom-radius($radius) {
+  border-bottom-right-radius: $radius;
+  border-bottom-left-radius: $radius;
+}
+@mixin border-left-radius($radius) {
+  border-top-left-radius: $radius;
+  border-bottom-left-radius: $radius;
+}
+
+// Gradient Horizontal 3-color
+@mixin gradient-horizontal-three-colors($startColor:#00b3ee, $midColor:#7a43b6, $colorStop:50%, $endColor:#c3325f) {
+  background: -moz-linear-gradient(left, $startColor 0%, $midColor $colorStop, $endColor 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, right top, color-stop(0%,$startColor), color-stop($colorStop,$midColor), color-stop(100%,$endColor)); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(left, $startColor 0%, $midColor $colorStop, $endColor 100%); /* Chrome10+,Safari5.1+ */
+  background: -ms-linear-gradient(left, $startColor 0%, $midColor $colorStop, $endColor 100%); /* IE10+ */
+  background: linear-gradient(left, $startColor 0%,$midColor $colorStop, $endColor 100%); /* W3C */
+}
+
+// Rotate element
+@mixin rotate($degrees:45deg) {
+  -moz-transform: rotate($degrees);
+  -webkit-transform: rotate($degrees);
+  -o-transform: rotate($degrees);
+  -ms-transform: rotate($degrees);
+}
+
+// Shine - 1px white border to top of element
+@mixin shine($opacity:1, $offset:0px) {
+  &:before {
+    @include gradient-horizontal-three-colors(
+      rgba(255,255,255,0),
+      rgba(255,255,255,$opacity),
+      50%, rgba(255,255,255,0));
+    box-shadow: 0px 1px 5px rgba(255,255,255,0.1);
+    content: "";
+    display: block;
+    height: 1px;
+    padding: 0px;
+    position: relative;
+    top: $offset;
+  }
+}
+
+
+// Curled shadow under element
+@mixin curlshadow($opacity:1) {
+  position: relative;
+  z-index: 0;
+  
+  &:before, &:after {
+    background-color: #888;
+    bottom: 16px;
+    box-shadow: 0px 15px 10px rgba(0,0,0,0.5);
+    content: "";
+    height: 20px;
+    max-width: 300px;
+    opacity: $opacity;
+    position: absolute;
+    width: 50%;
+    z-index: -1;
+  }
+  &:before {
+    @include rotate(-3deg);
+    left: 10px;
+  }
+  &:after {
+    @include rotate(3deg);
+    right: 10px;
+  }
+}

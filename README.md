@@ -21,6 +21,7 @@ __Install Third-Party Resources__
     > pip install -U pip
     > pip install -r  ~/Projects/pushingkarma/requirements.pip
     > sudo su -c "gem install sass"
+    > sudo su -c "gem install compass"
     > sudo npm install -g bower
     > bower install
 

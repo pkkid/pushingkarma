@@ -4,13 +4,11 @@ html {
   background-image: url("/static/img/layout/background-hardwood-dark.jpg");
   background-position: center top;
   color: #eee;
-  font-size: 14px;
-}
+  font-size: 14px; }
 
 body {
   background-color: transparent;
-  font-family: Georgia, "Times New Roman", Times, serif;
-}
+  font-family: Georgia, "Times New Roman", Times, serif; }
 
 header {
   border-top-left-radius: 5px;
@@ -22,21 +20,36 @@ header {
   box-shadow: inset 0px 0px 60px rgba(0, 0, 0, 0.6);
   height: 220px;
   margin: -20px -20px 0px -20px;
-  position: relative;
-}
+  position: relative; }
+  header:before {
+    background: -moz-linear-gradient(left, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0) 100%);
+    /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, right top, color-stop(0%, rgba(255, 255, 255, 0)), color-stop(50%, rgba(255, 255, 255, 0.8)), color-stop(100%, rgba(255, 255, 255, 0)));
+    /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(left, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0) 100%);
+    /* Chrome10+,Safari5.1+ */
+    background: -ms-linear-gradient(left, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0) 100%);
+    /* IE10+ */
+    background: linear-gradient(left, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0) 100%);
+    /* W3C */
+    box-shadow: 0px 1px 5px rgba(255, 255, 255, 0.1);
+    content: "";
+    display: block;
+    height: 1px;
+    padding: 0px;
+    position: relative;
+    top: 0px; }
 
 footer {
   color: #ccc;
-  margin: 15px;
-}
+  margin: 15px; }
 
 #layoutborder {
   border-radius: 18px;
   background-image: url("/static/img/transparent/black-30.png");
   margin: 25px auto;
   max-width: 980px;
-  padding: 13px;
-}
+  padding: 13px; }
 
 #layoutwrap {
   border-radius: 8px;
@@ -49,34 +62,48 @@ footer {
   padding: 20px;
   position: relative;
   text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.4);
-  z-index: 0;
-}
+  z-index: 0; }
 
 #logo {
   background-color: rgba(0, 0, 0, 0.5);
   background-image: url("/static/img/layout/logo.png");
-  background-repeat: no-repeat;
   background-position: 17px 5px;
+  background-repeat: no-repeat;
   border-bottom-right-radius: 5px;
   border-top-right-radius: 5px;
   display: block;
   float: left;
+  height: 65px;
   margin-top: 120px;
   position: relative;
-  width: 277px;
-  height: 65px;
-}
-#logo:hover {
-  background-color: rgba(0, 0, 0, 0.8);
-}
-#logo .title, #logo .subtitle {
-  display: none;
-}
+  transition: background-color 0.5s;
+  width: 277px; }
+  #logo:before {
+    background: -moz-linear-gradient(left, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0) 100%);
+    /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, right top, color-stop(0%, rgba(255, 255, 255, 0)), color-stop(50%, rgba(255, 255, 255, 0.3)), color-stop(100%, rgba(255, 255, 255, 0)));
+    /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(left, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0) 100%);
+    /* Chrome10+,Safari5.1+ */
+    background: -ms-linear-gradient(left, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0) 100%);
+    /* IE10+ */
+    background: linear-gradient(left, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0) 100%);
+    /* W3C */
+    box-shadow: 0px 1px 5px rgba(255, 255, 255, 0.1);
+    content: "";
+    display: block;
+    height: 1px;
+    padding: 0px;
+    position: relative;
+    top: 0px; }
+  #logo:hover {
+    background-color: rgba(0, 0, 0, 0.8); }
+  #logo .title, #logo .subtitle {
+    display: none; }
 
 #particles {
   position: absolute;
   top: 0px;
-  left: 0px;
-}
+  left: 0px; }
 
 /*# sourceMappingURL=pushingkarma.css.map */
