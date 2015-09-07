@@ -3,15 +3,23 @@
 //--------------------------------------------------------
 
 @import 'variables';
+@import 'mixins';
+@import 'fonts';
+
+@import 'layout';
+@import 'navigation';
+
+
+// @import 'variables.less';
 // @import 'responsive-navbar.less';
 // @import 'overrides.less';
-@import 'mixins';
+// @import 'mixins.less';
 // @import 'fonts.less';
 // @import 'icons.less';
 // @import 'type.less';
 // @import 'forms.less';
 // @import 'code.less';
-@import 'layout';
+// @import 'layout.less';
 // @import 'navigation.less';
 // @import 'components.less';
 // @import 'wysiwym.less';

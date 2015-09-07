@@ -21,12 +21,20 @@
 }
 
 // Gradient Horizontal 3-color
-@mixin gradient-horizontal-three-colors($startColor:#00b3ee, $midColor:#7a43b6, $colorStop:50%, $endColor:#c3325f) {
-  background: -moz-linear-gradient(left, $startColor 0%, $midColor $colorStop, $endColor 100%); /* FF3.6+ */
-  background: -webkit-gradient(linear, left top, right top, color-stop(0%,$startColor), color-stop($colorStop,$midColor), color-stop(100%,$endColor)); /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(left, $startColor 0%, $midColor $colorStop, $endColor 100%); /* Chrome10+,Safari5.1+ */
-  background: -ms-linear-gradient(left, $startColor 0%, $midColor $colorStop, $endColor 100%); /* IE10+ */
-  background: linear-gradient(left, $startColor 0%,$midColor $colorStop, $endColor 100%); /* W3C */
+@mixin gradient-vertical($start:#00b3ee, $end:#c3325f) {
+  background: -moz-linear-gradient(top, $start 0%, $end 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,$start), color-stop(100%,$end)); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top, $start 0%, $end 100%); /* Chrome10+,Safari5.1+ */
+  background: -ms-linear-gradient(top, $start 0%, $end 100%); /* IE10+ */
+  background: linear-gradient(top, $start 0%, $end 100%); /* W3C */
+}
+
+@mixin gradient-horizontal-three-colors($start:#00b3ee, $mid:#7a43b6, $pmid:50%, $end:#c3325f) {
+  background: -moz-linear-gradient(left, $start 0%, $mid $pmid, $end 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, right top, color-stop(0%,$start), color-stop($pmid,$mid), color-stop(100%,$end)); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(left, $start 0%, $mid $pmid, $end 100%); /* Chrome10+,Safari5.1+ */
+  background: -ms-linear-gradient(left, $start 0%, $mid $pmid, $end 100%); /* IE10+ */
+  background: linear-gradient(left, $start 0%,$mid $pmid, $end 100%); /* W3C */
 }
 
 // Rotate element
