@@ -24,6 +24,7 @@ header {
   box-shadow: inset 0px 0px 60px rgba(0,0,0,0.6);
   height: 220px;
   margin: -20px -20px 0px -20px;
+  overflow: hidden;
   position: relative;
 }
 footer {
@@ -67,10 +68,12 @@ footer {
   height: 65px;
   margin-top: 120px;
   position: relative;
-  transition: background-color 0.5s;
+  transition: background-color 0.5s, box-shadow 0.5s;
   width: 277px;
 
-  &:hover { background-color: rgba(0,0,0,0.8); }
+  &:hover {
+    background-color: rgba(0,0,0,0.8);
+  }
   .title, .subtitle { display: none; }
 }
 
