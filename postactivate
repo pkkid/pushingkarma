@@ -11,4 +11,4 @@ cdproject
 
 # Sass
 export CSS="$HOME/Projects/pushingkarma/pk/static/css"
-alias sasswartch="sass --cache-location=/tmp/sass-cache --watch $CSS:$CSS"
+alias sasswatch="sass --cache-location=/tmp/sass-cache --watch $CSS:$CSS"

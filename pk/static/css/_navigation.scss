@@ -3,18 +3,19 @@
 //--------------------------------------------------------
 
 #navigation {
+  @include shine(0.2);
   @include gradient-vertical(#464646, #1e1e1e);
   border-radius: 0px;
   box-shadow: 0px 2px 2px rgba(0,0,0,0.3);
   height: 65px;
   margin: 0px -20px 30px -20px;
   padding: 0px;
-  //overflow: hidden;
   text-shadow: 0px 1px 2px rgba(0,0,0,0.9);
 
   .navbar-brand { display: none; }
   .navbar-nav { margin: 0px; }
 
+  // Site Icons
   .nav-item.site a {
     display: block;
     font-family: $font-family-navbar;
@@ -23,11 +24,12 @@
     margin: 0px;
     overflow: hidden;
     padding: 0px;
+    position: relative;
     text-decoration: none;
     text-shadow: 0px 1px 1px rgba(0,0,0,0.5);
+    top: -1px;
     transition: background-color 0.8s, box-shadow 0.8s;
     width: 150px;
-    
     .title {
       color: #FFA500;
       display: block;
@@ -44,16 +46,51 @@
       margin: -2px 10px 5px 10px;
     }
   }
-  .nav-item.active a,
-  .nav-item:hover a {
+  .nav-item { margin: 0px 0px 0px 10px; }
+  .nav-item.site.active a,
+  .nav-item.site:hover a {
     background-color: #222;
     box-shadow: inset 0px 0px 10px rgba(0,0,0,0.5),
   }
 
+  // Social Icons
+  .nav-item.social a {
+    color: #666;
+    font-size: 30px;
+    line-height: 68px;
+    text-shadow:
+      0px 1px 0px rgba(255,255,255,0.4),
+      0px -1px 0px rgba(0,0,0,0.6);
+    //transition: color 0.3s;
+    &:hover {
+      animation: navglow 1.5s ease-in-out infinite alternate;
+      color: #888;
+      text-decoration: none;
+    }
+  }
+  .nav-item.social { list-style-type:none; margin: 0px 10px; }
+  .nav-item.social:first-child { margin-left:20px; }
+  .nav-item.social:nth-child(2) { margin-right:20px; }
+}
+
+@keyframes navglow {
+  from {
+    text-shadow:
+      0px 1px 0px rgba(255,255,255,0.4),
+      0px -1px 0px rgba(0,0,0,0.6),
+      0px 1px 5px rgba(255,255,255,0.4);
+  }
+  to {
+    text-shadow:
+      0px 1px 0px rgba(255,255,255,0.4),
+      0px -1px 0px rgba(0, 0,0,0.2),
+      0px 1px 20px rgba(255,255,255,0.4);
+  }
 }
 
 
-// Responsive
+
+// Responsive Design
 @media (max-width: 699px) {
   #navigation {
     .navbar-brand {
@@ -65,134 +102,6 @@
   }
 }
 
-
-// #sitenav {
-//   margin-bottom: 30px;
-// }
-// #sitenav .navbar-inner {
-//   #gradient > .vertical(#464646, #1e1e1e);
-//   .border-radius(0px);
-//   .box-shadow(0px 2px 2px rgba(0,0,0,0.3));
-//   .shine(0.2);
-//   height: 65px;
-//   margin: 0px -20px;
-//   overflow: hidden;
-//   text-shadow: 0px 1px 2px rgba(0,0,0,0.9);
-// }
-// #sitenav .brand {
-//   color: #111;
-//   display: none;
-//   text-shadow: 0px 1px 0px rgba(255,255,255,0.2);
-// }
-// #sitenav .btn-navbar {
-//   margin-right: 0px;
-// }
-// #sitenav ul.pull-left {
-//   border-left: 1px solid #222;
-//   border-right: 1px solid #444;
-// }
-// #sitenav ul.pull-left li {
-//   border-left: 1px solid #444;
-//   border-right: 1px solid #222;
-//   height: 65px;
-// }
-
-
-// //--- Large Nav Links ---//
-// #sitenav .site a {
-//   .transition(~"background-color ease-out 0.8s, box-shadow ease-out 0.8s");
-//   font-family: $navfonts;
-//   letter-spacing: 1px;
-//   width: 150px;
-//   height: 65px;
-//   overflow: hidden;
-//   padding: 0px;
-//   text-decoration: none;
-//   text-shadow: 0px 1px 1px rgba(0,0,0,0.5);
-// }
-// #sitenav .site a:hover {
-//   .box-shadow(0px 0px 10px rgba(0,0,0,0.5));
-//   background-color: #222;
-// }
-// #sitenav .site .title {
-//   color: #FFA500;
-//   display: block;
-//   font-family: kabelbook, @sansFontFamily;
-//   font-size: 18px;
-//   margin: 5px 10px 0px 10px;
-// }
-// #sitenav .site .subtitle {
-//   color: #AAA;
-//   display: block;
-//   font-family: @sansFontFamily;
-//   font-size: 10px;
-//   line-height: 15px;
-//   margin: 2px 10px 5px 10px;
-// }
-
-
-// /*--- Social Icon Links ---*/
-// #sitenav .social {
-//   .transition(background-color ease-out 0.3s);
-//   float: left;
-//   margin: 19px 10px 0px 0px;
-// }
-// #sitenav .social:last-child {
-//   margin-right: 0px;
-// }
-// #sitenav .social a {
-//   background-image: url("@{imageRoot}/layout/socialicons.png");
-//   background-repeat: no-repeat;
-//   display: block;
-//   width: 26px;
-//   height: 26px;
-//   margin: 0px;
-//   padding: 0px;
-// }
-// #sitenav .social.home {
-//   margin: 0px;
-//   padding: 19px 15px 20px 15px;
-//   height: 26px;
-// }
-// #sitenav .social.home a {
-//   width: 32px;
-//   height: 26px;
-// }
-// #sitenav .social span {
-//   .transition(opacity ease-out 0.3s);
-//   background-image: url("@{imageRoot}/layout/socialicons.png");
-//   display: block;
-//   height: 26px;
-//   opacity: 0;
-// }
-// #sitenav .social a:hover span { opacity: 1; }
-// #sitenav .social.home a { background-position: -9px -9px; }
-// #sitenav .social.delicious a { background-position: -49px -9px; }
-// #sitenav .social.facebook a { background-position: -89px -9px; }
-// #sitenav .social.flickr a { background-position: -129px -9px; }
-// #sitenav .social.gmail a { background-position: -169px -9px; }
-// #sitenav .social.igoogle a { background-position: -209px -9px; }
-// #sitenav .social.linkedin a { background-position: -249px -9px; }
-// #sitenav .social.picasa a { background-position: -289px -9px; }
-// #sitenav .social.twitter a { background-position: -329px -9px; }
-// #sitenav .social.twitterbird a { background-position: -369px -9px; }
-// #sitenav .social.rss a { background-position: -409px -9px; }
-// #sitenav .social.home span { background-position: -9px -89px; }
-// #sitenav .social.delicious span { background-position: -49px -89px; }
-// #sitenav .social.facebook span { background-position: -89px -89px; }
-// #sitenav .social.flickr span { background-position: -129px -89px; }
-// #sitenav .social.gmail span { background-position: -169px -89px; }
-// #sitenav .social.igoogle span { background-position: -209px -89px; }
-// #sitenav .social.linkedin span { background-position: -249px -89px; }
-// #sitenav .social.picasa span { background-position: -289px -89px; }
-// #sitenav .social.twitter span { background-position: -329px -89px; }
-// #sitenav .social.twitterbird span { background-position: -369px -89px; }
-// #sitenav .social.rss span { background-position: -409px -89px; }
-
-
-// //------------------------------------------------------------------------
-// // Responsive 600px
-// //------------------------------------------------------------------------
 // @media (max-width: 699px) {
 //   #sitenav .navbar-inner { height: auto; }
 //   #sitenav ul.pull-left { border-width: 0px; }
