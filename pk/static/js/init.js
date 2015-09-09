@@ -5,7 +5,7 @@
 
 (function() {
     // Register Tooltips
-    $("a[data-tooltip]").tooltip({delay:{show:200, hide:50}});
+    $('a[data-tooltip]').tooltip({delay:{show:200, hide:50}});
     // Apply Prettyprint to code blocks
-    $(".content pre").prettyPrint();
-})();
+    $('.content pre').prettyPrint();
+})(); 

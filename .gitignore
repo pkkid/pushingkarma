@@ -3,5 +3,6 @@
 *.sqlite3
 *.sublime-*
 *.sass-cache*
-settings/secrets.py
+node_modules/*
 pk/static/bower/*
+settings/secrets.py

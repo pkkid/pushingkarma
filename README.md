@@ -16,13 +16,14 @@ __Setup the virtualenv__
     > ln -s ~/Projects/pushingkarma/postactivate ~/.virtualenvs/pushingkarma/bin/postactivate
     > workon pushingkarma
 
-__Install Third-Party Resources__
-
     > pip install -U pip
-    > pip install -r  ~/Projects/pushingkarma/requirements.pip
-    > sudo su -c "gem install sass"
-    > sudo npm install -g bower
+    > pip install -r ~/Projects/pushingkarma/requirements.pip
+    > npm install
     > bower install
+
+__Watch Files During Development__
+
+    > grunt watch
 
 -----
 
