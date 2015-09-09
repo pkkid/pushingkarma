@@ -1,6 +1,7 @@
 //------------------------------------------------------------------------
 // PushingKarma - Layout
 //------------------------------------------------------------------------
+@import 'compass';
 
 html {
   background-attachment: fixed;
@@ -56,13 +57,12 @@ footer {
 
 // Header Logo
 #logo {
+  @include border-right-radius(5px);
   @include shine(0.3);
   background-color: rgba(0,0,0,0.5);
   background-image: url('#{$imgroot}/layout/logo.png');
   background-position: 17px 5px;
   background-repeat: no-repeat;
-  border-bottom-right-radius: 5px;
-  border-top-right-radius: 5px;
   display: block;
   float: left;
   height: 65px;
@@ -71,9 +71,7 @@ footer {
   transition: background-color 0.5s, box-shadow 0.5s;
   width: 277px;
 
-  &:hover {
-    background-color: rgba(0,0,0,0.8);
-  }
+  &:hover { background-color: rgba(0,0,0,0.8); }
   .title, .subtitle { display: none; }
 }
 

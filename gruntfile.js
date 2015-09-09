@@ -7,6 +7,8 @@ module.exports = function(grunt) {
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
+    
+    // Concat
     concat: {
       options: {
         separator: '\n\n\n'
@@ -19,17 +21,22 @@ module.exports = function(grunt) {
         dest: 'pk/static/js/pushingkarma.js',
       },
     },
+
+    // Sass
     sass: {
       css: {
         options: {
           style: 'compressed',
           cacheLocation: '/tmp/sass-cache',
+          compass: true,
         },
         files: {
           'pk/static/css/pushingkarma.css': 'pk/static/css/pushingkarma.scss',
         },
       },
     },
+
+    // Watch
     watch: {
       js: {
         files: ['**/*.js'],

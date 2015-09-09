@@ -1,57 +1,17 @@
 //--------------------------------------------------------
 // Copyright (c) 2015 PushingKarma. All rights reserved.
 //--------------------------------------------------------
+@import 'compass';
 
-// Border radius
-@mixin border-top-radius($radius) {
-  border-top-left-radius: $radius;
-  border-top-right-radius: $radius;
-}
-@mixin border-right-radius($radius) {
-  border-top-right-radius: $radius;
-  border-bottom-right-radius: $radius;
-}
-@mixin border-bottom-radius($radius) {
-  border-bottom-right-radius: $radius;
-  border-bottom-left-radius: $radius;
-}
-@mixin border-left-radius($radius) {
-  border-top-left-radius: $radius;
-  border-bottom-left-radius: $radius;
-}
-
-// Gradient Horizontal 3-color
-@mixin gradient-vertical($start:#00b3ee, $end:#c3325f) {
-  background: -moz-linear-gradient(top, $start 0%, $end 100%); /* FF3.6+ */
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,$start), color-stop(100%,$end)); /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(top, $start 0%, $end 100%); /* Chrome10+,Safari5.1+ */
-  background: -ms-linear-gradient(top, $start 0%, $end 100%); /* IE10+ */
-  background: linear-gradient(top, $start 0%, $end 100%); /* W3C */
-}
-
-@mixin gradient-horizontal-three-colors($start:#00b3ee, $mid:#7a43b6, $pmid:50%, $end:#c3325f) {
-  background: -moz-linear-gradient(left, $start 0%, $mid $pmid, $end 100%); /* FF3.6+ */
-  background: -webkit-gradient(linear, left top, right top, color-stop(0%,$start), color-stop($pmid,$mid), color-stop(100%,$end)); /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(left, $start 0%, $mid $pmid, $end 100%); /* Chrome10+,Safari5.1+ */
-  background: -ms-linear-gradient(left, $start 0%, $mid $pmid, $end 100%); /* IE10+ */
-  background: linear-gradient(left, $start 0%,$mid $pmid, $end 100%); /* W3C */
-}
-
-// Rotate element
-@mixin rotate($degrees:45deg) {
-  -moz-transform: rotate($degrees);
-  -webkit-transform: rotate($degrees);
-  -o-transform: rotate($degrees);
-  -ms-transform: rotate($degrees);
-}
 
 // Shine - 1px white border to top of element
 @mixin shine($opacity:1, $offset:0px) {
   &:before {
-    @include gradient-horizontal-three-colors(
+    @include background-image(linear-gradient(to right,
       rgba(255,255,255,0),
       rgba(255,255,255,$opacity),
-      50%, rgba(255,255,255,0));
+      rgba(255,255,255,0)
+    ));
     box-shadow: 0px 1px 5px rgba(255,255,255,0.1);
     content: "";
     display: block;

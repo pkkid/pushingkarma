@@ -113,7 +113,9 @@
 
 (function() {
     // Register Tooltips
-    $('a[data-tooltip]').tooltip({delay:{show:200, hide:50}});
+    $('[data-toggle="tooltip"]').tooltip({delay:{show:200, hide:50}});
+    console.log('TOOLTIPS!');
+
     // Apply Prettyprint to code blocks
-    $('.content pre').prettyPrint();
+    //$('.content pre').prettyPrint();
 })(); 
