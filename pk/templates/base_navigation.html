@@ -18,14 +18,18 @@
         <a href='https://github.com/mjs7231' data-toggle='tooltip' data-placement='top' title='Github'><span class='icomoon-github4'></span></a>
       </li>
       <!-- Site -->
-      <li class='nav-item site'><a href='{% url "notebook" %}'>
-        <span class='title'>Notebook</span>
-        <span class='subtitle'>Thoughts and writings from my journey</span>
-      </a></li>
-      <li class='nav-item site'><a href='{% url "projects" %}'>
-        <span class='title'>Projects</span>
-        <span class='subtitle'>My works shared with the community</span>
-      </a></li>
+      <li class='nav-item site {% if menuitem == "projects" %}active{% endif %}'>
+        <a href='{% url "projects" %}'>
+          <span class='title'>Projects</span>
+          <span class='subtitle'>My works shared with the community</span>
+        </a>
+      </li>
+      <li class='nav-item site {% if menuitem == "notebook" %}active{% endif %}'>
+        <a href='{% url "notebook" %}'>
+          <span class='title'>Notebook</span>
+          <span class='subtitle'>Thoughts and writings from my journey</span>
+        </a>
+      </li>
     </ul>
   </div>
 </div>

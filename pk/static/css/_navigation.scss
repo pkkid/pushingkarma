@@ -64,7 +64,7 @@
       0px -1px 0px rgba(0,0,0,0.6);
     //transition: color 0.3s;
     &:hover {
-      animation: navglow 1s ease-in-out infinite alternate;
+      @include animation(navglow 1s ease-in-out infinite alternate);
       color: #888;
       text-decoration: none;
     }

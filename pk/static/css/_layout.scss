@@ -1,6 +1,6 @@
-//------------------------------------------------------------------------
-// PushingKarma - Layout
-//------------------------------------------------------------------------
+//--------------------------------------------------------
+// Copyright (c) 2015 PushingKarma. All rights reserved.
+//--------------------------------------------------------
 @import 'compass';
 
 html {
@@ -29,8 +29,12 @@ header {
   position: relative;
 }
 footer {
-  color: #ccc;
-  margin: 15px;
+  color: rgba(255,255,255,0.3);
+  font-family: $font-family-serif;
+  font-size: 12px;
+  height: 20px;
+  margin: 2px 5px;
+  text-align: right;
 }
 
 #layoutborder {
@@ -38,7 +42,7 @@ footer {
   background-image: url('#{$imgroot}/transparent/black-30.png');
   margin: 25px auto;
   max-width: 980px;
-  padding: 13px;
+  padding: 13px 13px 4px 13px;
 }
 
 #layoutwrap {

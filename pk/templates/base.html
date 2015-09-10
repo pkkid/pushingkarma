@@ -20,10 +20,11 @@
           </a>
         </header>
         {% include 'base_navigation.html' %}
-        <div class='row-fluid'>
-          <div class='span12'>{% block content %}[block:content]{% endblock %}</div>
+        <div class='container'>
+          <div class='row'>{% block content %}[block:content]{% endblock %}</div>
         </div>
       </div>
+      <footer>Copyright (c) 2015 PushingKarma. All rights reserved.</footer>
     </div>
     <script src='/static/bower/jquery/dist/jquery.min.js'></script>
     <script src='/static/bower/tether/dist/js/tether.min.js'></script>
