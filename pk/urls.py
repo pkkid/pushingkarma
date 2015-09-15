@@ -24,7 +24,7 @@ urlpatterns = [
     url(r'^favicon\.ico$', redirect('/static/img/favicon.ico'), name='favicon'),
 
     # PushingKarma
-    url(r'^$', 'pk.views.notebook.overview', name='index'),
+    url(r'^$', 'pk.views.projects.overview', name='index'),
     url(r'^notebook/$', 'pk.views.notebook.overview', name='notebook'),
     url(r'^projects/$', 'pk.views.projects.overview', name='projects'),
 ]

@@ -1,0 +1,57 @@
+The edit buttons, auto-indentation and help syntax around this
+textarea are the result of using **JQuery-Wysiwym**. This demo
+is showing off the final result of jquery-wysiwym along side
+[Showdown][] and [Prettify][] to create a live preview similar
+to what [StackOverflow][] has.
+
+
+## HTML ##
+
+Include wysiwym.js along with Showdown and Prettify to help
+with converting the raw text input to HTML.
+
+    <script type='text/javascript' src='path/to/prettify.js'></script>
+    <script type='text/javascript' src='path/to/showdown.js'></script>
+    <script type='text/javascript' src='path/to/wysiwym.js'></script>
+
+Your HTML source also needs to include a textarea, and and a
+placeholder for the live preview output to go.
+
+    &lt;textarea id='mytextarea'&gt;&lt;/textarea&gt;
+    <div id='livepreview'></div>
+
+
+## Javascript ##
+
+Setting up the WYSIWYM editor is as simple as calling
+<code>.wysiwym(...)</code> on the jQuery textarea.  The rest
+of the code deals with setting up the live preview.
+
+    // Setup the WYSIWYM editor!
+    $('#mytextarea').wysiwym(Wysiwym.Markdown, {});
+
+    // For the Live Preview we want to check the value of textarea changes as some
+    // set interval.  If it's changed, we'll call Showdown to convert the textarea
+    // input to HTML then prettify to colorize code blocks.
+    var showdown = new Showdown.converter();
+    var previousValue = null;
+    var previewTextarea = $('#mytextarea');
+    var previewOutput = $('#livepreview');
+    var updateLivePreview = function() {
+        var newValue = previewTextarea.val();
+        if (newValue != previousValue) {
+            previousValue = newValue;
+            var newHtml = $("<div>"+ showdown.makeHtml(newValue) +"</div>");
+            newHtml.find('pre,p code').addClass('prettyprint');
+            newHtml.find('pre code').each(function() {
+                $(this).html(prettyPrintOne($(this).html()));
+            });
+            previewOutput.html(newHtml);
+        }
+    }
+    setInterval(updateLivePreview, 200);
+
+
+[Showdown]: http://softwaremaniacs.org/playground/showdown-highlight/
+[Prettify]: http://code.google.com/p/google-code-prettify/
+[StackOverflow]: http://stackoverflow.com

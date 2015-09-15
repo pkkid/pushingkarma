@@ -12,7 +12,7 @@ from os.path import abspath, dirname, join
 HOSTNAME = platform.node()
 ALLOWED_HOSTS = []
 BASE_DIR = dirname(dirname(abspath(__file__)))
-DEBUG = HOSTNAME in ['pkkid-mint', 'pkkid-work']
+DEBUG = HOSTNAME in ['pkkid-work', 'pkkid-home']
 ROOT_URLCONF = 'pk.urls'
 STATIC_URL = '/static/'
 STATIC_ROOT = '%s/static/' % BASE_DIR

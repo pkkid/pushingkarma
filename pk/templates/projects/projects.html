@@ -1,8 +1,30 @@
 {% extends 'base_twocolumn.html' %}
 
 {% block leftcolumn %}
-  List Posts
-  {# {% list_posts request %} #}
+  <div class='article'>
+    <div class='content'>
+      <h1>Projects</h1>
+      <p style="margin-bottom:0px;">I wrote my first program when I was 17, a Blackjack game for AmigaBasic.
+        However, it's only been recently that I started writing useful little bits of code with
+        idea of sharing them in mind. Below is a list of recent personal projects I have been working on
+        in no particular order.</p>
+
+      <div class='projects clearfix' style='margin:0px -15px;'>
+        <div class='col-md-6'>{% include 'projects/pkmeter/description.html' %}</div>
+        <div class='col-md-6'>{% include 'projects/django-dbbackup/description.html' %}</div>
+        <div class='col-md-6'>{% include 'projects/python-plexapi/description.html' %}</div>
+        <div class='col-md-6'>{% include 'projects/jquery-wysiwym/description.html' %}</div>
+        <div class='col-md-6'>{% include 'projects/dyndns-scripts/description.html' %}</div>
+        <div class='col-md-6'>{% include 'projects/pks-movie-database/description.html' %}</div>
+        <div class='col-md-6'>{% include 'projects/pushingkarma/description.html' %}</div>
+      </div>
+
+      <h1>Support</h1>
+      <p>All projects are hosted on <a href='https://github.org/'>Github</a> and any bugs
+        should be reported there. If you have a question, need help setting up a project or just want
+        to chat send me an email at <strong>mjs7231<span style='display:none'>+site</span><span>@</span>gmail.com</strong>.</p>
+    </div>
+  </div>
 {% endblock leftcolumn %}
 
 {% block rightcolumn %}

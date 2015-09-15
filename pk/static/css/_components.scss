@@ -4,12 +4,21 @@
 @import 'compass';
 
 
+// Curl Shadow
+// <div class="curlshadow">
+//   {{ content }}
+// </div>
+.curlshadow {
+  @include curlshadow(0.1);
+}
+
+
 // Sidebox
 // <div class="sidebox">
 //   {{ content }}
 // </div>
 .sidebox {
-  @include background-image(radial-gradient(50% 50%, #c5c1af 0px, #b6b2a2 100%));
+  @include background-image(radial-gradient(50% 50%, #c5c1af 0px, #b6b2a2 100px));
   @include shine(0.7, -15px);
   border-bottom: 1px solid rgba(0,0,0,0.2);
   border-radius: 5px;
@@ -21,9 +30,20 @@
     font-size: 14px;
     line-height: 1.6em;
   }
-  .project {
-    .description, h3 { margin-left: 53px; }
-    .project-icon { float: left; margin-left: 5px; }
+  &.project {
+    margin-top: 15px;
+    .description, h3 {
+      margin: 0px 0px 0px 50px;
+    }
+    .description {
+      margin-top: 5px;
+      font-size: 13px;
+    }
+    [class*='icomoon-'] {
+      float: left;
+      font-size: 40px;
+      margin-right: 0px 0px 0px 4px;
+    }
   }
 }
 
@@ -103,16 +123,6 @@
 //   width: 180px;
 //   float: left;
 //   margin-right: 20px;
-// }
-
-
-// --- Curl Shadow -----------------------------------------------------------
-// <div class="curlshadow">
-//   {{ content }}
-// </div>
-
-// .curlshadow {
-//   .curlshadow(0.1);
 // }
 
 

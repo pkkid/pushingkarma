@@ -1,6 +1,6 @@
-//------------------------------------------------------------------------
-// PushingKarma - Type
-//------------------------------------------------------------------------
+//--------------------------------------------------------
+// Copyright (c) 2015 PushingKarma. All rights reserved.
+//--------------------------------------------------------
 
 ::selection {
   background-color: #53843B;
@@ -9,7 +9,7 @@
 .first { margin-top: 0px; }
 
 a {
-  .transition(all 0.2s ease-out);
+  //.transition(all 0.2s ease-out);
   color: #005500;
 }
 h1, h2, h3, h1 a, h2 a, h3 a {
@@ -24,7 +24,7 @@ h3 { font-size: 16px; margin: 5px 0px 5px 0px; }
 h1:first-child { margin-top: 0px; }
 
 p {
-  font-family: $basefonts;
+  //font-family: $basefonts;
   font-size: 15px;
   line-height: 1.6em;
 }
