@@ -1,7 +1,6 @@
 //--------------------------------------------------------
 // Copyright (c) 2015 PushingKarma. All rights reserved.
 //--------------------------------------------------------
-@import 'compass';
 
 
 // Curl Shadow
@@ -18,8 +17,8 @@
 //   {{ content }}
 // </div>
 .sidebox {
-  @include background-image(radial-gradient(50% 50%, #c5c1af 0px, #b6b2a2 100px));
   @include shine(0.7, -15px);
+  background-image: radial-gradient(50% 50%, #c5c1af 0px, #b6b2a2 100px);
   border-bottom: 1px solid rgba(0,0,0,0.2);
   border-radius: 5px;
   padding: 15px 10px;
@@ -52,8 +51,8 @@
 //   <img src="{{imgpath}}"/>
 // </div>
 @mixin thumb() {
-  @include background-image(linear-gradient(#555, #333));
   @include shine(0.4);
+  background-image: linear-gradient(#555, #333);
   border-radius: 3px;
   float: right;
   margin: 0px 0px 5px 5px;

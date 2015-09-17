@@ -24,9 +24,7 @@ __Setup Environment__
     > pip install -r ~/Projects/pushingkarma/requirements.pip
     
     # Web Components
-    > sudo apt-get install ruby1.9.1-dev ruby-dev
     > sudo su -c "gem install sass"
-    > sudo su -c "gem install compass"
     > sudo ln -s /usr/bin/nodejs /usr/local/bin/node
     > npm install -g grunt-cli bower
     > npm install

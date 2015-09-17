@@ -1,17 +1,16 @@
 //--------------------------------------------------------
 // Copyright (c) 2015 PushingKarma. All rights reserved.
 //--------------------------------------------------------
-@import 'compass';
 
 
 // Shine - 1px white border to top of element
 @mixin shine($opacity:1, $offset:0px) {
   &:before {
-    @include background-image(linear-gradient(to right,
+    background-image: linear-gradient(to right,
       rgba(255,255,255,0),
       rgba(255,255,255,$opacity),
       rgba(255,255,255,0)
-    ));
+    );
     box-shadow: 0px 1px 5px rgba(255,255,255,0.1);
     content: "";
     display: block;
@@ -41,11 +40,11 @@
     z-index: -1;
   }
   &:before {
-    @include rotate(-3deg);
+    transform: rotate(-3deg);
     left: 10px;
   }
   &:after {
-    @include rotate(3deg);
+    transform: rotate(3deg);
     right: 10px;
   }
 }

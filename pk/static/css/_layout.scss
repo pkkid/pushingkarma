@@ -1,7 +1,6 @@
 //--------------------------------------------------------
 // Copyright (c) 2015 PushingKarma. All rights reserved.
 //--------------------------------------------------------
-@import 'compass';
 
 html {
   background-attachment: fixed;
@@ -17,24 +16,27 @@ body {
 }
 header {
   @include shine(0.8);
-  @include border-top-radius(5px);
-  background-color: #252525;
+  background-color: #252525; 
   background-image: url('#{$imgroot}/layout/banner-china.jpg');
-  background-repeat: no-repeat;
   background-position: 0px -20px;
+  background-repeat: no-repeat;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
   box-shadow: inset 0px 0px 60px rgba(0,0,0,0.6);
   height: 220px;
   margin: -20px -20px 0px -20px;
   overflow: hidden;
   position: relative;
+  @extend %clearfix;
 }
 footer {
   color: rgba(255,255,255,0.3);
   font-family: $font-family-serif;
   font-size: 12px;
-  height: 20px;
   margin: 2px 5px;
   text-align: right;
+  a { color:rgba(255,255,255,0.5); }
+  a:hover { color:rgba(255,255,230,0.8); text-decoration:none; }
 }
 
 #layoutborder {
@@ -61,12 +63,13 @@ footer {
 
 // Header Logo
 #logo {
-  @include border-right-radius(5px);
   @include shine(0.3);
   background-color: rgba(0,0,0,0.5);
   background-image: url('#{$imgroot}/layout/logo.png');
   background-position: 17px 5px;
   background-repeat: no-repeat;
+  border-bottom-right-radius: 5px;
+  border-top-right-radius: 5px;
   display: block;
   float: left;
   height: 65px;

@@ -26,9 +26,8 @@ module.exports = function(grunt) {
     sass: {
       css: {
         options: {
-          style: 'compressed',
+          style: 'expanded',
           cacheLocation: '/tmp/sass-cache',
-          compass: true,
         },
         files: {
           'pk/static/css/pushingkarma.css': 'pk/static/css/pushingkarma.scss',
@@ -36,20 +35,37 @@ module.exports = function(grunt) {
       },
     },
 
+    // PostCSS
+    postcss: {
+      options: {
+        map: true,
+        processors: [
+          require('autoprefixer')({
+            browsers: ['last 2 versions']
+          })
+        ],
+      },
+      dist: {
+        src: 'pk/static/css/pushingkarma.css'
+      },
+    },
+
     // Watch
     watch: {
       js: {
-        files: ['**/*.js'],
+        files: ['**/js/*.js'],
         tasks: ['concat:js'],
         options: {
           spawn: false,
+          debounceDelay: 0,
         },
       },
       css: {
-        files: ['**/*.scss'],
-        tasks: ['sass:css'],
+        files: ['**/css/*.scss'],
+        tasks: ['sass:css', 'postcss'],
         options: {
           spawn: false,
+          debounceDelay: 0,
         },
       },
     },
@@ -58,5 +74,6 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-contrib-concat');
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.registerTask('default', ['concat', 'sass']);
+  grunt.loadNpmTasks('grunt-postcss');
+  grunt.registerTask('default', ['concat', 'sass', 'postcss']);
 };
