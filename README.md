@@ -6,7 +6,7 @@ means let me know. :)
 #### Requirements
 
 * Python3, Pip, Virtualenv, Fabric
-* Bower, Sass, Compass, Grunt
+* Npm, Bower, Sass, Autoprefixer, Gulp
 
 #### Installation
 
@@ -26,10 +26,15 @@ __Setup Environment__
     # Web Components
     > sudo su -c "gem install sass"
     > sudo ln -s /usr/bin/nodejs /usr/local/bin/node
-    > npm install -g grunt-cli bower
+    > npm install -g gulp bower
     > npm install
     > bower install
-    > grunt
+    > gulp
+
+    # Ubuntu 14.04 Needs latest nodejs
+    > curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
+    > sudo apt-get install -y nodejs
+    > npm rebuild node-sass
 
     # Setup Django
     > django-admin syncdb
