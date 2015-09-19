@@ -11,6 +11,13 @@ from django.template import RequestContext
 from django.template.loader import render_to_string
 
 
+def get_object_or_none(cls, *args, **kwargs):
+    try:
+        return cls._default_manager.get(*args, **kwargs)
+    except cls.DoesNotExist:
+        return None
+
+
 def response(request, template, data):
     if 'json' in request.GET:
         return response_json(data)

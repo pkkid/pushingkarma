@@ -49,4 +49,4 @@ gulp.task('watch', function () {
 
 
 // Default
-gulp.task('default', ['js', 'sass'], function() {});
+gulp.task('default', ['js', 'sass']);

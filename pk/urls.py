@@ -12,6 +12,7 @@ from django.views.generic import RedirectView, TemplateView
 redirect = lambda url: RedirectView.as_view(url=url)
 template = lambda tmpl: TemplateView.as_view(template_name=tmpl)
 
+
 urlpatterns = [
     # Includes
     url(r'^admin/', include(admin.site.urls)),
@@ -24,9 +25,9 @@ urlpatterns = [
     url(r'^favicon\.ico$', redirect('/static/img/favicon.ico'), name='favicon'),
 
     # PushingKarma
-    url(r'^$', 'pk.views.projects.overview', name='index'),
-    url(r'^notebook/$', 'pk.views.notebook.overview', name='notebook'),
-    url(r'^projects/$', 'pk.views.projects.overview', name='projects'),
+    url(r'^$', 'pk.views.cms', name='index'),
+    url(r'^p/(?P<slug>.*?)/$', 'pk.views.cms', name='page'),
+    url(r'^notebook/$', 'pk.views.notebook', name='notebook'),
 ]
 
 
