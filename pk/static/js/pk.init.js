@@ -3,38 +3,6 @@
  *------------------------------------------------------- */
 'use strict';
 
-var pk = {
-    utils: {
-        set_default: function(input, default_value) {
-            return typeof input !== 'undefined' ? input : default_value;
-        },
-    },
-};
-
-
-
-/*----------------------------------------------------------
- * Copyright (c) 2015 PushingKarma. All rights reserved.
- *------------------------------------------------------- */
-'use strict';
-
-
-// Animate a jquery object
-// See: https://daneden.github.io/animate.css/
-$.fn.animatecss = function(effect) {
-    var animationend = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
-    $(this).addClass('animated '+effect).one(animationend, function() {
-        $(this).removeClass('animated '+effect);
-    });
-};
-
-
-
-/*----------------------------------------------------------
- * Copyright (c) 2015 PushingKarma. All rights reserved.
- *------------------------------------------------------- */
-'use strict';
-
 (function() {
 
     var init_csrf_token = function() {

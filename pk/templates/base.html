@@ -5,6 +5,7 @@
     <title>{% block title %}{{SITE_NAME}}{% endblock %}</title>
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     <link rel='shortcut icon' href='/static/img/favicon.ico'/>
+    <link rel='stylesheet' type='text/css' href='/static/bower/animate.css/animate.css'/>
     <link rel='stylesheet' type='text/css' href='/static/bower/bootstrap/dist/css/bootstrap.min.css'/>
     <link rel='stylesheet' type='text/css' href='/static/css/pushingkarma.css'/>
     {% block css %}{% endblock %}
@@ -13,11 +14,16 @@
     <div id='layoutborder'>
       <div id='layoutwrap'>
         <header>
-          <canvas id='particles'></canvas>
-          <a id='logo' href='{% url "index" %}'>
+          <div id='logo'>
             <div class='title'>PushingKarma</div>
             <div class='subtitle'>Website for Michael Shepanski</div>
-          </a>
+            <form method='POST'>
+              <span class='icomoon-notification'></span>
+              <input type='text' name='username' placeholder='Email' autocomplete='false'/>
+              <input type='password' name='password' placeholder='Password'/>
+              <input type='submit' style='display:none;'/>
+            </form>
+          </div>
         </header>
         {% include 'base_navigation.html' %}
         <div class='container-fluid'>

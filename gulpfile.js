@@ -15,12 +15,11 @@ var watch = require('gulp-watch');
 // Javascript
 gulp.task('js', function() {
   gulp.src([
-      './pk/static/js/particles.js',
-      './pk/static/js/init.js',
+      './pk/static/js/pk.utils.js',
+      './pk/static/js/pk.plugins.js',
+      './pk/static/js/pk.init.js',
     ])
-    .pipe(sourcemaps.init())
     .pipe(concat('pushingkarma.js', {newLine:'\n\n\n'}))
-    .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest('./pk/static/js'));
 });
 

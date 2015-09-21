@@ -1,5 +1,12 @@
 {% extends 'base.html' %}
 
 {% block content %}
+
+  {% if user.is_authenticated %}
+    <div id='cms-buttons'>
+      <span class='icomoon-pen'></span> Edit
+    </div>
+  {% endif %}
+
   Hello Mom!
 {% endblock content %}
