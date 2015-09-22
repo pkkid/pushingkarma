@@ -128,5 +128,4 @@ pk.login_form = {
 (function() {
     pk.login_form.init();
     pk.utils.init_tooltips();
-    init_funicons();
 })();

@@ -6,5 +6,4 @@
 (function() {
     pk.login_form.init();
     pk.utils.init_tooltips();
-    init_funicons();
 })();
