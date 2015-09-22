@@ -3,12 +3,13 @@
  *------------------------------------------------------- */
 'use strict';
 
-
 // Animate a jquery object
 // See: https://daneden.github.io/animate.css/
-$.fn.animatecss = function(effect) {
+$.fn.animatecss = function(effect, callback) {
     var animationend = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
     $(this).addClass('animated '+effect).one(animationend, function() {
         $(this).removeClass('animated '+effect);
+        if (callback !== undefined)
+            callback();
     });
 };

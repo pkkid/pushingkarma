@@ -1,7 +1,7 @@
 /*----------------------------------------------------------
  * Copyright (c) 2015 PushingKarma. All rights reserved.
  *------------------------------------------------------- */
-'use strict;'
+'use strict';
 
 var gulp = require('gulp');
 var autoprefixer = require('gulp-autoprefixer');
@@ -17,6 +17,7 @@ gulp.task('js', function() {
   gulp.src([
       './pk/static/js/pk.utils.js',
       './pk/static/js/pk.plugins.js',
+      './pk/static/js/pk.login.js',
       './pk/static/js/pk.init.js',
     ])
     .pipe(concat('pushingkarma.js', {newLine:'\n\n\n'}))

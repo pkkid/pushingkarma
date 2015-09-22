@@ -27,17 +27,19 @@ def response(request, template, data):
 def response_json(data):
     json.encoder.FLOAT_REPR = lambda f: ('%.5f' % f)  # fix floats
     data = json.dumps(dict(data), default=lambda x: str(x), sort_keys=True)
-    return HttpResponse(data, mimetype='application/json')
+    return HttpResponse(data, content_type='application/json')
 
 
-def response_json_error(data, errors):
-    data.success = False
-    data.errors = errors if type(errors) in [dict, ErrorDict] else {'__all__': errors}
+def response_json_error(errors, data=None):
+    data = data or {}
+    data['success'] = False
+    data['errors'] = errors if type(errors) in [dict, ErrorDict] else {'__all__': errors}
     return response_json(data)
 
 
-def response_json_success(data):
-    data.success = True
+def response_json_success(data=None):
+    data = data or {}
+    data['success'] = True
     return response_json(data)
 
 

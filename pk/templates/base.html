@@ -18,10 +18,17 @@
             <div class='title'>PushingKarma</div>
             <div class='subtitle'>Website for Michael Shepanski</div>
             <form method='POST'>
-              <span class='icomoon-notification'></span>
-              <input type='text' name='username' placeholder='Email' autocomplete='false'/>
-              <input type='password' name='password' placeholder='Password'/>
-              <input type='submit' style='display:none;'/>
+              {% if user.is_authenticated %}
+                <span class='icomoon-user'></span>
+                Hello {{user.username}}! |
+                <a href='{% url "auth_logout" %}'>Logout</a>
+              {% else %}
+                {% csrf_token %}
+                <span class='icon-error icomoon-notification'></span>
+                <input type='text' name='email' placeholder='Email' autocomplete='false'/>
+                <input type='password' name='password' placeholder='Password'/>
+                <button type='submit' style='display:none;'></button>
+              {% endif %}
             </form>
           </div>
         </header>
@@ -36,6 +43,7 @@
           via <a href='http://creativecommons.org/licenses/by/4.0/'>CC BY 4.0 license</a>.
       </footer>
     </div>
+    
     <script src='/static/bower/jquery/dist/jquery.min.js'></script>
     <script src='/static/bower/tether/dist/js/tether.min.js'></script>
     <script src='/static/bower/bootstrap/dist/js/bootstrap.min.js'></script>

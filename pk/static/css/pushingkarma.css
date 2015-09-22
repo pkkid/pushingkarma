@@ -1681,7 +1681,15 @@ footer a:hover {
   display: none; }
 
 #logo {
+  color: #aaa;
+  font-size: 12px;
   transition: all 0.5s; }
+
+#logo a {
+  color: #FFA500; }
+
+#logo a:hover {
+  color: #ffc04d; }
 
 #logo form {
   -webkit-animation-duration: 0.7s;
@@ -1704,7 +1712,7 @@ footer a:hover {
   transition: all 0.5s;
   width: 120px; }
 
-#logo form span {
+#logo form span.icon-error {
   color: #f00;
   left: 245px;
   opacity: 0;

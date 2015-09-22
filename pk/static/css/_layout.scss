@@ -85,7 +85,14 @@ footer {
 
 // Login Form
 #logo {
+  color: #aaa;
+  font-size: 12px;
   transition: all 0.5s;
+
+  a {
+    color: #FFA500;
+    &:hover { color: lighten(#FFA500, 15%); }
+  }
 
   form {
     animation-duration: 0.7s;
@@ -108,7 +115,7 @@ footer {
       width: 120px;
     }
 
-    span {
+    span.icon-error {
       color: #f00;
       left: 245px;
       opacity: 0;

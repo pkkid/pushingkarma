@@ -3,57 +3,6 @@
  *------------------------------------------------------- */
 'use strict';
 
-var pk = {  // jshint ignore:line
-    utils: {
-
-        ajax: function(url, data) {
-            var xhr = $.ajax({url:url, data:data, type:'POST', dataType:'json'});
-            return xhr.then(function(data, textStatus, jqXHR) {
-                var deferred = new $.Deferred();
-                if (!data.success) 
-                    return deferred.reject(jqXHR, textStatus, data);
-                return deferred.resolve(data, textStatus, jqXHR);
-            });
-        },
-
-        init_tooltips: function(selector) {
-            selector = this.set_default(selector, '[data-toggle="tooltip"]');
-            console.log('init_tooltips: '+ selector);
-            $(selector).tooltip({delay:{show:200, hide:50}});
-        },
-
-        set_default: function(input, default_value) {
-            return typeof input !== 'undefined' ? input : default_value;
-        },
-
-    },
-};
-
-
-
-/*----------------------------------------------------------
- * Copyright (c) 2015 PushingKarma. All rights reserved.
- *------------------------------------------------------- */
-'use strict';
-
-// Animate a jquery object
-// See: https://daneden.github.io/animate.css/
-$.fn.animatecss = function(effect, callback) {
-    var animationend = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
-    $(this).addClass('animated '+effect).one(animationend, function() {
-        $(this).removeClass('animated '+effect);
-        if (callback !== undefined)
-            callback();
-    });
-};
-
-
-
-/*----------------------------------------------------------
- * Copyright (c) 2015 PushingKarma. All rights reserved.
- *------------------------------------------------------- */
-'use strict';
-
 pk.login_form = {
     logo: $('#logo'),
     form: $('#logo form'),
@@ -117,16 +66,3 @@ pk.login_form = {
     },
 
 };
-
-
-
-/*----------------------------------------------------------
- * Copyright (c) 2015 PushingKarma. All rights reserved.
- *------------------------------------------------------- */
-'use strict';
-
-(function() {
-    pk.login_form.init();
-    pk.utils.init_tooltips();
-    init_funicons();
-})();
