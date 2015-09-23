@@ -57,7 +57,7 @@ footer {
   font-family: $font-family-serif;
   padding: 10px;
   position: relative;
-  text-shadow: 1px 1px 0px rgba(255,255,255,0.4);
+  //text-shadow: 1px 1px 0px rgba(255,255,255,0.4);
   z-index: 0;
 }
 
@@ -136,6 +136,10 @@ footer {
       input { opacity:1; }
     }
   }
+}
+
+#content {
+  background-color: #f00;
 }
 
 

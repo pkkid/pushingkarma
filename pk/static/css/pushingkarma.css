@@ -1645,7 +1645,6 @@ footer a:hover {
   font-family: Georgia, "Times New Roman", Times, serif;
   padding: 10px;
   position: relative;
-  text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.4);
   z-index: 0; }
 
 #logo {
@@ -1735,6 +1734,9 @@ footer a:hover {
 
 #logo.enabled form input {
   opacity: 1; }
+
+#content {
+  background-color: #f00; }
 
 #particles {
   position: absolute;
@@ -1949,5 +1951,42 @@ footer a:hover {
   padding: 0px;
   position: relative;
   top: 0px; }
+
+#page {
+  position: relative; }
+
+.pages-menu {
+  background-color: rgba(0, 0, 0, 0.7);
+  border-radius: 2px;
+  color: #eee;
+  display: fixed;
+  font-family: kabelbook, "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  left: 50%;
+  line-height: 25px;
+  margin-left: -55px;
+  padding-left: 15px;
+  position: absolute;
+  text-transform: uppercase;
+  top: -28px;
+  width: 110px; }
+
+.pages-menu .title {
+  display: block;
+  float: left;
+  font-size: 15px;
+  margin-right: 10px;
+  padding-top: 5px; }
+
+.pages-menu .btn {
+  border-radius: 0px;
+  display: block;
+  float: left;
+  font-size: 18px;
+  padding: 8px;
+  transition: all 0.3s; }
+
+.pages-menu .btn:hover {
+  background-color: #111; }
 
 /*# sourceMappingURL=pushingkarma.css.map */

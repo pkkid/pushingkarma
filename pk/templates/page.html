@@ -1,12 +1,18 @@
 {% extends 'base.html' %}
 
 {% block content %}
+  <div id='page'>
+    <!-- menu -->
+    {% if user.is_authenticated %}
+      <div class='pages-menu animated flipInX'>
+        <span class='title'>Menu</span>
+        <span class='btn icomoon-pen' data-toggle='tooltip' data-placement='top' title='Edit'></span>
+        {# <span class='btn icomoon-copy' data-toggle='tooltip' data-placement='top' title='Copy'></span> #}
+        {# <span class='btn icomoon-floppy-disk' data-toggle='tooltip' data-placement='top' title='Save'></span> #}
+      </div>
+    {% endif %}
 
-  {% if user.is_authenticated %}
-    <div id='cms-buttons'>
-      <span class='icomoon-pen'></span> Edit
-    </div>
-  {% endif %}
-
-  Hello Mom!
+    <!-- content -->
+    Hello Mom!
+  </div>
 {% endblock content %}
