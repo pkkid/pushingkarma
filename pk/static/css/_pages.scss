@@ -1,43 +1,110 @@
 //--------------------------------------------------------
 // Copyright (c) 2015 PushingKarma. All rights reserved.
 //--------------------------------------------------------
+$EDITOR_WIDTH: 600px;
+$HANDLE_WIDTH: 8px;
 
-#page {
-  position: relative;
+// Expanding Editor
+#layoutborder {
+  .page-editor {
+    background-color: #222;
+    border-bottom-left-radius: 5px;
+    border-top-left-radius: 5px;
+    border: 0px solid #111;
+    border-width: 0px 0px 0px 8px;
+    height: 100%;
+    left: -31px;
+    padding: 5px 0px;
+    position: absolute;
+    top: 0px;
+    transition: all 0.5s ease;
+    width: 0px;
+
+    .handle {
+      cursor: col-resize;
+      left: -8px;
+      margin-top: -20px;
+      position: absolute;
+      top: 50%;
+    }
+  }
+  &.editing {
+    margin-left: -215px;
+    .page-editor {
+      border-width: 1px 0px 1px 8px;
+      box-shadow: inset -2px 0px 2px rgba(0,0,0,0.2);
+      left: -$EDITOR_WIDTH - 25px;
+      padding: 5px 5px 5px 0px;
+      width: $EDITOR_WIDTH;
+    }
+  }
 }
 
-.pages-menu {
-  $width: 110px;
-  background-color: rgba(0,0,0,0.7);
-  border-radius: 2px;
-  color: #eee;
-  display: fixed;
-  font-family: kabelbook, $font-family-sans-serif;
-  font-size: 16px;
-  left: 50%;
-  line-height: 25px;
-  margin-left: $width / -2;
-  padding-left: 15px;
-  position: absolute;
-  text-transform: uppercase;
-  top: -28px;
-  width: $width;
 
-  .title {
-    display: block;
-    float: left;
-    font-size: 15px;
-    margin-right: 10px;
-    padding-top: 5px;
-  }
+// Markdown CSS (Move to Type.scss?)
+#page {
+  position: relative;
+  min-height: 400px;
 
-  .btn {
-    border-radius: 0px;
-    display: block;
-    float: left;
-    font-size: 18px;
-    padding: 8px;
-    transition: all 0.3s;
-    &:hover { background-color: #111; }
+  .page-menu {
+    $width: 110px;
+    background-color: rgba(0,0,0,0.7);
+    border-radius: 2px;
+    color: #eee;
+    display: fixed;
+    font-family: kabelbook, $font-family-sans-serif;
+    font-size: 16px;
+    left: 50%;
+    line-height: 25px;
+    margin-left: $width / -2;
+    padding-left: 15px;
+    position: absolute;
+    text-transform: uppercase;
+    top: -28px;
+    width: $width;
+
+    .title {
+      display: block;
+      float: left;
+      font-size: 15px;
+      margin-right: 10px;
+      padding-top: 5px;
+    }
+
+    .btn {
+      border-radius: 0px;
+      display: block;
+      float: left;
+      font-size: 18px;
+      padding: 8px;
+      transition: all 0.3s;
+      &:hover { background-color: #111; }
+    }
   }
+}
+
+
+// CodeMirror Theme
+.cm-s-blackboard.CodeMirror {
+  height: 100%;
+  font-size: 10px;
+  background: #222;
+}
+.cm-s-blackboard .CodeMirror-gutters {
+  background: #202020;
+}
+
+.CodeMirror-simplescroll-horizontal div, .CodeMirror-simplescroll-vertical div {
+  background: #333;
+  border: 1px solid #444;
+  border-radius: 0px;
+}
+.CodeMirror-simplescroll-horizontal, .CodeMirror-simplescroll-vertical {
+  background: #282828;
+}
+.CodeMirror-overlayscroll-horizontal div, .CodeMirror-overlayscroll-vertical div {
+  background: #f00;
+}
+.CodeMirror-scrollbar-filler, .CodeMirror-gutter-filler {
+  background-color: #222;
 }

@@ -1629,11 +1629,16 @@ footer a:hover {
   text-decoration: none; }
 
 #layoutborder {
-  border-radius: 18px;
   background-image: url("/static/img/transparent/black-30.png");
-  margin: 25px auto;
-  max-width: 1020px;
-  padding: 13px 13px 4px 13px; }
+  border-radius: 18px;
+  left: 50%;
+  margin-bottom: 25px;
+  margin-left: -510px;
+  padding: 13px 13px 4px 13px;
+  position: absolute;
+  top: 25px;
+  transition: all 0.5s ease;
+  width: 1020px; }
 
 #layoutwrap {
   border-radius: 8px;
@@ -1735,8 +1740,8 @@ footer a:hover {
 #logo.enabled form input {
   opacity: 1; }
 
-#content {
-  background-color: #f00; }
+body.preload .no-preload-animation {
+  transition: none !important; }
 
 #particles {
   position: absolute;
@@ -1952,10 +1957,42 @@ footer a:hover {
   position: relative;
   top: 0px; }
 
-#page {
-  position: relative; }
+#layoutborder .page-editor {
+  background-color: #222;
+  border-bottom-left-radius: 5px;
+  border-top-left-radius: 5px;
+  border: 0px solid #111;
+  border-width: 0px 0px 0px 8px;
+  height: 100%;
+  left: -31px;
+  padding: 5px 0px;
+  position: absolute;
+  top: 0px;
+  transition: all 0.5s ease;
+  width: 0px; }
 
-.pages-menu {
+#layoutborder .page-editor .handle {
+  cursor: col-resize;
+  left: -8px;
+  margin-top: -20px;
+  position: absolute;
+  top: 50%; }
+
+#layoutborder.editing {
+  margin-left: -215px; }
+
+#layoutborder.editing .page-editor {
+  border-width: 1px 0px 1px 8px;
+  box-shadow: inset -2px 0px 2px rgba(0, 0, 0, 0.2);
+  left: -625px;
+  padding: 5px 5px 5px 0px;
+  width: 600px; }
+
+#page {
+  position: relative;
+  min-height: 400px; }
+
+#page .page-menu {
   background-color: rgba(0, 0, 0, 0.7);
   border-radius: 2px;
   color: #eee;
@@ -1971,14 +2008,14 @@ footer a:hover {
   top: -28px;
   width: 110px; }
 
-.pages-menu .title {
+#page .page-menu .title {
   display: block;
   float: left;
   font-size: 15px;
   margin-right: 10px;
   padding-top: 5px; }
 
-.pages-menu .btn {
+#page .page-menu .btn {
   border-radius: 0px;
   display: block;
   float: left;
@@ -1986,7 +2023,29 @@ footer a:hover {
   padding: 8px;
   transition: all 0.3s; }
 
-.pages-menu .btn:hover {
+#page .page-menu .btn:hover {
   background-color: #111; }
+
+.cm-s-blackboard.CodeMirror {
+  height: 100%;
+  font-size: 10px;
+  background: #222; }
+
+.cm-s-blackboard .CodeMirror-gutters {
+  background: #202020; }
+
+.CodeMirror-simplescroll-horizontal div, .CodeMirror-simplescroll-vertical div {
+  background: #333;
+  border: 1px solid #444;
+  border-radius: 0px; }
+
+.CodeMirror-simplescroll-horizontal, .CodeMirror-simplescroll-vertical {
+  background: #282828; }
+
+.CodeMirror-overlayscroll-horizontal div, .CodeMirror-overlayscroll-vertical div {
+  background: #f00; }
+
+.CodeMirror-scrollbar-filler, .CodeMirror-gutter-filler {
+  background-color: #222; }
 
 /*# sourceMappingURL=pushingkarma.css.map */

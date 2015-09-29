@@ -1,6 +1,7 @@
 //--------------------------------------------------------
 // Copyright (c) 2015 PushingKarma. All rights reserved.
 //--------------------------------------------------------
+$LAYOUT_WIDTH: 1020px;
 
 html {
   background-attachment: fixed;
@@ -40,11 +41,16 @@ footer {
 }
 
 #layoutborder {
-  border-radius: 18px;
   background-image: url('#{$imgroot}/transparent/black-30.png');
-  margin: 25px auto;
-  max-width: 1020px;
+  border-radius: 18px;
+  left: 50%;
+  margin-bottom: 25px;
+  margin-left: -$LAYOUT_WIDTH / 2;
   padding: 13px 13px 4px 13px;
+  position: absolute;
+  top: 25px;
+  transition: all 0.5s ease;
+  width: $LAYOUT_WIDTH;
 }
 
 #layoutwrap {
@@ -57,7 +63,6 @@ footer {
   font-family: $font-family-serif;
   padding: 10px;
   position: relative;
-  //text-shadow: 1px 1px 0px rgba(255,255,255,0.4);
   z-index: 0;
 }
 
@@ -138,8 +143,10 @@ footer {
   }
 }
 
-#content {
-  background-color: #f00;
+
+// No transitions during preload
+body.preload .no-preload-animation {
+  transition: none !important;
 }
 
 
