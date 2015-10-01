@@ -3,84 +3,49 @@
 //--------------------------------------------------------
 $EDITOR_WIDTH: 600px;
 $HANDLE_WIDTH: 8px;
+$PAGE_TRANSITION: all 0.5s ease;
 
-// Expanding Editor
-#layoutborder {
-  .page-editor {
-    background-color: #222;
-    border-bottom-left-radius: 5px;
-    border-top-left-radius: 5px;
-    border: 0px solid #111;
-    border-width: 0px 0px 0px 8px;
-    height: 100%;
-    left: -31px;
-    padding: 5px 0px;
-    position: absolute;
-    top: 0px;
-    transition: all 0.5s ease;
-    width: 0px;
-
-    .handle {
-      cursor: col-resize;
-      left: -8px;
-      margin-top: -20px;
-      position: absolute;
-      top: 50%;
-    }
-  }
-  &.editing {
-    margin-left: -215px;
-    .page-editor {
-      border-width: 1px 0px 1px 8px;
-      box-shadow: inset -2px 0px 2px rgba(0,0,0,0.2);
-      left: -$EDITOR_WIDTH - 25px;
-      padding: 5px 5px 5px 0px;
-      width: $EDITOR_WIDTH;
-    }
-  }
+#layoutwrap {
+  transition: $PAGE_TRANSITION;
+  width: $LAYOUT_WIDTH + $HANDLE_WIDTH * 2;
 }
-
-
-// Markdown CSS (Move to Type.scss?)
+#layout,footer {
+  margin-left: $HANDLE_WIDTH;
+  margin-right: $HANDLE_WIDTH;
+  transition: $PAGE_TRANSITION;
+}
 #page {
   position: relative;
+  margin: 20px 10px;
   min-height: 400px;
+}
+#page-editor {
+  background-color: #222;
+  border-bottom-left-radius: 5px;
+  border-top-left-radius: 5px;
+  border: 1px solid #111;
+  border-left-width: $HANDLE_WIDTH;
+  height: 100%;
+  transition: $PAGE_TRANSITION;
+  float: left;
+  height: 400px;
+  margin-top: 300px;
+  position: relative;
 
-  .page-menu {
-    $width: 110px;
-    background-color: rgba(0,0,0,0.7);
-    border-radius: 2px;
-    color: #eee;
-    display: fixed;
-    font-family: kabelbook, $font-family-sans-serif;
-    font-size: 16px;
-    left: 50%;
-    line-height: 25px;
-    margin-left: $width / -2;
-    padding-left: 15px;
+  width: 0px;
+  .handle {
+    cursor: col-resize;
+    left: -$HANDLE_WIDTH;
+    margin-top: -20px;
     position: absolute;
-    text-transform: uppercase;
-    top: -28px;
-    width: $width;
-
-    .title {
-      display: block;
-      float: left;
-      font-size: 15px;
-      margin-right: 10px;
-      padding-top: 5px;
-    }
-
-    .btn {
-      border-radius: 0px;
-      display: block;
-      float: left;
-      font-size: 18px;
-      padding: 8px;
-      transition: all 0.3s;
-      &:hover { background-color: #111; }
-    }
+    top: 50%;
+    height: 40px;
   }
+}
+body.editing {
+  #layoutwrap { width: 1600px; }
+  #layout,footer { margin-left: $EDITOR_WIDTH; }
+  #page-editor { width: $EDITOR_WIDTH; padding-right:3px; }
 }
 
 
@@ -93,7 +58,6 @@ $HANDLE_WIDTH: 8px;
 .cm-s-blackboard .CodeMirror-gutters {
   background: #202020;
 }
-
 .CodeMirror-simplescroll-horizontal div, .CodeMirror-simplescroll-vertical div {
   background: #333;
   border: 1px solid #444;
@@ -108,3 +72,41 @@ $HANDLE_WIDTH: 8px;
 .CodeMirror-scrollbar-filler, .CodeMirror-gutter-filler {
   background-color: #222;
 }
+
+
+// Markdown Menu
+// .page-menu {
+//   $width: 110px;
+//   background-color: rgba(0,0,0,0.7);
+//   border-radius: 2px;
+//   color: #eee;
+//   display: fixed;
+//   font-family: kabelbook, $font-family-sans-serif;
+//   font-size: 16px;
+//   left: 50%;
+//   line-height: 25px;
+//   margin-left: $width / -2;
+//   padding-left: 15px;
+//   position: absolute;
+//   text-transform: uppercase;
+//   top: -28px;
+//   width: $width;
+
+//   .title {
+//     display: block;
+//     float: left;
+//     font-size: 15px;
+//     margin-right: 10px;
+//     padding-top: 5px;
+//   }
+
+//   .btn {
+//     border-radius: 0px;
+//     display: block;
+//     float: left;
+//     font-size: 18px;
+//     padding: 8px;
+//     transition: all 0.3s;
+//     &:hover { background-color: #111; }
+//   }
+// }

@@ -6,22 +6,20 @@
 (function() {
 
     var init_editor = function() {
-        $('.page-editor .handle').on('click', function() {
-            $('#layoutborder').toggleClass('editing');
+        $('#page-editor .handle').on('click', function() {
+            $('body').toggleClass('editing');
         });
         CodeMirror.fromTextArea(document.getElementById('page-textarea'), {
             lineNumbers: true,
-            mode: 'htmlmixed',
+            mode: 'markdown',
             theme: 'blackboard',
             scrollbarStyle: 'simple',
         });
     };
 
-    setTimeout(function() {
-        $('body').removeClass('preload');
-    }, 500);
-
     pk.login_form.init();
+    pk.utils.enable_animations();
     pk.utils.init_tooltips();
     init_editor();
+
 })();

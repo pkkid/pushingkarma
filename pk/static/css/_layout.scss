@@ -1,7 +1,8 @@
 //--------------------------------------------------------
 // Copyright (c) 2015 PushingKarma. All rights reserved.
 //--------------------------------------------------------
-$LAYOUT_WIDTH: 1020px;
+$LAYOUT_WIDTH: 1000px;
+$LAYOUT_BORDER_WIDTH: 13px;
 
 html {
   background-attachment: fixed;
@@ -14,6 +15,33 @@ html {
 body {
   background-color: transparent;
   font-family: $font-family-serif;
+  padding: 25px 10px;
+}
+#layoutwrap {
+  margin: 0px auto;
+  width: $LAYOUT_WIDTH;
+}
+#layout {
+  border-radius: 8px;
+  background-color: #DAD5C1;
+  background-image: url('#{$imgroot}/layout/background-noise.jpg');
+  background-position: center top;
+  border: 2px solid #111;
+  color: #504E41;
+  font-family: $font-family-serif;
+  position: relative;
+  width: $LAYOUT_WIDTH;
+  &:before {
+    content: ' ';
+    border-radius: 18px;
+    position: absolute;
+    z-index: -1;
+    top: -$LAYOUT_BORDER_WIDTH;
+    left: -$LAYOUT_BORDER_WIDTH;
+    right: -$LAYOUT_BORDER_WIDTH;
+    bottom: -$LAYOUT_BORDER_WIDTH;
+    background-image: url('#{$imgroot}/transparent/black-30.png');
+  }
 }
 header {
   @include shine(0.8);
@@ -25,45 +53,21 @@ header {
   border-top-right-radius: 5px;
   box-shadow: inset 0px 0px 60px rgba(0,0,0,0.6);
   height: 220px;
-  margin: -10px -10px 0px -10px;
   overflow: hidden;
   position: relative;
   @extend %clearfix;
 }
 footer {
-  color: rgba(255,255,255,0.3);
+  color: rgba(255,255,255,0.4);
   font-family: $font-family-serif;
-  font-size: 12px;
-  margin: 2px 5px;
+  font-size: 10px;
+  line-height: 12px;
+  margin: 15px auto;
   text-align: right;
-  a { color:rgba(255,255,255,0.5); }
-  a:hover { color:rgba(255,255,230,0.8); text-decoration:none; }
-}
-
-#layoutborder {
-  background-image: url('#{$imgroot}/transparent/black-30.png');
-  border-radius: 18px;
-  left: 50%;
-  margin-bottom: 25px;
-  margin-left: -$LAYOUT_WIDTH / 2;
-  padding: 13px 13px 4px 13px;
-  position: absolute;
-  top: 25px;
-  transition: all 0.5s ease;
+  clear: both;
   width: $LAYOUT_WIDTH;
-}
-
-#layoutwrap {
-  border-radius: 8px;
-  background-color: #DAD5C1;
-  background-image: url('#{$imgroot}/layout/background-noise.jpg');
-  background-position: center top;
-  border: 2px solid #111;
-  color: #504E41;
-  font-family: $font-family-serif;
-  padding: 10px;
-  position: relative;
-  z-index: 0;
+  a { color:rgba(255,255,255,0.6); }
+  a:hover { color:rgba(255,255,230,0.8); text-decoration:none; }
 }
 
 #logo {
@@ -147,12 +151,4 @@ footer {
 // No transitions during preload
 body.preload .no-preload-animation {
   transition: none !important;
-}
-
-
-// Particles Container
-#particles {
-  position: absolute;
-  top: 0px;
-  left: 0px;
 }

@@ -16,6 +16,12 @@ var pk = {  // jshint ignore:line
             });
         },
 
+        enable_animations: function() {
+            setTimeout(function() {
+                $('body').removeClass('preload');
+            }, 500);
+        },
+
         init_tooltips: function(selector) {
             selector = this.set_default(selector, '[data-toggle="tooltip"]');
             console.log('init_tooltips: '+ selector);
@@ -25,6 +31,7 @@ var pk = {  // jshint ignore:line
         set_default: function(input, default_value) {
             return typeof input !== 'undefined' ? input : default_value;
         },
+
 
     },
 };

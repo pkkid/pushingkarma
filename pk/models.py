@@ -15,10 +15,11 @@ from django_extensions.db.models import TimeStampedModel
 class Note(TimeStampedModel):
     title = models.CharField(max_length=255)
     slug = models.SlugField(unique=True)
-    body = models.TextField()
+    body = models.TextField(blank=True, help='markdown format')
+    html = models.TextField(blank=True, editable=False)
     tags = models.CharField(max_length=255, blank=True, help_text='space delimited')
     authors = models.CharField(max_length=255, default='Michael Shepanski', help_text='comma delimited')
-    allow_comments = models.BooleanField(default=True)
+    comments = models.BooleanField(default=True, help='allow comments')
 
     class Meta:
         ordering = ('-created',)
@@ -53,14 +54,16 @@ class Note(TimeStampedModel):
 
 class Page(TimeStampedModel):
     slug = models.CharField(max_length=255, unique=True)
-    body = models.TextField()
-    allow_comments = models.BooleanField(default=True)
+    body = models.TextField(blank=True, help='markdown format')
+    html = models.TextField(blank=True, editable=False)
+    comments = models.BooleanField(default=True, help='allow comments')
 
     def url(self):
         return reverse('page', kwargs={'slug':self.slug})
 
-    def html(self, anchor=True):
-        return gfm.gfm(self.body, safe_mode=False)
+    def save(self, *args, **kwargs):
+        self.html = gfm.gfm(self.body, safe_mode=False)
+        super(Page, self).save(*args, **kwargs)
 
 
 signals.post_save.connect(Note.update_tag_cache, sender=Note)

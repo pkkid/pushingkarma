@@ -1,26 +1,34 @@
 {% extends 'base.html' %}
 
-{% block content %}
-  <div id='page'>
-    <!-- menu -->
-    {% if user.is_authenticated %}
-      {% comment %}
-      <div class='page-menu animated flipInX'>
-        <span class='title'>Menu</span>
-        <span class='btn icomoon-pen' data-toggle='tooltip' data-placement='top' title='Edit'></span>
-        <span class='btn icomoon-copy' data-toggle='tooltip' data-placement='top' title='Copy'></span>
-        <span class='btn icomoon-floppy-disk' data-toggle='tooltip' data-placement='top' title='Save'></span>
-      </div>
-      {% endcomment %}
-      <div class='page-editor no-preload-animation'>
-        <svg height='40' width='8' class='handle'>
-          <line x1='4' y1='0' x2='4' y2='40' stroke='#333' stroke-width='2'/>
-        </svg>
-        <textarea id='page-textarea' style='display:none;'></textarea>
-      </div>
-    {% endif %}
 
-    <!-- content -->
+{% block layoutwrap %}
+  {% if user.is_authenticated %}
+    <div id='page-editor' class='no-preload-animation'>
+      <svg height='40' width='8' class='handle'>
+        <line x1='4' y1='0' x2='4' y2='40' stroke='#333' stroke-width='2'/>
+      </svg>
+      <textarea id='page-textarea' style='display:none;'></textarea>
+    </div>
+  {% endif %}
+  {{block.super}}
+{% endblock %}
+
+
+{% block content %}
+  
+  <div id='page'>
     Hello Mom!
   </div>
+
 {% endblock content %}
+
+
+
+{% comment %}
+<div class='page-menu animated flipInX'>
+  <span class='title'>Menu</span>
+  <span class='btn icomoon-pen' data-toggle='tooltip' data-placement='top' title='Edit'></span>
+  <span class='btn icomoon-copy' data-toggle='tooltip' data-placement='top' title='Copy'></span>
+  <span class='btn icomoon-floppy-disk' data-toggle='tooltip' data-placement='top' title='Save'></span>
+</div>
+{% endcomment %}
