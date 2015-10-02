@@ -30,7 +30,7 @@
                   {% csrf_token %}
                   <span class='icon-error icomoon-notification'></span>
                   <input type='text' name='email' placeholder='Email' autocomplete='false'/>
-                  <input type='password' name='password' placeholder='Password'/>
+                  <input type='password' name='password' placeholder='Password' autocomplete='false'/>
                   <button type='submit' style='display:none;'></button>
                 {% endif %}
               </form>
@@ -52,7 +52,15 @@
         <script src='/static/bower/tether/dist/js/tether.min.js'></script>
         <script src='/static/bower/bootstrap/dist/js/bootstrap.min.js'></script>
         <script src='/static/bower/codemirror/lib/codemirror.js'></script>
+        <script src='/static/bower/codemirror/addon/mode/overlay.js'></script>
         <script src='/static/bower/codemirror/addon/scroll/simplescrollbars.js'></script>
+        <script src='/static/bower/codemirror/mode/css/css.js'></script>
+        <script src='/static/bower/codemirror/mode/django/django.js'></script>
+        <script src='/static/bower/codemirror/mode/gfm/gfm.js'></script>
+        <script src='/static/bower/codemirror/mode/javascript/javascript.js'></script>
+        <script src='/static/bower/codemirror/mode/markdown/markdown.js'></script>
+        <script src='/static/bower/codemirror/mode/python/python.js'></script>
+        <script src='/static/bower/codemirror/mode/sass/sass.js'></script>
         <script src='/static/js/pushingkarma.js'></script>
         {% block js %}{% endblock %}
       {% endblock layoutwrap %}

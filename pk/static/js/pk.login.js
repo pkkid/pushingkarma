@@ -3,7 +3,7 @@
  *------------------------------------------------------- */
 'use strict';
 
-pk.login_form = {
+pk.login = {
     logo: $('#logo'),
     form: $('#logo form'),
     login_url: '/auth/login/',

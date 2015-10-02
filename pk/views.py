@@ -3,9 +3,12 @@
 """
 Copyright (c) 2015 PushingKarma. All rights reserved.
 """
+import gfm
+from django.views.decorators.csrf import csrf_exempt
 from pk.models import Note, Page
 from pk.utils import context
 from pk.utils import get_object_or_none, response
+from pk.utils import response_json_success
 
 
 def cms(request, slug=None, template='page.html'):
@@ -19,3 +22,10 @@ def notebook(request, template='notebook.html'):
     data = context.core(request, menuitem='notebook')
     data.tags = sorted(Note.public_tags().items(), key=lambda k,v:v, reverse=True)
     return response(request, template, data)
+
+
+@csrf_exempt
+def markdown(request):
+    input = request.POST.get('markdown', '')
+    input = gfm.gfm(input)
+    return response_json_success({'html':gfm.markdown(input)})

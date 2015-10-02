@@ -15,11 +15,10 @@ from django_extensions.db.models import TimeStampedModel
 class Note(TimeStampedModel):
     title = models.CharField(max_length=255)
     slug = models.SlugField(unique=True)
-    body = models.TextField(blank=True, help='markdown format')
-    html = models.TextField(blank=True, editable=False)
+    body = models.TextField(help_text='markdown format')
     tags = models.CharField(max_length=255, blank=True, help_text='space delimited')
     authors = models.CharField(max_length=255, default='Michael Shepanski', help_text='comma delimited')
-    comments = models.BooleanField(default=True, help='allow comments')
+    comments = models.BooleanField(default=True, help_text='allow comments')
 
     class Meta:
         ordering = ('-created',)
@@ -48,22 +47,17 @@ class Note(TimeStampedModel):
             for tag in filter(bool, tagstr.split(' ')):
                 tag = tag.lower().strip()
                 tags[tag] += 1
-        cache.set('note_tags', dict(tags), 999999999)
+        cache.set('note_tags', dict(tags), None)
         return dict(tags)
 
 
 class Page(TimeStampedModel):
     slug = models.CharField(max_length=255, unique=True)
-    body = models.TextField(blank=True, help='markdown format')
-    html = models.TextField(blank=True, editable=False)
-    comments = models.BooleanField(default=True, help='allow comments')
+    body = models.TextField(help_text='markdown format')
+    comments = models.BooleanField(default=True, help_text='allow comments')
 
     def url(self):
         return reverse('page', kwargs={'slug':self.slug})
-
-    def save(self, *args, **kwargs):
-        self.html = gfm.gfm(self.body, safe_mode=False)
-        super(Page, self).save(*args, **kwargs)
 
 
 signals.post_save.connect(Note.update_tag_cache, sender=Note)

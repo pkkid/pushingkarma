@@ -27,7 +27,9 @@ urlpatterns = [
     # PushingKarma
     url(r'^$', 'pk.views.cms', name='index'),
     url(r'^p/(?P<slug>.*?)/$', 'pk.views.cms', name='page'),
+    url(r'^markdown/$', 'pk.views.markdown', name='markdown'),
     url(r'^notebook/$', 'pk.views.notebook', name='notebook'),
+
 ]
 
 

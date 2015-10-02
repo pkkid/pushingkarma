@@ -4,6 +4,8 @@
 'use strict';
 
 var pk = {  // jshint ignore:line
+    ANIMATIONEND: 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend',
+
     utils: {
 
         ajax: function(url, data) {
@@ -32,7 +34,6 @@ var pk = {  // jshint ignore:line
             return typeof input !== 'undefined' ? input : default_value;
         },
 
-
     },
 };
 
@@ -43,25 +44,7 @@ var pk = {  // jshint ignore:line
  *------------------------------------------------------- */
 'use strict';
 
-// Animate a jquery object
-// See: https://daneden.github.io/animate.css/
-$.fn.animatecss = function(effect, callback) {
-    var animationend = 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend';
-    $(this).addClass('animated '+effect).one(animationend, function() {
-        $(this).removeClass('animated '+effect);
-        if (callback !== undefined)
-            callback();
-    });
-};
-
-
-
-/*----------------------------------------------------------
- * Copyright (c) 2015 PushingKarma. All rights reserved.
- *------------------------------------------------------- */
-'use strict';
-
-pk.login_form = {
+pk.login = {
     logo: $('#logo'),
     form: $('#logo form'),
     login_url: '/auth/login/',
@@ -132,23 +115,76 @@ pk.login_form = {
  *------------------------------------------------------- */
 'use strict';
 
+pk.pages = {
+
+    init: function() {
+        this.editor = $('#page-editor');
+        this.codemirror = this.init_codemirror();
+        this.init_triggers();
+    },
+
+    init_codemirror: function() {
+        var textarea = $('#page-textarea').get(0);
+        return CodeMirror.fromTextArea(textarea, {
+            extraKeys: {'Enter': 'newlineAndIndentContinueMarkdownList'},
+            lineNumbers: false,
+            lineWrapping: true,
+            matchBrackets: true,
+            mode: 'gfm',
+            scrollbarStyle: 'simple',
+            theme: 'blackboard',
+        });
+    },
+
+    init_triggers: function() {
+        var self = this;
+        // Toggle editor visibility
+        this.editor.find('.handle').on('click', function() {
+            $('body').toggleClass('editing');
+            setTimeout(function() { self.codemirror.refresh(); }, 100);
+        });
+        // Constantly update content
+        setInterval(function() {
+            var data = {'markdown': self.codemirror.getValue()};
+            var xhr = $.ajax({url:'/markdown/', method:'post', dataType:'json', data:data});
+            xhr.done(function(data, textStatus, jqXHR) {
+                console.log(data);
+                $('#page').html(data.html);
+            });
+        }, 2000);
+    },
+
+};
+
+
+
+/*----------------------------------------------------------
+ * Copyright (c) 2015 PushingKarma. All rights reserved.
+ *------------------------------------------------------- */
+'use strict';
+
+// Animate a jquery object
+// See: https://daneden.github.io/animate.css/
+$.fn.animatecss = function(effect, callback) {
+    $(this).addClass('animated '+effect).one(pk.ANIMATIONEND, function() {
+        $(this).removeClass('animated '+effect);
+        if (callback !== undefined)
+            callback();
+    });
+};
+
+
+
+/*----------------------------------------------------------
+ * Copyright (c) 2015 PushingKarma. All rights reserved.
+ *------------------------------------------------------- */
+'use strict';
+
 (function() {
 
-    var init_editor = function() {
-        $('#page-editor .handle').on('click', function() {
-            $('body').toggleClass('editing');
-        });
-        CodeMirror.fromTextArea(document.getElementById('page-textarea'), {
-            lineNumbers: true,
-            mode: 'markdown',
-            theme: 'blackboard',
-            scrollbarStyle: 'simple',
-        });
-    };
-
-    pk.login_form.init();
     pk.utils.enable_animations();
     pk.utils.init_tooltips();
-    init_editor();
+    pk.login.init();
+    pk.pages.init();
 
 })();

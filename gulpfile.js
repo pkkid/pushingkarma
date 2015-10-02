@@ -16,8 +16,9 @@ var watch = require('gulp-watch');
 gulp.task('js', function() {
   gulp.src([
       './pk/static/js/pk.utils.js',
-      './pk/static/js/pk.plugins.js',
       './pk/static/js/pk.login.js',
+      './pk/static/js/pk.pages.js',
+      './pk/static/js/pk.plugins.js',
       './pk/static/js/pk.init.js',
     ])
     .pipe(concat('pushingkarma.js', {newLine:'\n\n\n'}))
