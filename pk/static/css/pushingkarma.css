@@ -1993,13 +1993,13 @@ body.preload .no-preload-animation {
   height: 40px; }
 
 body.editing #layoutwrap {
-  width: 1623px; }
+  width: 1523px; }
 
 body.editing #layout, body.editing footer {
-  margin-left: 600px; }
+  margin-left: 500px; }
 
 body.editing #page-editor {
-  width: 600px;
+  width: 500px;
   padding-right: 3px; }
 
 .cm-s-blackboard.CodeMirror {

@@ -50,6 +50,9 @@ class Note(TimeStampedModel):
         cache.set('note_tags', dict(tags), None)
         return dict(tags)
 
+signals.post_save.connect(Note.update_tag_cache, sender=Note)
+signals.post_delete.connect(Note.update_tag_cache, sender=Note)
+
 
 class Page(TimeStampedModel):
     slug = models.CharField(max_length=255, unique=True)
@@ -59,6 +62,8 @@ class Page(TimeStampedModel):
     def url(self):
         return reverse('page', kwargs={'slug':self.slug})
 
-
-signals.post_save.connect(Note.update_tag_cache, sender=Note)
-signals.post_delete.connect(Note.update_tag_cache, sender=Note)
+    @classmethod
+    def markdown(cls, text):
+        text = gfm.gfm(text)
+        html = gfm.markdown(text)
+        return html

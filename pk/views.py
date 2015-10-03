@@ -3,7 +3,6 @@
 """
 Copyright (c) 2015 PushingKarma. All rights reserved.
 """
-import gfm
 from django.views.decorators.csrf import csrf_exempt
 from pk.models import Note, Page
 from pk.utils import context
@@ -26,6 +25,6 @@ def notebook(request, template='notebook.html'):
 
 @csrf_exempt
 def markdown(request):
-    input = request.POST.get('markdown', '')
-    input = gfm.gfm(input)
-    return response_json_success({'html':gfm.markdown(input)})
+    text = request.POST.get('text', '')
+    html = Page.markdown(text)
+    return response_json_success({'html':html})

@@ -8,6 +8,7 @@ pk.pages = {
     init: function() {
         this.editor = $('#page-editor');
         this.codemirror = this.init_codemirror();
+        this.last_updated_text = this.codemirror.getValue();
         this.init_triggers();
     },
 
@@ -32,14 +33,21 @@ pk.pages = {
             setTimeout(function() { self.codemirror.refresh(); }, 100);
         });
         // Constantly update content
-        setInterval(function() {
-            var data = {'markdown': self.codemirror.getValue()};
-            var xhr = $.ajax({url:'/markdown/', method:'post', dataType:'json', data:data});
-            xhr.done(function(data, textStatus, jqXHR) {
-                console.log(data);
-                $('#page').html(data.html);
-            });
-        }, 2000);
+        setInterval(function() { self.update(); }, 1500);
+    },
+
+    update: function() {
+        var self = this;
+        var editing = $('body').hasClass('editing');
+        var text = this.codemirror.getValue();
+        if (!editing || (text == this.last_updated_text))
+            return null;  // Nothing to update
+        var data = {'text': text};
+        var xhr = $.ajax({url:'/markdown/', method:'post', dataType:'json', data:data});
+        xhr.done(function(data, textStatus, jqXHR) {
+            self.last_updated_text = text;
+            $('#page').html(data.html);
+        });
     },
 
 };
