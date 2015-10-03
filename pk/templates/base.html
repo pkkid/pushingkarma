@@ -27,7 +27,6 @@
                   Hello {{user.username}}! |
                   <a href='{% url "auth_logout" %}'>Logout</a>
                 {% else %}
-                  {% csrf_token %}
                   <span class='icon-error icomoon-notification'></span>
                   <input type='text' name='email' placeholder='Email' autocomplete='false'/>
                   <input type='password' name='password' placeholder='Password' autocomplete='false'/>
@@ -51,6 +50,7 @@
         <script src='/static/bower/jquery/dist/jquery.min.js'></script>
         <script src='/static/bower/tether/dist/js/tether.min.js'></script>
         <script src='/static/bower/bootstrap/dist/js/bootstrap.min.js'></script>
+        <script src='/static/bower/js-cookie/src/js.cookie.js'></script>
         <script src='/static/bower/codemirror/lib/codemirror.js'></script>
         <script src='/static/bower/codemirror/addon/mode/overlay.js'></script>
         <script src='/static/bower/codemirror/addon/scroll/simplescrollbars.js'></script>

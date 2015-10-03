@@ -4,6 +4,7 @@
 'use strict';
 
 pk.pages = {
+    UPDATE_INTERVAL: 1500,
 
     init: function() {
         this.editor = $('#page-editor');
@@ -33,7 +34,7 @@ pk.pages = {
             setTimeout(function() { self.codemirror.refresh(); }, 100);
         });
         // Constantly update content
-        setInterval(function() { self.update(); }, 1500);
+        setInterval(function() { self.update(); }, this.UPDATE_INTERVAL);
     },
 
     update: function() {
@@ -41,12 +42,14 @@ pk.pages = {
         var editing = $('body').hasClass('editing');
         var text = this.codemirror.getValue();
         if (!editing || (text == this.last_updated_text))
-            return null;  // Nothing to update
-        var data = {'text': text};
-        var xhr = $.ajax({url:'/markdown/', method:'post', dataType:'json', data:data});
+            return null;  // nothing to update
+        var data = {'text':text};
+        var xhr = pk.utils.ajax('/markdown/', data);
         xhr.done(function(data, textStatus, jqXHR) {
-            self.last_updated_text = text;
             $('#page').html(data.html);
+        });
+        xhr.always(function() {
+            self.last_updated_text = text;
         });
     },
 

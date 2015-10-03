@@ -25,8 +25,8 @@ var pk = {  // jshint ignore:line
         },
 
         init_tooltips: function(selector) {
+            console.debug('init_tooltips: '+ selector);
             selector = this.set_default(selector, '[data-toggle="tooltip"]');
-            console.log('init_tooltips: '+ selector);
             $(selector).tooltip({delay:{show:200, hide:50}});
         },
 
@@ -116,6 +116,7 @@ pk.login = {
 'use strict';
 
 pk.pages = {
+    UPDATE_INTERVAL: 1500,
 
     init: function() {
         this.editor = $('#page-editor');
@@ -145,7 +146,7 @@ pk.pages = {
             setTimeout(function() { self.codemirror.refresh(); }, 100);
         });
         // Constantly update content
-        setInterval(function() { self.update(); }, 1500);
+        setInterval(function() { self.update(); }, this.UPDATE_INTERVAL);
     },
 
     update: function() {
@@ -153,12 +154,14 @@ pk.pages = {
         var editing = $('body').hasClass('editing');
         var text = this.codemirror.getValue();
         if (!editing || (text == this.last_updated_text))
-            return null;  // Nothing to update
-        var data = {'text': text};
-        var xhr = $.ajax({url:'/markdown/', method:'post', dataType:'json', data:data});
+            return null;  // nothing to update
+        var data = {'text':text};
+        var xhr = pk.utils.ajax('/markdown/', data);
         xhr.done(function(data, textStatus, jqXHR) {
-            self.last_updated_text = text;
             $('#page').html(data.html);
+        });
+        xhr.always(function() {
+            self.last_updated_text = text;
         });
     },
 
@@ -180,6 +183,19 @@ $.fn.animatecss = function(effect, callback) {
             callback();
     });
 };
+
+
+// Always send CSRF token with ajax requests
+// https://docs.djangoproject.com/en/1.8/ref/csrf/#ajax
+function csrfSafeMethod(method) {
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+$.ajaxSetup({beforeSend: function(xhr, settings) {
+    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+        var csrftoken = Cookies.get('csrftoken');
+        xhr.setRequestHeader('X-CSRFToken', csrftoken);
+    }
+}});
 
 
 

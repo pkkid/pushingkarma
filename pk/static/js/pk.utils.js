@@ -25,8 +25,8 @@ var pk = {  // jshint ignore:line
         },
 
         init_tooltips: function(selector) {
+            console.debug('init_tooltips: '+ selector);
             selector = this.set_default(selector, '[data-toggle="tooltip"]');
-            console.log('init_tooltips: '+ selector);
             $(selector).tooltip({delay:{show:200, hide:50}});
         },
 

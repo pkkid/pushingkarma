@@ -12,3 +12,16 @@ $.fn.animatecss = function(effect, callback) {
             callback();
     });
 };
+
+
+// Always send CSRF token with ajax requests
+// https://docs.djangoproject.com/en/1.8/ref/csrf/#ajax
+function csrfSafeMethod(method) {
+    return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+}
+$.ajaxSetup({beforeSend: function(xhr, settings) {
+    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+        var csrftoken = Cookies.get('csrftoken');
+        xhr.setRequestHeader('X-CSRFToken', csrftoken);
+    }
+}});

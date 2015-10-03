@@ -1,0 +1,22 @@
+{
+    "browser": true,            // Allow browser globals
+    "jquery": true,             // Allow jQuery globals
+    "moz": true,                // Use Mozilla extensions (new in JS 1.7)
+    "proto": true,              // Suppress warnings aboue __proto__
+    "strict": true,             // Require `use strict` pragma in every file.
+    "globalstrict": true,       // Allow global "use strict" (also enables 'strict').
+    "predef": [
+        "_",
+        "alert",
+        "console",
+        "global",
+        "imports",
+        "Nasuni",
+        "NUI",
+        "require",
+        "XML",
+        "pk",
+        "CodeMirror",
+        "Cookies"
+    ]
+}
