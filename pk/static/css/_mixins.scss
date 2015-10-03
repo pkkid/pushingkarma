@@ -2,22 +2,12 @@
 // Copyright (c) 2015 PushingKarma. All rights reserved.
 //--------------------------------------------------------
 
-
-// Shine - 1px white border to top of element
-@mixin shine($opacity:1, $offset:0px) {
-  &:before {
-    background-image: linear-gradient(to right,
-      rgba(255,255,255,0),
-      rgba(255,255,255,$opacity),
-      rgba(255,255,255,0)
-    );
-    box-shadow: 0px 1px 5px rgba(255,255,255,0.1);
-    content: "";
-    display: block;
-    height: 1px;
-    padding: 0px;
-    position: relative;
-    top: $offset;
+// Clearfix - Fix divs containing only float elements
+@mixin clearfix() {
+  &:after {
+    content: '';
+    display: table;
+    clear: both;
   }
 }
 
@@ -26,7 +16,6 @@
 @mixin curlshadow($opacity:1) {
   position: relative;
   z-index: 0;
-  
   &:before, &:after {
     background-color: #888;
     bottom: 16px;
@@ -47,4 +36,47 @@
     transform: rotate(3deg);
     right: 10px;
   }
+}
+
+
+// Shine - 1px white border to top of element
+@mixin shine($opacity:1, $offset:0px) {
+  &:before {
+    background-image: linear-gradient(to right,
+      rgba(255,255,255,0),
+      rgba(255,255,255,$opacity),
+      rgba(255,255,255,0)
+    );
+    box-shadow: 0px 1px 5px rgba(255,255,255,0.1);
+    content: "";
+    display: block;
+    height: 1px;
+    padding: 0px;
+    position: relative;
+    top: $offset;
+  }
+}
+
+
+// Spinner - Nice loading spinner without images
+@mixin spinner($diameter:40px, $width:6px, $color:#f00) {
+  border-bottom: $width solid rgba($color, 0.3);
+  border-left: $width solid rgba($color, 0.3);
+  border-radius: $diameter;
+  border-right: $width solid rgba($color, 0.3);
+  border-top: $width solid rgba($color, 0.8);
+  display: block;
+  height: $diameter;
+  opacity: 0;
+  position: relative;
+  transition: opacity 0.2s ease;
+  width: $diameter;
+  &.on {
+    animation: spinner_rotation .5s infinite linear;
+    opacity: 1;
+  }
+}
+@keyframes spinner_rotation {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(359deg); }
 }

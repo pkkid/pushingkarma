@@ -1492,10 +1492,21 @@
 .icomoon-IcoMoon:before {
   content: '\eaea'; }
 
-header:after {
-  content: "";
-  display: table;
-  clear: both; }
+@-webkit-keyframes spinner_rotation {
+  from {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg); }
+  to {
+    -webkit-transform: rotate(359deg);
+            transform: rotate(359deg); } }
+
+@keyframes spinner_rotation {
+  from {
+    -webkit-transform: rotate(0deg);
+            transform: rotate(0deg); }
+  to {
+    -webkit-transform: rotate(359deg);
+            transform: rotate(359deg); } }
 
 @font-face {
   font-family: 'kabelbook';
@@ -1629,6 +1640,11 @@ header {
   height: 220px;
   overflow: hidden;
   position: relative; }
+
+header:after {
+  content: '';
+  display: table;
+  clear: both; }
 
 header:before {
   background-image: linear-gradient(to right, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0));
@@ -1976,21 +1992,74 @@ body.preload .no-preload-animation {
   border-top-left-radius: 5px;
   border: 1px solid #111;
   border-left-width: 8px;
-  height: 100%;
+  height: 400px;
   transition: all 0.5s ease;
   float: left;
-  height: 400px;
-  margin-top: 300px;
+  min-height: 400px;
+  margin-top: 290px;
   position: relative;
   width: 0px; }
 
 #page-editor .handle {
+  background-color: #111;
+  border-radius: 2px;
   cursor: col-resize;
-  left: -8px;
-  margin-top: -20px;
+  height: calc(100% - 4px);
+  left: -6px;
   position: absolute;
-  top: 50%;
-  height: 40px; }
+  top: 2px;
+  width: 4px; }
+
+#page-editor .menu {
+  height: 30px;
+  font-size: 12px;
+  font-family: kabelbook, georgia, serif, arial;
+  text-transform: uppercase;
+  color: #555;
+  background-color: #181818;
+  line-height: 20px;
+  padding: 5px 0px;
+  overflow: hidden;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none; }
+
+#page-editor .menu span.title {
+  cursor: default;
+  float: left;
+  padding: 0px 10px; }
+
+#page-editor .menu span.action {
+  color: #888;
+  padding: 0px 10px;
+  border-left: 1px solid #333;
+  cursor: pointer;
+  float: left; }
+
+#page-editor .menu span.action:hover {
+  color: #bbb;
+  text-shadow: 0px 0px 2px #888; }
+
+#page-editor .menu span.spinner {
+  border-bottom: 1px solid rgba(136, 136, 119, 0.3);
+  border-left: 1px solid rgba(136, 136, 119, 0.3);
+  border-radius: 16px;
+  border-right: 1px solid rgba(136, 136, 119, 0.3);
+  border-top: 1px solid rgba(136, 136, 119, 0.8);
+  display: block;
+  height: 16px;
+  opacity: 0;
+  position: relative;
+  transition: opacity 0.2s ease;
+  width: 16px;
+  float: left;
+  margin: 2px; }
+
+#page-editor .menu span.spinner.on {
+  -webkit-animation: spinner_rotation 0.5s infinite linear;
+          animation: spinner_rotation 0.5s infinite linear;
+  opacity: 1; }
 
 body.editing #layoutwrap {
   width: 1523px; }
@@ -1999,13 +2068,13 @@ body.editing #layout, body.editing footer {
   margin-left: 500px; }
 
 body.editing #page-editor {
-  width: 500px;
-  padding-right: 3px; }
+  width: 500px; }
 
 .cm-s-blackboard.CodeMirror {
-  height: 100%;
   font-size: 10px;
-  background: #222; }
+  background: #222;
+  margin-right: 3px;
+  height: calc(100% - 30px); }
 
 .cm-s-blackboard .CodeMirror-gutters {
   background: #202020; }

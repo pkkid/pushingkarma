@@ -9,10 +9,15 @@ from pk.utils import get_object_or_none, response
 from pk.utils import response_json_success
 
 
-def cms(request, slug=None, template='page.html'):
-    page = get_object_or_none(Page, slug=slug)
+def page(request, slug='/', template='page.html'):
+    slug = slug or '/'
+    page = get_object_or_none(Page, slug=slug) or Page(slug=slug)
+    if request.method == 'POST':
+        page.body = request.POST.get('text')
+        page.save()
+        return response_json_success()
     data = context.core(request, menuitem='projects')
-    data.html = page.html() if page else ''
+    data.page = page.dict()
     return response(request, template, data)
 
 

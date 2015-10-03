@@ -4,10 +4,14 @@
 {% block layoutwrap %}
   {% if user.is_authenticated %}
     <div id='page-editor' class='no-preload-animation'>
-      <svg height='40' width='8' class='handle'>
-        <line x1='4' y1='0' x2='4' y2='40' stroke='#333' stroke-width='2'/>
-      </svg>
-      <textarea id='page-textarea' style='display:none;'>Hello Mom!</textarea>
+      <div class='handle'></div>
+      <div class='menu'>
+        <span class='title'>Markdown Editor</span>
+        <span class='action reset'>Reset</span>
+        <span class='action save'>Save</span>
+        <span class='spinner'></span>
+      </div>
+      <textarea id='page-textarea' style='display:none;'>{{page.body}}</textarea>
     </div>
   {% endif %}
   {{block.super}}
@@ -15,20 +19,7 @@
 
 
 {% block content %}
-  
   <div id='page'>
-    Hello Mom!
+    {{page.html|safe}}
   </div>
-
 {% endblock content %}
-
-
-
-{% comment %}
-<div class='page-menu animated flipInX'>
-  <span class='title'>Menu</span>
-  <span class='btn icomoon-pen' data-toggle='tooltip' data-placement='top' title='Edit'></span>
-  <span class='btn icomoon-copy' data-toggle='tooltip' data-placement='top' title='Copy'></span>
-  <span class='btn icomoon-floppy-disk' data-toggle='tooltip' data-placement='top' title='Save'></span>
-</div>
-{% endcomment %}

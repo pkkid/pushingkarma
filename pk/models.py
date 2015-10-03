@@ -59,11 +59,24 @@ class Page(TimeStampedModel):
     body = models.TextField(help_text='markdown format')
     comments = models.BooleanField(default=True, help_text='allow comments')
 
+    NO_CONTENT = 'Page contains no content.'
+
     def url(self):
         return reverse('page', kwargs={'slug':self.slug})
 
+    def html(self):
+        return Page.markdown(self.body)
+
+    def dict(self):
+        return dict(
+            slug = self.slug,
+            body = self.body,
+            html = self.html(),
+        )
+
     @classmethod
     def markdown(cls, text):
+        text = text or cls.NO_CONTENT
         text = gfm.gfm(text)
         html = gfm.markdown(text)
         return html

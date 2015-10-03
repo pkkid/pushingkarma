@@ -44,6 +44,7 @@ body {
   }
 }
 header {
+  @include clearfix();
   @include shine(0.8);
   background-color: #252525; 
   background-image: url('#{$imgroot}/layout/banner-china.jpg');
@@ -55,7 +56,6 @@ header {
   height: 220px;
   overflow: hidden;
   position: relative;
-  @extend %clearfix;
 }
 footer {
   color: rgba(255,255,255,0.4);
