@@ -2061,6 +2061,13 @@ body.preload .no-preload-animation {
           animation: spinner_rotation 0.5s infinite linear;
   opacity: 1; }
 
+#page-editor .menu span.message {
+  float: left;
+  font-size: 10px;
+  padding: 0px 10px;
+  opacity: 0;
+  transition: opacity 0.5s ease; }
+
 body.editing #layoutwrap {
   width: 1523px; }
 

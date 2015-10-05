@@ -10,6 +10,7 @@ pk.pages = {
         this.editor = $('#page-editor');
         this.menu = this.editor.find('.menu');
         this.spinner = this.menu.find('.spinner');
+        this.message = this.menu.find('.message');
         this.codemirror = this.init_codemirror();
         this.last_updated_text = this.codemirror.getValue();
         this.last_saved_text = this.last_updated_text;
@@ -104,12 +105,20 @@ pk.pages = {
         var text = this.codemirror.getValue();
         var xhr = pk.utils.ajax(window.location.pathname, {'text':text});
         xhr.done(function(data, textStatus, jqXHR) {
-            console.log('success!');
             self.last_saved_text = text;
+            self.show_message('<i class="icomoon-checkmark"></i>&nbsp;Saved');
         });
-        xhr.always(function() {
-            self.spinner.removeClass('on');
+        xhr.fail(function(jqXHR, textStatus, errorThrown) {
+            self.show_message('<i class="icomoon-notification"></i>&nbsp; Error');
         });
+    },
+
+    show_message: function(msg) {
+        var self = this;
+        this.spinner.removeClass('on');
+        this.message.html(msg);
+        this.message.css('opacity', 1);
+        setTimeout(function() { self.message.css('opacity', 0); }, 5000);
     },
 
 };

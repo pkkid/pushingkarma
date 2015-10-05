@@ -33,6 +33,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.staticfiles',
     'django.contrib.messages',
+    'dbbackup',
     'pk',
 )
 MIDDLEWARE_CLASSES = (
@@ -68,6 +69,11 @@ CACHES = {'default': {
     'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
     'LOCATION': 'django_cache',
 }}
+
+
+# DBBackup Settings
+DBBACKUP_BACKUP_DIRECTORY = '/home/mjs7231/Dropbox/Backup/pushingkarma/'
+DBBACKUP_FILENAME_TEMPLATE = '{servername}-{datetime}.{extension}'
 
 
 # Debug Settings
