@@ -9,9 +9,13 @@
 .first { margin-top: 0px; }
 
 a {
-  //.transition(all 0.2s ease-out);
   color: #005500;
 }
+a.invalid {
+  color: #a00;
+}
+
+
 h1, h2, h3, h1 a, h2 a, h3 a {
   color: #55321A;
   font-family: arial;

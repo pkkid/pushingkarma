@@ -1529,6 +1529,9 @@
 a {
   color: #005500; }
 
+a.invalid {
+  color: #a00; }
+
 h1, h2, h3, h1 a, h2 a, h3 a {
   color: #55321A;
   font-family: arial;
@@ -2069,13 +2072,13 @@ body.preload .no-preload-animation {
   transition: opacity 0.5s ease; }
 
 body.editing #layoutwrap {
-  width: 1523px; }
+  width: 1573px; }
 
 body.editing #layout, body.editing footer {
-  margin-left: 500px; }
+  margin-left: 550px; }
 
 body.editing #page-editor {
-  width: 500px; }
+  width: 550px; }
 
 .cm-s-blackboard.CodeMirror {
   font-size: 10px;

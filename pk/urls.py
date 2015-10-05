@@ -9,7 +9,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.views.generic import RedirectView, TemplateView
 
-redirect = lambda url: RedirectView.as_view(url=url)
+redirect = lambda url: RedirectView.as_view(url=url, permanent=False)
 template = lambda tmpl: TemplateView.as_view(template_name=tmpl)
 
 

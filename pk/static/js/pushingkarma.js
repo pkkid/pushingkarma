@@ -25,8 +25,8 @@ var pk = {  // jshint ignore:line
         },
 
         init_tooltips: function(selector) {
-            console.debug('init_tooltips: '+ selector);
             selector = this.set_default(selector, '[data-toggle="tooltip"]');
+            console.debug('init_tooltips: '+ selector);
             $(selector).tooltip({delay:{show:200, hide:50}});
         },
 
@@ -134,10 +134,11 @@ pk.pages = {
         var textarea = $('#page-textarea').get(0);
         return CodeMirror.fromTextArea(textarea, {
             extraKeys: {'Enter': 'newlineAndIndentContinueMarkdownList'},
+            htmlMode: true,
             lineNumbers: false,
             lineWrapping: false,
             matchBrackets: true,
-            mode: 'gfm',
+            mode: 'xml',
             scrollbarStyle: 'simple',
             theme: 'blackboard',
         });

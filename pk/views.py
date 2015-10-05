@@ -14,7 +14,8 @@ def page(request, slug='/', template='page.html'):
     page = get_object_or_none(Page, slug=slug) or Page(slug=slug)
     if request.method == 'POST':
         page.body = request.POST.get('text')
-        page.save()
+        if page.body: page.save()
+        else: page.delete()
         return response_json_success()
     data = context.core(request, menuitem='projects')
     data.page = page.dict()
@@ -23,7 +24,7 @@ def page(request, slug='/', template='page.html'):
 
 def markdown(request):
     text = request.POST.get('text', '')
-    html = Page.markdown(text)
+    html = Page.text_to_html(text)
     return response_json_success({'html':html})
 
 

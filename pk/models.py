@@ -3,13 +3,14 @@
 """
 Copyright (c) 2015 PushingKarma. All rights reserved.
 """
-import gfm
+import re
 from collections import defaultdict
 from django.core.cache import cache
 from django.core.urlresolvers import reverse
 from django.db import models
 from django.db.models import signals
 from django_extensions.db.models import TimeStampedModel
+from pk import utils
 
 
 class Note(TimeStampedModel):
@@ -31,7 +32,7 @@ class Note(TimeStampedModel):
         return sorted(self.tags.split())
 
     def html(self, anchor=True):
-        return gfm.gfm(self.body, safe_mode=False)
+        return self.body
 
     @classmethod
     def all_tags(cls):
@@ -60,12 +61,17 @@ class Page(TimeStampedModel):
     comments = models.BooleanField(default=True, help_text='allow comments')
 
     NO_CONTENT = 'Page contains no content.'
+    INCLUDE_REGEX = '(<include\shref=[\'"]/p/([a-z0-9_/]+)[\'"]\s*/>)'
+    INCLUDE_INVALID = '<a class="invalid" href="/p/%s">[template:%s]</a>'
+    LINK_REGEX = '(<a\shref=[\'"]/p/([a-z0-9_/]+)[\'"]>(.+?)</a>)'
+    LINK_VALID = '<a href="/p/%s">%s</a>'
+    LINK_INVALID = '<a class="invalid" href="/p/%s">%s</a>'
 
     def url(self):
         return reverse('page', kwargs={'slug':self.slug})
 
     def html(self):
-        return Page.markdown(self.body)
+        return Page.text_to_html(self.body)
 
     def dict(self):
         return dict(
@@ -75,8 +81,24 @@ class Page(TimeStampedModel):
         )
 
     @classmethod
-    def markdown(cls, text):
-        text = text or cls.NO_CONTENT
-        text = gfm.gfm(text)
-        html = gfm.markdown(text)
-        return html
+    def text_to_html(cls, text):
+        # replace includes
+        matches = re.findall(cls.INCLUDE_REGEX, text)
+        for match, href in matches:
+            page = utils.get_object_or_none(Page, slug=href)
+            if page:
+                text = text.replace(match, page.html(), 1)
+            else:
+                link = cls.INCLUDE_INVALID % (href, href)
+                text = text.replace(match, link)
+        # replace invalid links
+        matches = re.findall(cls.LINK_REGEX, text)
+        for match, href, txt in matches:
+            page = utils.get_object_or_none(Page, slug=href)
+            if page:
+                link = cls.LINK_VALID % (href, txt)
+                text = text.replace(match, link)
+            else:
+                link = cls.LINK_INVALID % (href, txt)
+                text = text.replace(match, link)
+        return text or cls.NO_CONTENT

@@ -22,10 +22,11 @@ pk.pages = {
         var textarea = $('#page-textarea').get(0);
         return CodeMirror.fromTextArea(textarea, {
             extraKeys: {'Enter': 'newlineAndIndentContinueMarkdownList'},
+            htmlMode: true,
             lineNumbers: false,
             lineWrapping: false,
             matchBrackets: true,
-            mode: 'gfm',
+            mode: 'xml',
             scrollbarStyle: 'simple',
             theme: 'blackboard',
         });
