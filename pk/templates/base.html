@@ -13,7 +13,7 @@
     <link rel='stylesheet' type='text/css' href='/static/css/pushingkarma.css'/>
     {% block css %}{% endblock %}
   </head>
-  <body class='preload'>
+  <body class='{% block bodyclass %}preload{% endblock %}'>
     <div id='layoutwrap' class='no-preload-animation'>
       {% block layoutwrap %}
         <div id='layout' class='no-preload-animation'>

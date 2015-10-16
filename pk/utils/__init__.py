@@ -4,7 +4,7 @@
 Copyright (c) 2015 PushingKarma. All rights reserved.
 """
 import json
-from django.forms.util import ErrorDict
+from django.forms.utils import ErrorDict
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
 from django.template import RequestContext

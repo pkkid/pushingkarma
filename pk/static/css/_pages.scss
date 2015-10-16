@@ -21,13 +21,13 @@ $PAGE_TRANSITION: all 0.5s ease;
 }
 #page-editor {
   background-color: #222;
-  border-bottom-left-radius: 5px;
-  border-top-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  border-top-right-radius: 5px;
   border: 1px solid #111;
-  border-left-width: $HANDLE_WIDTH;
+  border-right-width: $HANDLE_WIDTH;
   height: 400px;
   transition: $PAGE_TRANSITION;
-  float: left;
+  float: right;
   min-height: 400px;
   margin-top: 290px;
   position: relative;
@@ -37,13 +37,14 @@ $PAGE_TRANSITION: all 0.5s ease;
     border-radius: 2px;
     cursor: col-resize;
     height: calc(100% - 4px);
-    left: -6px;
+    right: -6px;
     position: absolute;
     top: 2px;
     width: 4px;
   }
 }
-#page-editor .menu {
+#page-editor .menu,
+#page-editor .footer {
   height: 30px;
   font-size: 12px;
   font-family: $font-family-navbar; 
@@ -82,11 +83,17 @@ $PAGE_TRANSITION: all 0.5s ease;
     opacity: 0;
     transition: opacity 0.5s ease;
   }
+  span.includes {
+    font-size: 12px;
+    padding: 0px 10px;
+    text-transform: none;
+    a { color:#888; }
+    a:hover { color:#bbb; text-shadow:0px 0px 2px #888; }
+  }
 }
 body.editing {
-  #layoutwrap { width: $LAYOUT_WIDTH + $EDITOR_WIDTH + 23px; }
-  #layout,footer { margin-left: $EDITOR_WIDTH; }
-  #page-editor { width: $EDITOR_WIDTH; }
+  #layoutwrap { width: $LAYOUT_WIDTH + $EDITOR_WIDTH + ($HANDLE_WIDTH * 2); }
+  #page-editor { width: $EDITOR_WIDTH; margin-right:$HANDLE_WIDTH; }
 }
 
 
@@ -94,8 +101,7 @@ body.editing {
 .cm-s-blackboard.CodeMirror {
   font-size: 10px;
   background: #222;
-  margin-right: 3px;
-  height: calc(100% - 30px);
+  height: calc(100% - 60px);
 }
 .cm-s-blackboard .CodeMirror-gutters {
   background: #202020;

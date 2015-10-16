@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% block bodyclass %}{{block.super}} {{editing|yesno:'editing,'}}{% endblock %}
 
 {% block layoutwrap %}
   {% if user.is_authenticated %}
@@ -13,6 +13,16 @@
         <span class='item message'></span>
       </div>
       <textarea id='page-textarea' style='display:none;'>{{page.body}}</textarea>
+      <div class='footer'>
+        <span class='item includes'>
+          {% if page.included %}
+            Included:
+            {% for slug in page.included %}
+              <a href='/p/{{slug}}'>{{slug}}</a>{% if not forloop.last %}, {% endif %}
+            {% endfor %}
+          {% endif %}
+        </span>
+      </div>
     </div>
   {% endif %}
   {{block.super}}
