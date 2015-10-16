@@ -20,6 +20,7 @@ pk.pages = {
         this.last_saved_text = this.last_updated_text;
         this.init_triggers();
         this.init_shortcuts();
+        this.resize_editor();
     },
 
     init_codemirror: function() {
@@ -86,17 +87,19 @@ pk.pages = {
     },
 
     resize_editor: function() {
+        // set editor window width
         if (this.editing()) {
-            // set window width
             var editorwidth = Math.max(500, Math.min(800, $(window).width() - this.LAYOUT_WIDTH - 60));
             var layoutwidth = this.LAYOUT_WIDTH + editorwidth + (this.HANDLE_WIDTH * 2);
             $('#layoutwrap').css({width: layoutwidth +'px'});
             $('#page-editor').css({width: editorwidth +'px'});
-            // set editor height
         } else {
             $('#layoutwrap').attr('style', '');
             $('#page-editor').attr('style', '');
         }
+        // always set editor height
+        var editorheight = $('#page').height();
+        this.editor.css({height: editorheight +'px'});
     },
 
     save: function() {
@@ -144,6 +147,7 @@ pk.pages = {
         xhr.done(function(data, textStatus, jqXHR) {
             $('#page').html(data.html);
             self.update_included(data.included);
+            self.resize_editor();
         });
         xhr.always(function() {
             self.last_updated_text = text;

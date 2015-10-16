@@ -15,6 +15,7 @@ $PAGE_TRANSITION: all 0.5s ease;
   transition: $PAGE_TRANSITION;
 }
 #page {
+  @include clearfix();
   position: relative;
   margin: 20px 10px;
   min-height: 400px;

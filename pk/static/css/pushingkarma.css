@@ -1989,6 +1989,11 @@ body.preload .no-preload-animation {
   margin: 20px 10px;
   min-height: 400px; }
 
+#page:after {
+  content: '';
+  display: table;
+  clear: both; }
+
 #page-editor {
   background-color: #222;
   border-bottom-right-radius: 5px;
