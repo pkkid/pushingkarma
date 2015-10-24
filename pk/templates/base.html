@@ -7,10 +7,8 @@
     <link rel='shortcut icon' href='/static/img/favicon.ico'/>
     <link rel='stylesheet' type='text/css' href='/static/bower/animate.css/animate.css'/>
     <link rel='stylesheet' type='text/css' href='/static/bower/bootstrap/dist/css/bootstrap.min.css'/>
-    <link rel='stylesheet' type='text/css' href='/static/bower/codemirror/lib/codemirror.css'/>
-    <link rel='stylesheet' type='text/css' href='/static/bower/codemirror/addon/scroll/simplescrollbars.css'/>
-    <link rel='stylesheet' type='text/css' href='/static/bower/codemirror/theme/blackboard.css'/>
-    <link rel='stylesheet' type='text/css' href='/static/css/pushingkarma.css'/>
+    <link rel='stylesheet' type='text/css' href='/static/dist/codemirror.css'/>
+    <link rel='stylesheet' type='text/css' href='/static/dist/pushingkarma.css'/>
     {% block css %}{% endblock %}
   </head>
   <body class='{% block bodyclass %}preload{% endblock %}'>
@@ -28,8 +26,8 @@
                   <a href='{% url "auth_logout" %}'>Logout</a>
                 {% else %}
                   <span class='icon-error icomoon-notification'></span>
-                  <input type='text' name='email' placeholder='Email' autocomplete='false'/>
-                  <input type='password' name='password' placeholder='Password' autocomplete='false'/>
+                  <input type='text' name='email' placeholder='Email' autocomplete='off'/>
+                  <input type='password' name='password' placeholder='Password' autocomplete='off'/>
                   <button type='submit' style='display:none;'></button>
                 {% endif %}
               </form>
@@ -51,18 +49,8 @@
         <script src='/static/bower/tether/dist/js/tether.min.js'></script>
         <script src='/static/bower/bootstrap/dist/js/bootstrap.min.js'></script>
         <script src='/static/bower/js-cookie/src/js.cookie.js'></script>
-        <script src='/static/bower/codemirror/lib/codemirror.js'></script>
-        <script src='/static/bower/codemirror/addon/mode/overlay.js'></script>
-        <script src='/static/bower/codemirror/addon/scroll/simplescrollbars.js'></script>
-        <script src='/static/bower/codemirror/mode/css/css.js'></script>
-        <script src='/static/bower/codemirror/mode/django/django.js'></script>
-        <script src='/static/bower/codemirror/mode/gfm/gfm.js'></script>
-        <script src='/static/bower/codemirror/mode/javascript/javascript.js'></script>
-        <script src='/static/bower/codemirror/mode/markdown/markdown.js'></script>
-        <script src='/static/bower/codemirror/mode/python/python.js'></script>
-        <script src='/static/bower/codemirror/mode/sass/sass.js'></script>
-        <script src='/static/bower/codemirror/mode/xml/xml.js'></script>
-        <script src='/static/js/pushingkarma.js'></script>
+        <script src='/static/dist/codemirror.js'></script>
+        <script src='/static/dist/pushingkarma.js'></script>
         {% block js %}{% endblock %}
       {% endblock layoutwrap %}
     </div>

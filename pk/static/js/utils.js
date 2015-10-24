@@ -7,7 +7,6 @@ var pk = {  // jshint ignore:line
     ANIMATIONEND: 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend',
 
     utils: {
-
         ajax: function(url, data) {
             var xhr = $.ajax({url:url, data:data, type:'POST', dataType:'json'});
             return xhr.then(function(data, textStatus, jqXHR) {
@@ -33,6 +32,5 @@ var pk = {  // jshint ignore:line
         set_default: function(input, default_value) {
             return typeof input !== 'undefined' ? input : default_value;
         },
-
     },
 };

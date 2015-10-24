@@ -5,4 +5,5 @@
 *.sass-cache*
 node_modules/*
 pk/static/bower/*
+pk/static/dist/*
 settings/secrets.py
