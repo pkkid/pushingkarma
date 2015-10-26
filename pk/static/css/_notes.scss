@@ -1,0 +1,63 @@
+//--------------------------------------------------------
+// Copyright (c) 2015 PushingKarma. All rights reserved.
+//--------------------------------------------------------
+$NOTESLIST_WIDTH: 300px;
+$NOTESLIST_BGCOLOR: rgba(0,0,0,0.3);
+
+#layoutwrap {
+  transition: $PAGE_TRANSITION;
+  width: $LAYOUT_WIDTH + $HANDLE_WIDTH * 2;
+}
+#layout,footer {
+  margin-left: $HANDLE_WIDTH;
+  margin-right: $HANDLE_WIDTH;
+  transition: $PAGE_TRANSITION;
+}
+
+#notes {
+  @include clearfix();
+  background-image: linear-gradient(to right,
+    $NOTESLIST_BGCOLOR 0%,
+    $NOTESLIST_BGCOLOR $NOTESLIST_WIDTH,
+    transparent $NOTESLIST_WIDTH,
+    transparent 100%
+  );
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  min-height: 400px;
+  position: relative;
+
+  #noteslist {
+    float: left;
+    height: 400px;
+    width: 300px;
+
+    &:after {
+      color: rgba(0,0,0,0.5);
+      content: "\e986";
+      font-family: 'icomoon-free';
+      font-size: 20px;
+      left: 10px;
+      line-height: 40px;
+      position: absolute;
+      top: 0px;
+      z-index: 1;
+    }
+  }
+  #notesfilter {
+    width: 100%;
+    border-width: 0px;
+    background-color: rgba(0,0,0,0.2);
+    font-size: 20px;
+    line-height: 40px;
+    color: #333;
+    position: relative;
+    padding-left: 40px;
+  }
+
+  #note {
+    margin-left: 300px;
+    height: 100%;
+  }
+}
+

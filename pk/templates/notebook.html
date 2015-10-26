@@ -1,11 +1,32 @@
-{% extends 'base_twocolumn.html' %}
+{% extends 'base.html' %}
+{% block bodyclass %}{{block.super}} {{editing|yesno:'editing,'}}{% endblock %}
 
-{% block leftcolumn %}
-  List Posts
-  {# {% list_posts request %} #}
-{% endblock leftcolumn %}
+{% block layoutwrap %}
+  {% if user.is_authenticated %}
+    <div id='page-editor' class='no-preload-animation'>
+      <div class='handle'></div>
+      <div class='menu'>
+        <span class='item title'>Markdown Editor</span>
+        <span class='action reset'>Reset</span>
+        <span class='action save'>Save</span>
+        <span class='item spinner'></span>
+        <span class='item message'></span>
+      </div>
+      <textarea id='page-textarea' style='display:none;'></textarea>
+      <div class='footer'>
+        <span class='item includes'></span>
+      </div>
+    </div>
+  {% endif %}
+  {{block.super}}
+{% endblock %}
 
-{% block rightcolumn %}
-  {% include 'sidebar/aboutme.html' %}
-  {% include 'sidebar/populartags.html' %}
-{% endblock rightcolumn %}
+
+{% block content %}
+  <div id='notes'>
+    <div id='noteslist'>
+      <input id='notesfilter' type='text'/>
+    </div>
+    <div id='note'></div>
+  </div>
+{% endblock content %}

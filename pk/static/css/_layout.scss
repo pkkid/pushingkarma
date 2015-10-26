@@ -42,6 +42,9 @@ body {
     bottom: -$LAYOUT_BORDER_WIDTH;
     background-image: url('#{$imgroot}/transparent/black-30.png');
   }
+  & > .container-fluid {
+    padding: 0px;
+  }
 }
 header {
   @include clearfix();

@@ -73,7 +73,7 @@ gulp.task('watch', function () {
     gulp.start('js', done);
   }));
   watch('**/css/*.scss', batch(function(events, done) {
-    gulp.start('sass', done);
+    gulp.start('css', done);
   }));
   gulp.start('default');
 });
