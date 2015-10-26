@@ -1,0 +1,38 @@
+//--------------------------------------------------------
+// Copyright (c) 2015 PushingKarma. All rights reserved.
+//--------------------------------------------------------
+
+@media (max-width: 999px) {
+  body {
+    padding: 0px; 
+    min-width: 650px;
+  }
+  #layoutwrap {
+    width: 100%;
+    margin: 0px;
+
+    header {
+      border-radius: 0px;
+      height: 150px;
+      #logo { margin-top: 30px; }
+    }
+    #layout {
+      border-radius: 0px;
+      border-width: 0px;
+      border-bottom: 2px solid #111;
+      margin: 0px;
+      width: 100%;
+    }
+    #layout:before {
+      display: none;
+    }
+    #page-editor {
+      display: none;
+    }
+    footer {
+      width: 100%;
+      margin: 10px 0px 20px 0px;
+      text-align: center;
+    }
+  }
+}

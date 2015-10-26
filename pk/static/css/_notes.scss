@@ -5,13 +5,11 @@ $NOTESLIST_WIDTH: 300px;
 $NOTESLIST_BGCOLOR: rgba(0,0,0,0.3);
 
 #layoutwrap {
-  transition: $PAGE_TRANSITION;
   width: $LAYOUT_WIDTH + $HANDLE_WIDTH * 2;
 }
 #layout,footer {
   margin-left: $HANDLE_WIDTH;
   margin-right: $HANDLE_WIDTH;
-  transition: $PAGE_TRANSITION;
 }
 
 #notes {
@@ -22,8 +20,6 @@ $NOTESLIST_BGCOLOR: rgba(0,0,0,0.3);
     transparent $NOTESLIST_WIDTH,
     transparent 100%
   );
-  border-bottom-left-radius: 5px;
-  border-bottom-right-radius: 5px;
   min-height: 400px;
   position: relative;
 

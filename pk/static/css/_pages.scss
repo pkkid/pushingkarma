@@ -3,16 +3,14 @@
 //--------------------------------------------------------
 $EDITOR_WIDTH: 550px;
 $HANDLE_WIDTH: 8px;
-$PAGE_TRANSITION: all 0.5s ease;
 
 #layoutwrap {
-  transition: $PAGE_TRANSITION;
+  transition: width 0.5s ease;
   width: $LAYOUT_WIDTH + $HANDLE_WIDTH * 2;
 }
 #layout,footer {
   margin-left: $HANDLE_WIDTH;
   margin-right: $HANDLE_WIDTH;
-  transition: $PAGE_TRANSITION;
 }
 #page {
   @include clearfix();
@@ -27,7 +25,7 @@ $PAGE_TRANSITION: all 0.5s ease;
   border: 1px solid #111;
   border-right-width: $HANDLE_WIDTH;
   height: 400px;
-  transition: $PAGE_TRANSITION;
+  transition: width 0.5s ease;
   float: right;
   min-height: 400px;
   margin-top: 290px;
@@ -94,7 +92,7 @@ $PAGE_TRANSITION: all 0.5s ease;
 }
 body.editing {
   #layoutwrap { width: $LAYOUT_WIDTH + $EDITOR_WIDTH + ($HANDLE_WIDTH * 2); }
-  #page-editor { width: $EDITOR_WIDTH; margin-right:$HANDLE_WIDTH; }
+  #page-editor { width: $EDITOR_WIDTH; margin-right: $HANDLE_WIDTH; }
 }
 
 
