@@ -11,6 +11,8 @@ pk.pages = {
 
     init: function() {
         this.editor = $('#page-editor');
+        if (!this.editor.length) { return null; }
+        console.debug('init pk.pages on #'+ this.editor.attr('id'));
         this.menu = this.editor.find('.menu');
         this.spinner = this.menu.find('.spinner');
         this.message = this.menu.find('.message');

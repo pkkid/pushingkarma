@@ -7,6 +7,7 @@
     <link rel='shortcut icon' href='/static/img/favicon.ico'/>
     <link rel='stylesheet' type='text/css' href='/static/bower/animate.css/animate.css'/>
     <link rel='stylesheet' type='text/css' href='/static/bower/bootstrap/dist/css/bootstrap.min.css'/>
+    <link rel='stylesheet' type='text/css' href='/static/bower/icomoon-bower/style.css'/>
     <link rel='stylesheet' type='text/css' href='/static/dist/codemirror.css'/>
     <link rel='stylesheet' type='text/css' href='/static/dist/pushingkarma.css'/>
     {% block css %}{% endblock %}
@@ -45,14 +46,14 @@
           Icons graciously shared by <a href='https://icomoon.io/#preview-free'>IcoMoon</a>
             via <a href='http://creativecommons.org/licenses/by/4.0/'>CC BY 4.0 license</a>.
         </footer>
-        <script src='/static/bower/jquery/dist/jquery.min.js'></script>
-        <script src='/static/bower/tether/dist/js/tether.min.js'></script>
-        <script src='/static/bower/bootstrap/dist/js/bootstrap.min.js'></script>
-        <script src='/static/bower/js-cookie/src/js.cookie.js'></script>
-        <script src='/static/dist/codemirror.js'></script>
-        <script src='/static/dist/pushingkarma.js'></script>
-        {% block js %}{% endblock %}
       {% endblock layoutwrap %}
     </div>
   </body>
+  <script src='/static/bower/jquery/dist/jquery.min.js'></script>
+  <script src='/static/bower/tether/dist/js/tether.min.js'></script>
+  <script src='/static/bower/bootstrap/dist/js/bootstrap.min.js'></script>
+  <script src='/static/bower/js-cookie/src/js.cookie.js'></script>
+  <script src='/static/dist/codemirror.js'></script>
+  <script src='/static/dist/pushingkarma.js'></script>
+  {% block js %}{% endblock %}
 </html>

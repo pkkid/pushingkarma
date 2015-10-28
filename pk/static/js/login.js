@@ -10,7 +10,7 @@ pk.login = {
     logout_url: '/auth/logout/',
 
     init: function() {
-        console.log('init_login_form');
+        console.debug('init pk.login on #'+ this.logo.attr('id'));
         this.init_triggers();
     },
 
