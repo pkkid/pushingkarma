@@ -5,6 +5,7 @@ $EDITOR_WIDTH: 550px;
 $HANDLE_WIDTH: 8px;
 
 #layoutwrap {
+  position: relative;
   transition: width 0.5s ease;
   width: $LAYOUT_WIDTH + $HANDLE_WIDTH * 2;
 }
@@ -24,12 +25,12 @@ $HANDLE_WIDTH: 8px;
   border-top-right-radius: 5px;
   border: 1px solid #111;
   border-right-width: $HANDLE_WIDTH;
-  height: 400px;
+  height: calc(100% - 340px);
   transition: width 0.5s ease;
-  float: right;
-  min-height: 400px;
+  position: absolute;
+  right: 0px;
+  min-height: 200px;
   margin-top: 290px;
-  position: relative;
   width: 0px;
   .handle {
     background-color: #111;

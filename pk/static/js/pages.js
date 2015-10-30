@@ -89,7 +89,6 @@ pk.pages = {
     },
 
     resize_editor: function() {
-        // set editor window width
         if (this.editing()) {
             var editorwidth = Math.max(500, Math.min(800, $(window).width() - this.LAYOUT_WIDTH - 60));
             var layoutwidth = this.LAYOUT_WIDTH + editorwidth + (this.HANDLE_WIDTH * 2);
@@ -99,9 +98,6 @@ pk.pages = {
             $('#layoutwrap').attr('style', '');
             $('#page-editor').attr('style', '');
         }
-        // always set editor height
-        var editorheight = $('#page').height();
-        this.editor.css({height: editorheight +'px'});
     },
 
     save: function() {
