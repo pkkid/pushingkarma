@@ -12,7 +12,7 @@
     <link rel='stylesheet' type='text/css' href='/static/dist/pushingkarma.css'/>
     {% block css %}{% endblock %}
   </head>
-  <body class='{% block bodyclass %}preload{% endblock %}'>
+  <body class='{{user.is_authenticated|yesno:"authenticated,"}} {% block bodyclass %}preload{% endblock %}'>
     <div id='layoutwrap' class='no-preload-animation'>
       {% block layoutwrap %}
         <div id='layout' class='no-preload-animation'>

@@ -26,6 +26,9 @@
   <div id='notes'>
     <div id='noteslist'>
       <input id='notesfilter' type='text'/>
+      {% if user.is_authenticated %}
+        <div id='addnote' data-toggle='tooltip' data-placement='right' title='Add New Note'><i class='icon-plus'></i></div>
+      {% endif %}
     </div>
     <div id='note'></div>
   </div>
