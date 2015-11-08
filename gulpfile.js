@@ -17,6 +17,7 @@ gulp.task('js', function() {
   gulp.src([
       './pk/static/js/utils.js',
       './pk/static/js/login.js',
+      './pk/static/js/editor.js',
       './pk/static/js/pages.js',
       './pk/static/js/plugins.js',
       './pk/static/js/init.js',

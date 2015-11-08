@@ -3,11 +3,10 @@
  *------------------------------------------------------- */
 'use strict';
 
-(function() {
+pk.notebook = {
 
-    pk.utils.enable_animations();
-    pk.utils.init_tooltips();
-    pk.login.init();
-    pk.pages.init('#editor');
+    init: function() {
+        console.log('init notebook');
+    },
 
-})();
+};

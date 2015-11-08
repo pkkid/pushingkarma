@@ -1,35 +1,46 @@
 {% extends 'base.html' %}
 {% block bodyclass %}{{block.super}} {{editing|yesno:'editing,'}}{% endblock %}
 
-{% block layoutwrap %}
-  {% if user.is_authenticated %}
-    <div id='page-editor' class='no-preload-animation'>
-      <div class='handle'></div>
-      <div class='menu'>
-        <span class='item title'>Markdown Editor</span>
-        <span class='action reset'>Reset</span>
-        <span class='action save'>Save</span>
-        <span class='item spinner'></span>
-        <span class='item message'></span>
-      </div>
-      <textarea id='page-textarea' style='display:none;'></textarea>
-      <div class='footer'>
-        <span class='item includes'></span>
-      </div>
-    </div>
-  {% endif %}
-  {{block.super}}
-{% endblock %}
-
 
 {% block content %}
   <div id='notes'>
+    
+    <!-- List -->
     <div id='noteslist'>
       <input id='notesfilter' type='text'/>
       {% if user.is_authenticated %}
         <div id='addnote' data-toggle='tooltip' data-placement='right' title='Add New Note'><i class='icon-plus'></i></div>
       {% endif %}
     </div>
-    <div id='note'></div>
+
+    <!-- Content -->
+    <div id='notescontent'>
+    
+      <!-- Note -->
+      <div id='note'>
+        Content
+      </div>
+
+      <!-- Editor -->
+      {% if user.is_authenticated %}
+        <div id='note-editor' class='no-preload-animation'>
+          <div class='handle'></div>
+          <div class='menu'>
+            <span class='item title'>Markdown Editor</span>
+            <span class='action reset'>Reset</span>
+            <span class='action save'>Save</span>
+            <span class='item spinner'></span>
+            <span class='item message'></span>
+          </div>
+          <textarea id='note-textarea' style='display:none;'>{{note.body}}</textarea>
+          <div class='footer'>
+            <span class='item tags'>
+                Tags: --
+            </span>
+          </div>
+        </div>
+      {% endif %}
+
+    </div>
   </div>
 {% endblock content %}
