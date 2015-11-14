@@ -1,0 +1,73 @@
+//--------------------------------------------------------
+// Copyright (c) 2015 PushingKarma. All rights reserved.
+//--------------------------------------------------------
+// $EDITOR_WIDTH: 550px;
+// $TOGGLE_WIDTH: 8px;
+
+
+.editor {
+  background-color: rgba(0,0,0,0.1);
+  min-height: 200px;
+
+  .editor-menu,
+  .editor-footer {
+    height: 30px;
+    font-size: 12px;
+    font-family: $font-family-navbar; 
+    text-transform: uppercase;
+    line-height:30px;
+    padding: 0px;
+    overflow: hidden;
+    user-select: none;
+
+    span.editor-title {
+      cursor: default;
+      float: left;
+      padding: 0px 10px;
+    }
+    span.action {
+      color: #888;
+      padding: 0px 10px;
+      border-left: 1px solid #222;
+      cursor: pointer;
+      float: left;
+      &:hover{
+        color: #bbb;
+        text-shadow: 0px 0px 2px #888;
+      }
+    }
+    span.editor-spinner {
+      @include spinner(16px, 1px, #887);
+      float: left;
+      margin: 2px;
+    }
+    span.editor-message {
+      float: left;
+      font-size: 10px;
+      padding: 0px 10px;
+      opacity: 0;
+      transition: opacity 0.5s ease;
+    }
+    span.editor-includes,
+    span.editor-tags, {
+      font-size: 14px;
+      padding: 0px 10px;
+      text-transform: none;
+      a { color:#888; }
+      a:hover { color:#bbb; text-shadow:0px 0px 2px #888; }
+      input { 
+        height: 30px;
+        border-width: 0px;
+        background-color: transparent;
+        margin-left: 5px;
+        width: calc(100% - 60px);
+        color: #333;
+      }
+    }
+  }
+}
+
+// CodeMirror Settings
+.cm-s-blackboard.CodeMirror {
+  font-size: 10px;
+}

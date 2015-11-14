@@ -8,9 +8,9 @@ pk.editor = {
     
     init: function(selector, opts) {
         this.container = $(selector);
+        this.opts = $.extend({}, this.defaults, opts);
         if (this.container.length === 0) { return; }
         console.debug('init pk.editor: '+ selector);
-        this.opts = $.extend({}, this.default_opts, opts);
         this.menu = this.container.find('.editor-menu');
         this.footer = this.container.find('.editor-footer');
         this.spinner = this.container.find('.editor-spinner');
@@ -26,16 +26,8 @@ pk.editor = {
 
     init_codemirror: function() {
         var textarea = this.container.find('textarea').get(0);
-        return CodeMirror.fromTextArea(textarea, {
-            extraKeys: {'Enter': 'newlineAndIndentContinueMarkdownList'},
-            htmlMode: true,
-            lineNumbers: false,
-            lineWrapping: false,
-            matchBrackets: true,
-            mode: 'xml',
-            scrollbarStyle: 'simple',
-            theme: 'blackboard',
-        });
+        var opts = $.extend({}, this.defaults.codemirror, this.opts.codemirror);
+        return CodeMirror.fromTextArea(textarea, this.opts.codemirror);
     },
 
     init_triggers: function() {
@@ -154,10 +146,20 @@ pk.editor = {
         else { this.includes.html(''); }
     },
 
-    default_opts: {
+    defaults: {
         url_save: null,                     // url to save contents
         url_markdown: '/markdown/',         // url converts markdown to html
         callback_resize: null,              // callback to resize editor
+        codemirror: {                       // default codemirror opts
+            extraKeys: {'Enter': 'newlineAndIndentContinueMarkdownList'},
+            htmlMode: true,
+            lineNumbers: false,
+            lineWrapping: false,
+            matchBrackets: true,
+            mode: 'xml',
+            scrollbarStyle: 'simple',
+            theme: 'blackboard',
+        },
     },
 
 };

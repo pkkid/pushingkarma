@@ -11,11 +11,11 @@ pk.pages = $.extend({}, pk.editor, {
         if (this.editing()) {
             var editorwidth = Math.max(500, Math.min(800, $(window).width() - this.LAYOUT_WIDTH - 60));
             var layoutwidth = this.LAYOUT_WIDTH + editorwidth + (this.HANDLE_WIDTH * 2);
-            this.container.css({width: editorwidth +'px'});
             $('#layoutwrap').css({width: layoutwidth +'px'});
+            $('#pages-editor').css({width: editorwidth +'px'});
         } else {
-            this.container.attr('style', '');
             $('#layoutwrap').attr('style', '');
+            $('#pages-editor').attr('style', '');
         }
     },
 

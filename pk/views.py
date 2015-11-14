@@ -11,8 +11,8 @@ from pk.utils import response_json_success
 
 def markdown(request):
     text = request.POST.get('text', '')
-    html, included = md.text_to_html(text)
-    return response_json_success({'html':html, 'included':included})
+    html, includes = md.text_to_html(text)
+    return response_json_success({'html':html, 'includes':includes})
 
 
 def notebook(request, template='notebook.html'):

@@ -3,18 +3,18 @@
 
 {% block layoutwrap %}
   {% if user.is_authenticated %}
-    <div id='editor' class='no-preload-animation'>
+    <div id='pages-editor' class='editor no-preload-animation'>
       <div class='editor-toggle'></div>
       <div class='editor-menu'>
-        <span class='item title'>Markdown Editor</span>
-        <span class='action editor-reset'>Reset</span>
-        <span class='action editor-save'>Save</span>
-        <span class='item editor-spinner'></span>
-        <span class='item editor-message'></span>
+        <span class='editor-title'>Markdown Editor</span>
+        <span class='editor-reset action'>Reset</span>
+        <span class='editor-save action'>Save</span>
+        <span class='editor-spinner'></span>
+        <span class='editor-message'></span>
       </div>
-      <textarea id='page-textarea' style='display:none;'>{{page.body}}</textarea>
+      <textarea style='display:none;'>{{page.body}}</textarea>
       <div class='editor-footer'>
-        <span class='item editor-includes'>
+        <span class='editor-includes'>
           {% if page.included %}
             Included:
             {% for slug in page.included %}

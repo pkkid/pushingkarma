@@ -3,18 +3,18 @@
 
 
 {% block content %}
-  <div id='notes'>
+  <div id='notebook'>
     
     <!-- List -->
-    <div id='noteslist'>
-      <input id='notesfilter' type='text'/>
+    <div id='notebook-list'>
+      <input id='notebook-filter' type='text'/>
       {% if user.is_authenticated %}
-        <div id='addnote' data-toggle='tooltip' data-placement='right' title='Add New Note'><i class='icon-plus'></i></div>
+        <div id='notebook-add' data-toggle='tooltip' data-placement='right' title='Add New Note'><i class='icon-plus'></i></div>
       {% endif %}
     </div>
 
     <!-- Content -->
-    <div id='notescontent'>
+    <div id='notebook-content'>
     
       <!-- Note -->
       <div id='note'>
@@ -23,19 +23,20 @@
 
       <!-- Editor -->
       {% if user.is_authenticated %}
-        <div id='note-editor' class='no-preload-animation'>
-          <div class='handle'></div>
-          <div class='menu'>
-            <span class='item title'>Markdown Editor</span>
-            <span class='action reset'>Reset</span>
-            <span class='action save'>Save</span>
-            <span class='item spinner'></span>
-            <span class='item message'></span>
+        <hr class='fancy'/>
+        <div id='notebook-editor' class='editor no-preload-animation'>
+          {# <div class='editor-toggle'></div> #}
+          <div class='editor-menu'>
+            <span class='editor-title'>Markdown Editor</span>
+            <span class='editor-reset action'>Reset</span>
+            <span class='editor-save action'>Save</span>
+            <span class='editor-spinner'></span>
+            <span class='editor-message'></span>
           </div>
-          <textarea id='note-textarea' style='display:none;'>{{note.body}}</textarea>
-          <div class='footer'>
-            <span class='item tags'>
-                Tags: --
+          <textarea style='display:none;'>{{note.body}}</textarea>
+          <div class='editor-footer'>
+            <span class='editor-tags'>
+                Tags: <input name='tags'/>
             </span>
           </div>
         </div>
