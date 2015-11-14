@@ -13,15 +13,13 @@
         <span class='editor-message'></span>
       </div>
       <textarea style='display:none;'>{{page.body}}</textarea>
-      <div class='editor-footer'>
-        <span class='editor-includes'>
-          {% if page.included %}
-            Included:
-            {% for slug in page.included %}
-              <a href='/p/{{slug}}'>{{slug}}</a>{% if not forloop.last %}, {% endif %}
-            {% endfor %}
-          {% endif %}
-        </span>
+      <div class='editor-includes'>
+        {% if page.included %}
+          Includes:
+          {% for slug in page.included %}
+            <a href='/p/{{slug}}'>{{slug}}</a>{% if not forloop.last %}, {% endif %}
+          {% endfor %}
+        {% endif %}
       </div>
     </div>
   {% endif %}

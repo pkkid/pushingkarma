@@ -72,18 +72,8 @@ body.authenticated #notebook-filter {
 }
 
 
-// Notebook Editor
+// CodeMirror Settings
 #notebook-editor {
-  color: #666;
-  width: 100%;
-  border-top: 1px solid rgba(0,0,0,0.1);
-
-  span.action {
-    color: #333;
-    border-left: 1px solid rgba(152,144,133,0.7);
-  }
-
-  // CodeMirror Settings
   .cm-s-blackboard.CodeMirror {
     background: rgba(0,0,0,0.1);
     height: 300px;

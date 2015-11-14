@@ -22,9 +22,9 @@ class Note(TimeStampedModel):
         return {
             'id': self.id,
             'title': self.title,
-            'tags': self.tags.split(' '),
             'body': self.body,
             'html': html,
+            'tags': self.tags.split(' '),
             'included': included,
         }
 

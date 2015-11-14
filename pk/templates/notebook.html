@@ -17,9 +17,7 @@
     <div id='notebook-content'>
     
       <!-- Note -->
-      <div id='note'>
-        Content
-      </div>
+      <div id='note'>Content</div>
 
       <!-- Editor -->
       {% if user.is_authenticated %}
@@ -33,12 +31,9 @@
             <span class='editor-spinner'></span>
             <span class='editor-message'></span>
           </div>
+          <input name='title' placeholder='Title' autocomplete='off'/>
           <textarea style='display:none;'>{{note.body}}</textarea>
-          <div class='editor-footer'>
-            <span class='editor-tags'>
-                Tags: <input name='tags'/>
-            </span>
-          </div>
+          <input name='tags' placeholder='Tags' autocomplete='off'/>
         </div>
       {% endif %}
 

@@ -17,7 +17,15 @@ def markdown(request):
 
 def notebook(request, template='notebook.html'):
     data = context.core(request, menuitem='notebook')
-    data.notes = [note.to_dict() for note in Note.objects.all()]
+    if request.method == 'POST':
+        note = get_object_or_none(Note, id=request.POST.get('id')) or Note()
+        note.title = request.POST.get('title')
+        note.body = request.POST.get('text')
+        note.tags = request.POST.get('tags')
+        if note.body: note.save()
+        else: note.delete()
+        return response_json_success()
+    data.notes = [n.to_dict() for n in Note.objects.all()]
     data.editing = bool(request.COOKIES.get('editing'))
     return response(request, template, data)
 

@@ -21,6 +21,7 @@ $TOGGLE_WIDTH: 8px;
   min-height: 400px;
 }
 #pages-editor {
+  border-top-width: 0px;
   background-color: #222;
   border: 1px solid #111;
   border-bottom-right-radius: 5px;
@@ -43,16 +44,25 @@ $TOGGLE_WIDTH: 8px;
     top: 2px;
     width: 4px;
   }
-  .editor-menu,
-  .editor-footer {
+  div.editor-menu,
+  div.editor-includes {
     color: #555;
     background-color: #181818;
+    padding: 0px;
+    span.action {
+      color: #888;
+      border-left: 1px solid #222;
+    }
   }
 }
 
 body.editing {
   #layoutwrap { width: $LAYOUT_WIDTH + $EDITOR_WIDTH + ($TOGGLE_WIDTH * 2); }
-  #pages-editor { width: $EDITOR_WIDTH; margin-right: $TOGGLE_WIDTH; }
+  #pages-editor {
+    width: $EDITOR_WIDTH; 
+    margin-right: $TOGGLE_WIDTH;
+    div.editor-menu, div.editor-includes { padding:0px 10px; }
+  }
 }
 
 // CodeMirror Settings

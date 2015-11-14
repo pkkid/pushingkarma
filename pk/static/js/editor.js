@@ -89,7 +89,13 @@ pk.editor = {
         var self = this;
         this.spinner.addClass('on');
         var text = this.codemirror.getValue();
-        var xhr = pk.utils.ajax(window.location.pathname, {'text':text});
+        var data = {
+            'text': text,
+            'id': this.container.find('[name=id]').val(),
+            'title': this.container.find('[name=title]').val(),
+            'tags': this.container.find('[name=tags]').val(),
+        };
+        var xhr = pk.utils.ajax(window.location.pathname, data);
         xhr.done(function(data, textStatus, jqXHR) {
             self.last_saved_text = text;
             self.show_message('<i class="icon-checkmark"></i>&nbsp;Saved');

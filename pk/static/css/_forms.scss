@@ -21,3 +21,6 @@ textarea:focus {
   border-color: rgba(61,87,138,0.8);
   outline: none;
 }
+::placeholder {
+  color: #777;
+}
