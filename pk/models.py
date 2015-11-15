@@ -18,15 +18,15 @@ class Note(TimeStampedModel):
         return reverse('note', kwargs={'slug':self.slug})
 
     def dict(self):
-        html, included = markdown.text_to_html(self.body)
-        return {
-            'id': self.id,
-            'title': self.title,
-            'body': self.body,
-            'html': html,
-            'tags': self.tags.split(' '),
-            'included': included,
-        }
+        html, includes = markdown.text_to_html(self.body)
+        return dict(
+            id = self.id,
+            title = self.title,
+            body = self.body,
+            html = html,
+            tags = self.tags.split(' '),
+            includes = includes,
+        )
 
 
 class Page(TimeStampedModel):
@@ -37,11 +37,11 @@ class Page(TimeStampedModel):
         return reverse('page', kwargs={'slug':self.slug})
 
     def dict(self):
-        html, included = markdown.text_to_html(self.body)
-        return {
-            'id': self.id,
-            'slug': self.slug,
-            'body': self.body,
-            'html': html,
-            'included': included,
-        }
+        html, includes = markdown.text_to_html(self.body)
+        return dict(
+            id = self.id,
+            slug = self.slug,
+            body = self.body,
+            html = html,
+            includes = includes,
+        )

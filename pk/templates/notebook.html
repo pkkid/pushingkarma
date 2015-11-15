@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block bodyclass %}{{block.super}} {{editing|yesno:'editing,'}}{% endblock %}
+{% block bodyclass %}{{block.super}} notebook {{editing|yesno:'editing,'}}{% endblock %}
 
 
 {% block content %}
@@ -22,6 +22,7 @@
       <!-- Editor -->
       {% if user.is_authenticated %}
         <hr class='fancy'/>
+        <div class='editor-toggle'>Toggle Editor</div>
         <div id='notebook-editor' class='editor no-preload-animation'>
           {# <div class='editor-toggle'></div> #}
           <div class='editor-menu'>

@@ -25,12 +25,12 @@ def notebook(request, template='notebook.html'):
         if note.body: note.save()
         else: note.delete()
         return response_json_success()
-    data.notes = [n.to_dict() for n in Note.objects.all()]
+    data.notes = [n.dict() for n in Note.objects.all()]
     data.editing = bool(request.COOKIES.get('editing'))
     return response(request, template, data)
 
 
-def page(request, slug='/', template='page.html'):
+def pages(request, slug='/', template='pages.html'):
     slug = slug or '/'
     page = get_object_or_none(Page, slug=slug) or Page(slug=slug)
     if request.method == 'POST':

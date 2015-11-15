@@ -33,7 +33,7 @@ pk.editor = {
     init_triggers: function() {
         var self = this;
         // toggle editing mode
-        this.container.find('.editor-toggle').on('click', function(event) {
+        $('.editor-toggle').on('click', function(event) {
             event.preventDefault();
             self.toggle_editor();
         });
@@ -148,7 +148,7 @@ pk.editor = {
         $.each(includes, function(i, slug) {
             html.push('<a href="/p/'+ slug +'">'+ slug +'</a>');
         });
-        if (html.length) { this.includes.html('Included: '+ html.join(', ')); }
+        if (html.length) { this.includes.html('Includes: '+ html.join(', ')); }
         else { this.includes.html(''); }
     },
 

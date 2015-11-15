@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block bodyclass %}{{block.super}} {{editing|yesno:'editing,'}}{% endblock %}
+{% block bodyclass %}{{block.super}} pages {{editing|yesno:'editing,'}}{% endblock %}
 
 {% block layoutwrap %}
   {% if user.is_authenticated %}
@@ -14,9 +14,9 @@
       </div>
       <textarea style='display:none;'>{{page.body}}</textarea>
       <div class='editor-includes'>
-        {% if page.included %}
+        {% if page.includes %}
           Includes:
-          {% for slug in page.included %}
+          {% for slug in page.includes %}
             <a href='/p/{{slug}}'>{{slug}}</a>{% if not forloop.last %}, {% endif %}
           {% endfor %}
         {% endif %}

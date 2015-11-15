@@ -16,17 +16,17 @@ NO_CONTENT = 'Page contains no content.'
 
 def text_to_html(text):
     text = gfm.markdown(text)
-    text, included = _replace_includes(text)
+    text, includes = _replace_includes(text)
     text = _replace_invalid_links(text)
     text = _remove_linefeeds(text)
-    return text or NO_CONTENT, included
+    return text or NO_CONTENT, includes
 
 
 def _replace_includes(text):
     from pk.models import Page
-    included = set()
+    includes = set()
     for match, href in re.findall(INCLUDE_REGEX, text):
-        included.add(href)
+        includes.add(href)
         page = utils.get_object_or_none(Page, slug=href)
         if page:
             subhtml = text_to_html(page.body)[0]
@@ -34,7 +34,7 @@ def _replace_includes(text):
         else:
             link = INCLUDE_INVALID % (href, href)
             text = text.replace(match, link)
-    return text, sorted(included)
+    return text, sorted(includes)
 
 
 def _replace_invalid_links(text):

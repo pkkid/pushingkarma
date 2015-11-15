@@ -13,7 +13,6 @@ $TOGGLE_WIDTH: 8px;
   margin-left: $TOGGLE_WIDTH;
   margin-right: $TOGGLE_WIDTH;
 }
-
 #page {
   @include clearfix();
   position: relative;
@@ -31,9 +30,6 @@ $TOGGLE_WIDTH: 8px;
   transition: width 0.5s ease;
   position: absolute;
   right: 0px;
-  margin-top: 290px;
-  width: 0px;
-
   .editor-toggle {
     background-color: #111;
     border-radius: 2px;
@@ -48,19 +44,29 @@ $TOGGLE_WIDTH: 8px;
   div.editor-includes {
     color: #555;
     background-color: #181818;
-    padding: 0px;
     span.action {
       color: #888;
       border-left: 1px solid #222;
+      &:hover{
+        color: #bbb;
+        text-shadow: 0px 0px 2px #777;
+      }
     }
   }
 }
 
-body.editing {
+
+// Toggle Editing Mode
+#pages-editor {
+  margin-top: 290px;
+  width: 0px;
+  div.editor-menu, div.editor-includes { padding:0px; }
+}
+body.pages.editing {
   #layoutwrap { width: $LAYOUT_WIDTH + $EDITOR_WIDTH + ($TOGGLE_WIDTH * 2); }
   #pages-editor {
-    width: $EDITOR_WIDTH; 
     margin-right: $TOGGLE_WIDTH;
+    width: $EDITOR_WIDTH; 
     div.editor-menu, div.editor-includes { padding:0px 10px; }
   }
 }

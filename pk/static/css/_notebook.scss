@@ -4,14 +4,14 @@
 $NOTEFILTER_HEIGHT: 40px;
 
 #note {
-  min-height: 150px;
+  min-height: 200px;
 }
 
+
+// Notebook Side Panel
 #notebook {
   @include clearfix();
   position: relative;
-
-  // left panel (filter & list)
   #notebook-list {
     background-color: rgba(0,0,0,0.1);
     border-right: 1px solid rgba(0,0,0,0.1);
@@ -58,17 +58,45 @@ $NOTEFILTER_HEIGHT: 40px;
       }
     }
   }
-  #notebook-content {
-    margin-left: 300px;
-    height: 100%;
-    min-height: 400px;
+}
+// show add (+) button when logged in
+body.authenticated #notebook-filter {
+  padding-right: 50px;
+}
+
+
+// Notebook Content
+#notebook-content {
+  margin-left: 300px;
+  height: 100%;
+  overflow: hidden;
+  .editor-toggle {
+    background-color: rgba(0,0,0,0.1);
+    border-top-left-radius: 2px;
+    border-top-right-radius: 2px;
+    border: 1px solid rgba(0,0,0,0.1);
+    border-bottom-width: 0px;
+    font-size: 10px;
+    margin: 0px auto;
+    text-align: center;
+    width: 150px;
+    cursor: pointer;
+    user-select: none;
   }
 }
 
 
-// show add (+) button when logged in
-body.authenticated #notebook-filter {
-  padding-right: 50px;
+// Toggle Editing Mode
+#notebook-editor {
+  height: 0px;
+  opacity: 0.4;
+  transition: height 0.5s ease, opacity 0.5s ease;
+}
+body.notebook.editing {
+  #notebook-editor {
+    height: 390px;
+    opacity: 1;
+  }
 }
 
 
