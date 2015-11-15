@@ -98,29 +98,3 @@ body.notebook.editing {
     opacity: 1;
   }
 }
-
-
-// CodeMirror Settings
-#notebook-editor {
-  .cm-s-blackboard.CodeMirror {
-    background: rgba(0,0,0,0.1);
-    height: 300px;
-  }
-  .cm-s-blackboard .CodeMirror-gutters {
-    background: #202020;
-  }
-  .CodeMirror-simplescroll-horizontal div, .CodeMirror-simplescroll-vertical div {
-    background: #333;
-    border: 1px solid #444;
-    border-radius: 0px;
-  }
-  .CodeMirror-simplescroll-horizontal, .CodeMirror-simplescroll-vertical {
-    background: #282828;
-  }
-  .CodeMirror-overlayscroll-horizontal div, .CodeMirror-overlayscroll-vertical div {
-    background: #f00;
-  }
-  .CodeMirror-scrollbar-filler, .CodeMirror-gutter-filler {
-    background-color: #222;
-  }
-}

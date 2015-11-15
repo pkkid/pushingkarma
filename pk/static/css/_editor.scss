@@ -69,5 +69,18 @@
 
 // CodeMirror Settings
 .cm-s-blackboard.CodeMirror {
+  background-color: rgba(0,0,0,0.1);
   font-size: 10px;
+  height: 300px;
+}
+.CodeMirror-simplescroll-horizontal, .CodeMirror-simplescroll-vertical {
+  background-color: #9B9781;
+}
+.CodeMirror-simplescroll-horizontal div, .CodeMirror-simplescroll-vertical div {
+  background-color: #87826A;
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 0px;
+}
+.CodeMirror-scrollbar-filler, .CodeMirror-gutter-filler {
+  background-color: transparent;
 }
