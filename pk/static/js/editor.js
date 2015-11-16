@@ -8,7 +8,7 @@ pk.editor = {
     
     init: function(selector, opts) {
         this.container = $(selector);
-        this.opts = $.extend({}, this.defaults, opts);
+        this.opts = $.extend(true, {}, this.defaults, opts);
         if (this.container.length === 0) { return; }
         console.debug('init pk.editor: '+ selector);
         this.menu = this.container.find('.editor-menu');
@@ -162,9 +162,9 @@ pk.editor = {
             lineNumbers: false,
             lineWrapping: false,
             matchBrackets: true,
-            mode: 'xml',
+            mode: 'gfm',
             scrollbarStyle: 'simple',
-            theme: 'blackboard',
+            theme: 'default',
         },
     },
 

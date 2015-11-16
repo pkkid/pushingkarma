@@ -4,7 +4,9 @@
 {% block js %}
   <script type='text/javascript'>
     $(function() {
-      pk.pages.init('#pages-editor');
+      pk.pages.init('#pages-editor', {
+        codemirror: {mode:'xml', theme:'blackboard'}
+      });
     });
   </script>
 {% endblock %}

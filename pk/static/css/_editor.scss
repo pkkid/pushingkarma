@@ -68,10 +68,18 @@
 }
 
 // CodeMirror Settings
-.cm-s-blackboard.CodeMirror {
-  background-color: rgba(0,0,0,0.1);
+.CodeMirror {
   font-size: 10px;
   height: 300px;
+}
+.cm-s-default.CodeMirror {
+  background: rgba(0,0,0,0.1);
+}
+.cm-s-default div.CodeMirror-selected, 
+.cm-s-default.CodeMirror-line::selection,
+.cm-s-default.CodeMirror-line > span::selection,
+.cm-s-default.CodeMirror-line > span > span::selection {
+  background-color: rgba(0,0,0,0.2);
 }
 .CodeMirror-simplescroll-horizontal, .CodeMirror-simplescroll-vertical {
   background-color: #9B9781;

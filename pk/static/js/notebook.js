@@ -5,8 +5,9 @@
 
 pk.notebook = {
 
-    init: function() {
-        console.log('init notebook');
+    init: function(selector) {
+        this.container = $(selector);
+        console.debug('init pk.notebook: '+ selector);
     },
 
 };

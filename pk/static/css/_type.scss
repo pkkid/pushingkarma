@@ -3,18 +3,13 @@
 //--------------------------------------------------------
 
 ::selection {
-  background-color: #53843B;
+  background-color: rgba(0,0,0,0.2);
   color: #fff;
 }
 .first { margin-top: 0px; }
 
-a {
-  color: #005500;
-}
-a.invalid {
-  color: #a00;
-}
-
+a { color: #005500; }
+a.invalid { color: #a00; }
 
 h1, h2, h3, h1 a, h2 a, h3 a {
   color: #55321A;
@@ -28,7 +23,6 @@ h3 { font-size: 16px; margin: 5px 0px 5px 0px; }
 h1:first-child { margin-top: 0px; }
 
 p {
-  //font-family: $basefonts;
   font-size: 15px;
   line-height: 1.6em;
 }

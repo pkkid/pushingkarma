@@ -38,6 +38,7 @@ gulp.task('codemirror-css', function() {
     './pk/static/bower/codemirror/lib/codemirror.css',
     './pk/static/bower/codemirror/addon/scroll/simplescrollbars.css',
     './pk/static/bower/codemirror/theme/blackboard.css',
+    './pk/static/bower/codemirror/theme/solarized.css',
   ])
   .pipe(concat('codemirror.css', {newLine:'\n\n\n'}))
   .pipe(gulp.dest('./pk/static/dist'));
