@@ -1,30 +1,31 @@
 {% extends 'base.html' %}
 {% block bodyclass %}{{block.super}} notebook {{editing|yesno:'editing,'}}{% endblock %}
 
+{% block js %}
+  <script type='text/javascript'>
+    $(function() {
+      pk.editor.init('#notebook-editor');
+    });
+  </script>
+{% endblock %}
 
 {% block content %}
   <div id='notebook'>
-    
-    <!-- List -->
+    <!-- Side Panel -->
     <div id='notebook-list'>
       <input id='notebook-filter' type='text'/>
       {% if user.is_authenticated %}
         <div id='notebook-add' data-toggle='tooltip' data-placement='right' title='Add New Note'><i class='icon-plus'></i></div>
       {% endif %}
     </div>
-
-    <!-- Content -->
+    <!-- Note Content -->
     <div id='notebook-content'>
-    
-      <!-- Note -->
       <div id='note'>Content</div>
-
       <!-- Editor -->
       {% if user.is_authenticated %}
         <hr class='fancy'/>
         <div class='editor-toggle'>Toggle Editor</div>
         <div id='notebook-editor' class='editor no-preload-animation'>
-          {# <div class='editor-toggle'></div> #}
           <div class='editor-menu'>
             <span class='editor-title'>Markdown Editor</span>
             <span class='editor-reset action'>Reset</span>
@@ -37,7 +38,6 @@
           <input name='tags' placeholder='Tags' autocomplete='off'/>
         </div>
       {% endif %}
-
     </div>
   </div>
 {% endblock content %}

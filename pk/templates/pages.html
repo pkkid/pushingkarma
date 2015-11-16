@@ -1,6 +1,15 @@
 {% extends 'base.html' %}
 {% block bodyclass %}{{block.super}} pages {{editing|yesno:'editing,'}}{% endblock %}
 
+{% block js %}
+  <script type='text/javascript'>
+    $(function() {
+      pk.pages.init('#pages-editor');
+    });
+  </script>
+{% endblock %}
+
+<!-- Editor -->
 {% block layoutwrap %}
   {% if user.is_authenticated %}
     <div id='pages-editor' class='editor no-preload-animation'>
@@ -26,9 +35,7 @@
   {{block.super}}
 {% endblock %}
 
-
+<!-- Page Content -->
 {% block content %}
-  <div id='page'>
-    {{page.html|safe}}
-  </div>
+  <div id='page'>{{page.html|safe}}</div>
 {% endblock content %}

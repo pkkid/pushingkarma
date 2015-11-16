@@ -3,12 +3,13 @@
  *------------------------------------------------------- */
 'use strict';
 
-(function() {
+// pk namespace and constants
+var pk = {  // jshint ignore:line
+    ANIMATIONEND: 'webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend',
+};
 
+$(function() {
     pk.utils.enable_animations();
     pk.utils.init_tooltips();
     pk.login.init();
-    pk.pages.init('#pages-editor');
-    pk.editor.init('#notebook-editor');
-
-})();
+});

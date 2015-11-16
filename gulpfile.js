@@ -14,57 +14,50 @@ var watch = require('gulp-watch');
 
 // Javascript
 gulp.task('js', function() {
-  gulp.src([
-      './pk/static/js/utils.js',
-      './pk/static/js/login.js',
-      './pk/static/js/editor.js',
-      './pk/static/js/pages.js',
-      './pk/static/js/plugins.js',
-      './pk/static/js/init.js',
-    ])
-    .pipe(concat('pushingkarma.js', {newLine:'\n\n\n'}))
-    .pipe(gulp.dest('./pk/static/dist'));
+  gulp.src('./pk/static/js/*.js')
+  .pipe(concat('pushingkarma.js', {newLine:'\n\n\n'}))
+  .pipe(gulp.dest('./pk/static/dist'));
 });
 
 
 // CSS
 gulp.task('css', function () {
   gulp.src('pk/static/css/pushingkarma.scss')
-    .pipe(sourcemaps.init())
-    .pipe(sass({style:'expanded'}))
-    .on('error', sass.logError)
-    .pipe(autoprefixer('last 2 versions', '> 1%'))
-    .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest('./pk/static/dist'));
+  .pipe(sourcemaps.init())
+  .pipe(sass({style:'expanded'}))
+  .on('error', sass.logError)
+  .pipe(autoprefixer('last 2 versions', '> 1%'))
+  .pipe(sourcemaps.write('.'))
+  .pipe(gulp.dest('./pk/static/dist'));
 });
 
 
 // Codemirror
 gulp.task('codemirror-css', function() {
   gulp.src([
-      './pk/static/bower/codemirror/lib/codemirror.css',
-      './pk/static/bower/codemirror/addon/scroll/simplescrollbars.css',
-      './pk/static/bower/codemirror/theme/blackboard.css',
-    ])
-    .pipe(concat('codemirror.css', {newLine:'\n\n\n'}))
-    .pipe(gulp.dest('./pk/static/dist'));
+    './pk/static/bower/codemirror/lib/codemirror.css',
+    './pk/static/bower/codemirror/addon/scroll/simplescrollbars.css',
+    './pk/static/bower/codemirror/theme/blackboard.css',
+  ])
+  .pipe(concat('codemirror.css', {newLine:'\n\n\n'}))
+  .pipe(gulp.dest('./pk/static/dist'));
 });
 gulp.task('codemirror-js', function() {
   gulp.src([
-      './pk/static/bower/codemirror/lib/codemirror.js',
-      './pk/static/bower/codemirror/addon/mode/overlay.js',
-      './pk/static/bower/codemirror/addon/scroll/simplescrollbars.js',
-      './pk/static/bower/codemirror/mode/css/css.js',
-      './pk/static/bower/codemirror/mode/django/django.js',
-      './pk/static/bower/codemirror/mode/gfm/gfm.js',
-      './pk/static/bower/codemirror/mode/javascript/javascript.js',
-      './pk/static/bower/codemirror/mode/markdown/markdown.js',
-      './pk/static/bower/codemirror/mode/python/python.js',
-      './pk/static/bower/codemirror/mode/sass/sass.js',
-      './pk/static/bower/codemirror/mode/xml/xml.js',
-    ])
-    .pipe(concat('codemirror.js', {newLine:'\n\n\n'}))
-    .pipe(gulp.dest('./pk/static/dist'));
+    './pk/static/bower/codemirror/lib/codemirror.js',
+    './pk/static/bower/codemirror/addon/mode/overlay.js',
+    './pk/static/bower/codemirror/addon/scroll/simplescrollbars.js',
+    './pk/static/bower/codemirror/mode/css/css.js',
+    './pk/static/bower/codemirror/mode/django/django.js',
+    './pk/static/bower/codemirror/mode/gfm/gfm.js',
+    './pk/static/bower/codemirror/mode/javascript/javascript.js',
+    './pk/static/bower/codemirror/mode/markdown/markdown.js',
+    './pk/static/bower/codemirror/mode/python/python.js',
+    './pk/static/bower/codemirror/mode/sass/sass.js',
+    './pk/static/bower/codemirror/mode/xml/xml.js',
+  ])
+  .pipe(concat('codemirror.js', {newLine:'\n\n\n'}))
+  .pipe(gulp.dest('./pk/static/dist'));
 });
 
 
