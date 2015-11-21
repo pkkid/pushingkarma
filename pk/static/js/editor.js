@@ -48,9 +48,9 @@ pk.editor = {
             self.save();
         });
         // update content timer
-        setInterval(function() {
-            self.update();
-        }, this.UPDATE_INTERVAL);
+        if (this.opts.output) {
+            setInterval(function() { self.update(); }, this.UPDATE_INTERVAL);
+        }
         // window resize
         $(window).on('resize', function(event) {
             self.resize_editor();
@@ -134,7 +134,8 @@ pk.editor = {
             return null;  // nothing to update
         var xhr = pk.utils.ajax('/markdown/', {'text':text});
         xhr.done(function(data, textStatus, jqXHR) {
-            $('#page').html(data.html);
+            if (self.opts.output)
+                $(self.opts.output).html(data.html);
             self.update_includes(data.includes);
             self.resize_editor();
         });
@@ -153,10 +154,11 @@ pk.editor = {
     },
 
     defaults: {
-        url_save: null,                     // url to save contents
-        url_markdown: '/markdown/',         // url converts markdown to html
-        callback_resize: null,              // callback to resize editor
-        codemirror: {                       // default codemirror opts
+        url_save: null,                 // url to save contents
+        url_markdown: '/markdown/',     // url converts markdown to html
+        callback_resize: null,          // callback to resize editor
+        output: null,                   // Selector for markdown output
+        codemirror: {                   // default codemirror opts
             extraKeys: {'Enter': 'newlineAndIndentContinueMarkdownList'},
             htmlMode: true,
             lineNumbers: false,
