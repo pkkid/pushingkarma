@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load humanize %}
 {% block bodyclass %}{{block.super}} notebook {{editing|yesno:'editing,'}}{% endblock %}
 
 {% block js %}
@@ -6,6 +7,7 @@
     $(function() {
       pk.editor.init('#notebook-editor', {
         output: '#note',
+        scrollbottom: true,
       });
       pk.notebook.init('#notebook');
     });
@@ -22,9 +24,13 @@
       {% endif %}
       <div id='notebook-list'>
         {% for note in notes %}
-          <div class='notebook-item'>
-            {{note.title}}
-          </div>
+          <a class='notebook-item' href='#'>
+            <div class='title'>{{note.title}}</div>
+            <div class='subtext'>
+              <span class='date'><span class='icon-clock'></span> {{note.created|naturaltime}}</span>
+              <span class='tags' style='margin-left:10px;'><span class='icon-price-tag'></span> {{note.tags|join:', '}}</span>
+            </div>
+          </a>
         {% endfor %}
       </div>
     </div>
