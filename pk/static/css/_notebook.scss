@@ -5,6 +5,7 @@ $NOTEFILTER_HEIGHT: 40px;
 
 #note {
   min-height: 200px;
+  padding: 20px;
 }
 
 
@@ -12,7 +13,7 @@ $NOTEFILTER_HEIGHT: 40px;
 #notebook {
   @include clearfix();
   position: relative;
-  #notebook-list {
+  #notebook-sidepanel {
     background-color: rgba(0,0,0,0.1);
     border-right: 1px solid rgba(0,0,0,0.1);
     height: 100%;

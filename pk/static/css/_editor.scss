@@ -47,6 +47,7 @@
       @include spinner(16px, 1px, #887);
       float: left;
       margin: 2px;
+      margin: 7px 0px;
     }
     span.editor-message {
       float: left;
@@ -62,6 +63,7 @@
     text-transform: uppercase;
   }
   input[name=title] {
+    color: #222;
     border-top: 1px solid rgba(0,0,0,0.1);
     font-size: 20px;
   }

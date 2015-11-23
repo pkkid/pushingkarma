@@ -15,11 +15,18 @@
 {% block content %}
   <div id='notebook'>
     <!-- Side Panel -->
-    <div id='notebook-list'>
+    <div id='notebook-sidepanel'>
       <input id='notebook-filter' type='text'/>
       {% if user.is_authenticated %}
         <div id='notebook-add' data-toggle='tooltip' data-placement='right' title='Add New Note'><i class='icon-plus'></i></div>
       {% endif %}
+      <div id='notebook-list'>
+        {% for note in notes %}
+          <div class='notebook-item'>
+            {{note.title}}
+          </div>
+        {% endfor %}
+      </div>
     </div>
     <!-- Note Content -->
     <div id='notebook-content'>
@@ -37,6 +44,7 @@
             <span class='editor-message'></span>
           </div>
           <input name='title' placeholder='Title' autocomplete='off'/>
+          <input name='id' type='hidden'/>
           <textarea style='display:none;'>{{note.body}}</textarea>
           <input name='tags' placeholder='Tags' autocomplete='off'/>
         </div>

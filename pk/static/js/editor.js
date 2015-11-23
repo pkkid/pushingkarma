@@ -17,8 +17,8 @@ pk.editor = {
         this.message = this.container.find('.editor-message');
         this.includes = this.container.find('.editor-includes');
         this.codemirror = this.init_codemirror();
-        this.last_updated_text = this.codemirror.getValue();
-        this.last_saved_text = this.last_updated_text;
+        this.last_updated_data = this.data();
+        this.last_saved_data = this.last_updated_data;
         this.init_triggers();
         this.init_shortcuts();
         this.resize_editor();
@@ -73,12 +73,23 @@ pk.editor = {
         }, false);
     },
 
+    data: function() {
+        return {
+            'text': this.codemirror.getValue(),
+            'id': this.container.find('[name=id]').val(),
+            'title': this.container.find('[name=title]').val(),
+            'tags': this.container.find('[name=tags]').val(),
+        };
+    },
+
     editing: function() {
         return $('body').hasClass('editing');
     },
 
     reset: function() {
-        this.codemirror.setValue(this.last_saved_text);
+        this.container.find('[name=title]').val(this.last_saved_data.title);
+        this.codemirror.setValue(this.last_saved_data.text);
+        this.container.find('[name=tags]').val(this.last_saved_data.tags);
     },
 
     resize_editor: function() {
@@ -88,26 +99,25 @@ pk.editor = {
     save: function() {
         var self = this;
         this.spinner.addClass('on');
-        var text = this.codemirror.getValue();
-        var data = {
-            'text': text,
-            'id': this.container.find('[name=id]').val(),
-            'title': this.container.find('[name=title]').val(),
-            'tags': this.container.find('[name=tags]').val(),
-        };
-        var xhr = pk.utils.ajax(window.location.pathname, data);
+        var xhr = pk.utils.ajax(window.location.pathname, this.data());
         xhr.done(function(data, textStatus, jqXHR) {
-            self.last_saved_text = text;
+            console.log('111');
+            console.log(data);
+            if (data.id) { self.container.find('[name=id]').val(data.id); }
+            self.last_saved_data = data;
+            console.log('222');
             self.show_message('<i class="icon-checkmark"></i>&nbsp;Saved');
         });
         xhr.fail(function(jqXHR, textStatus, errorThrown) {
             self.show_message('<i class="icon-notification"></i>&nbsp; Error');
         });
+        xhr.always(function() {
+            self.spinner.removeClass('on');
+        });
     },
 
     show_message: function(msg) {
         var self = this;
-        this.spinner.removeClass('on');
         this.message.html(msg);
         this.message.css('opacity', 1);
         setTimeout(function() { self.message.css('opacity', 0); }, 5000);
@@ -129,10 +139,10 @@ pk.editor = {
 
     update: function() {
         var self = this;
-        var text = this.codemirror.getValue();
-        if (!self.editing() || (text == this.last_updated_text))
+        var data = this.data();
+        if (!self.editing() || _.isEqual(data, this.last_updated_data))
             return null;  // nothing to update
-        var xhr = pk.utils.ajax('/markdown/', {'text':text});
+        var xhr = pk.utils.ajax('/markdown/', data);
         xhr.done(function(data, textStatus, jqXHR) {
             if (self.opts.output)
                 $(self.opts.output).html(data.html);
@@ -140,7 +150,7 @@ pk.editor = {
             self.resize_editor();
         });
         xhr.always(function() {
-            self.last_updated_text = text;
+            self.last_updated_data = data;
         });
     },
 
