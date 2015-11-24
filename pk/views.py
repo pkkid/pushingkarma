@@ -17,7 +17,7 @@ def markdown(request):
     return response_json_success({'html':html, 'includes':includes})
 
 
-def notebook(request, template='notebook.html'):
+def notebook(request, slug=None, template='notebook.html'):
     data = context.core(request, menuitem='notebook')
     if request.method == 'POST':
         noteid = request.POST.get('id') or None

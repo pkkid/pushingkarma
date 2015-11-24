@@ -32,6 +32,7 @@ class Note(TimeStampedModel):
             body = self.body,
             html = html,
             tags = self.tags.split(' '),
+            url = self.url(),
             includes = includes,
             created = self.created,
             modified = self.modified,
