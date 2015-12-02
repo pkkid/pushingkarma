@@ -5,7 +5,6 @@ Copyright (c) 2015 PushingKarma. All rights reserved.
 """
 from .secrets import *  # noqa
 import platform
-import debug_toolbar.middleware
 from os.path import abspath, dirname, join
 
 # Django Core Settings
@@ -79,13 +78,10 @@ DBBACKUP_FILENAME_TEMPLATE = '{servername}-{datetime}.{extension}'
 
 # Debug Settings
 if DEBUG:
-    INSTALLED_APPS = INSTALLED_APPS + (
-        #'django.contrib.staticfiles',
-        'debug_toolbar',
-    )
-
+    import debug_toolbar.middleware
+    INSTALLED_APPS = INSTALLED_APPS + ('debug_toolbar',)
     DEBUG_TOOLBAR_CONFIG = {'INTERCEPT_REDIRECTS': False}
-    def show_toolbar_monkeypatch(request):  # noqa
+    def show_toolbar_monkeypatch(request):
         if request.META.get('REMOTE_ADDR', None) not in INTERNAL_IPS: return False
         if request.is_ajax(): return False
         return request.GET.get('debug')
