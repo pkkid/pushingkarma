@@ -144,8 +144,13 @@ pk.editor = {
             return null;  // nothing to update
         var xhr = pk.utils.ajax('/markdown/', data);
         xhr.done(function(data, textStatus, jqXHR) {
-            if (self.opts.output)
+            if ((self.opts.output) && (self.opts.scrollbottom)) {
+                var sbot = $(window).scrollBottom();
                 $(self.opts.output).html(data.html);
+                $(window).scrollBottom(sbot);
+            } else if (self.opts.output) {
+                $(self.opts.output).html(data.html);
+            }
             self.update_includes(data.includes);
             self.resize_editor();
         });
@@ -168,6 +173,7 @@ pk.editor = {
         url_markdown: '/markdown/',     // url converts markdown to html
         callback_resize: null,          // callback to resize editor
         output: null,                   // Selector for markdown output
+        scrollbottom: false,            // Set true when update is above editor
         codemirror: {                   // default codemirror opts
             extraKeys: {'Enter': 'newlineAndIndentContinueMarkdownList'},
             htmlMode: true,

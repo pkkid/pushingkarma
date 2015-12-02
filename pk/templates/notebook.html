@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load humanize %}
 {% block bodyclass %}{{block.super}} notebook {{editing|yesno:'editing,'}}{% endblock %}
 
 {% block js %}
@@ -19,15 +20,21 @@
       {% endif %}
       <div id='notebook-list'>
         {% for note in notes %}
-          <div class='notebook-item'>
-            {{note.title}}
-          </div>
+          <a class='notebook-item' href='{{note.url}}'>
+            <div class='title'>{{note.title}}</div>
+            <div class='subtext'>
+              <span class='date'><span class='icon-clock'></span> {{note.created|naturaltime}}</span>
+              <span class='tags' style='margin-left:10px;'><span class='icon-price-tag'></span> {{note.tags|join:', '}}</span>
+            </div>
+          </a>
         {% endfor %}
       </div>
     </div>
     <!-- Note Content -->
     <div id='notebook-content'>
-      <div id='note'>Content</div>
+      <div id='note'>
+        {{note.html|safe}}
+      </div>
       <!-- Editor -->
       {% if user.is_authenticated %}
         <hr class='fancy'/>
@@ -40,10 +47,10 @@
             <span class='editor-spinner'></span>
             <span class='editor-message'></span>
           </div>
-          <input name='title' placeholder='Title' autocomplete='off'/>
+          <input name='title' placeholder='Title' autocomplete='off' value='{{note.title}}'/>
           <input name='id' type='hidden'/>
           <textarea style='display:none;'>{{note.body}}</textarea>
-          <input name='tags' placeholder='Tags' autocomplete='off'/>
+          <input name='tags' placeholder='Tags' autocomplete='off' value='{{note.tags}}'/>
         </div>
       {% endif %}
     </div>

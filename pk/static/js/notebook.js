@@ -16,6 +16,7 @@ pk.notebook = {
     init_editor: function() {
         pk.editor.init(this.EDITOR_SELECTOR, {
             output: this.NOTE_SELECTOR,
+            scrollbottom: true,
         });
     },
 

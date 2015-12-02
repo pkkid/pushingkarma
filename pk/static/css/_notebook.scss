@@ -42,6 +42,7 @@ $NOTEFILTER_HEIGHT: 40px;
       height: $NOTEFILTER_HEIGHT;
       position: relative;
       width: 100%;
+      border-bottom: 1px solid rgba(0,0,0,0.2);
     }
     #notebook-add {
       width: $NOTEFILTER_HEIGHT;
@@ -56,6 +57,39 @@ $NOTEFILTER_HEIGHT: 40px;
       &:hover {
         background-color: rgba(0,0,0,0.2);
         color: #2E2B25;
+      }
+    }
+    .notebook-item {
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+      border-top: 1px solid rgba(255,255,255,0.1);
+      display: block;
+      height: 45px;
+      padding: 5px;
+      text-decoration: none;
+      &:first-child {
+        border-top-width: 0px;
+      }
+      .title {
+        color: #55321A;
+        line-height: 18px;
+        font-size: 18px;
+        font-family: $font-family-navbar;
+      }
+      .subtext {
+        color: rgba(0,0,0,0.4);
+        font-size: 9px;
+        font-family: $font-family-sans-serif;
+        line-height: 18px;
+        [class^="icon-"], [class*=" icon-"] {
+          opacity: 0.7;
+          position: relative;
+          top: 1px;
+        }
+      }
+      &:hover {
+        background-color: rgba(0,0,0,0.1);
+        .title { color: darken(#55321A, 10%); }
+        .subtext { color: rgba(0,0,0,0.7); }
       }
     }
   }
