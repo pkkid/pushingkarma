@@ -7,6 +7,7 @@ from pk.models import Note, Page
 from pk.utils import context, markdown as md
 from pk.utils import get_object_or_none, response
 from pk.utils import response_json_success
+from pk.serializers import PageSerializer
 
 
 def markdown(request):
@@ -18,7 +19,7 @@ def markdown(request):
     return response_json_success({'html': html, 'includes': includes})
 
 
-def notebook(request, slug=None, template='notebook.html'):
+def note(request, slug=None, template='note.html'):
     data = context.core(request, menuitem='notebook')
     noteid = request.POST.get('id') or None
     note = get_object_or_none(Note, id=noteid) if noteid else None
@@ -40,18 +41,8 @@ def notebook(request, slug=None, template='notebook.html'):
     return response(request, template, data)
 
 
-def pages(request, slug='/', template='pages.html'):
-    slug = slug or '/'
-    page = get_object_or_none(Page, slug=slug) or Page(slug=slug)
-    if request.method == 'POST':
-        page.body = request.POST.get('text')
-        if page.body:
-            page.save()
-            return response_json_success(page.dict())
-        else:
-            page.delete()
-            return response_json_success()
+def page(request, slug='/', template='page.html'):
     data = context.core(request, menuitem='projects')
-    data.page = page.dict()
+    data.page = get_object_or_none(Page, slug=slug) or Page(slug=slug)
     data.editing = bool(request.COOKIES.get('editing'))
     return response(request, template, data)

@@ -33,7 +33,7 @@ gulp.task('css', function () {
 
 
 // Codemirror
-gulp.task('codemirror-css', function() {
+gulp.task('codemirror', function() {
   gulp.src([
     './pk/static/bower/codemirror/lib/codemirror.css',
     './pk/static/bower/codemirror/addon/scroll/simplescrollbars.css',
@@ -42,8 +42,6 @@ gulp.task('codemirror-css', function() {
   ])
   .pipe(concat('codemirror.css', {newLine:'\n\n\n'}))
   .pipe(gulp.dest('./pk/static/dist'));
-});
-gulp.task('codemirror-js', function() {
   gulp.src([
     './pk/static/bower/codemirror/lib/codemirror.js',
     './pk/static/bower/codemirror/addon/mode/overlay.js',
@@ -75,4 +73,4 @@ gulp.task('watch', function () {
 
 
 // Default
-gulp.task('default', ['js', 'css', 'codemirror-css', 'codemirror-js']);
+gulp.task('default', ['js', 'css', 'codemirror']);

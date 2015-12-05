@@ -11,49 +11,54 @@ from pk.utils import markdown
 
 
 class Note(TimeStampedModel):
+    slug = models.SlugField(editable=False, primary_key=True)
     title = models.CharField(max_length=255)
-    slug = models.SlugField()
     body = models.TextField(help_text='markdown format')
     tags = models.CharField(max_length=255, blank=True, help_text='space delimited')
+
+    def __str__(self):
+        return '<%s:%s>' % (self.__class__.__name__, self.slug)
+
+    def apiurl(self):
+        return reverse('notes-detail')
+
+    def weburl(self):
+        return reverse('note', kwargs={'slug':self.slug})
+
+    def html(self):
+        if getattr(self, '_html', None) is None:
+            self._html, self._includes = markdown.text_to_html(self.body)
+        return self._html
+
+    def includes(self):
+        if getattr(self, '_includes', None) is None:
+            self.html()
+        return self._includes
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.title)
         super(Note, self).save(*args, **kwargs)
 
-    def url(self):
-        return reverse('note', kwargs={'slug':self.slug})
-
-    def dict(self):
-        html, includes = markdown.text_to_html(self.body)
-        return dict(
-            id = self.id,
-            title = self.title,
-            slug = self.slug,
-            body = self.body,
-            html = html,
-            tags = self.tags.split(' '),
-            url = self.url(),
-            includes = includes,
-            created = self.created,
-            modified = self.modified,
-        )
-
 
 class Page(TimeStampedModel):
-    slug = models.CharField(max_length=255, unique=True)
+    slug = models.CharField(max_length=255, primary_key=True)
     body = models.TextField(help_text='markdown format')
 
-    def url(self):
+    def __str__(self):
+        return '<%s:%s>' % (self.__class__.__name__, self.slug)
+
+    def apiurl(self):
+        return reverse('pages-detail')
+
+    def weburl(self):
         return reverse('page', kwargs={'slug':self.slug})
 
-    def dict(self):
-        html, includes = markdown.text_to_html(self.body)
-        return dict(
-            id = self.id,
-            slug = self.slug,
-            body = self.body,
-            html = html,
-            includes = includes,
-            created = self.created,
-            modified = self.modified,
-        )
+    def html(self):
+        if getattr(self, '_html', None) is None:
+            self._html, self._includes = markdown.text_to_html(self.body)
+        return self._html
+
+    def includes(self):
+        if getattr(self, '_includes', None) is None:
+            self.html()
+        return self._includes

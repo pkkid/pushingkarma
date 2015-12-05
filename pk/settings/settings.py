@@ -33,6 +33,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.staticfiles',
     'django.contrib.messages',
+    'rest_framework',
     'dbbackup',
     'pk',
 )
@@ -69,6 +70,10 @@ CACHES = {'default': {
     'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
     'LOCATION': 'django_cache',
 }}
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAdminUser',),
+    'PAGE_SIZE': 100
+}
 
 
 # DBBackup Settings
@@ -77,12 +82,12 @@ DBBACKUP_FILENAME_TEMPLATE = '{servername}-{datetime}.{extension}'
 
 
 # Debug Settings
-if DEBUG:
-    import debug_toolbar.middleware
-    INSTALLED_APPS = INSTALLED_APPS + ('debug_toolbar',)
-    DEBUG_TOOLBAR_CONFIG = {'INTERCEPT_REDIRECTS': False}
-    def show_toolbar_monkeypatch(request):
-        if request.META.get('REMOTE_ADDR', None) not in INTERNAL_IPS: return False
-        if request.is_ajax(): return False
-        return request.GET.get('debug')
-    debug_toolbar.middleware.show_toolbar = show_toolbar_monkeypatch
+# if DEBUG:
+#     import debug_toolbar.middleware
+#     INSTALLED_APPS = INSTALLED_APPS + ('debug_toolbar',)
+#     DEBUG_TOOLBAR_CONFIG = {'INTERCEPT_REDIRECTS': False}
+#     def show_toolbar_monkeypatch(request):
+#         if request.META.get('REMOTE_ADDR', None) not in INTERNAL_IPS: return False
+#         if request.is_ajax(): return False
+#         return request.GET.get('debug')
+#     debug_toolbar.middleware.show_toolbar = show_toolbar_monkeypatch

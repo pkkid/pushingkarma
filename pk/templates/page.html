@@ -6,7 +6,8 @@
     $(function() {
       pk.pages.init('#pages-editor', {
         output: '#page',
-        codemirror: {mode:'xml', theme:'blackboard'}
+        codemirror: {mode:'xml', theme:'blackboard'},
+        initpage: '{{slug}}',
       });
     });
   </script>
