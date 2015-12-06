@@ -7,7 +7,7 @@ from django.core.urlresolvers import reverse
 from django.db import models
 from django.template.defaultfilters import slugify
 from django_extensions.db.models import TimeStampedModel
-from pk.utils import markdown
+from pk.utils.markdown import Markdown
 
 
 class Note(TimeStampedModel):
@@ -26,14 +26,9 @@ class Note(TimeStampedModel):
         return reverse('note', kwargs={'slug':self.slug})
 
     def html(self):
-        if getattr(self, '_html', None) is None:
-            self._html, self._includes = markdown.text_to_html(self.body)
-        return self._html
-
-    def includes(self):
-        if getattr(self, '_includes', None) is None:
-            self.html()
-        return self._includes
+        if getattr(self, '_md', None) is None:
+            self._md = Markdown(self.body)
+        return self._md.html
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.title)
@@ -54,11 +49,10 @@ class Page(TimeStampedModel):
         return reverse('page', kwargs={'slug':self.slug})
 
     def html(self):
-        if getattr(self, '_html', None) is None:
-            self._html, self._includes = markdown.text_to_html(self.body)
-        return self._html
+        if getattr(self, '_md', None) is None:
+            self._md = Markdown(self.body, Page, '/p/')
+        return self._md.html
 
-    def includes(self):
-        if getattr(self, '_includes', None) is None:
-            self.html()
-        return self._includes
+    def meta(self):
+        self.html()  # html must be rendered
+        return self._md.meta

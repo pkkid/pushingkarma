@@ -3,40 +3,34 @@
 """
 Copyright (c) 2015 PushingKarma. All rights reserved.
 """
-from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from rest_framework.response import Response
 from pk.models import Note, Page
 from pk import serializers
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 
-class NotesViewSet(viewsets.ViewSet):
+class NotesViewSet(viewsets.ModelViewSet):
     queryset = Note.objects.order_by('-created')
+    serializer_class = serializers.NoteSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    list_fields = ['url', 'title', 'tags', 'created', 'modified']
 
-    def list(self, request):
-        queryset = Note.objects.order_by('-created')
-        serializer = serializers.NoteSerializer(queryset, context={'request':request},
-            many=True, fields=['url', 'title', 'tags'])
-        return Response(serializer.data)
-
-    def retrieve(self, request, pk=None):
-        queryset = Note.objects.all()
-        note = get_object_or_404(queryset, pk=pk)
-        serializer = serializers.NoteSerializer(note, context={'request':request})
+    def list(self, request, *args, **kwargs):
+        notes = Note.objects.order_by('-created')
+        serializer = serializers.NoteSerializer(notes, context={'request':request},
+            many=True, fields=self.list_fields)
         return Response(serializer.data)
 
 
-class PagesViewSet(viewsets.ViewSet):
+class PagesViewSet(viewsets.ModelViewSet):
     queryset = Page.objects.order_by('-created')
+    serializer_class = serializers.PageSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
+    list_fields = ['url', 'slug', 'created', 'modified']
 
-    def list(self, request):
+    def list(self, request, *args, **kwargs):
         queryset = Page.objects.order_by('-created')
         serializer = serializers.PageSerializer(queryset, context={'request':request},
-            many=True, fields=['url', 'slug'])
-        return Response(serializer.data)
-
-    def retrieve(self, request, pk=None):
-        queryset = Page.objects.all()
-        page = get_object_or_404(queryset, pk=pk)
-        serializer = serializers.PageSerializer(page, context={'request':request})
+            many=True, fields=self.list_fields)
         return Response(serializer.data)

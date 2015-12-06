@@ -19,16 +19,16 @@ api.register('notes', pk.api.NotesViewSet)
 api.register('pages', pk.api.PagesViewSet)
 
 urlpatterns = [
-    # Includes
+    # includes
     url(r'^admin/', include(admin.site.urls)),
     url(r'^api/', include(api.urls)),
-    # Misc Utils
+    # misc utils
     url(r'^404/$', template('404.html'), name='404'),
     url(r'^500/$', template('500.html'), name='500'),
     url(r'^auth/login/$', pk.utils.auth.user_login, name='auth_login'),
     url(r'^auth/logout/$', pk.utils.auth.user_logout, name='auth_logout'),
     url(r'^favicon\.ico$', redirect('/static/img/favicon.ico'), name='favicon'),
-    # PushingKarma
+    # pushingKarma
     url(r'^$', pk.views.page, name='index'),
     url(r'^n/$', pk.views.note, name='notebook'),
     url(r'^p/(?P<slug>.*?)/$', pk.views.page, name='page'),

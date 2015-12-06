@@ -4,51 +4,61 @@
 Copyright (c) 2015 PushingKarma. All rights reserved.
 """
 import gfm, re
+from collections import defaultdict
 from pk import utils
 
-INCLUDE_REGEX = '(<include\shref=[\'"]/p/([a-z0-9_/]+)[\'"]\s*/>)'
-INCLUDE_INVALID = '<a class="invalid" href="/p/%s">[template:%s]</a>'
-LINK_REGEX = '(<a\shref=[\'"]/p/([a-z0-9_/]+)[\'"]>(.+?)</a>)'
-LINK_VALID = '<a href="/p/%s">%s</a>'
-LINK_INVALID = '<a class="invalid" href="/p/%s">%s</a>'
-NO_CONTENT = 'Page contains no content.'
 
+class Markdown(object):
+    NO_CONTENT = 'Page contains no content.'
 
-def text_to_html(text):
-    text = gfm.markdown(text)
-    text, includes = _replace_includes(text)
-    text = _replace_invalid_links(text)
-    text = _remove_linefeeds(text)
-    return text or NO_CONTENT, includes
+    def __init__(self, text, cls=None, prefix='/'):
+        self.text = text
+        self.cls = cls
+        self.prefix = prefix
+        self.meta = defaultdict(set)
 
+    @property
+    def html(self):
+        if getattr(self, '_html', None) is None:
+            self._html = gfm.markdown(self.text)
+            if self.cls:
+                self._html = self._replace_includes(self._html)
+                self._html = self._replace_links(self._html)
+            self._html = self._remove_linefeeds(self._html)
+        return self._html or self.NO_CONTENT
 
-def _replace_includes(text):
-    from pk.models import Page
-    includes = set()
-    for match, href in re.findall(INCLUDE_REGEX, text):
-        includes.add(href)
-        page = utils.get_object_or_none(Page, slug=href)
-        if page:
-            subhtml = text_to_html(page.body)[0]
-            text = text.replace(match, subhtml, 1)
-        else:
-            link = INCLUDE_INVALID % (href, href)
-            text = text.replace(match, link)
-    return text, sorted(includes)
+    def _replace_includes(self, html):
+        regex = '(<include\s+href=[\'"]%s([a-z_0-9]+)[\'"]\s*/>)' % self.prefix
+        for match, pk in re.findall(regex, html):
+            subitem = utils.get_object_or_none(self.cls, pk=pk)
+            if subitem:
+                submd = Markdown(subitem.body, self.cls)
+                subhtml = submd.html
+                html = html.replace(match, subhtml, 1)
+                self.meta['valid_includes'].add(pk)
+                for key in submd.meta:
+                    self.meta[key].union(submd.meta[key])
+            else:
+                href = '%s%s' % (self.prefix, pk)
+                link = '<a class="invalid" href="%s">[template:%s]</a>' % (href, href)
+                html = html.replace(match, link)
+                self.meta['invalid_includes'].add(pk)
+        return html
 
+    def _replace_links(self, html):
+        regex = '(<a\s+href=[\'"]%s([a-z_0-9]+)[\'"]>(.+?)</a>)' % self.prefix
+        for match, pk, txt in re.findall(regex, html):
+            subitem = utils.get_object_or_none(self.cls, pk=pk)
+            href = '%s%s' % (self.prefix, pk)
+            if subitem:
+                link = '<a href="%s">%s</a>' % (href, txt)
+                html = html.replace(match, link)
+                self.meta['valid_links'].add(pk)
+            else:
+                link = '<a class="invalid" href="%s">%s</a>' % (href, txt)
+                html = html.replace(match, link)
+                self.meta['invalid_links'].add(pk)
+        return html
 
-def _replace_invalid_links(text):
-    from pk.models import Page
-    for match, href, txt in re.findall(LINK_REGEX, text):
-        page = utils.get_object_or_none(Page, slug=href)
-        if page:
-            link = LINK_VALID % (href, txt)
-            text = text.replace(match, link)
-        else:
-            link = LINK_INVALID % (href, txt)
-            text = text.replace(match, link)
-    return text
-
-
-def _remove_linefeeds(text):
-    return text.replace('<br />', '\n')
+    def _remove_linefeeds(self, html):
+        return html.replace('<br />', '\n')

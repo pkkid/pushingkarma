@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import PasswordChangeForm
 from django.contrib.auth.models import User
+from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.views.decorators.http import require_POST
 from pk import utils
@@ -15,7 +16,8 @@ from pk import utils
 @require_POST
 def user_login(request):
     try:
-        test = utils.get_object_or_none(User, email=request.POST.get('email'))
+        email = request.POST.get('email')
+        test = utils.get_object_or_none(User, Q(email=email) | Q(username=email))
         passwd = request.POST.get('password')
         user = authenticate(username=test.username, password=passwd)
         if not user or not user.is_active:
