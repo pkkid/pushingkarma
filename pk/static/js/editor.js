@@ -11,6 +11,7 @@ pk.editor = {
         this.opts = $.extend(true, {}, this.defaults, opts);
         if (this.container.length === 0) { return; }
         console.debug('init pk.editor: '+ selector);
+        this.apiurl = '/api/'+ this.opts.type;
         this.menu = this.container.find('.editor-menu');
         this.footer = this.container.find('.editor-footer');
         this.spinner = this.container.find('.editor-spinner');
@@ -75,9 +76,11 @@ pk.editor = {
 
     data: function() {
         return {
-            'text': this.codemirror.getValue(),
-            'id': this.container.find('[name=id]').val(),
+            'pk': this.container.find('[name=pk]').val(),
+            'type': this.opts.type,
             'title': this.container.find('[name=title]').val(),
+            'slug': window.location.pathname.split('/').reverse()[0] || 'root',
+            'body': this.codemirror.getValue(),
             'tags': this.container.find('[name=tags]').val(),
         };
     },
@@ -88,7 +91,7 @@ pk.editor = {
 
     reset: function() {
         this.container.find('[name=title]').val(this.last_saved_data.title);
-        this.codemirror.setValue(this.last_saved_data.text);
+        this.codemirror.setValue(this.last_saved_data.body);
         this.container.find('[name=tags]').val(this.last_saved_data.tags);
     },
 
@@ -99,13 +102,14 @@ pk.editor = {
     save: function() {
         var self = this;
         this.spinner.addClass('on');
-        var xhr = pk.utils.ajax(window.location.pathname, this.data());
+        var data = this.data();
+        console.log(data);
+        var type = data.pk ? 'PUT' : 'POST';
+        var url = data.pk ? this.apiurl +'/'+ data.pk +'/' : this.apiurl +'/';
+        var xhr = pk.utils.ajax(url, data, type);
         xhr.done(function(data, textStatus, jqXHR) {
-            console.log('111');
-            console.log(data);
             if (data.id) { self.container.find('[name=id]').val(data.id); }
             self.last_saved_data = data;
-            console.log('222');
             self.show_message('<i class="icon-checkmark"></i>&nbsp;Saved');
         });
         xhr.fail(function(jqXHR, textStatus, errorThrown) {
@@ -169,12 +173,11 @@ pk.editor = {
     },
 
     defaults: {
-        url_save: null,                 // url to save contents
-        url_markdown: '/markdown/',     // url converts markdown to html
-        callback_resize: null,          // callback to resize editor
-        output: null,                   // Selector for markdown output
-        scrollbottom: false,            // Set true when update is above editor
-        codemirror: {                   // default codemirror opts
+        type: null,                 // (required) pages or notes
+        output: null,               // (required) selector for markdown output
+        callback_resize: null,      // callback to resize editor
+        scrollbottom: false,        // Set true when update is above editor
+        codemirror: {               // default codemirror opts
             extraKeys: {'Enter': 'newlineAndIndentContinueMarkdownList'},
             htmlMode: true,
             lineNumbers: false,

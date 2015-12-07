@@ -6,8 +6,8 @@
 pk.login = {
     logo: $('#logo'),
     form: $('#logo form'),
-    login_url: '/auth/login/',
-    logout_url: '/auth/logout/',
+    login_url: '/api/account/0/login/',
+    logout_url: '/api/account/0/logout/',
 
     init: function() {
         console.debug('init pk.login on #'+ this.logo.attr('id'));
@@ -52,10 +52,10 @@ pk.login = {
     login: function() {
         var self = this;
         var data = self.form.serializeArray();
-        var xhr = pk.utils.ajax(self.login_url, data);
+        var xhr = $.ajax({url:self.login_url, data:data, type:'POST', dataType:'json'});
         self.form.removeClass('error');
         xhr.done(function(data, textStatus, jqXHR) {
-            self.form.animatecss('tada', function() {
+            self.form.animatecss('pulse', function() {
                 location.reload();
             });
         });

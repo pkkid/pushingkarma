@@ -2,7 +2,7 @@
 // Copyright (c) 2015 PushingKarma. All rights reserved.
 //--------------------------------------------------------
 $EDITOR_WIDTH: 550px;
-$TOGGLE_WIDTH: 8px;
+$TOGGLE_WIDTH: 3px;
 
 #layoutwrap {
   position: relative;
@@ -29,16 +29,35 @@ $TOGGLE_WIDTH: 8px;
   height: calc(100% - 340px);
   transition: width 0.5s ease;
   position: absolute;
-  right: 0px;
-  .editor-toggle {
-    background-color: #111;
-    border-radius: 2px;
-    cursor: col-resize;
-    height: calc(100% - 4px);
-    right: -6px;
+  left: 1002px;
+  div.editor-toggle {
+    background-color: rgba(0,0,0,0.1);
+    border-radius: 6px;
+    cursor: pointer;
+    height: 30px;
+    left: -17px;
     position: absolute;
     top: 2px;
-    width: 4px;
+    width: 11px;
+    z-index: 100;
+    &:before,
+    &:after {
+      background-color: #666;
+      border-radius: 4px;
+      content: ' ';
+      display:block;
+      height: 10px;
+      left: 4px;
+      position: absolute;
+      top: 6px;
+      transform: rotate(-20deg);
+      transition: transform 0.5s ease;
+      width: 3px;
+    }
+    &:after {
+      top: 14px;
+      transform: rotate(20deg);
+    }
   }
   div.editor-menu,
   div.editor-includes {
@@ -68,6 +87,8 @@ body.pages.editing {
     margin-right: $TOGGLE_WIDTH;
     width: $EDITOR_WIDTH; 
     div.editor-menu, div.editor-includes { padding:0px 10px; }
+    div.editor-toggle:before { transform: rotate(20deg); }
+    div.editor-toggle:after { transform: rotate(-20deg); }
   }
 }
 

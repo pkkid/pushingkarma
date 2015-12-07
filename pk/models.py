@@ -11,7 +11,7 @@ from pk.utils.markdown import Markdown
 
 
 class Note(TimeStampedModel):
-    slug = models.SlugField(editable=False, primary_key=True)
+    slug = models.SlugField(editable=False)
     title = models.CharField(max_length=255)
     body = models.TextField(help_text='markdown format')
     tags = models.CharField(max_length=255, blank=True, help_text='space delimited')
@@ -36,7 +36,7 @@ class Note(TimeStampedModel):
 
 
 class Page(TimeStampedModel):
-    slug = models.CharField(max_length=255, primary_key=True)
+    slug = models.CharField(max_length=255)
     body = models.TextField(help_text='markdown format')
 
     def __str__(self):

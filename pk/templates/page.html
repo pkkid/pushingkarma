@@ -5,9 +5,9 @@
   <script type='text/javascript'>
     $(function() {
       pk.pages.init('#pages-editor', {
+        type: 'pages',
         output: '#page',
         codemirror: {mode:'xml', theme:'blackboard'},
-        initpage: '{{slug}}',
       });
     });
   </script>
@@ -17,6 +17,7 @@
 {% block layoutwrap %}
   {% if user.is_authenticated %}
     <div id='pages-editor' class='editor no-preload-animation'>
+      <input type='hidden' name='pk' value='{{page.pk|default:""}}'/>
       <div class='editor-toggle'></div>
       <div class='editor-menu'>
         <span class='editor-title'>Markdown Editor</span>

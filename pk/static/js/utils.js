@@ -4,14 +4,19 @@
 'use strict';
 
 pk.utils = {
-    ajax: function(url, data) {
-        var xhr = $.ajax({url:url, data:data, type:'POST', dataType:'json'});
+    ajax: function(url, data, type) {
+        type = type ? type : 'POST';
+        var xhr = $.ajax({url:url, data:data, type:type, dataType:'json'});
         return xhr.then(function(data, textStatus, jqXHR) {
             var deferred = new $.Deferred();
             if (!data.success) 
                 return deferred.reject(jqXHR, textStatus, data);
             return deferred.resolve(data, textStatus, jqXHR);
         });
+    },
+
+    basename: function(path) {
+        return path.split('/').reverse()[0];
     },
 
     enable_animations: function() {

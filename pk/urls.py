@@ -15,8 +15,10 @@ redirect = lambda url: RedirectView.as_view(url=url, permanent=False)
 template = lambda tmpl: TemplateView.as_view(template_name=tmpl)
 
 api = routers.DefaultRouter()
+api.register('account', pk.api.AccountViewSet)
 api.register('notes', pk.api.NotesViewSet)
 api.register('pages', pk.api.PagesViewSet)
+
 
 urlpatterns = [
     # includes
