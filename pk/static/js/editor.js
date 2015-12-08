@@ -5,7 +5,9 @@
 
 pk.editor = {
     UPDATE_INTERVAL: 1500,
-    
+    MESSAGE_SAVED: '<i class="icon-checkmark"></i>&nbsp;Saved',
+    MESSAGE_ERROR: '<i class="icon-notification"></i>&nbsp; Error',
+
     init: function(selector, opts) {
         this.container = $(selector);
         this.opts = $.extend(true, {}, this.defaults, opts);
@@ -103,17 +105,16 @@ pk.editor = {
         var self = this;
         this.spinner.addClass('on');
         var data = this.data();
-        console.log(data);
         var type = data.pk ? 'PUT' : 'POST';
-        var url = data.pk ? this.apiurl +'/'+ data.pk +'/' : this.apiurl +'/';
-        var xhr = pk.utils.ajax(url, data, type);
+        var url = data.pk ? this.apiurl +'/'+ data.pk +'/' : this.apiurl;
+        var xhr = $.ajax({url:url, data:data, type:type, dataType:'json'});
         xhr.done(function(data, textStatus, jqXHR) {
-            if (data.id) { self.container.find('[name=id]').val(data.id); }
+            self.container.find('[name=pk]').val(data.id || '');
             self.last_saved_data = data;
-            self.show_message('<i class="icon-checkmark"></i>&nbsp;Saved');
+            self.show_message(self.MESSAGE_SAVED);
         });
         xhr.fail(function(jqXHR, textStatus, errorThrown) {
-            self.show_message('<i class="icon-notification"></i>&nbsp; Error');
+            self.show_message(self.MESSAGE_ERROR);
         });
         xhr.always(function() {
             self.spinner.removeClass('on');
@@ -146,7 +147,7 @@ pk.editor = {
         var data = this.data();
         if (!self.editing() || _.isEqual(data, this.last_updated_data))
             return null;  // nothing to update
-        var xhr = pk.utils.ajax('/markdown/', data);
+        var xhr = $.ajax({url:'/markdown/', data:data, type:'POST', dataType:'json'});
         xhr.done(function(data, textStatus, jqXHR) {
             if ((self.opts.output) && (self.opts.scrollbottom)) {
                 var sbot = $(window).scrollBottom();

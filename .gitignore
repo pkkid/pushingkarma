@@ -3,6 +3,7 @@
 *.sqlite3
 *.sublime-*
 *.sass-cache*
+.env
 node_modules/*
 pk/static/bower/*
 pk/static/dist/*

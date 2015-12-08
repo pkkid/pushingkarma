@@ -55,7 +55,7 @@ pk.login = {
         var xhr = $.ajax({url:self.login_url, data:data, type:'POST', dataType:'json'});
         self.form.removeClass('error');
         xhr.done(function(data, textStatus, jqXHR) {
-            self.form.animatecss('pulse', function() {
+            self.form.animatecss('rubberBand', function() {
                 location.reload();
             });
         });

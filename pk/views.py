@@ -4,10 +4,8 @@
 Copyright (c) 2015 PushingKarma. All rights reserved.
 """
 from pk.models import Note, Page
-from pk.utils import context, markdown as md
-from pk.utils import get_object_or_none, response
-from pk.utils import response_json_success
-
+from pk.utils import get_object_or_none, context, response, response_json
+from pk.utils.markdown import Markdown
 
 def note(request, slug=None, template='note.html'):
     data = context.core(request, menuitem='notebook')
@@ -43,9 +41,19 @@ def page(request, slug='root', template='page.html'):
 
 
 def markdown(request):
-    text = request.POST.get('text', '')
-    title = request.POST.get('title')
-    html, includes = md.text_to_html(text)
-    if title:
-        html = '<h3>%s</h3>\n%s' % (title, html)
-    return response_json_success({'html': html, 'includes': includes})
+    body = request.POST.get('body', '')
+    mtype = request.POST.get('type')
+    if mtype == 'pages':
+        md = Markdown(body, Page, '/p/')
+        return response_json({'html':md.html, 'includes':md.includes})
+    elif mtype == 'notes':
+        # title = request.POST.get('title')
+        md = Markdown(body)
+        return response_json({'html':md.html})
+    return response_json({'message':'Unknown type'}, status=400)
+
+    # otype = request.POST.get('type')
+    # html, includes = md.text_to_html(text)
+    # if title:
+    #     html = '<h3>%s</h3>\n%s' % (title, html)
+    # return response_json_success({'html': html, 'includes': includes})

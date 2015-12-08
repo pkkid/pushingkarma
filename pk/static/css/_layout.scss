@@ -10,7 +10,7 @@ html {
   background-image: url('#{$imgroot}/layout/background-hardwood-dark.jpg');
   background-position: center top;
   color: #eee;
-  font-size: 14px; 
+  font-size: 14px;
 }
 body {
   background-color: transparent;
@@ -40,7 +40,7 @@ body {
     left: -$LAYOUT_BORDER_WIDTH;
     right: -$LAYOUT_BORDER_WIDTH;
     bottom: -$LAYOUT_BORDER_WIDTH;
-    background-image: url('#{$imgroot}/transparent/black-30.png');
+    background-color: rgba(0,0,0,0.3);
   }
   & > .container-fluid {
     padding: 0px;
@@ -49,7 +49,7 @@ body {
 header {
   @include clearfix();
   @include shine(0.8);
-  background-color: #252525; 
+  background-color: #252525;
   background-image: url('#{$imgroot}/layout/banner-china.jpg');
   background-position: 0px -20px;
   background-repeat: no-repeat;
@@ -91,7 +91,7 @@ footer {
 
   &:hover,
   &.enabled { background-color: rgba(0,0,0,0.8); }
-  .title, .subtitle { display: none; }  
+  .title, .subtitle { display: none; }
 }
 
 

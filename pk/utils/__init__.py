@@ -24,10 +24,10 @@ def response(request, template, data):
     return render_to_response(template, data, RequestContext(request))
 
 
-def response_json(data):
+def response_json(data, status=200):
     json.encoder.FLOAT_REPR = lambda f: ('%.5f' % f)  # fix floats
     data = json.dumps(dict(data), default=lambda x: str(x), sort_keys=True)
-    return HttpResponse(data, content_type='application/json')
+    return HttpResponse(data, content_type='application/json', status=status)
 
 
 def response_json_error(errors, data=None):
