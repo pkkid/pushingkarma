@@ -13,7 +13,7 @@ pk.editor = {
         this.opts = $.extend(true, {}, this.defaults, opts);
         if (this.container.length === 0) { return; }
         console.debug('init pk.editor: '+ selector);
-        this.apiurl = '/api/'+ this.opts.type;
+        this.apiurl = '/api/'+ this.opts.type +'/';
         this.menu = this.container.find('.editor-menu');
         this.footer = this.container.find('.editor-footer');
         this.spinner = this.container.find('.editor-spinner');
@@ -106,7 +106,7 @@ pk.editor = {
         this.spinner.addClass('on');
         var data = this.data();
         var type = data.pk ? 'PUT' : 'POST';
-        var url = data.pk ? this.apiurl +'/'+ data.pk +'/' : this.apiurl;
+        var url = data.pk ? this.apiurl + data.pk +'/' : this.apiurl;
         var xhr = $.ajax({url:url, data:data, type:type, dataType:'json'});
         xhr.done(function(data, textStatus, jqXHR) {
             self.container.find('[name=pk]').val(data.id || '');

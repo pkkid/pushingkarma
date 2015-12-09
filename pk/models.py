@@ -51,6 +51,8 @@ class Page(TimeStampedModel):
     def html(self):
         if getattr(self, '_md', None) is None:
             self._md = Markdown(self.body, Page, '/p/')
+            print('--------')
+            print(self._md.meta)
         return self._md.html
 
     def meta(self):

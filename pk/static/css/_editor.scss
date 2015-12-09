@@ -43,6 +43,11 @@
         text-shadow: 0px 0px 2px #888;
       }
     }
+    span.action.editor-delete {
+      float: right;
+      padding-right: 0px;
+      border-width: 0px;
+    }
     span.editor-spinner {
       @include spinner(16px, 1px, #887);
       float: left;

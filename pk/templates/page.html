@@ -23,14 +23,15 @@
         <span class='editor-title'>Markdown Editor</span>
         <span class='editor-reset action'>Reset</span>
         <span class='editor-save action'>Save</span>
+        <span class='editor-delete action'><i class='icon-bin'></i></span>
         <span class='editor-spinner'></span>
         <span class='editor-message'></span>
       </div>
       <textarea style='display:none;'>{{page.body}}</textarea>
       <div class='editor-includes'>
-        {% if page.includes %}
+        {% if page.meta.includes %}
           Includes:
-          {% for slug in page.includes %}
+          {% for slug in page.meta.includes %}
             <a href='/p/{{slug}}'>{{slug}}</a>{% if not forloop.last %}, {% endif %}
           {% endfor %}
         {% endif %}
