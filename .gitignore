@@ -3,6 +3,7 @@
 *.sqlite3
 *.sublime-*
 *.sass-cache*
+*__pycache__*
 .env
 node_modules/*
 pk/static/bower/*
