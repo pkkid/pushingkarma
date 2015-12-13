@@ -24,6 +24,6 @@
     "markdown-it": "~4.4.0",
     "tether": "~1.1.0",
     "icomoon-bower": "icomoon#~0.1.0",
-    "underscore": "~1.8.3"
-  }
+    "lodash": "~3.10.1"
+  },
 }

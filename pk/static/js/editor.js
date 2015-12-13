@@ -81,7 +81,7 @@ pk.editor = {
             'pk': this.container.find('[name=pk]').val(),
             'type': this.opts.type,
             'title': this.container.find('[name=title]').val(),
-            'slug': window.location.pathname.split('/').reverse()[0] || 'root',
+            'slug': _.trim(window.location.pathname, '/').split('/').reverse()[0] || 'root',
             'body': this.codemirror.getValue(),
             'tags': this.container.find('[name=tags]').val(),
         };

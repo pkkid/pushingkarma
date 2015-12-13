@@ -27,7 +27,8 @@ def markdown(request):
     mtype = request.POST.get('type')
     if mtype == 'pages':
         md = Markdown(body, Page, '/p/')
-        return response_json({'html':md.html, 'includes':md.meta['includes'].keys()})
+        includes = list(md.meta['includes'].keys())
+        return response_json({'html':md.html, 'includes':includes})
     elif mtype == 'notes':
         md = Markdown(body)
         return response_json({'html':md.html})

@@ -63,6 +63,6 @@ class Markdown(object):
         return html.replace('<br />', '\n')
 
     def _merge_submeta(self, submeta):
-        for key, slugs in submeta.iter():
+        for key, slugs in submeta.items():
             for slug, data in slugs.iter():
                 self.meta[key][slug] = data
