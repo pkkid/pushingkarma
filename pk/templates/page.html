@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
-{% block bodyclass %}{{block.super}} pages {{editing|yesno:'editing,'}}{% endblock %}
+{% block bodyclass %}{{block.super}} pages {{request.COOKIES.editing|yesno:'editing,'}}{% endblock %}
 
 {% block js %}
   <script type='text/javascript'>
     $(function() {
       pk.pages.init('#pages-editor', {
-        type: 'pages',
+        id: '{{page.id|default:""}}',
+        apiroot: '/api/pages/',
         output: '#page',
         codemirror: {mode:'xml', theme:'blackboard'},
       });
@@ -17,7 +18,6 @@
 {% block layoutwrap %}
   {% if user.is_authenticated %}
     <div id='pages-editor' class='editor no-preload-animation'>
-      <input type='hidden' name='pk' value='{{page.pk|default:""}}'/>
       <div class='editor-toggle'></div>
       <div class='editor-menu'>
         <span class='editor-title'>Markdown Editor</span>

@@ -1,11 +1,12 @@
 {% extends 'base.html' %}
 {% load humanize %}
-{% block bodyclass %}{{block.super}} notebook {{editing|yesno:'editing,'}}{% endblock %}
+{% load basefilters %}
+{% block bodyclass %}{{block.super}} notebook {{request.COOKIES.editing|yesno:'editing,'}}{% endblock %}
 
 {% block js %}
   <script type='text/javascript'>
     $(function() {
-      pk.notebook.init('#notebook');
+      pk.notebook.init('#notebook', {{note.id|json}});
     });
   </script>
 {% endblock %}
@@ -44,6 +45,7 @@
             <span class='editor-title'>Markdown Editor</span>
             <span class='editor-reset action'>Reset</span>
             <span class='editor-save action'>Save</span>
+            <span class='editor-delete action'><i class='icon-bin'></i></span>
             <span class='editor-spinner'></span>
             <span class='editor-message'></span>
           </div>

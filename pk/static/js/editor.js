@@ -6,14 +6,14 @@
 pk.editor = {
     UPDATE_INTERVAL: 1500,
     MESSAGE_SAVED: '<i class="icon-checkmark"></i>&nbsp;Saved',
-    MESSAGE_ERROR: '<i class="icon-notification"></i>&nbsp; Error',
+    MESSAGE_ERROR: '<i class="icon-notification"></i>&nbsp;Error',
+    MESSAGE_DELETED: '<i class="icon-checkmark"></i>&nbsp;Deleted',
 
     init: function(selector, opts) {
         this.container = $(selector);
         this.opts = $.extend(true, {}, this.defaults, opts);
         if (this.container.length === 0) { return; }
         console.debug('init pk.editor: '+ selector);
-        this.apiurl = '/api/'+ this.opts.type +'/';
         this.menu = this.container.find('.editor-menu');
         this.footer = this.container.find('.editor-footer');
         this.spinner = this.container.find('.editor-spinner');
@@ -50,6 +50,11 @@ pk.editor = {
             event.preventDefault();
             self.save();
         });
+        // delete current entry
+        this.menu.find('.editor-delete').on('click', function(event) {
+            event.preventDefault();
+            self.delete();
+        });
         // update content timer
         if (this.opts.output) {
             setInterval(function() { self.update(); }, this.UPDATE_INTERVAL);
@@ -78,13 +83,32 @@ pk.editor = {
 
     data: function() {
         return {
-            'pk': this.container.find('[name=pk]').val(),
-            'type': this.opts.type,
+            'id': this.opts.id,
             'title': this.container.find('[name=title]').val(),
             'slug': _.trim(window.location.pathname, '/').split('/').reverse()[0] || 'root',
             'body': this.codemirror.getValue(),
             'tags': this.container.find('[name=tags]').val(),
         };
+    },
+    
+    delete: function() {
+        var self = this;
+        this.spinner.addClass('on');
+        var url = this.opts.id ? this.opts.apiroot + this.opts.id +'/' : this.opts.apiroot;
+        var xhr = $.ajax({url:url, type:'DELETE', dataType:'json'});
+        xhr.done(function(data, textStatus, jqXHR) {
+            self.opts.id = '';
+            self.codemirror.setValue('');
+            self.container.find('[name=title]').val('');
+            self.container.find('[name=tags]').val('');
+            self.show_message(self.MESSAGE_DELETED);
+        });
+        xhr.fail(function(jqXHR, textStatus, errorThrown) {
+            self.show_message(self.MESSAGE_ERROR);
+        });
+        xhr.always(function() {
+            self.spinner.removeClass('on');
+        });
     },
 
     editing: function() {
@@ -92,8 +116,8 @@ pk.editor = {
     },
 
     reset: function() {
-        this.container.find('[name=title]').val(this.last_saved_data.title);
         this.codemirror.setValue(this.last_saved_data.body);
+        this.container.find('[name=title]').val(this.last_saved_data.title);
         this.container.find('[name=tags]').val(this.last_saved_data.tags);
     },
 
@@ -105,12 +129,13 @@ pk.editor = {
         var self = this;
         this.spinner.addClass('on');
         var data = this.data();
-        var type = data.pk ? 'PUT' : 'POST';
-        var url = data.pk ? this.apiurl + data.pk +'/' : this.apiurl;
-        var xhr = $.ajax({url:url, data:data, type:type, dataType:'json'});
+        var method = this.opts.id ? 'PUT' : 'POST';
+        var url = this.opts.id ? this.opts.apiroot + this.opts.id +'/' : this.opts.apiroot;
+        var xhr = $.ajax({url:url, type:method, data:data, dataType:'json'});
         xhr.done(function(data, textStatus, jqXHR) {
-            self.container.find('[name=pk]').val(data.id || '');
+            self.opts.id = data.id || '';
             self.last_saved_data = data;
+            window.history.replaceState('testing!!','',data.weburl);
             self.show_message(self.MESSAGE_SAVED);
         });
         xhr.fail(function(jqXHR, textStatus, errorThrown) {
@@ -165,6 +190,7 @@ pk.editor = {
     },
 
     update_includes: function(includes) {
+        if (includes === undefined) { return; }
         var html = [];
         $.each(includes, function(i, slug) {
             html.push('<a href="/p/'+ slug +'">'+ slug +'</a>');
@@ -174,7 +200,8 @@ pk.editor = {
     },
 
     defaults: {
-        type: null,                 // (required) pages or notes
+        id: null,                   // (required) current object id
+        apiroot: null,              // (required) pages or notes
         output: null,               // (required) selector for markdown output
         callback_resize: null,      // callback to resize editor
         scrollbottom: false,        // Set true when update is above editor

@@ -11,16 +11,13 @@ from pk.utils.markdown import Markdown
 
 
 class Note(TimeStampedModel):
-    slug = models.SlugField(editable=False)
+    slug = models.SlugField(max_length=255, unique=True)
     title = models.CharField(max_length=255)
     body = models.TextField(help_text='markdown format')
     tags = models.CharField(max_length=255, blank=True, help_text='space delimited')
 
     def __str__(self):
-        return '<%s:%s>' % (self.__class__.__name__, self.slug)
-
-    def apiurl(self):
-        return reverse('notes-detail')
+        return self.slug
 
     def weburl(self):
         return reverse('note', kwargs={'slug':self.slug})
@@ -36,14 +33,11 @@ class Note(TimeStampedModel):
 
 
 class Page(TimeStampedModel):
-    slug = models.CharField(max_length=255)
+    slug = models.CharField(max_length=255, unique=True)
     body = models.TextField(help_text='markdown format')
 
     def __str__(self):
-        return '<%s:%s>' % (self.__class__.__name__, self.slug)
-
-    def apiurl(self):
-        return reverse('pages-detail')
+        return self.slug
 
     def weburl(self):
         return reverse('page', kwargs={'slug':self.slug})
@@ -51,10 +45,9 @@ class Page(TimeStampedModel):
     def html(self):
         if getattr(self, '_md', None) is None:
             self._md = Markdown(self.body, Page, '/p/')
-            print('--------')
-            print(self._md.meta)
         return self._md.html
 
     def meta(self):
-        self.html()  # html must be rendered
+        if getattr(self, '_md', None) is None:
+            self._md = Markdown(self.body, Page, '/p/')
         return self._md.meta
