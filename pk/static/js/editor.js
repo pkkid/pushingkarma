@@ -135,7 +135,7 @@ pk.editor = {
         xhr.done(function(data, textStatus, jqXHR) {
             self.opts.id = data.id || '';
             self.last_saved_data = data;
-            window.history.replaceState('testing!!','',data.weburl);
+            window.history.replaceState('','',data.weburl);
             self.show_message(self.MESSAGE_SAVED);
         });
         xhr.fail(function(jqXHR, textStatus, errorThrown) {
