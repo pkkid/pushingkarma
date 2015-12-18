@@ -6,12 +6,22 @@ Copyright (c) 2015 PushingKarma. All rights reserved.
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.db.models import Q
+from pk import log, serializers, utils
 from pk.models import Note, Page
-from pk import serializers, utils
+from pk.utils.search import FIELDTYPES, SearchField, Search
 from rest_framework import status, viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
+
+NOTESEARCHFIELDS = {
+    'id': SearchField(FIELDTYPES.NUM, 'id'),
+    'title': SearchField(FIELDTYPES.STR, 'title'),
+    'body': SearchField(FIELDTYPES.STR, 'body'),
+    'tags': SearchField(FIELDTYPES.STR, 'tags'),
+    # 'created': SearchField(FIELDTYPES.NUM, 'created'),
+    # 'modified': SearchField(FIELDTYPES.NUM, 'modified'),
+}
 
 
 class AccountViewSet(viewsets.ViewSet):
@@ -54,7 +64,11 @@ class NotesViewSet(viewsets.ModelViewSet):
     list_fields = ['id','url','title','tags','created','modified']
 
     def list(self, request, *args, **kwargs):
+        search = request.GET.get('search')
         notes = Note.objects.order_by('-created')
+        if search:
+            notes = Search(notes, NOTESEARCHFIELDS, search).queryset()
+        log.info(notes.query)
         serializer = serializers.NoteSerializer(notes, context={'request':request},
             many=True, fields=self.list_fields)
         return Response(serializer.data)
