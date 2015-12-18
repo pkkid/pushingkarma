@@ -23,7 +23,6 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-
 # Django Environment
 INSTALLED_APPS = (
     'django.contrib.admin',
@@ -33,6 +32,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.staticfiles',
     'django.contrib.messages',
+    'django_extensions',
     'rest_framework',
     'dbbackup',
     'pk',
@@ -70,24 +70,44 @@ CACHES = {'default': {
     'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
     'LOCATION': 'django_cache',
 }}
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'handlers': {
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'standard',
+        },
+        'file': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': join(dirname(BASE_DIR), 'pk.log'),
+            'maxBytes': 1000000,
+            'backupCount': 3,
+            'formatter': 'standard',
+        },
+    },
+    'loggers': {
+        'pk': {
+            'handlers': ['file', 'console'],
+            'level': 'INFO',
+            'propagate': True,
+        },
+    },
+    'formatters': {
+        'standard': {
+            'format': '%(asctime)-.19s %(module)12s:%(lineno)-3s %(levelname)-7s %(message)s'
+        },
+    },
+}
+
+# Django Rest Framework
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticatedOrReadOnly',),
     'PAGE_SIZE': 100
 }
 
-
 # DBBackup Settings
 DBBACKUP_BACKUP_DIRECTORY = '/home/mjs7231/Dropbox/Backup/pushingkarma/'
 DBBACKUP_FILENAME_TEMPLATE = '{servername}-{datetime}.{extension}'
-
-
-# Debug Settings
-# if DEBUG:
-#     import debug_toolbar.middleware
-#     INSTALLED_APPS = INSTALLED_APPS + ('debug_toolbar',)
-#     DEBUG_TOOLBAR_CONFIG = {'INTERCEPT_REDIRECTS': False}
-#     def show_toolbar_monkeypatch(request):
-#         if request.META.get('REMOTE_ADDR', None) not in INTERNAL_IPS: return False
-#         if request.is_ajax(): return False
-#         return request.GET.get('debug')
-#     debug_toolbar.middleware.show_toolbar = show_toolbar_monkeypatch
