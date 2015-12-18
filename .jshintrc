@@ -8,15 +8,16 @@
     "predef": [
         "_",
         "alert",
+        "CodeMirror",
         "console",
+        "Cookies",
         "global",
+        "Handlebars",
         "imports",
         "Nasuni",
         "NUI",
-        "require",
-        "XML",
         "pk",
-        "CodeMirror",
-        "Cookies"
+        "require",
+        "XML"
     ]
 }

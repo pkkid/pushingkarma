@@ -24,6 +24,8 @@
     "markdown-it": "~4.4.0",
     "tether": "~1.1.0",
     "icomoon-bower": "icomoon#~0.1.0",
-    "lodash": "~3.10.1"
-  },
+    "lodash": "~3.10.1",
+    "handlebars": "~4.0.5",
+    "handlebars-helpers": "~2.0.0"
+  }
 }
