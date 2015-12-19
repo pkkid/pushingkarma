@@ -62,10 +62,12 @@ $NOTEFILTER_HEIGHT: 40px;
     .notebook-item {
       border-bottom: 1px solid rgba(0,0,0,0.1);
       border-top: 1px solid rgba(255,255,255,0.1);
+      cursor: pointer;
       display: block;
       height: 45px;
       padding: 5px;
       text-decoration: none;
+      user-select: none;
       &:first-child {
         border-top-width: 0px;
       }

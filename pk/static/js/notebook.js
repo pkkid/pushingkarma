@@ -39,14 +39,13 @@ pk.notebook = {
     },
     
     update_list: function(search) {
+        var self = this;
         if (this.xhr) { this.xhr.abort(); }
-        console.log(search);
         var url = search ? this.APIROOT +'?search='+ encodeURIComponent(search) : this.APIROOT;
         this.xhr = $.ajax({url:url, type:'GET', dataType:'json'});
         this.xhr.done(function(data, textStatus, jqXHR) {
-            $.each(data, function(i, item) {
-                console.log(item.title);
-            });
+            var html = self.templates.listitems(data);
+            self.container.find('#notebook-list').html(html);
         });
         // this.xhr.always(function() {
         //     console.log('..always');
@@ -54,8 +53,13 @@ pk.notebook = {
     },
     
     templates: {
-        listitem: Handlebars.compile([
-            'Hello Mom!',
+        listitems: Handlebars.compile([
+            '{{#each this}}',
+            '  <div class="notebook-item">',
+            '    <div class="title">{{this.title}}</div>',
+            '    <div class="subtext">{{this.tags}} - {{formatDate this.created "%Y-%m-%d"}}</div>',
+            '  </div>',
+            '{{/each}}',
         ].join('\n')),
     },
 
