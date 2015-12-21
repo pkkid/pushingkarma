@@ -8,6 +8,7 @@ pk.editor = {
   MESSAGE_SAVED: '<i class="icon-checkmark"></i>&nbsp;Saved',
   MESSAGE_ERROR: '<i class="icon-notification"></i>&nbsp;Error',
   MESSAGE_DELETED: '<i class="icon-checkmark"></i>&nbsp;Deleted',
+  KEYS: {S:83, F2:113},
 
   init: function(selector, opts) {
     this.container = $(selector);
@@ -69,18 +70,17 @@ pk.editor = {
 
   init_shortcuts: function() {
     var self = this;
-    document.addEventListener('keydown', function(event) {
+    var KEYS = this.KEYS;
+    $(document).on('keydown', function(event) {
       var ctrl = navigator.platform.match('Mac') ? event.metaKey : event.ctrlKey;
-      var s = event.keyCode == 83;
-      var f2 = event.keyCode == 113;
-      if (ctrl && s && self.editing()) {
+      if (ctrl && event.keyCode == KEYS.S && self.editing()) {
         event.preventDefault();
         self.save();
-      } else if (f2) {
+      } else if (event.keyCode == KEYS.F2) {
         event.preventDefault();
         self.toggle_editor();
       }
-    }, false);
+    });
   },
 
   data: function() {

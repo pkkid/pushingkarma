@@ -20,16 +20,15 @@ pk.notebook = {
     this.xhr = null;
     this.last_searched = '__init__';
     this.init_triggers();
+    this.init_shortcuts();
     this.update_list();
   },
   
   init_triggers: function() {
     var self = this;
-    var KEYS = this.KEYS;
-    var keycodes = [KEYS.TAB, KEYS.ENTER, KEYS.ESC, KEYS.UP, KEYS.DOWN];
     // search input changes
     this.searchinput.on('change paste keyup', function(event) {
-      if (keycodes.indexOf(event.keyCode) == -1) {
+      if (_.valuesIn(this.KEYS).indexOf(event.keyCode) == -1) {
         event.preventDefault();
         var search = $(this).val();
         if (search.length === 0) { self.update_list(); }
@@ -41,11 +40,16 @@ pk.notebook = {
       event.preventDefault();
       self.setup_new_note();
     });
+  },
+  
+  init_shortcuts: function() {
+    var self = this;
+    var KEYS = this.KEYS;
     // select noteitems via keyboard
     $(window).on('keydown', function(event) {
       var noteitems = self.notelist.find('.notebook-item');
       var focused = self.searchinput.is(':focus');
-      if(focused && (keycodes.indexOf(event.keyCode) > -1)) {
+      if (focused && (_.valuesIn(KEYS).indexOf(event.keyCode) > -1)) {
         event.preventDefault();
         var selected = noteitems.filter('.selected');
         if ((event.keyCode == KEYS.DOWN) || (event.keyCode == KEYS.TAB)) {
