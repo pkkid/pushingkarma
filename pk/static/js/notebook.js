@@ -17,7 +17,8 @@ pk.notebook = {
         this.container = $(selector);
         console.debug('init pk.notebook: '+ selector);
         this.sidepanel = this.container.find('#notebook-sidepanel');
-        this.searchinput = this.container.find('#notebook-filter');
+        this.searchinput = this.container.find('#notebook-search');
+        this.addnote = this.container.find('#notebook-add');
         this.notelist = this.container.find('#notebook-list');
         this.xhr = null;
         this.last_searched = '__init__';
@@ -37,6 +38,11 @@ pk.notebook = {
                 if (search.length === 0) { self.update_list(); }
                 else if (search.length >= 3) { self.update_list(search); }
             }
+        });
+        // start a new note
+        this.addnote.on('click', function() {
+            event.preventDefault();
+            self.setup_new_note();
         });
         // select noteitems via keyboard
         $(window).on('keydown', function(event) {
@@ -71,6 +77,10 @@ pk.notebook = {
             output: this.NOTE_SELECTOR,
             scrollbottom: true,
         });
+    },
+    
+    setup_new_note: function() {
+        console.log('Setup New Note!');
     },
     
     update_list: function(search) {

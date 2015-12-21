@@ -13,32 +13,24 @@ var helperutils = {
   // https://github.com/assemble/handlebars-helpers/blob/master/lib/utils/utils.js
   // -----------------------------
   
-  isFunction: function (obj) {
+  isFunction: function(obj) {
     return typeof obj === 'function';
   },
    
-  isUndefined: function (value) {
+  isUndefined: function(value) {
     return typeof value === 'undefined' || this.toString.call(value) === '[object Function]' || (value.hash !== null);
   },
   
   result: function(value) {
-    if (this.isFunction(value)) {
-      return value();
-    } else {
-      return value;
-    }
+    return this.isFunction(value) ? value() : value;
   },
   
-  safeString: function (str) {
+  safeString: function(str) {
     return new Handlebars.SafeString(str);
   },
   
-  toString: function (val) {
-    if (val === null) {
-      return '';
-    } else {
-      return val.toString();
-    }
+  toString: function(val) {
+    return val === null ? '' : val.toString();
   },
   
   // -----------------------------
@@ -81,17 +73,12 @@ var helperutils = {
     var dayNr = (date.getDay() + 6) % 7;
     target.setDate(target.getDate() - dayNr + 3);
     var jan4 = new Date(target.getFullYear(), 0, 4);
-
     var dayDiff = (target - jan4) / 86400000;
     return 1 + Math.ceil(dayDiff / 7);
   },
 
   tweleveHour: function(date) {
-    if (date.getHours() > 12) {
-      return date.getHours() - 12;
-    } else {
-      return date.getHours();
-    }
+    return date.getHours() > 12 ? date.getHours() - 12 : date.getHours();
   },
 
   timeZoneOffset: function(date) {
@@ -105,100 +92,49 @@ var helperutils = {
     var match = null;
     return format.replace(this.date_formats, function(m, p) {
       switch (p) {
-        case 'a':
-          return self.dates_abbreviatedWeekdays[date.getDay()];
-        case 'A':
-          return self.dates_fullWeekdays[date.getDay()];
-        case 'b':
-          return self.dates_abbreviatedMonths[date.getMonth()];
-        case 'B':
-          return self.dates_fullMonths[date.getMonth()];
-        case 'c':
-          return date.toLocaleString();
-        case 'C':
-          return Math.round(date.getFullYear() / 100);
-        case 'd':
-          return self.padNumber(date.getDate(), 2);
-        case 'D':
-          return self.format(date, '%m/%d/%y');
-        case 'e':
-          return self.padNumber(date.getDate(), 2, ' ');
-        case 'F':
-          return self.format(date, '%Y-%m-%d');
-        case 'h':
-          return self.format(date, '%b');
-        case 'H':
-          return self.padNumber(date.getHours(), 2);
-        case 'I':
-          return self.padNumber(self.tweleveHour(date), 2);
-        case 'j':
-          return self.padNumber(self.dayOfYear(date), 3);
-        case 'k':
-          return self.padNumber(date.getHours(), 2, ' ');
-        case 'l':
-          return self.padNumber(self.tweleveHour(date), 2, ' ');
-        case 'L':
-          return self.padNumber(date.getMilliseconds(), 3);
-        case 'm':
-          return self.padNumber(date.getMonth() + 1, 2);
-        case 'M':
-          return self.padNumber(date.getMinutes(), 2);
-        case 'n':
-          return '\n';
-        case 'p':
-          if (date.getHours() > 11) {
-            return 'PM';
-          } else {
-            return 'AM';
-          }
-        break;
-        case 'P':
-          return self.format(date, '%p').toLowerCase();
-        case 'r':
-          return self.format(date, '%I:%M:%S %p');
-        case 'R':
-          return self.format(date, '%H:%M');
-        case 's':
-          return date.getTime() / 1000;
-        case 'S':
-          return self.padNumber(date.getSeconds(), 2);
-        case 't':
-          return '\t';
-        case 'T':
-          return self.format(date, '%H:%M:%S');
-        case 'u':
-          if (date.getDay() === 0) {
-            return 7;
-          } else {
-            return date.getDay();
-          }
-          break;
-        case 'U':
-          return self.padNumber(self.weekOfYear(date), 2);
-        case 'v':
-          return self.format(date, '%e-%b-%Y');
-        case 'V':
-          return self.padNumber(self.isoWeekOfYear(date), 2);
-        case 'W':
-          return self.padNumber(self.weekOfYear(date), 2);
-        case 'w':
-          return self.padNumber(date.getDay(), 2);
-        case 'x':
-          return date.toLocaleDateString();
-        case 'X':
-          return date.toLocaleTimeString();
-        case 'y':
-          return String(date.getFullYear()).substring(2);
-        case 'Y':
-          return date.getFullYear();
-        case 'z':
-          return self.timeZoneOffset(date);
-        default:
-          return match;
+        case 'a': return self.dates_abbreviatedWeekdays[date.getDay()];
+        case 'A': return self.dates_fullWeekdays[date.getDay()];
+        case 'b': return self.dates_abbreviatedMonths[date.getMonth()];
+        case 'B': return self.dates_fullMonths[date.getMonth()];
+        case 'c': return date.toLocaleString();
+        case 'C': return Math.round(date.getFullYear() / 100);
+        case 'd': return self.padNumber(date.getDate(), 2);
+        case 'D': return self.format(date, '%m/%d/%y');
+        case 'e': return self.padNumber(date.getDate(), 2, ' ');
+        case 'F': return self.format(date, '%Y-%m-%d');
+        case 'h': return self.format(date, '%b');
+        case 'H': return self.padNumber(date.getHours(), 2);
+        case 'I': return self.padNumber(self.tweleveHour(date), 2);
+        case 'j': return self.padNumber(self.dayOfYear(date), 3);
+        case 'k': return self.padNumber(date.getHours(), 2, ' ');
+        case 'l': return self.padNumber(self.tweleveHour(date), 2, ' ');
+        case 'L': return self.padNumber(date.getMilliseconds(), 3);
+        case 'm': return self.padNumber(date.getMonth() + 1, 2);
+        case 'M': return self.padNumber(date.getMinutes(), 2);
+        case 'n': return '\n';
+        case 'p': return date.getHours() > 11 ? 'PM' : 'AM';
+        case 'P': return self.format(date, '%p').toLowerCase();
+        case 'r': return self.format(date, '%I:%M:%S %p');
+        case 'R': return self.format(date, '%H:%M');
+        case 's': return date.getTime() / 1000;
+        case 'S': return self.padNumber(date.getSeconds(), 2);
+        case 't': return '\t';
+        case 'T': return self.format(date, '%H:%M:%S');
+        case 'u': return date.getDay() === 0 ? 7 : date.getDay();
+        case 'U': return self.padNumber(self.weekOfYear(date), 2);
+        case 'v': return self.format(date, '%e-%b-%Y');
+        case 'V': return self.padNumber(self.isoWeekOfYear(date), 2);
+        case 'W': return self.padNumber(self.weekOfYear(date), 2);
+        case 'w': return self.padNumber(date.getDay(), 2);
+        case 'x': return date.toLocaleDateString();
+        case 'X': return date.toLocaleTimeString();
+        case 'y': return String(date.getFullYear()).substring(2);
+        case 'Y': return date.getFullYear();
+        case 'z': return self.timeZoneOffset(date);
+        default: return match;
       }
     });
   },
-  
 };
 
 
@@ -214,7 +150,7 @@ var helpers = {
    * @param  {Array}  array
    * @param  {Object} options
    */
-  any: function (array, options) {
+  any: function(array, options) {
     if (array.length > 0) {
       return options.fn(this);
     } else {
@@ -228,7 +164,7 @@ var helpers = {
    * @param  {Number} count Number of items to exclude
    * @return {Array}        Array excluding the number of items specified
    */
-  after: function (array, count) {
+  after: function(array, count) {
     return array.slice(count);
   },
 
@@ -241,7 +177,7 @@ var helpers = {
    * @param  {Ojbect} options
    * @return {Array}
    */
-  withAfter: function (array, count, options) {
+  withAfter: function(array, count, options) {
     array = array.slice(count);
     var result = '';
     for (var item in array) {
@@ -258,8 +194,8 @@ var helpers = {
    * @param  {[type]} data [description]
    * @return {[type]}      [description]
    */
-  arrayify: function (str) {
-    return str.split(",").map(function (tag) {
+  arrayify: function(str) {
+    return str.split(',').map(function(tag) {
       return "\"" + tag + "\"";
     });
   },
@@ -272,7 +208,7 @@ var helpers = {
    * @param  {[type]} count [description]
    * @return {[type]}       [description]
    */
-  before: function (array, count) {
+  before: function(array, count) {
     return array.slice(0, -count);
   },
 
@@ -285,7 +221,7 @@ var helpers = {
    * @param  {Object} options [description]
    * @return {[type]}         [description]
    */
-  withBefore: function (array, count, options) {
+  withBefore: function(array, count, options) {
     array = array.slice(0, -count);
     var result = '';
     for (var item in array) {
@@ -303,7 +239,7 @@ var helpers = {
    * @param  {[type]} count
    * @return {[type]}
    */
-  first: function (array, count) {
+  first: function(array, count) {
     if (helperutils.isUndefined(count)) {
       return array[0];
     } else {
@@ -348,7 +284,7 @@ var helpers = {
    * @param  {[type]} count [description]
    * @return {[type]}       [description]
    */
-  last: function (array, count) {
+  last: function(array, count) {
     if (helperutils.isUndefined(count)) {
       return array[array.length - 1];
     } else {
@@ -364,7 +300,7 @@ var helpers = {
    * @param  {Object} options [description]
    * @return {[type]}         [description]
    */
-  withLast: function (array, count, options) {
+  withLast: function(array, count, options) {
     if (helperutils.isUndefined(count)) {
       options = count;
       return options.fn(array[array.length - 1]);
@@ -385,7 +321,7 @@ var helpers = {
    * @param  {[type]} separator [description]
    * @return {[type]}           [description]
    */
-  join: function (array, separator) {
+  join: function(array, separator) {
     return array.join(helperutils.isUndefined(separator) ? ' ' : separator);
   },
 
@@ -409,7 +345,7 @@ var helpers = {
    *   {{join jobs delimiter=", " start="1" end="2"}}
    *
    */
-  joinAny: function (items, block) {
+  joinAny: function(items, block) {
     var delimiter = block.hash.delimiter || ",";
     var start = block.hash.start || 0;
     var len = (items ? items.length : 0);
@@ -438,20 +374,20 @@ var helpers = {
   },
 
 
-  sort: function (array, field) {
+  sort: function(array, field) {
     if (helperutils.isUndefined(field)) {
       return array.sort();
     } else {
-      return array.sort(function (a, b) {
+      return array.sort(function(a, b) {
         return a[field] > b[field];
       });
     }
   },
 
 
-  withSort: function (array, field, options) {
+  withSort: function(array, field, options) {
     array = _.cloneDeep(array);
-    var getDescendantProp = function (obj, desc) {
+    var getDescendantProp = function(obj, desc) {
       var arr = desc.split('.');
       while (arr.length && (obj = obj[arr.shift()])) {
         continue;
@@ -473,7 +409,7 @@ var helpers = {
         result += options.fn(item);
       }
     } else {
-      array = array.sort(function (a, b) {
+      array = array.sort(function(a, b) {
         var aProp = getDescendantProp(a, field);
         var bProp = getDescendantProp(b, field);
         if (aProp > bProp) {
@@ -496,12 +432,12 @@ var helpers = {
   },
 
 
-  length: function (array) {
+  length: function(array) {
     return (!array) ? 0 : array.length;
   },
 
 
-  lengthEqual: function (array, length, options) {
+  lengthEqual: function(array, length, options) {
     if (array.length === length) {
       return options.fn(this);
     } else {
@@ -510,7 +446,7 @@ var helpers = {
   },
 
 
-  empty: function (array, options) {
+  empty: function(array, options) {
     if (array.length <= 0) {
       return options.fn(this);
     } else {
@@ -527,7 +463,7 @@ var helpers = {
    * @param  {Object} options [description]
    * @return {[type]}         [description]
    */
-  inArray: function (array, value, options) {
+  inArray: function(array, value, options) {
     var _indexOf = require('../utils/lib/indexOf');
     if (_indexOf.call(array, value) >= 0) {
       return options.fn(this);
@@ -545,32 +481,24 @@ var helpers = {
    * @return {[type]}         [description]
    */
   filter: function(array, value, options) {
-
     var data = void 0;
     var content = '';
     var results = [];
-
-    if(options.data) {
+    if (options.data) {
       data = Handlebars.createFrame(options.data);
     }
-
     // filtering on a specific property
-    if(options.hash && options.hash.property) {
-
+    if (options.hash && options.hash.property) {
       var search = {};
       search[options.hash.property] = value;
       results = _.filter(array, search);
-
     } else {
-
       // filtering on a string value
       results = _.filter(array, function(v, k) {
         return value === v;
       });
-
     }
-
-    if(results && results.length > 0) {
+    if (results && results.length > 0) {
       for(var i=0; i < results.length; i++){
         content += options.fn(results[i], {data: data});
       }
@@ -592,7 +520,7 @@ var helpers = {
    * @param  {Object} options [description]
    * @return {[type]}         [description]
    */
-  iterate: function (context, options) {
+  iterate: function(context, options) {
     var fn = options.fn;
     var inverse = options.inverse;
     var i = 0;
@@ -645,7 +573,7 @@ var helpers = {
    *     </a>{{#unless isLast}}, {{/unless}}
    *   {{/forEach}}
    */
-  forEach: function (array, fn) {
+  forEach: function(array, fn) {
     var total = array.length;
     var buffer = "";
     // Better performance: http://jsperf.com/for-vs-forEach/2
@@ -677,8 +605,8 @@ var helpers = {
    * @param  {Object} options [description]
    * @return {[type]}         [description]
    */
-  eachProperty: function (context, options) {
-    var content = (function () {
+  eachProperty: function(context, options) {
+    var content = (function() {
       var results = [];
       for (var key in context) {
         var value = context[key];
@@ -704,7 +632,7 @@ var helpers = {
    *     {{item}} is {{index}}
    *   {{/eachIndex}}
    */
-  eachIndex: function (array, options) {
+  eachIndex: function(array, options) {
     var i;
     var len;
     var result = '';
@@ -730,7 +658,7 @@ var helpers = {
    *     {{item}} is {{index}}
    *   {{/eachIndexPlusOne}}
    */
-  eachIndexPlusOne: function (array, options) {
+  eachIndexPlusOne: function(array, options) {
     var result = '';
     var len;
     var i;
@@ -750,14 +678,14 @@ var helpers = {
   // https://github.com/assemble/handlebars-helpers/blob/master/lib/helpers/helpers-comparisons.js
   // -----------------------------
 
-  contains: function (str, pattern, options) {
+  contains: function(str, pattern, options) {
     if (str.indexOf(pattern) !== -1) {
       return options.fn(this);
     }
     return options.inverse(this);
   },
 
-  and: function (a, b, options) {
+  and: function(a, b, options) {
     if (a && b) {
       return options.fn(this);
     } else {
@@ -765,7 +693,7 @@ var helpers = {
     }
   },
 
-  gt: function (value, test, options) {
+  gt: function(value, test, options) {
     if (value > test) {
       return options.fn(this);
     } else {
@@ -773,7 +701,7 @@ var helpers = {
     }
   },
 
-  gte: function (value, test, options) {
+  gte: function(value, test, options) {
     if (value >= test) {
       return options.fn(this);
     } else {
@@ -781,7 +709,7 @@ var helpers = {
     }
   },
 
-  is: function (value, test, options) {
+  is: function(value, test, options) {
     if (value === test) {
       return options.fn(this);
     } else {
@@ -789,7 +717,7 @@ var helpers = {
     }
   },
 
-  isnt: function (value, test, options) {
+  isnt: function(value, test, options) {
     if (value !== test) {
       return options.fn(this);
     } else {
@@ -797,7 +725,7 @@ var helpers = {
     }
   },
 
-  lt: function (value, test, options) {
+  lt: function(value, test, options) {
     if (value < test) {
       return options.fn(this);
     } else {
@@ -805,7 +733,7 @@ var helpers = {
     }
   },
 
-  lte: function (value, test, options) {
+  lte: function(value, test, options) {
     if (value <= test) {
       return options.fn(this);
     } else {
@@ -817,7 +745,7 @@ var helpers = {
    * Or
    * Conditionally render a block if one of the values is truthy.
    */
-  or: function (a, b, options) {
+  or: function(a, b, options) {
     if (a || b) {
       return options.fn(this);
     } else {
@@ -829,7 +757,7 @@ var helpers = {
    * ifNth
    * Conditionally render a block if mod(nr, v) is 0
    */
-  ifNth: function (nr, v, options) {
+  ifNth: function(nr, v, options) {
     v = v+1;
     if (v % nr === 0) {
       return options.fn(this);
@@ -861,35 +789,29 @@ var helpers = {
    */
   compare: function(left, operator, right, options) {
     /*jshint eqeqeq: false*/
-
     if (arguments.length < 3) {
       throw new Error('Handlebars Helper "compare" needs 2 parameters');
     }
-
     if (options === undefined) {
       options = right;
       right = operator;
       operator = '===';
     }
-
     var operators = {
-      '==':     function(l, r) {return l == r; },
-      '===':    function(l, r) {return l === r; },
-      '!=':     function(l, r) {return l != r; },
-      '!==':    function(l, r) {return l !== r; },
-      '<':      function(l, r) {return l < r; },
-      '>':      function(l, r) {return l > r; },
-      '<=':     function(l, r) {return l <= r; },
-      '>=':     function(l, r) {return l >= r; },
-      'typeof': function(l, r) {return typeof l == r; }
+      '==': function(l, r) { return l == r; },
+      '===': function(l, r) { return l === r; },
+      '!=': function(l, r) { return l != r; },
+      '!==': function(l, r) { return l !== r; },
+      '<': function(l, r) { return l < r; },
+      '>': function(l, r) { return l > r; },
+      '<=': function(l, r) { return l <= r; },
+      '>=': function(l, r) { return l >= r; },
+      'typeof': function(l, r) { return typeof l == r; }
     };
-
     if (!operators[operator]) {
       throw new Error('Handlebars Helper "compare" doesn\'t know the operator ' + operator);
     }
-
     var result = operators[operator](left, right);
-
     if (result) {
       return options.fn(this);
     } else {
@@ -909,7 +831,7 @@ var helpers = {
    *
    * @example: {{if_eq this compare=that}}
    */
-  if_eq: function (context, options) {
+  if_eq: function(context, options) {
     if (context === options.hash.compare) {
       return options.fn(this);
     }
@@ -926,7 +848,7 @@ var helpers = {
    *
    * @example: {{unless_eq this compare=that}}
    */
-  unless_eq: function (context, options) {
+  unless_eq: function(context, options) {
     if (context === options.hash.compare) {
       return options.inverse(this);
     }
@@ -943,7 +865,7 @@ var helpers = {
    *
    * @example: {{if_gt this compare=that}}
    */
-  if_gt: function (context, options) {
+  if_gt: function(context, options) {
     if (context > options.hash.compare) {
       return options.fn(this);
     }
@@ -960,7 +882,7 @@ var helpers = {
    *
    * @example: {{unless_gt this compare=that}}
    */
-  unless_gt: function (context, options) {
+  unless_gt: function(context, options) {
     if (context > options.hash.compare) {
       return options.inverse(this);
     }
@@ -977,7 +899,7 @@ var helpers = {
    *
    * @example: {{if_lt this compare=that}}
    */
-  if_lt: function (context, options) {
+  if_lt: function(context, options) {
     if (context < options.hash.compare) {
       return options.fn(this);
     }
@@ -994,7 +916,7 @@ var helpers = {
    *
    * @example: {{unless_lt this compare=that}}
    */
-  unless_lt: function (context, options) {
+  unless_lt: function(context, options) {
     if (context < options.hash.compare) {
       return options.inverse(this);
     }
@@ -1011,7 +933,7 @@ var helpers = {
    *
    * @example: {{if_gteq this compare=that}}
    */
-  if_gteq: function (context, options) {
+  if_gteq: function(context, options) {
     if (context >= options.hash.compare) {
       return options.fn(this);
     }
@@ -1028,7 +950,7 @@ var helpers = {
    *
    * @example: {{unless_gteq this compare=that}}
    */
-  unless_gteq: function (context, options) {
+  unless_gteq: function(context, options) {
     if (context >= options.hash.compare) {
       return options.inverse(this);
     }
@@ -1045,7 +967,7 @@ var helpers = {
    *
    * @example: {{if_lteq this compare=that}}
    */
-  if_lteq: function (context, options) {
+  if_lteq: function(context, options) {
     if (context <= options.hash.compare) {
       return options.fn(this);
     }
@@ -1062,7 +984,7 @@ var helpers = {
    *
    * @example: {{unless_lteq this compare=that}}
    */
-  unless_lteq: function (context, options) {
+  unless_lteq: function(context, options) {
     if (context <= options.hash.compare) {
       return options.inverse(this);
     }
@@ -1080,7 +1002,7 @@ var helpers = {
    *
    * @example: {{ifAny this compare=that}}
    */
-  ifAny: function () {
+  ifAny: function() {
     var argLength = arguments.length - 1;
     var content = arguments[argLength];
     var success = true;
@@ -1111,7 +1033,7 @@ var helpers = {
    *
    * @example: {{ifEven @index}}
    */
-  ifEven: function (conditional, options) {
+  ifEven: function(conditional, options) {
     if ((conditional % 2) === 0) {
       return options.fn(this);
     } else {
@@ -1131,7 +1053,7 @@ var helpers = {
    * @param  {[type]} format [description]
    * @return {[type]}        [description]
    */
-  formatDate: function (date, format) {
+  formatDate: function(date, format) {
     date = new Date(date);
     return helperutils.format(date, format);
   },
@@ -1141,7 +1063,7 @@ var helpers = {
    * @param  {[type]} format [description]
    * @return {[type]}        [description]
    */
-  now: function (format) {
+  now: function(format) {
     var date = new Date();
     if (helperutils.isUndefined(format)) {
       return date;
@@ -1156,19 +1078,19 @@ var helpers = {
    * @param  {[type]} date [description]
    * @return {[type]}      [description]
    */
-  timeago: function (date) {
+  timeago: function(date) {
     date = new Date(date);
     var seconds = Math.floor((new Date() - date) / 1000);
     var interval = Math.floor(seconds / 31536000);
-    if (interval > 1) {return "" + interval + " years ago"; }
+    if (interval > 1) { return "" + interval + " years ago"; }
     interval = Math.floor(seconds / 2592000);
-    if (interval > 1) {return "" + interval + " months ago"; }
+    if (interval > 1) { return "" + interval + " months ago"; }
     interval = Math.floor(seconds / 86400);
-    if (interval > 1) {return "" + interval + " days ago"; }
+    if (interval > 1) { return "" + interval + " days ago"; }
     interval = Math.floor(seconds / 3600);
-    if (interval > 1) {return "" + interval + " hours ago"; }
+    if (interval > 1) { return "" + interval + " hours ago"; }
     interval = Math.floor(seconds / 60);
-    if (interval > 1) {return "" + interval + " minutes ago"; }
+    if (interval > 1) { return "" + interval + " minutes ago"; }
     if (Math.floor(seconds) === 0) {
       return 'Just now';
     } else {
@@ -1181,7 +1103,7 @@ var helpers = {
   // https://github.com/assemble/handlebars-helpers/blob/master/lib/helpers/helpers-logging.js
   // -----------------------------
   
-  log: function (value) {
+  log: function(value) {
     return console.log(value);
   },
   
@@ -1190,36 +1112,36 @@ var helpers = {
   // https://github.com/assemble/handlebars-helpers/blob/master/lib/helpers/helpers-math.js
   // -----------------------------
   
-  add: function (value, addition) {
+  add: function(value, addition) {
     return value + addition;
   },
 
-  subtract: function (value, substraction) {
+  subtract: function(value, substraction) {
     return value - substraction;
   },
 
-  divide: function (value, divisor) {
+  divide: function(value, divisor) {
     return value / divisor;
   },
 
-  multiply: function (value, multiplier) {
+  multiply: function(value, multiplier) {
     return value * multiplier;
   },
 
-  floor: function (value) {
+  floor: function(value) {
     return Math.floor(value);
   },
 
-  ceil: function (value) {
+  ceil: function(value) {
     return Math.ceil(value);
   },
 
-  round: function (value) {
+  round: function(value) {
     return Math.round(value);
   },
 
   // Attempt to parse the int, if not class it as 0
-  sum: function () {
+  sum: function() {
     var args = _.flatten(arguments);
     var sum = 0;
     var i = args.length - 1;
@@ -1234,7 +1156,7 @@ var helpers = {
   // https://github.com/assemble/handlebars-helpers/blob/master/lib/helpers/helpers-miscellaneous.js
   // -----------------------------
   
-  default: function (value, defaultValue) {
+  default: function(value, defaultValue) {
     return value !== null ? value : defaultValue;
   },
 
@@ -1243,7 +1165,7 @@ var helpers = {
    * @param  {[type]} options [description]
    * @return {[type]}         [description]
    */
-  noop: function (options) {
+  noop: function(options) {
     return options.fn(this);
   },
 
@@ -1252,7 +1174,7 @@ var helpers = {
    * Build context from the attributes hash
    * @author Vladimir Kuznetsov <https://github.com/mistakster>
    */
-  withHash: function (options) {
+  withHash: function(options) {
     return options.fn(options.hash || {});
   },
   
@@ -1267,7 +1189,7 @@ var helpers = {
    * Add commas to numbers
    * @param {[type]} number [description]
    */
-  addCommas: function (number) {
+  addCommas: function(number) {
     return number.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
   },
 
@@ -1278,7 +1200,7 @@ var helpers = {
   * @param  {Number} phoneNumber [8005551212]
   * @return {Number}             [(800) 555-1212]
   */
-  formatPhoneNumber: function (num) {
+  formatPhoneNumber: function(num) {
     num = num.toString();
     return "(" + num.substr(0, 3) + ") " + num.substr(3, 3) + "-" + num.substr(6, 4);
   },
@@ -1291,7 +1213,7 @@ var helpers = {
    * @param  {[type]} max [description]
    * @return {[type]}     [description]
    */
-  random: function (min, max) {
+  random: function(min, max) {
     return _.random(min, max);
   },
 
@@ -1303,7 +1225,7 @@ var helpers = {
    * @param  {[type]} digits [description]
    * @return {[type]}        [description]
    */
-  toAbbr: function (number, digits) {
+  toAbbr: function(number, digits) {
     if (helperutils.isUndefined(digits)) {
       digits = 2;
     }
@@ -1328,29 +1250,29 @@ var helpers = {
     return number;
   },
 
-  toExponential: function (number, fractions) {
+  toExponential: function(number, fractions) {
     if (helperutils.isUndefined(fractions)) {
       fractions = 0;
     }
     return number.toExponential(fractions);
   },
 
-  toFixed: function (number, digits) {
+  toFixed: function(number, digits) {
     if (helperutils.isUndefined(digits)) {
       digits = 0;
     }
     return number.toFixed(digits);
   },
 
-  toFloat: function (number) {
+  toFloat: function(number) {
     return parseFloat(number);
   },
 
-  toInt: function (number) {
+  toInt: function(number) {
     return parseInt(number, 10);
   },
 
-  toPrecision: function (number, precision) {
+  toPrecision: function(number, precision) {
     if (helperutils.isUndefined(precision)) {
       precision = 1;
     }
@@ -1368,8 +1290,8 @@ var helpers = {
    * @param  {[type]} str [description]
    * @return {[type]}     [description]
    */
-  capitalizeFirst: function (str) {
-    if(str && typeof str === "string") {
+  capitalizeFirst: function(str) {
+    if (str && typeof str === "string") {
       return str.charAt(0).toUpperCase() + str.slice(1);
     }
   },
@@ -1380,9 +1302,9 @@ var helpers = {
    * @param  {[type]} str [description]
    * @return {[type]}     [description]
    */
-  capitalizeEach: function (str) {
-    if(str && typeof str === "string") {
-      return str.replace(/\w\S*/g, function (word) {
+  capitalizeEach: function(str) {
+    if (str && typeof str === "string") {
+      return str.replace(/\w\S*/g, function(word) {
         return word.charAt(0).toUpperCase() + word.substr(1);
       });
     }
@@ -1395,8 +1317,8 @@ var helpers = {
    * @param  {[type]} spaces [description]
    * @return {[type]}        [description]
    */
-  center: function (str, spaces) {
-    if(str && typeof str === "string") {
+  center: function(str, spaces) {
+    if (str && typeof str === "string") {
       var space = '';
       var i = 0;
       while (i < spaces) {
@@ -1413,8 +1335,8 @@ var helpers = {
    * @param  {[type]} str [description]
    * @return {[type]}     [description]
    */
-  dashify: function (str) {
-    if(str && typeof str === "string") {
+  dashify: function(str) {
+    if (str && typeof str === "string") {
       return str.split(".").join("-");
     }
   },
@@ -1425,8 +1347,8 @@ var helpers = {
    * @param  {[type]} str [description]
    * @return {[type]}     [description]
    */
-  hyphenate: function (str) {
-    if(str && typeof str === "string") {
+  hyphenate: function(str) {
+    if (str && typeof str === "string") {
       return str.split(" ").join("-");
     }
   },
@@ -1437,8 +1359,8 @@ var helpers = {
    * @param  {[type]} str [description]
    * @return {[type]}     [description]
    */
-  lowercase: function (str) {
-    if(str && typeof str === "string") {
+  lowercase: function(str) {
+    if (str && typeof str === "string") {
       return str.toLowerCase();
     }
   },
@@ -1450,8 +1372,8 @@ var helpers = {
    * @param  {[type]} str The input string
    * @return {[type]}     Input string with spaces replaced by plus signs
    */
-  plusify: function (str) {
-    if(str && typeof str === "string") {
+  plusify: function(str) {
+    if (str && typeof str === "string") {
       return str.split(" ").join("+");
     }
   },
@@ -1462,8 +1384,8 @@ var helpers = {
    * @param  {[type]} str [description]
    * @return {[type]}       [description]
    */
-  safeString: function (str) {
-    if(str && typeof str === "string") {
+  safeString: function(str) {
+    if (str && typeof str === "string") {
       return new helperutils.safeString(str);
     }
   },
@@ -1474,9 +1396,9 @@ var helpers = {
    * @param  {[type]} str [description]
    * @return {[type]}     [description]
    */
-  sentence: function (str) {
-    if(str && typeof str === "string") {
-      return str.replace(/((?:\S[^\.\?\!]*)[\.\?\!]*)/g, function (txt) {
+  sentence: function(str) {
+    if (str && typeof str === "string") {
+      return str.replace(/((?:\S[^\.\?\!]*)[\.\?\!]*)/g, function(txt) {
         return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
       });
     }
@@ -1488,14 +1410,14 @@ var helpers = {
    * @param  {[type]} str [description]
    * @return {[type]}     [description]
    */
-  titleize: function (str) {
-    if(str && typeof str === "string") {
+  titleize: function(str) {
+    if (str && typeof str === "string") {
       var title = str.replace(/[ \-_]+/g, ' ');
       var words = title.match(/\w+/g);
-      var capitalize = function (word) {
+      var capitalize = function(word) {
         return word.charAt(0).toUpperCase() + word.slice(1);
       };
-      return ((function () {
+      return ((function() {
         var i, len, results;
         results = [];
         for (i = 0, len = words.length; i < len; i++) {
@@ -1507,16 +1429,16 @@ var helpers = {
     }
   },
 
-  uppercase: function (options) {
-    if(options && typeof options === "string") {
+  uppercase: function(options) {
+    if (options && typeof options === "string") {
       return options.toUpperCase();
-    } else if(options && typeof options === "object") {
+    } else if (options && typeof options === "object") {
       return options.fn(this).toUpperCase();
     }
   },
 
-  reverse: function (str) {
-    if(str && typeof str === "string") {
+  reverse: function(str) {
+    if (str && typeof str === "string") {
       return str.split('').reverse().join('');
     }
   },
@@ -1529,8 +1451,8 @@ var helpers = {
    * @param  {String} substring The needle
    * @return {Number}           The number of times the needle is found in the haystack.
    */
-  count: function (str, substring) {
-    if(str && typeof str === "string") {
+  count: function(str, substring) {
+    if (str && typeof str === "string") {
       var n = 0;
       var pos = 0;
       var l = substring.length;
@@ -1556,8 +1478,8 @@ var helpers = {
    * @param  {[type]} b   [description]
    * @return {[type]}     [description]
    */
-  replace: function (str, a, b) {
-    if(str && typeof str === "string") {
+  replace: function(str, a, b) {
+    if (str && typeof str === "string") {
       return str.split(a).join(b);
     }
   },
@@ -1571,7 +1493,7 @@ var helpers = {
    * @param  {String} append   The string to append if charaters are omitted.
    * @return {String}          The truncated string.
    */
-  ellipsis: function (str, limit, append) {
+  ellipsis: function(str, limit, append) {
     if (helperutils.isUndefined(append)) {
       append = '';
     }
@@ -1592,7 +1514,7 @@ var helpers = {
    * @param  {[type]} omission [description]
    * @return {[type]}          [description]
    */
-  truncate: function (str, limit, omission) {
+  truncate: function(str, limit, omission) {
     if (helperutils.isUndefined(omission)) {
       omission = '';
     }
@@ -1621,7 +1543,7 @@ var helpers = {
    *     Bro, do you even hello world?
    *   {{/startsWith}}
    */
-  startsWith: function (prefix, str, options) {
+  startsWith: function(prefix, str, options) {
     if ((str !== null ? str.indexOf(prefix) : void 0) === 0) {
       return options.fn(this);
     } else {
@@ -1634,7 +1556,7 @@ var helpers = {
   // https://github.com/assemble/handlebars-helpers/blob/master/lib/helpers/helpers-url.js
   // -----------------------------
   
-  stripQuerystring: function (url) {
+  stripQuerystring: function(url) {
     return url.split("?")[0];
   },
 
@@ -1649,7 +1571,7 @@ var helpers = {
    * @param  {String} uri: The un-encoded string
    * @return {String}      The endcoded string.
    */
-  encodeURI: function (uri) {
+  encodeURI: function(uri) {
     return encodeURIComponent(uri);
   },
 
@@ -1663,10 +1585,9 @@ var helpers = {
    * @param  {[type]} encodedURI [description]
    * @return {[type]}            [description]
    */
-  decodeURI: function (encodedURI) {
+  decodeURI: function(encodedURI) {
     return decodeURIComponent(encodedURI);
   },
-
 };
 
 for (var helper in helpers) {
