@@ -20,6 +20,8 @@ pk.editor = {
     this.message = this.container.find('.editor-message');
     this.includes = this.container.find('.editor-includes');
     this.codemirror = this.init_codemirror();
+    this.title = this.container.find('[name=title]');
+    this.tags = this.container.find('[name=tags]');
     this.last_updated_data = this.data();
     this.last_saved_data = this.last_updated_data;
     this.init_triggers();
@@ -84,10 +86,10 @@ pk.editor = {
   data: function() {
     return {
       'id': this.opts.id,
-      'title': this.container.find('[name=title]').val(),
+      'title': this.title.val(),
       'slug': _.trim(window.location.pathname, '/').split('/').reverse()[0] || 'root',
       'body': this.codemirror.getValue(),
-      'tags': this.container.find('[name=tags]').val(),
+      'tags': this.tags.val(),
     };
   },
   
@@ -99,8 +101,8 @@ pk.editor = {
     xhr.done(function(data, textStatus, jqXHR) {
       self.opts.id = '';
       self.codemirror.setValue('');
-      self.container.find('[name=title]').val('');
-      self.container.find('[name=tags]').val('');
+      self.title.val('');
+      self.tags.val('');
       self.show_message(self.MESSAGE_DELETED);
     });
     xhr.fail(function(jqXHR, textStatus, errorThrown) {
@@ -117,8 +119,8 @@ pk.editor = {
 
   reset: function() {
     this.codemirror.setValue(this.last_saved_data.body);
-    this.container.find('[name=title]').val(this.last_saved_data.title);
-    this.container.find('[name=tags]').val(this.last_saved_data.tags);
+    this.title.val(this.last_saved_data.title);
+    this.tags.val(this.last_saved_data.tags);
   },
 
   resize_editor: function() {
@@ -153,9 +155,9 @@ pk.editor = {
     setTimeout(function() { self.message.css('opacity', 0); }, 5000);
   },
 
-  toggle_editor: function() {
+  toggle_editor: function(enable) {
     var self = this;
-    if (self.editing()) {
+    if (enable === false || (enable === undefined && self.editing())) {
       $('body').removeClass('editing');
       Cookies.set('editing', '');
     } else {
