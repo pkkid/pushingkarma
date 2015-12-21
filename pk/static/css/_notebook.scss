@@ -88,7 +88,8 @@ $NOTEFILTER_HEIGHT: 40px;
           top: 1px;
         }
       }
-      &:hover {
+      &:hover,&.selected {
+        outline-color: transparent;
         background-color: rgba(0,0,0,0.1);
         .title { color: darken(#55321A, 10%); }
         .subtext { color: rgba(0,0,0,0.7); }

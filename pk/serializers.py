@@ -23,9 +23,6 @@ class NoteSerializer(DynamicFieldsSerializer):
         model = Note
         fields = ('id','url','weburl','title','slug','tags','body','html','created','modified')
 
-    # def get_url(self, note):
-    #     return note.apiurl()
-
     def get_tags(self, note):
         return note.tags.split(' ')
 
@@ -35,9 +32,6 @@ class PageSerializer(DynamicFieldsSerializer):
     class Meta:
         model = Page
         fields = ('id','url','weburl','slug','body','html','meta','created','modified')
-
-    # def get_url(self, note):
-    #     return note.apiurl()
 
     def validate_slug(self, value):
         if len(value) <= 0:
