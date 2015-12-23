@@ -29,5 +29,5 @@ def markdown(request):
         md = Markdown(body)
         return response_json({'html':md.html})
     md = Markdown(body, Page, '/p/')
-    includes = list(md.meta['includes'].keys())
+    includes = sorted(md.meta['includes'].keys())
     return response_json({'html':md.html, 'includes':includes})

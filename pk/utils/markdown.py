@@ -3,7 +3,8 @@
 """
 Copyright (c) 2015 PushingKarma. All rights reserved.
 """
-import gfm, re
+import gfm
+from bs4 import BeautifulSoup
 from collections import defaultdict
 from pk import utils
 
@@ -12,57 +13,67 @@ class Markdown(object):
     NO_CONTENT = 'Page contains no content.'
     VALID, INVALID = 'valid', 'invalid'
 
-    def __init__(self, text, cls=None, prefix='/'):
+    def __init__(self, text, cls=None, prefix='/', kwvars=None):
         self.text = text
         self.cls = cls
         self.prefix = prefix
+        self.kwvars = kwvars or {} 
         self.meta = defaultdict(dict)
         self.html = self._render_html()
 
     def _render_html(self):
-        html = gfm.markdown(self.text)
+        text = self._replace_kwvars(self.text)
+        html = gfm.markdown(text)
+        soup = BeautifulSoup(html)
         if self.cls:
-            html = self._replace_includes(html)
-            html = self._replace_links(html)
-        html = self._remove_linefeeds(html)
-        return html or self.NO_CONTENT
+            self._replace_includes(soup)
+            self._replace_links(soup)
+        self._remove_linefeeds(soup)
+        return str(soup) or self.NO_CONTENT
 
-    def _replace_includes(self, html):
-        regex = '(<include\s+href=[\'"]%s([a-z_0-9]+)[\'"]\s*/>)' % self.prefix
-        for match, slug in re.findall(regex, html):
+    def _replace_kwvars(self, text):
+        for key, val in self.kwvars.items():
+            text = text.replace('{{%s}}' % key, val)
+        return text
+
+    def _replace_includes(self, soup):
+        for elem in soup.find_all('include'):
+            slug = elem.attrs.get('href','').replace(self.prefix,'').strip('/')
             subitem = utils.get_object_or_none(self.cls, slug=slug)
             if subitem:
-                submd = Markdown(subitem.body, self.cls)
-                subhtml = submd.html
-                html = html.replace(match, subhtml, 1)
+                kwvars = dict(elem.attrs); kwvars['text'] = elem.text.strip()
+                submd = Markdown(subitem.body, self.cls, self.prefix, kwvars)
+                elem.replaceWith(BeautifulSoup(submd.html))
                 self.meta['includes'][slug] = self.VALID
                 self._merge_submeta(submd.meta)
             else:
                 href = '%s%s' % (self.prefix, slug)
                 link = '<a class="invalid" href="%s">[template:%s]</a>' % (href, href)
-                html = html.replace(match, link)
+                elem.replaceWith(BeautifulSoup(link))
                 self.meta['includes'][slug] = self.INVALID
-        return html
 
-    def _replace_links(self, html):
-        regex = '(<a\s+href=[\'"]%s([a-z_0-9]+)[\'"]>(.+?)</a>)' % self.prefix
-        for match, slug, txt in re.findall(regex, html):
+    def _replace_links(self, soup):
+        for elem in soup.find_all('a'):
+            if not elem.attrs.get('href','').startswith(self.prefix):
+                continue
+            slug = elem.attrs.get('href','').replace(self.prefix,'').strip('/')
             subitem = utils.get_object_or_none(self.cls, slug=slug)
             href = '%s%s' % (self.prefix, slug)
             if subitem:
-                link = '<a href="%s">%s</a>' % (href, txt)
-                html = html.replace(match, link)
-                self.meta['links'][slug] = self.VALID
+                link = '<a href="%s">%s</a>' % (href, elem.text)
+                elem.replaceWith(BeautifulSoup(link))
+                #self.meta['links'][slug] = self.VALID
             else:
-                link = '<a class="invalid" href="%s">%s</a>' % (href, txt)
-                html = html.replace(match, link)
+                link = '<a class="invalid" href="%s">%s</a>' % (href, elem.text)
+                elem.replaceWith(BeautifulSoup(link))
                 self.meta['links'][slug] = self.INVALID
-        return html
 
-    def _remove_linefeeds(self, html):
-        return html.replace('<br />', '\n')
+    def _remove_linefeeds(self, soup):
+        for elem in soup.find_all('br'):
+            elem.replaceWith('\n')
+        return soup
 
     def _merge_submeta(self, submeta):
         for key, slugs in submeta.items():
-            for slug, data in slugs.iter():
+            for slug, data in slugs.items():
                 self.meta[key][slug] = data

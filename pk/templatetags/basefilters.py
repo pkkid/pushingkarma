@@ -48,6 +48,11 @@ def is_false(arg):
 @register.filter
 def is_true(arg):
     return arg is True
+    
+
+@register.filter
+def sort(sortable):
+    return sorted(sortable)
 
 
 @register.filter

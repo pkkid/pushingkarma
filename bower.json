@@ -24,6 +24,7 @@
     "tether": "~1.1.0",
     "icomoon-bower": "icomoon#~0.1.0",
     "lodash": "~3.10.1",
-    "handlebars": "~4.0.5"
+    "handlebars": "~4.0.5",
+    "mdi": "~1.3.41"
   }
 }

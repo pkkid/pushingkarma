@@ -45,7 +45,7 @@ $TOGGLE_WIDTH: 3px;
       background-color: #666;
       border-radius: 4px;
       content: ' ';
-      display:block;
+      display: block;
       height: 10px;
       left: 4px;
       position: absolute;
@@ -97,6 +97,7 @@ body.pages.editing {
   .cm-s-blackboard.CodeMirror {
     background: #222;
     height: calc(100% - 60px);
+    position: relative;
   }
   .CodeMirror-simplescroll-horizontal, .CodeMirror-simplescroll-vertical {
     background: #282828;
