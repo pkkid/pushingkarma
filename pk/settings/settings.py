@@ -109,5 +109,8 @@ REST_FRAMEWORK = {
 }
 
 # DBBackup Settings
-DBBACKUP_BACKUP_DIRECTORY = '/home/mjs7231/Dropbox/Backup/pushingkarma/'
-DBBACKUP_FILENAME_TEMPLATE = '{servername}-{datetime}.{extension}'
+DBBACKUP_STORAGE = 'dbbackup.storage.dropbox_storage'
+DBBACKUP_TOKENS_FILEPATH = '/home/mjs7231/.dbbackup'
+
+#DBBACKUP_BACKUP_DIRECTORY = '/home/mjs7231/Dropbox/Backup/pushingkarma/'
+#DBBACKUP_FILENAME_TEMPLATE = '{servername}-{datetime}.{extension}'
