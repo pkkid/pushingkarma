@@ -24,6 +24,15 @@ pk.utils = {
       $('body').removeClass('preload');
     }, 500);
   },
+  
+  highlightjs: function(selector) {
+    selector = this.set_default(selector, 'article pre code');
+    console.debug('init highlightjs on '+ selector);
+    //hljs.configure({useBR: true});
+    $(selector).each(function(i, block) {
+      hljs.highlightBlock(block);
+    });
+  },
 
   init_tooltips: function(selector) {
     selector = this.set_default(selector, '[data-toggle="tooltip"]');

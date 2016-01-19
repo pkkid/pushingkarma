@@ -33,9 +33,9 @@
     </div>
     <!-- Note Content -->
     <div id='notebook-content'>
-      <div id='note'>
+      <article id='note'>
         {{note.html|safe}}
-      </div>
+      </article>
       <!-- Editor -->
       {% if user.is_authenticated %}
         <hr class='fancy'/>

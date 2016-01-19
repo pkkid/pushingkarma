@@ -4,7 +4,7 @@
 'use strict';
 
 pk.editor = {
-  UPDATE_INTERVAL: 1500,
+  UPDATE_INTERVAL: 500,
   MESSAGE_SAVED: '<i class="icon-checkmark"></i>&nbsp;Saved',
   MESSAGE_ERROR: '<i class="icon-notification"></i>&nbsp;Error',
   MESSAGE_DELETED: '<i class="icon-checkmark"></i>&nbsp;Deleted',
@@ -180,6 +180,11 @@ pk.editor = {
       if ((self.opts.output) && (self.opts.scrollbottom)) {
         var sbot = $(window).scrollBottom();
         $(self.opts.output).html(data.html);
+        
+        pk.utils.highlightjs();
+        
+        //hljs.highlightBlock($(self.opts.output).find('pre code'));
+        //pk.utils.highlightjs('article pre code');
         $(window).scrollBottom(sbot);
       } else if (self.opts.output) {
         $(self.opts.output).html(data.html);

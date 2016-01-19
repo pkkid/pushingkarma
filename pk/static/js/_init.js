@@ -10,6 +10,7 @@ var pk = {  // jshint ignore:line
 
 $(function() {
   pk.utils.enable_animations();
+  pk.utils.highlightjs();
   pk.utils.init_tooltips();
   pk.login.init();
 });
