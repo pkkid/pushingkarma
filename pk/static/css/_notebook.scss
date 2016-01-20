@@ -59,6 +59,10 @@ $NOTEFILTER_HEIGHT: 40px;
         color: #2E2B25;
       }
     }
+    #notebook-list {
+      overflow-y: auto;
+      height: calc(100% - 42px);
+    }
     .notebook-item {
       border-bottom: 1px solid rgba(0,0,0,0.1);
       border-top: 1px solid rgba(255,255,255,0.1);
@@ -74,8 +78,10 @@ $NOTEFILTER_HEIGHT: 40px;
       .title {
         color: #55321A;
         line-height: 18px;
-        font-size: 18px;
-        font-family: $font-family-navbar;
+        font-size: 15px;
+        font-family: $font-family-sans-serif;
+        white-space: nowrap;
+        overflow: hidden;
       }
       .subtext {
         color: rgba(0,0,0,0.4);

@@ -27,7 +27,8 @@ def markdown(request):
     body = request.POST.get('body', '')
     if '/n/' in request.META['HTTP_REFERER']:
         md = Markdown(body)
-        return response_json({'html':md.html})
+        html = '<h2>%s</h2>%s' % (request.POST.get('title',''), md.html)
+        return response_json({'html':html})
     md = Markdown(body, Page, '/p/')
     includes = sorted(md.meta['includes'].keys())
     return response_json({'html':md.html, 'includes':includes})
