@@ -8,7 +8,3 @@ export DJANGO_SETTINGS_MODULE="pk.settings.settings"
 source /home/mjs7231/Sources/django/extras/django_bash_completion
 alias cdproject="cd $HOME/Projects/pushingkarma"
 cdproject
-
-# Sass
-export CSS="$HOME/Projects/pushingkarma/pk/static/css"
-alias sasswatch="sass --cache-location=/tmp/sass-cache --watch $CSS:$CSS"
