@@ -14,7 +14,7 @@ __Setup Environment__
 
     # Create Python Virtualenv
     > git clone git@github.com:mjs7231/pushingkarma.git ~/Projects/
-    > mkvirtualenv --python=/usr/bin/python3 pushingkarma
+    > mkvirtualenv --python=/usr/bin/python3 -a /home/mjs7231/Projects/pushingkarma pushingkarma
     > rm ~/.virtualenvs/pushingkarma/bin/postactivate
     > ln -s ~/Projects/pushingkarma/postactivate ~/.virtualenvs/pushingkarma/bin/postactivate
     > workon pushingkarma
@@ -67,4 +67,3 @@ public domain or where your use is permitted by an applicable exception or
 limitation. No warranties are given. The license may not give you all of the 
 permissions necessary for your intended use. For example, other rights such as
 publicity, privacy, or moral rights may limit how you use the material.
-

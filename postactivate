@@ -5,6 +5,6 @@
 PS1="[pk] $_OLD_VIRTUAL_PS1"
 export PYTHONPATH="$HOME/Projects/pushingkarma:$PYTHONPATH"
 export DJANGO_SETTINGS_MODULE="pk.settings.settings"
-source /home/mjs7231/Sources/django/extras/django_bash_completion
-alias cdproject="cd $HOME/Projects/pushingkarma"
-cdproject
+if [ -f /home/mjs7231/Sources/django/extras/django_bash_completion ]
+  then source /home/mjs7231/Sources/django/extras/django_bash_completion
+fi
