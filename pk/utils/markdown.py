@@ -22,7 +22,8 @@ class Markdown(object):
         self.html = self._render_html()
 
     def _render_html(self):
-        text = self._replace_kwvars(self.text)
+        text = self._explicit_linefeeds(self.text)
+        text = self._replace_kwvars(text)
         html = gfm.markdown(text)
         soup = BeautifulSoup(html)
         if self.cls:
@@ -68,9 +69,16 @@ class Markdown(object):
                 elem.replaceWith(BeautifulSoup(link))
                 self.meta['links'][slug] = self.INVALID
 
+    def _explicit_linefeeds(self, text):
+        text = text.replace('<br/>', '<brx/>')
+        text = text.replace('<br />', '<brx/>')
+        return text
+
     def _remove_linefeeds(self, soup):
         for elem in soup.find_all('br'):
             elem.replaceWith('\n')
+        for elem in soup.find_all('brx'):
+            elem.replaceWith(BeautifulSoup('<br/>'))
         return soup
 
     def _merge_submeta(self, submeta):

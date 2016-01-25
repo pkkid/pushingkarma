@@ -180,11 +180,7 @@ pk.editor = {
       if ((self.opts.output) && (self.opts.scrollbottom)) {
         var sbot = $(window).scrollBottom();
         $(self.opts.output).html(data.html);
-        
         pk.utils.highlightjs();
-        
-        //hljs.highlightBlock($(self.opts.output).find('pre code'));
-        //pk.utils.highlightjs('article pre code');
         $(window).scrollBottom(sbot);
       } else if (self.opts.output) {
         $(self.opts.output).html(data.html);

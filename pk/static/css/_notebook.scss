@@ -114,7 +114,10 @@ body.authenticated #notebook-filter {
   margin-left: 300px;
   height: 100%;
   overflow: hidden;
-
+  
+  #note {
+    min-height: 400px;
+  }
   div.editor-toggle {
     background-color: rgba(0,0,0,0.1);
     border-radius: 6px;
@@ -143,22 +146,7 @@ body.authenticated #notebook-filter {
       transform: rotate(-20deg);
     }
   }
-
-  // .editor-toggle {
-  //   background-color: rgba(0,0,0,0.1);
-  //   border-top-left-radius: 2px;
-  //   border-top-right-radius: 2px;
-  //   border: 1px solid rgba(0,0,0,0.1);
-  //   border-bottom-width: 0px;
-  //   font-size: 10px;
-  //   margin: 0px auto;
-  //   text-align: center;
-  //   width: 150px;
-  //   cursor: pointer;
-  //   user-select: none;
-  // }
 }
-
 
 // Toggle Editing Mode
 #notebook-editor {
