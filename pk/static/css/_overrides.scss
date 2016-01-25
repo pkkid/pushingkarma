@@ -11,3 +11,24 @@
 .tooltip.in {
   opacity: 0.9;
 }
+
+// Webkit Scrollbar
+body *::-webkit-scrollbar {
+  height: 7px;
+  width: 7px;
+}
+body *::-webkit-scrollbar-button:start:decrement,
+body *::-webkit-scrollbar-button:end:increment {
+  display: none;
+}
+body *::-webkit-scrollbar-track-piece {
+  background: rgba(0,0,0,0.1);
+}
+body *::-webkit-scrollbar-thumb:horizontal {
+  background: -webkit-gradient(linear, left top, left bottom, from(#999), to(#666));
+  border-radius: 3px;
+}
+body *::-webkit-scrollbar-thumb:vertical {
+  background: -webkit-gradient(linear, left top, right top, from(#999), to(#666));
+  border-radius: 3px;
+}
