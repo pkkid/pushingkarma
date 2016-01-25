@@ -3,10 +3,15 @@
 """
 Copyright (c) 2015 PushingKarma. All rights reserved.
 """
-import gfm
+import markdown
 from bs4 import BeautifulSoup
 from collections import defaultdict
 from pk import utils
+from pymdownx import github
+
+MARKDOWN_EXTENSIONS = [
+    github.GithubExtension([]),
+]
 
 
 class Markdown(object):
@@ -24,12 +29,13 @@ class Markdown(object):
     def _render_html(self):
         text = self._explicit_linefeeds(self.text)
         text = self._replace_kwvars(text)
-        html = gfm.markdown(text)
+        html = markdown.markdown(text, extensions=MARKDOWN_EXTENSIONS)
         soup = BeautifulSoup(html)
         if self.cls:
             self._replace_includes(soup)
             self._replace_links(soup)
-        self._remove_linefeeds(soup)
+        self._syntax_hinting(soup)
+        self._clean_linefeeds(soup)
         return str(soup) or self.NO_CONTENT
 
     def _replace_kwvars(self, text):
@@ -68,13 +74,16 @@ class Markdown(object):
                 link = '<a class="invalid" href="%s">%s</a>' % (href, elem.text)
                 elem.replaceWith(BeautifulSoup(link))
                 self.meta['links'][slug] = self.INVALID
+                
+    def _syntax_hinting(self, soup):
+        pass
 
     def _explicit_linefeeds(self, text):
         text = text.replace('<br/>', '<brx/>')
         text = text.replace('<br />', '<brx/>')
         return text
 
-    def _remove_linefeeds(self, soup):
+    def _clean_linefeeds(self, soup):
         for elem in soup.find_all('br'):
             elem.replaceWith('\n')
         for elem in soup.find_all('brx'):
