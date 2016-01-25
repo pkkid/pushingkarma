@@ -178,10 +178,10 @@ pk.editor = {
     var xhr = $.ajax({url:'/markdown/', data:data, type:'POST', dataType:'json'});
     xhr.done(function(data, textStatus, jqXHR) {
       if ((self.opts.output) && (self.opts.scrollbottom)) {
-        var sbot = $(window).scrollBottom();
+        var pxtobottom = $(window).scrollBottom();
         $(self.opts.output).html(data.html);
         pk.utils.highlightjs();
-        $(window).scrollBottom(sbot);
+        $(window).scrollBottom(pxtobottom);
       } else if (self.opts.output) {
         $(self.opts.output).html(data.html);
       }

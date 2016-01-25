@@ -18,7 +18,9 @@ $.fn.animatecss = function(effect, callback) {
 // ScrollBottom (similar to scrolltop, but use bottom as the root)
 // see: http://stackoverflow.com/questions/4188903/opposite-of-scrolltop-in-jquery
 $.fn.scrollBottom = function(val) { 
-  if (val) { return this.scrollTop($(document).height() - val - this.height()); }
+  if (val !== undefined) {
+    return this.scrollTop($(document).height() - val - this.height());
+  }
   return $(document).height() - this.scrollTop() - this.height();
 };
 
