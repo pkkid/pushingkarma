@@ -67,3 +67,5 @@ public domain or where your use is permitted by an applicable exception or
 limitation. No warranties are given. The license may not give you all of the 
 permissions necessary for your intended use. For example, other rights such as
 publicity, privacy, or moral rights may limit how you use the material.
+
+[![Analytics](https://ga-beacon.appspot.com/UA-87461-7/pushingkarma/home)](https://github.com/igrigorik/ga-beacon)
