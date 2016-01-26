@@ -4,6 +4,7 @@
 Copyright (c) 2015 PushingKarma. All rights reserved.
 """
 import json
+from django.conf import settings
 from django.forms.utils import ErrorDict
 from django.http import HttpResponse
 from django.shortcuts import render_to_response
@@ -21,6 +22,7 @@ def get_object_or_none(cls, *args, **kwargs):
 def response(request, template, data):
     if 'json' in request.GET:
         return response_json(data)
+    data['settings'] = settings
     return render_to_response(template, data, RequestContext(request))
 
 
