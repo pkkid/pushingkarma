@@ -21,7 +21,7 @@ pk.notebook = {
     this.last_searched = '__init__';
     this.init_triggers();
     this.init_shortcuts();
-    this.update_list();
+    this.update_list(this.searchinput.val());
   },
   
   init_triggers: function() {
@@ -31,8 +31,7 @@ pk.notebook = {
       if (_.valuesIn(this.KEYS).indexOf(event.keyCode) == -1) {
         event.preventDefault();
         var search = $(this).val();
-        if (search.length === 0) { self.update_list(); }
-        else if (search.length >= 3) { self.update_list(search); }
+        self.update_list(search);
       }
     });
     // start a new note
@@ -97,7 +96,8 @@ pk.notebook = {
     var url = search ? this.APIROOT +'?search='+ encodeURIComponent(search) : this.APIROOT;
     this.xhr = $.ajax({url:url, type:'GET', dataType:'json'});
     this.xhr.done(function(data, textStatus, jqXHR) {
-      var html = self.templates.listitems(data);
+      var ctx = {items:data, search:encodeURIComponent(search)};
+      var html = self.templates.listitems(ctx);
       self.container.find('#notebook-list').html(html);
       self.last_searched = search;
     });
@@ -105,8 +105,8 @@ pk.notebook = {
   
   templates: {
     listitems: Handlebars.compile([
-      '{{#each this}}',
-      '  <a class="notebook-item" href="{{this.weburl}}" data-url="{{this.url}}">',
+      '{{#each this.items}}',
+      '  <a class="notebook-item" href="{{this.weburl}}{{#if ../search}}?search={{../search}}{{/if}}" data-url="{{this.url}}">',
       '    <div class="title">{{this.title}}</div>',
       '    <div class="subtext">{{this.tags}} - {{formatDate this.created "%Y-%m-%d"}}</div>',
       '  </a>',

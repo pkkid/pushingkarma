@@ -10,7 +10,7 @@ from pk.utils.markdown import Markdown
 
 
 def note(request, slug=None, template='note.html'):
-    note = get_object_or_none(Note, slug=slug) or Note()
+    note = get_object_or_none(Note, slug=slug) or Note.objects.order_by('-created')[0]
     data = context.core(request, menuitem='notebook')
     data.note = NoteSerializer(note, context={'request':request}).data
     return response(request, template, data)
