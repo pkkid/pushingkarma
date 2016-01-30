@@ -4,7 +4,7 @@
 Copyright (c) 2015 PushingKarma. All rights reserved.
 """
 import os
-from fabric.api import cd, env, put, run, sudo
+from fabric.api import cd, env, local, put, run, sudo
 from fabric.contrib.project import rsync_project
 
 RSYNC_EXCLUDE = ('.DS_Store', '__pycache__', '.git', '*.sqlite3', '*.example', '*.db', 'secrets.py', 'fabfile.py')
@@ -21,6 +21,11 @@ def _virtualenv(command):
         activate = 'source ./activate && source ./postactivate'
         run('%s && %s' % (activate, command))
         
+
+def build_static():
+    """ Build local static files to be uploaded. """
+    local('cd /home/mjs7231/Projects/pushingkarma && /home/mjs7231/Sources/node_modules/bin/gulp default')
+
 
 def deploy_source():
     """ Copy source files (default rsync options: -pthrvz). """
@@ -43,6 +48,7 @@ def reload_apache():
 
 def deploy():
     """ Deploy to production. """
+    build_static()
     deploy_source()
     pip_install()
     reload_apache()
