@@ -25,10 +25,18 @@ pk.utils = {
     }, 500);
   },
   
+  format: function() {
+    var result = arguments[0];
+    for (var i=0; i<arguments.length-1; i++) {
+        var regexp = new RegExp('\\{'+i+'\\}', 'gi');
+        result = result.replace(regexp, arguments[i+1]);
+    }
+    return result;
+  },
+  
   highlightjs: function(selector) {
     selector = this.set_default(selector, 'article pre code');
     console.debug('init highlightjs on '+ selector);
-    //hljs.configure({useBR: true});
     $(selector).each(function(i, block) {
       hljs.highlightBlock(block);
     });
