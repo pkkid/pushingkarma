@@ -4,13 +4,25 @@
 'use strict';
 
 // Animate a jquery object
-// See: https://daneden.github.io/animate.css/
+// https://daneden.github.io/animate.css/
 $.fn.animatecss = function(effect, callback) {
   $(this).addClass('animated '+effect).one(pk.ANIMATIONEND, function() {
     $(this).removeClass('animated '+effect);
     if (callback !== undefined) {
       callback();
     }
+  });
+};
+
+
+// Disable parent scroll (side effect: forces scroll to 30px)
+// http://stackoverflow.com/questions/25125560/prevent-parent-scroll-when-in-child-div
+$.fn.disableParentScroll = function() {
+  $(this).on('mousewheel', function(event) {
+    var e = event.originalEvent;
+    var d = e.wheelDelta || -e.detail;
+    this.scrollTop += (d < 0 ? 1 : -1) * 30;
+    event.preventDefault();
   });
 };
 
