@@ -36,6 +36,7 @@ gulp.task('css', function () {
 gulp.task('codemirror', function() {
   gulp.src([
     './pk/static/bower/codemirror/lib/codemirror.css',
+    './pk/static/bower/codemirror/addon/dialog/dialog.css',
     './pk/static/bower/codemirror/addon/scroll/simplescrollbars.css',
     './pk/static/bower/codemirror/theme/blackboard.css',
     './pk/static/bower/codemirror/theme/solarized.css',
@@ -44,8 +45,13 @@ gulp.task('codemirror', function() {
   .pipe(gulp.dest('./pk/static/dist'));
   gulp.src([
     './pk/static/bower/codemirror/lib/codemirror.js',
+    './pk/static/bower/codemirror/addon/dialog/dialog.js',
+    './pk/static/bower/codemirror/addon/edit/continuelist.js',
     './pk/static/bower/codemirror/addon/mode/overlay.js',
     './pk/static/bower/codemirror/addon/scroll/simplescrollbars.js',
+    './pk/static/bower/codemirror/addon/search/search.js',
+    './pk/static/bower/codemirror/addon/search/searchcursor.js',
+    './pk/static/bower/codemirror/keymap/sublime.js',
     './pk/static/bower/codemirror/mode/css/css.js',
     './pk/static/bower/codemirror/mode/django/django.js',
     './pk/static/bower/codemirror/mode/gfm/gfm.js',
