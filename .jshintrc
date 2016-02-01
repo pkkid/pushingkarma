@@ -13,6 +13,7 @@
         "Cookies",
         "global",
         "Handlebars",
+        "hljs",
         "imports",
         "Nasuni",
         "NUI",
