@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 {% load basefilters %}
-{% block bodyclass %}{{block.super}} pages {{request.COOKIES.editing|yesno:'editing,'}}{% endblock %}
 
 {% block js %}
   <script type='text/javascript'>
@@ -9,56 +8,12 @@
         api_url: '/api/pages/',
         markdown_url: '/markdown/p/',
         show_includes: true,
-        codemirror: {
-          keyMap:'sublime',
-          mode:'xml',
-          tabSize: 2,
-          theme:'blackboard',
-        },
         init_data: {{page|json}},
       });
-      
-    //pk.editor2.opts.    
-    //   pk.pages.init('#pages-editor', {
-    //     id: '{{page.id|default:""}}',
-    //     apiroot: '/api/pages/',
-    //     output: '#page',
-    //     codemirror: {mode:'xml', theme:'blackboard'},
-    //   });
     });
   </script>
 {% endblock %}
 
-<!-- Editor -->
-{% comment %}
-{% block layoutwrap %}
-  {% if user.is_authenticated %}
-    <div id='pages-editor' class='editor no-preload-animation'>
-      <div class='editor-toggle'></div>
-      <div class='editor-menu'>
-        <span class='editor-title'>Markdown Editor</span>
-        <span class='editor-reset action'>Reset</span>
-        <span class='editor-save action'>Save</span>
-        <span class='editor-delete action'><i class='icon-bin'></i></span>
-        <span class='editor-spinner'></span>
-        <span class='editor-message'></span>
-      </div>
-      <textarea style='display:none;'>{{page.body}}</textarea>
-      <div class='editor-includes'>
-        {% if page.meta.includes %}
-          Includes:
-          {% for slug in page.meta.includes.keys|sort %}
-            <a href='/p/{{slug}}'>{{slug}}</a>{% if not forloop.last %}, {% endif %}
-          {% endfor %}
-        {% endif %}
-      </div>
-    </div>
-  {% endif %}
-  {{block.super}}
-{% endblock %}
-{% endcomment %}
-
-<!-- Page Content -->
 {% block content %}
   <article id='page'>{{page.html|safe}}</article>
 {% endblock content %}

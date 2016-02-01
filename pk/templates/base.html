@@ -23,8 +23,7 @@
             <form method='POST'>
               {% if user.is_authenticated %}
                 <span class='icomoon-user'></span>
-                Hello {{user.username}}! |
-                <a href='{% url "auth_logout" %}'>Logout</a>
+                Hello {{user.username}}! | <a href='{% url "auth_logout" %}'>Logout</a>
               {% else %}
                 <span class='icon-notification'></span>
                 <input type='text' name='email' placeholder='Email' autocomplete='off'/>
@@ -42,9 +41,7 @@
         </div>
       </div>
       <footer class='no-preload-animation'>
-        Copyright (c) 2015 PushingKarma. All rights reserved.<br/>
-        Icons graciously shared by <a href='https://icomoon.io/#preview-free'>IcoMoon</a>
-          via <a href='http://creativecommons.org/licenses/by/4.0/'>CC BY 4.0 license</a>.
+        Copyright (c) 2015 PushingKarma. All rights reserved.
       </footer>
     </div>
   </body>
