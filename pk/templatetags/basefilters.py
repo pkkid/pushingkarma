@@ -4,6 +4,7 @@ General useful filters.
 import json as _json
 from django import template
 from django.utils.html import escape
+from django.utils.safestring import mark_safe
 register = template.Library()
 
 
@@ -37,7 +38,7 @@ def join_by(arg, delim=', '):
 @register.filter
 def json(arg):
     if not arg: return 'null'
-    return _json.dumps(arg)
+    return mark_safe(_json.dumps(arg))
 
 
 @register.filter
