@@ -5,17 +5,32 @@
 {% block js %}
   <script type='text/javascript'>
     $(function() {
-      pk.pages.init('#pages-editor', {
-        id: '{{page.id|default:""}}',
-        apiroot: '/api/pages/',
-        output: '#page',
-        codemirror: {mode:'xml', theme:'blackboard'},
+      pk.editor2.init('#page', {
+        api_url: '/api/pages/',
+        markdown_url: '/markdown/p/',
+        show_includes: true,
+        codemirror: {
+          keyMap:'sublime',
+          mode:'xml',
+          tabSize: 2,
+          theme:'blackboard',
+        },
+        init_data: {{page|json}},
       });
+      
+    //pk.editor2.opts.    
+    //   pk.pages.init('#pages-editor', {
+    //     id: '{{page.id|default:""}}',
+    //     apiroot: '/api/pages/',
+    //     output: '#page',
+    //     codemirror: {mode:'xml', theme:'blackboard'},
+    //   });
     });
   </script>
 {% endblock %}
 
 <!-- Editor -->
+{% comment %}
 {% block layoutwrap %}
   {% if user.is_authenticated %}
     <div id='pages-editor' class='editor no-preload-animation'>
@@ -41,6 +56,7 @@
   {% endif %}
   {{block.super}}
 {% endblock %}
+{% endcomment %}
 
 <!-- Page Content -->
 {% block content %}

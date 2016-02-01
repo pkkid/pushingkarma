@@ -35,7 +35,7 @@ urlpatterns = [
     url(r'^n/$', pk.views.note, name='notebook'),
     url(r'^p/(?P<slug>.*?)/$', pk.views.page, name='page'),
     url(r'^n/(?P<slug>.*?)/$', pk.views.note, name='note'),
-    url(r'^markdown/$', pk.views.markdown, name='markdown'),
+    url(r'^markdown(?P<prefix>/[np]/)$', pk.views.markdown, name='markdown'),
 ]
 
 if settings.DEBUG:

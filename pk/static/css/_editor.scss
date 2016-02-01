@@ -1,77 +1,93 @@
 //--------------------------------------------------------
 // Copyright (c) 2015 PushingKarma. All rights reserved.
 //--------------------------------------------------------
-// $EDITOR_WIDTH: 550px;
-// $TOGGLE_WIDTH: 8px;
 
 
-.editor {
-  color: #666;
-  background-color: rgba(0,0,0,0.1);
-  border-top: 1px solid rgba(0,0,0,0.1);
-  //min-height: 200px;
+#editor {
+  animation-duration: 0.4s;
+  background-color: #181818;
+  bottom: 0px;
+  box-shadow: 0px -2px 2px rgba(0,0,0,0.2);
+  color: #888;
+  height: 200px;
+  padding: 0px 30px;
+  position: fixed;
   width: 100%;
-
-  input,
-  div.editor-menu,
-  div.editor-includes {
-    color: #777;
-    background-color: transparent;
+  z-index: 999;
+  
+  // resize editor
+  .slider {
+    background-color: #181818;
+    height: 8px;
+    padding: 3px;
+    cursor: ns-resize;
+    .grip {
+      background-color: #666;
+      width: 20px;
+      height: 4px;
+      border-radius: 3px;
+      margin: 0px auto;
+    }
+  }
+  
+  // menu and items
+  .menu, .includes, .tags {
     border-width: 0px;
+    color: #555;
     font-family: $font-family-navbar; 
     font-size: 12px;
     height: 30px;
     line-height:30px;
     margin: 0px;
     overflow: hidden;
-    padding: 0px 10px;
     user-select: none;
     width: 100%;
-    span.editor-title {
+    .menutitle {
       cursor: default;
       float: left;
       padding-right: 10px;
     }
-    span.action {
-      color: #333;
-      padding: 0px 10px;
-      border-left: 1px solid rgba(152,144,133,0.7);
+    .action {
+      border-left: 1px solid #222;
+      color: #888;
       cursor: pointer;
       float: left;
+      padding: 0px 10px;
       &:hover{
-        color: #222;
+        color: #bbb;
         text-shadow: 0px 0px 2px #888;
       }
     }
-    span.action.editor-delete {
+    .delete {
       float: right;
       padding-right: 0px;
       border-width: 0px;
     }
-    span.editor-spinner {
+    .spinner {
       @include spinner(16px, 1px, #887);
       float: left;
       margin: 2px;
       margin: 7px 0px;
     }
-    span.editor-message {
+    .message {
       float: left;
       font-size: 10px;
       padding: 0px 10px;
       opacity: 0;
       transition: opacity 0.5s ease;
     }
-    a { color:#888; }
-    a:hover { color:#bbb; text-shadow:0px 0px 2px #888; }
+    a {
+      color:#888;
+      &:hover { color:#bbb; text-shadow:0px 0px 2px #888; }
+    }
   }
-  div.editor-menu {
+  .menu {
     text-transform: uppercase;
   }
-  input[name=title] {
-    color: #222;
-    border-top: 1px solid rgba(0,0,0,0.1);
-    font-size: 20px;
+  .includes, .tags {
+    font-size: 14px;
   }
+  
 }
 
 // CodeMirror Settings
@@ -79,23 +95,97 @@
   font-size: 10px;
   height: 300px;
 }
-.cm-s-default.CodeMirror {
-  background: rgba(0,0,0,0.1);
+.cm-s-blackboard.CodeMirror {
+  background-color: #222;
 }
-.cm-s-default div.CodeMirror-selected, 
-.cm-s-default.CodeMirror-line::selection,
-.cm-s-default.CodeMirror-line > span::selection,
-.cm-s-default.CodeMirror-line > span > span::selection {
-  background-color: rgba(0,0,0,0.2);
+.cm-s-blackboard div.CodeMirror-selected, 
+.cm-s-blackboard.CodeMirror-line::selection,
+.cm-s-blackboard.CodeMirror-line > span::selection,
+.cm-s-blackboard.CodeMirror-line > span > span::selection {
+  background-color: #555;
 }
 .CodeMirror-simplescroll-horizontal, .CodeMirror-simplescroll-vertical {
-  background-color: #9B9781;
+  background-color: #282828;
 }
 .CodeMirror-simplescroll-horizontal div, .CodeMirror-simplescroll-vertical div {
-  background-color: #87826A;
+  background-color: #444;
   border: 1px solid rgba(0,0,0,0.1);
   border-radius: 0px;
 }
 .CodeMirror-scrollbar-filler, .CodeMirror-gutter-filler {
   background-color: transparent;
 }
+
+
+
+
+
+
+// .editor {
+//   color: #666;
+//   background-color: rgba(0,0,0,0.1);
+//   border-top: 1px solid rgba(0,0,0,0.1);
+//   //min-height: 200px;
+//   width: 100%;
+// 
+//   input,
+//   div.editor-menu,
+//   div.editor-includes {
+//     color: #777;
+//     background-color: transparent;
+//     border-width: 0px;
+//     font-family: $font-family-navbar; 
+//     font-size: 12px;
+//     height: 30px;
+//     line-height:30px;
+//     margin: 0px;
+//     overflow: hidden;
+//     padding: 0px 10px;
+//     user-select: none;
+//     width: 100%;
+//     span.editor-title {
+//       cursor: default;
+//       float: left;
+//       padding-right: 10px;
+//     }
+//     span.action {
+//       color: #333;
+//       padding: 0px 10px;
+//       border-left: 1px solid rgba(152,144,133,0.7);
+//       cursor: pointer;
+//       float: left;
+//       &:hover{
+//         color: #222;
+//         text-shadow: 0px 0px 2px #888;
+//       }
+//     }
+//     span.action.editor-delete {
+//       float: right;
+//       padding-right: 0px;
+//       border-width: 0px;
+//     }
+//     span.editor-spinner {
+//       @include spinner(16px, 1px, #887);
+//       float: left;
+//       margin: 2px;
+//       margin: 7px 0px;
+//     }
+//     span.editor-message {
+//       float: left;
+//       font-size: 10px;
+//       padding: 0px 10px;
+//       opacity: 0;
+//       transition: opacity 0.5s ease;
+//     }
+//     a { color:#888; }
+//     a:hover { color:#bbb; text-shadow:0px 0px 2px #888; }
+//   }
+//   div.editor-menu {
+//     text-transform: uppercase;
+//   }
+//   input[name=title] {
+//     color: #222;
+//     border-top: 1px solid rgba(0,0,0,0.1);
+//     font-size: 20px;
+//   }
+// }

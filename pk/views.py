@@ -3,6 +3,7 @@
 """
 Copyright (c) 2015 PushingKarma. All rights reserved.
 """
+from django.http import HttpResponse
 from pk.models import Note, Page
 from pk.serializers import NoteSerializer, PageSerializer
 from pk.utils import get_object_or_none, context, response, response_json
@@ -23,12 +24,14 @@ def page(request, slug='root', template='page.html'):
     return response(request, template, data)
 
 
-def markdown(request):
+def markdown(request, prefix):
     body = request.POST.get('body', '')
-    if '/n/' in request.META['HTTP_REFERER']:
+    if prefix == '/n/':
         md = Markdown(body)
         html = '<h2>%s</h2>%s' % (request.POST.get('title',''), md.html)
         return response_json({'html':html})
-    md = Markdown(body, Page, '/p/')
-    includes = sorted(md.meta['includes'].keys())
-    return response_json({'html':md.html, 'includes':includes})
+    elif prefix == '/p/':
+        md = Markdown(body, Page, prefix)
+        includes = sorted(md.meta['includes'].keys())
+        return response_json({'html':md.html, 'includes':includes})
+    return HttpResponse(status=400)
