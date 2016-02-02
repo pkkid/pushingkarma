@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 {% load humanize %}
 {% load basefilters %}
-{% block bodyclass %}{{block.super}} notebook {{request.COOKIES.editing|yesno:'editing,'}}{% endblock %}
 
 {% block js %}
   <script type='text/javascript'>

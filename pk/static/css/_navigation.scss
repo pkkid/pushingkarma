@@ -85,37 +85,3 @@ $NAV_HEIGHT: 64px;
       0px 1px 20px rgba(255,255,255,0.4);
   }
 }
-
-
-
-// Responsive Design
-@media (max-width: 699px) {
-  #navigation {
-    .navbar-brand {
-      color: #111;
-      cursor: pointer;
-      display: block;
-      text-shadow: 0px 1px 0px rgba(255,255,255,0.2);
-    }
-  }
-}
-
-// @media (max-width: 699px) {
-//   #sitenav .navbar-inner { height: auto; }
-//   #sitenav ul.pull-left { border-width: 0px; }
-//   #sitenav ul.pull-left li { border-width: 0px; height: auto; }
-//   #sitenav .brand { display: block; cursor: pointer; }
-//   #sitenav .site a {
-//     .transition(background-color 0s ease-out);
-//     font-weight: normal;
-//     padding: 5px 15px;
-//     width: auto;
-//     height: auto;
-//   }
-//   #sitenav .site .title,
-//   #sitenav .site .subtitle { margin: 0px; }
-//   #sitenav .site a:hover { box-shadow: none; }
-//   #sitenav .social { margin: 0px 0px 10px 15px; }
-//   #sitenav .social:hover a { background-color: transparent; }
-//   #sitenav .social.home { display: none; }
-// }

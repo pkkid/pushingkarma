@@ -2,6 +2,18 @@
 // Copyright (c) 2015 PushingKarma. All rights reserved.
 //--------------------------------------------------------
 
+@media (max-width: 699px) {
+  #navigation {
+    .navbar-brand {
+      color: #111;
+      cursor: pointer;
+      display: block;
+      text-shadow: 0px 1px 0px rgba(255,255,255,0.2);
+    }
+  }
+}
+
+
 @media (max-width: 999px) {
   body {
     padding: 0px; 
