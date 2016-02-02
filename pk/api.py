@@ -58,14 +58,14 @@ class AccountViewSet(viewsets.ViewSet):
 
 
 class NotesViewSet(viewsets.ModelViewSet):
-    queryset = Note.objects.order_by('-created')
+    queryset = Note.objects.order_by('-modified')
     serializer_class = serializers.NoteSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
     list_fields = ['id','url','weburl','title','tags','created','modified']
 
     def list(self, request, *args, **kwargs):
         search = request.GET.get('search')
-        notes = Note.objects.order_by('-created')
+        notes = Note.objects.order_by('-modified')
         if search:
             notes = Search(notes, NOTESEARCHFIELDS, search).queryset()
         serializer = serializers.NoteSerializer(notes, context={'request':request},
