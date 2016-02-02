@@ -3,12 +3,12 @@
  *------------------------------------------------------- */
 'use strict';
 
-pk.editor2 = {
+pk.editor = {
   UPDATE_INTERVAL: 500,
   MESSAGE_SAVED: '<i class="icon-checkmark"></i>&nbsp;Saved',
   MESSAGE_ERROR: '<i class="icon-notification"></i>&nbsp;Error',
   MESSAGE_DELETED: '<i class="icon-checkmark"></i>&nbsp;Deleted',
-  MIN_HEIGHT: 132,
+  MIN_HEIGHT: 135,
   ONE_HOUR: 0.042,
   KEYS: {S:83, F2:113},
   
@@ -38,7 +38,7 @@ pk.editor2 = {
   
   init_editor: function() {
     this.editor = $(this.templates.editor(this)).appendTo('body');
-    this.set_height(Cookies.get('editor-height') || this.MIN_HEIGHT);
+    this.set_height(Cookies.get('editor-height') || 300);
     return this.editor;
   },
   
@@ -53,7 +53,7 @@ pk.editor2 = {
     $('#editor .slider').on('mousedown', function(event) { event.preventDefault(); self.resize(event); });
     $('#editor .reset').on('click', function(event) { event.preventDefault(); self.reset(); });
     $('#editor .save').on('click', function(event) { event.preventDefault(); self.save(); });
-    $('#editor .delete').on('click', function(event) { event.preventDefault(); self.delete(); });
+    $('#editor .delete').on('dblclick', function(event) { event.preventDefault(); self.delete(); });
     setInterval(function() { self.update(); }, this.UPDATE_INTERVAL);
   },
   
@@ -74,7 +74,9 @@ pk.editor2 = {
   
   init_data: function(data) {
     this.history.saved = data;
+    if (this.opts.show_title) { this.title.val(data.title); }
     this.codemirror.setValue(data.body);
+    if (this.opts.show_tags) { this.tags.val(data.tags); }
   },
   
   delete: function() {
@@ -161,9 +163,9 @@ pk.editor2 = {
     if (this.editing()) {
       // resize codemirror
       var cmheight = height - 38;  // slider and menu
-      if (this.opts.show_title) { cmheight -= 30; }
-      if (this.opts.show_includes) { cmheight -= 30; }
-      if (this.opts.show_tags) { cmheight -= 30; }
+      if (this.opts.show_title) { cmheight -= 31; }
+      if (this.opts.show_includes) { cmheight -= 35; }
+      if (this.opts.show_tags) { cmheight -= 35; }
       $(this.codemirror.getWrapperElement()).height(cmheight);
       // set the body margin
       $('body').css('margin-bottom', height);
@@ -182,9 +184,10 @@ pk.editor2 = {
     this.includes.html(html);
   },
   
-  toggle_editor: function() {
+  toggle_editor: function(enable) {
     var self = this;
-    if (!this.editing()) {
+    enable = enable ? enable : !this.editing();
+    if (enable) {
       // show the editor and set the body margin. We set the body margin early
       // so the body scrollbar displays before the animation starts.
       this.editor.show();
@@ -213,6 +216,7 @@ pk.editor2 = {
     this.request('POST', this.opts.markdown_url, function(data) {
         self.container.html(data.html);
         self.set_includes(data.includes);
+        pk.utils.highlightjs();
     });
   },
   
@@ -251,7 +255,7 @@ pk.editor2 = {
       '  {{#if this.opts.show_title}}<input type="text" name="title" class="title" placeholder="Title" autocomplete="off" value=""/>{{/if}}',
       '  <textarea style="display:none;"></textarea>',
       '  {{#if this.opts.show_includes}}<div class="includes">Includes: </div>{{/if}}',
-      '  {{#if this.opts.show_tags}}<div class="tags"></div>{{/if}}',
+      '  {{#if this.opts.show_tags}}<input type="text" name="tags" class="tags" placeholder="Tags" autocomplete="off" value=""/>{{/if}}',
       '</div>',
     ].join('\n')),
   },

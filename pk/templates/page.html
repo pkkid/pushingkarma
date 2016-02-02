@@ -2,16 +2,18 @@
 {% load basefilters %}
 
 {% block js %}
-  <script type='text/javascript'>
-    $(function() {
-      pk.editor2.init('#page', {
-        api_url: '/api/pages/',
-        markdown_url: '/markdown/p/',
-        show_includes: true,
-        init_data: {{page|json}},
+  {% if user.is_authenticated %}
+    <script type='text/javascript'>
+      $(function() {
+        pk.editor.init('#page', {
+          api_url: '/api/pages/',
+          markdown_url: '/markdown/p/',
+          show_includes: true,
+          init_data: {{page|json}},
+        });
       });
-    });
-  </script>
+    </script>
+  {% endif %}
 {% endblock %}
 
 {% block content %}

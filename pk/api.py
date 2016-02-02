@@ -68,7 +68,6 @@ class NotesViewSet(viewsets.ModelViewSet):
         notes = Note.objects.order_by('-created')
         if search:
             notes = Search(notes, NOTESEARCHFIELDS, search).queryset()
-        log.info(notes.query)
         serializer = serializers.NoteSerializer(notes, context={'request':request},
             many=True, fields=self.list_fields)
         return Response(serializer.data)

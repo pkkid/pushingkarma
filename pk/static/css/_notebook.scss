@@ -142,18 +142,3 @@ body.authenticated #notebook-filter {
     }
   }
 }
-
-// Toggle Editing Mode
-#notebook-editor {
-  height: 0px;
-  opacity: 0.4;
-  transition: height 0.5s ease, opacity 0.5s ease;
-}
-body.notebook.editing {
-  #notebook-editor { height:390px; opacity:1; }
-  #notebook-content {
-    div.editor-toggle:before { transform: rotate(-20deg); }
-    div.editor-toggle:after { transform: rotate(20deg); }
-  }
-
-}

@@ -6,7 +6,16 @@
 {% block js %}
   <script type='text/javascript'>
     $(function() {
-      pk.notebook.init('#notebook', {{note.id|json}});
+      {% if user.is_authenticated %}
+        pk.editor.init('#note', {
+          api_url: '/api/pages/',
+          markdown_url: '/markdown/n/',
+          show_title: true,
+          show_tags: true,
+          init_data: {{note|json}},
+        });
+      {% endif %}
+      pk.notebook.init('#notebook', pk.editor);
     });
   </script>
 {% endblock %}
@@ -37,25 +46,6 @@
         <h2>{{note.title}}</h2>
         {{note.html|safe}}
       </article>
-      <!-- Editor -->
-      {% if user.is_authenticated %}
-        <hr class='fancy'/>
-        <div class='editor-toggle'></div>
-        <div id='notebook-editor' class='editor no-preload-animation'>
-          <div class='editor-menu'>
-            <span class='editor-title'>Markdown Editor</span>
-            <span class='editor-reset action'>Reset</span>
-            <span class='editor-save action'>Save</span>
-            <span class='editor-delete action'><i class='icon-bin'></i></span>
-            <span class='editor-spinner'></span>
-            <span class='editor-message'></span>
-          </div>
-          <input name='title' placeholder='Title' autocomplete='off' value='{{note.title}}'/>
-          <input name='id' type='hidden'/>
-          <textarea style='display:none;'>{{note.body}}</textarea>
-          <input name='tags' placeholder='Tags' autocomplete='off' value='{{note.tags}}'/>
-        </div>
-      {% endif %}
     </div>
   </div>
 {% endblock content %}

@@ -6,7 +6,6 @@ Copyright (c) 2015 PushingKarma. All rights reserved.
 import datetime, re, shlex
 from functools import reduce
 from types import SimpleNamespace
-from pk import log  # TODO: REMOVE
 
 NONE = ('none', 'null')
 OPERATIONS = {'=':'', '>':'__gt', '>=':'__gte', '<=':'__lte', '<':'__lt', ':': '__icontains'}
@@ -99,7 +98,6 @@ class SearchChunk:
         self.error = None               # error message (if applicable)
         self.datefilter = None          # date filter representation
         self._parse_chunkstr()
-        log.info(str(self))
         
     def __str__(self):
         rtnstr = '\n--- %s ---\n' % self.__class__.__name__

@@ -9,19 +9,23 @@ pk.notebook = {
   NOTE_SELECTOR: '#note',
   KEYS: {TAB:9, ENTER:13, ESC:27, UP:38, DOWN:40},
   
-  init: function(selector, noteid) {
-    this.container = $(selector);
+  init: function(selector, editor) {
     console.debug('init pk.notebook: '+ selector);
+    this.container = $(selector);
+    this.editor = editor;
+    this.xhr = null;
+    this.search = null;
+    this.init_elements();
+    this.init_triggers();
+    this.init_shortcuts();
+    this.update_list(this.searchinput.val());
+  },
+  
+  init_elements: function() {
     this.sidepanel = this.container.find('#notebook-sidepanel');
     this.searchinput = this.container.find('#notebook-search');
     this.addnote = this.container.find('#notebook-add');
     this.notelist = this.container.find('#notebook-list');
-    this.editor = this.init_editor(noteid);
-    this.xhr = null;
-    this.last_searched = '__init__';
-    this.init_triggers();
-    this.init_shortcuts();
-    this.update_list(this.searchinput.val());
   },
   
   init_triggers: function() {
@@ -37,7 +41,7 @@ pk.notebook = {
     // start a new note
     this.addnote.on('click', function() {
       event.preventDefault();
-      self.setup_new_note();
+      self.new_note();
     });
   },
   
@@ -69,20 +73,10 @@ pk.notebook = {
       }
     });
   },
-
-  init_editor: function(noteid) {
-    pk.editor.init(this.EDITOR_SELECTOR, {
-      id: noteid,
-      apiroot: this.APIROOT,
-      output: this.NOTE_SELECTOR,
-      scrollbottom: true,
-    });
-    return pk.editor;
-  },
   
-  setup_new_note: function() {
+  new_note: function() {
     this.editor.toggle_editor(true);
-    this.editor.opts.id = null;
+    this.editor.history.saved = {};
     this.editor.codemirror.setValue('');
     this.editor.title.val('');
     this.editor.tags.val('');
@@ -91,7 +85,7 @@ pk.notebook = {
   
   update_list: function(search) {
     var self = this;
-    if (search == this.last_searched) { return; }
+    if (search == this.search) { return; }
     if (this.xhr) { this.xhr.abort(); }
     var url = search ? this.APIROOT +'?search='+ encodeURIComponent(search) : this.APIROOT;
     this.xhr = $.ajax({url:url, type:'GET', dataType:'json'});
@@ -99,7 +93,7 @@ pk.notebook = {
       var ctx = {items:data, search:encodeURIComponent(search)};
       var html = self.templates.listitems(ctx);
       self.container.find('#notebook-list').html(html);
-      self.last_searched = search;
+      self.search = search;
     });
   },
   

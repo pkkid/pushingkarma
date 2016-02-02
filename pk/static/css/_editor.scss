@@ -33,8 +33,12 @@
   }
   
   // menu and items
-  .menu, .includes, .tags {
+  .menu,
+  .title,
+  .tags,
+  .includes {
     border-width: 0px;
+    background-color: transparent;
     color: #555;
     font-family: $font-family-navbar; 
     font-size: 12px;
@@ -84,7 +88,9 @@
     }
   }
   .menu { text-transform:uppercase; }
-  .includes, .tags { font-size: 14px; }
+  .title { color:#ddd; background-color:#202020; margin-bottom:1px; font-size:18px; }
+  .tags { color:#ddd; background-color:#202020; margin-top:1px; font-size:14px; height:28px; }
+  .includes { font-size:14px; }
 }
 
 
