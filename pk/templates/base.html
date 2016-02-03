@@ -18,6 +18,9 @@
     <link rel='stylesheet' type='text/css' href='/static/bower/mdi/css/materialdesignicons.min.css'/>
     <link rel='stylesheet' type='text/css' href='/static/dist/codemirror.css'/>
     <link rel='stylesheet' type='text/css' href='/static/dist/pushingkarma.css'/>
+    <!-- custom fonts from Fonts.com: http://www.fonts.com/web-fonts/projects
+    <script type='text/javascript'>MTIConfig = {EnableCustomFOUTHandler:true};</script>
+    <script src='http://fast.fonts.net/jsapi/45c8eb40-4e57-4dad-bdfd-c57f0d4d6326.js'></script> -->
     {% block css %}{% endblock %}
   </head>
   <body class='{{user.is_authenticated|yesno:"authenticated,"}} {% block bodyclass %}preload{% endblock %}'>
@@ -68,8 +71,7 @@
       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
       m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
       })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-      ga('create', 'UA-87461-5', 'auto');
-      ga('send', 'pageview');
+      ga('create', 'UA-87461-5', 'auto'); ga('send', 'pageview');
     </script>
   {% endif %}
   {% block js %}{% endblock %}

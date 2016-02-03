@@ -26,15 +26,15 @@ $NAV_HEIGHT: 64px;
     padding: 0px;
     position: relative;
     text-decoration: none;
-    text-shadow: 0px 1px 1px rgba(0,0,0,0.5);
+    text-shadow: 0px 1px 0px rgba(0,0,0,0.5);
     transition: background-color 0.6s, box-shadow 0.6s;
     width: 150px;
     .title {
       color: #FFA500;
       display: block;
-      font-family: kabelbook, $font-family-sans-serif;
-      font-size: 18px;
-      margin: 5px 10px 0px 10px;
+      font-size: 16px;
+      font-weight: 600;
+      margin: 7px 10px 0px 10px;
     }
     .subtitle {
       color: #AAA;
@@ -42,7 +42,7 @@ $NAV_HEIGHT: 64px;
       font-family: $font-family-sans-serif;
       font-size: 10px;
       line-height: 14px;
-      margin: 2px 10px 5px 10px;
+      margin: 0px 10px 5px 10px;
     }
   }
   .nav-item { margin: 0px 0px 0px 10px; }
