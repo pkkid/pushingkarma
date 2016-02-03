@@ -73,22 +73,23 @@
 
 
 // --- Fancy HR ----------------------------------------------------------
-// <hr class='fancy'/>
-hr.fancy {
-  background: url('#{$imgroot}/layout/separator.png') no-repeat;
+// <div class='fancyhr'>o</div>
+div.fancyhr {
+  font-family: fleurons;
+  font-size: 90px;
   border-width: 0px;
   display: block;
-  height: 27px;
-  margin: 30px auto;
-  opacity: 0.9;
+  margin: 20px auto;
+  opacity: 0.7;
   overflow: visible;
   position: relative;
+  line-height: 70px;
   width: 54px;
   &:before, &:after {
     content: '\0020';
     height: 1px;
     position: absolute;
-    top: 50%;
+    top: 45px;
     width: 200px;
   }
   &:before {

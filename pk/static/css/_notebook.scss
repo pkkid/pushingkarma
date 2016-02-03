@@ -22,8 +22,8 @@ $NOTEFILTER_HEIGHT: 40px;
     width: 300px;
     color: #3E3B35;
     &:after {
-      content: "\e986";
-      font-family: 'icomoon';
+      content: '\f401';
+      font-family: 'Material Design Icons';
       font-size: 20px;
       left: 10px;
       line-height: 40px;
@@ -44,15 +44,16 @@ $NOTEFILTER_HEIGHT: 40px;
       border-bottom: 1px solid rgba(0,0,0,0.2);
     }
     #notebook-add {
-      width: $NOTEFILTER_HEIGHT;
-      height: $NOTEFILTER_HEIGHT;
-      cursor: pointer;
-      position: absolute;
-      top: 0px;
-      right: 0px;
       background-color: rgba(0,0,0,0.1);
-      transition: background-color 0.5s ease, color 0.5s ease;
+      cursor: pointer;
+      font-size: 20px;
+      height: $NOTEFILTER_HEIGHT;
+      position: absolute;
+      right: 0px;
       text-align: center;
+      top: 0px;
+      transition: background-color 0.5s ease, color 0.5s ease;
+      width: $NOTEFILTER_HEIGHT;
       &:hover {
         background-color: rgba(0,0,0,0.2);
         color: #2E2B25;

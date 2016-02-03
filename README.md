@@ -16,12 +16,12 @@ __Setup Environment__
     > git clone git@github.com:mjs7231/pushingkarma.git ~/Projects/
     > mkvirtualenv --python=/usr/bin/python3 -a /home/mjs7231/Projects/pushingkarma pushingkarma
     > rm ~/.virtualenvs/pushingkarma/bin/postactivate
-    > ln -s ~/Projects/pushingkarma/postactivate ~/.virtualenvs/pushingkarma/bin/postactivate
+    > ln -s ~/Projects/pushingkarma/env/postactivate ~/.virtualenvs/pushingkarma/bin/postactivate
     > workon pushingkarma
 
     # Install Python Requirements
     > pip install -U pip
-    > pip install -r ~/Projects/pushingkarma/requirements.pip
+    > pip install -r ~/Projects/pushingkarma/env/requirements.pip
     
     # Web Components
     > sudo su -c "gem install sass"
