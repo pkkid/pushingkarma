@@ -40,7 +40,7 @@ def deploy_source():
 
 def pip_install():
     """ Update to the latest requirements.pip. """
-    requirments = '%s/requirements.pip' % env.directory
+    requirments = '%s/env/requirements.pip' % env.directory
     _virtualenv('pip install -qUr %s' % requirments)
 
 
