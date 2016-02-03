@@ -25,7 +25,7 @@
     <div id='notebook-sidepanel'>
       <input id='notebook-search' type='text' autofocus='true' value='{{request.GET.search}}' onfocus='this.value = this.value;'/>
       {% if user.is_authenticated %}
-        <div id='notebook-add' data-toggle='tooltip' data-placement='right' title='Add New Note'><i class='icon-plus'></i></div>
+        <div id='notebook-add' data-toggle='tooltip' data-placement='right' title='Add New Note'><i class='mdi mdi-plus'></i></div>
       {% endif %}
       <div id='notebook-list'>
         {% for note in notes %}

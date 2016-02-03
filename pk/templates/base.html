@@ -16,7 +16,6 @@
     <link rel='stylesheet' type='text/css' href='/static/bower/animate.css/animate.css'/>
     <link rel='stylesheet' type='text/css' href='/static/bower/bootstrap/dist/css/bootstrap.min.css'/>
     <link rel='stylesheet' type='text/css' href='/static/bower/mdi/css/materialdesignicons.min.css'/>
-    <link rel='stylesheet' type='text/css' href='/static/bower/icomoon-bower/style.css'/>
     <link rel='stylesheet' type='text/css' href='/static/dist/codemirror.css'/>
     <link rel='stylesheet' type='text/css' href='/static/dist/pushingkarma.css'/>
     {% block css %}{% endblock %}
@@ -30,7 +29,7 @@
             <div class='subtitle'>Website for Michael Shepanski</div>
             <form method='POST'>
               {% if user.is_authenticated %}
-                <span class='icomoon-user'></span>
+                <span class='mdi mdi-account'></span>
                 Hello {{user.username}}! | <a href='{% url "auth_logout" %}'>Logout</a>
               {% else %}
                 <span class='icon-notification'></span>
