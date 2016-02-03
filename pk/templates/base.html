@@ -18,9 +18,7 @@
     <link rel='stylesheet' type='text/css' href='/static/bower/mdi/css/materialdesignicons.min.css'/>
     <link rel='stylesheet' type='text/css' href='/static/dist/codemirror.css'/>
     <link rel='stylesheet' type='text/css' href='/static/dist/pushingkarma.css'/>
-    <!-- custom fonts from Fonts.com: http://www.fonts.com/web-fonts/projects
-    <script type='text/javascript'>MTIConfig = {EnableCustomFOUTHandler:true};</script>
-    <script src='http://fast.fonts.net/jsapi/45c8eb40-4e57-4dad-bdfd-c57f0d4d6326.js'></script> -->
+    <link rel='stylesheet' type='text/css' href='https://fonts.googleapis.com/css?family=Josefin+Sans:400,600'>
     {% block css %}{% endblock %}
   </head>
   <body class='{{user.is_authenticated|yesno:"authenticated,"}} {% block bodyclass %}preload{% endblock %}'>
