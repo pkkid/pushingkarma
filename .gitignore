@@ -8,4 +8,5 @@
 node_modules/*
 pk/static/bower/*
 pk/static/dist/*
+pk/static/font/*
 settings/secrets.py
