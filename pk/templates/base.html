@@ -33,7 +33,7 @@
                 <span class='mdi mdi-account'></span>
                 Hello {{user.username}}! | <a href='{% url "auth_logout" %}'>Logout</a>
               {% else %}
-                <span class='icon-notification'></span>
+                <span class='mdi mdi-minus-circle-outline icon-notification'></span>
                 <input type='text' name='email' placeholder='Email' autocomplete='off'/>
                 <input type='password' name='password' placeholder='Password' autocomplete='off'/>
                 <button type='submit' style='display:none;'></button>

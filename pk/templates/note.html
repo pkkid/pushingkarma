@@ -27,17 +27,7 @@
       {% if user.is_authenticated %}
         <div id='notebook-add' data-toggle='tooltip' data-placement='right' title='Add New Note'><i class='mdi mdi-plus'></i></div>
       {% endif %}
-      <div id='notebook-list'>
-        {% for note in notes %}
-          <a class='notebook-item' href='{{note.url}}'>
-            <div class='title'>{{note.title}}</div>
-            <div class='subtext'>
-              <span class='date'><span class='icon-clock'></span> {{note.created|naturaltime}}</span>
-              <span class='tags' style='margin-left:10px;'><span class='icon-price-tag'></span> {{note.tags|join:', '}}</span>
-            </div>
-          </a>
-        {% endfor %}
-      </div>
+      <div id='notebook-list'></div>
     </div>
     <!-- Note Content -->
     <div id='notebook-content'>

@@ -86,11 +86,6 @@ $NOTEFILTER_HEIGHT: 40px;
         font-size: 9px;
         font-family: $font-family-sans-serif;
         line-height: 18px;
-        [class^="icon-"], [class*=" icon-"] {
-          opacity: 0.7;
-          position: relative;
-          top: 1px;
-        }
       }
       &:hover,&.selected {
         background-color: rgba(0,0,0,0.1);

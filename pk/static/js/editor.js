@@ -5,9 +5,9 @@
 
 pk.editor = {
   UPDATE_INTERVAL: 500,
-  MESSAGE_SAVED: '<i class="icon-checkmark"></i>&nbsp;Saved',
-  MESSAGE_ERROR: '<i class="icon-notification"></i>&nbsp;Error',
-  MESSAGE_DELETED: '<i class="icon-checkmark"></i>&nbsp;Deleted',
+  MESSAGE_SAVED: '<span style="color:rgba(0,255,0,0.9)"><i class="mdi mdi-check"></i>&nbsp;Saved</span>',
+  MESSAGE_ERROR: '<span style="color:rgba(255,0,0,0.9)"><i class="mdi mdi-minus-circle-outline"></i>&nbsp;Error</span>',
+  MESSAGE_DELETED: '<span style="color:rgba(0,255,0,0.9)"><i class="mdi mdi-check"></i>&nbsp;Deleted</span>',
   MIN_HEIGHT: 135,
   ONE_HOUR: 0.042,
   KEYS: {S:83, F2:113},
@@ -248,7 +248,7 @@ pk.editor = {
       '    <span class="menutitle">Markdown Editor</span>',
       '    <span class="reset action">Reset</span>',
       '    <span class="save action">Save</span>',
-      '    <span class="delete action"><i class="icon-bin"></i></span>',
+      '    <span class="delete action">Delete</span>',
       '    <span class="spinner"></span>',
       '    <span class="message"></span>',
       '  </div>',
