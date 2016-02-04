@@ -22,7 +22,7 @@ api.register('pages', pk.api.PagesViewSet)
 
 urlpatterns = [
     # includes
-    url(r'^admin/', include(admin.site.urls)),
+    #url(r'^admin/', include(admin.site.urls)),
     url(r'^api/', include(api.urls)),
     # misc utils
     url(r'^404/$', template('404.html'), name='404'),
