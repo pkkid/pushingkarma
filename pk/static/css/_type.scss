@@ -8,32 +8,42 @@
 }
 .first { margin-top: 0px; }
 
-a { color: #005500; }
-a.invalid { color: #a00; }
+a {
+  color: #005500;
+  &.invalid { color:#a00; }
+}
 
 h1, h2, h3, h1 a, h2 a, h3 a {
-  color: #55321A;
-  font-family: arial;
+  color: #543;
   line-height: normal;
-  text-shadow: 1px 1px 1px rgba(255,255,255,0.3);
+  text-shadow: 0px 1px 1px rgba(255,255,255,0.3);
+  font-family: $font-family-serif;
 }
-h1 { font-size: 22px; margin: 25px 0px 5px 0px; }
-h2 { font-size: 20px; margin: 15px 0px 5px 0px; color: #543; }
-h3 { font-size: 16px; margin: 5px 0px 5px 0px; }
-h1:first-child, h2:first-child { margin-top: 0px; }
-
+h2 {
+  font-size: 28px;
+  margin: 15px 0px 5px 0px;
+  &:first-child { margin-top:0px; }
+}
+h3 {
+  font-size: 22px;
+  margin: 5px 0px 5px 0px;
+  &:first-child { margin-top:0px; }
+}
 p {
-  font-size: 15px;
+  font-size: 18px;
   line-height: 1.6em;
 }
 
-ul, ol { margin-top: 5px; }
-li { font-size: 14px; line-height: 20px; }
-li pre { margin: 10px 0px; }
+ul, ol {
+  margin-top: 5px;
+  li {
+    font-size: 16px;
+    line-height: 22px;
+    pre { margin:10px 0px; }
+  }
+}
 
-
-// Documentation
-.documentation {
-  p { margin-left: 20px; }
-  pre { margin-left: 20px; }
+article ul,
+article ol {
+  width: 80%;
 }

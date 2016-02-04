@@ -23,26 +23,22 @@
   border-bottom: 1px solid rgba(0,0,0,0.2);
   border-radius: 5px;
   padding: 15px 10px;
+  h3 {
+    font-size: 18px;
+    font-family: $font-family-sans-serif;
+    a { font-family: $font-family-sans-serif; }
+  }
   p {
     color: #424036;
-    font-size: 14px;
-    line-height: 1.6em;
+    font-size: 15px;
+    line-height: 1.4em;
   }
   &.project {
     margin-top: 15px;
     margin-right: 10px;
-    h3 {
-      margin: 0px 0px 0px 50px;
-    }
-    .description {
-      margin: 5px 0px 0px 50px;
-      font-size: 13px;
-    }
-    .mdi {
-      float: left;
-      font-size: 42px !important;
-      margin: -4px 0px 0px 0px;
-    }
+    h3 { margin:-3px 0px 0px 50px; }
+    p { margin: 3px 0px 0px 50px; }
+    .mdi { float:left; font-size:42px !important; margin:-4px 0px 0px 0px; }
   }
 }
 
@@ -63,12 +59,12 @@
 .thumbright {
   @include thumb();
   float: right;
-  margin: 0px 0px 5px 5px;
+  margin: 0px 0px 8px 8px;
 }
 .thumbleft {
   @include thumb();
   float: left;
-  margin: 0px 5px 5px 0px;
+  margin: 0px 8px 8px 0px;
 }
 
 
@@ -104,40 +100,6 @@ div.fancyhr {
 }
 
 
-// --- Author Details ----------------------------------------------------
-// <div class='authordetails'>
-//   <div class='authors'>{{ authors }}</div>
-//   <div class='date'>{{ date }}</div>
-//   <div class='ncomments'><i class="icon-comment"></i>{{ ncomments }}</div>
-//   <div class='tags'><i class="icon-tags"></i>{{ tags }}</div>
-// </div>
-
-// .authordetails {
-//   .clearfix();
-//   font-size: 11px;
-//   margin-top: -5px;
-//   margin-bottom: 15px;
-// }
-// .authordetails a {
-//   color: #5E5C4C;
-// }
-// .authordetails div {
-//   color: #8A846E;
-//   float: left;
-//   margin-right: 20px;
-//   text-transform: uppercase;
-// }
-// .authordetails [class^="icon-"],
-// .authordetails [class*=" icon-"] {
-//   opacity: 0.4;
-// }
-
-// // Hide author on blogposts
-// .blogpost .authors {
-//   display: none;
-// }
-
-
 // --- Checkbox List -----------------------------------------------------
 // <ul class='checklist'>
 //   <li><i class='icon-add'></i> Item-1 Column-1</div>
@@ -145,7 +107,7 @@ div.fancyhr {
 //   <li><i class='icon-add'></i> Item-2 Column-1</div>
 //   <li><i class='icon-add'></i> Item-2 Column-2</div>
 // </div>
-
+//
 // ul.checklist {
 //   .clearfix();
 //   list-style: none;
@@ -157,113 +119,12 @@ div.fancyhr {
 // }
 
 
-// --- Date Calendar -----------------------------------------------------
-// <div class='datecal'>
-//   <div class='month'>{{ month }}</div>
-//   <div class='day'>{{ day }}</div>
-//   <div class='overlay'><span></span></div>
-// </div>
-
-// .datecal {
-//   background-image: url("@{imageRoot}/layout/caldate.png");
-//   background-repeat: no-repeat;
-//   float: left;
-//   font-family: arial, georgia, serif;
-//   height: 50px;
-//   margin-right: 10px;
-//   margin-bottom: 3px;
-//   opacity: 0.9;
-//   position: relative;
-//   width: 45px;
-//   .month {
-//     color: #fec;
-//     font-size: 9px;
-//     font-weight: bold;
-//     line-height: 9px;
-//     position: absolute;
-//     text-align: center;
-//     text-shadow: none;
-//     top: 9px;
-//     width: 43px;
-//   }
-//   .day {
-//     color: #545;
-//     font-size: 20px;
-//     font-weight: bold;
-//     line-height: 26px;
-//     position: absolute;
-//     text-align: center;
-//     text-shadow: 1px 1px 1px rgba(255,255,255,0.8);
-//     top: 19px;
-//     width: 43px;
-//   }
-//   .overlay {
-//     background-image: url("@{imageRoot}/layout/caldate.png");
-//     background-position: 0px -50px;
-//     background-repeat: no-repeat;
-//     height: 50px;
-//     position: absolute;
-//     width: 45px;
-//   }
-// }
-
-
-// --- Header Link -------------------------------------------------------
-// <h1><span>
-//   {{ title }}
-//   <a class="headerlink" href="#demo" title="Permalink to this headline">¶</a>
-// </span></h2>
-
-// .headerlink {
-//   display: none;
-// }
-
-
-// --- Page Nav ----------------------------------------------------------
-// <div class='pagenav clearfix'>
-//   <div class='taglinks'>
-//     <span class='taglabel'>Showing posts for:</span>
-//     {% Tag Links %}
-//   </div>
-//   <div class='pages'>
-//     {% spaceless %}
-//       <a class='previous' href='#'>&laquo; previous</a>
-//       <span class="current">Page {{ page }} of {{ pages }}</span>
-//       <a class='next' href='#'>next &raquo;</a>
-//     {% endspaceless %}
-//   </div>
-// </div>
-
-// .pagenav {
-//   .taglabel {
-//     float: left;
-//     margin-right: 5px;
-//   }
-//   .pages {
-//     float: right;
-//   }
-//   .previous {
-//     border-right: 1px solid #9F9E88;
-//     margin-right: 4px;
-//     padding-right: 4px;
-//   }
-//   .next {
-//     border-left: 1px solid #9F9E88;
-//     margin-left: 4px;
-//     padding-left: 4px;
-//   }
-// }
-// .pagenav:last-child {
-//   margin: 20px 0px;
-// }
-
-
 // --- Tag Link ----------------------------------------------------------
 // <a class="taglink" href="/?tags=django">
 //   {{ tag-name }}
 //   <a class="close" href="/" data-tooltip="" data-original-title="Clear tag">×</a>
 // </a>
-
+//
 // .taglink {
 //   .box-shadow(0px 1px 1px rgba(0,0,0,0.3));
 //   .transition(none);
@@ -317,31 +178,4 @@ div.fancyhr {
 //       opacity: 0.8;
 //     }
 //   }
-// }
-
-
-// --- Thumbnails --------------------------------------------------------
-// <div class="thumbright">
-//   <img src="{{ imgpath }}" />
-// </div>
-
-// .thumb() {
-//   #gradient > .vertical(#444, #333);
-//   .border-radius(3px);
-//   .shine(0.4);
-//   float: right;
-//   margin: 0px 0px 5px 5px;
-//   padding: 3px 4px 4px 4px;
-//   position: relative;
-//   z-index: 1;
-// }
-// .thumbright {
-//   .thumb();
-//   float: right;
-//   margin: 0px 0px 5px 5px;
-// }
-// .thumbleft {
-//   .thumb();
-//   float: left;
-//   margin: 0px 5px 5px 0px;
 // }
