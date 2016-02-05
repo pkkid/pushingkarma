@@ -7,7 +7,7 @@
     $(function() {
       {% if user.is_authenticated %}
         pk.editor.init('#note', {
-          api_url: '/api/pages/',
+          api_url: '/api/notes/',
           markdown_url: '/markdown/n/',
           show_title: true,
           show_tags: true,

@@ -11,7 +11,7 @@ from pk.utils.markdown import Markdown
 
 
 class Note(TimeStampedModel):
-    slug = models.SlugField(max_length=255, unique=True)
+    slug = models.SlugField(max_length=255, unique=True, default=None)
     title = models.CharField(max_length=255)
     body = models.TextField(help_text='markdown format')
     tags = models.CharField(max_length=255, blank=True, help_text='space delimited')
