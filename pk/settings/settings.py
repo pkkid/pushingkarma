@@ -82,7 +82,7 @@ LOGGING = {
         'file': {
             'level': 'INFO',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': join(dirname(BASE_DIR), 'pk.log'),
+            'filename': join(dirname(dirname(BASE_DIR)), 'pushingkarma-logs/pk.log'),
             'maxBytes': 1000000,
             'backupCount': 3,
             'formatter': 'standard',

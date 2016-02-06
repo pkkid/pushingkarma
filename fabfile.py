@@ -34,8 +34,9 @@ def deploy_source():
     local = env.directory
     remote = os.path.dirname(env.directory)
     rsync_project(local_dir=local, remote_dir=remote, exclude=RSYNC_EXCLUDE, delete=True, extra_opts='--quiet --links --omit-dir-times')
-    run('rm %s/pk/settings/secrets.py' % env.directory)
+    run('rm -f %s/pk/settings/secrets.py' % env.directory)
     put('/home/mjs7231/Private/pushingkarma/secrets.py', '%s/pk/settings/secrets.py' % env.directory)
+    _virtualenv('django-admin.py collectstatic --link --noinput')
 
 
 def pip_install():
