@@ -6,6 +6,7 @@
 *__pycache__*
 .env
 node_modules/*
+pk/collectstatic/*
 pk/static/bower/*
 pk/static/dist/*
 settings/secrets.py

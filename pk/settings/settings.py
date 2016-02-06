@@ -14,7 +14,7 @@ BASE_DIR = dirname(dirname(abspath(__file__)))
 DEBUG = HOSTNAME in ['pkkid-work', 'pkkid-home']
 ROOT_URLCONF = 'pk.urls'
 STATIC_URL = '/static/'
-STATIC_ROOT = '%s/static/' % BASE_DIR
+STATIC_ROOT = '%s/collectstatic/' % BASE_DIR
 WSGI_APPLICATION = 'pk.wsgi.application'
 
 LANGUAGE_CODE = 'en-us'
@@ -25,7 +25,7 @@ USE_TZ = True
 
 # Django Environment
 INSTALLED_APPS = (
-    'django.contrib.admin',
+    #'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.humanize',
