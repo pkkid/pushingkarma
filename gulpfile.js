@@ -14,7 +14,7 @@ var watch = require('gulp-watch');
 
 // Javascript
 gulp.task('js', function() {
-  gulp.src('./pk/static/js/*.js')
+  gulp.src('./pk/static/pushingkarma/js/*.js')
   .pipe(concat('pushingkarma.js', {newLine:'\n\n\n'}))
   .pipe(gulp.dest('./pk/static/dist'));
 });
@@ -22,7 +22,7 @@ gulp.task('js', function() {
 
 // CSS
 gulp.task('css', function () {
-  gulp.src('pk/static/css/pushingkarma.scss')
+  gulp.src('pk/static/pushingkarma/css/pushingkarma.scss')
   .pipe(sourcemaps.init())
   .pipe(sass({style:'expanded'}))
   .on('error', sass.logError)
