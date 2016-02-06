@@ -8,6 +8,12 @@
   opacity: 0.9;
 }
 
+// Github emoji
+img.emoji {
+  position: relative;
+  top: -4px;
+}
+
 // Webkit Scrollbar
 body *::-webkit-scrollbar {
   height: 7px;
