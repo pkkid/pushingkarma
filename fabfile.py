@@ -6,7 +6,6 @@ Copyright (c) 2015 PushingKarma. All rights reserved.
 import os
 from fabric.api import cd, env, local, put, run, sudo
 from fabric.contrib.project import rsync_project
-#ssss
 
 RSYNC_EXCLUDE = ('.DS_Store', '__pycache__', '.git', '*.sqlite3', '*.example', '*.db', 'secrets.py', 'fabfile.py')
 env.hosts = ['pushingkarma.com']
@@ -36,7 +35,7 @@ def deploy_source():
     rsync_project(local_dir=local, remote_dir=remote, exclude=RSYNC_EXCLUDE, delete=True, extra_opts='--quiet --links --omit-dir-times')
     run('rm -f %s/pk/settings/secrets.py' % env.directory)
     put('/home/mjs7231/Private/pushingkarma/secrets.py', '%s/pk/settings/secrets.py' % env.directory)
-    _virtualenv('django-admin.py collectstatic --link --noinput')
+    _virtualenv('django-admin.py collectstatic --link --noinput --verbosity=0')
 
 
 def pip_install():
