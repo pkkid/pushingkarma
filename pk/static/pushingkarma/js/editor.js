@@ -5,9 +5,9 @@
 
 pk.editor = {
   UPDATE_INTERVAL: 500,
-  MESSAGE_SAVED: '<span style="color:rgba(0,255,0,0.9)"><i class="mdi mdi-check"></i>&nbsp;Saved</span>',
-  MESSAGE_ERROR: '<span style="color:rgba(255,0,0,0.9)"><i class="mdi mdi-minus-circle-outline"></i>&nbsp;Error</span>',
-  MESSAGE_DELETED: '<span style="color:rgba(0,255,0,0.9)"><i class="mdi mdi-check"></i>&nbsp;Deleted</span>',
+  MESSAGE_SAVED: '<span style="color:rgba(40,200,40,0.9)"><i class="mdi mdi-check"></i>&nbsp;Saved</span>',
+  MESSAGE_ERROR: '<span style="color:rgba(200,40,40,0.9)"><i class="mdi mdi-minus-circle-outline"></i>&nbsp;Error</span>',
+  MESSAGE_DELETED: '<span style="color:rgba(40,200,40,0.9)"><i class="mdi mdi-check"></i>&nbsp;Deleted</span>',
   MIN_HEIGHT: 135,
   ONE_HOUR: 0.042,
   KEYS: {S:83, F2:113},
@@ -20,6 +20,7 @@ pk.editor = {
     this.codemirror = this.init_codemirror();
     this.history = {updated:null, saved:null};
     this.init_elements();
+    this.init_edit_buttons();
     this.init_triggers();
     this.init_shortcuts();
     this.init_data(this.opts.init_data);
@@ -47,6 +48,12 @@ pk.editor = {
     return CodeMirror.fromTextArea(textarea, this.opts.codemirror);
   },
   
+  init_edit_buttons: function() {
+    var h2s = this.container.find('h2');
+    h2s.append('<i class="toggle mdi mdi-pencil"></i>');
+    h2s.wrapInner('<span></span>');
+  },
+  
   init_triggers: function() {
     var self = this;
     $('.CodeMirror-scroll').disableParentScroll();
@@ -54,6 +61,8 @@ pk.editor = {
     $('#editor .reset').on('click', function(event) { event.preventDefault(); self.reset(); });
     $('#editor .save').on('click', function(event) { event.preventDefault(); self.save(); });
     $('#editor .delete').on('dblclick', function(event) { event.preventDefault(); self.delete(); });
+    $('#editor .toggle').on('click', function(event) { event.preventDefault(); self.toggle_editor(); });
+    this.container.on('click', '.toggle', function(event) { event.preventDefault(); self.toggle_editor(); });
     setInterval(function() { self.update(); }, this.UPDATE_INTERVAL);
   },
   
@@ -217,6 +226,7 @@ pk.editor = {
         self.container.html(data.html);
         self.set_includes(data.includes);
         pk.utils.highlightjs();
+        self.init_edit_buttons();
     });
   },
   
@@ -248,6 +258,7 @@ pk.editor = {
       '    <span class="menutitle">Markdown Editor</span>',
       '    <span class="reset action">Reset</span>',
       '    <span class="save action">Save</span>',
+      '    <span class="toggle action"><i class="mdi mdi-chevron-down"></i></span>',
       '    <span class="delete action">Delete</span>',
       '    <span class="spinner"></span>',
       '    <span class="message"></span>',

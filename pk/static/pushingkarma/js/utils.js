@@ -36,7 +36,6 @@ pk.utils = {
   
   highlightjs: function(selector) {
     selector = this.set_default(selector, 'article pre code');
-    console.debug('init highlightjs on '+ selector);
     $(selector).each(function(i, block) {
       hljs.highlightBlock(block);
     });

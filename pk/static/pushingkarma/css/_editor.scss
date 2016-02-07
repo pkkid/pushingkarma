@@ -2,7 +2,6 @@
 // Copyright (c) 2015 PushingKarma. All rights reserved.
 //--------------------------------------------------------
 
-
 #editor {
   animation-duration: 0.6s;
   background-color: #181818;
@@ -43,7 +42,7 @@
     font-family: $font-family-navbar;
     font-size: 12px;
     height: 30px;
-    line-height:30px;
+    line-height: 30px;
     margin: 0px;
     overflow: hidden;
     user-select: none;
@@ -66,8 +65,10 @@
     }
     .delete {
       float: right;
-      padding-right: 0px;
       border-width: 0px;
+    }
+    .toggle {
+      float: right;
     }
     .spinner {
       @include spinner(16px, 1px, #887);
@@ -90,6 +91,23 @@
   .title { color:#ddd; background-color:#202020; margin-bottom:1px; font-size:18px; padding:3px 4px 0px 4px; }
   .tags { color:#ddd; background-color:#202020; margin-top:1px; font-size:14px; height:28px; }
   .includes { font-size:14px; }
+}
+
+
+// Article edit buttons
+article h2 span {
+  .toggle {
+    opacity: 0;
+    font-size: 18px;
+    margin-left: 10px;
+    color: #444;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+  }
+  &:hover .toggle {
+    opacity: 0.3;
+    &:hover { opacity:1; text-shadow:0px 1px 0px rgba(0,0,0,0.1); }
+  }
 }
 
 
