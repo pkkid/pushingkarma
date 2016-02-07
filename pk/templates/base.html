@@ -31,7 +31,7 @@
             <form method='POST'>
               {% if user.is_authenticated %}
                 <span class='mdi mdi-account'></span>
-                Hello {{user.username}}! | <a href='{% url "auth_logout" %}'>Logout</a>
+                Hello {{user.first_name|default:user.username}}! | <a href='{% url "auth_logout" %}'>Logout</a>
               {% else %}
                 <span class='mdi mdi-minus-circle-outline icon-notification'></span>
                 <input type='text' name='email' placeholder='Email' autocomplete='off'/>
