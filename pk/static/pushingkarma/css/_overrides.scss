@@ -14,6 +14,11 @@ img.emoji {
   top: -4px;
 }
 
+// jQuery-Confirm
+.jconfirm-box-container {
+  button { background:transparent; }
+}
+
 // Webkit Scrollbar
 body *::-webkit-scrollbar {
   height: 7px;

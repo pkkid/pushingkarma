@@ -9,7 +9,6 @@ pk.editor = {
   MESSAGE_ERROR: '<span style="color:rgba(200,40,40,0.9)"><i class="mdi mdi-minus-circle-outline"></i>&nbsp;Error</span>',
   MESSAGE_DELETED: '<span style="color:rgba(40,200,40,0.9)"><i class="mdi mdi-check"></i>&nbsp;Deleted</span>',
   MIN_HEIGHT: 135,
-  ONE_HOUR: 0.042,
   KEYS: {S:83, F2:113},
   
   init: function(selector, opts) {
@@ -60,7 +59,7 @@ pk.editor = {
     $('#editor .slider').on('mousedown', function(event) { event.preventDefault(); self.resize(event); });
     $('#editor .reset').on('click', function(event) { event.preventDefault(); self.reset(); });
     $('#editor .save').on('click', function(event) { event.preventDefault(); self.save(); });
-    $('#editor .delete').on('dblclick', function(event) { event.preventDefault(); self.delete(); });
+    $('#editor .delete').on('click', function(event) { event.preventDefault(); self.delete(); });
     $('#editor .toggle').on('click', function(event) { event.preventDefault(); self.toggle_editor(); });
     this.container.on('click', '.toggle', function(event) { event.preventDefault(); self.toggle_editor(); });
     setInterval(function() { self.update(); }, this.UPDATE_INTERVAL);
@@ -90,13 +89,26 @@ pk.editor = {
   
   delete: function() {
     var self = this;
-    var url = this.history.saved.url || this.opts.api_url;
-    this.request('DELETE', url, function(data) {
-      self.history.saved = {};
-      self.codemirror.setValue('');
-      self.title.val('');
-      self.tags.val('');
-      self.notify(self.MESSAGE_DELETED);
+    var data = this.request_data();
+    var title = data.title ? data.title : data.slug;
+    $.confirm({
+      backgroundDismiss: true,
+      cancelButton: 'Cancel',
+      columnClass: 'col-md-6 col-md-offset-3',
+      confirmButton: 'Delete It',
+      content: "Are you sure you wish to delete the entry '"+ title +"?'",
+      keyboardEnabled: true,
+      title: 'Delete Entry?',
+      confirm: function() {
+          var url = self.history.saved.url || self.opts.api_url;
+          self.request('DELETE', url, function(data) {
+            self.history.saved = {};
+            self.codemirror.setValue('');
+            self.title.val('');
+            self.tags.val('');
+            self.notify(self.MESSAGE_DELETED);
+          });
+      }
     });
   },
   
@@ -168,7 +180,7 @@ pk.editor = {
     var max_height = $(window).height() - 200;
     height = Math.max(this.MIN_HEIGHT, Math.min(max_height, height));
     this.editor.height(height);
-    Cookies.set('editor-height', height, this.ONE_HOUR);
+    Cookies.set('editor-height', height, {expires:14});
     if (this.editing()) {
       // resize codemirror
       var cmheight = height - 38;  // slider and menu
@@ -205,13 +217,13 @@ pk.editor = {
         self.set_height(self.editor.height());
         self.codemirror.refresh();
         self.codemirror.focus();
-        Cookies.set('editing', '1', self.ONE_HOUR);
+        Cookies.set('editing', '1', {expires:0.042});
       });
     } else {
       this.editor.animatecss('bounceOutDown', function() {
         self.editor.hide();
         $('body').css('margin-bottom', 0);
-        Cookies.set('editing', '');
+        Cookies.remove('editing');
       });
     }
   },

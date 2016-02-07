@@ -28,7 +28,9 @@ def markdown(request, prefix):
     body = request.POST.get('body', '')
     if prefix == '/n/':
         md = Markdown(body)
-        html = '<h2>%s</h2>%s' % (request.POST.get('title',''), md.html)
+        html = md.html
+        if request.POST.get('title',''):
+            html = '<h2>%s</h2>%s' % (request.POST['title'], html)
         return response_json({'html':html})
     elif prefix == '/p/':
         md = Markdown(body, Page, prefix)
