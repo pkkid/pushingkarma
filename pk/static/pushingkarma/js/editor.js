@@ -9,7 +9,7 @@ pk.editor = {
   MESSAGE_ERROR: '<span style="color:rgba(200,40,40,0.9)"><i class="mdi mdi-minus-circle-outline"></i>&nbsp;Error</span>',
   MESSAGE_DELETED: '<span style="color:rgba(40,200,40,0.9)"><i class="mdi mdi-check"></i>&nbsp;Deleted</span>',
   MIN_HEIGHT: 135,
-  KEYS: {S:83, F2:113},
+  KEYS: {S:83, F2:113, ESC:27},
   
   init: function(selector, opts) {
     console.debug('init pk.editor2: '+ selector);
@@ -76,6 +76,9 @@ pk.editor = {
       } else if (event.keyCode == KEYS.F2) {
         event.preventDefault();
         self.toggle_editor();
+      } else if (event.keyCode == KEYS.ESC && $('.jconfirm-box-container').length === 0) {
+        event.preventDefault();
+        self.toggle_editor(false);
       }
     });
   },
@@ -207,8 +210,8 @@ pk.editor = {
   
   toggle_editor: function(enable) {
     var self = this;
-    enable = enable ? enable : !this.editing();
-    if (enable) {
+    enable = enable !== undefined ? enable : !this.editing();
+    if (enable && !self.editing()) {
       // show the editor and set the body margin. We set the body margin early
       // so the body scrollbar displays before the animation starts.
       this.editor.show();
@@ -219,7 +222,7 @@ pk.editor = {
         self.codemirror.focus();
         Cookies.set('editing', '1', {expires:0.042});
       });
-    } else {
+    } else if (!enable && self.editing()) {
       this.editor.animatecss('bounceOutDown', function() {
         self.editor.hide();
         $('body').css('margin-bottom', 0);
