@@ -1,3 +1,0 @@
-# PKKID-WEB CRONTAB
-@daily /home/mjs7231/Projects/pushingkarma/env/dbbackup.sh >> /home/mjs7231/Logs/pushingkarma/dbbackup.log 2>&1
-@monthly /home/mjs7231/Sources/letsencrypt/letsencrypt-auto certonly --apache >> /home/mjs7231/Logs/pushingkarma/letsencrypt.log 2>&1
