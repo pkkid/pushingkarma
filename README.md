@@ -3,46 +3,46 @@ This is the core code running pushingkarma.com.  Feel free to borrow
 some ideas for your own site.  If you find anything useful, by all
 means let me know. :)
 
-#### Requirements
-
+### Requirements
 * Python3, Pip, Virtualenv, Fabric
 * Npm, Bower, Sass, Autoprefixer, Gulp
 
-#### Installation
+### Installation
+```bash
+# Create Python Virtualenv
+$ git clone git@github.com:mjs7231/pushingkarma.git ~/Projects/pushingkarma
+$ mkvirtualenv --python=/usr/bin/python3 -a /home/mjs7231/Projects/pushingkarma pushingkarma
+$ rm ~/.virtualenvs/pushingkarma/bin/postactivate
+$ ln -s ~/Projects/pushingkarma/conf/postactivate ~/.virtualenvs/pushingkarma/bin/postactivate
+$ workon pushingkarma
 
-__Setup Environment__
+# Install Python Requirements
+$ pip install -U pip
+$ pip install -r ~/Projects/pushingkarma/conf/requirements.pip
+```
 
-    # Create Python Virtualenv
-    > git clone git@github.com:mjs7231/pushingkarma.git ~/Projects/
-    > mkvirtualenv --python=/usr/bin/python3 -a /home/mjs7231/Projects/pushingkarma pushingkarma
-    > rm ~/.virtualenvs/pushingkarma/bin/postactivate
-    > ln -s ~/Projects/pushingkarma/env/postactivate ~/.virtualenvs/pushingkarma/bin/postactivate
-    > workon pushingkarma
+### Dev Environment
+```bash
+# Install Development Utilities
+> sudo su -c "gem install sass"
+> sudo ln -s /usr/bin/nodejs /usr/local/bin/node
+> npm install -g gulp bower
+> npm install
+> bower install
+> gulp
 
-    # Install Python Requirements
-    > pip install -U pip
-    > pip install -r ~/Projects/pushingkarma/env/requirements.pip
-    
-    # Web Components
-    > sudo su -c "gem install sass"
-    > sudo ln -s /usr/bin/nodejs /usr/local/bin/node
-    > npm install -g gulp bower
-    > npm install
-    > bower install
-    > gulp
+# Update Nodejs to latest version (if hitting errors)
+> curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
+> sudo apt-get install -y nodejs
+> npm rebuild node-sass
 
-    # Ubuntu 14.04 Needs latest nodejs
-    > curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
-    > sudo apt-get install -y nodejs
-    > npm rebuild node-sass
-
-    # Setup Django
-    > django-admin syncdb
-    > django-admin createcachetable
+# Kickstart the Database
+> django-admin syncdb
+> django-admin createcachetable
+```
 
 -----
-
-#### License
+### License
 
 Create Commons Attribution-ShareAlike 2.5 Generic (CC BY-SA 2.5)
 https://creativecommons.org/licenses/by-sa/2.5/
