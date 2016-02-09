@@ -8,7 +8,7 @@ from fabric.api import cd, env, local, put, run, sudo
 from fabric.contrib.project import rsync_project
 
 RSYNC_EXCLUDE = ('.DS_Store', '__pycache__', '.git', '*.sqlite3', '*.example', '*.db', 'secrets.py', 'fabfile.py')
-env.hosts = ['pushingkarma.com']
+env.hosts = ['162.243.98.231']
 env.directory = '/home/mjs7231/Projects/pushingkarma'
 env.virtualenv = '/home/mjs7231/.virtualenvs/pushingkarma'
 env.privatemount = '/home/mjs7231/Projects/'
@@ -22,14 +22,13 @@ def _virtualenv(command):
         run('%s && %s' % (activate, command))
         
 
-def _build_static():
+def build_static():
     """ Build local static files to be uploaded. """
     local('cd /home/mjs7231/Projects/pushingkarma && /home/mjs7231/Sources/node_modules/bin/gulp default')
 
 
 def deploy_source():
     """ Copy source files (default rsync options: -pthrvz). """
-    _build_static()
     local = env.directory
     remote = os.path.dirname(env.directory)
     rsync_project(local_dir=local, remote_dir=remote, exclude=RSYNC_EXCLUDE, delete=True, extra_opts='--quiet --links --omit-dir-times')
@@ -40,17 +39,19 @@ def deploy_source():
 
 def pip_install():
     """ Update to the latest requirements.pip. """
-    requirments = '%s/env/requirements.pip' % env.directory
+    requirments = '%s/conf/requirements.pip' % env.directory
     _virtualenv('pip install -qUr %s' % requirments)
 
 
-def reload_apache():
-    """ Reload the apache server. """
-    sudo('service apache2 reload', shell=False)
+def restart_server():
+    """ Reload the http server. """
+    sudo('service uwsgi restart', shell=False)
+    sudo('service nginx restart', shell=False)
     
 
 def deploy():
     """ Deploy to production. """
+    build_static()
     deploy_source()
     pip_install()
-    reload_apache()
+    restart_server()
