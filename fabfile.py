@@ -53,5 +53,5 @@ def deploy():
     """ Deploy to production. """
     build_static()
     deploy_source()
-    pip_install()
+    #pip_install()
     restart_server()
