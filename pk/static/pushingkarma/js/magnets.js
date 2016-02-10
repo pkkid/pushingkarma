@@ -10,7 +10,7 @@ pk.magnets = {
     if (!this.container.length) { return; }
     console.debug('init pk.magnets on '+ selector);
     this.uri = pk.utils.url({
-      protocol: window.location.protocol == 'https' ? 'wss:' : 'ws:',
+      protocol: window.location.protocol == 'https:' ? 'wss:' : 'ws:',
       pathname: '/ws/foobar?subscribe-broadcast&publish-broadcast',
     });
     this.ws = this.init_websocket(this.uri);
