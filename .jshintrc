@@ -19,6 +19,7 @@
         "NUI",
         "pk",
         "require",
+        "WS4Redis",
         "XML"
     ]
 }

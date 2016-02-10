@@ -12,8 +12,9 @@ pk.editor = {
   KEYS: {S:83, F2:113, ESC:27},
   
   init: function(selector, opts) {
-    console.debug('init pk.editor2: '+ selector);
     this.container = $(selector);
+    if (!this.container.length) { return; }
+    console.debug('init pk.editor on '+ selector);
     this.opts = $.extend(true, {}, this.defaults, opts);
     this.editor = this.init_editor();
     this.codemirror = this.init_codemirror();

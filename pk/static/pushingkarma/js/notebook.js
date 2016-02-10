@@ -10,8 +10,9 @@ pk.notebook = {
   KEYS: {TAB:9, ENTER:13, ESC:27, UP:38, DOWN:40},
   
   init: function(selector, editor) {
-    console.debug('init pk.notebook: '+ selector);
     this.container = $(selector);
+    if (!this.container.length) { return; }
+    console.debug('init pk.notebook on '+ selector);
     this.editor = editor;
     this.xhr = null;
     this.search = null;

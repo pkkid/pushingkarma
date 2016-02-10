@@ -9,8 +9,12 @@ var pk = {  // jshint ignore:line
 };
 
 $(function() {
+  // Core website functions
   pk.utils.enable_animations();
   pk.utils.highlightjs();
   pk.utils.init_tooltips();
   pk.login.init();
+  
+  // Side projects
+  pk.magnets.init('#magnets');
 });

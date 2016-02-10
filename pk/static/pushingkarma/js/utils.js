@@ -50,4 +50,14 @@ pk.utils = {
   set_default: function(input, default_value) {
     return typeof input !== 'undefined' ? input : default_value;
   },
+  
+  url: function(opts) {
+    var protocol = opts.protocol || window.location.protocol || '';
+    var hostname = opts.hostname || window.location.hostname || '';
+    var port = opts.port || window.location.port || '';
+    var pathname = opts.pathname || window.location.pathname || '';
+    var search = opts.search || window.location.search || '';
+    if (port) { port = ':'+ port; }
+    return pk.utils.format('{0}//{1}{2}{3}{4}', protocol, hostname, port, pathname, search);
+  },
 };

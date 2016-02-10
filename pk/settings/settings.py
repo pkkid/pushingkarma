@@ -34,6 +34,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django_extensions',
     'rest_framework',
+    'ws4redis',
     'dbbackup',
     'pk',
 )
@@ -108,9 +109,22 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 100
 }
 
+# Django Redis Sessions
+SESSION_ENGINE = 'redis_sessions.session'
+SESSION_REDIS_PREFIX = 'session'
+SESSION_REDIS_HOST = 'localhost'
+SESSION_REDIS_PORT = 6379
+SESSION_REDIS_DB = 1
+
+# Django Websockets Redis
+WEBSOCKET_URL = '/ws/'
+WS4REDIS_CONNECTION = {'host':'localhost'}
+WS4REDIS_EXPIRE = 3600
+WS4REDIS_HEARTBEAT = 'ping'
+WS4REDIS_PREFIX = 'ws'
+WSGI_APPLICATION = 'ws4redis.django_runserver.application'
+#WS4REDIS_ALLOWED_CHANNELS = lambda r,c: set(channels).intersection(['subscribe-broadcast'])
+
 # DBBackup Settings
 DBBACKUP_STORAGE = 'dbbackup.storage.dropbox_storage'
 DBBACKUP_TOKENS_FILEPATH = '/home/mjs7231/.dbbackup'
-
-#DBBACKUP_BACKUP_DIRECTORY = '/home/mjs7231/Dropbox/Backup/pushingkarma/'
-#DBBACKUP_FILENAME_TEMPLATE = '{servername}-{datetime}.{extension}'
