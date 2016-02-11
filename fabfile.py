@@ -6,11 +6,9 @@ Copyright (c) 2015 PushingKarma. All rights reserved.
 import os
 from fabric.api import cd, env, local, put, run, sudo
 from fabric.contrib.project import rsync_project
-from pk.settings.secrets import SERVER_SECRET
 
 RSYNC_EXCLUDE = ('.DS_Store', '__pycache__', '.git', '*.sqlite3', '*.example', '*.db', 'secrets.py', 'fabfile.py')
 env.hosts = ['162.243.98.231']
-env.password = SERVER_SECRET
 env.directory = '/home/mjs7231/Projects/pushingkarma'
 env.virtualenv = '/home/mjs7231/.virtualenvs/pushingkarma'
 env.privatemount = '/home/mjs7231/Projects/'

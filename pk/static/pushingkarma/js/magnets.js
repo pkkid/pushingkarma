@@ -18,7 +18,7 @@ pk.magnets = {
   
   init_websocket: function(uri) {
     var self = this;
-    return new WS4Redis({uri:uri, heartbeat_msg:'ping',
+    return new WS4Redis({uri:uri, heartbeat_msg:'heartbeat',
         receive_message: function(data) { self.receive_message(data); },
         connected: function(data) { self.connected(data); },
     });
@@ -30,6 +30,7 @@ pk.magnets = {
   
   receive_message: function(data) {
     console.log('received: '+ data);
+    this.container.append($('<div>'+ Date.now() +': '+ data +'</div>'));
   },
   
 };

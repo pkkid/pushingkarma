@@ -15,7 +15,7 @@ DEBUG = HOSTNAME in ['pkkid-work', 'pkkid-home']
 ROOT_URLCONF = 'pk.urls'
 STATIC_URL = '/static/'
 STATIC_ROOT = '%s/collectstatic/' % BASE_DIR
-WSGI_APPLICATION = 'pk.wsgi.application'
+WSGI_APPLICATION = 'ws4redis.django_runserver.application'
 
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
@@ -68,8 +68,8 @@ DATABASES = {
     }
 }
 CACHES = {'default': {
-    'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
-    'LOCATION': 'django_cache',
+    'BACKEND': 'redis_cache.RedisCache',
+    'LOCATION': 'localhost:6379',
 }}
 LOGGING = {
     'version': 1,
@@ -112,17 +112,13 @@ REST_FRAMEWORK = {
 # Django Redis Sessions
 SESSION_ENGINE = 'redis_sessions.session'
 SESSION_REDIS_PREFIX = 'session'
-SESSION_REDIS_HOST = 'localhost'
-SESSION_REDIS_PORT = 6379
-SESSION_REDIS_DB = 1
 
 # Django Websockets Redis
 WEBSOCKET_URL = '/ws/'
 WS4REDIS_CONNECTION = {'host':'localhost'}
 WS4REDIS_EXPIRE = 3600
-WS4REDIS_HEARTBEAT = 'ping'
+WS4REDIS_HEARTBEAT = 'heartbeat'
 WS4REDIS_PREFIX = 'ws'
-WSGI_APPLICATION = 'ws4redis.django_runserver.application'
 #WS4REDIS_ALLOWED_CHANNELS = lambda r,c: set(channels).intersection(['subscribe-broadcast'])
 
 # DBBackup Settings
