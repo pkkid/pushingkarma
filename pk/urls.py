@@ -7,7 +7,6 @@ import pk.api, pk.views, pk.utils.auth
 from django.conf import settings
 from django.conf.urls import include, url
 from django.conf.urls.static import static
-from django.contrib import admin
 from django.views.generic import RedirectView, TemplateView
 from rest_framework import routers
 
@@ -21,16 +20,13 @@ api.register('pages', pk.api.PagesViewSet)
 
 
 urlpatterns = [
-    # includes
-    #url(r'^admin/', include(admin.site.urls)),
     url(r'^api/', include(api.urls)),
-    # misc utils
     url(r'^404/$', template('404.html'), name='404'),
     url(r'^500/$', template('500.html'), name='500'),
     url(r'^auth/login/$', pk.utils.auth.user_login, name='auth_login'),
     url(r'^auth/logout/$', pk.utils.auth.user_logout, name='auth_logout'),
-    url(r'^favicon\.ico$', redirect('/static/img/favicon.ico'), name='favicon'),
-    # pushingKarma
+    url(r'^favicon\.ico$', redirect('/static/pushingkarma/img/favicon.ico'), name='favicon'),
+    # pushingkarma
     url(r'^$', pk.views.page, name='index'),
     url(r'^n/$', pk.views.note, name='notebook'),
     url(r'^p/(?P<slug>.*?)/$', pk.views.page, name='page'),

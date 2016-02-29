@@ -4,7 +4,7 @@
  *------------------------------------------------------- */
 'use strict';
 
-function WS4Redis(options) {
+function Redsocket(options) {
   if (options.uri === undefined)
 		throw new Error('No Websocket URI in options');
 

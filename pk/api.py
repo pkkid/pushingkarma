@@ -6,7 +6,7 @@ Copyright (c) 2015 PushingKarma. All rights reserved.
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.db.models import Q
-from pk import log, serializers, utils
+from pk import serializers, utils
 from pk.models import Note, Page
 from pk.utils.search import FIELDTYPES, SearchField, Search
 from rest_framework import status, viewsets
@@ -15,12 +15,9 @@ from rest_framework.permissions import AllowAny, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 
 NOTESEARCHFIELDS = {
-    'id': SearchField(FIELDTYPES.NUM, 'id'),
     'title': SearchField(FIELDTYPES.STR, 'title'),
     'body': SearchField(FIELDTYPES.STR, 'body'),
     'tags': SearchField(FIELDTYPES.STR, 'tags'),
-    # 'created': SearchField(FIELDTYPES.NUM, 'created'),
-    # 'modified': SearchField(FIELDTYPES.NUM, 'modified'),
 }
 
 

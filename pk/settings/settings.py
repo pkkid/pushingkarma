@@ -15,7 +15,6 @@ DEBUG = HOSTNAME in ['pkkid-work', 'pkkid-home']
 ROOT_URLCONF = 'pk.urls'
 STATIC_URL = '/static/'
 STATIC_ROOT = '%s/collectstatic/' % BASE_DIR
-WSGI_APPLICATION = 'ws4redis.django_runserver.application'
 
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
@@ -34,7 +33,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django_extensions',
     'rest_framework',
-    'ws4redis',
+    'redsocks',
     'dbbackup',
     'pk',
 )
@@ -68,7 +67,7 @@ DATABASES = {
     }
 }
 CACHES = {'default': {
-    'BACKEND': 'redis_cache.RedisCache',
+    'BACKEND': 'pk.utils.rediscache.CompleteRedisCache',
     'LOCATION': 'localhost:6379',
 }}
 LOGGING = {
@@ -95,6 +94,11 @@ LOGGING = {
             'level': 'INFO',
             'propagate': True,
         },
+        'redsocks': {
+            'handlers': ['file', 'console'],
+            'level': 'INFO',
+            'propagate': False,
+        }
     },
     'formatters': {
         'standard': {
@@ -114,12 +118,16 @@ SESSION_ENGINE = 'redis_sessions.session'
 SESSION_REDIS_PREFIX = 'session'
 
 # Django Websockets Redis
+WSGI_APPLICATION = 'redsocks.runserver.server.application'
 WEBSOCKET_URL = '/ws/'
-WS4REDIS_CONNECTION = {'host':'localhost'}
-WS4REDIS_EXPIRE = 3600
-WS4REDIS_HEARTBEAT = 'heartbeat'
-WS4REDIS_PREFIX = 'ws'
-#WS4REDIS_ALLOWED_CHANNELS = lambda r,c: set(channels).intersection(['subscribe-broadcast'])
+REDSOCKS_CONNECTION = {'host':'localhost'}
+REDSOCKS_EXPIRE = 3600
+REDSOCKS_HEARTBEAT = 'heartbeat'
+REDSOCKS_PREFIX = 'ws'
+REDSOCKS_SUBSCRIBERS = {
+    'magnets': 'pk.websocket.magnets.MagnetsSubscriber',
+}
+#REDSOCKS_ALLOWED_CHANNELS = 'pk.websocket.subscriber.allowed_channels'
 
 # DBBackup Settings
 DBBACKUP_STORAGE = 'dbbackup.storage.dropbox_storage'

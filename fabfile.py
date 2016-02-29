@@ -43,10 +43,10 @@ def pip_install():
     _virtualenv('pip install -qUr %s' % requirments)
 
 
-def restart_server():
+def reload_server():
     """ Reload the http server. """
-    sudo('service uwsgi restart', shell=False)
-    sudo('service nginx restart', shell=False)
+    sudo('service uwsgi reload', shell=False)
+    sudo('service nginx reload', shell=False)
     
 
 def deploy():
@@ -54,4 +54,4 @@ def deploy():
     build_static()
     deploy_source()
     #pip_install()
-    restart_server()
+    reload_server()

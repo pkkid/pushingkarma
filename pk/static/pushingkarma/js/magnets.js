@@ -11,14 +11,14 @@ pk.magnets = {
     console.debug('init pk.magnets on '+ selector);
     this.uri = pk.utils.url({
       protocol: window.location.protocol == 'https:' ? 'wss:' : 'ws:',
-      pathname: '/ws/foobar?subscribe-broadcast&publish-broadcast',
+      pathname: '/ws/magnets?subscribe-broadcast&publish-broadcast&echo',
     });
     this.ws = this.init_websocket(this.uri);
   },
   
   init_websocket: function(uri) {
     var self = this;
-    return new WS4Redis({uri:uri, heartbeat_msg:'heartbeat',
+    return new Redsocket({uri:uri, heartbeat_msg:'heartbeat',
         receive_message: function(data) { self.receive_message(data); },
         connected: function(data) { self.connected(data); },
     });

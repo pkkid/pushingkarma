@@ -19,7 +19,7 @@
         "NUI",
         "pk",
         "require",
-        "WS4Redis",
+        "Redsocks",
         "XML"
     ]
 }
