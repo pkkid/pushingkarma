@@ -19,7 +19,7 @@
         "NUI",
         "pk",
         "require",
-        "Redsocks",
+        "Redsocket",
         "XML"
     ]
 }
