@@ -4,6 +4,9 @@
 'use strict';
 
 pk.magnets = {
+  ACTIONS: {ADD:'add', REMOVE:'remove', UPDATE:'update'},
+  DRAGGING: 'dragging',
+  FRAMES_PER_SEC: 10,
   KEYS: {ENTER:13},
 
   init: function(selector, opts) {
@@ -14,11 +17,11 @@ pk.magnets = {
     this.canvas = this.container.find('#canvas');
     this.uri = pk.utils.url({
       protocol: window.location.protocol == 'https:' ? 'wss:' : 'ws:',
-      pathname: '/ws/magnets?subscribe-broadcast&publish-broadcast&echo',
+      pathname: '/ws/magnets?subscribe-broadcast&publish-broadcast',
     });
+    this.ws = this.init_websocket(this.uri);
     this.init_triggers();
     this.init_shortcuts();
-    this.ws = this.init_websocket(this.uri);
   },
   
   init_triggers: function() {
@@ -35,7 +38,7 @@ pk.magnets = {
     this.newword.keyup(function(event) {
       if (event.keyCode == self.KEYS.ENTER) {
         event.preventDefault();
-        self.addword($(this).val());
+        self.add_word($(this).val());
         $(this).val('');
       }
     });
@@ -49,56 +52,55 @@ pk.magnets = {
     });
   },
   
-  addword: function(word) {
-    console.log('Adding: '+ word);
+  add_word: function(word) {
     var data = {
       word: word,
-      id: 'word-'+ Date.now() +'-'+ word.toLowerCase(),
-      status: 'placed',
+      cls: '',
+      id: pk.utils.format('word-{0}-{1}', Date.now(), word.toLowerCase()),
       x: parseInt(Math.random() * (this.canvas.width() - 100)) + 20,
       y: parseInt(Math.random() * (this.canvas.height() - 50)) + 20,
       r: (Math.random() * 10) - 5,
     };
-    var elem = $('<div id="'+ data.id +'" class="word">'+ word +'</div>');
-    elem.css({
-      'position': 'absolute',
-      'transform': 'rotate('+ data.r +'deg)',
-      'top': data.y +'px',
-      'left': data.x +'px',
-    });
+    this.send_message(this.ACTIONS.ADD, data);
+    var elem = $(pk.utils.format('<div id="{0}" class="word">{1}</div>', data.id, data.word));
+    this.update_word(data, elem);
     this.canvas.append(elem);
-  },
-  
-  removeword: function(elem) {
-    console.log('Removing: '+ elem.text());
-    elem.remove();
   },
   
   drag: function(elem, event) {
     var self = this;
     var h = elem.outerHeight();
     var w = elem.outerWidth();
-    var y = elem.offset().top + h - event.pageY;
-    var x = elem.offset().left + w - event.pageX;
+    var y = elem.position().top + h - event.pageY;
+    var x = elem.position().left + w - event.pageX;
     var move = function(event) {
       event.preventDefault();
-      elem.addClass('dragging');
-      elem.offset({top:event.pageY+y-h, left:event.pageX+x-w});
+      var newdata = {'cls':self.DRAGGING, 'x':event.pageX+x-w, 'y':event.pageY+y-h};
+      self.update_word(newdata, elem);
+      // elem.addClass(self.DRAGGING);
+      // elem.offset({top:event.pageY+y-h, left:event.pageX+x-w});
     };
+    var timer = setInterval(function() {
+      self.send_message(self.ACTIONS.UPDATE, elem.data('data'));
+    }, 1000 / this.FRAMES_PER_SEC);
     var stop = function(event) {
       event.preventDefault();
+      clearTimeout(timer);
       $('body').unbind('mousemove', move);
       $('body').unbind('mouseup', stop);
-      elem.removeClass('dragging');
-      if (!self.is_inbound(elem)) {
-        self.removeword(elem);
+      elem.removeClass(self.DRAGGING);
+      if (!self.is_inbounds(elem)) {
+        self.send_message(self.ACTIONS.REMOVE, elem.data('data'));
+        return self.remove_word(elem);
       }
+      var data = self.update_word({'cls':''}, elem);
+      self.send_message(self.ACTIONS.UPDATE, data);
     };
     $('body').bind('mousemove', move);
     $('body').bind('mouseup', stop);
   },
   
-  is_inbound: function(elem) {
+  is_inbounds: function(elem) {
     var x1 = parseInt(elem.position().left);
     var y1 = parseInt(elem.position().top);
     var x2 = parseInt(x1 + elem.width());
@@ -106,13 +108,34 @@ pk.magnets = {
     return !((x1 < -5) || (y1 < -5) || (x2 > this.canvas.width() + 5) || (y2 > this.canvas.height() + 5));
   },
   
+  remove_word: function(elem) {
+    elem.remove();
+  },
+  
+  update_word: function(newdata, elem) {
+    elem = elem !== undefined ? elem : this.canvas.find('#'+data.id);   
+    var data = $.extend({}, elem.data('data'), newdata);
+    if ('cls' in newdata) { elem.attr('class', 'word '+ data.cls); }
+    if ('x' in newdata) { elem.css('left', data.x +'px'); }
+    if ('y' in newdata) { elem.css('top', data.y +'px'); }
+    if ('r' in newdata) { elem.css('transform', 'rotate(', data.r +'deg)'); }
+    elem.data('data', data);
+    return data;
+  },
+  
   connected: function() {
     console.debug('connected: '+ this.uri);
   },
   
-  receive_message: function(data) {
-    console.log('received: '+ data);
-    this.container.append($('<div>'+ Date.now() +': '+ data +'</div>'));
+  receive_message: function(datastr) {
+    console.log('recieve_message: '+ datastr);
+    var data = JSON.parse(datastr);
+  },
+  
+  send_message: function(action, data) {
+    var datastr = JSON.stringify($.extend({}, data, {action:action}));
+    console.log('send_message: '+ datastr);
+    this.ws.send_message(datastr);
   },
   
 };

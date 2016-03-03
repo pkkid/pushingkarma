@@ -10,4 +10,14 @@ from pk import log
 
 class MagnetsSubscriber(RedisSubscriber):
     """ Routes calls within specified facilities to their destined subscribers. """
-    pass
+    
+    def on_connect(self, request, websocket):
+        log.info('Connected!')
+    
+    def on_receive_message(self, request, websocket, recvmsg):
+        log.info('Recieved: %s', recvmsg)
+        return recvmsg
+    
+    def on_send_message(self, request, websocket, sendmsg):
+        log.info('Sending: %s', sendmsg)
+        return sendmsg
