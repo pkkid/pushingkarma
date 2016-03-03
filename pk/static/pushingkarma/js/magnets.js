@@ -4,7 +4,7 @@
 'use strict';
 
 pk.magnets = {
-  ACTIONS: {ADD:'add', REMOVE:'remove', UPDATE:'update'},
+  ACTIONS: {ADD:'add', UPDATE:'update', REMOVE:'remove'},
   DRAGGING: 'dragging',
   FRAMES_PER_SEC: 10,
   KEYS: {ENTER:13},
@@ -52,16 +52,20 @@ pk.magnets = {
     });
   },
   
-  add_word: function(word) {
-    var data = {
-      word: word,
-      cls: '',
-      id: pk.utils.format('word-{0}-{1}', Date.now(), word.toLowerCase()),
-      x: parseInt(Math.random() * (this.canvas.width() - 100)) + 20,
-      y: parseInt(Math.random() * (this.canvas.height() - 50)) + 20,
-      r: (Math.random() * 10) - 5,
-    };
-    this.send_message(this.ACTIONS.ADD, data);
+  add_word: function(data) {
+    // Check input data is a simple string and generate new data
+    if (typeof(data) == 'string') {
+      data = {
+        word:data,
+        cls:'',
+        id: pk.utils.format('word-{0}-{1}', Date.now(), data.toLowerCase()),
+        x: parseInt(Math.random() * (this.canvas.width() - 100)) + 20,
+        y: parseInt(Math.random() * (this.canvas.height() - 50)) + 20,
+        r: (Math.random() * 10) - 5,
+      };
+      this.send_message(this.ACTIONS.ADD, data);
+    }
+    // Build the DOM object and add it to canvas
     var elem = $(pk.utils.format('<div id="{0}" class="word">{1}</div>', data.id, data.word));
     this.update_word(data, elem);
     this.canvas.append(elem);
@@ -91,7 +95,7 @@ pk.magnets = {
       elem.removeClass(self.DRAGGING);
       if (!self.is_inbounds(elem)) {
         self.send_message(self.ACTIONS.REMOVE, elem.data('data'));
-        return self.remove_word(elem);
+        return self.remove_word(elem.data('data'));
       }
       var data = self.update_word({'cls':''}, elem);
       self.send_message(self.ACTIONS.UPDATE, data);
@@ -108,12 +112,12 @@ pk.magnets = {
     return !((x1 < -5) || (y1 < -5) || (x2 > this.canvas.width() + 5) || (y2 > this.canvas.height() + 5));
   },
   
-  remove_word: function(elem) {
-    elem.remove();
+  remove_word: function(data) {
+    this.canvas.find('#'+data.id).remove();
   },
   
   update_word: function(newdata, elem) {
-    elem = elem !== undefined ? elem : this.canvas.find('#'+data.id);   
+    elem = elem !== undefined ? elem : this.canvas.find('#'+newdata.id);   
     var data = $.extend({}, elem.data('data'), newdata);
     if ('cls' in newdata) { elem.attr('class', 'word '+ data.cls); }
     if ('x' in newdata) { elem.css('left', data.x +'px'); }
@@ -130,6 +134,9 @@ pk.magnets = {
   receive_message: function(datastr) {
     console.log('recieve_message: '+ datastr);
     var data = JSON.parse(datastr);
+    if (data.action == this.ACTIONS.ADD) { this.add_word(data); }
+    else if (data.action == this.ACTIONS.UPDATE) { this.update_word(data); }
+    else if (data.action == this.ACTIONS.REMOVE) { this.remove_word(data); }
   },
   
   send_message: function(action, data) {
