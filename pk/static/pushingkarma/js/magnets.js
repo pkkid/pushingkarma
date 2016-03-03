@@ -7,6 +7,7 @@ pk.magnets = {
   ACTIONS: {ADD:'add', UPDATE:'update', REMOVE:'remove'},
   DRAGGING: 'dragging',
   FRAMES_PER_SEC: 10,
+  MAX_ROTATION: 7,
   KEYS: {ENTER:13},
 
   init: function(selector, opts) {
@@ -38,7 +39,9 @@ pk.magnets = {
     this.newword.keyup(function(event) {
       if (event.keyCode == self.KEYS.ENTER) {
         event.preventDefault();
-        self.add_word($(this).val());
+        $.map($(this).val().split(' '), function(w) { 
+          self.add_word(w);
+        });
         $(this).val('');
       }
     });
@@ -56,12 +59,12 @@ pk.magnets = {
     // Check input data is a simple string and generate new data
     if (typeof(data) == 'string') {
       data = {
-        word:data,
-        cls:'',
-        id: pk.utils.format('word-{0}-{1}', Date.now(), data.toLowerCase()),
+        word: data,
+        cls: '',
+        id: 'w'+ pk.utils.hash(data + Date.now()),
         x: parseInt(Math.random() * (this.canvas.width() - 100)) + 20,
         y: parseInt(Math.random() * (this.canvas.height() - 50)) + 20,
-        r: (Math.random() * 10) - 5,
+        r: this.choose_rotation(),
       };
       this.send_message(this.ACTIONS.ADD, data);
     }
@@ -71,22 +74,31 @@ pk.magnets = {
     this.canvas.append(elem);
   },
   
+  choose_rotation: function() {
+    return parseInt((Math.random() * (this.MAX_ROTATION * 2)) - this.MAX_ROTATION);
+  },
+  
   drag: function(elem, event) {
     var self = this;
     var h = elem.outerHeight();
     var w = elem.outerWidth();
     var y = elem.position().top + h - event.pageY;
     var x = elem.position().left + w - event.pageX;
+    // drag word
     var move = function(event) {
       event.preventDefault();
-      var newdata = {'cls':self.DRAGGING, 'x':event.pageX+x-w, 'y':event.pageY+y-h};
+      var newdata = {
+        cls: self.DRAGGING,
+        x: parseInt(event.pageX + x - w),
+        y: parseInt(event.pageY + y - h),
+      };
       self.update_word(newdata, elem);
-      // elem.addClass(self.DRAGGING);
-      // elem.offset({top:event.pageY+y-h, left:event.pageX+x-w});
     };
+    // update (using fps)
     var timer = setInterval(function() {
       self.send_message(self.ACTIONS.UPDATE, elem.data('data'));
     }, 1000 / this.FRAMES_PER_SEC);
+    // stop dragging
     var stop = function(event) {
       event.preventDefault();
       clearTimeout(timer);
@@ -97,9 +109,10 @@ pk.magnets = {
         self.send_message(self.ACTIONS.REMOVE, elem.data('data'));
         return self.remove_word(elem.data('data'));
       }
-      var data = self.update_word({'cls':''}, elem);
+      var data = self.update_word({cls:'', r:self.choose_rotation()}, elem);
       self.send_message(self.ACTIONS.UPDATE, data);
     };
+    // init
     $('body').bind('mousemove', move);
     $('body').bind('mouseup', stop);
   },
@@ -122,7 +135,7 @@ pk.magnets = {
     if ('cls' in newdata) { elem.attr('class', 'word '+ data.cls); }
     if ('x' in newdata) { elem.css('left', data.x +'px'); }
     if ('y' in newdata) { elem.css('top', data.y +'px'); }
-    if ('r' in newdata) { elem.css('transform', 'rotate(', data.r +'deg)'); }
+    if ('r' in newdata) { elem.css('transform', 'rotate('+ data.r +'deg)'); }
     elem.data('data', data);
     return data;
   },
