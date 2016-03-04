@@ -6,7 +6,7 @@
 pk.magnets = {
   ACTIONS: {ADD:'add', UPDATE:'update', REMOVE:'remove'},
   DRAGGING: 'dragging',
-  FRAMES_PER_SEC: 30,
+  FRAMES_PER_SEC: 20,
   MAX_ROTATION: 7,
   KEYS: {ENTER:13},
 
@@ -69,9 +69,11 @@ pk.magnets = {
       this.send_message(this.ACTIONS.ADD, data);
     }
     // Build the DOM object and add it to canvas
-    var elem = $(pk.utils.format('<div id="{0}" class="word">{1}</div>', data.id, data.word));
-    this.update_word(data, elem);
-    this.canvas.append(elem);
+    if (!this.canvas.find('#'+ data.id).length) {
+      var elem = $(pk.utils.format('<div id="{0}" class="word">{1}</div>', data.id, data.word));
+      this.update_word(data, elem);
+      this.canvas.append(elem);
+    }
   },
   
   choose_rotation: function() {
