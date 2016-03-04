@@ -6,7 +6,7 @@
 pk.magnets = {
   ACTIONS: {ADD:'add', UPDATE:'update', REMOVE:'remove'},
   DRAGGING: 'dragging',
-  FRAMES_PER_SEC: 10,
+  FRAMES_PER_SEC: 30,
   MAX_ROTATION: 7,
   KEYS: {ENTER:13},
 
@@ -145,7 +145,7 @@ pk.magnets = {
   },
   
   receive_message: function(datastr) {
-    console.log('recieve_message: '+ datastr);
+    console.log('recieve: '+ datastr);
     var data = JSON.parse(datastr);
     if (data.action == this.ACTIONS.ADD) { this.add_word(data); }
     else if (data.action == this.ACTIONS.UPDATE) { this.update_word(data); }
@@ -154,7 +154,7 @@ pk.magnets = {
   
   send_message: function(action, data) {
     var datastr = JSON.stringify($.extend({}, data, {action:action}));
-    console.log('send_message: '+ datastr);
+    console.log('send: '+ datastr);
     this.ws.send_message(datastr);
   },
   
