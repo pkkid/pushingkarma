@@ -147,7 +147,6 @@ pk.magnets = {
   },
   
   receive_message: function(datastr) {
-    console.log('recieve: '+ datastr);
     var data = JSON.parse(datastr);
     if (data.action == this.ACTIONS.ADD) { this.add_word(data); }
     else if (data.action == this.ACTIONS.UPDATE) { this.update_word(data); }
@@ -156,7 +155,6 @@ pk.magnets = {
   
   send_message: function(action, data) {
     var datastr = JSON.stringify($.extend({}, data, {action:action}));
-    console.log('send: '+ datastr);
     this.ws.send_message(datastr);
   },
   
