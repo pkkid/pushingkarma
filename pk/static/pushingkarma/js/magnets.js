@@ -4,7 +4,7 @@
 'use strict';
 
 pk.magnets = {
-  ACTIONS: {ADD:'add', UPDATE:'update', REMOVE:'remove'},
+  ACTIONS: {ADD:'add', UPDATE:'update', REMOVE:'remove', META:'meta'},
   DRAGGING: 'dragging',
   FRAMES_PER_SEC: 20,
   MAX_ROTATION: 7,
@@ -51,6 +51,7 @@ pk.magnets = {
     var self = this;
     return new Redsocket({uri:uri, heartbeat_msg:'heartbeat',
         receive_message: function(data) { self.receive_message(data); },
+        receive_heartbeat: function(latency) { self.receive_heartbeat(latency); },
         connected: function(data) { self.connected(data); },
     });
   },
@@ -151,6 +152,11 @@ pk.magnets = {
     if (data.action == this.ACTIONS.ADD) { this.add_word(data); }
     else if (data.action == this.ACTIONS.UPDATE) { this.update_word(data); }
     else if (data.action == this.ACTIONS.REMOVE) { this.remove_word(data); }
+    else if (data.action == this.ACTIONS.META) { $('#clients').text(data.clients); }
+  },
+  
+  receive_heartbeat: function(latency) {
+    $('#latency').text(latency);
   },
   
   send_message: function(action, data) {
