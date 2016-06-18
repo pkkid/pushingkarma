@@ -22,12 +22,28 @@ article pre {
   margin: 0 0 22px 0;
   overflow-y: auto;
   padding: 5px 10px;
+  position: relative;
+  &:hover .copycode {
+    opacity: 1;
+  }
 }
 article pre code {
   background: transparent;
   border: none;
   color: #400;
   padding: 0px;
+  .copycode {
+    position: absolute;
+    top: 3px;
+    right: 3px;
+    padding: 4px;
+    font-size: 12px;
+    background-color: rgba(0,0,0,0.2);
+    border-radius: 2px;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
 }
 
 

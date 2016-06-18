@@ -18,6 +18,24 @@ pk.utils = {
   basename: function(path) {
     return path.split('/').reverse()[0];
   },
+
+  copycode: function(selector) {
+    // initilize the clipboard plugin
+    var clippy = new Clipboard('article pre .copycode', {
+      text: function(trigger) {
+        return _.trimEnd($(trigger).parents('pre').text());
+      }
+    });
+    clippy.on('success', function(event) {
+      $(event.trigger).animatecss('bounce');
+    });
+    // append copy button to each code block
+    selector = this.set_default(selector, 'article pre code');
+    $(selector).each(function(i, block) {
+      var btn = $('<span class="copycode mdi mdi-content-duplicate"></span>');
+      $(block).prepend(btn);
+    });
+  },
   
   hash: function(str) {
     var hash = 0, i, chr, len;

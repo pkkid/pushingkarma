@@ -11,6 +11,7 @@ var pk = {  // jshint ignore:line
 $(function() {
   // Core website functions
   pk.utils.enable_animations();
+  pk.utils.copycode();
   pk.utils.highlightjs();
   pk.utils.init_tooltips();
   pk.login.init();
