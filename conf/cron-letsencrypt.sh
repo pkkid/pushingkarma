@@ -5,4 +5,4 @@ export DOMAINS='-d pushingkarma.com -d www.pushingkarma.com'
 export DIR='/tmp/letsencrypt-auto'
 mkdir -p $DIR
 /home/mjs7231/Sources/letsencrypt/letsencrypt-auto certonly --renew-by-default -a webroot --webroot-path=$DIR $DOMAINS
-service nginx reload
+/usr/sbin/service nginx reload
