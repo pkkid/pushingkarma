@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load humanize %}
 {% load basefilters %}
+{% block title %}{% if note.title %}{{note.title}} - {% endif %}{% endblock %}
 
 {% block js %}
   <script type='text/javascript'>

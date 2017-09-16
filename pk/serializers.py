@@ -31,7 +31,7 @@ class PageSerializer(DynamicFieldsSerializer):
 
     class Meta:
         model = Page
-        fields = ('id','url','weburl','slug','body','html','meta','created','modified')
+        fields = ('id','url','weburl','slug','title','body','html','meta','created','modified')
 
     def validate_slug(self, value):
         if len(value) <= 0:

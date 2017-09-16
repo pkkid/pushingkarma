@@ -47,6 +47,14 @@ class Page(TimeStampedModel):
             self._md = Markdown(self.body, Page, '/p/')
         return self._md.html
 
+    def title(self):
+        body = self.body.split('\n')
+        if len(body) and body[0].startswith('#'):
+            return body[0].strip('# ')
+        elif len(body) and body[0].startswith('<!--'):
+            return body[0].strip('<>!- ')
+        return None
+
     def meta(self):
         if getattr(self, '_md', None) is None:
             self._md = Markdown(self.body, Page, '/p/')
