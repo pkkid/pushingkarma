@@ -8,10 +8,12 @@ pk.login = {
   form: $('#logo form'),
   login_url: '/api/account/0/login/',
   logout_url: '/api/account/0/logout/',
+  KEYS: {F2:113},
 
   init: function() {
     console.debug('init pk.login on #'+ this.logo.attr('id'));
     this.init_triggers();
+    this.init_shortcuts();
   },
 
   init_triggers: function() {
@@ -36,12 +38,23 @@ pk.login = {
       });
   },
 
+  init_shortcuts: function() {
+    var self = this;
+    var KEYS = this.KEYS;
+    $(document).on('keydown', function(event) {
+      if ((event.keyCode == KEYS.F2) && (!$('body').hasClass('authenticated'))) {
+        event.stopPropagation();
+        self.show_form();
+      }
+    });
+  },
+
   show_form: function() {
     if (this.logo.hasClass('enabled')) {
       return null;
     }
     this.logo.addClass('enabled');
-    this.form.find('input[name=username]').val('').focus();
+    this.form.find('input[name=email]').val('').focus();
     this.form.find('input[name=password]').val('');
   },
 
