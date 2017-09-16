@@ -10,25 +10,25 @@ means let me know. :)
 ### Installation
 ```bash
 # Create Python Virtualenv
-$ git clone git@github.com:mjs7231/pushingkarma.git ~/Projects/pushingkarma
-$ mkvirtualenv --python=/usr/bin/python3 -a /home/mjs7231/Projects/pushingkarma pushingkarma
-$ rm ~/.virtualenvs/pushingkarma/bin/postactivate
-$ ln -s ~/Projects/pushingkarma/conf/postactivate ~/.virtualenvs/pushingkarma/bin/postactivate
-$ workon pushingkarma
+> git clone git@github.com:mjs7231/pushingkarma.git ~/Projects/pushingkarma
+> mkvirtualenv --python=/usr/bin/python3 -a /home/mjs7231/Projects/pushingkarma pk
+> rm ~/.virtualenvs/pk/bin/postactivate
+> ln -s ~/Projects/pushingkarma/conf/postactivate ~/.virtualenvs/pk/bin/postactivate
+> workon pk
 
 # Install Python Requirements
-$ pip install -U pip
-$ pip install -r ~/Projects/pushingkarma/conf/requirements.pip
+> pip install -U pip
+> pip install -r ~/Projects/pushingkarma/conf/requirements.pip
 ```
 
 ### Dev Environment
 ```bash
 # Install Development Utilities
 > sudo su -c "gem install sass"
-> sudo ln -s /usr/bin/nodejs /usr/local/bin/node
+> sudo ln -s /usr/bin/nodejs ~/.local/bin/node
 > npm install -g gulp bower
 > npm install
-> bower install
+> bower install    # choose bootstrap 4 and jquery 3
 > gulp
 
 # Update Nodejs to latest version (if hitting errors)
@@ -36,9 +36,13 @@ $ pip install -r ~/Projects/pushingkarma/conf/requirements.pip
 > sudo apt-get install -y nodejs
 > npm rebuild node-sass
 
+# Install Redis and django-redsocks
+> sudo apt-get install redis
+> git clone git@github.com:pkkid/django-redsocks.git ~/Projects/django-redsocks
+> ln -s ~/Projects/django-redsocks/redsocks ~/.virtualenvs/pk/lib/python3.5/site-packages/
+
 # Kickstart the Database
-> django-admin syncdb
-> django-admin createcachetable
+> django-admin migrate
 ```
 
 -----

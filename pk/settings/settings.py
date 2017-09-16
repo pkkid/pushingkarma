@@ -66,10 +66,6 @@ DATABASES = {
         'NAME': join(dirname(BASE_DIR), 'db.sqlite3'),
     }
 }
-CACHES = {'default': {
-    'BACKEND': 'pk.utils.rediscache.CompleteRedisCache',
-    'LOCATION': 'localhost:6379',
-}}
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
@@ -130,5 +126,15 @@ REDSOCKS_SUBSCRIBERS = {
 #REDSOCKS_ALLOWED_CHANNELS = 'pk.websocket.subscriber.allowed_channels'
 
 # DBBackup Settings
-DBBACKUP_STORAGE = 'dbbackup.storage.dropbox_storage'
-DBBACKUP_TOKENS_FILEPATH = '/home/mjs7231/.dbbackup'
+DBBACKUP_STORAGE = 'storages.backends.sftpstorage.SFTPStorage'
+DBBACKUP_STORAGE_OPTIONS = {
+    'root_path': '/home',
+    'host': DBBACKUP_SFTP_HOST,
+    'params': {
+        'username': DBBACKUP_SFTP_USER,
+        'password': DBBACKUP_SFTP_PASS,
+        'port': DBBACKUP_SFTP_PORT,
+        'allow_agent': False,
+        'look_for_keys': False,
+    },
+}

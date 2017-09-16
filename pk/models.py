@@ -51,3 +51,19 @@ class Page(TimeStampedModel):
         if getattr(self, '_md', None) is None:
             self._md = Markdown(self.body, Page, '/p/')
         return self._md.meta
+
+
+# class Transaction(TimeStampedModel):
+#     bankid = 
+#     account = 
+#     date = 
+#     payee = 
+#     category = 
+#     amount = 
+#     approved = 
+#     comment = 
+
+
+# class Category(TimeStampedModel):
+#     name = 
+#     budget = 
