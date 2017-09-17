@@ -7,7 +7,7 @@ import json
 from django.conf import settings
 from django.forms.utils import ErrorDict
 from django.http import HttpResponse
-from django.shortcuts import render_to_response
+from django.shortcuts import render
 from django.template import RequestContext
 from django.template.loader import render_to_string
 
@@ -23,7 +23,7 @@ def response(request, template, data):
     if 'json' in request.GET:
         return response_json(data)
     data['settings'] = settings
-    return render_to_response(template, data, RequestContext(request))
+    return render(request, template, data)
 
 
 def response_json(data, status=200):

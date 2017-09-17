@@ -6,7 +6,7 @@ Copyright (c) 2015 PushingKarma. All rights reserved.
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.db.models import Q
-from pk import utils
+from pk import log, utils
 from pk.models import AccountSerializer
 from rest_framework import status, viewsets
 from rest_framework.decorators import detail_route
@@ -36,6 +36,7 @@ class AccountViewSet(viewsets.ViewSet):
             if user and user.is_active:
                 login(request, user)
                 serializer = AccountSerializer(user, context={'request':request})
+                log.info('Logged in as %s' % serializer.data)
                 return Response(serializer.data)
         except Exception as err:
             print(err)

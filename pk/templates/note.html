@@ -15,7 +15,7 @@
           init_data: {{note|json}},
         });
       {% endif %}
-      pk.notebook.init('#notebook', pk.editor);
+      pk.notebook.init('#notebook', {{note.id}}, pk.editor);
     });
   </script>
 {% endblock %}

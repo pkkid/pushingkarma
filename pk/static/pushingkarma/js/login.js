@@ -27,8 +27,10 @@ pk.login = {
       });
       // Hide login form
       $('header').on('click', function(event) {
-        event.preventDefault();
-        self.hide_form();
+        if (!$('body').hasClass('authenticated')) {
+          event.preventDefault();
+          self.hide_form();
+        }
       });
       // Submit login form
       self.form.on('submit', function(event) {

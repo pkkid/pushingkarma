@@ -9,10 +9,11 @@ pk.notebook = {
   NOTE_SELECTOR: '#note',
   KEYS: {TAB:9, ENTER:13, ESC:27, UP:38, DOWN:40},
   
-  init: function(selector, editor) {
+  init: function(selector, noteid, editor) {
     this.container = $(selector);
     if (!this.container.length) { return; }
     console.debug('init pk.notebook on '+ selector);
+    this.noteid = noteid;
     this.editor = editor;
     this.xhr = null;
     this.search = null;
@@ -91,7 +92,7 @@ pk.notebook = {
     var url = search ? this.APIROOT +'?search='+ encodeURIComponent(search) : this.APIROOT;
     this.xhr = $.ajax({url:url, type:'GET', dataType:'json'});
     this.xhr.done(function(data, textStatus, jqXHR) {
-      var ctx = {items:data, search:encodeURIComponent(search)};
+      var ctx = {items:data, search:encodeURIComponent(search), noteid:self.noteid};
       var html = self.templates.listitems(ctx);
       self.container.find('#notebook-list').html(html);
       self.search = search;
@@ -101,7 +102,7 @@ pk.notebook = {
   templates: {
     listitems: Handlebars.compile([
       '{{#each this.items}}',
-      '  <a class="notebook-item" href="{{this.weburl}}{{#if ../search}}?search={{../search}}{{/if}}" data-url="{{this.url}}">',
+      '  <a class="notebook-item {{#if_eq this.id compare=../noteid}}selected{{/if_eq}}" href="{{this.weburl}}{{#if ../search}}?search={{../search}}{{/if}}" data-url="{{this.url}}">',
       '    <div class="title">{{this.title}}</div>',
       '    <div class="subtext">',
       '      {{#if this.tags}}{{this.tags}} - {{/if}}{{formatDate this.created "%Y-%m-%d"}}',

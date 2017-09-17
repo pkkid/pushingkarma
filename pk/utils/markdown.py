@@ -22,7 +22,7 @@ class Markdown(object):
         self.text = text
         self.cls = cls
         self.prefix = prefix
-        self.kwvars = kwvars or {} 
+        self.kwvars = kwvars or {}
         self.meta = defaultdict(dict)
         self.html = self._render_html()
 
@@ -30,7 +30,7 @@ class Markdown(object):
         text = self._explicit_linefeeds(self.text)
         text = self._replace_kwvars(text)
         html = markdown.markdown(text, extensions=MARKDOWN_EXTENSIONS)
-        soup = BeautifulSoup(html)
+        soup = BeautifulSoup(html, 'html.parser')
         if self.cls:
             self._replace_includes(soup)
             self._replace_links(soup)
@@ -50,13 +50,13 @@ class Markdown(object):
             if subitem:
                 kwvars = dict(elem.attrs); kwvars['text'] = elem.text.strip()
                 submd = Markdown(subitem.body, self.cls, self.prefix, kwvars)
-                elem.replaceWith(BeautifulSoup(submd.html))
+                elem.replaceWith(BeautifulSoup(submd.html, 'html.parser'))
                 self.meta['includes'][slug] = self.VALID
                 self._merge_submeta(submd.meta)
             else:
                 href = '%s%s' % (self.prefix, slug)
                 link = '<a class="invalid" href="%s">[template:%s]</a>' % (href, href)
-                elem.replaceWith(BeautifulSoup(link))
+                elem.replaceWith(BeautifulSoup(link, 'html.parser'))
                 self.meta['includes'][slug] = self.INVALID
 
     def _replace_links(self, soup):
@@ -68,11 +68,11 @@ class Markdown(object):
             href = '%s%s' % (self.prefix, slug)
             if subitem:
                 link = '<a href="%s">%s</a>' % (href, elem.text)
-                elem.replaceWith(BeautifulSoup(link))
-                #self.meta['links'][slug] = self.VALID
+                elem.replaceWith(BeautifulSoup(link, 'html.parser'))
+                # self.meta['links'][slug] = self.VALID
             else:
                 link = '<a class="invalid" href="%s">%s</a>' % (href, elem.text)
-                elem.replaceWith(BeautifulSoup(link))
+                elem.replaceWith(BeautifulSoup(link, 'html.parser'))
                 self.meta['links'][slug] = self.INVALID
                 
     def _syntax_hinting(self, soup):
