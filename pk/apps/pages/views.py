@@ -19,9 +19,9 @@ def page(request, slug='root', tmpl='page.html'):
     return utils.response(request, tmpl, data)
 
 
-def markdown(request, prefix):
+def markdown(request):
     body = request.POST.get('body', '')
-    md = Markdown(body, Page, prefix)
+    md = Markdown(body, Page, '/p/')
     includes = sorted(md.meta['includes'].keys())
     return utils.response_json({'html':md.html, 'includes':includes})
 

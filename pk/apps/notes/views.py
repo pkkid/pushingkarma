@@ -30,7 +30,7 @@ def note(request, slug=None, tmpl='note.html'):
     return utils.response(request, tmpl, data)
 
 
-def markdown(request, prefix):
+def markdown(request):
     body = request.POST.get('body', '')
     md = Markdown(body)
     html = md.html
