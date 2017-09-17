@@ -3,21 +3,23 @@
 """
 Copyright (c) 2015 PushingKarma. All rights reserved.
 """
-import pk.api, pk.views, pk.utils.auth
+import pk.utils.auth
 from django.conf import settings
 from django.conf.urls import include, url
 from django.conf.urls.static import static
 from django.views.generic import RedirectView, TemplateView
 from rest_framework import routers
+from pk import views as pk_views
+from pk.apps.notes import views as note_views
+from pk.apps.pages import views as page_views
 
 redirect = lambda url: RedirectView.as_view(url=url, permanent=False)
 template = lambda tmpl: TemplateView.as_view(template_name=tmpl)
 
 api = routers.DefaultRouter()
-api.register('account', pk.api.AccountViewSet)
-api.register('notes', pk.api.NotesViewSet)
-api.register('pages', pk.api.PagesViewSet)
-
+api.register('account', pk_views.AccountViewSet)
+api.register('notes', note_views.NotesViewSet)
+api.register('pages', page_views.PagesViewSet)
 
 urlpatterns = [
     url(r'^api/', include(api.urls)),
@@ -26,12 +28,15 @@ urlpatterns = [
     url(r'^auth/login/$', pk.utils.auth.user_login, name='auth_login'),
     url(r'^auth/logout/$', pk.utils.auth.user_logout, name='auth_logout'),
     url(r'^favicon\.ico$', redirect('/static/pushingkarma/img/favicon.ico'), name='favicon'),
-    # pushingkarma
-    url(r'^$', pk.views.page, name='index'),
-    url(r'^n/$', pk.views.note, name='notebook'),
-    url(r'^p/(?P<slug>.*?)/$', pk.views.page, name='page'),
-    url(r'^n/(?P<slug>.*?)/$', pk.views.note, name='note'),
-    url(r'^markdown(?P<prefix>/[np]/)$', pk.views.markdown, name='markdown'),
+    # PushingKarma Pages
+    url(r'^$', page_views.page, name='index'),
+    url(r'^$', page_views.page, name='pages'),
+    url(r'^p/(?P<slug>.*?)/$', page_views.page, name='page'),
+    url(r'^markdown/p/$', page_views.markdown, name='page_markdown'),
+    # PushingKarma Notes
+    url(r'^n/$', note_views.note, name='notes'),
+    url(r'^n/(?P<slug>.*?)/$', note_views.note, name='note'),
+    url(r'^markdown/n/$', note_views.markdown, name='note_markdown'),
 ]
 
 if settings.DEBUG:

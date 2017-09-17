@@ -3,44 +3,45 @@
 """
 Copyright (c) 2015 PushingKarma. All rights reserved.
 """
-from django.http import HttpResponse
-from pk.api import NOTESEARCHFIELDS
-from pk.models import Note, Page
-from pk.serializers import NoteSerializer, PageSerializer
-from pk.utils.search import Search
-from pk.utils import get_object_or_none, context, response, response_json
-from pk.utils.markdown import Markdown
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
+from django.db.models import Q
+from pk import utils
+from pk.models import AccountSerializer
+from rest_framework import status, viewsets
+from rest_framework.decorators import detail_route
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
 
 
-def note(request, slug=None, template='note.html'):
-    notes = Note.objects.order_by('-modified')
-    slugnote = get_object_or_none(Note, slug=slug)
-    search = request.GET.get('search')
-    if slugnote: note = slugnote
-    elif search: note = Search(notes, NOTESEARCHFIELDS, search).queryset()[0]
-    else: note = notes[0]
-    data = context.core(request, menuitem='notebook')
-    data.note = NoteSerializer(note, context={'request':request}).data
-    return response(request, template, data)
+class AccountViewSet(viewsets.ViewSet):
+    queryset = User.objects.filter(pk=-1)
+    serializer_class = AccountSerializer
+    permission_classes = [AllowAny]
 
+    def get_queryset(self):
+        return User.objects.filter(pk=self.request.user.pk)
 
-def page(request, slug='root', template='page.html'):
-    page = get_object_or_none(Page, slug=slug) or Page(slug=slug)
-    data = context.core(request, menuitem='projects')
-    data.page = PageSerializer(page, context={'request':request}).data
-    return response(request, template, data)
+    def list(self, request, *args, **kwargs):
+        serializer = AccountSerializer(self.request.user, context={'request':request})
+        return Response(serializer.data)
 
+    @detail_route(methods=['post'])
+    def login(self, request, *args, **kwargs):
+        try:
+            email = request.POST.get('email')
+            test = utils.get_object_or_none(User, Q(email=email) | Q(username=email))
+            passwd = request.POST.get('password')
+            user = authenticate(username=test.username, password=passwd)
+            if user and user.is_active:
+                login(request, user)
+                serializer = AccountSerializer(user, context={'request':request})
+                return Response(serializer.data)
+        except Exception as err:
+            print(err)
+        return Response(status=status.HTTP_403_FORBIDDEN)
 
-def markdown(request, prefix):
-    body = request.POST.get('body', '')
-    if prefix == '/n/':
-        md = Markdown(body)
-        html = md.html
-        if request.POST.get('title',''):
-            html = '<h2>%s</h2>%s' % (request.POST['title'], html)
-        return response_json({'html':html})
-    elif prefix == '/p/':
-        md = Markdown(body, Page, prefix)
-        includes = sorted(md.meta['includes'].keys())
-        return response_json({'html':md.html, 'includes':includes})
-    return HttpResponse(status=400)
+    @detail_route(methods=['post'])
+    def logout(self, request, *args, **kwargs):
+        logout(request)
+        return Response({'status': 'Successfully logged out.'})

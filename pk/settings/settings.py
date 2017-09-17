@@ -3,9 +3,9 @@
 """
 Copyright (c) 2015 PushingKarma. All rights reserved.
 """
-from .secrets import *  # noqa
 import platform
 from os.path import abspath, dirname, join
+from . import secrets
 
 # Django Core Settings
 HOSTNAME = platform.node()
@@ -15,6 +15,7 @@ DEBUG = HOSTNAME in ['pkkid-work', 'pkkid-home']
 ROOT_URLCONF = 'pk.urls'
 STATIC_URL = '/static/'
 STATIC_ROOT = '%s/collectstatic/' % BASE_DIR
+SECRET_KEY = secrets.SECRET_KEY
 
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
@@ -22,9 +23,8 @@ USE_I18N = True
 USE_L10N = True
 USE_TZ = True
 
-# Django Environment
 INSTALLED_APPS = (
-    #'django.contrib.admin',
+    # 'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.humanize',
@@ -36,7 +36,11 @@ INSTALLED_APPS = (
     'redsocks',
     'dbbackup',
     'pk',
+    'pk.apps.budget',
+    'pk.apps.notes',
+    'pk.apps.pages',
 )
+
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -47,6 +51,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
 )
+
 TEMPLATES = [{
     'BACKEND': 'django.template.backends.django.DjangoTemplates',
     'DIRS': ['%s/templates' % BASE_DIR],
@@ -60,12 +65,14 @@ TEMPLATES = [{
         ],
     },
 }]
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': join(dirname(BASE_DIR), 'db.sqlite3'),
     }
 }
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
@@ -114,6 +121,7 @@ SESSION_ENGINE = 'redis_sessions.session'
 SESSION_REDIS_PREFIX = 'session'
 
 # Django Websockets Redis
+# REDSOCKS_ALLOWED_CHANNELS = 'pk.websocket.subscriber.allowed_channels'
 WSGI_APPLICATION = 'redsocks.runserver.server.application'
 WEBSOCKET_URL = '/ws/'
 REDSOCKS_CONNECTION = {'host':'localhost'}
@@ -123,17 +131,16 @@ REDSOCKS_PREFIX = 'ws'
 REDSOCKS_SUBSCRIBERS = {
     'magnets': 'pk.websocket.magnets.MagnetsSubscriber',
 }
-#REDSOCKS_ALLOWED_CHANNELS = 'pk.websocket.subscriber.allowed_channels'
 
 # DBBackup Settings
 DBBACKUP_STORAGE = 'storages.backends.sftpstorage.SFTPStorage'
 DBBACKUP_STORAGE_OPTIONS = {
     'root_path': '/home',
-    'host': DBBACKUP_SFTP_HOST,
+    'host': secrets.DBBACKUP_SFTP_HOST,
     'params': {
-        'username': DBBACKUP_SFTP_USER,
-        'password': DBBACKUP_SFTP_PASS,
-        'port': DBBACKUP_SFTP_PORT,
+        'username': secrets.DBBACKUP_SFTP_USER,
+        'password': secrets.DBBACKUP_SFTP_PASS,
+        'port': secrets.DBBACKUP_SFTP_PORT,
         'allow_agent': False,
         'look_for_keys': False,
     },
