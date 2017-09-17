@@ -9,7 +9,7 @@ from os.path import abspath, dirname, join
 
 # Django Core Settings
 HOSTNAME = platform.node()
-ALLOWED_HOSTS = ['.pushingkarma.com']
+ALLOWED_HOSTS = ['.pushingkarma.com', 'localhost']
 BASE_DIR = dirname(dirname(abspath(__file__)))
 DEBUG = HOSTNAME in ['pkkid-work', 'pkkid-home']
 ROOT_URLCONF = 'pk.urls'
