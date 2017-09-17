@@ -13,14 +13,13 @@ pk.notebook = {
     this.container = $(selector);
     if (!this.container.length) { return; }
     console.debug('init pk.notebook on '+ selector);
-    this.noteid = noteid;
     this.editor = editor;
     this.xhr = null;
     this.search = null;
     this.init_elements();
     this.init_triggers();
     this.init_shortcuts();
-    this.update_list(this.searchinput.val());
+    this.update_list(this.searchinput.val(), noteid);
   },
   
   init_elements: function() {
@@ -85,14 +84,14 @@ pk.notebook = {
     window.history.replaceState('','','/n/');
   },
   
-  update_list: function(search) {
+  update_list: function(search, noteid) {
     var self = this;
     if (search == this.search) { return; }
     if (this.xhr) { this.xhr.abort(); }
     var url = search ? this.APIROOT +'?search='+ encodeURIComponent(search) : this.APIROOT;
     this.xhr = $.ajax({url:url, type:'GET', dataType:'json'});
     this.xhr.done(function(data, textStatus, jqXHR) {
-      var ctx = {items:data, search:encodeURIComponent(search), noteid:self.noteid};
+      var ctx = {items:data, search:encodeURIComponent(search), noteid:noteid};
       var html = self.templates.listitems(ctx);
       self.container.find('#notebook-list').html(html);
       self.search = search;
