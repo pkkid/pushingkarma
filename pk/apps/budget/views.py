@@ -24,7 +24,8 @@ TRANSACTIONSEARCHFIELDS = {
 
 
 def budget(request, slug=None, tmpl='budget.html'):
-    return utils.response(request, tmpl, {})
+    data = utils.context.core(request, menuitem='budget')
+    return utils.response(request, tmpl, data)
 
 
 class TransactionsViewSet(viewsets.ModelViewSet):

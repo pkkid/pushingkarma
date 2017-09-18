@@ -28,5 +28,13 @@
         <span class='subtitle'>Thoughts and writings from my journey</span>
       </a>
     </li>
+    {% if user.is_authenticated %}
+      <li class='nav-item site {% if menuitem == "budget" %}active{% endif %}'>
+        <a href='{% url "budget" %}'>
+          <span class='title'>Budget</span>
+          <span class='subtitle'>Limit desires by tracking personal expences</span>
+        </a>
+      </li>
+    {% endif %}
   </ul>
 </div>

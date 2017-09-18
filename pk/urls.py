@@ -12,6 +12,7 @@ from rest_framework import routers
 from pk import views as pk_views
 from pk.apps.notes import views as note_views
 from pk.apps.pages import views as page_views
+from pk.apps.budget import views as budget_views
 
 redirect = lambda url: RedirectView.as_view(url=url, permanent=False)
 template = lambda tmpl: TemplateView.as_view(template_name=tmpl)
@@ -20,6 +21,7 @@ api = routers.DefaultRouter()
 api.register('account', pk_views.AccountViewSet)
 api.register('notes', note_views.NotesViewSet)
 api.register('pages', page_views.PagesViewSet)
+
 
 urlpatterns = [
     url(r'^api/', include(api.urls)),
@@ -38,7 +40,7 @@ urlpatterns = [
     url(r'^n/(?P<slug>.*?)/$', note_views.note, name='note'),
     url(r'^markdown/n/$', note_views.markdown, name='note_markdown'),
     # PushingkKarma Budget
-    url(r'^n/$', note_views.note, name='notes'),
+    url(r'^budget/$', budget_views.budget, name='budget'),
 ]
 
 if settings.DEBUG:
