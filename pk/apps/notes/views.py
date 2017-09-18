@@ -25,7 +25,7 @@ def note(request, slug=None, tmpl='note.html'):
     if slugnote: note = slugnote
     elif search: note = Search(notes, NOTESEARCHFIELDS, search).queryset()[0]
     else: note = notes[0]
-    data = utils.context.core(request, menuitem='notebook')
+    data = utils.context.core(request, menuitem='notes')
     data.note = NoteSerializer(note, context={'request':request}).data
     return utils.response(request, tmpl, data)
 

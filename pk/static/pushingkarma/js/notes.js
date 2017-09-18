@@ -3,16 +3,16 @@
  *------------------------------------------------------- */
 'use strict';
 
-pk.notebook = {
+pk.notes = {
   APIROOT: '/api/notes/',
-  EDITOR_SELECTOR: '#notebook-editor',
+  EDITOR_SELECTOR: '#notes-editor',
   NOTE_SELECTOR: '#note',
   KEYS: {TAB:9, ENTER:13, ESC:27, UP:38, DOWN:40},
   
   init: function(selector, noteid, editor) {
     this.container = $(selector);
     if (!this.container.length) { return; }
-    console.debug('init pk.notebook on '+ selector);
+    console.debug('init pk.notes on '+ selector);
     this.editor = editor;
     this.xhr = null;
     this.search = null;
@@ -23,10 +23,10 @@ pk.notebook = {
   },
   
   init_elements: function() {
-    this.sidepanel = this.container.find('#notebook-sidepanel');
-    this.searchinput = this.container.find('#notebook-search');
-    this.addnote = this.container.find('#notebook-add');
-    this.notelist = this.container.find('#notebook-list');
+    this.sidepanel = this.container.find('#notes-sidepanel');
+    this.searchinput = this.container.find('#notes-search');
+    this.addnote = this.container.find('#notes-add');
+    this.notelist = this.container.find('#notes-list');
   },
   
   init_triggers: function() {
@@ -51,7 +51,7 @@ pk.notebook = {
     var KEYS = this.KEYS;
     // select noteitems via keyboard
     $(window).on('keydown', function(event) {
-      var noteitems = self.notelist.find('.notebook-item');
+      var noteitems = self.notelist.find('.notes-item');
       var focused = self.searchinput.is(':focus');
       if (focused && (_.valuesIn(KEYS).indexOf(event.keyCode) > -1)) {
         event.preventDefault();
@@ -62,7 +62,7 @@ pk.notebook = {
           noteitems.removeClass('selected');
           next.addClass('selected');
         } else if (event.keyCode == KEYS.UP) {
-          var prev = selected.prev().filter('.notebook-item');
+          var prev = selected.prev().filter('.notes-item');
           prev = prev.length ? prev : noteitems.filter(':last-child');
           noteitems.removeClass('selected');
           prev.addClass('selected');
@@ -93,7 +93,7 @@ pk.notebook = {
     this.xhr.done(function(data, textStatus, jqXHR) {
       var ctx = {items:data, search:encodeURIComponent(search), noteid:noteid};
       var html = self.templates.listitems(ctx);
-      self.container.find('#notebook-list').html(html);
+      self.container.find('#notes-list').html(html);
       self.search = search;
     });
   },
@@ -101,7 +101,7 @@ pk.notebook = {
   templates: {
     listitems: Handlebars.compile([
       '{{#each this.items}}',
-      '  <a class="notebook-item {{#if_eq this.id compare=../noteid}}selected{{/if_eq}}" href="{{this.weburl}}{{#if ../search}}?search={{../search}}{{/if}}" data-url="{{this.url}}">',
+      '  <a class="notes-item {{#if_eq this.id compare=../noteid}}selected{{/if_eq}}" href="{{this.weburl}}{{#if ../search}}?search={{../search}}{{/if}}" data-url="{{this.url}}">',
       '    <div class="title">{{this.title}}</div>',
       '    <div class="subtext">',
       '      {{#if this.tags}}{{this.tags}} - {{/if}}{{formatDate this.created "%Y-%m-%d"}}',

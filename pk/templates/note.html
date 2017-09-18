@@ -15,23 +15,23 @@
           init_data: {{note|json}},
         });
       {% endif %}
-      pk.notebook.init('#notebook', {{note.id}}, pk.editor);
+      pk.notes.init('#notes', {{note.id}}, pk.editor);
     });
   </script>
 {% endblock %}
 
 {% block content %}
-  <div id='notebook'>
+  <div id='notes'>
     <!-- Side Panel -->
-    <div id='notebook-sidepanel'>
-      <input id='notebook-search' type='text' autofocus='true' value='{{request.GET.search}}' onfocus='this.value = this.value;'/>
+    <div id='notes-sidepanel'>
+      <input id='notes-search' type='text' autofocus='true' value='{{request.GET.search}}' onfocus='this.value = this.value;'/>
       {% if user.is_authenticated %}
-        <div id='notebook-add' data-toggle='tooltip' data-placement='right' title='Add New Note'><i class='mdi mdi-plus'></i></div>
+        <div id='notes-add' data-toggle='tooltip' data-placement='right' title='Add New Note'><i class='mdi mdi-plus'></i></div>
       {% endif %}
-      <div id='notebook-list'></div>
+      <div id='notes-list'></div>
     </div>
     <!-- Note Content -->
-    <div id='notebook-content'>
+    <div id='notes-content'>
       <article id='note'>
         <h2>{{note.title}}</h2>
         {{note.html|safe}}

@@ -37,6 +37,8 @@ urlpatterns = [
     url(r'^n/$', note_views.note, name='notes'),
     url(r'^n/(?P<slug>.*?)/$', note_views.note, name='note'),
     url(r'^markdown/n/$', note_views.markdown, name='note_markdown'),
+    # PushingkKarma Budget
+    url(r'^n/$', note_views.note, name='notes'),
 ]
 
 if settings.DEBUG:

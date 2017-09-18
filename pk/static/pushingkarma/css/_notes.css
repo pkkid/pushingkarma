@@ -8,11 +8,11 @@ $NOTEFILTER_HEIGHT: 40px;
   min-height: 500px;
 }
 
-// Notebook Side Panel
-#notebook {
+// Notes Side Panel
+#notes {
   @include clearfix();
   position: relative;
-  #notebook-sidepanel {
+  #notes-sidepanel {
     background-color: rgba(0,0,0,0.05);
     border-right: 1px solid rgba(0,0,0,0.1);
     height: 100%;
@@ -31,7 +31,7 @@ $NOTEFILTER_HEIGHT: 40px;
       top: 0px;
       z-index: 1;
     }
-    #notebook-search {
+    #notes-search {
       background-color: rgba(0,0,0,0.05);
       border-width: 0px;
       box-shadow: inset 0px 0px 50px rgba(0,0,0,0.2) !important;
@@ -43,7 +43,7 @@ $NOTEFILTER_HEIGHT: 40px;
       width: 100%;
       border-bottom: 1px solid rgba(0,0,0,0.2);
     }
-    #notebook-add {
+    #notes-add {
       background-color: rgba(0,0,0,0.1);
       cursor: pointer;
       font-size: 20px;
@@ -59,11 +59,11 @@ $NOTEFILTER_HEIGHT: 40px;
         color: #2E2B25;
       }
     }
-    #notebook-list {
+    #notes-list {
       overflow-y: auto;
       height: calc(100% - 42px);
     }
-    .notebook-item {
+    .notes-item {
       border-bottom: 1px solid rgba(0,0,0,0.1);
       border-top: 1px solid rgba(255,255,255,0.1);
       cursor: pointer;
@@ -97,12 +97,12 @@ $NOTEFILTER_HEIGHT: 40px;
   }
 }
 // show add (+) button when logged in
-body.authenticated #notebook-filter {
+body.authenticated #notes-filter {
   padding-right: 50px;
 }
 
-// Notebook Content
-#notebook-content {
+// Notes Content
+#notes-content {
   margin-left: 300px;
   height: 100%;
   overflow: hidden;
