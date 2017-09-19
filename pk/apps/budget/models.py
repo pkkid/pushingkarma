@@ -10,8 +10,18 @@ from pk.utils.serializers import DynamicFieldsSerializer
 
 class Category(TimeStampedModel):
     name = models.CharField(max_length=255, unique=True)
+    order = models.IntegerField(default=None, unique=True)
     budget = models.DecimalField(max_digits=8, decimal_places=2)
     comment = models.TextField(blank=True, default='')
+
+    def __str__(self):
+        return self.name
+
+
+class CategorySerializer(DynamicFieldsSerializer):
+    class Meta:
+        model = Category
+        fields = ('id','url','name','order','budget','comment','created','modified')
 
 
 class Transaction(TimeStampedModel):
@@ -29,4 +39,5 @@ class Transaction(TimeStampedModel):
 class TransactionSerializer(DynamicFieldsSerializer):
     class Meta:
         model = Transaction
-        fields = ('id','url','weburl','title','slug','tags','body','html','created','modified')
+        fields = ('id','url','bankid','account','date','payee','category',
+            'amount','approved','memo','comment','created','modified')

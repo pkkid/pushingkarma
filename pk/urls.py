@@ -21,6 +21,8 @@ api = routers.DefaultRouter()
 api.register('account', pk_views.AccountViewSet)
 api.register('notes', note_views.NotesViewSet)
 api.register('pages', page_views.PagesViewSet)
+api.register('categories', budget_views.CategoriesViewSet)
+api.register('transactions', budget_views.TransactionsViewSet)
 
 
 urlpatterns = [
