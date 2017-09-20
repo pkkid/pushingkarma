@@ -4,6 +4,7 @@
 Copyright (c) 2015 PushingKarma. All rights reserved.
 """
 from pk import utils
+from django.contrib.auth.decorators import login_required
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -25,6 +26,7 @@ TRANSACTIONSEARCHFIELDS = {
 }
 
 
+@login_required
 def budget(request, slug=None, tmpl='budget.html'):
     data = utils.context.core(request, menuitem='budget')
     return utils.response(request, tmpl, data)

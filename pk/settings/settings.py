@@ -13,6 +13,7 @@ ALLOWED_HOSTS = ['.pushingkarma.com', 'localhost']
 BASE_DIR = dirname(dirname(abspath(__file__)))
 DEBUG = HOSTNAME in ['pkkid-work', 'pkkid-home']
 ROOT_URLCONF = 'pk.urls'
+LOGIN_URL = 'index'
 STATIC_URL = '/static/'
 STATIC_ROOT = '%s/collectstatic/' % BASE_DIR
 SECRET_KEY = secrets.SECRET_KEY

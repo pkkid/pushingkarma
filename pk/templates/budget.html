@@ -3,6 +3,18 @@
 {% block title %}Budget{% endblock %}
 
 {% block js %}
+  <script type='text/javascript'>
+    $(function() {
+      pk.editor.init('#note', {
+        api_url: '/api/notes/',
+        markdown_url: '/markdown/n/',
+        show_title: true,
+        show_tags: true,
+        init_data: {{note|json}},
+      });
+      pk.notes.init('#notes', {{note.id}}, pk.editor);
+    });
+  </script>
 {% endblock %}
 
 {% block content %}
