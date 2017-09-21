@@ -24,6 +24,7 @@ means let me know. :)
 ### Dev Environment
 ```bash
 # Install Development Utilities
+> sudo apt-get install ruby ruby-dev
 > sudo su -c "gem install sass"
 > sudo ln -s /usr/bin/nodejs ~/.local/bin/node
 > npm install -g gulp bower
@@ -37,7 +38,7 @@ means let me know. :)
 > npm rebuild node-sass
 
 # Install Redis and django-redsocks
-> sudo apt-get install redis
+> sudo apt-get install redis redis-server
 > git clone git@github.com:pkkid/django-redsocks.git ~/Projects/django-redsocks
 > ln -s ~/Projects/django-redsocks/redsocks ~/.virtualenvs/pk/lib/python3.5/site-packages/
 

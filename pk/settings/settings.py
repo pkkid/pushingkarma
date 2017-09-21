@@ -11,7 +11,7 @@ from . import secrets
 HOSTNAME = platform.node()
 ALLOWED_HOSTS = ['.pushingkarma.com', 'localhost']
 BASE_DIR = dirname(dirname(abspath(__file__)))
-DEBUG = HOSTNAME in ['pkkid-work', 'pkkid-home']
+DEBUG = HOSTNAME in ['pkkid-work3', 'pkkid-home']
 ROOT_URLCONF = 'pk.urls'
 LOGIN_URL = 'index'
 STATIC_URL = '/static/'

@@ -39,7 +39,7 @@ class AccountViewSet(viewsets.ViewSet):
                 log.info('Logged in as %s' % serializer.data)
                 return Response(serializer.data)
         except Exception as err:
-            print(err)
+            log.error(err)
         return Response(status=status.HTTP_403_FORBIDDEN)
 
     @detail_route(methods=['post'])
