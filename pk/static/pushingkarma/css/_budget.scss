@@ -75,7 +75,7 @@ $SIDEPANEL_WIDTH: 300px;
         .budget { width:60px; text-align:center; }
         
         input {
-          padding: 1px 3px;
+          padding: 0px 4px;
           border-width: 0px;
           background-color: transparent;
         }
@@ -88,7 +88,8 @@ $SIDEPANEL_WIDTH: 300px;
         }
         tfoot input {
           margin-top: 3px;
-          background-color: rgba(0,0,0,0.1);
+          background-color: rgba(0,0,0,0.05);
+          border-radius: 4px;
         }
       }
     }

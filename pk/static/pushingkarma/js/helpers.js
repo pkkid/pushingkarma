@@ -823,16 +823,16 @@ var helpers = {
   /**
    * {{if_eq}}
    *
-   * @author: Dan Harper <http://github.com/danharper>
    *
-   * @param  {[type]} context [description]
+   * @param  {[type]} value   [description]
+   * @param  {[type]} other   [description]
    * @param  {[type]} options [description]
    * @return {[type]}         [description]
    *
    * @example: {{if_eq this compare=that}}
    */
-  if_eq: function(context, options) {
-    if (context === options.hash.compare) {
+  if_eq: function(value, other, options) {
+    if (value === other) {
       return options.fn(this);
     }
     return options.inverse(this);
@@ -840,16 +840,16 @@ var helpers = {
 
   /**
    * {{unless_eq}}
-   * @author: Dan Harper <http://github.com/danharper>
    *
-   * @param  {[type]} context [description]
+   * @param  {[type]} value   [description]
+   * @param  {[type]} other   [description]
    * @param  {[type]} options [description]
    * @return {[type]}         [description]
    *
    * @example: {{unless_eq this compare=that}}
    */
-  unless_eq: function(context, options) {
-    if (context === options.hash.compare) {
+  unless_eq: function(value, other, options) {
+    if (value === other) {
       return options.inverse(this);
     }
     return options.fn(this);
@@ -857,16 +857,16 @@ var helpers = {
 
   /**
    * {{if_gt}}
-   * @author: Dan Harper <http://github.com/danharper>
    *
-   * @param  {[type]} context [description]
+   * @param  {[type]} value   [description]
+   * @param  {[type]} other   [description]
    * @param  {[type]} options [description]
    * @return {[type]}         [description]
    *
    * @example: {{if_gt this compare=that}}
    */
-  if_gt: function(context, options) {
-    if (context > options.hash.compare) {
+  if_gt: function(value, other, options) {
+    if (value > other) {
       return options.fn(this);
     }
     return options.inverse(this);
@@ -874,16 +874,16 @@ var helpers = {
 
   /**
    * {{unless_gt}}
-   * @author: Dan Harper <http://github.com/danharper>
    *
-   * @param  {[type]} context [description]
+   * @param  {[type]} value   [description]
+   * @param  {[type]} other   [description]
    * @param  {[type]} options [description]
    * @return {[type]}         [description]
    *
    * @example: {{unless_gt this compare=that}}
    */
-  unless_gt: function(context, options) {
-    if (context > options.hash.compare) {
+  unless_gt: function(value, other, options) {
+    if (value > other) {
       return options.inverse(this);
     }
     return options.fn(this);
@@ -891,16 +891,16 @@ var helpers = {
 
   /**
    * {{if_lt}}
-   * @author: Dan Harper <http://github.com/danharper>
    *
-   * @param  {[type]} context [description]
+   * @param  {[type]} value   [description]
+   * @param  {[type]} other   [description]
    * @param  {[type]} options [description]
    * @return {[type]}         [description]
    *
    * @example: {{if_lt this compare=that}}
    */
-  if_lt: function(context, options) {
-    if (context < options.hash.compare) {
+  if_lt: function(value, other, options) {
+    if (value < other) {
       return options.fn(this);
     }
     return options.inverse(this);
@@ -908,16 +908,16 @@ var helpers = {
 
   /**
    * {{unless_lt}}
-   * @author: Dan Harper <http://github.com/danharper>
    *
-   * @param  {[type]} context [description]
+   * @param  {[type]} value   [description]
+   * @param  {[type]} other   [description]
    * @param  {[type]} options [description]
    * @return {[type]}         [description]
    *
    * @example: {{unless_lt this compare=that}}
    */
-  unless_lt: function(context, options) {
-    if (context < options.hash.compare) {
+  unless_lt: function(value, other, options) {
+    if (value < other) {
       return options.inverse(this);
     }
     return options.fn(this);
@@ -925,16 +925,16 @@ var helpers = {
 
   /**
    * {{if_gteq}}
-   * @author: Dan Harper <http://github.com/danharper>
    *
-   * @param  {[type]} context [description]
+   * @param  {[type]} value   [description]
+   * @param  {[type]} other   [description]
    * @param  {[type]} options [description]
    * @return {[type]}         [description]
    *
    * @example: {{if_gteq this compare=that}}
    */
-  if_gteq: function(context, options) {
-    if (context >= options.hash.compare) {
+  if_gteq: function(value, other, options) {
+    if (value >= other) {
       return options.fn(this);
     }
     return options.inverse(this);
@@ -942,16 +942,16 @@ var helpers = {
 
   /**
    * {{unless_gteq}}
-   * @author: Dan Harper <http://github.com/danharper>
    *
-   * @param  {[type]} context [description]
+   * @param  {[type]} value   [description]
+   * @param  {[type]} other   [description]
    * @param  {[type]} options [description]
    * @return {[type]}         [description]
    *
    * @example: {{unless_gteq this compare=that}}
    */
-  unless_gteq: function(context, options) {
-    if (context >= options.hash.compare) {
+  unless_gteq: function(value, other, options) {
+    if (value >= other) {
       return options.inverse(this);
     }
     return options.fn(this);
@@ -959,16 +959,16 @@ var helpers = {
 
   /**
    * {{if_lteq}}
-   * @author: Dan Harper <http://github.com/danharper>
    *
-   * @param  {[type]} context [description]
+   * @param  {[type]} value   [description]
+   * @param  {[type]} other   [description]
    * @param  {[type]} options [description]
    * @return {[type]}         [description]
    *
    * @example: {{if_lteq this compare=that}}
    */
-  if_lteq: function(context, options) {
-    if (context <= options.hash.compare) {
+  if_lteq: function(value, other, options) {
+    if (value <= other) {
       return options.fn(this);
     }
     return options.inverse(this);
@@ -976,16 +976,16 @@ var helpers = {
 
   /**
    * {{unless_lteq}}
-   * @author: Dan Harper <http://github.com/danharper>
    *
-   * @param  {[type]} context [description]
+   * @param  {[type]} value   [description]
+   * @param  {[type]} other   [description]
    * @param  {[type]} options [description]
    * @return {[type]}         [description]
    *
    * @example: {{unless_lteq this compare=that}}
    */
-  unless_lteq: function(context, options) {
-    if (context <= options.hash.compare) {
+  unless_lteq: function(value, other, options) {
+    if (value <= other) {
       return options.inverse(this);
     }
     return options.fn(this);
@@ -1191,6 +1191,17 @@ var helpers = {
    */
   addCommas: function(number) {
     return number.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+  },
+
+  /**
+   * {{formatDollars}}
+   *
+   * Round to the nearest int value and commas to numbers
+   * @param {[type]} number [description]
+   */
+  formatDollars: function(amount) {
+    amount = Math.round(amount);
+    return amount.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
   },
 
  /**

@@ -101,7 +101,7 @@ pk.notes = {
   templates: {
     listitems: Handlebars.compile([
       '{{#each this.items}}',
-      '  <a class="notes-item {{#if_eq this.id compare=../noteid}}selected{{/if_eq}}" href="{{this.weburl}}{{#if ../search}}?search={{../search}}{{/if}}" data-url="{{this.url}}">',
+      '  <a class="notes-item {{#if_eq this.id ../noteid}}selected{{/if_eq}}" href="{{this.weburl}}{{#if ../search}}?search={{../search}}{{/if}}" data-url="{{this.url}}">',
       '    <div class="title">{{this.title}}</div>',
       '    <div class="subtext">',
       '      {{#if this.tags}}{{this.tags}} - {{/if}}{{formatDate this.created "%Y-%m-%d"}}',
