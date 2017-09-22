@@ -75,9 +75,16 @@ $SIDEPANEL_WIDTH: 300px;
         .budget { width:60px; text-align:center; }
         
         input {
-          padding: 0px 4px;
-          border-width: 0px;
+          cursor: default;
           background-color: transparent;
+          border-radius: 3px;
+          border: 1px solid transparent;
+          box-sizing: border-box;
+          padding: 0px 4px;
+        }
+        input:focus {
+          cursor: auto;
+          background-color: rgba(0,0,0,0.1);
         }
         input[name=category] {
           width:150px;
@@ -93,6 +100,10 @@ $SIDEPANEL_WIDTH: 300px;
         }
       }
     }
+  }
+  input.error {
+    border: 1px solid #977 !important;
+    background-color: rgba(150,0,0,0.1) !important;
   }
 }
 

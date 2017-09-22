@@ -31,7 +31,7 @@ pk.budget = {
   init_triggers: function() {
     var self = this;
     // Edit category budget
-    this.categorylist.on('dblclick', 'tbody input', function() {
+    this.categorylist.on('focus', 'tbody input', function() {
       event.preventDefault();
       self.input_edit($(this));
     });
@@ -63,22 +63,25 @@ pk.budget = {
   },
 
   input_edit: function(input) {
-    if (input.hasClass('int')) {
+    if (input.hasClass('int') && !input.hasClass('error')) {
       input.val(pk.utils.to_int(input.val()));
-    } else if (input.hasClass('float')) {
+    } else if (input.hasClass('float') && !input.hasClass('error')) {
       input.val(pk.utils.to_float(input.val()));
     }
-    input.attr('readonly', false);
     input.get(0).setSelectionRange(input.val().length * 2, input.val().length * 2);
   },
 
   input_display: function(input) {
-    input.attr('readonly', true);
-    if (input.hasClass('int')) {
-      input.val(pk.utils.to_amount_int(input.val()));
-    } else if (input.hasClass('float')) {
-      input.val(pk.utils.to_amount_float(input.val()));
+    if (input.hasClass('int') && pk.utils.is_int(input.val())) {
+      input.removeClass('error');
+      return input.val(pk.utils.to_amount_int(input.val()));
+    } else if (input.hasClass('float') && pk.utils.is_float(input.val())) {
+      input.removeClass('error');
+      return input.val(pk.utils.to_amount_float(input.val()));
+    } else if (input.hasClass('text')) {
+      return input.removeClass('error');
     }
+    input.addClass('error');
   },
 
   request: function(method, url, data, callback) {
@@ -124,9 +127,9 @@ pk.budget = {
     listcategories: Handlebars.compile([
       '{{#each this.items}}',
       '  <tr class="category" data-id="{{this.id}}">',
-      '    <td class="category"><input name="category" type="text" value="{{this.name}}" autocomplete="off" readonly="true"></td>',
+      '    <td class="category"><input name="category" class="text" type="text" value="{{this.name}}" autocomplete="off"></td>',
       '    <td class="trend">&nbsp;</td>',
-      '    <td class="budget"><input name="budget" class="float" type="integer" value="${{formatDollars this.budget}}" autocomplete="off" readonly="true"></td>',
+      '    <td class="budget"><input name="budget" class="int" type="text" value="${{formatDollars this.budget}}" autocomplete="off"></td>',
       '  </tr>',
       '{{/each}}',
     ].join('\n')),
