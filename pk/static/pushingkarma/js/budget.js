@@ -68,7 +68,10 @@ pk.budget = {
     } else if (input.hasClass('float') && !input.hasClass('error')) {
       input.val(pk.utils.to_float(input.val()));
     }
-    input.get(0).setSelectionRange(input.val().length * 2, input.val().length * 2);
+    setTimeout(function() {
+      var len = input.val().length * 2;
+      input.get(0).setSelectionRange(len, len)
+    }, 10);
   },
 
   input_display: function(input) {
