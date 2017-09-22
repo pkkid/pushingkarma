@@ -76,6 +76,13 @@ pk.utils = {
     $(selector).tooltip({delay:{show:200, hide:50}});
   },
 
+  round: function(number, precision) {
+    var factor = Math.pow(10, precision);
+    var tempNumber = number * factor;
+    var roundedTempNumber = Math.round(tempNumber);
+    return roundedTempNumber / factor;
+  },
+
   set_default: function(input, default_value) {
     return typeof input !== 'undefined' ? input : default_value;
   },

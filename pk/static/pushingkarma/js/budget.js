@@ -16,7 +16,7 @@ pk.budget = {
     this.xhr = null;
     this.search = null;
     this.init_elements();
-    // this.init_triggers();
+    this.init_triggers();
     this.init_shortcuts();
     this.update_categories();
   },
@@ -28,13 +28,27 @@ pk.budget = {
     this.categorylist = this.container.find('#budget-categories');
   },
 
+  init_triggers: function() {
+    var self = this;
+    // Edit category budget
+    this.categorylist.on('dblclick', 'tbody input', function() {
+      event.preventDefault();
+      self.field_edit($(this));
+    });
+    this.categorylist.on('blur', 'tbody input', function() {
+      event.preventDefault();
+      self.field_display($(this));
+    });
+  },
+
   init_shortcuts: function() {
     var self = this;
     var KEYS = this.KEYS;
     // select noteitems via keyboard
     this.categorylist.on('keydown', 'tbody input', function(event) {
       if (event.keyCode == KEYS.ENTER) {
-        self.save_category($(this).parents('.category'));
+        console.log('Save category');
+        //self.save_category($(this).parents('.category'));
         //self.select_next_budget($(this).parents('.category'));
       }
     });
@@ -42,6 +56,45 @@ pk.budget = {
 
   add_category: function(elem) {
     console.log('add_category');
+  },
+
+  delete_category: function(elem) {
+    console.log('delete_category');
+  },
+
+  field_edit: function(input) {
+    if (input.hasClass('dollar0')) {
+      // edit field as integer
+      input.val(_.trimStart(input.val(), '$').replace(',', ''));
+      
+    } else if (input.hasClass('dollar2')) {
+      // edit field as decimal
+    }
+    input.attr('readonly', false);
+    input.get(0).setSelectionRange(input.val().length * 2, input.val().length * 2);
+  },
+
+  field_display: function(input) {
+    input.attr('readonly', true);
+    if (input.hasClass('dollar0')) {
+      // display field as dollar amount
+      var newval = pk.utils.round(input.val(), 0);
+      newval = newval.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,');
+      input.val('$'+ newval);
+    } else if (input.hasClass('dollar2')) {
+      // display field as exact amount
+    }
+  },
+
+  request: function(method, url, data, callback) {
+    var self = this;
+    //this.spinner.addClass('on');
+    //var data = this.request_data();
+    console.log(data);
+    var xhr = $.ajax({url:url, type:method, data:data, dataType:'json'});
+    xhr.done(function(data, textStatus, jqXHR) { callback(data, textStatus, jqXHR); });
+    //xhr.fail(function(jqXHR, textStatus, errorThrown) { self.notify(self.MESSAGE_ERROR); });
+    //xhr.always(function() { self.spinner.removeClass('on'); });
   },
 
   save_category: function(elem) {
@@ -56,21 +109,6 @@ pk.budget = {
       console.log(data);
     });
   },
-
-  delete_category: function(elem) {
-    console.log('delete_category');
-  },
-
-  request: function(method, url, data, callback) {
-    var self = this;
-    //this.spinner.addClass('on');
-    //var data = this.request_data();
-    console.log(data);
-    var xhr = $.ajax({url:url, type:method, data:data, dataType:'json'});
-    xhr.done(function(data, textStatus, jqXHR) { callback(data, textStatus, jqXHR); });
-    //xhr.fail(function(jqXHR, textStatus, errorThrown) { self.notify(self.MESSAGE_ERROR); });
-    //xhr.always(function() { self.spinner.removeClass('on'); });
-  },
  
   update_categories: function() {
     var self = this;
@@ -83,13 +121,17 @@ pk.budget = {
     });
   },
 
+  validate_int: function(input) {
+
+  },
+
   templates: {
     listcategories: Handlebars.compile([
       '{{#each this.items}}',
       '  <tr class="category" data-id="{{this.id}}">',
-      '    <td class="category"><input name="category" type="text" value="{{this.name}}"></td>',
+      '    <td class="category"><input name="category" type="text" value="{{this.name}}" autocomplete="off" readonly="true"></td>',
       '    <td class="trend">&nbsp;</td>',
-      '    <td class="budget"><input name="budget" type="integer" value="${{formatDollars this.budget}}"></td>',
+      '    <td class="budget"><input name="budget" class="dollar0" type="integer" value="${{formatDollars this.budget}}" autocomplete="off" readonly="true"></td>',
       '  </tr>',
       '{{/each}}',
     ].join('\n')),

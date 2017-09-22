@@ -117,7 +117,7 @@ REST_FRAMEWORK = {
 
 # Django Redis Sessions
 SESSION_ENGINE = 'redis_sessions.session'
-SESSION_REDIS_PREFIX = 'session'
+SESSION_COOKIE_AGE = 7776000  # 90 days
 
 # Django Websockets Redis
 # REDSOCKS_ALLOWED_CHANNELS = 'pk.websocket.subscriber.allowed_channels'
