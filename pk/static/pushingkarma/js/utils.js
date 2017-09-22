@@ -76,6 +76,13 @@ pk.utils = {
     $(selector).tooltip({delay:{show:200, hide:50}});
   },
 
+  add_commas: function(value) {
+    var parts = value.toString().split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return parts.join('.');
+    //return value.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,');
+  },
+
   round: function(number, precision) {
     var factor = Math.pow(10, precision);
     var tempNumber = number * factor;
@@ -86,7 +93,7 @@ pk.utils = {
   set_default: function(input, default_value) {
     return typeof input !== 'undefined' ? input : default_value;
   },
-  
+
   url: function(opts) {
     var protocol = opts.protocol || window.location.protocol || '';
     var hostname = opts.hostname || window.location.hostname || '';
@@ -96,4 +103,44 @@ pk.utils = {
     if (port) { port = ':'+ port; }
     return pk.utils.format('{0}//{1}{2}{3}{4}', protocol, hostname, port, pathname, search);
   },
+
+  //--------------------
+  // Budget Functions
+  // validate and convert int to amount
+  is_int: function(value) {
+    return !!value.match(/^-?\d+$/);
+  },
+
+  is_float: function(value) {
+    return !!value.match(/^-?\d+\.\d{2}$/) || !!value.match(/^-?\d+$/);
+  },
+
+  to_int: function(value) {
+    value = _.trimStart(value, '$').replace(',', '');
+    return pk.utils.round(value, 0)
+  },
+
+  to_float: function(value) {
+    value = _.trimStart(value, '$').replace(',', '');
+    return pk.utils.round(value, 2);
+  },
+
+  to_amount_int: function(value) {
+    var negative = value < 0;
+    value = Math.abs(value);
+    if (negative) { return '-$'+ pk.utils.add_commas(value); }
+    return '$'+ pk.utils.add_commas(value);
+  },
+
+  to_amount_float: function(value) {
+    var result;
+    var negative = value < 0;
+    value = Math.abs(value);
+    if (negative) { result = '-$'+ pk.utils.add_commas(value); }
+    else { result = '$'+ pk.utils.add_commas(value); }
+    if (result.match(/\.\d{1}$/)) { return result +'0'; }
+    if (!result.match(/\./)) { return result +'.00'; }
+    return result;
+  },
+
 };

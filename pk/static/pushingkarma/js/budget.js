@@ -33,11 +33,11 @@ pk.budget = {
     // Edit category budget
     this.categorylist.on('dblclick', 'tbody input', function() {
       event.preventDefault();
-      self.field_edit($(this));
+      self.input_edit($(this));
     });
     this.categorylist.on('blur', 'tbody input', function() {
       event.preventDefault();
-      self.field_display($(this));
+      self.input_display($(this));
     });
   },
 
@@ -62,27 +62,22 @@ pk.budget = {
     console.log('delete_category');
   },
 
-  field_edit: function(input) {
-    if (input.hasClass('dollar0')) {
-      // edit field as integer
-      input.val(_.trimStart(input.val(), '$').replace(',', ''));
-      
-    } else if (input.hasClass('dollar2')) {
-      // edit field as decimal
+  input_edit: function(input) {
+    if (input.hasClass('int')) {
+      input.val(pk.utils.to_int(input.val()));
+    } else if (input.hasClass('float')) {
+      input.val(pk.utils.to_float(input.val()));
     }
     input.attr('readonly', false);
     input.get(0).setSelectionRange(input.val().length * 2, input.val().length * 2);
   },
 
-  field_display: function(input) {
+  input_display: function(input) {
     input.attr('readonly', true);
-    if (input.hasClass('dollar0')) {
-      // display field as dollar amount
-      var newval = pk.utils.round(input.val(), 0);
-      newval = newval.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,');
-      input.val('$'+ newval);
-    } else if (input.hasClass('dollar2')) {
-      // display field as exact amount
+    if (input.hasClass('int')) {
+      input.val(pk.utils.to_amount_int(input.val()));
+    } else if (input.hasClass('float')) {
+      input.val(pk.utils.to_amount_float(input.val()));
     }
   },
 
@@ -131,7 +126,7 @@ pk.budget = {
       '  <tr class="category" data-id="{{this.id}}">',
       '    <td class="category"><input name="category" type="text" value="{{this.name}}" autocomplete="off" readonly="true"></td>',
       '    <td class="trend">&nbsp;</td>',
-      '    <td class="budget"><input name="budget" class="dollar0" type="integer" value="${{formatDollars this.budget}}" autocomplete="off" readonly="true"></td>',
+      '    <td class="budget"><input name="budget" class="float" type="integer" value="${{formatDollars this.budget}}" autocomplete="off" readonly="true"></td>',
       '  </tr>',
       '{{/each}}',
     ].join('\n')),
