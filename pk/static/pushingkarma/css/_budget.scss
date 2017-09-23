@@ -70,7 +70,10 @@ $SIDEPANEL_WIDTH: 300px;
         thead tr {
           border-bottom:1px solid rgba(0,0,0,0.5);
         }
-        .category { text-align:left; }
+        tbody td, tfoot td {
+          padding-top: 2px;
+        }
+        .name { text-align:left; }
         .trend { width:60px; text-align:center; }
         .budget { width:60px; text-align:center; }
         
@@ -94,7 +97,6 @@ $SIDEPANEL_WIDTH: 300px;
           text-align: center;
         }
         tfoot input {
-          margin-top: 3px;
           background-color: rgba(0,0,0,0.05);
           border-radius: 4px;
         }
@@ -107,11 +109,22 @@ $SIDEPANEL_WIDTH: 300px;
   }
 }
 
-// Notes Content
+// Budget Content
 #budget-content {
   margin-left: $SIDEPANEL_WIDTH;
   height: 100%;
   overflow: hidden;
   width: 680px;
   min-height: 300px;
+}
+#budget-spinner {
+  @include spinner(12px, 1px, #aab);
+  float: left;
+  margin: 2px 5px 2px 0px;
+}
+#budget-message {
+  float: left;
+  padding: 0px 10px;
+  opacity: 0;
+  transition: opacity 0.5s ease;
 }

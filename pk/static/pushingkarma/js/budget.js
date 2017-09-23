@@ -22,6 +22,8 @@ pk.budget = {
   },
 
   init_elements: function() {
+    this.spinner = $('#budget-spinner');
+    this.message = $('#budget-message');
     this.sidepanel = this.container.find('#budget-sidepanel');
     this.searchinput = this.container.find('#budget-search');
     this.transactionsbtn = this.container.find('#budget-transactions');
@@ -44,12 +46,10 @@ pk.budget = {
   init_shortcuts: function() {
     var self = this;
     var KEYS = this.KEYS;
-    // select noteitems via keyboard
-    this.categorylist.on('keydown', 'tbody input', function(event) {
+    // Update budget items on enter
+    this.categorylist.on('keydown', 'tbody input,tfoot input', function(event) {
       if (event.keyCode == KEYS.ENTER) {
-        console.log('Save category');
-        //self.save_category($(this).parents('.category'));
-        //self.select_next_budget($(this).parents('.category'));
+        self.save_category($(this).parents('.category'));
       }
     });
   },
@@ -58,8 +58,35 @@ pk.budget = {
     console.log('add_category');
   },
 
-  delete_category: function(elem) {
-    console.log('delete_category');
+  category_data: function(category) {
+    return {
+      id: category.data('id'),
+      name: category.find('input[name=name]').val(),
+      budget: pk.utils.to_float(category.find('input[name=budget]').val()),
+      origname: category.data('origname'),
+    };
+  },
+
+  delete_category: function(category) {
+    var self = this;
+    var data = this.category_data(category);
+    var origname = data.origname;
+    $.confirm({
+      backgroundDismiss: true,
+      cancelButton: 'Cancel',
+      columnClass: 'col-md-6 col-md-offset-3',
+      confirmButton: 'Delete It',
+      content: "Are you sure you wish to delete the category '"+ origname +"?'",
+      keyboardEnabled: true,
+      title: 'Delete Category?',
+      confirm: function() {
+        var url = self.API_CATEGORIES + data.id + '/';
+        self.request('DELETE', url, {}, function(data) {
+          self.notify('Deleted category '+ origname +'.');
+          self.update_categories();
+        });
+      }
+    });
   },
 
   input_edit: function(input) {
@@ -87,27 +114,31 @@ pk.budget = {
     input.addClass('error');
   },
 
-  request: function(method, url, data, callback) {
+  notify: function(msg) {
     var self = this;
-    //this.spinner.addClass('on');
-    //var data = this.request_data();
-    console.log(data);
-    var xhr = $.ajax({url:url, type:method, data:data, dataType:'json'});
-    xhr.done(function(data, textStatus, jqXHR) { callback(data, textStatus, jqXHR); });
-    //xhr.fail(function(jqXHR, textStatus, errorThrown) { self.notify(self.MESSAGE_ERROR); });
-    //xhr.always(function() { self.spinner.removeClass('on'); });
+    this.message.html(msg).css('opacity', 1);
+    setTimeout(function() { self.message.css('opacity', 0); }, 5000);
   },
 
-  save_category: function(elem) {
+  request: function(method, url, data, callback) {
     var self = this;
-    var data = {
-      id: elem.data('id'),
-      name: elem.find('input[name=category]').val(),
-      budget: elem.find('input[name=budget]').val().replace(',','').replace('$',''),
-    }
-    console.log(elem);
-    this.request('UPDATE', this.API_CATEGORIES, data, function(data) {
-      console.log(data);
+    this.spinner.addClass('on');
+    var xhr = $.ajax({url:url, type:method, data:data, dataType:'json'});
+    xhr.done(function(data, textStatus, jqXHR) { callback(data, textStatus, jqXHR); });
+    xhr.fail(function(jqXHR, textStatus, errorThrown) { self.notify(self.MESSAGE_ERROR); });
+    xhr.always(function() { self.spinner.removeClass('on'); });
+  },
+
+  save_category: function(category) {
+    var self = this;
+    var data = self.category_data(category);
+    if (!data.name) { return self.delete_category(category); }
+    var method = data.id ? 'PUT' : 'POST';
+    var url = data.id ? this.API_CATEGORIES + data.id + '/' : this.API_CATEGORIES;
+    this.request(method, url, data, function(data) {
+      self.notify('Saved category '+ data.name +'.');
+      self.categorylist.find('tfoot input').val('');
+      self.update_categories();
     });
   },
  
@@ -122,15 +153,11 @@ pk.budget = {
     });
   },
 
-  validate_int: function(input) {
-
-  },
-
   templates: {
     listcategories: Handlebars.compile([
       '{{#each this.items}}',
-      '  <tr class="category" data-id="{{this.id}}">',
-      '    <td class="category"><input name="category" class="text" type="text" value="{{this.name}}" autocomplete="off"></td>',
+      '  <tr class="category" data-id="{{this.id}}" data-origname="{{this.name}}">',
+      '    <td class="name"><input name="name" class="text" type="text" value="{{this.name}}" autocomplete="off"></td>',
       '    <td class="trend">&nbsp;</td>',
       '    <td class="budget"><input name="budget" class="int" type="text" value="${{formatDollars this.budget}}" autocomplete="off"></td>',
       '  </tr>',

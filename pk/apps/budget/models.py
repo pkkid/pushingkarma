@@ -3,7 +3,7 @@
 """
 Copyright (c) 2015 PushingKarma. All rights reserved.
 """
-from django.db import models
+from django.db import models, transaction
 from django_extensions.db.models import TimeStampedModel
 from pk.utils.serializers import DynamicFieldsSerializer
 
@@ -16,6 +16,13 @@ class Category(TimeStampedModel):
 
     def __str__(self):
         return self.name
+
+    @transaction.atomic
+    def save(self, *args, **kwargs):
+        if not self.order:
+            categories = Category.objects.order_by('-order')
+            self.order = categories[0].order + 1 if categories.exists() else 1
+        super(Category, self).save(*args, **kwargs)
 
 
 class CategorySerializer(DynamicFieldsSerializer):

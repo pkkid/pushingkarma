@@ -73,7 +73,6 @@
     .spinner {
       @include spinner(16px, 1px, #887);
       float: left;
-      margin: 2px;
       margin: 7px 0px 7px 5px;
     }
     .message {

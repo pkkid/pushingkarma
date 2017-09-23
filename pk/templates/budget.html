@@ -21,15 +21,15 @@
       <div id='budget-categories'>
         <table cellpadding='0' cellspacing='0'>
           <thead><tr>
-            <th class='category'>Category</th>
+            <th class='name'>Category</th>
             <th class='trend'>Trend</th>
             <th class='budget'>Budget</th>
           </tr></thead>
           <tbody></tbody>
-          <tfoot><tr id='category-add'>
-            <td class='category'><input name='category' type='text' placeholder='New Category'></td>
+          <tfoot><tr class='category'>
+            <td class='name'><input name='name' type='text' placeholder='New Category' autocomplete='off'></td>
             <td class='trend'>&nbsp;</td>
-            <td class='budget'><input name='budget' type='integer' placeholder='$0'></td>
+            <td class='budget'><input name='budget' type='integer' placeholder='$0' autocomplete='off'></td>
           </tr></tfoot>
         </table>
       </div>
@@ -39,3 +39,8 @@
     </div>
   </div>
 {% endblock content %}
+
+{% block footer %}
+  <span id='budget-message'></span>
+  <span id='budget-spinner'></span>
+{% endblock footer%}
