@@ -38,16 +38,19 @@ class Command(BaseCommand):
 
     def import_transactions(self, sheet, options):
         transactions = []
+        trxids = set(Transaction.objects.values_list('bankid', flat=True))
         categories = {k.lower():v for k,v in Category.objects.values_list('name', 'id')}
         self.log('Loading existing transactions from sheet: %s' % sheet.title)
         for trx in sheet.get_all_records(head=options['header']):
-            transaction = Transaction(bankid=trx['ID'], account=trx['Account'],
-                date=trx['Date'], payee=trx['Payee'], amount=trx['Amount'])
-            if 'Memo' in trx: transaction.memo = trx['Memo']
-            if 'Comment' in trx: transaction.comment = trx['Comment']
-            if 'Category' in trx: transaction.category_id = categories[trx['Category'].lower()]
-            if 'X' in trx: transaction.approved = trx['X'] == 'x'
-            transactions.append(transaction)
+            if trx['ID'] not in trxids:
+                amount = trx['Amount'].replace('$','').replace(',','')
+                transaction = Transaction(bankid=trx['ID'], account=trx['Account'],
+                    date=trx['Date'], payee=trx['Payee'], amount=amount)
+                if 'Memo' in trx: transaction.memo = trx['Memo']
+                if 'Comment' in trx: transaction.comment = trx['Comment']
+                if 'Category' in trx: transaction.category_id = categories[trx['Category'].lower()]
+                if 'X' in trx: transaction.approved = trx['X'] == 'x'
+                transactions.append(transaction)
         return transactions
 
     def handle(self, *args, **options):
@@ -58,3 +61,5 @@ class Command(BaseCommand):
         spreadsheet = client.open_by_url(options['url'])
         sheet = spreadsheet.worksheet_by_title(options['sheet']) if options['sheet'] else spreadsheet.sheet1
         transactions = self.import_transactions(sheet, options)
+        self.log('Saving %s new transactions' % len(transactions))
+        Transaction.objects.bulk_create(transactions)

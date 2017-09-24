@@ -3,7 +3,7 @@
 //--------------------------------------------------------
 
 #budget {
-  @include contentwithsidepanel(300px, 900px);
+  @include contentwithsidepanel(280px, 900px);
 
   .sidepanel-content {
     overflow-y: auto;
@@ -33,7 +33,7 @@
       th { border-bottom:1px solid rgba(0,0,0,0.5); }
       td { padding-top: 2px; }
       .name { text-align:left; }
-      .name input { width:150px; }
+      .name input { width:130px; }
       .trend { text-align:center; width:60px; }
       .budget { text-align:center; width:60px; }
       .budget input { width:60px; text-align:center; }
