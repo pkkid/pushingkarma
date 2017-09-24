@@ -3,12 +3,15 @@
 """
 Copyright (c) 2015 PushingKarma. All rights reserved.
 """
-from pk import utils
 from django.contrib.auth.decorators import login_required
-from rest_framework import viewsets
+from django.db import transaction
+from django.db.models import F
+from pk import log, utils
+from pk.utils.search import FIELDTYPES, SearchField, Search
+from rest_framework import status, viewsets
+from rest_framework.decorators import detail_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from pk.utils.search import FIELDTYPES, SearchField, Search
 from .models import Category, CategorySerializer
 from .models import Transaction, TransactionSerializer
 
@@ -33,15 +36,34 @@ def budget(request, slug=None, tmpl='budget.html'):
 
 
 class CategoriesViewSet(viewsets.ModelViewSet):
-    queryset = Category.objects.order_by('-order')
+    queryset = Category.objects.order_by('-sortindex')
     serializer_class = CategorySerializer
     permission_classes = [IsAuthenticated]
     list_fields = CategorySerializer.Meta.fields
 
     def list(self, request, *args, **kwargs):
-        queryset = Category.objects.order_by('order')
+        queryset = Category.objects.order_by('sortindex')
         serializer = CategorySerializer(queryset, context={'request':request},
             many=True, fields=self.list_fields)
+        return Response(serializer.data)
+
+    @detail_route(methods=['put'])
+    @transaction.atomic()
+    def sortindex(self, request, *args, **kwargs):
+        category = Category.objects.get(id=request.POST['id'])
+        sortindex = int(request.POST['sortindex'])
+        log.info('Moving category %s to %s', category.name, sortindex)
+        index = 0
+        for cat in Category.objects.exclude(id=request.POST['id']).order_by('sortindex'):
+            index += 1 if index == sortindex else 0
+            log.info('Saving category %s to %s', cat.name, index)
+            cat.sortindex = index
+            cat.save()
+            index += 1
+        log.info('Saving category %s to %s', category.name, sortindex)
+        category.sortindex = sortindex
+        category.save()
+        serializer = CategorySerializer(category, context={'request':request})
         return Response(serializer.data)
 
 

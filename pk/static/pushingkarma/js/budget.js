@@ -41,6 +41,11 @@ pk.budget = {
       event.preventDefault();
       self.input_display($(this));
     });
+    this.categorylist.find('tbody').sortable({axis:'y', delay:150, handle:'.trend',
+      update: function(event, ui) {
+        self.save_category(ui.item, ui.item.index());
+      }
+    });
   },
 
   init_shortcuts: function() {
@@ -58,11 +63,12 @@ pk.budget = {
     console.log('add_category');
   },
 
-  category_data: function(category) {
+  category_data: function(category, sortindex) {
     return {
       id: category.data('id'),
       name: category.find('input[name=name]').val(),
       budget: pk.utils.to_float(category.find('input[name=budget]').val()),
+      sortindex: sortindex === undefined ? null : sortindex,
       origname: category.data('origname'),
     };
   },
@@ -129,12 +135,13 @@ pk.budget = {
     xhr.always(function() { self.spinner.removeClass('on'); });
   },
 
-  save_category: function(category) {
+  save_category: function(category, sortindex) {
     var self = this;
-    var data = self.category_data(category);
+    var data = self.category_data(category, sortindex);
     if (!data.name) { return self.delete_category(category); }
     var method = data.id ? 'PUT' : 'POST';
     var url = data.id ? this.API_CATEGORIES + data.id + '/' : this.API_CATEGORIES;
+    url = sortindex === undefined ? url : url +'sortindex/';
     this.request(method, url, data, function(data) {
       self.notify('Saved category '+ data.name +'.');
       self.categorylist.find('tfoot input').val('');

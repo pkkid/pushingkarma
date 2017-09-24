@@ -10,25 +10,25 @@ from pk.utils.serializers import DynamicFieldsSerializer
 
 class Category(TimeStampedModel):
     name = models.CharField(max_length=255, unique=True)
-    order = models.IntegerField(default=None, unique=True)
     budget = models.DecimalField(max_digits=8, decimal_places=2)
     comment = models.TextField(blank=True, default='')
+    sortindex = models.IntegerField(default=None)
 
     def __str__(self):
         return self.name
 
     @transaction.atomic
     def save(self, *args, **kwargs):
-        if not self.order:
-            categories = Category.objects.order_by('-order')
-            self.order = categories[0].order + 1 if categories.exists() else 0
+        if self.sortindex is None:
+            categories = Category.objects.order_by('-sortindex')
+            self.sortindex = categories[0].sortindex + 1 if categories.exists() else 0
         super(Category, self).save(*args, **kwargs)
 
 
 class CategorySerializer(DynamicFieldsSerializer):
     class Meta:
         model = Category
-        fields = ('id','url','name','order','budget','comment','created','modified')
+        fields = ('id','url','name','sortindex','budget','comment','created','modified')
 
 
 class Transaction(TimeStampedModel):
