@@ -17,8 +17,6 @@
 //   {{ content }}
 // </div>
 .sidebox {
-  //@include shine(0.7, -15px);
-  //@include curlshadow();
   background-image: radial-gradient(50% 50%, #c5c1af 0px, #b6b2a2 100px);
   border-bottom: 1px solid rgba(0,0,0,0.2);
   border-radius: 5px;

@@ -1,130 +1,58 @@
 //--------------------------------------------------------
 // Copyright (c) 2015 PushingKarma. All rights reserved.
 //--------------------------------------------------------
-$BUDGETFILTER_HEIGHT: 40px;
-$SIDEPANEL_WIDTH: 300px;
 
-// Budget Side Panel
 #budget {
-  @include clearfix();
-  position: relative;
-  #budget-sidepanel {
-    background-color: rgba(0,0,0,0.05);
-    border-right: 1px solid rgba(0,0,0,0.1);
-    height: 100%;
-    left: 0px;
+  @include contentwithsidepanel(300px, 900px);
+
+  .sidepanel-content {
+    overflow-y: auto;
+    height: calc(100% - 42px);
+    padding: 10px;
+    color: #333;
     
-    position: absolute;
-    width: $SIDEPANEL_WIDTH;
-    color: #3E3B35;
-    &:after {
-      content: '\f349';
-      font-family: 'Material Design Icons';
-      font-size: 20px;
-      left: 10px;
-      line-height: 40px;
-      position: absolute;
-      top: 0px;
-      z-index: 1;
+    input {
+      background-color: transparent;
+      border-radius: 3px;
+      border: 1px solid transparent;
+      box-sizing: border-box;
+      cursor: default;
+      padding: 0px 4px;
     }
-    #budget-search {
-      background-color: rgba(0,0,0,0.05);
-      border-width: 0px;
-      box-shadow: inset 0px 0px 50px rgba(0,0,0,0.2) !important;
-      color: #333;
-      font-size: 20px;
-      padding-left: $BUDGETFILTER_HEIGHT;
-      height: $BUDGETFILTER_HEIGHT;
-      line-height: $BUDGETFILTER_HEIGHT;
-      position: relative;
-      width: 100%;
-      border-bottom: 1px solid rgba(0,0,0,0.2);
-    }
-    #budget-transactions {
+    input:focus {
+      cursor: auto;
       background-color: rgba(0,0,0,0.1);
-      cursor: pointer;
-      font-size: 20px;
-      height: $BUDGETFILTER_HEIGHT;
-      line-height: $BUDGETFILTER_HEIGHT;
-      position: absolute;
-      right: 0px;
-      text-align: center;
-      top: 0px;
-      transition: background-color 0.5s ease, color 0.5s ease;
-      width: $BUDGETFILTER_HEIGHT;
-      &:hover {
-        background-color: rgba(0,0,0,0.2);
-        color: #2E2B25;
-      }
     }
-    #budget-categories {
-      overflow-y: auto;
-      height: calc(100% - 42px);
-      margin: 10px;
-      color: #333;
-      
-      table {
-        font-size: 14px;
-        width: 100%;
-        
-        thead tr {
-          border-bottom:1px solid rgba(0,0,0,0.5);
-        }
-        tbody td, tfoot td {
-          padding-top: 2px;
-        }
-        .name { text-align:left; }
-        .trend { width:60px; text-align:center; }
-        .budget { width:60px; text-align:center; }
-        
-        input {
-          cursor: default;
-          background-color: transparent;
-          border-radius: 3px;
-          border: 1px solid transparent;
-          box-sizing: border-box;
-          padding: 0px 4px;
-        }
-        input:focus {
-          cursor: auto;
-          background-color: rgba(0,0,0,0.1);
-        }
-        input[name=category] {
-          width:150px;
-        }
-        input[name=budget] {
-          width:60px;
-          text-align: center;
-        }
-        tfoot input {
-          background-color: rgba(0,0,0,0.05);
-          border-radius: 4px;
-        }
-      }
+    input.error {
+      border: 1px solid #977;
+      background-color: rgba(150,0,0,0.1);
+    }
+    table {
+      font-size: 14px;
+      width: 100%;
+      th { border-bottom:1px solid rgba(0,0,0,0.5); }
+      td { padding-top: 2px; }
+      .name { text-align:left; }
+      .name input { width:150px; }
+      .trend { text-align:center; width:60px; }
+      .budget { text-align:center; width:60px; }
+      .budget input { width:60px; text-align:center; }
+      .add input { background-color:rgba(0,0,0,0.05); }
     }
   }
-  input.error {
-    border: 1px solid #977 !important;
-    background-color: rgba(150,0,0,0.1) !important;
-  }
+  
 }
 
-// Budget Content
-#budget-content {
-  margin-left: $SIDEPANEL_WIDTH;
-  height: 100%;
-  overflow: hidden;
-  width: 680px;
-  min-height: 300px;
-}
-#budget-spinner {
-  @include spinner(12px, 1px, #aab);
-  float: left;
-  margin: 2px 5px 2px 0px;
-}
-#budget-message {
-  float: left;
-  padding: 0px 10px;
-  opacity: 0;
-  transition: opacity 0.5s ease;
+#budget-notify {
+  .spinner {
+    @include spinner(12px, 1px, #aab);
+    float: left;
+    margin: 2px 5px 2px 0px;
+  }
+  .message {
+    float: left;
+    padding: 0px 10px;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
 }

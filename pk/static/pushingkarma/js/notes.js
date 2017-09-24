@@ -5,8 +5,6 @@
 
 pk.notes = {
   APIROOT: '/api/notes/',
-  EDITOR_SELECTOR: '#notes-editor',
-  NOTE_SELECTOR: '#note',
   KEYS: {TAB:9, ENTER:13, ESC:27, UP:38, DOWN:40},
   
   init: function(selector, noteid, editor) {
@@ -23,10 +21,10 @@ pk.notes = {
   },
   
   init_elements: function() {
-    this.sidepanel = this.container.find('#notes-sidepanel');
-    this.searchinput = this.container.find('#notes-search');
-    this.addnote = this.container.find('#notes-add');
-    this.notelist = this.container.find('#notes-list');
+    this.sidepanel = this.container.find('.sidepanel');
+    this.searchinput = this.container.find('.search');
+    this.addnote = this.container.find('.search-action');
+    this.notelist = this.container.find('.sidepanel-content');
   },
   
   init_triggers: function() {
@@ -93,7 +91,7 @@ pk.notes = {
     this.xhr.done(function(data, textStatus, jqXHR) {
       var ctx = {items:data, search:encodeURIComponent(search), noteid:noteid};
       var html = self.templates.listitems(ctx);
-      self.container.find('#notes-list').html(html);
+      self.notelist.html(html);
       self.search = search;
     });
   },

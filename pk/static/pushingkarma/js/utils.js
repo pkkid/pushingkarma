@@ -80,7 +80,6 @@ pk.utils = {
     var parts = value.toString().split('.');
     parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
     return parts.join('.');
-    //return value.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,');
   },
 
   round: function(number, precision) {
@@ -116,12 +115,14 @@ pk.utils = {
   },
 
   to_int: function(value) {
-    value = _.trimStart(value, '$').replace(',', '');
+    console.log(value);
+    value = value.replace('$', '').replace(',', '');
+    console.log(value);
     return pk.utils.round(value, 0)
   },
 
   to_float: function(value) {
-    value = _.trimStart(value, '$').replace(',', '');
+    value = value.replace('$', '').replace(',', '');
     return pk.utils.round(value, 2);
   },
 

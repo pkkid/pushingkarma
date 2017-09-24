@@ -22,12 +22,12 @@ pk.budget = {
   },
 
   init_elements: function() {
-    this.spinner = $('#budget-spinner');
-    this.message = $('#budget-message');
-    this.sidepanel = this.container.find('#budget-sidepanel');
-    this.searchinput = this.container.find('#budget-search');
-    this.transactionsbtn = this.container.find('#budget-transactions');
-    this.categorylist = this.container.find('#budget-categories');
+    this.spinner = $('#budget-notify .spinner');
+    this.message = $('#budget-notify .message');
+    this.sidepanel = this.container.find('.sidepanel');
+    this.searchinput = this.container.find('.search');
+    this.transactionsbtn = this.container.find('.search-action');
+    this.categorylist = this.container.find('.sidepanel-content');
   },
 
   init_triggers: function() {
@@ -139,6 +139,8 @@ pk.budget = {
       self.notify('Saved category '+ data.name +'.');
       self.categorylist.find('tfoot input').val('');
       self.update_categories();
+      if (method == 'POST') {
+        self.categorylist.find('tfoot .name input').focus(); }
     });
   },
  
@@ -159,7 +161,7 @@ pk.budget = {
       '  <tr class="category" data-id="{{this.id}}" data-origname="{{this.name}}">',
       '    <td class="name"><input name="name" class="text" type="text" value="{{this.name}}" autocomplete="off"></td>',
       '    <td class="trend">&nbsp;</td>',
-      '    <td class="budget"><input name="budget" class="int" type="text" value="${{formatDollars this.budget}}" autocomplete="off"></td>',
+      '    <td class="budget"><input name="budget" class="int" type="text" value="{{amountInt this.budget}}" autocomplete="off"></td>',
       '  </tr>',
       '{{/each}}',
     ].join('\n')),

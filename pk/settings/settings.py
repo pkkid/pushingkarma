@@ -144,3 +144,7 @@ DBBACKUP_STORAGE_OPTIONS = {
         'look_for_keys': False,
     },
 }
+
+# PushingKarma Settings
+GSHEETS_CREDSTORE = '~/Private/googleapi/'
+GSHEETS_SECRETS = join(GSHEETS_CREDSTORE, 'googlesheets-oauth2.json')

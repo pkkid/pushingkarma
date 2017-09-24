@@ -11,6 +11,68 @@
   }
 }
 
+// Content With Sidepanel
+@mixin contentwithsidepanel($width:300px, $minheight:400px) {
+  @include clearfix();
+  position: relative;
+
+  .sidepanel {
+    background-color: rgba(0,0,0,0.05);
+    border-right: 1px solid rgba(0,0,0,0.1);
+    color: #3E3B35;
+    height: 100%;
+    left: 0px;
+    position: absolute;
+    width: $width;
+    
+    &:after {
+      content: '\f349';
+      font-family: 'Material Design Icons';
+      font-size: 20px;
+      left: 10px;
+      line-height: 40px;
+      position: absolute;
+      top: 0px;
+      z-index: 1;
+    }
+    .search { 
+      background-color: rgba(0,0,0,0.05);
+      border-width: 0px;
+      border-bottom: 1px solid rgba(0,0,0,0.2);
+      box-shadow: inset 0px 0px 50px rgba(0,0,0,0.2) !important;
+      color: #333;
+      font-size: 20px;
+      height: 40px;
+      line-height: 40px;
+      padding-left: 40px;
+      position: relative;
+      width: 100%;
+    }
+    .search-action {
+      background-color: rgba(0,0,0,0.1);
+      cursor: pointer;
+      font-size: 20px;
+      height: 40px;
+      line-height: 40px;
+      position: absolute;
+      right: 0px;
+      text-align: center;
+      top: 0px;
+      transition: background-color 0.5s ease, color 0.5s ease;
+      width: 40px;
+      &:hover { background-color:rgba(0,0,0,0.2); color:#2E2B25; }
+    }
+    .sidepanel-content {
+      overflow-y: auto;
+      height: calc(100% - 42px);
+    }
+  }
+  .maincontent {
+    margin-left: $width;
+    min-height: $minheight;
+  }
+}
+
 
 // Curled shadow under element
 @mixin curlshadow($opacity:1) {

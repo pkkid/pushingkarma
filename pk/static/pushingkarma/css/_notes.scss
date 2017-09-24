@@ -1,0 +1,47 @@
+//--------------------------------------------------------
+// Copyright (c) 2015 PushingKarma. All rights reserved.
+//--------------------------------------------------------
+
+#notes {
+  @include contentwithsidepanel(300px, 400px);
+
+  .maincontent {
+    padding: 20px;
+  }
+  .notes-item {
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    border-top: 1px solid rgba(255,255,255,0.1);
+    cursor: pointer;
+    display: block;
+    height: 45px;
+    padding: 5px;
+    text-decoration: none;
+    user-select: none;
+
+    .title {
+      color: rgba(50,40,18,0.7);
+      line-height: 16px;
+      font-size: 14px;
+      font-weight: 200;
+      font-family: $font-family-sans-serif;
+      white-space: nowrap;
+      overflow: hidden;
+    }
+    .subtext {
+      color: rgba(0,0,0,0.4);
+      font-size: 9px;
+      font-family: $font-family-sans-serif;
+      line-height: 18px;
+    }
+    &:hover,&.selected {
+      background-color: rgba(0,0,0,0.1);
+      outline-color: transparent;
+      .title { color: #24150b; }
+      .subtext { color: rgba(0,0,0,0.6); }
+    }
+  }
+}
+// show add (+) button when logged in
+body.authenticated #notes .search {
+  padding-right: 50px;
+}

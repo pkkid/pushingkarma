@@ -7,7 +7,7 @@
   <script type='text/javascript'>
     $(function() {
       {% if user.is_authenticated %}
-        pk.editor.init('#note', {
+        pk.editor.init('#notes .note', {
           api_url: '/api/notes/',
           markdown_url: '/markdown/n/',
           show_title: true,
@@ -23,16 +23,16 @@
 {% block content %}
   <div id='notes'>
     <!-- Side Panel -->
-    <div id='notes-sidepanel'>
-      <input id='notes-search' type='text' autofocus='true' value='{{request.GET.search}}' onfocus='this.value = this.value;'/>
+    <div class='sidepanel'>
+      <input class='search' type='text' autofocus='true' value='{{request.GET.search}}' onfocus='this.value=this.value;'/>
       {% if user.is_authenticated %}
-        <div id='notes-add' data-toggle='tooltip' data-placement='right' title='Add New Note'><i class='mdi mdi-plus'></i></div>
+        <div class='search-action' data-toggle='tooltip' data-placement='right' title='Add New Note'><i class='mdi mdi-plus'></i></div>
       {% endif %}
-      <div id='notes-list'></div>
+      <div class='sidepanel-content'></div>
     </div>
     <!-- Note Content -->
-    <div id='notes-content'>
-      <article id='note'>
+    <div class='maincontent'>
+      <article class='note'>
         <h2>{{note.title}}</h2>
         {{note.html|safe}}
       </article>

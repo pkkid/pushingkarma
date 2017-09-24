@@ -1199,9 +1199,16 @@ var helpers = {
    * Round to the nearest int value and commas to numbers
    * @param {[type]} number [description]
    */
-  formatDollars: function(amount) {
-    amount = Math.round(amount);
-    return amount.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+  amountInt: function(amount) {
+    return pk.utils.to_amount_int(amount);
+    // amount = Math.round(amount);
+    // return amount.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
+  },
+
+  amountFloat: function(amount) {
+    return pk.utils.to_amount_float(amount);
+    // amount = Math.round(amount);
+    // return amount.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
   },
 
  /**

@@ -21,7 +21,7 @@ class Category(TimeStampedModel):
     def save(self, *args, **kwargs):
         if not self.order:
             categories = Category.objects.order_by('-order')
-            self.order = categories[0].order + 1 if categories.exists() else 1
+            self.order = categories[0].order + 1 if categories.exists() else 0
         super(Category, self).save(*args, **kwargs)
 
 
