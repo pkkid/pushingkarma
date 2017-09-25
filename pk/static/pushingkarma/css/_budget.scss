@@ -3,41 +3,64 @@
 //--------------------------------------------------------
 
 #budget {
-  @include contentwithsidepanel(280px, 900px);
+  @include contentwithsidepanel(250px, 900px);
+
+  table {
+    font-size: 14px;
+    width: 100%;
+    th { border-bottom:1px solid rgba(0,0,0,0.5); }
+    td { padding:1px 0px; cursor:default; border-bottom:1px dotted rgba(0,0,0,0.05); }
+    tbody, tfoot { font-family:verdana; font-size:10px; }
+    tfoot td { border-width:0px; }
+    
+    th.left { padding-left:4px; }
+    th.right { padding-right:5px; }
+    .center,.center input { text-align:center; }
+    .right,.right input { text-align:right; }
+  }
+  input {
+    background-color: transparent;
+    border-radius: 3px;
+    border: 1px solid transparent;
+    box-sizing: border-box;
+    cursor: default;
+    padding: 0px 4px;
+
+    &:focus {
+      cursor: auto;
+      background-color: rgba(0,0,0,0.1);
+    }
+    &.error {
+      border: 1px solid #977;
+      background-color: rgba(150,0,0,0.1);
+    }
+
+  }
 
   .sidepanel-content {
     overflow-y: auto;
     height: calc(100% - 42px);
     padding: 10px;
     color: #333;
-    
-    input {
-      background-color: transparent;
-      border-radius: 3px;
-      border: 1px solid transparent;
-      box-sizing: border-box;
-      cursor: default;
-      padding: 0px 4px;
-    }
-    input:focus {
-      cursor: auto;
-      background-color: rgba(0,0,0,0.1);
-    }
-    input.error {
-      border: 1px solid #977;
-      background-color: rgba(150,0,0,0.1);
-    }
+
     table {
-      font-size: 14px;
-      width: 100%;
-      th { border-bottom:1px solid rgba(0,0,0,0.5); }
-      td { padding-top:2px; cursor:default; }
-      .name { text-align:left; }
       .name input { width:130px; }
-      .trend { text-align:center; width:60px; }
-      .budget { text-align:center; width:60px; }
-      .budget input { width:60px; text-align:center; }
+      .trend { width:60px; }
+      .budget input { width:55px; }
       .add input { background-color:rgba(0,0,0,0.05); }
+    }
+  }
+
+  .maincontent {
+    padding: 6px 20px 20px 20px;
+
+    table {
+      .account { width:50px; }
+      .date input { width:80px; }
+      .payee input { width:200px; }
+      .category input { width:130px; }
+      .amount input { width:75px; }
+      .approved input { width:25px; }
     }
   }
   

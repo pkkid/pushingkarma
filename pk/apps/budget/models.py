@@ -28,7 +28,13 @@ class Category(TimeStampedModel):
 class CategorySerializer(DynamicFieldsSerializer):
     class Meta:
         model = Category
-        fields = ('id','url','name','sortindex','budget','comment','created','modified')
+        fields = ('id','url','name','sortindex','budget','comment')
+
+
+class CategorySubsetSerializer(DynamicFieldsSerializer):
+    class Meta:
+        model = Category
+        fields = ('url','name','budget')
 
 
 class Transaction(TimeStampedModel):
@@ -44,7 +50,9 @@ class Transaction(TimeStampedModel):
 
 
 class TransactionSerializer(DynamicFieldsSerializer):
+    category = CategorySubsetSerializer(read_only=True)
+
     class Meta:
         model = Transaction
         fields = ('id','url','bankid','account','date','payee','category',
-            'amount','approved','memo','comment','created','modified')
+            'amount','approved','memo','comment')

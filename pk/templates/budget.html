@@ -19,21 +19,35 @@
       <div class='sidepanel-content'>
         <table cellpadding='0' cellspacing='0'>
           <thead><tr>
-            <th class='name'>Category</th>
-            <th class='trend'>Trend</th>
-            <th class='budget'>Budget</th>
+            <th class='name left'>Category</th>
+            <th class='trend center'>Trend</th>
+            <th class='budget right'>Budget</th>
           </tr></thead>
           <tbody></tbody>
           <tfoot><tr class='category add'>
-            <td class='name'><input name='name' type='text' placeholder='New Category' autocomplete='off'></td>
-            <td class='trend'>&nbsp;</td>
-            <td class='budget'><input name='budget' type='integer' placeholder='$0' autocomplete='off'></td>
+            <td class='name left'><input name='name' type='text' placeholder='New Category' autocomplete='off'></td>
+            <td class='trend center'>&nbsp;</td>
+            <td class='budget right'><input name='budget' type='integer' placeholder='$0' autocomplete='off'></td>
           </tr></tfoot>
         </table>
       </div>
     </div>
     <!-- Note Content -->
-    <div class='maincontent'>Hello World!</div>
+    <div class='maincontent'>
+      <h2>Transactions</h2>
+      <table cellpadding='0' cellspacing='0'>
+        <thead><tr>
+          <th class='account'>Bank</th>
+          <th class='date left'>Date</th>
+          <th class='payee left'>Payee</th>
+          <th class='category left'>Category</th>
+          <th class='amount right'>Amount</th>
+          <th class='approved center'>X</th>
+          <th class='comment left'>Comment</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
   </div>
 {% endblock content %}
 

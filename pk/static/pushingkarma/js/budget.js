@@ -13,12 +13,15 @@ pk.budget = {
     this.container = $(selector);
     if (!this.container.length) { return; }
     console.debug('init pk.budget on '+ selector);
-    this.xhr = null;
+    this.xhr = null;          // Main actions xhr reference
+    this.xhrcat = null;       // Categories xhr reference
+    this.xhrtrx = null;       // Transactions xhr reference
     this.search = null;
     this.init_elements();
     this.init_triggers();
     this.init_shortcuts();
     this.update_categories();
+    this.update_transactions();
   },
 
   init_elements: function() {
@@ -28,6 +31,7 @@ pk.budget = {
     this.searchinput = this.container.find('.search');
     this.transactionsbtn = this.container.find('.search-action');
     this.categorylist = this.container.find('.sidepanel-content');
+    this.maincontent = this.container.find('.maincontent');
   },
 
   init_triggers: function() {
@@ -153,12 +157,23 @@ pk.budget = {
  
   update_categories: function() {
     var self = this;
-    if (this.xhr) { this.xhr.abort(); }
-    this.xhr = $.ajax({url:this.API_CATEGORIES, type:'GET', dataType:'json'});
-    this.xhr.done(function(data, textStatus, jqXHR) {
+    if (this.xhrcat) { this.xhrcat.abort(); }
+    this.xhrcat = $.ajax({url:this.API_CATEGORIES, type:'GET', dataType:'json'});
+    this.xhrcat.done(function(data, textStatus, jqXHR) {
       var ctx = {items:data};
       var html = self.templates.listcategories(ctx);
       self.categorylist.find('tbody').html(html);
+    });
+  },
+
+  update_transactions: function() {
+    var self = this;
+    if (this.xhrtrx) { this.xhrtrx.abort(); }
+    this.xhrtrx = $.ajax({url:this.API_TRANSACTIONS, type:'GET', dataType:'json'});
+    this.xhrtrx.done(function(data, textStatus, jqXHR) {
+      var ctx = {items:data};
+      var html = self.templates.listtransactions(ctx);
+      self.maincontent.find('tbody').html(html);
     });
   },
 
@@ -168,7 +183,21 @@ pk.budget = {
       '  <tr class="category" data-id="{{this.id}}" data-origname="{{this.name}}">',
       '    <td class="name"><input name="name" class="text" type="text" value="{{this.name}}" autocomplete="off"></td>',
       '    <td class="trend">&nbsp;</td>',
-      '    <td class="budget"><input name="budget" class="int" type="text" value="{{amountInt this.budget}}" autocomplete="off"></td>',
+      '    <td class="budget right"><input name="budget" class="int" type="text" value="{{amountInt this.budget}}" autocomplete="off"></td>',
+      '  </tr>',
+      '{{/each}}',
+    ].join('\n')),
+
+    listtransactions: Handlebars.compile([
+      '{{#each this.items}}',
+      '  <tr class="transaction" data-id="{{this.id}}" data-bankid="{{this.bankid}}">',
+      '    <td class="account">{{this.account}}</td>',
+      '    <td class="date"><input name="date" type="text" value="{{this.date}}" autocomplete="off"></td>',
+      '    <td class="payee"><input name="payee" type="text" value="{{this.payee}}" autocomplete="off"></td>',
+      '    <td class="category"><input name="name" type="text" value="{{this.category.name}}" autocomplete="off"></td>',
+      '    <td class="amount right"><input name="budget" type="text" value="{{amountFloat this.amount}}" autocomplete="off"></td>',
+      '    <td class="approved center"><input name="approved" type="text" value="x" autocomplete="off"></td>',
+      '    <td class="comment"><input name="comment" type="text" value="{{this.comment}}" autocomplete="off"></td>',
       '  </tr>',
       '{{/each}}',
     ].join('\n')),

@@ -52,17 +52,13 @@ class CategoriesViewSet(viewsets.ModelViewSet):
     def sortindex(self, request, *args, **kwargs):
         category = Category.objects.get(id=request.POST['id'])
         sortindex = int(request.POST['sortindex'])
-        log.info('Moving category %s to %s', category.name, sortindex)
+        log.info('Moving category %s to index %s', category.name, sortindex)
         index = 0
         for cat in Category.objects.exclude(id=request.POST['id']).order_by('sortindex'):
             index += 1 if index == sortindex else 0
-            log.info('Saving category %s to %s', cat.name, index)
-            cat.sortindex = index
-            cat.save()
+            utils.update(cat, sortindex=index)
             index += 1
-        log.info('Saving category %s to %s', category.name, sortindex)
-        category.sortindex = sortindex
-        category.save()
+        utils.update(category, sortindex=sortindex)
         serializer = CategorySerializer(category, context={'request':request})
         return Response(serializer.data)
 

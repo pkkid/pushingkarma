@@ -72,3 +72,9 @@ def rset(obj, attrstr, value, delim='.'):
     if attr not in obj: obj[attr] = {}
     if attrstr: rset(obj[attr], attrstr, value, delim)
     else: obj[attr] = value
+
+
+def update(obj, **kwargs):
+    for key,val in kwargs.items():
+        setattr(obj, key, val)
+    obj.save()
