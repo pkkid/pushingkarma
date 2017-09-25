@@ -24,6 +24,7 @@
   <div id='notes'>
     <!-- Side Panel -->
     <div class='sidepanel'>
+      <span class='search-icon mdi mdi-magnify'></span>
       <input class='search' type='text' autofocus='true' value='{{request.GET.search}}' onfocus='this.value=this.value;'/>
       {% if user.is_authenticated %}
         <div class='search-action' data-toggle='tooltip' data-placement='right' title='Add New Note'><i class='mdi mdi-plus'></i></div>

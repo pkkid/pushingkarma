@@ -25,16 +25,6 @@
     position: absolute;
     width: $width;
     
-    &:after {
-      content: '\f349';
-      font-family: 'Material Design Icons';
-      font-size: 20px;
-      left: 10px;
-      line-height: 40px;
-      position: absolute;
-      top: 0px;
-      z-index: 1;
-    }
     .search { 
       background-color: rgba(0,0,0,0.05);
       border-width: 0px;
@@ -47,6 +37,14 @@
       padding-left: 40px;
       position: relative;
       width: 100%;
+    }
+    .search-icon {
+      font-size: 20px;
+      left: 10px;
+      line-height: 40px;
+      position: absolute;
+      top: 0px;
+      z-index: 1;
     }
     .search-action {
       background-color: rgba(0,0,0,0.1);

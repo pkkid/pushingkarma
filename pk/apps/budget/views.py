@@ -74,6 +74,6 @@ class TransactionsViewSet(viewsets.ModelViewSet):
         transactions = Transaction.objects.order_by('-date')
         if search:
             transactions = Search(transactions, TRANSACTIONSEARCHFIELDS, search).queryset()
-        serializer = TransactionSerializer(transactions[:100], context={'request':request},
+        serializer = TransactionSerializer(transactions[:200], context={'request':request},
             many=True, fields=self.list_fields)
         return Response(serializer.data)
