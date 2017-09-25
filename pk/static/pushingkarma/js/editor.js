@@ -98,7 +98,7 @@ pk.editor = {
     $.confirm({
       backgroundDismiss: true,
       cancelButton: 'Cancel',
-      columnClass: 'col-md-6 col-md-offset-3',
+      columnClass: 'col-6',
       confirmButton: 'Delete It',
       content: "Are you sure you wish to delete the entry '"+ title +"?'",
       keyboardEnabled: true,
@@ -162,11 +162,11 @@ pk.editor = {
     };
     var stopdrag = function(event) {
       event.preventDefault();
-      $('body').unbind('mousemove', drag);
-      $('body').unbind('mouseup', stopdrag);
+      $(document).unbind('mousemove', drag);
+      $(document).unbind('mouseup', stopdrag);
     };
-    $('body').bind('mousemove', drag);
-    $('body').bind('mouseup', stopdrag);
+    $(document).bind('mousemove', drag);
+    $(document).bind('mouseup', stopdrag);
   },
   
   save: function() {

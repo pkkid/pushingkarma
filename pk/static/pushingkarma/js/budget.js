@@ -91,7 +91,7 @@ pk.budget = {
     $.confirm({
       backgroundDismiss: true,
       cancelButton: 'Cancel',
-      columnClass: 'col-md-6 col-md-offset-3',
+      columnClass: 'col-6',
       confirmButton: 'Delete It',
       content: "Are you sure you wish to delete the category '"+ origname +"?'",
       keyboardEnabled: true,

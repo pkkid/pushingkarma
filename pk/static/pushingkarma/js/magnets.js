@@ -105,8 +105,8 @@ pk.magnets = {
     var stop = function(event) {
       event.preventDefault();
       clearTimeout(timer);
-      $('body').unbind('mousemove', move);
-      $('body').unbind('mouseup', stop);
+      $(document).unbind('mousemove', move);
+      $(document).unbind('mouseup', stop);
       elem.removeClass(self.DRAGGING);
       if (!self.is_inbounds(elem)) {
         self.send_message(self.ACTIONS.REMOVE, elem.data('data'));
@@ -116,8 +116,8 @@ pk.magnets = {
       self.send_message(self.ACTIONS.UPDATE, data);
     };
     // init
-    $('body').bind('mousemove', move);
-    $('body').bind('mouseup', stop);
+    $(document).bind('mousemove', move);
+    $(document).bind('mouseup', stop);
   },
   
   is_inbounds: function(elem) {
