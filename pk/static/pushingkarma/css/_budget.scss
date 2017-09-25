@@ -77,16 +77,29 @@
   }
 }
 
-#budget-notify {
-  .spinner {
-    @include spinner(12px, 1px, #aab);
-    float: left;
-    margin: 2px 5px 2px 0px;
+#budget-notifications {
+  background-color: rgba(0,0,0,0.9);
+  border-radius: 5px;
+  bottom: 15px;
+  color: #bbb;
+  font-size: 14px;
+  height: 26px;
+  left: 50%;
+  margin-left: -200px;
+  padding: 0px 10px;
+  position: fixed;
+  width: 400px;
+  display: none;
+  transition: 
+
+  .mdi {
+    font-size: 16px;
+    margin-right: 5px;
+    position: relative;
+    top: 1px;
   }
   .message {
-    float: left;
-    padding: 0px 10px;
-    opacity: 0;
-    transition: opacity 0.5s ease;
+    position: relative;
+    top: -1px;
   }
 }

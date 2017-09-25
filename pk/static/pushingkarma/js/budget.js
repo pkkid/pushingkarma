@@ -20,8 +20,10 @@ pk.budget = {
     this.init_elements();
     this.init_triggers();
     this.init_shortcuts();
+    this.init_notifications();
     this.update_categories();
     this.update_transactions();
+    this.notify('Help Me!');
   },
 
   init_elements: function() {
@@ -70,8 +72,9 @@ pk.budget = {
     });
   },
 
-  add_category: function(elem) {
-    console.log('add_category');
+  init_notifications: function() {
+    $('body').append(this.templates.notifications());
+    this.notifications = $('#budget-notifications');
   },
 
   category_data: function(category, sortindex) {
@@ -133,8 +136,14 @@ pk.budget = {
 
   notify: function(msg) {
     var self = this;
-    this.message.html(msg).css('opacity', 1);
-    setTimeout(function() { self.message.css('opacity', 0); }, 5000);
+    this.notifications.find('.message').text(msg);
+    this.notifications.animatecss('fadeInUp', function() {
+        
+    });
+
+    // this.notifications.
+    // this.message.html(msg).css('opacity', 1);
+    // setTimeout(function() { self.message.css('opacity', 0); }, 5000);
   },
 
   request: function(method, url, data, callback) {
@@ -154,7 +163,7 @@ pk.budget = {
     var url = data.id ? this.API_CATEGORIES + data.id + '/' : this.API_CATEGORIES;
     url = sortindex === undefined ? url : url +'sortindex/';
     this.request(method, url, data, function(data) {
-      self.notify('Saved category '+ data.data.name +'.');
+      self.notify('Saved category.');
       self.categorylist.find('tfoot input').val('');
       self.update_categories();
       if (method == 'POST') {
@@ -209,6 +218,13 @@ pk.budget = {
       '    <td class="comment"><input name="comment" type="text" value="{{this.comment}}" autocomplete="off"></td>',
       '  </tr>',
       '{{/each}}',
+    ].join('\n')),
+
+    notifications: Handlebars.compile([
+      '<div id="budget-notifications">',
+      '  <span class="mdi mdi-access-point"></span>',
+      '  <span class="message">This is a budget notification.</span>',
+      '</div>',
     ].join('\n')),
   },
 
