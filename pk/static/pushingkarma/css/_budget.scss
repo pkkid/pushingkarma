@@ -8,8 +8,8 @@
   table {
     font-size: 14px;
     width: 100%;
-    th { border-bottom:1px solid rgba(0,0,0,0.5); }
-    td { padding:1px 0px; cursor:default; border-bottom:1px dotted rgba(0,0,0,0.05); }
+    th { color:#504E41; border-bottom:1px solid rgba(0,0,0,0.5); }
+    td { color:#504E41; padding:1px 0px; cursor:default; border-bottom:1px dotted rgba(0,0,0,0.05); }
     tbody, tfoot { font-family:verdana; font-size:10px; }
     tfoot td { border-width:0px; }
     th.left { padding-left:4px; }
@@ -23,6 +23,7 @@
     border: 1px solid transparent;
     box-sizing: border-box;
     cursor: default;
+    color: #504E41; 
     padding: 0px 4px;
     &:focus {
       cursor: auto;
