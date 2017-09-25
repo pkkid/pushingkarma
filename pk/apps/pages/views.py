@@ -36,4 +36,4 @@ class PagesViewSet(viewsets.ModelViewSet):
         queryset = Page.objects.order_by('-created')
         serializer = PageSerializer(queryset, context={'request':request},
             many=True, fields=self.list_fields)
-        return Response(serializer.data)
+        return Response({'data':serializer.data})

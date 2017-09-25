@@ -154,7 +154,7 @@ pk.budget = {
     var url = data.id ? this.API_CATEGORIES + data.id + '/' : this.API_CATEGORIES;
     url = sortindex === undefined ? url : url +'sortindex/';
     this.request(method, url, data, function(data) {
-      self.notify('Saved category '+ data.name +'.');
+      self.notify('Saved category '+ data.data.name +'.');
       self.categorylist.find('tfoot input').val('');
       self.update_categories();
       if (method == 'POST') {
@@ -167,7 +167,7 @@ pk.budget = {
     if (this.xhrcat) { this.xhrcat.abort(); }
     this.xhrcat = $.ajax({url:this.API_CATEGORIES, type:'GET', dataType:'json'});
     this.xhrcat.done(function(data, textStatus, jqXHR) {
-      var ctx = {items:data};
+      var ctx = {items:data.data};
       var html = self.templates.listcategories(ctx);
       self.categorylist.find('tbody').html(html);
     });
@@ -180,7 +180,7 @@ pk.budget = {
     var url = search ? this.API_TRANSACTIONS +'?search='+ encodeURIComponent(search) : this.API_TRANSACTIONS;
     this.xhrtrx = $.ajax({url:url, type:'GET', dataType:'json'});
     this.xhrtrx.done(function(data, textStatus, jqXHR) {
-      var ctx = {items:data};
+      var ctx = {items:data.data};
       var html = self.templates.listtransactions(ctx);
       self.maincontent.find('tbody').html(html);
     });

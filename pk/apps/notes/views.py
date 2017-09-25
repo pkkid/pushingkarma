@@ -52,4 +52,4 @@ class NotesViewSet(viewsets.ModelViewSet):
             notes = Search(notes, NOTESEARCHFIELDS, search).queryset()
         serializer = NoteSerializer(notes, context={'request':request},
             many=True, fields=self.list_fields)
-        return Response(serializer.data)
+        return Response({'data':serializer.data})

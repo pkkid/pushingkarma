@@ -88,7 +88,7 @@ pk.notes = {
     var url = search ? this.APIROOT +'?search='+ encodeURIComponent(search) : this.APIROOT;
     this.xhr = $.ajax({url:url, type:'GET', dataType:'json'});
     this.xhr.done(function(data, textStatus, jqXHR) {
-      var ctx = {items:data, search:encodeURIComponent(search), noteid:noteid};
+      var ctx = {items:data.data, search:encodeURIComponent(search), noteid:noteid};
       var html = self.templates.listitems(ctx);
       self.notelist.html(html);
       self.search = search;

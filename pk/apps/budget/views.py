@@ -5,10 +5,9 @@ Copyright (c) 2015 PushingKarma. All rights reserved.
 """
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
-from django.db.models import F
 from pk import log, utils
 from pk.utils.search import FIELDTYPES, SearchField, Search
-from rest_framework import status, viewsets
+from rest_framework import viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -45,7 +44,7 @@ class CategoriesViewSet(viewsets.ModelViewSet):
         queryset = Category.objects.order_by('sortindex')
         serializer = CategorySerializer(queryset, context={'request':request},
             many=True, fields=self.list_fields)
-        return Response(serializer.data)
+        return Response({'data':serializer.data})
 
     @detail_route(methods=['put'])
     @transaction.atomic()
@@ -60,7 +59,7 @@ class CategoriesViewSet(viewsets.ModelViewSet):
             index += 1
         utils.update(category, sortindex=sortindex)
         serializer = CategorySerializer(category, context={'request':request})
-        return Response(serializer.data)
+        return Response({'data':serializer.data})
 
 
 class TransactionsViewSet(viewsets.ModelViewSet):
@@ -70,10 +69,14 @@ class TransactionsViewSet(viewsets.ModelViewSet):
     list_fields = TransactionSerializer.Meta.fields
 
     def list(self, request, *args, **kwargs):
-        search = request.GET.get('search')
+        data = {}
+        searchstr = request.GET.get('search')
         transactions = Transaction.objects.order_by('-date')
-        if search:
-            transactions = Search(transactions, TRANSACTIONSEARCHFIELDS, search).queryset()
+        if searchstr:
+            search = Search(transactions, TRANSACTIONSEARCHFIELDS, searchstr)
+            transactions = search.queryset()
+            data['search'] = {'errors':search.errors, 'datefilters': search.datefilters}
         serializer = TransactionSerializer(transactions[:200], context={'request':request},
             many=True, fields=self.list_fields)
-        return Response(serializer.data)
+        data['data'] = serializer.data
+        return Response(data)

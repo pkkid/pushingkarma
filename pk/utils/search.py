@@ -42,7 +42,6 @@ class Search:
     
     def __init__(self, basequeryset, fields, searchstr):
         self.errors = []                            # list of errors to display
-        self.warnings = []                          # list of warnings to display
         self.datefilters = []                       # list of date translations to display
         self.basequeryset = basequeryset            # base queryset to filter in Search
         self.fields = fields                        # field objects to filter on
@@ -54,7 +53,7 @@ class Search:
         try:
             chunkstrs = shlex.split(self.searchstr)
             for chunk in [c for c in chunkstrs if c in STOPWORDS]:
-                self.warnings.append('Part of the search is being ignored: %s' % chunk)
+                self.errors.append('Part of the search is being ignored: %s' % chunk)
             return [SearchChunk(self, c) for c in chunkstrs if c not in STOPWORDS]
         except Exception as err:
             self.errors.append(Exception('Invalid query: %s' % err))
@@ -308,6 +307,8 @@ def modifier_numeric(value):
 
 def modifier_date(value):
     try:
+        if is_year(value):
+            return datetime.datetime(int(value), 1, 1)
         dt = timelib.strtodatetime(value.encode('utf8'))
         return datetime.datetime(dt.year, dt.month, dt.day)
     except:
