@@ -6,6 +6,7 @@ Copyright (c) 2015 PushingKarma. All rights reserved.
 import datetime, re, shlex
 from functools import reduce
 from types import SimpleNamespace
+from pk import log
 
 NONE = ('none', 'null')
 OPERATIONS = {'=':'', '>':'__gt', '>=':'__gte', '<=':'__lte', '<':'__lt', ':': '__icontains'}
@@ -13,6 +14,7 @@ STOPWORDS = ('and', '&&', '&', 'or', '||', '|')
 
 FIELDTYPES = SimpleNamespace()
 FIELDTYPES.NUM = 'numeric'
+FIELDTYPES.DATE = 'numeric'
 FIELDTYPES.STR = 'string'
 
 
@@ -50,8 +52,8 @@ class Search:
                 self.warnings.append('Part of the search is being ignored: %s' % chunk)
             return [SearchChunk(self, c) for c in chunkstrs if c not in STOPWORDS]
         except Exception as err:
-            print('Error: %s' % err)
             self.errors.append(Exception('Invalid query: %s' % err))
+            log.exception(err)
 
     def _list_datefilters(self):
         datefilters = []
@@ -98,6 +100,8 @@ class SearchChunk:
         self.error = None               # error message (if applicable)
         self.datefilter = None          # date filter representation
         self._parse_chunkstr()
+        print('---')
+        print(self)
         
     def __str__(self):
         rtnstr = '\n--- %s ---\n' % self.__class__.__name__
@@ -144,6 +148,7 @@ class SearchChunk:
                     self.qvalue = self._get_qvalue()
                     break  # only use one operation
         except SearchError as err:
+            log.exception(err)
             self.error = err
             
     def _get_qfield(self):
@@ -226,8 +231,8 @@ class SearchChunk:
 
 
 def modifier_numeric(value):
-    if re.match('^\d+$', value):
+    if re.match('^\-*\d+$', value):
         return int(value)
-    elif re.match('^\d+.\d+$'):
+    elif re.match('^\-*\d+.\d+$', value):
         return float(value)
     raise SearchError('Invalid int value: %s' % value)

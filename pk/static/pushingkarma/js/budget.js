@@ -36,7 +36,14 @@ pk.budget = {
 
   init_triggers: function() {
     var self = this;
-    // Edit category budget
+    // search input changes
+    this.searchinput.on('change paste keyup', function(event) {
+      if (_.valuesIn(this.KEYS).indexOf(event.keyCode) == -1) {
+        event.preventDefault();
+        self.update_transactions($(this).val());
+      }
+    });
+    // edit & drag category budget
     this.categorylist.on('focus', 'tbody input', function() {
       event.preventDefault();
       self.input_edit($(this));
@@ -166,10 +173,12 @@ pk.budget = {
     });
   },
 
-  update_transactions: function() {
+  update_transactions: function(search) {
     var self = this;
+    //if (search == this.search) { return; }
     if (this.xhrtrx) { this.xhrtrx.abort(); }
-    this.xhrtrx = $.ajax({url:this.API_TRANSACTIONS, type:'GET', dataType:'json'});
+    var url = search ? this.API_TRANSACTIONS +'?search='+ encodeURIComponent(search) : this.API_TRANSACTIONS;
+    this.xhrtrx = $.ajax({url:url, type:'GET', dataType:'json'});
     this.xhrtrx.done(function(data, textStatus, jqXHR) {
       var ctx = {items:data};
       var html = self.templates.listtransactions(ctx);

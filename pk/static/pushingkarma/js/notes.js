@@ -33,8 +33,7 @@ pk.notes = {
     this.searchinput.on('change paste keyup', function(event) {
       if (_.valuesIn(this.KEYS).indexOf(event.keyCode) == -1) {
         event.preventDefault();
-        var search = $(this).val();
-        self.update_list(search);
+        self.update_list($(this).val());
       }
     });
     // start a new note

@@ -17,15 +17,15 @@ from .models import Transaction, TransactionSerializer
 
 
 TRANSACTIONSEARCHFIELDS = {
-    'bankid': SearchField(FIELDTYPES.STR, 'bankid'),
     'account': SearchField(FIELDTYPES.STR, 'account'),
-    'date': SearchField(FIELDTYPES.STR, 'date'),
+    'date': SearchField(FIELDTYPES.DATE, 'date'),
     'payee': SearchField(FIELDTYPES.STR, 'payee'),
-    'category': SearchField(FIELDTYPES.STR, 'category'),
-    'amount': SearchField(FIELDTYPES.STR, 'amount'),
-    'approved': SearchField(FIELDTYPES.STR, 'approved'),
-    'memo': SearchField(FIELDTYPES.STR, 'memo'),
-    'comment': SearchField(FIELDTYPES.STR, 'comment'),
+    'category': SearchField(FIELDTYPES.STR, 'category__name'),
+    'amount': SearchField(FIELDTYPES.NUM, 'amount'),
+    # 'bankid': SearchField(FIELDTYPES.STR, 'bankid'),
+    # 'approved': SearchField(FIELDTYPES.STR, 'approved'),
+    # 'memo': SearchField(FIELDTYPES.STR, 'memo'),
+    # 'comment': SearchField(FIELDTYPES.STR, 'comment'),
 }
 
 
@@ -74,6 +74,6 @@ class TransactionsViewSet(viewsets.ModelViewSet):
         transactions = Transaction.objects.order_by('-date')
         if search:
             transactions = Search(transactions, TRANSACTIONSEARCHFIELDS, search).queryset()
-        serializer = TransactionSerializer(transactions, context={'request':request},
+        serializer = TransactionSerializer(transactions[:100], context={'request':request},
             many=True, fields=self.list_fields)
         return Response(serializer.data)

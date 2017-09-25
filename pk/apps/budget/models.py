@@ -9,7 +9,7 @@ from pk.utils.serializers import DynamicFieldsSerializer
 
 
 class Category(TimeStampedModel):
-    name = models.CharField(max_length=255, unique=True)
+    name = models.CharField(max_length=255, unique=True, db_index=True)
     budget = models.DecimalField(max_digits=8, decimal_places=2)
     comment = models.TextField(blank=True, default='')
     sortindex = models.IntegerField(default=None)
@@ -38,15 +38,15 @@ class CategorySubsetSerializer(DynamicFieldsSerializer):
 
 
 class Transaction(TimeStampedModel):
-    bankid = models.CharField(max_length=255, unique=True)
-    account = models.CharField(max_length=255)
-    date = models.DateField()
-    payee = models.CharField(max_length=255, blank=True)
+    bankid = models.CharField(max_length=255, unique=True, db_index=True)
+    account = models.CharField(max_length=255, db_index=True)
+    date = models.DateField(db_index=True)
+    payee = models.CharField(max_length=255, blank=True, db_index=True)
     category = models.ForeignKey(Category, null=True, on_delete=models.SET_NULL, default=None)
-    amount = models.DecimalField(max_digits=8, decimal_places=2)
-    approved = models.BooleanField(default=False)
+    amount = models.DecimalField(max_digits=8, decimal_places=2, db_index=True)
+    approved = models.BooleanField(default=False, db_index=True)
     memo = models.CharField(max_length=255, blank=True, default='')
-    comment = models.TextField(blank=True, default='')
+    comment = models.TextField(blank=True, default='', db_index=True)
 
 
 class TransactionSerializer(DynamicFieldsSerializer):
