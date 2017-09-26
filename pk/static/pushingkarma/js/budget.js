@@ -41,15 +41,16 @@ pk.budget = {
         self.update_transactions($(this).val());
       }
     });
-    // edit & drag category budget
-    this.categorylist.on('focus', 'tbody input', function() {
+    // edit category or transaction
+    this.container.on('dblclick', 'tbody input', function() {
       event.preventDefault();
       self.input_edit($(this));
     });
-    this.categorylist.on('blur', 'tbody input', function() {
+    this.container.on('blur', 'tbody input', function() {
       event.preventDefault();
       self.input_display($(this));
     });
+    // drag and drop categories
     this.categorylist.find('tbody').sortable({axis:'y', delay:150, handle:'.trend',
       update: function(event, ui) {
         self.save_category(ui.item, ui.item.index());
@@ -101,6 +102,7 @@ pk.budget = {
   },
 
   input_edit: function(input) {
+    input.attr('readonly', false);
     if (input.hasClass('int') && !input.hasClass('error')) {
       input.val(pk.utils.to_int(input.val()));
     } else if (input.hasClass('float') && !input.hasClass('error')) {
@@ -113,16 +115,19 @@ pk.budget = {
   },
 
   input_display: function(input) {
-    if (input.hasClass('int') && pk.utils.is_int(input.val())) {
-      input.removeClass('error');
-      return input.val(pk.utils.to_amount_int(input.val()));
-    } else if (input.hasClass('float') && pk.utils.is_float(input.val())) {
-      input.removeClass('error');
-      return input.val(pk.utils.to_amount_float(input.val()));
-    } else if (input.hasClass('text')) {
-      return input.removeClass('error');
+    if (!input.attr('readonly')) {
+      input.attr('readonly', true);
+      if (input.hasClass('int') && pk.utils.is_int(input.val())) {
+        input.removeClass('error');
+        return input.val(pk.utils.to_amount_int(input.val()));
+      } else if (input.hasClass('float') && pk.utils.is_float(input.val())) {
+        input.removeClass('error');
+        return input.val(pk.utils.to_amount_float(input.val()));
+      } else if (input.hasClass('text')) {
+        return input.removeClass('error');
+      }
+      input.addClass('error');
     }
-    input.addClass('error');
   },
 
   request: function(method, url, data, callback) {
@@ -152,7 +157,7 @@ pk.budget = {
     if (this.xhrcat) { this.xhrcat.abort(); }
     this.xhrcat = $.ajax({url:this.API_CATEGORIES, type:'GET', dataType:'json'});
     this.xhrcat.done(function(data, textStatus, jqXHR) {
-      var ctx = {items:data.data};
+      var ctx = {categories:data.results};
       var html = self.templates.listcategories(ctx);
       self.categorylist.find('tbody').html(html);
     });
@@ -165,7 +170,7 @@ pk.budget = {
     var url = search ? this.API_TRANSACTIONS +'?search='+ encodeURIComponent(search) : this.API_TRANSACTIONS;
     this.xhrtrx = $.ajax({url:url, type:'GET', dataType:'json'});
     this.xhrtrx.done(function(data, textStatus, jqXHR) {
-      var ctx = {items:data.data};
+      var ctx = {items:data.results};
       var html = self.templates.listtransactions(ctx);
       self.maincontent.find('tbody').html(html);
     });
@@ -173,11 +178,11 @@ pk.budget = {
 
   templates: {
     listcategories: Handlebars.compile([
-      '{{#each this.items}}',
+      '{{#each this.categories}}',
       '  <tr class="category" data-id="{{this.id}}" data-origname="{{this.name}}">',
-      '    <td class="name"><input name="name" class="text" type="text" value="{{this.name}}" autocomplete="off"></td>',
+      '    <td class="name"><input name="name" class="text" type="text" value="{{this.name}}" autocomplete="off" readonly="readonly"></td>',
       '    <td class="trend">&nbsp;</td>',
-      '    <td class="budget right"><input name="budget" class="int" type="text" value="{{amountInt this.budget}}" autocomplete="off"></td>',
+      '    <td class="budget right"><input name="budget" class="int" type="text" value="{{amountInt this.budget}}" autocomplete="off" readonly="readonly"></td>',
       '  </tr>',
       '{{/each}}',
     ].join('\n')),
@@ -186,12 +191,12 @@ pk.budget = {
       '{{#each this.items}}',
       '  <tr class="transaction" data-id="{{this.id}}" data-bankid="{{this.bankid}}">',
       '    <td class="account">{{this.account}}</td>',
-      '    <td class="date"><input name="date" type="text" value="{{this.date}}" autocomplete="off"></td>',
-      '    <td class="payee"><input name="payee" type="text" value="{{this.payee}}" autocomplete="off"></td>',
-      '    <td class="category"><input name="name" type="text" value="{{this.category.name}}" autocomplete="off"></td>',
-      '    <td class="amount right"><input name="budget" type="text" value="{{amountFloat this.amount}}" autocomplete="off"></td>',
-      '    <td class="approved center"><input name="approved" type="text" value="x" autocomplete="off"></td>',
-      '    <td class="comment"><input name="comment" type="text" value="{{this.comment}}" autocomplete="off"></td>',
+      '    <td class="date"><input name="date" class="text" type="text" value="{{this.date}}" autocomplete="off" readonly="readonly"></td>',
+      '    <td class="payee"><input name="payee" class="text" type="text" value="{{this.payee}}" autocomplete="off" readonly="readonly"></td>',
+      '    <td class="category"><input name="name" class="text" type="text" value="{{this.category.name}}" autocomplete="off" readonly="readonly"></td>',
+      '    <td class="amount right"><input name="budget" class="text" type="text" value="{{amountFloat this.amount}}" autocomplete="off" readonly="readonly"></td>',
+      '    <td class="approved center"><input name="approved" class="text" type="text" value="x" autocomplete="off" readonly="readonly"></td>',
+      '    <td class="comment"><input name="comment" class="text" type="text" value="{{this.comment}}" autocomplete="off" readonly="readonly"></td>',
       '  </tr>',
       '{{/each}}',
     ].join('\n')),

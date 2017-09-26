@@ -41,10 +41,11 @@ class CategoriesViewSet(viewsets.ModelViewSet):
     list_fields = CategorySerializer.Meta.fields
 
     def list(self, request, *args, **kwargs):
-        queryset = Category.objects.order_by('sortindex')
-        serializer = CategorySerializer(queryset, context={'request':request},
+        categories = Category.objects.order_by('sortindex')
+        page = self.paginate_queryset(categories)
+        serializer = CategorySerializer(page, context={'request':request},
             many=True, fields=self.list_fields)
-        return Response({'data':serializer.data})
+        return self.get_paginated_response(serializer.data)
 
     @detail_route(methods=['put'])
     @transaction.atomic()
@@ -59,7 +60,7 @@ class CategoriesViewSet(viewsets.ModelViewSet):
             index += 1
         utils.update(category, sortindex=sortindex)
         serializer = CategorySerializer(category, context={'request':request})
-        return Response({'data':serializer.data})
+        return Response({'result':serializer.data})
 
 
 class TransactionsViewSet(viewsets.ModelViewSet):
@@ -69,14 +70,16 @@ class TransactionsViewSet(viewsets.ModelViewSet):
     list_fields = TransactionSerializer.Meta.fields
 
     def list(self, request, *args, **kwargs):
-        data = {}
+        searchdata = {}
         searchstr = request.GET.get('search')
-        transactions = Transaction.objects.order_by('-date')
+        transactions = Transaction.objects.order_by('-date', 'payee', 'id')
         if searchstr:
             search = Search(transactions, TRANSACTIONSEARCHFIELDS, searchstr)
             transactions = search.queryset()
-            data['search'] = {'errors':search.errors, 'datefilters': search.datefilters}
-        serializer = TransactionSerializer(transactions[:200], context={'request':request},
-            many=True, fields=self.list_fields)
-        data['data'] = serializer.data
-        return Response(data)
+            searchdata = {'searchstr':searchstr, 'errors':search.errors, 'datefilters': search.datefilters}
+        page = self.paginate_queryset(transactions)
+        serializer = TransactionSerializer(page, context={'request':request}, many=True, fields=self.list_fields)
+        response = self.get_paginated_response(serializer.data)
+        response.data.update(searchdata)
+        response.data.move_to_end('results')
+        return response

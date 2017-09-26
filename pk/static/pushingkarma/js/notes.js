@@ -88,7 +88,7 @@ pk.notes = {
     var url = search ? this.APIROOT +'?search='+ encodeURIComponent(search) : this.APIROOT;
     this.xhr = $.ajax({url:url, type:'GET', dataType:'json'});
     this.xhr.done(function(data, textStatus, jqXHR) {
-      var ctx = {items:data.data, search:encodeURIComponent(search), noteid:noteid};
+      var ctx = {notes:data.results, search:encodeURIComponent(search), noteid:noteid};
       var html = self.templates.listitems(ctx);
       self.notelist.html(html);
       self.search = search;
@@ -97,7 +97,7 @@ pk.notes = {
   
   templates: {
     listitems: Handlebars.compile([
-      '{{#each this.items}}',
+      '{{#each this.notes}}',
       '  <a class="notes-item {{#if_eq this.id ../noteid}}selected{{/if_eq}}" href="{{this.weburl}}{{#if ../search}}?search={{../search}}{{/if}}" data-url="{{this.url}}">',
       '    <div class="title">{{this.title}}</div>',
       '    <div class="subtext">',

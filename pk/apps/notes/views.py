@@ -46,10 +46,16 @@ class NotesViewSet(viewsets.ModelViewSet):
     list_fields = ['id','url','weburl','title','tags','created','modified']
 
     def list(self, request, *args, **kwargs):
-        search = request.GET.get('search')
+        searchdata = {}
+        searchstr = request.GET.get('search')
         notes = Note.objects.order_by('-modified')
-        if search:
-            notes = Search(notes, NOTESEARCHFIELDS, search).queryset()
-        serializer = NoteSerializer(notes, context={'request':request},
-            many=True, fields=self.list_fields)
-        return Response({'data':serializer.data})
+        if searchstr:
+            search = Search(notes, NOTESEARCHFIELDS, searchstr)
+            notes = search.queryset()
+            searchdata = {'searchstr':searchstr, 'errors':search.errors, 'datefilters': search.datefilters}
+        page = self.paginate_queryset(notes)
+        serializer = NoteSerializer(page, context={'request':request}, many=True, fields=self.list_fields)
+        response = self.get_paginated_response(serializer.data)
+        response.data.update(searchdata)
+        response.data.move_to_end('results')
+        return response

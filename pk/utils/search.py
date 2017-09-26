@@ -86,7 +86,7 @@ class Search:
                 self.errors = [c.error for c in self.chunks if c.error]
                 self.datefilters = self._list_datefilters()
                 self._queryset = queryset
-        log.info(self._queryset.query)
+        log.debug(self._queryset.query)
         return self._queryset
         
     

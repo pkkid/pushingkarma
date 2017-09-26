@@ -18,16 +18,17 @@
     .right,.right input { text-align:right; }
   }
   input {
-    background-color: transparent;
     border-radius: 3px;
     border: 1px solid transparent;
     box-sizing: border-box;
     cursor: default;
     color: #504E41; 
     padding: 0px 4px;
-    &:focus {
+    background-color: rgba(0,0,0,0.1);
+
+    &[readonly=readonly] {
       cursor: auto;
-      background-color: rgba(0,0,0,0.1);
+      background-color: transparent;
     }
     &.error {
       border: 1px solid #977;
