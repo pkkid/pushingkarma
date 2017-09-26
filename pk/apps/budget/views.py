@@ -21,6 +21,7 @@ TRANSACTIONSEARCHFIELDS = {
     'payee': SearchField(FIELDTYPES.STR, 'payee'),
     'category': SearchField(FIELDTYPES.STR, 'category__name'),
     'amount': SearchField(FIELDTYPES.NUM, 'amount'),
+    'amountstr': SearchField(FIELDTYPES.STR, 'printf("%.2f", amount)'),
     # 'bankid': SearchField(FIELDTYPES.STR, 'bankid'),
     # 'approved': SearchField(FIELDTYPES.STR, 'approved'),
     # 'memo': SearchField(FIELDTYPES.STR, 'memo'),

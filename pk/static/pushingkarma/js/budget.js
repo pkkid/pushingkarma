@@ -46,59 +46,74 @@ pk.budget = {
       event.preventDefault();
       self.input_edit($(this));
     });
-    this.container.on('blur', 'tbody input', function() {
-      event.preventDefault();
-      self.input_display($(this));
-    });
+    // this.container.on('blur', 'tbody input', function() {
+    //   event.preventDefault();
+    //   self.input_save($(this));
+    // });
     // drag and drop categories
-    this.categorylist.find('tbody').sortable({axis:'y', delay:150, handle:'.trend',
-      update: function(event, ui) {
-        self.save_category(ui.item, ui.item.index());
-      }
-    });
+    // this.categorylist.find('tbody').sortable({axis:'y', delay:150, handle:'.trend',
+    //   update: function(event, ui) {
+    //     self.save_category(ui.item);
+    //   }
+    // });
   },
 
   init_shortcuts: function() {
     var self = this;
     var KEYS = this.KEYS;
     // update budget items on enter
-    this.categorylist.on('keydown', 'tbody input,tfoot input', function(event) {
+    this.container.on('keydown', 'tbody input', function(event) {
       if (event.keyCode == KEYS.ENTER) {
-        self.save_category($(this).parents('.category'));
+        event.preventDefault();
+        self.input_save($(this));
+        self.input_nextdown($(this));
       }
     });
   },
 
-  category_data: function(category, sortindex) {
+  data_category: function(row, sortindex) {
     return {
-      id: category.data('id'),
-      name: category.find('input[name=name]').val(),
-      budget: pk.utils.to_float(category.find('input[name=budget]').val()),
-      sortindex: sortindex === undefined ? null : sortindex,
-      origname: category.data('origname'),
+      id: row.data('id'),
+      name: row.find('input[name=name]').val(),
+      budget: pk.utils.to_float(row.find('input[name=budget]').val()),
+      sortindex: row.index(),
+      origname: row.data('origname'),
     };
   },
 
-  delete_category: function(category) {
-    var self = this;
-    var data = this.category_data(category);
-    var origname = data.origname;
-    $.confirm({
-      backgroundDismiss: true,
-      cancelButton: 'Cancel',
-      columnClass: 'col-6',
-      confirmButton: 'Delete It',
-      content: "Are you sure you wish to delete the category '"+ origname +"?'",
-      keyboardEnabled: true,
-      title: 'Delete Category?',
-      confirm: function() {
-        var url = self.API_CATEGORIES + data.id + '/';
-        self.request('DELETE', url, {}, function(data) {
-          self.notify('Deleted category '+ origname +'.');
-          self.update_categories();
-        });
+  data_transaction: function(row) {
+
+  },
+
+  // delete_category: function(category) {
+  //   var self = this;
+  //   var data = this.data_category(category);
+  //   var origname = data.origname;
+  //   $.confirm({
+  //     backgroundDismiss: true,
+  //     cancelButton: 'Cancel',
+  //     columnClass: 'col-6',
+  //     confirmButton: 'Delete It',
+  //     content: "Are you sure you wish to delete the category '"+ origname +"?'",
+  //     keyboardEnabled: true,
+  //     title: 'Delete Category?',
+  //     confirm: function() {
+  //       var url = self.API_CATEGORIES + data.id + '/';
+  //       self.request('DELETE', url, {}, function(data) {
+  //         self.notify('Deleted category '+ origname +'.');
+  //         self.update_categories();
+  //       });
+  //     }
+  //   });
+  // },
+
+  input_display: function(input, value) {
+      input.attr('readonly', true);
+      switch(input.data('display')) {
+        case 'int': input.val(pk.utils.to_amount_int(value)); break;
+        case 'float': input.val(pk.utils.to_amount_float(value)); break;
+        default: input.val(value); break;
       }
-    });
   },
 
   input_edit: function(input) {
@@ -114,43 +129,58 @@ pk.budget = {
     }, 10);
   },
 
-  input_display: function(input) {
-    if (!input.attr('readonly')) {
-      input.attr('readonly', true);
-      if (input.hasClass('int') && pk.utils.is_int(input.val())) {
-        input.removeClass('error');
-        return input.val(pk.utils.to_amount_int(input.val()));
-      } else if (input.hasClass('float') && pk.utils.is_float(input.val())) {
-        input.removeClass('error');
-        return input.val(pk.utils.to_amount_float(input.val()));
-      } else if (input.hasClass('text')) {
-        return input.removeClass('error');
-      }
-      input.addClass('error');
+  input_save: function(input) {
+    var self = this;
+    input.addClass('saving');
+    input.removeClass('error');
+    var row = input.parents('tr');
+    var type = row.data('type');
+    switch(type) {
+      case 'category':
+        var url = this.API_CATEGORIES;
+        var data = this.data_category(row);
+        break;
+      case 'transaction':
+        var url = this.API_TRANSACTIONS;
+        var data = this.data_transaction(row);
+        break;
     }
-  },
-
-  request: function(method, url, data, callback) {
-    var self = this;
-    var xhr = $.ajax({url:url, type:method, data:data, dataType:'json'});
-    xhr.done(function(data, textStatus, jqXHR) { callback(data, textStatus, jqXHR); });
-  },
-
-  save_category: function(category, sortindex) {
-    var self = this;
-    var data = self.category_data(category, sortindex);
-    if (!data.name) { return self.delete_category(category); }
     var method = data.id ? 'PUT' : 'POST';
-    var url = data.id ? this.API_CATEGORIES + data.id + '/' : this.API_CATEGORIES;
-    url = sortindex === undefined ? url : url +'sortindex/';
-    this.request(method, url, data, function(data) {
-      self.categorylist.find('tfoot input').val('');
-      self.update_categories();
-      if (method == 'POST') {
-        self.categorylist.find('tfoot .name input').focus();
-      }
+    url += data.id ? data.id+'/' : '';
+    var xhr = $.ajax({url:url, type:method, data:data, dataType:'json'});
+    xhr.always(function() {
+      setTimeout(function() { input.removeClass('saving'); }, 500);
+    });
+    xhr.done(function(data, textStatus, jqXHR) {
+      self.input_display(input, data[input.attr('name')]);
+    });
+    xhr.fail(function(jqXHR, textStatus, errorThrown) {
+      input.removeClass('error');
     });
   },
+
+  // request: function(method, url, data, callback) {
+  //   var self = this;
+  //   var xhr = $.ajax({url:url, type:method, data:data, dataType:'json'});
+  //   xhr.done(function(data, textStatus, jqXHR) { callback(data, textStatus, jqXHR); });
+  //   xhr.done(function(data, textStatus, jqXHR) { callback(data, textStatus, jqXHR); });
+  // },
+
+  // save_category: function(category, input) {
+  //   var self = this;
+  //   var data = self.data_category(category);
+  //   if (!data.name) { return self.delete_category(category); }
+  //   var method = data.id ? 'PUT' : 'POST';
+  //   var url = data.id ? this.API_CATEGORIES + data.id + '/' : this.API_CATEGORIES;
+  //   url = sortindex === undefined ? url : url +'sortindex/';
+  //   this.request(method, url, data, function(data) {
+  //     self.categorylist.find('tfoot input').val('');
+  //     self.update_categories();
+  //     if (method == 'POST') {
+  //       self.categorylist.find('tfoot .name input').focus();
+  //     }
+  //   });
+  // },
  
   update_categories: function() {
     var self = this;
@@ -179,24 +209,24 @@ pk.budget = {
   templates: {
     listcategories: Handlebars.compile([
       '{{#each this.categories}}',
-      '  <tr class="category" data-id="{{this.id}}" data-origname="{{this.name}}">',
-      '    <td class="name"><input name="name" class="text" type="text" value="{{this.name}}" autocomplete="off" readonly="readonly"></td>',
+      '  <tr data-id="{{this.id}}" data-type="category" data-origname="{{this.name}}">',
+      '    <td class="name"><input name="name" type="text" value="{{this.name}}" autocomplete="off" readonly="readonly"></td>',
       '    <td class="trend">&nbsp;</td>',
-      '    <td class="budget right"><input name="budget" class="int" type="text" value="{{amountInt this.budget}}" autocomplete="off" readonly="readonly"></td>',
+      '    <td class="budget right"><input name="budget" data-display="int" type="text" value="{{amountInt this.budget}}" autocomplete="off" readonly="readonly"></td>',
       '  </tr>',
       '{{/each}}',
     ].join('\n')),
 
     listtransactions: Handlebars.compile([
       '{{#each this.items}}',
-      '  <tr class="transaction" data-id="{{this.id}}" data-bankid="{{this.bankid}}">',
+      '  <tr id="{{this.id}}" data-type="transaction" data-bankid="{{this.bankid}}">',
       '    <td class="account">{{this.account}}</td>',
-      '    <td class="date"><input name="date" class="text" type="text" value="{{this.date}}" autocomplete="off" readonly="readonly"></td>',
-      '    <td class="payee"><input name="payee" class="text" type="text" value="{{this.payee}}" autocomplete="off" readonly="readonly"></td>',
-      '    <td class="category"><input name="name" class="text" type="text" value="{{this.category.name}}" autocomplete="off" readonly="readonly"></td>',
-      '    <td class="amount right"><input name="budget" class="text" type="text" value="{{amountFloat this.amount}}" autocomplete="off" readonly="readonly"></td>',
-      '    <td class="approved center"><input name="approved" class="text" type="text" value="x" autocomplete="off" readonly="readonly"></td>',
-      '    <td class="comment"><input name="comment" class="text" type="text" value="{{this.comment}}" autocomplete="off" readonly="readonly"></td>',
+      '    <td class="date"><input name="date" type="text" value="{{this.date}}" autocomplete="off" readonly="readonly"></td>',
+      '    <td class="payee"><input name="payee" type="text" value="{{this.payee}}" autocomplete="off" readonly="readonly"></td>',
+      '    <td class="category"><input name="name" type="text" value="{{this.category.name}}" autocomplete="off" readonly="readonly"></td>',
+      '    <td class="amount right"><input name="budget" data-display="float" type="text" value="{{amountFloat this.amount}}" autocomplete="off" readonly="readonly"></td>',
+      '    <td class="approved center"><input name="approved" type="text" value="x" autocomplete="off" readonly="readonly"></td>',
+      '    <td class="comment"><input name="comment" type="text" value="{{this.comment}}" autocomplete="off" readonly="readonly"></td>',
       '  </tr>',
       '{{/each}}',
     ].join('\n')),

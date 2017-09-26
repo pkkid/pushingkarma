@@ -25,10 +25,14 @@
     color: #504E41; 
     padding: 0px 4px;
     background-color: rgba(0,0,0,0.1);
+    transition: background-color 0.2s ease;
 
     &[readonly=readonly] {
       cursor: auto;
       background-color: transparent;
+    }
+    &.saving {
+      background-color: rgba(0,0,255,0.1);
     }
     &.error {
       border: 1px solid #977;
