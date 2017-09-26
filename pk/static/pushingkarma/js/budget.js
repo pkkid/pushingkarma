@@ -13,22 +13,18 @@ pk.budget = {
     this.container = $(selector);
     if (!this.container.length) { return; }
     console.debug('init pk.budget on '+ selector);
-    this.xhr = null;          // Main actions xhr reference
-    this.xhrcat = null;       // Categories xhr reference
-    this.xhrtrx = null;       // Transactions xhr reference
-    this.search = null;
+    this.xhr = null;            // main actions xhr reference
+    this.xhrcat = null;         // categories xhr reference
+    this.xhrtrx = null;         // transactions xhr reference
+    this.search = null;         // current search string
     this.init_elements();
     this.init_triggers();
     this.init_shortcuts();
-    this.init_notifications();
     this.update_categories();
     this.update_transactions();
-    this.notify('Help Me!');
   },
 
   init_elements: function() {
-    this.spinner = $('#budget-notify .spinner');
-    this.message = $('#budget-notify .message');
     this.sidepanel = this.container.find('.sidepanel');
     this.searchinput = this.container.find('.search');
     this.transactionsbtn = this.container.find('.search-action');
@@ -64,17 +60,12 @@ pk.budget = {
   init_shortcuts: function() {
     var self = this;
     var KEYS = this.KEYS;
-    // Update budget items on enter
+    // update budget items on enter
     this.categorylist.on('keydown', 'tbody input,tfoot input', function(event) {
       if (event.keyCode == KEYS.ENTER) {
         self.save_category($(this).parents('.category'));
       }
     });
-  },
-
-  init_notifications: function() {
-    $('body').append(this.templates.notifications());
-    this.notifications = $('#budget-notifications');
   },
 
   category_data: function(category, sortindex) {
@@ -134,25 +125,10 @@ pk.budget = {
     input.addClass('error');
   },
 
-  notify: function(msg) {
-    var self = this;
-    this.notifications.find('.message').text(msg);
-    this.notifications.animatecss('fadeInUp', function() {
-        
-    });
-
-    // this.notifications.
-    // this.message.html(msg).css('opacity', 1);
-    // setTimeout(function() { self.message.css('opacity', 0); }, 5000);
-  },
-
   request: function(method, url, data, callback) {
     var self = this;
-    this.spinner.addClass('on');
     var xhr = $.ajax({url:url, type:method, data:data, dataType:'json'});
     xhr.done(function(data, textStatus, jqXHR) { callback(data, textStatus, jqXHR); });
-    xhr.fail(function(jqXHR, textStatus, errorThrown) { self.notify(self.MESSAGE_ERROR); });
-    xhr.always(function() { self.spinner.removeClass('on'); });
   },
 
   save_category: function(category, sortindex) {
@@ -163,11 +139,11 @@ pk.budget = {
     var url = data.id ? this.API_CATEGORIES + data.id + '/' : this.API_CATEGORIES;
     url = sortindex === undefined ? url : url +'sortindex/';
     this.request(method, url, data, function(data) {
-      self.notify('Saved category.');
       self.categorylist.find('tfoot input').val('');
       self.update_categories();
       if (method == 'POST') {
-        self.categorylist.find('tfoot .name input').focus(); }
+        self.categorylist.find('tfoot .name input').focus();
+      }
     });
   },
  
@@ -218,13 +194,6 @@ pk.budget = {
       '    <td class="comment"><input name="comment" type="text" value="{{this.comment}}" autocomplete="off"></td>',
       '  </tr>',
       '{{/each}}',
-    ].join('\n')),
-
-    notifications: Handlebars.compile([
-      '<div id="budget-notifications">',
-      '  <span class="mdi mdi-access-point"></span>',
-      '  <span class="message">This is a budget notification.</span>',
-      '</div>',
     ].join('\n')),
   },
 

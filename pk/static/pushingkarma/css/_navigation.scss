@@ -4,7 +4,6 @@
 $NAV_HEIGHT: 64px;
 
 #navigation {
-  @include shine(0.2);
   background-image: linear-gradient(#464646, #1e1e1e);
   border-radius: 0px;
   box-shadow: 0px 2px 2px rgba(0,0,0,0.3);
@@ -14,7 +13,7 @@ $NAV_HEIGHT: 64px;
   position: relative;
 
   .nav {
-    margin:-1px 10px 0px 10px;
+    margin:0px 10px 0px 10px;
   }
   .nav-item.site a {
     display: block;
