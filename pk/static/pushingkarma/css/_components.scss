@@ -100,12 +100,15 @@ div.fancyhr {
 // jconfirm
 // Most of these styles are in the jquert-confirm.min.css, 
 // the styles here are my personal overrides.
-.jconfirm.jconfirm-white .jconfirm-box {
-  box-shadow: 0 2px 15px rgba(0,0,0,0.8);
-}
 .jconfirm .container .row {
   justify-content: center;
 }
 .jconfirm .jconfirm-box {
+  box-shadow: 0 2px 15px rgba(0,0,0,0.8);
   background: #ddd;
+}
+.jconfirm.jconfirm-white .jconfirm-box .buttons button.btn-default {
+  color: #666;
+  transition: color 0.3s ease;
+  &:hover { color: #222; }
 }

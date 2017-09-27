@@ -21,7 +21,7 @@ TRANSACTIONSEARCHFIELDS = {
     'payee': SearchField(FIELDTYPES.STR, 'payee'),
     'category': SearchField(FIELDTYPES.STR, 'category__name'),
     'amount': SearchField(FIELDTYPES.NUM, 'amount'),
-    'amountstr': SearchField(FIELDTYPES.STR, 'printf("%.2f", amount)'),
+    # 'amountstr': SearchField(FIELDTYPES.STR, 'printf("%.2f", amount)'),
     # 'bankid': SearchField(FIELDTYPES.STR, 'bankid'),
     # 'approved': SearchField(FIELDTYPES.STR, 'approved'),
     # 'memo': SearchField(FIELDTYPES.STR, 'memo'),
@@ -47,21 +47,6 @@ class CategoriesViewSet(viewsets.ModelViewSet):
         serializer = CategorySerializer(page, context={'request':request},
             many=True, fields=self.list_fields)
         return self.get_paginated_response(serializer.data)
-
-    @detail_route(methods=['put'])
-    @transaction.atomic()
-    def sortindex(self, request, *args, **kwargs):
-        category = Category.objects.get(id=request.POST['id'])
-        sortindex = int(request.POST['sortindex'])
-        log.info('Moving category %s to index %s', category.name, sortindex)
-        index = 0
-        for cat in Category.objects.exclude(id=request.POST['id']).order_by('sortindex'):
-            index += 1 if index == sortindex else 0
-            utils.update(cat, sortindex=index)
-            index += 1
-        utils.update(category, sortindex=sortindex)
-        serializer = CategorySerializer(category, context={'request':request})
-        return Response({'result':serializer.data})
 
 
 class TransactionsViewSet(viewsets.ModelViewSet):

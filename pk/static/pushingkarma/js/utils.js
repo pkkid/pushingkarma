@@ -4,6 +4,7 @@
 'use strict';
 
 pk.utils = {
+
   ajax: function(url, data, type) {
     type = type ? type : 'POST';
     var xhr = $.ajax({url:url, data:data, type:type, dataType:'json'});
@@ -101,6 +102,32 @@ pk.utils = {
     var search = opts.search || window.location.search || '';
     if (port) { port = ':'+ port; }
     return pk.utils.format('{0}//{1}{2}{3}{4}', protocol, hostname, port, pathname, search);
+  },
+
+  update_url: function(url, key, value) {
+      var urls = url.split('?');
+      var baseurl = urls[0];
+      var params = '';
+      var outparams = {};
+      value = value != undefined ? encodeURI(value) : value;
+      params = urls.length > 1 ? urls[1] : params;
+      if (params != '') {
+        params = params.split('&');
+        for (key in params) {
+          var keyval = params[key].split('=');
+          var ekey = keyval[0];
+          var evalue = (keyval.length > 1) ? keyval[1] : '';
+          outparams[ekey] = evalue;
+        }
+      }
+      if (value != undefined) { outparams[key] = value; }
+      else { delete outparams[key]; }
+      params = [];
+      for (var key in outparams) {
+        params.push(key + '=' + outparams[key]);
+      }
+      if (params.length == 0) { return baseurl; }
+      return baseurl +'?'+ params.join('&');
   },
 
   //--------------------

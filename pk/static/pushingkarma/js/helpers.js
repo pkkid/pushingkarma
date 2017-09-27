@@ -1194,21 +1194,23 @@ var helpers = {
   },
 
   /**
-   * {{formatDollars}}
+   * {{amountInt}}
    *
-   * Round to the nearest int value and commas to numbers
+   * Round to the nearest int value and add commas to numbers
    * @param {[type]} number [description]
    */
   amountInt: function(amount) {
     return pk.utils.to_amount_int(amount);
-    // amount = Math.round(amount);
-    // return amount.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
   },
 
+  /**
+   * {{amountInt}}
+   *
+   * Round to the nearest 2 decimals and add commas to numbers
+   * @param {[type]} number [description]
+   */
   amountFloat: function(amount) {
     return pk.utils.to_amount_float(amount);
-    // amount = Math.round(amount);
-    // return amount.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
   },
 
  /**
@@ -1606,6 +1608,13 @@ var helpers = {
   decodeURI: function(encodedURI) {
     return decodeURIComponent(encodedURI);
   },
+
+  /**
+   * Return yes or no based on the test
+   */
+  yesNo: function(test, yes, no) {
+    return test ? yes : no;
+  }
 };
 
 for (var helper in helpers) {
