@@ -5,7 +5,7 @@
 #notes {
   @include contentwithsidepanel(300px, 400px);
 
-  .maincontent {
+  #maincontent {
     padding: 20px;
   }
   .notes-item {

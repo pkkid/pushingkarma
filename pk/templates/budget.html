@@ -13,39 +13,39 @@
 {% block content %}
   <div id='budget'>
     <!-- Side Panel -->
-    <div class='sidepanel'>
+    <div id='sidepanel'>
       {# <input class='search' type='text' autofocus='true' value='{{request.GET.search}}' onfocus='this.value = this.value;'/> #}
       {# <div class='search-action' data-toggle='tooltip' data-placement='right' title='View Transactions'><i class='mdi mdi-table'></i></div> #}
-      <div class='sidepanel-content'>
+      <div id='sidepanel-content'>
         <table cellpadding='0' cellspacing='0'>
           <thead><tr>
-            <th class='name left'>Category</th>
-            <th class='trend center'>Trend</th>
-            <th class='budget right'>Budget</th>
+            <th data-name='name'>Category</th>
+            <th data-name='trend' class='center'>Trend</th>
+            <th data-name='budget' class='right'>Budget</th>
           </tr></thead>
           <tbody></tbody>
           <tfoot><tr data-type='category' data-add='true' data-url='/api/categories/'>
-            <td class='name left'><input name='name' type='text' placeholder='New Category' autocomplete='off'></td>
-            <td class='trend center'>&nbsp;</td>
-            <td class='budget right'><input name='budget' type='integer' placeholder='$0' autocomplete='off'></td>
+            <td data-name='name'><input name='name' type='text' placeholder='New Category' autocomplete='off'></td>
+            <td data-name='trend' class='center'>&nbsp;</td>
+            <td data-name='budget' class='right'><input name='budget' type='integer' placeholder='$0' autocomplete='off'></td>
           </tr></tfoot>
         </table>
       </div>
     </div>
     <!-- Note Content -->
-    <div class='maincontent'>
-      <span class='search-icon mdi mdi-magnify'></span>
-      <input class='search' type='text' autofocus='true' value='{{request.GET.search}}' onfocus='this.value=this.value;'/>
+    <div id='maincontent'>
+      <span id='search-icon' class='mdi mdi-magnify'></span>
+      <input id='search' type='text' value='{{request.GET.search}}' autocomplete='off' autofocus='true'/>
       <h2>Transactions</h2>
       <table cellpadding='0' cellspacing='0'>
         <thead><tr>
-          <th class='account'>Bank</th>
-          <th class='date left'>Date</th>
-          <th class='payee left'>Payee</th>
-          <th class='category left'>Category</th>
-          <th class='amount right'>Amount</th>
-          <th class='approved center'>X</th>
-          <th class='comment left'>Comment</th>
+          <th data-name='account'>Bank</th>
+          <th data-name='date'>Date</th>
+          <th data-name='payee'>Payee</th>
+          <th data-name='category'>Category</th>
+          <th data-name='amount' class='right'>Amount</th>
+          <th data-name='approved' class='center'>X</th>
+          <th data-name='comment'>Comment</th>
         </tr></thead>
         <tbody></tbody>
       </table>

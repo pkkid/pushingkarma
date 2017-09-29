@@ -16,7 +16,7 @@
   @include clearfix();
   position: relative;
 
-  .sidepanel {
+  #sidepanel {
     background-color: rgba(0,0,0,0.05);
     border-right: 1px solid rgba(0,0,0,0.1);
     color: #3E3B35;
@@ -24,8 +24,7 @@
     left: 0px;
     position: absolute;
     width: $width;
-    
-    .search { 
+    #search { 
       background-color: rgba(0,0,0,0.05);
       border-width: 0px;
       border-bottom: 1px solid rgba(0,0,0,0.2);
@@ -38,7 +37,7 @@
       position: relative;
       width: 100%;
     }
-    .search-icon {
+    #search-icon {
       font-size: 20px;
       left: 10px;
       line-height: 40px;
@@ -46,7 +45,7 @@
       top: 0px;
       z-index: 1;
     }
-    .search-action {
+    #search-action {
       background-color: rgba(0,0,0,0.1);
       cursor: pointer;
       font-size: 20px;
@@ -60,12 +59,12 @@
       width: 40px;
       &:hover { background-color:rgba(0,0,0,0.2); color:#2E2B25; }
     }
-    .sidepanel-content {
-      overflow-y: auto;
-      height: calc(100% - 42px);
-    }
   }
-  .maincontent {
+  #sidepanel-content {
+    overflow-y: auto;
+    height: calc(100% - 42px);
+  }
+  #maincontent {
     margin-left: $width;
     min-height: $minheight;
   }

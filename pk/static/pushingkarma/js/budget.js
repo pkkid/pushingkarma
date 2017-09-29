@@ -16,19 +16,21 @@ pk.budget = {
     this.xhr = null;            // main actions xhr reference
     this.xhrcat = null;         // categories xhr reference
     this.xhrtrx = null;         // transactions xhr reference
+    this.trxpage = null;        // Last loaded trx page
     this.search = null;         // current search string
     this.init_elements();
     this.init_triggers();
+    this.init_shortcuts();
     this.update_categories();
     this.update_transactions();
   },
 
   init_elements: function() {
-    this.sidepanel = this.container.find('.sidepanel');
-    this.searchinput = this.container.find('.search');
-    this.transactionsbtn = this.container.find('.search-action');
-    this.categorylist = this.container.find('.sidepanel-content');
-    this.maincontent = this.container.find('.maincontent');
+    this.sidepanel = this.container.find('#sidepanel');
+    this.searchinput = this.container.find('#search');
+    this.transactionsbtn = this.container.find('#search-action');
+    this.categorylist = this.container.find('#sidepanel-content');
+    this.maincontent = this.container.find('#maincontent');
   },
 
   init_triggers: function() {
@@ -38,25 +40,31 @@ pk.budget = {
     // search input changes
     this.searchinput.on('change paste keyup', function(event) {
       event.preventDefault();
-      self.update_transactions($(this).val());
+      self.update_transactions();
     });
 
     // edit category or transaction
-    this.container.on('dblclick', 'tbody input', function() {
-      if ($(this).attr('readonly')) {
-        event.preventDefault();
-        self.input_edit($(this));
-      }
+    this.container.on('dblclick', 'td > div', function() {
+      event.preventDefault();
+      self.td_edit($(this).closest('td'));
     });
     this.container.on('blur', 'tbody input', function() {
-      if (!$(this).attr('readonly')) {
-        event.preventDefault();
+      event.preventDefault();
+      var input = $(this);
+      if (!input.val() && input.data('empty')) {
+        self[input.data('empty')](input);
+      } else {
+        self.input_save(input);
+      }
+    });
+
+    // create category when pressing enter on footer inputs
+    this.categorylist.on('keydown', 'tfoot input', function(event) {
+      if (event.keyCode == KEYS.ENTER) {
         var input = $(this);
-        if (!input.val() && input.data('empty')) {
-          self[input.data('empty')](input);
-        } else {
-          self.input_save(input);
-        }
+        var inputs = input.closest('tr').find('input');
+        self.input_save(input);
+        inputs.val('').first().focus();
       }
     });
 
@@ -69,16 +77,26 @@ pk.budget = {
       }
     });
 
+    // load more transactions if user scrolls near bottom
+    setInterval(function() {
+       var bottom = $(document).height() - $(window).scrollTop() - $(window).height();
+       if (bottom < 100 && self.maincontent.find('#loadmore').length) {
+          self.update_transactions(true);
+       }
+    }, 2000);
+  },
+
+  init_shortcuts: function() {
     // update budget items on enter
     this.container.on('keydown', 'tbody input', function(event) {
       var watchedkey = _.valuesIn(KEYS).indexOf(event.keyCode) >= 0;
-      if (!$(this).attr('readonly') && watchedkey) {
-        var input = $(this);
-        // enter and down select input on next row
+      if (watchedkey) {
+        var td = $(this).closest('td');
+        // enter and down select td on next row
         if (event.keyCode == KEYS.ENTER || event.keyCode == KEYS.DOWN) {
           event.preventDefault();
-          var row = input.closest('tr');
-          var name = input.attr('name');
+          var row = td.closest('tr');
+          var name = td.attr('name');
           var next = row.next().find('input[name='+name+']');
         // up selects input on prev row
         } else if (event.keyCode == KEYS.UP) {
@@ -103,20 +121,10 @@ pk.budget = {
         }
         // edit next input or blur current
         if (next !== undefined && next.length) {
-          self.input_edit(next);
+          self.td_edit(next);
         } else {
           input.blur();
         }
-      }
-    });
-
-    // create category when pressing enter on footer inputs
-    this.categorylist.on('keydown', 'tfoot input', function(event) {
-      if (event.keyCode == KEYS.ENTER) {
-        var input = $(this);
-        var inputs = input.closest('tr').find('input');
-        self.input_save(input);
-        inputs.val('').first().focus();
       }
     });
   },
@@ -179,18 +187,21 @@ pk.budget = {
     }
   },
 
-  input_edit: function(input) {
-    input.focus().attr('readonly', false);
-    if (!input.hasClass('error')) {
-      switch (input.data('display')) {
-        case 'int': input.val(pk.utils.to_int(input.val())); break;
-        case 'float': input.val(pk.utils.to_float(input.val())); break;
-      }
+  td_edit: function(td) {
+    if (td.hasClass('readonly')) { return; }
+    // replace div with input
+    var input = $('<input type="text" />').val(td.text());
+    td.addClass('editing').html(input);
+    input.focus();
+    if (!td.hasClass('error')) {
+      var display = td.data('display');
+      if (display == 'int') { input.val(pk.utils.to_int(input.val())); }
+      if (display == 'float') { input.val(pk.utils.to_float(input.val())); }
     }
-    input.data('init', input.val());
+    td.data('init', input.val());
     setTimeout(function() {
       var end = input.val().length * 2;
-      var start = input.data('selectall') ? 0 : end;
+      var start = td.hasClass('selectall') ? 0 : end;
       input.get(0).setSelectionRange(start, end);
     }, 10);
   },
@@ -238,52 +249,95 @@ pk.budget = {
   update_categories: function() {
     var self = this;
     var url = '/api/categories/';
-    if (this.xhrcat) { this.xhrcat.abort(); }
+    try { this.xhrtrx.abort(); } catch(err) { }
     this.xhrcat = $.ajax({url:url, type:'GET', dataType:'json'});
     this.xhrcat.done(function(data, textStatus, jqXHR) {
-      var ctx = {categories:data.results};
-      var html = self.templates.listcategories(ctx);
+      var html = self.templates.listcategories(data);
       self.categorylist.find('tbody').html(html);
     });
   },
 
-  update_transactions: function(search) {
+  update_transactions: function(nextpage) {
     var self = this;
-    var url = '/api/transactions/';
-    if (this.xhrtrx) { this.xhrtrx.abort(); }
-    var url = search ? pk.utils.update_url(url, 'search', search) : url;
-    this.xhrtrx = $.ajax({url:url, type:'GET', dataType:'json'});
-    this.xhrtrx.done(function(data, textStatus, jqXHR) {
-      var ctx = {items:data.results};
-      var html = self.templates.listtransactions(ctx);
-      self.maincontent.find('tbody').html(html);
-    });
+    if (!nextpage) {
+      self.trxpage = null;
+      var loadmore = null;
+      var url = '/api/transactions/';
+      var search = this.searchinput.val();
+      url = search ? pk.utils.update_url(url, 'search', search) : url;
+    } else {
+      var loadmore = this.maincontent.find('#loadmore');
+      var url = loadmore.data('next');
+      loadmore.addClass('on');
+    }
+    if (self.trxpage != url) {
+      self.trxpage = url;
+      try { this.xhrtrx.abort(); } catch(err) { }
+      this.xhrtrx = $.ajax({url:url, type:'GET', dataType:'json'});
+      this.xhrtrx.done(function(data, textStatus, jqXHR) {
+        if (loadmore) { loadmore.remove(); }
+        var html = self.templates.listtransactions(data);
+        self.maincontent.find('tbody').append(html);
+      });
+    }
   },
 
+  // data attributes that affect ttd element behavior:
+  //   data-id: ID of the item being displayed.
+  //   data-type: category or transaction of item being displayed.
+  //   data-name: name of the model field td corresponds to.
+  //   data-display: int or float currency representaion.
+  //   data-url: API url to use when editing item.
+  //   selectall (class): Select all content when initializing edit.
+  //   readonly (class): Do not allow editing this item.
   templates: {
     listcategories: Handlebars.compile([
-      '{{#each this.categories}}',
+      '{{#each this.results}}',
       '  <tr data-id="{{this.id}}" data-type="category" data-url="{{this.url}}">',
-      '    <td class="name"><input name="name" type="text" value="{{this.name}}" autocomplete="off" readonly="readonly" data-empty="input_delete"></td>',
-      '    <td class="trend">&nbsp;</td>',
-      '    <td class="budget right"><input name="budget" data-display="int" type="text" value="{{amountInt this.budget}}" autocomplete="off" readonly="readonly"></td>',
+      '    <td data-name="name"><div>{{this.name}}</div></td>',
+      '    <td data-name="trend"><div>&nbsp;</div></td>',
+      '    <td data-name="budget" class="right"><div>{{amountInt this.budget}}</div></td>',
       '  </tr>',
       '{{/each}}',
     ].join('\n')),
 
     listtransactions: Handlebars.compile([
-      '{{#each this.items}}',
+      '{{#each this.results}}',
       '  <tr id="{{this.id}}" data-type="transaction" data-bankid="{{this.bankid}}" data-url="{{this.url}}">',
-      '    <td class="account">{{this.account}}</td>',
-      '    <td class="date"><input name="date" type="text" value="{{this.date}}" autocomplete="off" readonly="readonly"></td>',
-      '    <td class="payee"><input name="payee" type="text" value="{{this.payee}}" autocomplete="off" readonly="readonly"></td>',
-      '    <td class="category"><input name="category" type="text" value="{{this.category.name}}" autocomplete="off" readonly="readonly"></td>',
-      '    <td class="amount right"><input name="amount" data-display="float" type="text" value="{{amountFloat this.amount}}" autocomplete="off" readonly="readonly"></td>',
-      '    <td class="approved center"><input name="approved" data-display="bool" data-selectall="true" type="text" value="{{yesNo this.approved \'x\' \'\'}}" autocomplete="off" readonly="readonly"></td>',
-      '    <td class="comment"><input name="comment" type="text" value="{{this.comment}}" autocomplete="off" readonly="readonly"></td>',
+      '    <td data-name="account" class="readonly"><div>{{this.account}}</div></td>',
+      '    <td data-name="date"><div>{{this.date}}</div></td>',
+      '    <td data-name="payee"><div>{{this.payee}}</div></td>',
+      '    <td data-name="category"><div>{{this.category.name}}</div></td>',
+      '    <td data-name="amount" class="right"><div>{{amountFloat this.amount}}</div></td>',
+      '    <td data-name="approved" class="center selectall"><div>{{yesNo this.approved \'x\' \'\'}}</div></td>',
+      '    <td data-name="comment"><div>{{this.comment}}</div></td>',
       '  </tr>',
       '{{/each}}',
+      '{{#if this.next}}',
+      '  <tr id="loadmore" data-next="{{this.next}}">',
+      '    <td colspan="100%"><span class="spinner on"></span></td>',
+      '  </tr>',
+      '{{/if}}',
     ].join('\n')),
+
+    // listtransactions: Handlebars.compile([
+    //   '{{#each this.results}}',
+    //   '  <tr id="{{this.id}}" data-type="transaction" data-bankid="{{this.bankid}}" data-url="{{this.url}}">',
+    //   '    <td class="account">{{this.account}}</td>',
+    //   '    <td class="date"><input name="date" type="text" value="{{this.date}}" autocomplete="off" readonly="readonly"></td>',
+    //   '    <td class="payee"><input name="payee" type="text" value="{{this.payee}}" autocomplete="off" readonly="readonly"></td>',
+    //   '    <td class="category"><input name="category" type="text" value="{{this.category.name}}" autocomplete="off" readonly="readonly"></td>',
+    //   '    <td class="amount right"><input name="amount" data-display="float" type="text" value="{{amountFloat this.amount}}" autocomplete="off" readonly="readonly"></td>',
+    //   '    <td class="approved center"><input name="approved" data-display="bool" data-selectall="true" type="text" value="{{yesNo this.approved \'x\' \'\'}}" autocomplete="off" readonly="readonly"></td>',
+    //   '    <td class="comment"><input name="comment" type="text" value="{{this.comment}}" autocomplete="off" readonly="readonly"></td>',
+    //   '  </tr>',
+    //   '{{/each}}',
+    //   '{{#if this.next}}',
+    //   '  <tr id="loadmore" data-next="{{this.next}}">',
+    //   '    <td colspan="100%"><span class="spinner on"></span></td>',
+    //   '  </tr>',
+    //   '{{/if}}',
+    // ].join('\n')),
   },
 
 };

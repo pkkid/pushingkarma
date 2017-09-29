@@ -23,16 +23,16 @@
 {% block content %}
   <div id='notes'>
     <!-- Side Panel -->
-    <div class='sidepanel'>
-      <span class='search-icon mdi mdi-magnify'></span>
-      <input class='search' type='text' autofocus='true' value='{{request.GET.search}}' onfocus='this.value=this.value;'/>
+    <div id='sidepanel'>
+      <span id='search-icon' class='mdi mdi-magnify'></span>
+      <input id='search' type='text' autofocus='true' value='{{request.GET.search}}' onfocus='this.value=this.value;' autocomplete='off' />
       {% if user.is_authenticated %}
-        <div class='search-action' data-toggle='tooltip' data-placement='right' title='Add New Note'><i class='mdi mdi-plus'></i></div>
+        <div id='search-action' data-toggle='tooltip' data-placement='right' title='Add New Note'><i class='mdi mdi-plus'></i></div>
       {% endif %}
-      <div class='sidepanel-content'></div>
+      <div id='sidepanel-content'></div>
     </div>
     <!-- Note Content -->
-    <div class='maincontent'>
+    <div id='maincontent'>
       <article class='note'>
         <h2>{{note.title}}</h2>
         {{note.html|safe}}

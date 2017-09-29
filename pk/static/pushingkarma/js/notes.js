@@ -21,10 +21,10 @@ pk.notes = {
   },
   
   init_elements: function() {
-    this.sidepanel = this.container.find('.sidepanel');
-    this.searchinput = this.container.find('.search');
-    this.addnote = this.container.find('.search-action');
-    this.notelist = this.container.find('.sidepanel-content');
+    this.sidepanel = this.container.find('#sidepanel');
+    this.searchinput = this.container.find('#search');
+    this.addnote = this.container.find('#search-action');
+    this.notelist = this.container.find('#sidepanel-content');
   },
   
   init_triggers: function() {
@@ -84,7 +84,7 @@ pk.notes = {
   update_list: function(search, noteid) {
     var self = this;
     if (search == this.search) { return; }
-    if (this.xhr) { this.xhr.abort(); }
+    try { this.xhr.abort(); } catch(err) { }
     var url = search ? this.APIROOT +'?search='+ encodeURIComponent(search) : this.APIROOT;
     this.xhr = $.ajax({url:url, type:'GET', dataType:'json'});
     this.xhr.done(function(data, textStatus, jqXHR) {
