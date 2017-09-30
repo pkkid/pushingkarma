@@ -106,28 +106,28 @@ pk.budget = {
         if (event.keyCode == KEYS.ENTER || event.keyCode == KEYS.DOWN) {
           event.preventDefault();
           var row = td.closest('tr');
-          var name = td.attr('name');
-          var next = row.next().find('input[name='+name+']');
+          var name = td.data('name');
+          var next = row.next().find('td[data-name='+name+']');
         // up selects input on prev row
         } else if (event.keyCode == KEYS.UP) {
           event.preventDefault();
-          var row = input.closest('tr');
-          var name = input.attr('name');
-          var next = row.prev().find('input[name='+name+']');
+          var row = td.closest('tr');
+          var name = td.data('name');
+          var next = row.prev().find('td[data-name='+name+']');
         // shift + tab selects previous input in full table
         } else if (event.shiftKey && event.keyCode == KEYS.TAB) {
           event.preventDefault();
-          var all = input.closest('tbody').find(':input');
-          var next = all.eq(all.index(this) - 1);
+          var all = td.closest('tbody').find('td:not(.readonly)');
+          var next = all.eq(all.index(td) - 1);
         // tab selects next input in full table
         } else if (event.keyCode == KEYS.TAB) {
           event.preventDefault();
-          var all = input.closest('tbody').find(':input');
-          var next = all.eq(all.index(this) + 1);
+          var all = td.closest('tbody').find('td:not(.readonly)');
+          var next = all.eq(all.index(td) + 1);
         // esc reverts back to init value and stops editing
         } else if (event.keyCode == KEYS.ESC) {
-          var init = input.data('init');
-          self.input_display(input, init);
+          // var init = td.data('init');
+          // self.td_display(td, init);
         }
         // edit next input or blur current
         if (next !== undefined && next.length) {
@@ -163,9 +163,6 @@ pk.budget = {
   },
 
   text_or_val: function(elem) {
-    // console.log('---');
-    // console.log(elem);
-    // console.log(elem.children().is('input'));
     var child = elem.children().first();
     return child.is('input') ? child.val().trim() : child.text().trim();
   },
