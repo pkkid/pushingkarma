@@ -36,44 +36,41 @@ pk.budget = {
   init_triggers: function() {
     var self = this;
     var KEYS = this.KEYS;
-
-    // search input changes
+    // update transactions when search input changes
     this.searchinput.on('change paste keyup', function(event) {
       event.preventDefault();
       self.update_transactions();
     });
-
-    // edit category or transaction
-    this.container.on('dblclick', 'td > div', function(event) {
+    // edit category or transaction on dblclick
+    this.container.on('dblclick', 'tbody td > div', function(event) {
       event.preventDefault();
       self.td_edit($(this).closest('td'));
     });
-    this.container.on('blur', 'td > input', function(event) {
+    // save category or transaction on blur
+    this.container.on('blur', 'tbody td > input', function(event) {
       event.preventDefault();
       var input = $(this);
       var td = input.closest('td');
-      if (!input.val() && input.hasClass('delempty')) {
+      if (input.hasClass('nosave')) { return; }
+      if (td.hasClass('delempty') && !input.val()) {
         self.td_delete(td);
       } else {
         self.td_save(td);
       }
     });
-
     // prevent selectall on dblclick
     this.container.on('mousedown', 'td > div', function(event) {
       event.preventDefault();
     });
-
     // create category when pressing enter on footer inputs
     this.categorylist.on('keydown', 'tfoot input', function(event) {
       if (event.keyCode == KEYS.ENTER) {
-        var input = $(this);
-        var inputs = input.closest('tr').find('input');
-        self.input_save(input);
-        inputs.val('').first().focus();
+        var td = $(this).closest('td');
+        var row = td.closest('tr');
+        self.td_save(td);
+        row.find('input').val('').first().focus();
       }
     });
-
     // drag and drop categories
     this.categorylist.find('tbody').sortable({
       axis:'y', delay:150, handle:'.trend',
@@ -82,7 +79,6 @@ pk.budget = {
         self.input_save(input);
       }
     });
-
     // load more transactions if user scrolls near bottom
     setInterval(function() {
        var bottom = $(document).height() - $(window).scrollTop() - $(window).height();
@@ -95,7 +91,6 @@ pk.budget = {
   init_shortcuts: function() {
     var self = this;
     var KEYS = this.KEYS;
-
     // update budget items on enter
     this.container.on('keydown', 'tbody input', function(event) {
       var input = $(this);
@@ -108,44 +103,45 @@ pk.budget = {
           var row = td.closest('tr');
           var name = td.data('name');
           var next = row.next().find('td[data-name='+name+']');
+          self.td_edit(next);
         // up selects input on prev row
         } else if (event.keyCode == KEYS.UP) {
           event.preventDefault();
           var row = td.closest('tr');
           var name = td.data('name');
           var next = row.prev().find('td[data-name='+name+']');
+          self.td_edit(next);
         // shift + tab selects previous input in full table
         } else if (event.shiftKey && event.keyCode == KEYS.TAB) {
           event.preventDefault();
           var all = td.closest('tbody').find('td:not(.readonly)');
           var next = all.eq(all.index(td) - 1);
+          self.td_edit(next);
         // tab selects next input in full table
         } else if (event.keyCode == KEYS.TAB) {
           event.preventDefault();
           var all = td.closest('tbody').find('td:not(.readonly)');
           var next = all.eq(all.index(td) + 1);
+          self.td_edit(next);
         // esc reverts back to init value and stops editing
         } else if (event.keyCode == KEYS.ESC) {
-          // var init = td.data('init');
-          // self.td_display(td, init);
-        }
-        // edit next input or blur current
-        if (next !== undefined && next.length) {
-          self.td_edit(next);
-        } else {
-          input.blur();
+          event.preventDefault();
+          input.addClass('nosave');
+          return self.td_display(td, td.data('init'));
         }
       }
     });
   },
 
   data_category: function(row) {
-    return {
+    var data = {
       id: row.attr('id').replace('category-', ''),
       name: this.text_or_val(row.find('[data-name=name]')),
-      budget: pk.utils.to_float(this.text_or_val(row.find('[data-name=budget]'))),
-      sortindex: row.data('add') ? null : row.index(),
+      budget: this.text_or_val(row.find('[data-name=budget]')),
+      sortindex: row.attr('id') == 'category-add' ? null : row.index(),
     };
+    data.id = data.id == 'add' ? null : data.id;
+    return data;
   },
 
   data_transaction: function(row) {
@@ -162,38 +158,44 @@ pk.budget = {
     }
   },
 
-  text_or_val: function(elem) {
-    var child = elem.children().first();
-    return child.is('input') ? child.val().trim() : child.text().trim();
+  text_or_val: function(td) {
+    var child = td.children().first();
+    var value = child.is('input') ? child.val().trim() : child.text().trim();
+    if ((value == '') && (td.data('default') !== undefined)) {
+      value = td.data('default');
+    }
+    return value;
   },
 
-  td_delete: function(input) {
+  td_delete: function(td) {
     var self = this;
-    var row = input.closest('tr');
+    var row = td.closest('tr');
     var type = row.attr('id').split('-')[0];
     $.confirm({
       backgroundDismiss: true,
       cancelButton: 'Cancel',
       columnClass: 'col-6',
       confirmButton: 'Delete It',
-      content: "Are you sure you wish to delete the "+ type +" '"+ input.data('init') +"?'",
+      content: "Are you sure you wish to delete the "+ type +" '"+ td.data('init') +"?'",
       keyboardEnabled: true,
       title: 'Delete '+ _.startCase(type) +'?',
       confirm: function() {
         var url = row.data('url');
-        self.request(input, url, 'DELETE', null, function(data) {
-          input.closest('tr').remove();
+        self.request(td, url, 'DELETE', null, {
+          done: function(data) { row.remove(); },
         });
       },
       cancel: function() {
-        var init = input.data('init');
-        self.input_display(input, init);
+        self.td_display(td, td.data('init'));
       }
     });
   },
 
   td_display: function(td, value) {
     var div = $('<div></div>');
+    if (td.hasClass('error')) {
+      return td.html(div.text(value));
+    }
     switch (td.data('display')) {
       case 'int': div.text(pk.utils.to_amount_int(value)); break;
       case 'float': div.text(pk.utils.to_amount_float(value)); break;
@@ -205,16 +207,20 @@ pk.budget = {
 
   td_edit: function(td) {
     if (td.hasClass('readonly')) { return; }
-    // replace div with input
+    // create input and format value
     var div = td.find('div');
-    var input = $('<input type="text" />').val(td.text());
-    if (!td.hasClass('error')) {
-      var display = td.data('display');
-      if (display == 'int') { input.val(pk.utils.to_int(div.text())); }
-      if (display == 'float') { input.val(pk.utils.to_float(div.text())); }
+    var input = $('<input type="text" />');
+    if (td.hasClass('error')) {
+      input.val(td.text());
+    } else {
+      switch (td.data('display')) {
+        case 'int': input.val(pk.utils.to_int(div.text())); break;
+        case 'float': input.val(pk.utils.to_float(div.text())); break;
+        default: input.val(div.text()); break;
+      }
     }
-    td.data('init', input.val());
-    td.addClass('editing').html(input);
+    // repalce div with input and set focus
+    td.data('init', input.val()).html(input);
     input.focus();
     setTimeout(function() {
       var end = input.val().length * 2;
@@ -225,45 +231,49 @@ pk.budget = {
 
   td_save: function(td) {
     var self = this;
+    var input = td.find('input');
     var row = td.closest('tr');
     var type = row.attr('id').split('-')[0];
-    var input = td.find('input');
+    var add = row.attr('id') == 'category-add';
     // do nothing if the value is unchanged
     if (td.data('init') == input.val() && !td.hasClass('error')) {
       return self.td_display(td, input.val());
     }
     // save the new value to the database
-    td.addClass('saving');
     var data = this['data_'+ type](row);
     var url = row.data('url');
     var method = data.id ? 'PUT' : 'POST';
-    self.request(td, url, method, data, function(data) {
-      if (row.data('add')) {
-        self.update_categories();
-      } else {
-        //self.td_display(td, data[td.data('name')]);
+    var xhr = self.request(td, url, method, data, {
+      done: function(data, textStatus, jqXHR) {
+        if (add) { return self.update_categories(); }
+        self.td_display(td, data[td.data('name')]);
+      },
+      fail: function(jqXHR, textStatus, errorThrown) {
+        if (add) { return; }
+        self.td_display(td, data[td.data('name')]);
       }
     });
   },
-  
-  request: function(td, url, method, data, callback) {
+
+  request: function(td, url, method, data, opts) {
+    td.addClass('saving');
     var row = td.closest('tr');
     var xhr = $.ajax({url:url, type:method, data:data, dataType:'json'});
-    xhr.always(function() {
-      setTimeout(function() { td.removeClass('saving'); }, 500);
-    });
     xhr.done(function(data, textStatus, jqXHR) {
+      setTimeout(function() { td.removeClass('saving'); }, 500);
       td.removeClass('error');
       row.removeData('errors');
-      callback(data, textStatus, jqXHR);
+      if (opts.done) { opts.done(data, textStatus, jqXHR); }
     });
     xhr.fail(function(jqXHR, textStatus, errorThrown) {
+      td.removeClass('saving');
       td.addClass('error');
       row.data('errors', jqXHR.responseJSON);
+      if (opts.fail) { opts.fail(jqXHR, textStatus, errorThrown); }
     });
     xhr.always(function() {
-      self.td_display(td, data[td.data('name')]);
-    })
+      if (opts.always) { opts.always(); }
+    });
     return xhr;
   },
  
@@ -307,6 +317,7 @@ pk.budget = {
   //   data-id: ID of the item being displayed.
   //   data-type: category or transaction of item being displayed.
   //   data-name: name of the model field td corresponds to.
+  //   data-default: default value if left blank.
   //   data-display: int or float currency representaion.
   //   data-url: API url to use when editing item.
   //   selectall (class): Select all content when initializing edit.
@@ -317,7 +328,7 @@ pk.budget = {
       '{{#each this.results}}',
       '  <tr id="category-{{this.id}}" data-type="category" data-url="{{this.url}}">',
       '    <td data-name="name" class="delempty"><div>{{this.name}}</div></td>',
-      '    <td data-name="trend"><div>&nbsp;</div></td>',
+      '    <td data-name="trend" class="readonly"><div>&nbsp;</div></td>',
       '    <td data-name="budget" data-display="int" class="right"><div>{{amountInt this.budget}}</div></td>',
       '  </tr>',
       '{{/each}}',
@@ -341,25 +352,6 @@ pk.budget = {
       '  </tr>',
       '{{/if}}',
     ].join('\n')),
-
-    // listtransactions: Handlebars.compile([
-    //   '{{#each this.results}}',
-    //   '  <tr id="{{this.id}}" data-type="transaction" data-bankid="{{this.bankid}}" data-url="{{this.url}}">',
-    //   '    <td class="account">{{this.account}}</td>',
-    //   '    <td class="date"><input name="date" type="text" value="{{this.date}}" autocomplete="off" readonly="readonly"></td>',
-    //   '    <td class="payee"><input name="payee" type="text" value="{{this.payee}}" autocomplete="off" readonly="readonly"></td>',
-    //   '    <td class="category"><input name="category" type="text" value="{{this.category.name}}" autocomplete="off" readonly="readonly"></td>',
-    //   '    <td class="amount right"><input name="amount" data-display="float" type="text" value="{{amountFloat this.amount}}" autocomplete="off" readonly="readonly"></td>',
-    //   '    <td class="approved center"><input name="approved" data-display="bool" data-selectall="true" type="text" value="{{yesNo this.approved \'x\' \'\'}}" autocomplete="off" readonly="readonly"></td>',
-    //   '    <td class="comment"><input name="comment" type="text" value="{{this.comment}}" autocomplete="off" readonly="readonly"></td>',
-    //   '  </tr>',
-    //   '{{/each}}',
-    //   '{{#if this.next}}',
-    //   '  <tr id="loadmore" data-next="{{this.next}}">',
-    //   '    <td colspan="100%"><span class="spinner on"></span></td>',
-    //   '  </tr>',
-    //   '{{/if}}',
-    // ].join('\n')),
   },
 
 };

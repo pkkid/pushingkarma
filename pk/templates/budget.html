@@ -24,10 +24,10 @@
             <th data-name='budget' class='right'>Budget</th>
           </tr></thead>
           <tbody></tbody>
-          <tfoot><tr data-type='category' data-add='true' data-url='/api/categories/'>
+          <tfoot><tr id='category-add' data-add='true' data-url='/api/categories/'>
             <td data-name='name'><input name='name' type='text' placeholder='New Category' autocomplete='off'></td>
             <td data-name='trend' class='center'>&nbsp;</td>
-            <td data-name='budget' class='right'><input name='budget' type='integer' placeholder='$0' autocomplete='off'></td>
+            <td data-name='budget' class='right' data-default='0'><input name='budget' type='integer' placeholder='$0' autocomplete='off'></td>
           </tr></tfoot>
         </table>
       </div>

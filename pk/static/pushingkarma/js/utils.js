@@ -142,9 +142,7 @@ pk.utils = {
   },
 
   to_int: function(value) {
-    console.log(value);
     value = value.replace('$', '').replace(',', '');
-    console.log(value);
     return pk.utils.round(value, 0)
   },
 
