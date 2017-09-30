@@ -4,9 +4,9 @@
 'use strict';
 
 pk.budget = {
-  API_CATEGORIES: '/api/categories/',
-  API_TRANSACTIONS: '/api/transactions/',
   BUDGET_SELECTOR: '#budget',
+  LOADMORE_INTERVAL: 100,
+  LOADMORE_DISTANCE: 200,
   KEYS: {TAB:9, ENTER:13, ESC:27, UP:38, DOWN:40},
   
   init: function(selector) {
@@ -82,10 +82,10 @@ pk.budget = {
     // load more transactions if user scrolls near bottom
     setInterval(function() {
        var bottom = $(document).height() - $(window).scrollTop() - $(window).height();
-       if (bottom < 100 && self.maincontent.find('#loadmore').length) {
+       if (bottom < self.LOADMORE_DISTANCE && self.maincontent.find('#transactions-more').length) {
           self.update_transactions(true);
        }
-    }, 2000);
+    }, self.LOADMORE_INTERVAL);
   },
 
   init_shortcuts: function() {
@@ -103,26 +103,28 @@ pk.budget = {
           var row = td.closest('tr');
           var name = td.data('name');
           var next = row.next().find('td[data-name='+name+']');
-          self.td_edit(next);
+          next.length ? self.td_edit(next) : input.blur();
         // up selects input on prev row
         } else if (event.keyCode == KEYS.UP) {
           event.preventDefault();
           var row = td.closest('tr');
           var name = td.data('name');
           var next = row.prev().find('td[data-name='+name+']');
-          self.td_edit(next);
+          next.length ? self.td_edit(next) : input.blur();
         // shift + tab selects previous input in full table
         } else if (event.shiftKey && event.keyCode == KEYS.TAB) {
           event.preventDefault();
           var all = td.closest('tbody').find('td:not(.readonly)');
-          var next = all.eq(all.index(td) - 1);
-          self.td_edit(next);
+          var index = all.index(td) - 1;
+          var next = index >= 0 ? all.eq(index) : null;
+          next.length ? self.td_edit(next) : input.blur();
         // tab selects next input in full table
         } else if (event.keyCode == KEYS.TAB) {
           event.preventDefault();
           var all = td.closest('tbody').find('td:not(.readonly)');
-          var next = all.eq(all.index(td) + 1);
-          self.td_edit(next);
+          var index = all.index(td) + 1
+          var next = all.eq(index);
+          next.length ? self.td_edit(next) : input.blur();
         // esc reverts back to init value and stops editing
         } else if (event.keyCode == KEYS.ESC) {
           event.preventDefault();
@@ -288,27 +290,29 @@ pk.budget = {
     });
   },
 
-  update_transactions: function(nextpage) {
+  update_transactions: function(page) {
     var self = this;
-    if (!nextpage) {
+    if (!page) {
       self.trxpage = null;
-      var loadmore = null;
+      var more = null;
       var url = '/api/transactions/';
       var search = this.searchinput.val();
       url = search ? pk.utils.update_url(url, 'search', search) : url;
     } else {
-      var loadmore = this.maincontent.find('#loadmore');
-      var url = loadmore.data('next');
-      loadmore.addClass('on');
+      var more = this.maincontent.find('#transactions-more');
+      var url = more.data('next');
+      more.addClass('on');
     }
     if (self.trxpage != url) {
       self.trxpage = url;
       try { this.xhrtrx.abort(); } catch(err) { }
       this.xhrtrx = $.ajax({url:url, type:'GET', dataType:'json'});
       this.xhrtrx.done(function(data, textStatus, jqXHR) {
-        if (loadmore) { loadmore.remove(); }
+        if (more) { more.remove(); }
         var html = self.templates.listtransactions(data);
-        self.maincontent.find('tbody').append(html);
+        var tbody = self.maincontent.find('tbody');
+        data.previous ? tbody.append(html) : tbody.html(html);
+        //self.maincontent.find('tbody').append(html);
       });
     }
   },
@@ -342,12 +346,12 @@ pk.budget = {
       '    <td data-name="payee"><div>{{this.payee}}</div></td>',
       '    <td data-name="category"><div>{{this.category.name}}</div></td>',
       '    <td data-name="amount" data-display="float" class="right"><div>{{amountFloat this.amount}}</div></td>',
-      '    <td data-name="approved" class="center selectall"><div>{{yesNo this.approved \'x\' \'\'}}</div></td>',
+      '    <td data-name="approved" data-display="bool" class="center selectall"><div>{{yesNo this.approved \'x\' \'\'}}</div></td>',
       '    <td data-name="comment"><div>{{this.comment}}</div></td>',
       '  </tr>',
       '{{/each}}',
       '{{#if this.next}}',
-      '  <tr id="loadmore" data-next="{{this.next}}">',
+      '  <tr id="transactions-more" data-next="{{this.next}}">',
       '    <td colspan="100%"><span class="spinner on"></span></td>',
       '  </tr>',
       '{{/if}}',
