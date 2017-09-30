@@ -44,18 +44,24 @@ pk.budget = {
     });
 
     // edit category or transaction
-    this.container.on('dblclick', 'td > div', function() {
+    this.container.on('dblclick', 'td > div', function(event) {
       event.preventDefault();
       self.td_edit($(this).closest('td'));
     });
-    this.container.on('blur', 'tbody input', function() {
+    this.container.on('blur', 'td > input', function(event) {
       event.preventDefault();
       var input = $(this);
-      if (!input.val() && input.data('empty')) {
-        self[input.data('empty')](input);
+      var td = input.closest('td');
+      if (!input.val() && input.hasClass('delempty')) {
+        self.td_delete(td);
       } else {
-        self.input_save(input);
+        self.td_save(td);
       }
+    });
+
+    // prevent selectall on dblclick
+    this.container.on('mousedown', 'td > div', function(event) {
+      event.preventDefault();
     });
 
     // create category when pressing enter on footer inputs
@@ -87,11 +93,15 @@ pk.budget = {
   },
 
   init_shortcuts: function() {
+    var self = this;
+    var KEYS = this.KEYS;
+
     // update budget items on enter
     this.container.on('keydown', 'tbody input', function(event) {
+      var input = $(this);
       var watchedkey = _.valuesIn(KEYS).indexOf(event.keyCode) >= 0;
       if (watchedkey) {
-        var td = $(this).closest('td');
+        var td = input.closest('td');
         // enter and down select td on next row
         if (event.keyCode == KEYS.ENTER || event.keyCode == KEYS.DOWN) {
           event.preventDefault();
@@ -131,31 +141,39 @@ pk.budget = {
 
   data_category: function(row) {
     return {
-      id: row.data('id'),
-      name: row.find('input[name=name]').val(),
-      budget: pk.utils.to_float(row.find('input[name=budget]').val()),
+      id: row.attr('id').replace('category-', ''),
+      name: this.text_or_val(row.find('[data-name=name]')),
+      budget: pk.utils.to_float(this.text_or_val(row.find('[data-name=budget]'))),
       sortindex: row.data('add') ? null : row.index(),
     };
   },
 
   data_transaction: function(row) {
     return {
-      id: row.attr('id'),
+      id: row.attr('id').replace('transaction-'),
       bankid: row.data('bankid'),
-      account: row.find('td.account').text(),
-      date: row.find('input[name=date]').val(),
-      payee: row.find('input[name=payee]').val(),
-      category: row.find('input[name=category]').val(),
-      amount: pk.utils.to_float(row.find('input[name=amount]').val()),
-      approved: row.find('input[name=approved]').val() == 'x',
-      comment: row.find('input[name=comment]').val(),
+      account: this.text_or_val(row.find('[data-name=account]')),
+      date: this.text_or_val(row.find('[data-name=date]')),
+      payee: this.text_or_val(row.find('[data-name=payee]')),
+      category: this.text_or_val(row.find('[data-name=category]')),
+      amount: pk.utils.to_float(this.text_or_val(row.find('[data-name=amount]'))),
+      approved: this.text_or_val(row.find('[data-name=approved]')) == 'x',
+      comment: this.text_or_val(row.find('[data-name=comment]')),
     }
   },
 
-  input_delete: function(input) {
+  text_or_val: function(elem) {
+    // console.log('---');
+    // console.log(elem);
+    // console.log(elem.children().is('input'));
+    var child = elem.children().first();
+    return child.is('input') ? child.val().trim() : child.text().trim();
+  },
+
+  td_delete: function(input) {
     var self = this;
     var row = input.closest('tr');
-    var type = row.data('type');
+    var type = row.attr('id').split('-')[0];
     $.confirm({
       backgroundDismiss: true,
       cancelButton: 'Cancel',
@@ -177,28 +195,30 @@ pk.budget = {
     });
   },
 
-  input_display: function(input, value) {
-    input.attr('readonly', true);
-    switch (input.data('display')) {
-      case 'int': input.val(pk.utils.to_amount_int(value)); break;
-      case 'float': input.val(pk.utils.to_amount_float(value)); break;
-      case 'bool': input.val(value ? 'x' : ''); break;
-      default: input.val(value); break;
+  td_display: function(td, value) {
+    var div = $('<div></div>');
+    switch (td.data('display')) {
+      case 'int': div.text(pk.utils.to_amount_int(value)); break;
+      case 'float': div.text(pk.utils.to_amount_float(value)); break;
+      case 'bool': div.text(value ? 'x' : ''); break;
+      default: div.text(value); break;
     }
+    td.html(div);
   },
 
   td_edit: function(td) {
     if (td.hasClass('readonly')) { return; }
     // replace div with input
+    var div = td.find('div');
     var input = $('<input type="text" />').val(td.text());
-    td.addClass('editing').html(input);
-    input.focus();
     if (!td.hasClass('error')) {
       var display = td.data('display');
-      if (display == 'int') { input.val(pk.utils.to_int(input.val())); }
-      if (display == 'float') { input.val(pk.utils.to_float(input.val())); }
+      if (display == 'int') { input.val(pk.utils.to_int(div.text())); }
+      if (display == 'float') { input.val(pk.utils.to_float(div.text())); }
     }
     td.data('init', input.val());
+    td.addClass('editing').html(input);
+    input.focus();
     setTimeout(function() {
       var end = input.val().length * 2;
       var start = td.hasClass('selectall') ? 0 : end;
@@ -206,43 +226,47 @@ pk.budget = {
     }, 10);
   },
 
-  input_save: function(input) {
+  td_save: function(td) {
     var self = this;
-    var row = input.closest('tr');
-    var type = row.data('type');
+    var row = td.closest('tr');
+    var type = row.attr('id').split('-')[0];
+    var input = td.find('input');
     // do nothing if the value is unchanged
-    if (input.data('init') == input.val() && !input.hasClass('error')) {
-      return self.input_display(input, input.val());
+    if (td.data('init') == input.val() && !td.hasClass('error')) {
+      return self.td_display(td, input.val());
     }
     // save the new value to the database
-    input.addClass('saving');
+    td.addClass('saving');
     var data = this['data_'+ type](row);
     var url = row.data('url');
     var method = data.id ? 'PUT' : 'POST';
-    self.request(input, url, method, data, function(data) {
+    self.request(td, url, method, data, function(data) {
       if (row.data('add')) {
         self.update_categories();
       } else {
-        self.input_display(input, data[input.attr('name')]);
+        //self.td_display(td, data[td.data('name')]);
       }
     });
   },
   
-  request: function(input, url, method, data, callback) {
-    var row = input.closest('tr');
+  request: function(td, url, method, data, callback) {
+    var row = td.closest('tr');
     var xhr = $.ajax({url:url, type:method, data:data, dataType:'json'});
     xhr.always(function() {
-      setTimeout(function() { input.removeClass('saving'); }, 500);
+      setTimeout(function() { td.removeClass('saving'); }, 500);
     });
     xhr.done(function(data, textStatus, jqXHR) {
-      row.find('input').removeClass('error');
+      td.removeClass('error');
       row.removeData('errors');
       callback(data, textStatus, jqXHR);
     });
     xhr.fail(function(jqXHR, textStatus, errorThrown) {
-      input.addClass('error');
+      td.addClass('error');
       row.data('errors', jqXHR.responseJSON);
     });
+    xhr.always(function() {
+      self.td_display(td, data[td.data('name')]);
+    })
     return xhr;
   },
  
@@ -290,25 +314,26 @@ pk.budget = {
   //   data-url: API url to use when editing item.
   //   selectall (class): Select all content when initializing edit.
   //   readonly (class): Do not allow editing this item.
+  //   delempty (class): Delete category or transaction if value empty.
   templates: {
     listcategories: Handlebars.compile([
       '{{#each this.results}}',
-      '  <tr data-id="{{this.id}}" data-type="category" data-url="{{this.url}}">',
-      '    <td data-name="name"><div>{{this.name}}</div></td>',
+      '  <tr id="category-{{this.id}}" data-type="category" data-url="{{this.url}}">',
+      '    <td data-name="name" class="delempty"><div>{{this.name}}</div></td>',
       '    <td data-name="trend"><div>&nbsp;</div></td>',
-      '    <td data-name="budget" class="right"><div>{{amountInt this.budget}}</div></td>',
+      '    <td data-name="budget" data-display="int" class="right"><div>{{amountInt this.budget}}</div></td>',
       '  </tr>',
       '{{/each}}',
     ].join('\n')),
 
     listtransactions: Handlebars.compile([
       '{{#each this.results}}',
-      '  <tr id="{{this.id}}" data-type="transaction" data-bankid="{{this.bankid}}" data-url="{{this.url}}">',
+      '  <tr id="transaction-{{this.id}}" data-type="transaction" data-bankid="{{this.bankid}}" data-url="{{this.url}}">',
       '    <td data-name="account" class="readonly"><div>{{this.account}}</div></td>',
       '    <td data-name="date"><div>{{this.date}}</div></td>',
       '    <td data-name="payee"><div>{{this.payee}}</div></td>',
       '    <td data-name="category"><div>{{this.category.name}}</div></td>',
-      '    <td data-name="amount" class="right"><div>{{amountFloat this.amount}}</div></td>',
+      '    <td data-name="amount" data-display="float" class="right"><div>{{amountFloat this.amount}}</div></td>',
       '    <td data-name="approved" class="center selectall"><div>{{yesNo this.approved \'x\' \'\'}}</div></td>',
       '    <td data-name="comment"><div>{{this.comment}}</div></td>',
       '  </tr>',
