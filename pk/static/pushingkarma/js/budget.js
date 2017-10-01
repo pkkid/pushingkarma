@@ -73,10 +73,10 @@ pk.budget = {
     });
     // drag and drop categories
     this.categorylist.find('tbody').sortable({
-      axis:'y', delay:150, handle:'.trend',
+      axis:'y', delay:150, handle:'[data-name=trend]',
       update: function(event, ui) {
-        var input = ui.item.find('input').first();
-        self.input_save(input);
+        console.log(ui.item.find('td').first());
+        self.td_save(ui.item.find('td').first(), true);
       }
     });
     // load more transactions if user scrolls near bottom
@@ -154,17 +154,29 @@ pk.budget = {
       date: this.text_or_val(row.find('[data-name=date]')),
       payee: this.text_or_val(row.find('[data-name=payee]')),
       category: this.text_or_val(row.find('[data-name=category]')),
-      amount: pk.utils.to_float(this.text_or_val(row.find('[data-name=amount]'))),
+      amount: this.text_or_val(row.find('[data-name=amount]')),
       approved: this.text_or_val(row.find('[data-name=approved]')) == 'x',
       comment: this.text_or_val(row.find('[data-name=comment]')),
     }
   },
 
   text_or_val: function(td) {
+    var value = null;
     var child = td.children().first();
-    var value = child.is('input') ? child.val().trim() : child.text().trim();
-    if ((value == '') && (td.data('default') !== undefined)) {
-      value = td.data('default');
+    if (child.is('div')) {
+      // Get value from a div
+      var text = child.text().trim();
+      switch (td.data('display')) {
+        case 'int': value = pk.utils.to_int(text); break;
+        case 'float': value = pk.utils.to_float(text); break;
+        default: value = text; break;
+      }
+    } else {
+      // Get value from an input
+      value = child.val().trim();
+      if ((value == '') && (td.data('default') !== undefined)) {
+        value = td.data('default');
+      }
     }
     return value;
   },
@@ -231,14 +243,14 @@ pk.budget = {
     }, 10);
   },
 
-  td_save: function(td) {
+  td_save: function(td, force) {
     var self = this;
     var input = td.find('input');
     var row = td.closest('tr');
     var type = row.attr('id').split('-')[0];
     var add = row.attr('id') == 'category-add';
     // do nothing if the value is unchanged
-    if (td.data('init') == input.val() && !td.hasClass('error')) {
+    if (!force && td.data('init') == input.val() && !td.hasClass('error')) {
       return self.td_display(td, input.val());
     }
     // save the new value to the database

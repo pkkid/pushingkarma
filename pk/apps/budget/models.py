@@ -19,9 +19,6 @@ class Category(TimeStampedModel):
         super(Category, self).__init__(*args, **kwargs)
         self._init_sortindex = self.sortindex
 
-    def __str__(self):
-        return self.name
-
     @transaction.atomic
     def save(self, *args, **kwargs):
         if self.sortindex is None:
@@ -32,8 +29,9 @@ class Category(TimeStampedModel):
             log.info('Moving category %s to index %s', self.name, self.sortindex)
             categories = Category.objects.exclude(id=self.id).order_by('sortindex')
             for catid in categories.values_list('id', flat=True):
+                index += 1 if index == self.sortindex else 0
                 Category.objects.filter(id=catid).update(sortindex=index)
-                index += 2 if index == self.sortindex - 1 else 1
+                index += 1
         super(Category, self).save(*args, **kwargs)
 
 
