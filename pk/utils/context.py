@@ -3,10 +3,21 @@
 """
 Copyright (c) 2015 PushingKarma. All rights reserved.
 """
+from collections import OrderedDict
 
 
 class Bunch(dict):
+    def __getattr__(self, item):
+        try:
+            return self.__getitem__(item)
+        except KeyError:
+            return None
 
+    def __setattr__(self, item, value):
+        return self.__setitem__(item, value)
+
+
+class OrderedBunch(OrderedDict):
     def __getattr__(self, item):
         try:
             return self.__getitem__(item)

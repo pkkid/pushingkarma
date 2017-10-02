@@ -5,6 +5,7 @@ Copyright (c) 2015 PushingKarma. All rights reserved.
 """
 from django.db import models, transaction
 from django_extensions.db.models import TimeStampedModel
+from rest_framework.serializers import CharField, ValidationError
 from pk import log, utils
 from pk.utils.serializers import DynamicFieldsSerializer
 
@@ -19,8 +20,13 @@ class Category(TimeStampedModel):
         super(Category, self).__init__(*args, **kwargs)
         self._init_sortindex = self.sortindex
 
+    def __str__(self):
+        name = self.name.lower().replace(' ', '_')[:20]
+        return '<%s:%s:%s>' % (self.__class__.__name__, self.id, name)
+
     @transaction.atomic
     def save(self, *args, **kwargs):
+        # reorder the categories if needed
         if self.sortindex is None:
             categories = Category.objects.order_by('-sortindex')
             self.sortindex = categories[0].sortindex + 1 if categories.exists() else 0
@@ -32,6 +38,7 @@ class Category(TimeStampedModel):
                 index += 1 if index == self.sortindex else 0
                 Category.objects.filter(id=catid).update(sortindex=index)
                 index += 1
+            self.sortindex = index
         super(Category, self).save(*args, **kwargs)
 
 
@@ -39,12 +46,6 @@ class CategorySerializer(DynamicFieldsSerializer):
     class Meta:
         model = Category
         fields = ('id','url','name','sortindex','budget','comment')
-
-
-class CategorySubsetSerializer(DynamicFieldsSerializer):
-    class Meta:
-        model = Category
-        fields = ('url','name','budget')
 
 
 class Transaction(TimeStampedModel):
@@ -58,11 +59,28 @@ class Transaction(TimeStampedModel):
     memo = models.CharField(max_length=255, blank=True, default='')
     comment = models.TextField(blank=True, default='', db_index=True)
 
+    def __str__(self):
+        return '<%s:%s:%s:%s>' % (self.__class__.__name__, self.id, self.account, self.bankid)
+
 
 class TransactionSerializer(DynamicFieldsSerializer):
-    category = CategorySubsetSerializer(read_only=True)
+    category = CharField(source='category.name')
 
     class Meta:
         model = Transaction
         fields = ('id','url','bankid','account','date','payee','category',
             'amount','approved','memo','comment')
+
+    def validate_category(self, value):
+        category = utils.get_object_or_none(Category, name=value)
+        if not category:
+            raise ValidationError("Unknown category '%s'." % value)
+        return value
+
+    def update(self, instance, validated_data):
+        for var in ('bankid','account','date','payee','amount','approved','memo','comment'):
+            value = validated_data.get(var, getattr(instance, var))
+            setattr(instance, var, value)
+        instance.category_id = Category.objects.get(name=validated_data['category']['name']).id
+        instance.save()
+        return instance

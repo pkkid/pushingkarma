@@ -14,12 +14,12 @@ NONE = ('none', 'null')
 OPERATIONS = {'=':'', '>':'__gt', '>=':'__gte', '<=':'__lte', '<':'__lt', ':': '__icontains'}
 REVERSEOP = {'__gt':'__lte', '__gte':'__lt', '__lte':'__gt', '__lt':'__gte'}
 STOPWORDS = ('and', '&&', '&', 'or', '||', '|')
-MONTHNAMES = list(calendar.month_name)[1:] + list(calendar.month_abbr)[1:]
-MONTHNAMES = [month.lower() for month in MONTHNAMES]
+MONTHNAMES = [m.lower() for m in list(calendar.month_name)[1:] + list(calendar.month_abbr)[1:]]
 
 FIELDTYPES = SimpleNamespace()
-FIELDTYPES.NUM = 'numeric'
+FIELDTYPES.BOOL = 'bool'
 FIELDTYPES.DATE = 'date'
+FIELDTYPES.NUM = 'numeric'
 FIELDTYPES.STR = 'string'
 
 
@@ -180,6 +180,8 @@ class SearchChunk:
         modifier = lambda value: value
         if self.qfield.modifier:
             modifier = self.qfield.modifier
+        elif self.searchtype == FIELDTYPES.BOOL:
+            modifier = modifier_bool
         elif self.searchtype == FIELDTYPES.NUM:
             modifier = modifier_numeric
         elif self.searchtype == FIELDTYPES.DATE:
@@ -212,8 +214,8 @@ class SearchChunk:
             log.exception(err)
         
     def _queryset_generic(self):
-        # create a list of subqueries
         subqueries = []
+        # check all string fields for self.qvalue
         stringfields = (f for f in self.search.fields.values() if f.fieldtype == FIELDTYPES.STR)
         for field in stringfields:
             kwarg = '%s%s' % (field.field, OPERATIONS[':'])
@@ -223,6 +225,13 @@ class SearchChunk:
                 continue
             subquery = self.search.basequeryset.filter(**{kwarg: self.qvalue})
             subqueries.append(subquery)
+        # check all int and float fields for self.qvalue
+        if is_float(self.qvalue):
+            numfields = (f for f in self.search.fields.values() if f.fieldtype == FIELDTYPES.NUM)
+            for field in numfields:
+                qvalue = float(self.qvalue) * -1 if self.exclude else float(self.qvalue)
+                subquery = self.search.basequeryset.filter(**{field.field: qvalue})
+                subqueries.append(subquery)
         # join and return the subqueries
         if self.exclude:
             return reduce(lambda x,y: x & y, subqueries)
@@ -280,10 +289,14 @@ class SearchChunk:
             mindate = self.qvalue
             maxdate = mindate + datetime.timedelta(days=1)
         return mindate, maxdate
-    
 
-def is_year(value):
-    return re.match('^20\d\d$', value.lower())
+
+def is_float(value):
+    try:
+        float(value)
+        return True
+    except ValueError:
+        return False
 
 
 def is_month(value):
@@ -297,6 +310,18 @@ def is_month(value):
     return False
 
 
+def is_year(value):
+    return re.match('^20\d\d$', value.lower())
+
+
+def modifier_bool(value):
+    if value.lower() in ('t', 'true', '1', 'y', 'yes'):
+        return True
+    elif value.lower() in ('f', 'false', '0', 'n', 'no'):
+        return False
+    raise SearchError('Invalid bool value: %s' % value)
+
+
 def modifier_numeric(value):
     if re.match('^\-*\d+$', value):
         return int(value)
@@ -307,6 +332,7 @@ def modifier_numeric(value):
 
 def modifier_date(value):
     try:
+        value = value.replace('_', ' ')
         if is_year(value):
             return datetime.datetime(int(value), 1, 1)
         dt = timelib.strtodatetime(value.encode('utf8'))

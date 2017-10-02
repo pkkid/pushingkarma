@@ -10,6 +10,10 @@
     line-height: 16px;
     width: 100%;
 
+    tr.popped {
+      background-color: rgba(0,0,0,0.05);
+    }
+
     th {
       border-bottom: 1px solid rgba(0,0,0,0.5);
       padding: 0px 4px;
@@ -60,7 +64,8 @@
     .add input { background-color:rgba(0,0,0,0.05); }
   }
   #maincontent {
-    padding: 6px 20px 20px 20px;
+    padding: 21px 20px 20px 20px;
+    
     $width:50px; [data-name='account'] { width:$width; div,input { width:$width; }}
     $width:75px; [data-name='date'] { width:$width; div,input { width:$width; }}
     $width:200px; [data-name='payee'] { width:$width; div,input { width:$width; }}

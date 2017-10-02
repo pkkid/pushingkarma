@@ -143,12 +143,12 @@ pk.utils = {
 
   to_int: function(value) {
     value = value.replace('$', '').replace(',', '');
-    return pk.utils.round(value, 0)
+    return pk.utils.round(value, 0);
   },
 
   to_float: function(value) {
     value = value.replace('$', '').replace(',', '');
-    return pk.utils.round(value, 2);
+    return pk.utils.round(value, 2).toFixed(2);
   },
 
   to_amount_int: function(value) {

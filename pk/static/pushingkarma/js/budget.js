@@ -15,36 +15,54 @@ pk.budget = {
     console.debug('init pk.budget on '+ selector);
     this.xhr = null;            // main actions xhr reference
     this.xhrcat = null;         // categories xhr reference
+    this.xhrsmry = null;        // summary xhr reference
     this.xhrtrx = null;         // transactions xhr reference
-    this.trxpage = null;        // Last loaded trx page
-    this.search = null;         // current search string
+    this.trxpage = null;        // last loaded trx page
+    this.clicktimer = null;     // detects single vs dblclick
     this.init_elements();
     this.init_triggers();
     this.init_shortcuts();
     this.update_categories();
+    //this.update_summary();
     this.update_transactions();
   },
 
   init_elements: function() {
-    this.sidepanel = this.container.find('#sidepanel');
-    this.searchinput = this.container.find('#search');
-    this.transactionsbtn = this.container.find('#search-action');
-    this.categorylist = this.container.find('#sidepanel-content');
-    this.maincontent = this.container.find('#maincontent');
+    this.search = this.container.find('#search');
+    this.summary = this.container.find('#summary');
+    this.categories = this.container.find('#categories');
+    this.transactions = this.container.find('#transactions');
   },
 
   init_triggers: function() {
     var self = this;
     var KEYS = this.KEYS;
     // update transactions when search input changes
-    this.searchinput.on('change paste keyup', function(event) {
+    this.search.on('change paste keyup', function(event) {
       event.preventDefault();
       self.update_transactions();
     });
-    // edit category or transaction on dblclick
-    this.container.on('dblclick', 'tbody td > div', function(event) {
+    // handle both single and dblclick events
+    this.container.on('click', 'tbody td > div', function(event) {
       event.preventDefault();
-      self.td_edit($(this).closest('td'));
+      var td = $(this).closest('td');
+      if (event.detail == 1) {
+        // display popover on single click
+        self.clicktimer = setTimeout(function() {
+          console.log('DISPLAY POPEVER');
+          //self.popover_display(td);
+        }, 200);
+      } else if (event.detail == 2) {
+        // edit category or transaction on dblclick
+        clearTimeout(self.clicktimer);
+        self.td_edit(td);
+      }      
+    });
+    $(document).on('click', function(event) {
+      var trgt = $(event.target);
+      if (!trgt.closest('tr').hasClass('popped') && !trgt.closest('.popover').length) {
+        $('tr.popped').removeClass('popped').popover('hide');
+      }
     });
     // save category or transaction on blur
     this.container.on('blur', 'tbody td > input', function(event) {
@@ -58,12 +76,8 @@ pk.budget = {
         self.td_save(td);
       }
     });
-    // prevent selectall on dblclick
-    this.container.on('mousedown', 'td > div', function(event) {
-      event.preventDefault();
-    });
     // create category when pressing enter on footer inputs
-    this.categorylist.on('keydown', 'tfoot input', function(event) {
+    this.categories.on('keydown', 'tfoot input', function(event) {
       if (event.keyCode == KEYS.ENTER) {
         var td = $(this).closest('td');
         var row = td.closest('tr');
@@ -72,17 +86,19 @@ pk.budget = {
       }
     });
     // drag and drop categories
-    this.categorylist.find('tbody').sortable({
+    this.categories.find('tbody').sortable({
       axis:'y', delay:150, handle:'[data-name=trend]',
       update: function(event, ui) {
-        console.log(ui.item.find('td').first());
-        self.td_save(ui.item.find('td').first(), true);
+        $('#category-null').appendTo(self.categories.find('tbody'));
+        if (ui.item.attr('id') != 'category-null') {
+          self.td_save(ui.item.find('td').first(), true);
+        }
       }
     });
     // load more transactions if user scrolls near bottom
     setInterval(function() {
        var bottom = $(document).height() - $(window).scrollTop() - $(window).height();
-       if (bottom < self.LOADMORE_DISTANCE && self.maincontent.find('#transactions-more').length) {
+       if (bottom < self.LOADMORE_DISTANCE && self.transactions.find('#transactions-more').length) {
           self.update_transactions(true);
        }
     }, self.LOADMORE_INTERVAL);
@@ -158,6 +174,16 @@ pk.budget = {
       approved: this.text_or_val(row.find('[data-name=approved]')) == 'x',
       comment: this.text_or_val(row.find('[data-name=comment]')),
     }
+  },
+
+  popover_display: function(td) {
+    var row = td.closest('tr');
+    row.popover({trigger:'manual', placement:'bottom', html:true,
+      content: function() {
+        var html = $('<div style="padding:5px 10px;">This is the plan!</div>');
+        return html;
+      },
+    }).addClass('popped').popover('show');
   },
 
   text_or_val: function(td) {
@@ -298,7 +324,7 @@ pk.budget = {
     this.xhrcat = $.ajax({url:url, type:'GET', dataType:'json'});
     this.xhrcat.done(function(data, textStatus, jqXHR) {
       var html = self.templates.listcategories(data);
-      self.categorylist.find('tbody').html(html);
+      self.categories.find('tbody').html(html);
     });
   },
 
@@ -308,10 +334,10 @@ pk.budget = {
       self.trxpage = null;
       var more = null;
       var url = '/api/transactions/';
-      var search = this.searchinput.val();
+      var search = this.search.val();
       url = search ? pk.utils.update_url(url, 'search', search) : url;
     } else {
-      var more = this.maincontent.find('#transactions-more');
+      var more = this.transactions.find('#transactions-more');
       var url = more.data('next');
       more.addClass('on');
     }
@@ -322,9 +348,9 @@ pk.budget = {
       this.xhrtrx.done(function(data, textStatus, jqXHR) {
         if (more) { more.remove(); }
         var html = self.templates.listtransactions(data);
-        var tbody = self.maincontent.find('tbody');
+        var tbody = self.transactions.find('tbody');
         data.previous ? tbody.append(html) : tbody.html(html);
-        //self.maincontent.find('tbody').append(html);
+        //self.transactions.find('tbody').append(html);
       });
     }
   },
@@ -340,6 +366,7 @@ pk.budget = {
   //   readonly (class): Do not allow editing this item.
   //   delempty (class): Delete category or transaction if value empty.
   templates: {
+
     listcategories: Handlebars.compile([
       '{{#each this.results}}',
       '  <tr id="category-{{this.id}}" data-type="category" data-url="{{this.url}}">',
@@ -348,6 +375,11 @@ pk.budget = {
       '    <td data-name="budget" data-display="int" class="right"><div>{{amountInt this.budget}}</div></td>',
       '  </tr>',
       '{{/each}}',
+      '<tr id="category-null" data-type="category">',
+      '  <td data-name="name" class="readonly"><div>Uncategorized</div></td>',
+      '  <td data-name="trend" class="readonly"><div>&nbsp;</div></td>',
+      '  <td data-name="budget" data-display="int" class="readonly right"><div>$0</div></td>',
+      '</tr>',
     ].join('\n')),
 
     listtransactions: Handlebars.compile([
@@ -356,7 +388,7 @@ pk.budget = {
       '    <td data-name="account" class="readonly"><div>{{this.account}}</div></td>',
       '    <td data-name="date"><div>{{this.date}}</div></td>',
       '    <td data-name="payee"><div>{{this.payee}}</div></td>',
-      '    <td data-name="category"><div>{{this.category.name}}</div></td>',
+      '    <td data-name="category"><div>{{this.category}}</div></td>',
       '    <td data-name="amount" data-display="float" class="right"><div>{{amountFloat this.amount}}</div></td>',
       '    <td data-name="approved" data-display="bool" class="center selectall"><div>{{yesNo this.approved \'x\' \'\'}}</div></td>',
       '    <td data-name="comment"><div>{{this.comment}}</div></td>',

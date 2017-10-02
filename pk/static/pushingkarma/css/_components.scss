@@ -112,3 +112,20 @@ div.fancyhr {
   transition: color 0.3s ease;
   &:hover { color: #222; }
 }
+
+// Popovers
+// Modifies Bootstrap Popovers
+.popover {
+  $bgcolor: #222;
+  $arrowsize: 5px;
+  background-color: $bgcolor;
+
+  &.bs-popover-bottom { margin-top: ($arrowsize - 1); }
+  &.bs-popover-bottom .arrow::after { border-bottom-color:$bgcolor; top:-$arrowsize; margin-left:-($arrowsize / 2); }
+  &.bs-popover-top .arrow::after { border-top-color: $bgcolor; bottom:-$arrowsize; margin-left:-($arrowsize / 2); }
+  .popover-header { display:none; }
+  .arrow::before { display: none; }
+  .arrow::after { border-width: $arrowsize; }
+  .popover-body { padding:0px; color:#aaa; }
+}
+

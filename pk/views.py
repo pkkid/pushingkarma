@@ -7,11 +7,11 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.db.models import Q
 from pk import log, utils
-from pk.models import AccountSerializer
 from rest_framework import status, viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from .models import AccountSerializer
 
 
 class AccountViewSet(viewsets.ViewSet):
