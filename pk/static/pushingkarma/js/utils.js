@@ -153,7 +153,7 @@ pk.utils = {
 
   to_amount_int: function(value) {
     var negative = value < 0;
-    value = Math.abs(value);
+    value = Math.round(Math.abs(value));
     if (negative) { return '-$'+ pk.utils.add_commas(value); }
     return '$'+ pk.utils.add_commas(value);
   },

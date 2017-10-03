@@ -52,6 +52,10 @@
     }
     tfoot td { border-width:0px; }
   }
+
+  #summary {
+    th, td { text-align: right; }
+  }
   
   #sidepanel-content {
     overflow-y: auto;

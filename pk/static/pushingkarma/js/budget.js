@@ -23,7 +23,7 @@ pk.budget = {
     this.init_triggers();
     this.init_shortcuts();
     this.update_categories();
-    //this.update_summary();
+    this.update_summary();
     this.update_transactions();
   },
 
@@ -91,7 +91,9 @@ pk.budget = {
       update: function(event, ui) {
         $('#category-null').appendTo(self.categories.find('tbody'));
         if (ui.item.attr('id') != 'category-null') {
-          self.td_save(ui.item.find('td').first(), true);
+          self.td_save(ui.item.find('td').first(), true, function() {
+            self.update_summary();
+          });
         }
       }
     });
@@ -269,7 +271,7 @@ pk.budget = {
     }, 10);
   },
 
-  td_save: function(td, force) {
+  td_save: function(td, force, callback) {
     var self = this;
     var input = td.find('input');
     var row = td.closest('tr');
@@ -287,6 +289,7 @@ pk.budget = {
       done: function(data, textStatus, jqXHR) {
         if (add) { return self.update_categories(); }
         self.td_display(td, data[td.data('name')]);
+        if (callback) { callback(); }
       },
       fail: function(jqXHR, textStatus, errorThrown) {
         if (add) { return; }
@@ -320,11 +323,22 @@ pk.budget = {
   update_categories: function() {
     var self = this;
     var url = '/api/categories/';
-    try { this.xhrtrx.abort(); } catch(err) { }
+    try { this.xhrcat.abort(); } catch(err) { }
     this.xhrcat = $.ajax({url:url, type:'GET', dataType:'json'});
     this.xhrcat.done(function(data, textStatus, jqXHR) {
       var html = self.templates.listcategories(data);
       self.categories.find('tbody').html(html);
+    });
+  },
+
+  update_summary: function() {
+    var self = this;
+    var url = '/api/transactions/summary/';
+    try { this.xhrsmry.abort(); } catch(err) { }
+    this.xhrsmry = $.ajax({url:url, type:'GET', dataType:'json'});
+    this.xhrsmry.done(function(data, textStatus, jqXHR) {
+      var html = self.templates.summary(data);
+      self.summary.find('table').html(html);
     });
   },
 
@@ -350,7 +364,6 @@ pk.budget = {
         var html = self.templates.listtransactions(data);
         var tbody = self.transactions.find('tbody');
         data.previous ? tbody.append(html) : tbody.html(html);
-        //self.transactions.find('tbody').append(html);
       });
     }
   },
@@ -366,6 +379,25 @@ pk.budget = {
   //   readonly (class): Do not allow editing this item.
   //   delempty (class): Delete category or transaction if value empty.
   templates: {
+
+    summary: Handlebars.compile([
+      '<thead><tr>',
+      '  <th>Average</th>',
+      '  {{#each this.categories.0.amounts}}',
+      '    <th>{{formatDate @key "%b"}}</th>',
+      '  {{/each}}',
+      '</tr></thead>',
+      '<tbody>',
+      '  {{#each this.categories}}',
+      '    <tr>',
+      '      <td><div>{{amountInt this.average}}</div></td>',
+      '      {{#each this.amounts}}',
+      '        <td><div>{{amountInt this}}</div></td>',
+      '      {{/each}}',
+      '    </tr>',
+      '  {{/each}}',
+      '</tbody>',
+    ].join('\n')),
 
     listcategories: Handlebars.compile([
       '{{#each this.results}}',

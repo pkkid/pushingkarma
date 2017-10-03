@@ -38,7 +38,6 @@ class Category(TimeStampedModel):
                 index += 1 if index == self.sortindex else 0
                 Category.objects.filter(id=catid).update(sortindex=index)
                 index += 1
-            self.sortindex = index
         super(Category, self).save(*args, **kwargs)
 
 
