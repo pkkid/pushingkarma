@@ -15,20 +15,20 @@ pk.budget = {
     console.debug('init pk.budget on '+ selector);
     this.xhr = null;            // main actions xhr reference
     this.xhrcat = null;         // categories xhr reference
-    this.xhrsmry = null;        // summary xhr reference
     this.xhrtrx = null;         // transactions xhr reference
     this.trxpage = null;        // last loaded trx page
     this.clicktimer = null;     // detects single vs dblclick
+    this.viewmode = 'summary';  // current view mode
     this.init_elements();
     this.init_triggers();
     this.init_shortcuts();
     this.update_categories();
     this.update_summary();
-    this.update_transactions();
   },
 
   init_elements: function() {
     this.search = this.container.find('#search');
+    this.viewbtn = this.container.find('#budget-viewbtn');
     this.summary = this.container.find('#summary');
     this.categories = this.container.find('#categories');
     this.transactions = this.container.find('#transactions');
@@ -40,7 +40,7 @@ pk.budget = {
     // update transactions when search input changes
     this.search.on('change paste keyup', function(event) {
       event.preventDefault();
-      self.update_transactions();
+      $(this).val() ? self.update_transactions() : self.update_summary();
     });
     // handle both single and dblclick events
     this.container.on('click', 'tbody td > div', function(event) {
@@ -99,10 +99,12 @@ pk.budget = {
     });
     // load more transactions if user scrolls near bottom
     setInterval(function() {
-       var bottom = $(document).height() - $(window).scrollTop() - $(window).height();
-       if (bottom < self.LOADMORE_DISTANCE && self.transactions.find('#transactions-more').length) {
+      if (self.viewmode == 'transactions') {
+        var bottom = $(document).height() - $(window).scrollTop() - $(window).height();
+        if (bottom < self.LOADMORE_DISTANCE && self.transactions.find('#transactions-more').length) {
           self.update_transactions(true);
-       }
+        }
+      }
     }, self.LOADMORE_INTERVAL);
   },
 
@@ -186,6 +188,22 @@ pk.budget = {
         return html;
       },
     }).addClass('popped').popover('show');
+  },
+
+  show_summary: function() {
+    var self = this;
+    self.viewmode = 'summary';
+    self.transactions.fadeOut('fast', function() {
+      self.summary.fadeIn('fast');
+    });
+  },
+
+  show_transactions: function() {
+    var self = this;
+    self.viewmode = 'transactions';
+    self.summary.fadeOut('fast', function() {
+      self.transactions.fadeIn('fast');
+    });
   },
 
   text_or_val: function(td) {
@@ -333,10 +351,11 @@ pk.budget = {
 
   update_summary: function() {
     var self = this;
+    self.show_summary();
     var url = '/api/transactions/summary/';
-    try { this.xhrsmry.abort(); } catch(err) { }
-    this.xhrsmry = $.ajax({url:url, type:'GET', dataType:'json'});
-    this.xhrsmry.done(function(data, textStatus, jqXHR) {
+    try { this.xhrtrx.abort(); } catch(err) { }
+    this.xhrtrx = $.ajax({url:url, type:'GET', dataType:'json'});
+    this.xhrtrx.done(function(data, textStatus, jqXHR) {
       var html = self.templates.summary(data);
       self.summary.find('table').html(html);
     });
@@ -344,6 +363,7 @@ pk.budget = {
 
   update_transactions: function(page) {
     var self = this;
+    self.show_transactions();
     if (!page) {
       self.trxpage = null;
       var more = null;
@@ -382,7 +402,7 @@ pk.budget = {
 
     summary: Handlebars.compile([
       '<thead><tr>',
-      '  <th>Average</th>',
+      '  <th class="average">Average</th>',
       '  {{#each this.categories.0.amounts}}',
       '    <th>{{formatDate @key "%b"}}</th>',
       '  {{/each}}',
@@ -390,9 +410,11 @@ pk.budget = {
       '<tbody>',
       '  {{#each this.categories}}',
       '    <tr>',
-      '      <td><div>{{amountInt this.average}}</div></td>',
+      '      <td class="average"><div>{{amountInt this.average}}</div></td>',
       '      {{#each this.amounts}}',
-      '        <td><div>{{amountInt this}}</div></td>',
+      '        <td class="{{yesNo this \'\' \'zero\'}}"><div>',
+      '          {{amountInt this}}',
+      '        </div></td>',
       '      {{/each}}',
       '    </tr>',
       '  {{/each}}',

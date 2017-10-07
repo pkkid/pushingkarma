@@ -25,7 +25,7 @@
       border-bottom: 1px dotted rgba(0,0,0,0.05);
       color: #504E41;
       cursor: default;
-      padding: 1px;
+      padding: 2px 1px;
 
       div,input {
         border: 1px solid transparent;
@@ -53,10 +53,6 @@
     tfoot td { border-width:0px; }
   }
 
-  #summary {
-    th, td { text-align: right; }
-  }
-  
   #sidepanel-content {
     overflow-y: auto;
     height: calc(100% - 42px);
@@ -67,9 +63,9 @@
     $width:55px; [data-name='budget'] { width:$width; div,input { width:$width; }}
     .add input { background-color:rgba(0,0,0,0.05); }
   }
+
   #maincontent {
     padding: 21px 20px 20px 20px;
-    
     $width:50px; [data-name='account'] { width:$width; div,input { width:$width; }}
     $width:75px; [data-name='date'] { width:$width; div,input { width:$width; }}
     $width:200px; [data-name='payee'] { width:$width; div,input { width:$width; }}
@@ -90,9 +86,6 @@
       top: 26px;
       width: 400px;
       border: 1px solid rgba(0,0,0,0.1);
-      &:focus {
-
-      }
     }
     #search-icon {
       font-size: 18px;
@@ -100,6 +93,23 @@
       right: 395px;
       top: 26px;
     }
+
+    #summary {
+      th, td {
+        text-align: right;
+        width: 50px;
+        text-align: center;
+      }
+      .zero div { color: rgba(0,0,0,0.2); }
+      .average { background-color: rgba(0,0,0,0.05); border-right: 1px solid rgba(0,0,0,0.2); }
+      th.average { border-top-left-radius: 5px; }
+      tr:last-child td.average { border-bottom-left-radius: 5px; }
+    }
+
+    #transactions {
+      display: none;
+    }
+
     #transactions-more td {
       border-bottom-width: 0px;
       .spinner {
@@ -107,5 +117,6 @@
         margin: 10px auto;
       }
     }
+
   }
 }
