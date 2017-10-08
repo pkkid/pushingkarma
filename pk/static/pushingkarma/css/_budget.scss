@@ -4,6 +4,7 @@
 
 #budget {
   @include contentwithsidepanel(250px, 900px);
+  position: relative;
 
   table {
     font-size: 14px;
@@ -17,7 +18,6 @@
     th {
       border-bottom: 1px solid rgba(0,0,0,0.5);
       padding: 0px 4px;
-
       &.center { text-align:center; }
       &.right { text-align:right; }
     }
@@ -25,7 +25,7 @@
       border-bottom: 1px dotted rgba(0,0,0,0.05);
       color: #504E41;
       cursor: default;
-      padding: 2px 1px;
+      padding: 1px 1px;
 
       div,input {
         border: 1px solid transparent;
@@ -33,9 +33,9 @@
         box-sizing: border-box;
         color: #504E41;
         line-height: 14px;
-        height: 16px;
+        height: 20px;
         overflow-x: hidden;
-        padding: 0px 2px;
+        padding: 2px 2px;
         white-space: nowrap;
         transition: background-color 0.2s ease;
       }
@@ -50,7 +50,11 @@
       font-family: verdana;
       font-size: 10px;
     }
-    tfoot td { border-width:0px; }
+    tfoot tr:first-child td {
+      border-top: 1px solid rgba(0,0,0,0.3);
+      div { color: #222; }
+    }
+    tfoot td { border-width: 0px; }
   }
 
   #sidepanel-content {
@@ -61,11 +65,16 @@
     $width:110px; [data-name='name'] { width:$width; div,input { width:$width; }}
     $width:100%; [data-name='trend'] { width:$width; text-align:center; div,input { width:$width; }}
     $width:55px; [data-name='budget'] { width:$width; div,input { width:$width; }}
-    .add input { background-color:rgba(0,0,0,0.05); }
+    #category-add input {
+      background-color: rgba(0,0,0,0.05);
+      opacity: 0.5;
+      transition: opacity 0.3s ease;
+      &:focus { opacity:1; }
+    }
   }
 
   #maincontent {
-    padding: 21px 20px 20px 20px;
+    padding: 21px 20px 20px 0px;
     $width:50px; [data-name='account'] { width:$width; div,input { width:$width; }}
     $width:75px; [data-name='date'] { width:$width; div,input { width:$width; }}
     $width:200px; [data-name='payee'] { width:$width; div,input { width:$width; }}
@@ -95,21 +104,56 @@
     }
 
     #summary {
+      h2 { padding-left: 20px; }
       th, td {
         text-align: right;
         width: 50px;
         text-align: center;
       }
       .zero div { color: rgba(0,0,0,0.2); }
-      .average { background-color: rgba(0,0,0,0.05); border-right: 1px solid rgba(0,0,0,0.2); }
-      th.average { border-top-left-radius: 5px; }
-      tr:last-child td.average { border-bottom-left-radius: 5px; }
+      .average {
+        background-color: rgba(0,0,0,0.05);
+        border-right: 1px solid rgba(0,0,0,0.2);
+        position: relative;
+      }
+      // Extra bits to make the table blend better
+      th.average::before {
+        content: "";
+        display: block;
+        border-bottom: 1px solid #68655D;
+        width: 10px;
+        position:absolute;
+        left:-11px;
+        bottom: -1px;
+        z-index: 99;
+      }
+      td.average::before {
+        content: "";
+        display: block;
+        border-left: 1px solid rgba(0,0,0,0.1);
+        height: 21px;
+        position:absolute;
+        left:-1px;
+        top: -1px;
+        z-index: 97;
+      }
+      tfoot td.average::before {
+        content: "";
+        display: block;
+        border-width: 0px;
+        border-top: 1px solid rgba(0,0,0,0.3);
+        width: 10px;
+        position:absolute;
+        left:-11px;
+        bottom: -1px;
+        z-index: 98;
+      }
     }
 
     #transactions {
       display: none;
+      padding-left: 20px;
     }
-
     #transactions-more td {
       border-bottom-width: 0px;
       .spinner {
@@ -117,6 +161,24 @@
         margin: 10px auto;
       }
     }
+  }
 
+  #dropzone {
+    background-color: rgba(197,191,174,0.90);
+    display: none;
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+    z-index: 99;
+    .outline {
+      border-radius: 20px;
+      border: 5px dashed #89826F;
+      font-size: 120px;
+      margin: 50px 100px;
+      padding: 50px;
+      text-align: center;
+    }
   }
 }

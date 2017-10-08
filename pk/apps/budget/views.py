@@ -13,9 +13,10 @@ from pk.utils.context import OrderedBunch
 from pk.utils.search import FIELDTYPES, SearchField, Search
 from rest_framework import viewsets
 from rest_framework.decorators import list_route
+from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from .models import Category, CategorySerializer
+from .models import UNCATEGORIZED, Category, CategorySerializer
 from .models import Transaction, TransactionSerializer
 
 DATEFORMAT = '%Y-%m-%d'
@@ -49,7 +50,11 @@ class CategoriesViewSet(viewsets.ModelViewSet):
         page = self.paginate_queryset(categories)
         serializer = CategorySerializer(page, context={'request':request},
             many=True, fields=self.list_fields)
-        return self.get_paginated_response(serializer.data)
+        response = self.get_paginated_response(serializer.data)
+        response.data['total'] = round(sum(float(c['budget']) for c in response.data['results']), 2)
+        response.data['results'].append({'id':'null', 'url':None, 'name':'Uncategorized', 'sortindex':99, 'budget':'0.00', 'comment':''})
+        response.data.move_to_end('results')
+        return response
 
 
 class TransactionsViewSet(viewsets.ModelViewSet):
@@ -83,14 +88,22 @@ class TransactionsViewSet(viewsets.ModelViewSet):
         data.mindate = maxmonth - relativedelta(months=data.months - 1)
         data.maxdate = maxmonth + relativedelta(months=1)
         # populate summary data
-        self._init_summary_total(data)
-        self._add_cateogry_values(data)
-        self._calc_category_averages(data)
+        self._summary_init_total(data)
+        self._summary_add_cateogry_values(data)
+        self._summary_calc_averages(data)
         data.move_to_end('total')
         data.move_to_end('categories')
         return Response(data)
 
-    def _init_summary_total(self, data):
+    @list_route(methods=['put'], parser_classes=[FormParser, MultiPartParser])
+    def upload(self, request, format=None):
+        for fileobj in request.FILES.values():
+            print('---')
+            print(fileobj.name)
+            print(fileobj.file.read())
+        return Response(status=204)
+
+    def _summary_init_total(self, data):
         """ start the totals category. """
         data.total = OrderedBunch()
         for category in Category.objects.all():
@@ -100,13 +113,13 @@ class TransactionsViewSet(viewsets.ModelViewSet):
                 data.total[monthstr] = 0.0
                 month += relativedelta(months=1)
 
-    def _add_cateogry_values(self, data):
+    def _summary_add_cateogry_values(self, data):
         """ group data by category, month => amount. """
         data.categories = []
-        lookup = self._get_summary_data(data.mindate, data.maxdate)
+        lookup = self._summary_query_data(data.mindate, data.maxdate)
         for category in list(Category.objects.order_by('sortindex')) + [None]:
             cdata = OrderedBunch()
-            cdata.name = 'Uncategorized' if category is None else category.name
+            cdata.name = UNCATEGORIZED if category is None else category.name
             cdata.total = 0.0
             cdata.average = 0.0
             cdata.amounts = OrderedBunch()
@@ -122,7 +135,7 @@ class TransactionsViewSet(viewsets.ModelViewSet):
                 month += relativedelta(months=1)
             data.categories.append(cdata)
 
-    def _get_summary_data(self, mindate, maxdate):
+    def _summary_query_data(self, mindate, maxdate):
         """ Returns a dictionary of {'<categoryid>-<date>': <amount>}. """
         with connection.cursor() as cursor:
             mindatestr = mindate.strftime(DATEFORMAT)
@@ -137,7 +150,7 @@ class TransactionsViewSet(viewsets.ModelViewSet):
             cursor.execute(query, (mindatestr, maxdatestr))
             return dict(cursor.fetchall())
 
-    def _calc_category_averages(self, data):
+    def _summary_calc_averages(self, data):
         """ update averages accounting for months with incomplete data. """
         # find number of months and daterange to use when calculating average
         query = Transaction.objects.filter(date__gte=data.mindate, date__lt=data.maxdate)
@@ -150,6 +163,7 @@ class TransactionsViewSet(viewsets.ModelViewSet):
         data.avg_months = relativedelta(end, start).months
         data.avg_mindate = start
         data.avg_maxdate = end
+        data.avg_total = 0.0
         # calculate the average for each category
         if data.avg_months:
             for category in data.categories:
@@ -159,3 +173,4 @@ class TransactionsViewSet(viewsets.ModelViewSet):
                     if start <= cdate < end:
                         avg_total += value
                 category.average = round(avg_total / float(data.avg_months), 2)
+                data.avg_total += category.average

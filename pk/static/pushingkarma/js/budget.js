@@ -20,7 +20,11 @@ pk.budget = {
     this.clicktimer = null;     // detects single vs dblclick
     this.viewmode = 'summary';  // current view mode
     this.init_elements();
-    this.init_triggers();
+    this.bind_search_edit();
+    this.bind_row_edit();
+    this.bind_category_add();
+    this.bind_drag_files();
+    this.bind_infinite_scroll();
     this.init_shortcuts();
     this.update_categories();
     this.update_summary();
@@ -32,18 +36,23 @@ pk.budget = {
     this.summary = this.container.find('#summary');
     this.categories = this.container.find('#categories');
     this.transactions = this.container.find('#transactions');
+    this.dropzone = this.container.find('#dropzone');
   },
 
-  init_triggers: function() {
-    var self = this;
-    var KEYS = this.KEYS;
+  bind_search_edit: function() {
     // update transactions when search input changes
+    var self = this;
     this.search.on('change paste keyup', function(event) {
       event.preventDefault();
       $(this).val() ? self.update_transactions() : self.update_summary();
     });
+  },
+
+  bind_row_edit: function() {
     // handle both single and dblclick events
-    this.container.on('click', 'tbody td > div', function(event) {
+    var self = this;
+    var selector = '#categories tbody td > div,#transactions tbody td > div';
+    this.container.on('click', selector, function(event) {
       event.preventDefault();
       var td = $(this).closest('td');
       if (event.detail == 1) {
@@ -58,6 +67,7 @@ pk.budget = {
         self.td_edit(td);
       }      
     });
+    // close the popover if clicking somewhere else
     $(document).on('click', function(event) {
       var trgt = $(event.target);
       if (!trgt.closest('tr').hasClass('popped') && !trgt.closest('.popover').length) {
@@ -76,7 +86,12 @@ pk.budget = {
         self.td_save(td);
       }
     });
+  },
+
+  bind_category_add: function() {
     // create category when pressing enter on footer inputs
+    var self = this;
+    var KEYS = this.KEYS;
     this.categories.on('keydown', 'tfoot input', function(event) {
       if (event.keyCode == KEYS.ENTER) {
         var td = $(this).closest('td');
@@ -85,9 +100,13 @@ pk.budget = {
         row.find('input').val('').first().focus();
       }
     });
+  },
+
+  bind_drag_categories: function() {
     // drag and drop categories
+    var self = this;
     this.categories.find('tbody').sortable({
-      axis:'y', delay:150, handle:'[data-name=trend]',
+      axis:'y', delay:150, handle:'.drag',
       update: function(event, ui) {
         $('#category-null').appendTo(self.categories.find('tbody'));
         if (ui.item.attr('id') != 'category-null') {
@@ -97,7 +116,46 @@ pk.budget = {
         }
       }
     });
+  },
+
+  bind_drag_files: function() {
+    // show and hide the dropzone when dragging a file
+    var self = this;
+    $(document).on('dragover', function(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      self.dropzone.fadeIn('fast');
+    });
+    $(document).on('dragleave', function(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      if (event.originalEvent.pageX != 0 && event.originalEvent.pageY != 0) { return; }
+      self.dropzone.fadeOut('fast');
+    });
+    // handle file drag and drop event
+    $(document).on('drop', function(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      self.dropzone.fadeOut('fast');
+      var formdata = new FormData();
+      $.each(event.originalEvent.dataTransfer.files, function(i, file) {
+        formdata.append(file.name, file);
+      });
+      var xhr = $.ajax({url:'/api/transactions/upload/', type:'PUT', data:formdata,
+        cache:false, contentType:false, processData:false});
+      xhr.done(function(data, textStatus, jqXHR) {
+        console.log('SUCCESS?');
+        console.log(data);
+      });
+      xhr.fail(function(jqXHR, textStatus, errorThrown) {
+        console.log('FAILED UPLOAD');
+      });
+    });
+  },
+
+  bind_infinite_scroll: function() {
     // load more transactions if user scrolls near bottom
+    var self = this;
     setInterval(function() {
       if (self.viewmode == 'transactions') {
         var bottom = $(document).height() - $(window).scrollTop() - $(window).height();
@@ -267,6 +325,7 @@ pk.budget = {
 
   td_edit: function(td) {
     if (td.hasClass('readonly')) { return; }
+    if (td.closest('tr').attr('id') == 'category-null') { return; }
     // create input and format value
     var div = td.find('div');
     var input = $('<input type="text" />');
@@ -345,7 +404,8 @@ pk.budget = {
     this.xhrcat = $.ajax({url:url, type:'GET', dataType:'json'});
     this.xhrcat.done(function(data, textStatus, jqXHR) {
       var html = self.templates.listcategories(data);
-      self.categories.find('tbody').html(html);
+      self.categories.html(html);
+      self.bind_drag_categories();
     });
   },
 
@@ -357,7 +417,7 @@ pk.budget = {
     this.xhrtrx = $.ajax({url:url, type:'GET', dataType:'json'});
     this.xhrtrx.done(function(data, textStatus, jqXHR) {
       var html = self.templates.summary(data);
-      self.summary.find('table').html(html);
+      self.summary.html(html);
     });
   },
 
@@ -382,8 +442,12 @@ pk.budget = {
       this.xhrtrx.done(function(data, textStatus, jqXHR) {
         if (more) { more.remove(); }
         var html = self.templates.listtransactions(data);
-        var tbody = self.transactions.find('tbody');
-        data.previous ? tbody.append(html) : tbody.html(html);
+        if (data.previous) {
+          var items = $(html).find('tbody tr');
+          self.transactions.find('tbody').append(items);
+        } else {
+          self.transactions.html(html);
+        }
       });
     }
   },
@@ -401,58 +465,99 @@ pk.budget = {
   templates: {
 
     summary: Handlebars.compile([
-      '<thead><tr>',
-      '  <th class="average">Average</th>',
-      '  {{#each this.categories.0.amounts}}',
-      '    <th>{{formatDate @key "%b"}}</th>',
-      '  {{/each}}',
-      '</tr></thead>',
-      '<tbody>',
-      '  {{#each this.categories}}',
-      '    <tr>',
-      '      <td class="average"><div>{{amountInt this.average}}</div></td>',
-      '      {{#each this.amounts}}',
-      '        <td class="{{yesNo this \'\' \'zero\'}}"><div>',
-      '          {{amountInt this}}',
-      '        </div></td>',
-      '      {{/each}}',
-      '    </tr>',
-      '  {{/each}}',
-      '</tbody>',
+      '<h2>Summary</h2>',
+      '<table cellpadding="0" cellspacing="0">',
+      '  <thead><tr>',
+      '    <th class="average">Average</th>',
+      '    {{#each this.categories.0.amounts}}',
+      '      <th>{{formatDate @key "%b"}}</th>',
+      '    {{/each}}',
+      '  </tr></thead>',
+      '  <tbody>',
+      '    {{#each this.categories}}',
+      '      <tr>',
+      '        <td class="average"><div>{{amountInt this.average}}</div></td>',
+      '        {{#each this.amounts}}',
+      '          <td class="{{yesNo this \'\' \'zero\'}}"><div>',
+      '            {{amountInt this}}',
+      '          </div></td>',
+      '        {{/each}}',
+      '      </tr>',
+      '    {{/each}}',
+      '  </tbody>',
+      '  <tfoot><tr>',
+      '    <td class="average"><div>{{amountInt this.avg_total}}</div></td>',
+      '    {{#each this.total}}',
+      '      <td class="{{yesNo this \'\' \'zero\'}}"><div>',
+      '        {{amountInt this}}',
+      '      </div></td>',
+      '    {{/each}}',
+      '  </tr></tfoot>',
+      '</table>',
     ].join('\n')),
 
     listcategories: Handlebars.compile([
-      '{{#each this.results}}',
-      '  <tr id="category-{{this.id}}" data-type="category" data-url="{{this.url}}">',
-      '    <td data-name="name" class="delempty"><div>{{this.name}}</div></td>',
-      '    <td data-name="trend" class="readonly"><div>&nbsp;</div></td>',
-      '    <td data-name="budget" data-display="int" class="right"><div>{{amountInt this.budget}}</div></td>',
-      '  </tr>',
-      '{{/each}}',
-      '<tr id="category-null" data-type="category">',
-      '  <td data-name="name" class="readonly"><div>Uncategorized</div></td>',
-      '  <td data-name="trend" class="readonly"><div>&nbsp;</div></td>',
-      '  <td data-name="budget" data-display="int" class="readonly right"><div>$0</div></td>',
-      '</tr>',
+      '<table cellpadding="0" cellspacing="0">',
+      '  <thead><tr>',
+      '    <th data-name="name">Category</th>',
+      '    <th data-name="trend" class="center">Trend</th>',
+      '    <th data-name="budget" class="right">Budget</th>',
+      '  </tr></thead>',
+      '  <tbody>',
+      '    {{#each this.results}}',
+      '      <tr id="category-{{this.id}}" data-type="category" data-url="{{this.url}}">',
+      '        <td data-name="name" class="delempty"><div>{{this.name}}</div></td>',
+      '        <td data-name="trend" class="readonly drag"><div>&nbsp;</div></td>',
+      '        <td data-name="budget" data-display="int" class="right"><div>{{amountInt this.budget}}</div></td>',
+      '      </tr>',
+      '    {{/each}}',
+      '  </tbody>',
+      '  <tfoot>',
+      '    <tr id="category-total" data-type="category">',
+      '      <td data-name="name" class="readonly"><div>Total</div></td>',
+      '      <td data-name="trend" class="readonly"><div>&nbsp;</div></td>',
+      '      <td data-name="budget" data-display="int" class="readonly right"><div>{{amountInt this.total}}</div></td>',
+      '    </tr>',
+      '    <tr id="category-add" data-add="true" data-url="/api/categories/">',
+      '      <td data-name="name"><input name="name" type="text" placeholder="New Category" autocomplete="off"></td>',
+      '      <td data-name="trend" class="center">&nbsp;</td>',
+      '      <td data-name="budget" class="right" data-default="0"><input name="budget" type="integer" placeholder="$0" autocomplete="off"></td>',
+      '    </tr>',
+      '  </tfoot>',
+      '</table>'
     ].join('\n')),
 
     listtransactions: Handlebars.compile([
-      '{{#each this.results}}',
-      '  <tr id="transaction-{{this.id}}" data-type="transaction" data-bankid="{{this.bankid}}" data-url="{{this.url}}">',
-      '    <td data-name="account" class="readonly"><div>{{this.account}}</div></td>',
-      '    <td data-name="date"><div>{{this.date}}</div></td>',
-      '    <td data-name="payee"><div>{{this.payee}}</div></td>',
-      '    <td data-name="category"><div>{{this.category}}</div></td>',
-      '    <td data-name="amount" data-display="float" class="right"><div>{{amountFloat this.amount}}</div></td>',
-      '    <td data-name="approved" data-display="bool" class="center selectall"><div>{{yesNo this.approved \'x\' \'\'}}</div></td>',
-      '    <td data-name="comment"><div>{{this.comment}}</div></td>',
-      '  </tr>',
-      '{{/each}}',
-      '{{#if this.next}}',
-      '  <tr id="transactions-more" data-next="{{this.next}}">',
-      '    <td colspan="100%"><span class="spinner on"></span></td>',
-      '  </tr>',
-      '{{/if}}',
+      '<h2>Transactions</h2>',
+      '<table cellpadding="0" cellspacing="0">',
+      '  <thead><tr>',
+      '    <th data-name="account">Bank</th>',
+      '    <th data-name="date">Date</th>',
+      '    <th data-name="payee">Payee</th>',
+      '    <th data-name="category">Category</th>',
+      '    <th data-name="amount" class="right">Amount</th>',
+      '    <th data-name="approved" class="center">X</th>',
+      '    <th data-name="comment">Comment</th>',
+      '  </tr></thead>',
+      '  <tbody>',
+      '   {{#each this.results}}',
+      '     <tr id="transaction-{{this.id}}" data-type="transaction" data-bankid="{{this.bankid}}" data-url="{{this.url}}">',
+      '       <td data-name="account" class="readonly"><div>{{this.account}}</div></td>',
+      '       <td data-name="date"><div>{{this.date}}</div></td>',
+      '       <td data-name="payee"><div>{{this.payee}}</div></td>',
+      '       <td data-name="category"><div>{{this.category}}</div></td>',
+      '       <td data-name="amount" data-display="float" class="right"><div>{{amountFloat this.amount}}</div></td>',
+      '       <td data-name="approved" data-display="bool" class="center selectall"><div>{{yesNo this.approved \'x\' \'\'}}</div></td>',
+      '       <td data-name="comment"><div>{{this.comment}}</div></td>',
+      '     </tr>',
+      '   {{/each}}',
+      '   {{#if this.next}}',
+      '     <tr id="transactions-more" data-next="{{this.next}}">',
+      '       <td colspan="100%"><span class="spinner on"></span></td>',
+      '     </tr>',
+      '   {{/if}}',
+      '  </tbody>',
+      '</table>',
     ].join('\n')),
   },
 

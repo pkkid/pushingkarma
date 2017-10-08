@@ -9,6 +9,8 @@ from rest_framework.serializers import CharField, ValidationError
 from pk import log, utils
 from pk.utils.serializers import DynamicFieldsSerializer
 
+UNCATEGORIZED = 'Uncategorized'
+
 
 class Category(TimeStampedModel):
     name = models.CharField(max_length=255, unique=True, db_index=True)
@@ -26,6 +28,9 @@ class Category(TimeStampedModel):
 
     @transaction.atomic
     def save(self, *args, **kwargs):
+        # Dont allow saving Uncategorized category
+        if self.name == UNCATEGORIZED:
+            raise Exception('Cannot modify category %s' % UNCATEGORIZED)
         # reorder the categories if needed
         if self.sortindex is None:
             categories = Category.objects.order_by('-sortindex')
