@@ -5,10 +5,12 @@ Copyright (c) 2015 PushingKarma. All rights reserved.
 """
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db import connection
 from django.db.models import Min, Max
-from pk import utils
+from ofxparse import OfxParser
+from pk import log, utils
 from pk.utils.context import OrderedBunch
 from pk.utils.search import FIELDTYPES, SearchField, Search
 from rest_framework import viewsets
@@ -16,10 +18,12 @@ from rest_framework.decorators import list_route
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from .manager import TransactionManager
 from .models import UNCATEGORIZED, Category, CategorySerializer
 from .models import Transaction, TransactionSerializer
 
 DATEFORMAT = '%Y-%m-%d'
+ACCOUNTS = settings.BUDGET_ACCOUNTS
 TRANSACTIONSEARCHFIELDS = {
     'bank': SearchField(FIELDTYPES.STR, 'account'),
     'date': SearchField(FIELDTYPES.DATE, 'date'),
@@ -28,7 +32,8 @@ TRANSACTIONSEARCHFIELDS = {
     'amount': SearchField(FIELDTYPES.NUM, 'amount'),
     'approved': SearchField(FIELDTYPES.STR, 'approved'),
     'comment': SearchField(FIELDTYPES.STR, 'comment'),
-    # 'bankid': SearchField(FIELDTYPES.STR, 'bankid'),
+    # 'bankfid': SearchField(FIELDTYPES.STR, 'accountfid'),
+    # 'trxid': SearchField(FIELDTYPES.STR, 'trxid'),
     # 'memo': SearchField(FIELDTYPES.STR, 'memo'),
 }
 
@@ -78,6 +83,13 @@ class TransactionsViewSet(viewsets.ModelViewSet):
         response.data.move_to_end('results')
         return response
 
+    @list_route(methods=['put'], parser_classes=[FormParser, MultiPartParser])
+    def upload(self, request, format=None):
+        trxmanager = TransactionManager()
+        for fileobj in request.FILES.values():
+            trxmanager.import_qfx(fileobj.name, fileobj.file)
+        return Response(status=204)
+
     @list_route(methods=['get'])
     def summary(self, request, *args, **kwargs):
         data = OrderedBunch()
@@ -95,23 +107,14 @@ class TransactionsViewSet(viewsets.ModelViewSet):
         data.move_to_end('categories')
         return Response(data)
 
-    @list_route(methods=['put'], parser_classes=[FormParser, MultiPartParser])
-    def upload(self, request, format=None):
-        for fileobj in request.FILES.values():
-            print('---')
-            print(fileobj.name)
-            print(fileobj.file.read())
-        return Response(status=204)
-
     def _summary_init_total(self, data):
         """ start the totals category. """
         data.total = OrderedBunch()
-        for category in Category.objects.all():
-            month = data.mindate
-            while month < data.maxdate:
-                monthstr = month.strftime(DATEFORMAT)
-                data.total[monthstr] = 0.0
-                month += relativedelta(months=1)
+        month = data.mindate
+        while month < data.maxdate:
+            monthstr = month.strftime(DATEFORMAT)
+            data.total[monthstr] = 0.0
+            month += relativedelta(months=1)
 
     def _summary_add_cateogry_values(self, data):
         """ group data by category, month => amount. """
@@ -153,8 +156,10 @@ class TransactionsViewSet(viewsets.ModelViewSet):
     def _summary_calc_averages(self, data):
         """ update averages accounting for months with incomplete data. """
         # find number of months and daterange to use when calculating average
+        start, end = data.mindate, data.maxdate
         query = Transaction.objects.filter(date__gte=data.mindate, date__lt=data.maxdate)
-        start, end = sorted(query.values('date').aggregate(Min('date'), Max('date')).values())
+        if query.exists():
+            start, end = sorted(query.values('date').aggregate(Min('date'), Max('date')).values())
         if start.day != 1:
             start += relativedelta(months=1)
             start = date(start.year, start.month, 1)

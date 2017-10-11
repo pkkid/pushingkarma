@@ -3,8 +3,8 @@
 """
 Copyright (c) 2015 PushingKarma. All rights reserved.
 """
-import platform
-from os.path import abspath, dirname, join
+import copy, platform
+from os.path import abspath, dirname, expanduser, join
 from . import secrets
 
 # Django Core Settings
@@ -72,6 +72,21 @@ DATABASES = {
     }
 }
 
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+    'handlers': {},
+    'loggers': {},
+    'formatters': {},
+}
+LOGGING['handlers']['console'] = {
+    'level': 'INFO',
+    'class': 'logging.StreamHandler',
+    'formatter': 'standard',
+}
+
+
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
@@ -91,6 +106,11 @@ LOGGING = {
         },
     },
     'loggers': {
+        # 'django': {
+        #     'handlers': ['file', 'console'],
+        #     'level': 'INFO',
+        #     'propagate': True,
+        # },
         'pk': {
             'handlers': ['file', 'console'],
             'level': 'INFO',
@@ -100,7 +120,7 @@ LOGGING = {
             'handlers': ['file', 'console'],
             'level': 'INFO',
             'propagate': False,
-        }
+        },
     },
     'formatters': {
         'standard': {
@@ -146,6 +166,7 @@ DBBACKUP_STORAGE_OPTIONS = {
     },
 }
 
-# PushingKarma Settings
-GSHEETS_CREDSTORE = '~/Private/googleapi/'
-GSHEETS_SECRETS = join(GSHEETS_CREDSTORE, 'googlesheets-oauth2.json')
+# PushingKarma Budget Settings
+BUDGET_GSHEETS_CREDSTORE = expanduser('~/Private/googleapi/')
+BUDGET_GSHEETS_SECRETS = join(BUDGET_GSHEETS_CREDSTORE, 'googlesheets-oauth2.json')
+BUDGET_ACCOUNTS = secrets.BUDGET_ACCOUNTS

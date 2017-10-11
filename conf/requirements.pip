@@ -18,3 +18,4 @@ pymdown-extensions==1.0.1
 python-dateutil==2.6.1
 redis==2.10.5
 timelib==0.2.4
+ofxparse==0.16

@@ -1054,7 +1054,8 @@ var helpers = {
    * @return {[type]}        [description]
    */
   formatDate: function(date, format) {
-    date = new Date(date);
+    var tz = new Date().toLocaleTimeString('en-us',{timeZoneName:'short'}).split(' ')[2]
+    date = new Date(date +' '+ tz);
     return helperutils.format(date, format);
   },
 

@@ -53,8 +53,9 @@ class CategorySerializer(DynamicFieldsSerializer):
 
 
 class Transaction(TimeStampedModel):
-    bankid = models.CharField(max_length=255, unique=True, db_index=True)
     account = models.CharField(max_length=255, db_index=True)
+    accountfid = models.IntegerField(db_index=True)
+    trxid = models.CharField(max_length=255, db_index=True)
     date = models.DateField(db_index=True)
     payee = models.CharField(max_length=255, blank=True, db_index=True)
     category = models.ForeignKey(Category, null=True, on_delete=models.SET_NULL, default=None)
@@ -63,8 +64,11 @@ class Transaction(TimeStampedModel):
     memo = models.CharField(max_length=255, blank=True, default='')
     comment = models.TextField(blank=True, default='', db_index=True)
 
+    class Meta:
+        unique_together = ('accountfid', 'trxid')
+
     def __str__(self):
-        return '<%s:%s:%s:%s>' % (self.__class__.__name__, self.id, self.account, self.bankid)
+        return '<%s:%s:%s:%s>' % (self.__class__.__name__, self.id, self.account, self.trxid)
 
 
 class TransactionSerializer(DynamicFieldsSerializer):
@@ -72,8 +76,8 @@ class TransactionSerializer(DynamicFieldsSerializer):
 
     class Meta:
         model = Transaction
-        fields = ('id','url','bankid','account','date','payee','category',
-            'amount','approved','memo','comment')
+        fields = ('id','url','account','accountfid','trxid','date','payee',
+            'category','amount','approved','memo','comment')
 
     def validate_category(self, value):
         category = utils.get_object_or_none(Category, name=value)
@@ -82,7 +86,7 @@ class TransactionSerializer(DynamicFieldsSerializer):
         return value
 
     def update(self, instance, validated_data):
-        for var in ('bankid','account','date','payee','amount','approved','memo','comment'):
+        for var in ('trxid','account','date','payee','amount','approved','memo','comment'):
             value = validated_data.get(var, getattr(instance, var))
             setattr(instance, var, value)
         instance.category_id = Category.objects.get(name=validated_data['category']['name']).id

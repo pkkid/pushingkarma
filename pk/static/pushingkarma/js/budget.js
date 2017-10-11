@@ -94,10 +94,17 @@ pk.budget = {
     var KEYS = this.KEYS;
     this.categories.on('keydown', 'tfoot input', function(event) {
       if (event.keyCode == KEYS.ENTER) {
+        event.preventDefault();
+        console.log(event.keyCode);
         var td = $(this).closest('td');
         var row = td.closest('tr');
-        self.td_save(td);
-        row.find('input').val('').first().focus();
+        self.td_save(td, false, false, function() {
+          self.update_categories(function() {
+            console.log(self.categories.find('#category-add input'));
+            self.categories.find('#category-add input').first().focus();
+          });
+          self.update_summary();
+        });
       }
     });
   },
@@ -110,7 +117,8 @@ pk.budget = {
       update: function(event, ui) {
         $('#category-null').appendTo(self.categories.find('tbody'));
         if (ui.item.attr('id') != 'category-null') {
-          self.td_save(ui.item.find('td').first(), true, function() {
+          var td = ui.item.find('td').first();
+          self.td_save(td, true, true, function() {
             self.update_summary();
           });
         }
@@ -195,6 +203,7 @@ pk.budget = {
           var all = td.closest('tbody').find('td:not(.readonly)');
           var index = all.index(td) - 1;
           var next = index >= 0 ? all.eq(index) : null;
+          if (!next) { return; }
           next.length ? self.td_edit(next) : input.blur();
         // tab selects next input in full table
         } else if (event.keyCode == KEYS.TAB) {
@@ -227,8 +236,9 @@ pk.budget = {
   data_transaction: function(row) {
     return {
       id: row.attr('id').replace('transaction-'),
-      bankid: row.data('bankid'),
       account: this.text_or_val(row.find('[data-name=account]')),
+      accountfid: row.data('accountfid'),
+      trxid: row.data('trxid'),
       date: this.text_or_val(row.find('[data-name=date]')),
       payee: this.text_or_val(row.find('[data-name=payee]')),
       category: this.text_or_val(row.find('[data-name=category]')),
@@ -348,12 +358,12 @@ pk.budget = {
     }, 10);
   },
 
-  td_save: function(td, force, callback) {
+  td_save: function(td, force, display, callback) {
     var self = this;
     var input = td.find('input');
     var row = td.closest('tr');
     var type = row.attr('id').split('-')[0];
-    var add = row.attr('id') == 'category-add';
+    display = display === undefined ? false : display;
     // do nothing if the value is unchanged
     if (!force && td.data('init') == input.val() && !td.hasClass('error')) {
       return self.td_display(td, input.val());
@@ -364,13 +374,11 @@ pk.budget = {
     var method = data.id ? 'PUT' : 'POST';
     var xhr = self.request(td, url, method, data, {
       done: function(data, textStatus, jqXHR) {
-        if (add) { return self.update_categories(); }
-        self.td_display(td, data[td.data('name')]);
+        if (display) { self.td_display(td, data[td.data('name')]); }
         if (callback) { callback(); }
       },
       fail: function(jqXHR, textStatus, errorThrown) {
-        if (add) { return; }
-        self.td_display(td, data[td.data('name')]);
+        if (display) { self.td_display(td, data[td.data('name')]); }
       }
     });
   },
@@ -397,7 +405,7 @@ pk.budget = {
     return xhr;
   },
  
-  update_categories: function() {
+  update_categories: function(callback) {
     var self = this;
     var url = '/api/categories/';
     try { this.xhrcat.abort(); } catch(err) { }
@@ -406,6 +414,7 @@ pk.budget = {
       var html = self.templates.listcategories(data);
       self.categories.html(html);
       self.bind_drag_categories();
+      if (callback) { callback(); }
     });
   },
 
@@ -541,7 +550,7 @@ pk.budget = {
       '  </tr></thead>',
       '  <tbody>',
       '   {{#each this.results}}',
-      '     <tr id="transaction-{{this.id}}" data-type="transaction" data-bankid="{{this.bankid}}" data-url="{{this.url}}">',
+      '     <tr id="transaction-{{this.id}}" data-type="transaction" data-accountfid="{{this.accountfid}}" data-trxid="{{this.trxid}}" data-url="{{this.url}}">',
       '       <td data-name="account" class="readonly"><div>{{this.account}}</div></td>',
       '       <td data-name="date"><div>{{this.date}}</div></td>',
       '       <td data-name="payee"><div>{{this.payee}}</div></td>',
