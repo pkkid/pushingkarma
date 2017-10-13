@@ -24,7 +24,7 @@ class Category(TimeStampedModel):
 
     def __str__(self):
         name = self.name.lower().replace(' ', '_')[:20]
-        return '<%s:%s:%s>' % (self.__class__.__name__, self.id, name)
+        return '%s:%s' % (self.id, name)
 
     @transaction.atomic
     def save(self, *args, **kwargs):
@@ -68,7 +68,7 @@ class Transaction(TimeStampedModel):
         unique_together = ('accountfid', 'trxid')
 
     def __str__(self):
-        return '<%s:%s:%s:%s>' % (self.__class__.__name__, self.id, self.account, self.trxid)
+        return '%s:%s:%s:%s' % (self.id, self.account, self.trxid, self.payee[:10])
 
 
 class TransactionSerializer(DynamicFieldsSerializer):

@@ -4,7 +4,7 @@
 Copyright (c) 2015 PushingKarma. All rights reserved.
 """
 import os
-from fabric.api import cd, env, local, put, run, sudo
+from fabric.api import cd, env, get, local, put, run, sudo
 from fabric.contrib.project import rsync_project
 
 RSYNC_EXCLUDE = ('.DS_Store','__pycache__','.git','*.sqlite3','*.example','*.db','secrets.py','fabfile.py')
@@ -39,11 +39,6 @@ def deploy_pushingkarma():
     _virtualenv('django-admin.py collectstatic --link --noinput --verbosity=0')
 
 
-def migrate_database():
-    """ Migrate django database. """
-    _virtualenv('django-admin.py migrate')
-
-
 def deploy_redsocks():
     """ Deploy django-redsocks project. """
     local = os.path.join(env.projects, 'django-redsocks')
@@ -58,6 +53,17 @@ def deploy_dbbackup():
     remote = os.path.join(env.sources)
     rsync_project(local_dir=local, remote_dir=remote, exclude=RSYNC_EXCLUDE,
         delete=True, extra_opts='--quiet --links --omit-dir-times')
+
+
+def get_db():
+    """ Download production database to local environment. """
+    dbpath = os.path.join(env.directory, 'db.sqlite3')
+    get(dbpath, dbpath)
+
+
+def migrate_database():
+    """ Migrate django database. """
+    _virtualenv('django-admin.py migrate')
 
 
 def pip_install():

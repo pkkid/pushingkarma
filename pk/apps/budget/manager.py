@@ -8,7 +8,8 @@ https://github.com/jseutter/ofxparse
 https://console.developers.google.com/
 https://pygsheets.readthedocs.io/en/latest/authorizing.html
 """
-import pygsheets
+import datetime, pygsheets
+from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from ofxparse import OfxParser
 from pk import log
@@ -18,6 +19,7 @@ from .models import Category, Transaction
 ACCOUNTS = settings.BUDGET_ACCOUNTS
 GSHEETS_CREDSTORE = getattr(settings, 'BUDGET_GSHEETS_CREDSTORE', None)
 GSHEETS_SECRETS = getattr(settings, 'BUDGET_GSHEETS_SECRETS', None)
+TRXJUNK = '#0123456789 '
 
 
 class TransactionManager:
@@ -72,6 +74,8 @@ class TransactionManager:
                         amount=trx['amount'],
                         date=trx['date'].date(),
                     ))
+            self.label_transactions(transactions)
+            self.categorize_transactions(transactions)
             log.info('Saving %s new transactions from qfx file: %s' % (len(transactions), filename))
             Transaction.objects.bulk_create(transactions)
             self.status.append('%s: added %s transactions' % (filename, len(transactions)))
@@ -107,6 +111,8 @@ class TransactionManager:
                     if not transactions[-1].category and trx['category'] not in categories_not_found:
                         log.warning("No category found for '%s'" % trx['category'])
                         categories_not_found.add(trx['category'])
+            self.label_transactions(transactions)
+            self.categorize_transactions(transactions)
             log.info('Saving %s new transactions from Google spreadsheet: %s' % (len(transactions), spreadsheet.title))
             Transaction.objects.bulk_create(transactions)
             self.status.append('%s: added %s transactions' % (spreadsheet.title, len(transactions)))
@@ -114,8 +120,21 @@ class TransactionManager:
             log.exception(err)
             self.status.append('%s: %s' % (url, err))
 
-    def label_transactions(self):
-        pass
+    def label_transactions(self, transactions):
+        lastyear = datetime.datetime.now() - relativedelta(months=13)
+        labels = Transaction.objects.filter(payee__startswith='<', date__gte=lastyear)
+        labels = dict(labels.values_list('payee','amount').order_by('date'))
+        lookup = dict((v,k) for k,v in labels.items())
+        for trx in transactions:
+            if not trx.payee and trx.amount in lookup:
+                trx.payee = lookup[trx.amount]
 
-    def categorize_transactions(self):
-        pass
+    def categorize_transactions(self, transactions):
+        lastyear = datetime.datetime.now() - relativedelta(months=13)
+        items = Transaction.objects.filter(date__gte=lastyear).exclude(payee='')
+        items = items.values_list('payee', 'category__id').order_by('date')
+        lookup = {payee.lower().rstrip(TRXJUNK):catid for payee,catid in items}
+        for trx in transactions:
+            payee = trx.payee.lower().rstrip(TRXJUNK)
+            if not trx.category and payee in lookup:
+                trx.category_id = lookup[payee]

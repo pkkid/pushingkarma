@@ -4,6 +4,7 @@
 Copyright (c) 2015 PushingKarma. All rights reserved.
 """
 import copy, platform
+from os import makedirs
 from os.path import abspath, dirname, expanduser, join
 from . import secrets
 
@@ -128,6 +129,7 @@ LOGGING = {
         },
     },
 }
+makedirs(dirname(LOGGING['handlers']['file']['filename']), exist_ok=True)
 
 # Django Rest Framework
 REST_FRAMEWORK = {

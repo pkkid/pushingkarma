@@ -24,23 +24,17 @@ means let me know. :)
 ### Dev Environment
 ```bash
 # Install Development Utilities
-> sudo apt-get install ruby ruby-dev
+> sudo apt-get install ruby ruby-dev nodejs npm
 > sudo su -c "gem install sass"
-> sudo ln -s /usr/bin/nodejs ~/.local/bin/node
 > npm install -g gulp bower
 > npm install
-> bower install    # choose bootstrap 4 and jquery 3
+> bower install  # choose bootstrap 4.0.0-beta
 > gulp
 
-# Update Nodejs to latest version (if hitting errors)
-> curl -sL https://deb.nodesource.com/setup_4.x | sudo -E bash -
-> sudo apt-get install -y nodejs
-> npm rebuild node-sass
-
 # Install Redis and django-redsocks
-> sudo apt-get install redis redis-server
+> sudo apt-get install redis-server
 > git clone git@github.com:pkkid/django-redsocks.git ~/Projects/django-redsocks
-> ln -s ~/Projects/django-redsocks/redsocks ~/.virtualenvs/pk/lib/python3.5/site-packages/
+> ln -s ~/Projects/django-redsocks/redsocks ~/.virtualenvs/pk/lib/python3.*/site-packages/
 
 # Kickstart the Database
 > django-admin migrate
