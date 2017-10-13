@@ -83,7 +83,7 @@ pk.budget = {
       if (td.hasClass('delempty') && !input.val()) {
         self.td_delete(td);
       } else {
-        self.td_save(td);
+        self.td_save(td, false, true);
       }
     });
   },
@@ -517,7 +517,7 @@ pk.budget = {
       '      <tr id="category-{{this.id}}" data-type="category" data-url="{{this.url}}">',
       '        <td data-name="name" class="delempty"><div>{{this.name}}</div></td>',
       '        <td data-name="trend" class="readonly drag"><div>&nbsp;</div></td>',
-      '        <td data-name="budget" data-display="int" class="right"><div>{{amountInt this.budget}}</div></td>',
+      '        <td data-name="budget" data-display="int" class="right selectall"><div>{{amountInt this.budget}}</div></td>',
       '      </tr>',
       '    {{/each}}',
       '  </tbody>',
@@ -553,8 +553,8 @@ pk.budget = {
       '     <tr id="transaction-{{this.id}}" data-type="transaction" data-accountfid="{{this.accountfid}}" data-trxid="{{this.trxid}}" data-url="{{this.url}}">',
       '       <td data-name="account" class="readonly"><div>{{this.account}}</div></td>',
       '       <td data-name="date"><div>{{this.date}}</div></td>',
-      '       <td data-name="payee"><div>{{this.payee}}</div></td>',
-      '       <td data-name="category"><div>{{this.category}}</div></td>',
+      '       <td data-name="payee" class="selectall"><div>{{this.payee}}</div></td>',
+      '       <td data-name="category" class="selectall"><div>{{this.category}}</div></td>',
       '       <td data-name="amount" data-display="float" class="right"><div>{{amountFloat this.amount}}</div></td>',
       '       <td data-name="approved" data-display="bool" class="center selectall"><div>{{yesNo this.approved \'x\' \'\'}}</div></td>',
       '       <td data-name="comment"><div>{{this.comment}}</div></td>',
