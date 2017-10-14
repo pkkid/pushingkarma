@@ -7,7 +7,7 @@ pk.budget = {
   BUDGET_SELECTOR: '#budget',
   LOADMORE_INTERVAL: 100,
   LOADMORE_DISTANCE: 200,
-  KEYS: {TAB:9, ENTER:13, ESC:27, UP:38, DOWN:40},
+  KEYS: {TAB:9, ENTER:13, ESC:27, F3:114, UP:38, DOWN:40},
   
   init: function(selector) {
     this.container = $(selector);
@@ -180,6 +180,14 @@ pk.budget = {
   init_shortcuts: function() {
     var self = this;
     var KEYS = this.KEYS;
+    // f3 puts focus on search input
+    $(document).on('keydown', function(event) {
+      if (event.keyCode == KEYS.F3) {
+        event.preventDefault();
+        event.stopPropagation();
+        self.search.focus();
+      }
+    });
     // update budget items on enter
     this.container.on('keydown', 'tbody input', function(event) {
       var input = $(this);

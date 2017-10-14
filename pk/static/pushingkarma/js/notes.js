@@ -5,7 +5,7 @@
 
 pk.notes = {
   APIROOT: '/api/notes/',
-  KEYS: {TAB:9, ENTER:13, ESC:27, UP:38, DOWN:40},
+  KEYS: {TAB:9, ENTER:13, ESC:27, F3:114, UP:38, DOWN:40},
   
   init: function(selector, noteid, editor) {
     this.container = $(selector);
@@ -47,10 +47,14 @@ pk.notes = {
     var self = this;
     var KEYS = this.KEYS;
     // select noteitems via keyboard
-    $(window).on('keydown', function(event) {
+    $(document).on('keydown', function(event) {
       var noteitems = self.notelist.find('.notes-item');
       var focused = self.searchinput.is(':focus');
-      if (focused && (_.valuesIn(KEYS).indexOf(event.keyCode) > -1)) {
+      if (event.keyCode == KEYS.F3) {
+        event.preventDefault();
+        event.stopPropagation();
+        self.searchinput.focus();
+      } else if (focused && (_.valuesIn(KEYS).indexOf(event.keyCode) > -1)) {
         event.preventDefault();
         var selected = noteitems.filter('.selected');
         if ((event.keyCode == KEYS.DOWN) || (event.keyCode == KEYS.TAB)) {

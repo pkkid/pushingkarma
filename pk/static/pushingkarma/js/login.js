@@ -43,6 +43,7 @@ pk.login = {
     var KEYS = this.KEYS;
     $(document).on('keydown', function(event) {
       if ((event.keyCode == KEYS.F2) && (!$('body').hasClass('authenticated'))) {
+        event.preventDefault();
         event.stopPropagation();
         self.show_form();
       }
