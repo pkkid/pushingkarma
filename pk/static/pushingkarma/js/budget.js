@@ -130,9 +130,12 @@ pk.budget = {
     // show and hide the dropzone when dragging a file
     var self = this;
     $(document).on('dragover', function(event) {
-      event.preventDefault();
-      event.stopPropagation();
-      self.dropzone.fadeIn('fast');
+      var dt = event.originalEvent.dataTransfer;
+      if (dt.types && (dt.types.indexOf ? dt.types.indexOf('Files') != -1 : dt.types.contains('Files'))) {
+        event.preventDefault();
+        event.stopPropagation();
+        self.dropzone.fadeIn('fast');
+      }
     });
     $(document).on('dragleave', function(event) {
       event.preventDefault();
