@@ -87,7 +87,7 @@ class Markdown(object):
         for elem in soup.find_all('br'):
             elem.replaceWith('\n')
         for elem in soup.find_all('brx'):
-            elem.replaceWith(BeautifulSoup('<br/>'))
+            elem.replaceWith(BeautifulSoup('<br/>', 'html.parser'))
         return soup
 
     def _merge_submeta(self, submeta):
