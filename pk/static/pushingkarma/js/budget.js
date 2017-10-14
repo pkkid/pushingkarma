@@ -199,14 +199,14 @@ pk.budget = {
           event.preventDefault();
           var row = td.closest('tr');
           var name = td.data('name');
-          var next = row.next().find('td[data-name='+name+']:not(.readonly)');
+          var next = row.next(':not(.readonly)').find('td[data-name='+name+']');
           next.length ? self.td_edit(next) : input.blur();
         // up selects input on prev row
         } else if (event.keyCode == KEYS.UP) {
           event.preventDefault();
           var row = td.closest('tr');
           var name = td.data('name');
-          var next = row.prev().find('td[data-name='+name+']:not(.readonly)');
+          var next = row.prev(':not(.readonly)').find('td[data-name='+name+']');
           next.length ? self.td_edit(next) : input.blur();
         // shift + tab selects previous input in full table
         } else if (event.shiftKey && event.keyCode == KEYS.TAB) {
@@ -525,10 +525,10 @@ pk.budget = {
       '  </tr></thead>',
       '  <tbody>',
       '    {{#each this.results}}',
-      '      <tr id="category-{{this.id}}" data-type="category" data-url="{{this.url}}">',
-      '        <td data-name="name" class="delempty {{#if_eq this.id "null"}}readonly{{/if_eq}}"><div>{{this.name}}</div></td>',
+      '      <tr id="category-{{this.id}}" data-type="category" data-url="{{this.url}}" class="{{#if_eq this.id "null"}}readonly{{/if_eq}}">',
+      '        <td data-name="name" class="delempty"><div>{{this.name}}</div></td>',
       '        <td data-name="trend" class="readonly drag"><div>&nbsp;</div></td>',
-      '        <td data-name="budget" data-display="int" class="right selectall {{#if_eq this.id "null"}}readonly{{/if_eq}}"><div>{{amountInt this.budget}}</div></td>',
+      '        <td data-name="budget" data-display="int" class="right selectall"><div>{{amountInt this.budget}}</div></td>',
       '      </tr>',
       '    {{/each}}',
       '  </tbody>',
