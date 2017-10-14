@@ -1,0 +1,50 @@
+{
+    "child": {
+        "child1": {
+            "directory": "\/home\/mjs7231\/Projects\/pushingkarma",
+            "overrideCommand": "/bin/bash --init-file /home/mjs7231/Projects/pushingkarma/conf/tilix-cmd.sh",
+            "height": 678,
+            "profile": "2b7c4080-0ddd-46c5-8f23-563fd3ba789d",
+            "readOnly": false,
+            "synchronizedInput": true,
+            "type": "Terminal",
+            "width": 775
+        },
+        "child2": {
+            "child1": {
+                "directory": "\/home\/mjs7231\/Projects\/pushingkarma",
+                "overrideCommand": "/bin/bash --init-file /home/mjs7231/Projects/pushingkarma/conf/tilix-runserver.sh",
+                "height": 336,
+                "profile": "2b7c4080-0ddd-46c5-8f23-563fd3ba789d",
+                "readOnly": false,
+                "synchronizedInput": true,
+                "type": "Terminal",
+                "width": 775
+            },
+            "child2": {
+                "directory": "\/home\/mjs7231\/Projects\/pushingkarma",
+                "overrideCommand": "/bin/bash --init-file /home/mjs7231/Projects/pushingkarma/conf/tilix-gulp.sh",
+                "height": 332,
+                "profile": "2b7c4080-0ddd-46c5-8f23-563fd3ba789d",
+                "readOnly": false,
+                "synchronizedInput": true,
+                "type": "Terminal",
+                "width": 775
+            },
+            "orientation": 1,
+            "position": 24,
+            "ratio": 0.499257057949479943,
+            "type": "Paned"
+        },
+        "orientation": 1,
+        "position": 50,
+        "ratio": 0.5,
+        "type": "Paned"
+    },
+    "height": 1356,
+    "name": "${directory}",
+    "synchronizedInput": false,
+    "type": "Session",
+    "version": "1.0",
+    "width": 775
+}
