@@ -21,6 +21,7 @@ pk.budget = {
     this.viewmode = 'summary';  // current view mode
     this.init_elements();
     this.bind_search_edit();
+    this.bind_view_button();
     this.bind_row_edit();
     this.bind_category_add();
     this.bind_drag_files();
@@ -32,7 +33,7 @@ pk.budget = {
 
   init_elements: function() {
     this.search = this.container.find('#search');
-    this.viewbtn = this.container.find('#budget-viewbtn');
+    this.viewbtn = this.container.find('#viewbtn');
     this.summary = this.container.find('#summary');
     this.categories = this.container.find('#categories');
     this.transactions = this.container.find('#transactions');
@@ -45,6 +46,20 @@ pk.budget = {
     this.search.on('change paste keyup', function(event) {
       event.preventDefault();
       $(this).val() ? self.update_transactions() : self.update_summary();
+    });
+  },
+
+  bind_view_button: function() {
+    // show or hide the transaction list
+    var self = this;
+    self.viewbtn.on('click', function(event) {
+      if (self.viewmode == 'summary') {
+        console.log('show_transactions');
+        self.update_transactions();
+      } else {
+        self.search.val('');
+        self.update_summary();
+      }
     });
   },
 
@@ -272,6 +287,8 @@ pk.budget = {
   show_summary: function() {
     var self = this;
     self.viewmode = 'summary';
+    self.viewbtn.attr('class', 'mdi mdi-format-list-bulleted');
+    self.viewbtn.tooltip('hide').attr('data-original-title', 'View Transactions');
     self.transactions.fadeOut('fast', function() {
       self.summary.fadeIn('fast');
     });
@@ -280,6 +297,8 @@ pk.budget = {
   show_transactions: function() {
     var self = this;
     self.viewmode = 'transactions';
+    self.viewbtn.attr('class', 'mdi mdi-close-circle-outline');
+    self.viewbtn.tooltip('hide').attr('data-original-title', 'View Summary');
     self.summary.fadeOut('fast', function() {
       self.transactions.fadeIn('fast');
     });
