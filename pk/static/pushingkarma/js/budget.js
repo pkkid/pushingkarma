@@ -13,12 +13,14 @@ pk.budget = {
     this.container = $(selector);
     if (!this.container.length) { return; }
     console.debug('init pk.budget on '+ selector);
-    this.xhr = null;            // main actions xhr reference
-    this.xhrcat = null;         // categories xhr reference
-    this.xhrtrx = null;         // transactions xhr reference
-    this.trxpage = null;        // last loaded trx page
-    this.clicktimer = null;     // detects single vs dblclick
-    this.viewmode = 'summary';  // current view mode
+    this.xhr = null;              // main actions xhr reference
+    this.xhrcat = null;           // categories xhr reference
+    this.xhrtrx = null;           // transactions xhr reference
+    this.trxpage = null;          // last loaded trx page
+    this.clicktimer = null;       // detects single vs dblclick
+    this.viewmode = 'summary';    // current view mode
+    self.autocomplete = false;    // autocomplete select open
+    this.categorynames = [];      // category name choices
     this.init_elements();
     this.bind_search_edit();
     this.bind_view_button();
@@ -210,14 +212,14 @@ pk.budget = {
       if (watchedkey) {
         var td = input.closest('td');
         // enter and down select td on next row
-        if (event.keyCode == KEYS.ENTER || event.keyCode == KEYS.DOWN) {
+        if ((event.keyCode == KEYS.ENTER || event.keyCode == KEYS.DOWN) && !self.autocomplete) {
           event.preventDefault();
           var row = td.closest('tr');
           var name = td.data('name');
           var next = row.next(':not(.readonly)').find('td[data-name='+name+']');
           next.length ? self.td_edit(next) : input.blur();
         // up selects input on prev row
-        } else if (event.keyCode == KEYS.UP) {
+        } else if ((event.keyCode == KEYS.UP) && !self.autocomplete) {
           event.preventDefault();
           var row = td.closest('tr');
           var name = td.data('name');
@@ -364,6 +366,7 @@ pk.budget = {
   },
 
   td_edit: function(td) {
+    var self = this;
     if (td.hasClass('readonly')) { return; }
     if (td.closest('tr').attr('id') == 'category-null') { return; }
     // create input and format value
@@ -377,6 +380,19 @@ pk.budget = {
         case 'float': input.val(pk.utils.to_float(div.text())); break;
         default: input.val(div.text()); break;
       }
+    }
+    // bind autocomplete to category inputs
+    if (td.data('name') == 'category') {
+      input.on('keydown', function(event) {
+        var watchedkey = _.valuesIn(self.KEYS).indexOf(event.keyCode) >= 0;
+        if (watchedkey) { self.autocomplete = $('.ui-autocomplete:visible').length > 0; }
+      });
+      input.autocomplete({
+        source: self.categorynames,
+        autoFocus: true,
+        change: function (event, ui) { if (!ui.item) { $(event.target).val(''); }}, 
+        focus: function (event, ui) { return false; }
+      });
     }
     // repalce div with input and set focus
     td.data('init', input.val()).html(input);
@@ -443,9 +459,20 @@ pk.budget = {
     this.xhrcat.done(function(data, textStatus, jqXHR) {
       var html = self.templates.listcategories(data);
       self.categories.html(html);
+      self.update_categorynames(data);
       self.bind_drag_categories();
       if (callback) { callback(); }
     });
+  },
+
+  update_categorynames: function(data) {
+    var categorynames = [];
+    for (var i in data.results) {
+      if (data.results[i].name != 'Uncategorized') {
+        categorynames.push(data.results[i].name);
+      }
+    }
+    this.categorynames = categorynames.sort();
   },
 
   update_summary: function() {

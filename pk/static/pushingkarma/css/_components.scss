@@ -129,3 +129,33 @@ div.fancyhr {
   .popover-body { padding:0px; color:#aaa; }
 }
 
+// ui-autocomplete
+// <li class="ui-menu-item"><div id="ui-id-2" tabindex="-1" class="ui-menu-item-wrapper ui-state-active">Income</div></li>
+// <li class="ui-menu-item"><div id="ui-id-3" tabindex="-1" class="ui-menu-item-wrapper">Insurance</div></li>
+// <li class="ui-menu-item"><div id="ui-id-4" tabindex="-1" class="ui-menu-item-wrapper">Work Food &amp; Drink</div></li>
+.ui-autocomplete {
+  background-color: #efede8;
+  border: 1px solid rgba(0,0,0,0.3);
+  box-shadow: 0px 2px 3px rgba(0,0,0,0.1);
+  padding: 0px;
+  width: 130px;
+  border-radius: 3px;
+  li {
+    list-style-type: none;
+    div {
+      border-bottom: 1px solid transparent;
+      border-top: 1px solid transparent;
+      font-family: verdana;
+      font-size: 10px;
+      line-height: 16px;
+      padding: 0px 5px;
+      color: #666;
+      &.ui-state-active {
+        background-color: rgba(0,0,0,0.05);
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+        border-top: 1px solid rgba(0,0,0,0.05);
+        color: #111;
+      }
+    }
+  }
+}
