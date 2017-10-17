@@ -5,9 +5,13 @@
 
 pk.budget = {
   BUDGET_SELECTOR: '#budget',
+  KEYS: {TAB:9, ENTER:13, ESC:27, F3:114, UP:38, DOWN:40},
   LOADMORE_INTERVAL: 100,
   LOADMORE_DISTANCE: 200,
-  KEYS: {TAB:9, ENTER:13, ESC:27, F3:114, UP:38, DOWN:40},
+  URL_SUMMARY: '/api/transactions/summary/',
+  URL_CATEGORIES: '/api/categories/',
+  URL_TRANSACTIONS: '/api/transactions/',
+  URL_UPLOAD: '/api/transactions/upload/',
   
   init: function(selector) {
     this.container = $(selector);
@@ -478,9 +482,8 @@ pk.budget = {
   update_summary: function() {
     var self = this;
     self.show_summary();
-    var url = '/api/transactions/summary/';
     try { this.xhrtrx.abort(); } catch(err) { }
-    this.xhrtrx = $.ajax({url:url, type:'GET', dataType:'json'});
+    this.xhrtrx = $.ajax({url:self.URL_SUMMARY, type:'GET', dataType:'json'});
     this.xhrtrx.done(function(data, textStatus, jqXHR) {
       var html = self.templates.summary(data);
       self.summary.html(html);
@@ -493,9 +496,7 @@ pk.budget = {
     if (!page) {
       self.trxpage = null;
       var more = null;
-      var url = '/api/transactions/';
-      var search = this.search.val();
-      url = search ? pk.utils.update_url(url, 'search', search) : url;
+      var url = pk.utils.update_url(self.URL_TRANSACTIONS, 'search',  this.search.val());
     } else {
       var more = this.transactions.find('#transactions-more');
       var url = more.data('next');
