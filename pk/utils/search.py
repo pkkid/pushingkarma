@@ -14,7 +14,7 @@ NONE = ('none', 'null')
 OPERATIONS = {'=':'', '>':'__gt', '>=':'__gte', '<=':'__lte', '<':'__lt', ':': '__icontains'}
 REVERSEOP = {'__gt':'__lte', '__gte':'__lt', '__lte':'__gt', '__lt':'__gte'}
 STOPWORDS = ('and', '&&', '&', 'or', '||', '|')
-MONTHNAMES = [m.lower() for m in list(calendar.month_name)[1:] + list(calendar.month_abbr)[1:]]
+MONTHNAMES = [m.lower() for m in list(calendar.month_name)[1:] + list(calendar.month_abbr)[1:] + ['sept']]
 
 FIELDTYPES = SimpleNamespace()
 FIELDTYPES.BOOL = 'bool'
@@ -56,7 +56,7 @@ class Search:
                 self.errors.append('Part of the search is being ignored: %s' % chunk)
             return [SearchChunk(self, c) for c in chunkstrs if c not in STOPWORDS]
         except Exception as err:
-            self.errors.append(Exception('Invalid query: %s' % err))
+            self.errors.append('Invalid query: %s' % err)
             log.exception(err)
 
     def _list_datefilters(self):
@@ -64,14 +64,15 @@ class Search:
         datestrings = [c.datefilter for c in self.chunks if c.datefilter]
         for datestring in datestrings:
             opused = None
-            for operation, qoperation in OPERATIONS.items():
+            for operation in sorted(OPERATIONS.keys(), key=len, reverse=True):
+                qoperation = OPERATIONS[operation]
                 if qoperation:
                     opused = operation
                     datestring = datestring.replace(qoperation, ' %s' % operation)
             if not opused:
                 datestring = datestring.replace(' ', ' = ' % operation)
             datestring = datestring.replace('__', '.')
-            datefilters.append(datestring)
+            datefilters.append(datestring.replace('00:00:00', ''))
         return datefilters
             
     def queryset(self):
@@ -152,7 +153,7 @@ class SearchChunk:
                     break  # only use one operation
         except SearchError as err:
             log.error(err)
-            self.error = err
+            self.error = str(err)
             
     def _get_qfield(self):
         field = self.search.fields.get(self.field)
@@ -247,8 +248,8 @@ class SearchChunk:
         # return the queryset for a date operation on a specific column.
         clauses = []
         mindate, maxdate = self._min_max_dates()
-        if self.operation == '>': clauses.append([OPERATIONS['>='], mindate])
         if self.operation == '>=': clauses.append([OPERATIONS['>='], mindate])
+        if self.operation == '>': clauses.append([OPERATIONS['>='], mindate])
         if self.operation == '<=': clauses.append([OPERATIONS['<='], mindate])
         if self.operation == '<': clauses.append([OPERATIONS['<='], mindate])
         if self.operation == '=':

@@ -6,15 +6,28 @@
   @include contentwithsidepanel(250px, 900px);
   position: relative;
 
+  .subtext,
+  .subtext a {
+    color: #848177;
+    font-size: 10px;
+    font-family: "Cabin", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    line-height: 18px;
+    .error { color:#966; }
+  }
+  h2 {
+    float: left;
+    line-height: 22px;
+    margin-top: 6px;
+    margin-bottom: 10px;
+    .subtext { padding-left: 2px; }
+  }
+
   table {
     font-size: 14px;
     line-height: 16px;
     width: 100%;
 
-    tr.popped {
-      background-color: rgba(0,0,0,0.05);
-    }
-
+    tr.popped { background-color: rgba(0,0,0,0.05); }
     th {
       border-bottom: 1px solid rgba(0,0,0,0.5);
       padding: 0px 4px;
@@ -60,11 +73,15 @@
   #sidepanel-content {
     overflow-y: auto;
     height: calc(100% - 42px);
-    padding: 65px 10px 10px 10px;
+    padding: 5px 10px 10px 10px;
     color: #333;
     $width:110px; [data-name='name'] { width:$width; div,input { width:$width; }}
     $width:100%; [data-name='trend'] { width:$width; text-align:center; div,input { width:$width; }}
     $width:55px; [data-name='budget'] { width:$width; div,input { width:$width; }}
+    
+    #categories {
+      margin-top: 72px;
+    }
     #category-add input {
       background-color: rgba(0,0,0,0.05);
       opacity: 0.5;
@@ -83,36 +100,40 @@
     $width:20px; [data-name='approved'] { width:$width; div,input { width:$width; }}
     $width:150px; [data-name='comment'] { width:$width; div,input { width:$width; }}
 
-    #search {
-      background-color: rgba(0,0,0,0.1);
-      border-radius: 20px;
-      color: #504E41;
-      font-size: 16px;
-      line-height: 22px;
-      padding: 1px 28px 1px 28px;
-      position: absolute;
-      right: 20px;
-      top: 26px;
-      width: 400px;
-      border: 1px solid rgba(0,0,0,0.1);
-    }
-    #search-icon {
-      font-size: 18px;
-      position: absolute;
-      right: 395px;
-      top: 26px;
-      z-index: 98;
-    }
-    #viewbtn {
-      cursor: pointer;
-      font-size: 18px;
-      position: absolute;
-      right: 26px;
-      top: 26px;
-      z-index: 98;
-      opacity: 0.6;
-      transition: opacity 0.2s ease;
-      &:hover { opacity: 1; }
+    #searchwrap {
+      float: right;
+      position: relative;
+
+      #search {
+        background-color: rgba(0,0,0,0.1);
+        border-radius: 20px;
+        color: #504E41;
+        font-size: 16px;
+        line-height: 22px;
+        padding: 1px 28px 1px 28px;
+        right: 20px;
+        width: 400px;
+        border: 1px solid rgba(0,0,0,0.1);
+      }
+      #search-icon {
+        font-size: 19px;
+        position: absolute;
+        right: 375px;
+        top: 2px;
+        z-index: 98;
+      }
+      #viewbtn {
+        cursor: pointer;
+        font-size: 18px;
+        position: absolute;
+        right: 6px;
+        top: 2px;
+        z-index: 98;
+        opacity: 0.6;
+        transition: opacity 0.2s ease;
+        &:hover { opacity: 1; }
+      }
+      .subtext { padding-left:10px; }
     }
 
     #summary {

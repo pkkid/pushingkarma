@@ -41,6 +41,7 @@ pk.budget = {
 
   init_elements: function() {
     this.search = this.container.find('#search');
+    this.searchinfo = this.container.find('#searchwrap .subtext');
     this.viewbtn = this.container.find('#viewbtn');
     this.summary = this.container.find('#summary');
     this.categories = this.container.find('#categories');
@@ -493,6 +494,7 @@ pk.budget = {
     try { this.xhrtrx.abort(); } catch(err) { }
     this.xhrtrx = $.ajax({url:self.URL_SUMMARY, type:'GET', dataType:'json'});
     this.xhrtrx.done(function(data, textStatus, jqXHR) {
+      self.searchinfo.text('');
       var html = self.templates.summary(data);
       self.summary.html(html);
     });
@@ -517,6 +519,7 @@ pk.budget = {
       this.xhrtrx = $.ajax({url:url, type:'GET', dataType:'json'});
       this.xhrtrx.done(function(data, textStatus, jqXHR) {
         if (more) { more.remove(); }
+        self.searchinfo.text(data.errors || data.datefilters);
         var html = self.templates.listtransactions(data);
         if (data.previous) {
           var items = $(html).find('tbody tr');
@@ -541,8 +544,17 @@ pk.budget = {
   templates: {
 
     summary: Handlebars.compile([
-      '<h2>Summary</h2>',
-      '<table cellpadding="0" cellspacing="0">',
+      '<h2>',
+      '  Summary',
+      '  <div class="subtext">',
+      '    {{addCommas this.count}} transactions',
+      '    {{yesNo this.uncategorized "|" ""}}',
+      '    {{#if this.uncategorized}}<a class="error" href="/budget/?view=transactions&search=-category%3A">{{addCommas this.uncategorized}} uncategorized</a>{{/if}}',
+      '    {{yesNo this.unapproved "|" ""}}',
+      '    {{#if this.unapproved}}<a class="error" href="/budget/?view=transactions&search=approved%3Df">{{addCommas this.unapproved}} unapproved</a>{{/if}}',
+      '  </div>',
+      '</h2>',
+      '<table cellpadding="0" cellspacing="0" style="clear:both;">',
       '  <thead><tr>',
       '    <th class="average">Average</th>',
       '    {{#each this.categories.0.amounts}}',
@@ -604,8 +616,17 @@ pk.budget = {
     ].join('\n')),
 
     listtransactions: Handlebars.compile([
-      '<h2>Transactions</h2>',
-      '<table cellpadding="0" cellspacing="0">',
+      '<h2>',
+      '  Transactions',
+      '  <div class="subtext">',
+      '    {{addCommas this.count}} transactions',
+      '    {{yesNo this.uncategorized "|" ""}}',
+      '    {{#if this.uncategorized}}<a class="error" href="/budget/?view=transactions&search=-category%3A">{{addCommas this.uncategorized}} uncategorized</a>{{/if}}',
+      '    {{yesNo this.unapproved "|" ""}}',
+      '    {{#if this.unapproved}}<a class="error" href="/budget/?view=transactions&search=approved%3Df">{{addCommas this.unapproved}} unapproved</a>{{/if}}',
+      '  </div>',
+      '</h2>',
+      '<table cellpadding="0" cellspacing="0" style="clear:both;">',
       '  <thead><tr>',
       '    <th data-name="account">Bank</th>',
       '    <th data-name="date">Date</th>',

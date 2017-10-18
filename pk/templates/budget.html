@@ -20,9 +20,12 @@
     </div>
     <!-- Layout:MainContent -->
     <div id='maincontent'>
-      <span id='search-icon' class='mdi mdi-magnify'></span>
-      <span id='viewbtn' class='mdi mdi-format-list-bulleted' data-toggle='tooltip' data-placement='bottom' title='View Transactions'></span>
-      <input id='search' type='text' value='{{request.GET.search}}' autocomplete='off' autofocus='true'/>
+      <div id='searchwrap'>
+        <span id='search-icon' class='mdi mdi-magnify'></span>
+        <span id='viewbtn' class='mdi mdi-format-list-bulleted' data-toggle='tooltip' data-placement='bottom' title='View Transactions'></span>
+        <input id='search' type='text' value='{{request.GET.search}}' autocomplete='off' autofocus='true'/>
+        <div class='subtext'></div>
+      </div>
       <div id='summary'></div>
       <div id='transactions'></div>
       <div id='dropzone'><div class='outline'>drop .qfx</div></div>

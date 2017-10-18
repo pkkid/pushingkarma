@@ -75,11 +75,14 @@ class TransactionsViewSet(viewsets.ModelViewSet):
         if searchstr:
             search = Search(transactions, TRANSACTIONSEARCHFIELDS, searchstr)
             transactions = search.queryset()
-            searchdata = {'searchstr':searchstr, 'errors':search.errors, 'datefilters': search.datefilters}
+            searchdata = {'searchstr':searchstr, 'errors':', '.join(search.errors),
+                'datefilters':' AND '.join(search.datefilters)}
         page = self.paginate_queryset(transactions)
         serializer = TransactionSerializer(page, context={'request':request}, many=True, fields=self.list_fields)
         response = self.get_paginated_response(serializer.data)
         response.data.update(searchdata)
+        response.data['unapproved'] = transactions.filter(approved=False).count()
+        response.data['uncategorized'] = transactions.filter(category_id=None).count()
         response.data.move_to_end('results')
         return response
 
@@ -99,6 +102,11 @@ class TransactionsViewSet(viewsets.ModelViewSet):
         data.months = 12
         data.mindate = maxmonth - relativedelta(months=data.months - 1)
         data.maxdate = maxmonth + relativedelta(months=1)
+        # count transactions
+        transactions = Transaction.objects.filter(date__gte=data.mindate, date__lt=data.maxdate)
+        data.count = transactions.count()
+        data.unapproved = transactions.filter(approved=False).count()
+        data.uncategorized = transactions.filter(category_id=None).count()
         # populate summary data
         self._summary_init_total(data)
         self._summary_add_cateogry_values(data)
@@ -179,3 +187,4 @@ class TransactionsViewSet(viewsets.ModelViewSet):
                         avg_total += value
                 category.average = round(avg_total / float(data.avg_months), 2)
                 data.avg_total += category.average
+        data.avg_total = round(data.avg_total, 2)
