@@ -33,6 +33,8 @@ pk.notes = {
     this.searchinput.on('change paste keyup', function(event) {
       if (_.valuesIn(this.KEYS).indexOf(event.keyCode) == -1) {
         event.preventDefault();
+        var url = pk.utils.update_url(null, {search:$(this).val()})
+        window.history.replaceState(null, null, url);
         self.update_list($(this).val());
       }
     });

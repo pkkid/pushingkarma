@@ -104,13 +104,14 @@ pk.utils = {
     return pk.utils.format('{0}//{1}{2}{3}{4}', protocol, hostname, port, pathname, search);
   },
 
-  update_url: function(url, key, value) {
-    url = url == null ? window.location.href.toLowerCase() : url.toLowerCase();
-    url = url.indexOf('http') == 0 ? url : 'http://example.com'+ url;
-    url = new URL(url);
-    if (value !== '') { url.searchParams.set(key, value); }
-    else { url.searchParams.delete(key); }
-    return url.toString().replace('http://example.com', '');
+  update_url: function(url, params) {
+    url = url === null ? new URL(window.location.href) : new URL(url);
+    for (var key in params) {
+      var value = params[key];
+      if (value == '') { url.searchParams.delete(key); }
+      else { url.searchParams.set(key, value); }
+    }
+    return url.toString();
   },
 
   //--------------------

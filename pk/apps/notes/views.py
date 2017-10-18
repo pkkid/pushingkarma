@@ -19,12 +19,12 @@ NOTESEARCHFIELDS = {
 
 
 def note(request, slug=None, tmpl='note.html'):
-    notes = Note.objects.order_by('-modified')
-    slugnote = utils.get_object_or_none(Note, slug=slug)
-    search = request.GET.get('search')
-    if slugnote: note = slugnote
-    elif search: note = Search(notes, NOTESEARCHFIELDS, search).queryset()[0]
-    else: note = notes[0]
+    note = utils.get_object_or_none(Note, slug=slug)
+    if note is None:
+        search = request.GET.get('search')
+        notes = Note.objects.order_by('-modified')
+        notes = Search(notes, NOTESEARCHFIELDS, search).queryset() if search else notes
+        note = notes[0] if notes.exists() else None
     data = utils.context.core(request, menuitem='notes')
     data.note = NoteSerializer(note, context={'request':request}).data
     return utils.response(request, tmpl, data)

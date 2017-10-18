@@ -8,23 +8,23 @@ pk.budget = {
   KEYS: {TAB:9, ENTER:13, ESC:27, F3:114, UP:38, DOWN:40},
   LOADMORE_INTERVAL: 100,
   LOADMORE_DISTANCE: 200,
-  URL_SUMMARY: '/api/transactions/summary/',
-  URL_CATEGORIES: '/api/categories/',
-  URL_TRANSACTIONS: '/api/transactions/',
-  URL_UPLOAD: '/api/transactions/upload/',
+  URL_SUMMARY: window.location.origin +'/api/transactions/summary/',
+  URL_CATEGORIES: window.location.origin +'/api/categories/',
+  URL_TRANSACTIONS: window.location.origin +'/api/transactions/',
+  URL_UPLOAD: window.location.origin +'/api/transactions/upload/',
   
   init: function(selector) {
     this.container = $(selector);
     if (!this.container.length) { return; }
     console.debug('init pk.budget on '+ selector);
-    this.xhr = null;              // main actions xhr reference
-    this.xhrcat = null;           // categories xhr reference
-    this.xhrtrx = null;           // transactions xhr reference
-    this.trxpage = null;          // last loaded trx page
-    this.clicktimer = null;       // detects single vs dblclick
-    this.viewmode = 'summary';    // current view mode
-    self.autocomplete = false;    // autocomplete select open
-    this.categorynames = [];      // category name choices
+    this.xhr = null;                            // main actions xhr reference
+    this.xhrcat = null;                         // categories xhr reference
+    this.xhrtrx = null;                         // transactions xhr reference
+    this.trxpage = null;                        // last loaded trx page
+    this.clicktimer = null;                     // detects single vs dblclick
+    self.autocomplete = false;                  // autocomplete select open
+    this.categorynames = [];                    // category name choices
+    this.params = {view:'summary', search:''};  // URL params for current view
     this.init_elements();
     this.bind_search_edit();
     this.bind_view_button();
@@ -34,7 +34,9 @@ pk.budget = {
     this.bind_infinite_scroll();
     this.init_shortcuts();
     this.update_categories();
-    this.update_summary();
+    // display summary or transactions
+    var view = new URL(window.location.href).searchParams.get('view');
+    view == 'transactions' ? this.update_transactions() : this.update_summary();
   },
 
   init_elements: function() {
@@ -59,8 +61,7 @@ pk.budget = {
     // show or hide the transaction list
     var self = this;
     self.viewbtn.on('click', function(event) {
-      if (self.viewmode == 'summary') {
-        console.log('show_transactions');
+      if (self.params.view == 'summary') {
         self.update_transactions();
       } else {
         self.search.val('');
@@ -189,7 +190,7 @@ pk.budget = {
     // load more transactions if user scrolls near bottom
     var self = this;
     setInterval(function() {
-      if (self.viewmode == 'transactions') {
+      if (self.params.view == 'transactions') {
         var bottom = $(document).height() - $(window).scrollTop() - $(window).height();
         if (bottom < self.LOADMORE_DISTANCE && self.transactions.find('#transactions-more').length) {
           self.update_transactions(true);
@@ -292,22 +293,29 @@ pk.budget = {
 
   show_summary: function() {
     var self = this;
-    self.viewmode = 'summary';
+    self.params.view = 'summary';
+    self.params.search = '';
     self.viewbtn.attr('class', 'mdi mdi-format-list-bulleted');
     self.viewbtn.tooltip('hide').attr('data-original-title', 'View Transactions');
     self.transactions.fadeOut('fast', function() {
       self.summary.fadeIn('fast');
     });
+    // update the url
+    var url = pk.utils.update_url(null, self.params);
+    window.history.replaceState(null, null, url);
   },
 
   show_transactions: function() {
     var self = this;
-    self.viewmode = 'transactions';
+    self.params.view = 'transactions';
     self.viewbtn.attr('class', 'mdi mdi-close-circle-outline');
     self.viewbtn.tooltip('hide').attr('data-original-title', 'View Summary');
     self.summary.fadeOut('fast', function() {
       self.transactions.fadeIn('fast');
     });
+    // update the url
+    var url = pk.utils.update_url(null, self.params);
+    window.history.replaceState(null, null, url);
   },
 
   text_or_val: function(td) {
@@ -492,11 +500,12 @@ pk.budget = {
 
   update_transactions: function(page) {
     var self = this;
+    self.params.search = this.search.val();
     self.show_transactions();
     if (!page) {
       self.trxpage = null;
       var more = null;
-      var url = pk.utils.update_url(self.URL_TRANSACTIONS, 'search',  this.search.val());
+      var url = pk.utils.update_url(self.URL_TRANSACTIONS, {search:self.params.search});
     } else {
       var more = this.transactions.find('#transactions-more');
       var url = more.data('next');
