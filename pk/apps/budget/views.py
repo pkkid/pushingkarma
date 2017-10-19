@@ -126,6 +126,7 @@ class TransactionsViewSet(viewsets.ModelViewSet):
             monthstr = month.strftime(DATEFORMAT)
             data.total[monthstr] = 0.0
             month += relativedelta(months=1)
+        data.total = OrderedDict(sorted(data.total.items()))
 
     def _summary_add_cateogry_values(self, data):
         """ group data by category, month => amount. """
@@ -147,6 +148,7 @@ class TransactionsViewSet(viewsets.ModelViewSet):
                 cdata.total = round(cdata.total + value, 2)
                 data.total[monthstr] = round(data.total[monthstr] + value, 2)
                 month += relativedelta(months=1)
+            cdata.amounts = OrderedDict(sorted(cdata.amounts.items()))
             data.categories.append(cdata)
 
     def _summary_query_data(self, mindate, maxdate):
