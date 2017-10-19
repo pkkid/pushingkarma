@@ -30,7 +30,7 @@ TRANSACTIONSEARCHFIELDS = {
     'payee': SearchField(FIELDTYPES.STR, 'payee'),
     'category': SearchField(FIELDTYPES.STR, 'category__name'),
     'amount': SearchField(FIELDTYPES.NUM, 'amount'),
-    'approved': SearchField(FIELDTYPES.STR, 'approved'),
+    'approved': SearchField(FIELDTYPES.BOOL, 'approved'),
     'comment': SearchField(FIELDTYPES.STR, 'comment'),
     # 'bankfid': SearchField(FIELDTYPES.STR, 'accountfid'),
     # 'trxid': SearchField(FIELDTYPES.STR, 'trxid'),

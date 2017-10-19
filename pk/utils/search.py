@@ -166,7 +166,7 @@ class SearchChunk:
     def _get_qoperation(self):
         # check were searching none
         if self.value.lower() in NONE:
-            return '__in'
+            return '__isnull'
         # regex will catch invalid operations, no need to check
         operation = OPERATIONS[self.operation]
         if self.is_value_list and self.operation == '=':
@@ -176,7 +176,7 @@ class SearchChunk:
     def _get_qvalue(self):
         # check were searching none
         if self.value.lower() in NONE:
-            return [None, '']
+            return True
         # get correct modifier
         modifier = lambda value: value
         if self.qfield.modifier:

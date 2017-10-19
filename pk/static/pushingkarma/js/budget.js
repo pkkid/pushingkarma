@@ -40,7 +40,7 @@ pk.budget = {
   },
 
   init_elements: function() {
-    this.search = this.container.find('#search');
+    this.searchinput = this.container.find('#search');
     this.searchinfo = this.container.find('#searchwrap .subtext');
     this.viewbtn = this.container.find('#viewbtn');
     this.summary = this.container.find('#summary');
@@ -52,7 +52,7 @@ pk.budget = {
   bind_search_edit: function() {
     // update transactions when search input changes
     var self = this;
-    this.search.on('change paste keyup', function(event) {
+    this.searchinput.on('change paste keyup', function(event) {
       event.preventDefault();
       $(this).val() ? self.update_transactions() : self.update_summary();
     });
@@ -65,7 +65,7 @@ pk.budget = {
       if (self.params.view == 'summary') {
         self.update_transactions();
       } else {
-        self.search.val('');
+        self.searchinput.val('');
         self.update_summary();
       }
     });
@@ -208,7 +208,7 @@ pk.budget = {
       if (event.keyCode == KEYS.F3) {
         event.preventDefault();
         event.stopPropagation();
-        self.search.focus();
+        self.searchinput.focus();
       }
     });
     // update budget items on enter
@@ -463,6 +463,16 @@ pk.budget = {
     });
     return xhr;
   },
+
+  search: function(query, append) {
+    if (append == true) {
+      var searchval = this.searchinput.val();
+      var exists = searchval.toLowerCase().indexOf(query.toLowerCase()) >= 0;
+      query = exists ? searchval : searchval +' '+ query;
+    }
+    this.searchinput.val(query);
+    this.update_transactions();
+  },
  
   update_categories: function(callback) {
     var self = this;
@@ -502,7 +512,7 @@ pk.budget = {
 
   update_transactions: function(page) {
     var self = this;
-    self.params.search = this.search.val();
+    self.params.search = this.searchinput.val();
     self.show_transactions();
     if (!page) {
       self.trxpage = null;
@@ -549,9 +559,9 @@ pk.budget = {
       '  <div class="subtext">',
       '    {{addCommas this.count}} transactions',
       '    {{yesNo this.uncategorized "|" ""}}',
-      '    {{#if this.uncategorized}}<a class="error" href="/budget/?view=transactions&search=-category%3A">{{addCommas this.uncategorized}} uncategorized</a>{{/if}}',
+      '    {{#if this.uncategorized}}<a class="error" href="javascript:pk.budget.search(\'category=none\')">{{addCommas this.uncategorized}} uncategorized</a>{{/if}}',
       '    {{yesNo this.unapproved "|" ""}}',
-      '    {{#if this.unapproved}}<a class="error" href="/budget/?view=transactions&search=approved%3Df">{{addCommas this.unapproved}} unapproved</a>{{/if}}',
+      '    {{#if this.unapproved}}<a class="error" href="javascript:pk.budget.search(\'approved=false\')">{{addCommas this.unapproved}} unapproved</a>{{/if}}',
       '  </div>',
       '</h2>',
       '<table cellpadding="0" cellspacing="0" style="clear:both;">',
@@ -621,9 +631,9 @@ pk.budget = {
       '  <div class="subtext">',
       '    {{addCommas this.count}} transactions',
       '    {{yesNo this.uncategorized "|" ""}}',
-      '    {{#if this.uncategorized}}<a class="error" href="/budget/?view=transactions&search=-category%3A">{{addCommas this.uncategorized}} uncategorized</a>{{/if}}',
+      '    {{#if this.uncategorized}}<a class="error" href="javascript:pk.budget.search(\'category=none\', true)">{{addCommas this.uncategorized}} uncategorized</a>{{/if}}',
       '    {{yesNo this.unapproved "|" ""}}',
-      '    {{#if this.unapproved}}<a class="error" href="/budget/?view=transactions&search=approved%3Df">{{addCommas this.unapproved}} unapproved</a>{{/if}}',
+      '    {{#if this.unapproved}}<a class="error" href="javascript:pk.budget.search(\'approved=false\', true)">{{addCommas this.unapproved}} unapproved</a>{{/if}}',
       '  </div>',
       '</h2>',
       '<table cellpadding="0" cellspacing="0" style="clear:both;">',
