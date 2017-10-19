@@ -1055,7 +1055,6 @@ var helpers = {
    */
   formatDate: function(datestr, format) {
     var date = moment(datestr).toDate();
-    console.log(datestr +' = '+ helperutils.format(date, format));
     return helperutils.format(date, format);
   },
 
