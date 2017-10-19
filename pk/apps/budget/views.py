@@ -23,8 +23,8 @@ from .manager import TransactionManager
 from .models import UNCATEGORIZED, Category, CategorySerializer
 from .models import Transaction, TransactionSerializer
 
-DATEFORMAT = '%Y-%m-%d'
 ACCOUNTS = settings.BUDGET_ACCOUNTS
+DATEFORMAT = '%Y-%m-%d'
 TRANSACTIONSEARCHFIELDS = {
     'bank': SearchField(FIELDTYPES.STR, 'account'),
     'date': SearchField(FIELDTYPES.DATE, 'date'),
@@ -33,9 +33,7 @@ TRANSACTIONSEARCHFIELDS = {
     'amount': SearchField(FIELDTYPES.NUM, 'amount'),
     'approved': SearchField(FIELDTYPES.BOOL, 'approved'),
     'comment': SearchField(FIELDTYPES.STR, 'comment'),
-    # 'bankfid': SearchField(FIELDTYPES.STR, 'accountfid'),
-    # 'trxid': SearchField(FIELDTYPES.STR, 'trxid'),
-    # 'memo': SearchField(FIELDTYPES.STR, 'memo'),
+    'memo': SearchField(FIELDTYPES.STR, 'memo'),
 }
 
 
@@ -135,6 +133,7 @@ class TransactionsViewSet(viewsets.ModelViewSet):
         for category in list(Category.objects.order_by('sortindex')) + [None]:
             cdata = Bunch()
             cdata.name = UNCATEGORIZED if category is None else category.name
+            cdata.budget = 0.0 if category is None else category.budget
             cdata.total = 0.0
             cdata.average = 0.0
             cdata.amounts = Bunch()

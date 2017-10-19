@@ -1614,7 +1614,19 @@ var helpers = {
    */
   yesNo: function(test, yes, no) {
     return test ? yes : no;
-  }
+  },
+
+  // -----------------------------
+  // Budget Helpers
+  // -----------------------------
+  budgetFlags: function(budget, value) {
+    var flags = [];
+    if (value == 0) { flags.push('zero'); }
+    if (value > 10) { flags.push('income'); }
+    if (value < 10 && (value <= budget * 1.1)) { flags.push('over'); }
+    return flags.join(' ');
+  },
+
 };
 
 for (var helper in helpers) {

@@ -215,8 +215,15 @@ class SearchChunk:
             log.exception(err)
         
     def _queryset_generic(self):
-        subqueries = []
+        subqueries = self._queryset_generic_string()
+        subqueries += self._queryset_generic_num()
+        if self.exclude:
+            return reduce(lambda x,y: x & y, subqueries)
+        return reduce(lambda x,y: x | y, subqueries)
+
+    def _queryset_generic_string(self):
         # check all string fields for self.qvalue
+        subqueries = []
         stringfields = (f for f in self.search.fields.values() if f.fieldtype == FIELDTYPES.STR)
         for field in stringfields:
             kwarg = '%s%s' % (field.field, OPERATIONS[':'])
@@ -226,17 +233,23 @@ class SearchChunk:
                 continue
             subquery = self.search.basequeryset.filter(**{kwarg: self.qvalue})
             subqueries.append(subquery)
+        return subqueries
+
+    def _queryset_generic_num(self):
         # check all int and float fields for self.qvalue
+        subqueries = []
         if is_float(self.qvalue):
             numfields = (f for f in self.search.fields.values() if f.fieldtype == FIELDTYPES.NUM)
             for field in numfields:
-                qvalue = float(self.qvalue) * -1 if self.exclude else float(self.qvalue)
-                subquery = self.search.basequeryset.filter(**{field.field: qvalue})
+                qvalue = abs(float(self.qvalue))
+                sigdigs = len(self.qvalue.split('.')[1]) if '.' in self.qvalue else 0
+                variance = round(.1 ** sigdigs, sigdigs)
+                posfilter = {'%s__gte' % field.field: qvalue, '%s__lt' % field.field: qvalue + variance}
+                negfilter = {'%s__lte' % field.field: -qvalue, '%s__gt' % field.field: -qvalue - variance}
+                subquery = self.search.basequeryset.filter(**posfilter)
+                subquery |= self.search.basequeryset.filter(**negfilter)
                 subqueries.append(subquery)
-        # join and return the subqueries
-        if self.exclude:
-            return reduce(lambda x,y: x & y, subqueries)
-        return reduce(lambda x,y: x | y, subqueries)
+        return subqueries
         
     def _queryset_advanced(self):
         kwarg = '%s%s' % (self.qfield.field, self.qoperation)
@@ -295,6 +308,14 @@ class SearchChunk:
 def is_float(value):
     try:
         float(value)
+        return True
+    except ValueError:
+        return False
+
+
+def is_int(value):
+    try:
+        int(value)
         return True
     except ValueError:
         return False

@@ -575,7 +575,7 @@ pk.budget = {
       '      <tr>',
       '        <td class="average"><div>{{amountInt this.average}}</div></td>',
       '        {{#each this.amounts}}',
-      '          <td class="{{yesNo this \'\' \'zero\'}}"><div>',
+      '          <td class="{{budgetFlags ../budget this}}"><div>',
       '            {{amountInt this}}',
       '          </div></td>',
       '        {{/each}}',

@@ -143,12 +143,14 @@
         width: 50px;
         text-align: center;
       }
-      .zero div { color: rgba(0,0,0,0.2); }
       .average {
         background-color: rgba(0,0,0,0.05);
         border-right: 1px solid rgba(0,0,0,0.2);
         position: relative;
       }
+      td.income div { color: #575; }
+      td.over div { color: #955; }
+      td.zero div { color: rgba(0,0,0,0.2); }
       // Extra bits to make the table blend better
       td.average {
         border-bottom: 1px dotted rgba(0,0,0,0.14);
