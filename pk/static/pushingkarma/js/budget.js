@@ -22,7 +22,6 @@ pk.budget = {
     this.xhrtrx = null;                         // transactions xhr reference
     this.trxpage = null;                        // last loaded trx page
     this.clicktimer = null;                     // detects single vs dblclick
-    self.autocomplete = false;                  // autocomplete select open
     this.categorynames = [];                    // category name choices
     this.params = {view:'summary', search:''};  // URL params for current view
     this.init_elements();
@@ -218,14 +217,14 @@ pk.budget = {
       if (watchedkey) {
         var td = input.closest('td');
         // enter and down select td on next row
-        if ((event.keyCode == KEYS.ENTER || event.keyCode == KEYS.DOWN) && !self.autocomplete) {
+        if ((event.keyCode == KEYS.ENTER || event.keyCode == KEYS.DOWN) && !self.autocomplete()) {
           event.preventDefault();
           var row = td.closest('tr');
           var name = td.data('name');
           var next = row.next(':not(.readonly)').find('td[data-name='+name+']');
           next.length ? self.td_edit(next) : input.blur();
         // up selects input on prev row
-        } else if ((event.keyCode == KEYS.UP) && !self.autocomplete) {
+        } else if ((event.keyCode == KEYS.UP) && !self.autocomplete()) {
           event.preventDefault();
           var row = td.closest('tr');
           var name = td.data('name');
@@ -254,6 +253,10 @@ pk.budget = {
         }
       }
     });
+  },
+
+  autocomplete: function() {
+    return $('.ui-autocomplete:visible').length > 0;
   },
 
   data_category: function(row) {
@@ -396,15 +399,11 @@ pk.budget = {
     }
     // bind autocomplete to category inputs
     if (td.data('name') == 'category') {
-      input.on('keydown', function(event) {
-        var watchedkey = _.valuesIn(self.KEYS).indexOf(event.keyCode) >= 0;
-        if (watchedkey) { self.autocomplete = $('.ui-autocomplete:visible').length > 0; }
-      });
       input.autocomplete({
         source: self.categorynames,
         autoFocus: true,
         change: function (event, ui) { if (!ui.item) { $(event.target).val(''); }}, 
-        focus: function (event, ui) { return false; }
+        focus: function (event, ui) { return false; },
       });
     }
     // repalce div with input and set focus
