@@ -17,17 +17,6 @@ class Bunch(dict):
         return self.__setitem__(item, value)
 
 
-class OrderedBunch(OrderedDict):
-    def __getattr__(self, item):
-        try:
-            return self.__getitem__(item)
-        except KeyError:
-            return None
-
-    def __setattr__(self, item, value):
-        return self.__setitem__(item, value)
-
-
 def core(request, **kwargs):
     if '_core' not in request:
         data = Bunch(**kwargs)

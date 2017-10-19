@@ -3,6 +3,7 @@
 """
 Copyright (c) 2015 PushingKarma. All rights reserved.
 """
+from collections import OrderedDict
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
@@ -11,7 +12,7 @@ from django.db import connection
 from django.db.models import Min, Max
 from ofxparse import OfxParser
 from pk import log, utils
-from pk.utils.context import OrderedBunch
+from pk.utils.context import Bunch
 from pk.utils.search import FIELDTYPES, SearchField, Search
 from rest_framework import viewsets
 from rest_framework.decorators import list_route
@@ -95,7 +96,7 @@ class TransactionsViewSet(viewsets.ModelViewSet):
 
     @list_route(methods=['get'])
     def summary(self, request, *args, **kwargs):
-        data = OrderedBunch()
+        data = Bunch()
         maxdate = datetime.today()
         maxmonth = date(maxdate.year, maxdate.month, 1)
         # initialize data response
@@ -111,13 +112,15 @@ class TransactionsViewSet(viewsets.ModelViewSet):
         self._summary_init_total(data)
         self._summary_add_cateogry_values(data)
         self._summary_calc_averages(data)
+        # cleanup output and return
+        data = OrderedDict(data)
         data.move_to_end('total')
         data.move_to_end('categories')
         return Response(data)
 
     def _summary_init_total(self, data):
         """ start the totals category. """
-        data.total = OrderedBunch()
+        data.total = Bunch()
         month = data.mindate
         while month < data.maxdate:
             monthstr = month.strftime(DATEFORMAT)
@@ -129,11 +132,11 @@ class TransactionsViewSet(viewsets.ModelViewSet):
         data.categories = []
         lookup = self._summary_query_data(data.mindate, data.maxdate)
         for category in list(Category.objects.order_by('sortindex')) + [None]:
-            cdata = OrderedBunch()
+            cdata = Bunch()
             cdata.name = UNCATEGORIZED if category is None else category.name
             cdata.total = 0.0
             cdata.average = 0.0
-            cdata.amounts = OrderedBunch()
+            cdata.amounts = Bunch()
             month = data.mindate
             while month < data.maxdate:
                 categoryid = 'null' if category is None else category.id
