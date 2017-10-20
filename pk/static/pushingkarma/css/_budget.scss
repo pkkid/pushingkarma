@@ -6,28 +6,37 @@
   @include contentwithsidepanel(250px, 900px);
   position: relative;
 
-  .subtext,
-  .subtext a {
-    color: #848177;
-    font-size: 10px;
-    font-family: "Cabin", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    line-height: 18px;
-    .error { color:#966; }
-  }
   h2 {
     float: left;
     line-height: 22px;
     margin-top: 6px;
     margin-bottom: 10px;
-    .subtext { padding-left: 2px; }
+    .subtext,.subtext a { 
+      color: #848177;
+      font-family: "Cabin", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      font-size: 10px;
+      line-height: 18px;
+      padding-left: 2px;
+      .error { color:#966; }
+    }
   }
 
+  // --------------------
+  // General Table Styles
   table {
     font-size: 14px;
     line-height: 16px;
     width: 100%;
-
-    tr.popped { background-color: rgba(0,0,0,0.05); }
+    tr {
+      background-color: transparent;
+      transition: background-color 1s ease;
+      transition-delay: 0.1s;
+      &.hover { background-color: rgba(0,0,0,0.04); }
+      &.popped {
+        background-color: rgba(0,0,0,0.06);
+        td { border-top: 1px dotted rgba(0,0,0,0.2); }
+      }
+    }
     th {
       border-bottom: 1px solid rgba(0,0,0,0.5);
       padding: 0px 4px;
@@ -35,11 +44,10 @@
       &.right { text-align:right; }
     }
     td {
-      border-bottom: 1px dotted rgba(0,0,0,0.05);
+      border-top: 1px dotted rgba(0,0,0,0.05);
       color: #504E41;
       cursor: default;
       padding: 1px 1px;
-
       div,input {
         border: 1px solid transparent;
         border-radius: 3px;
@@ -70,6 +78,8 @@
     tfoot td { border-width: 0px; }
   }
 
+  // ------------------------------
+  // Sidepanel Content (categories)
   #sidepanel-content {
     overflow-y: auto;
     height: calc(100% - 42px);
@@ -78,18 +88,24 @@
     $width:110px; [data-name='name'] { width:$width; div,input { width:$width; }}
     $width:100%; [data-name='trend'] { width:$width; text-align:center; div,input { width:$width; }}
     $width:55px; [data-name='budget'] { width:$width; div,input { width:$width; }}
-    
+    &.toedge {
+      padding-right: 0px;
+      th[data-name='budget'] { width:65px; padding-right:14px; }
+      td[data-name='budget'] { width:65px; padding-right:11px; div,input { width:55px; }}
+    }
     #categories {
       margin-top: 72px;
-    }
-    #category-add input {
-      background-color: rgba(0,0,0,0.05);
-      opacity: 0.5;
-      transition: opacity 0.3s ease;
-      &:focus { opacity:1; }
+      #category-add input {
+        background-color: rgba(0,0,0,0.05);
+        opacity: 0.5;
+        transition: opacity 0.3s ease;
+        &:focus { opacity:1; }
+      }
     }
   }
 
+  // -------------------------------------
+  // Main Content (summary & transactions)
   #maincontent {
     padding: 21px 20px 20px 0px;
     $width:50px; [data-name='account'] { width:$width; div,input { width:$width; }}
@@ -100,42 +116,8 @@
     $width:20px; [data-name='approved'] { width:$width; div,input { width:$width; }}
     $width:150px; [data-name='comment'] { width:$width; div,input { width:$width; }}
 
-    #searchwrap {
-      float: right;
-      position: relative;
-
-      #search {
-        background-color: rgba(0,0,0,0.1);
-        border-radius: 20px;
-        color: #504E41;
-        font-size: 16px;
-        line-height: 22px;
-        padding: 1px 28px 1px 28px;
-        right: 20px;
-        width: 400px;
-        border: 1px solid rgba(0,0,0,0.1);
-      }
-      #search-icon {
-        font-size: 19px;
-        position: absolute;
-        right: 375px;
-        top: 2px;
-        z-index: 98;
-      }
-      #viewbtn {
-        cursor: pointer;
-        font-size: 18px;
-        position: absolute;
-        right: 6px;
-        top: 2px;
-        z-index: 98;
-        opacity: 0.6;
-        transition: opacity 0.2s ease;
-        &:hover { opacity: 1; }
-      }
-      .subtext { padding-left:10px; }
-    }
-
+    // -----------------------------------
+    // Budget Summary (display by default)
     #summary {
       h2 { padding-left: 20px; }
       th, td {
@@ -148,59 +130,64 @@
         border-right: 1px solid rgba(0,0,0,0.2);
         position: relative;
       }
+      td.average { border-bottom: 1px dotted rgba(0,0,0,0.14); }
       td.income div { color: #575; }
       td.over div { color: #955; }
       td.zero div { color: rgba(0,0,0,0.2); }
-      // Extra bits to make the table blend better
-      td.average {
-        border-bottom: 1px dotted rgba(0,0,0,0.14);
-      }
-      th.average::before {
-        content: "";
-        display: block;
-        border-bottom: 1px solid #68655D;
-        width: 10px;
-        position:absolute;
-        left:-11px;
-        bottom: -1px;
-        z-index: 99;
-      }
-      td.average::before {
-        content: "";
-        display: block;
-        border-left: 1px solid rgba(0,0,0,0.1);
-        height: 21px;
-        position:absolute;
-        left:-1px;
-        top: -1px;
-        z-index: 97;
-      }
-      tfoot td.average::before {
-        content: "";
-        display: block;
-        border-width: 0px;
-        border-top: 1px solid rgba(0,0,0,0.3);
-        width: 10px;
-        position:absolute;
-        left:-11px;
-        bottom: -1px;
-        z-index: 98;
-      }
     }
 
+    // -------------------------------------
+    // Budget transactions (hide by default)
     #transactions {
       display: none;
       padding-left: 20px;
-    }
-    #transactions-more td {
-      border-bottom-width: 0px;
-      .spinner {
-        @include spinner(16px, 1px, #887);
-        margin: 10px auto;
+      #transactions-more td {
+        border-bottom-width: 0px;
+        color: rgba(0,0,0,0.3);
+        text-align: center;
       }
     }
   }
 
+  // -------------------
+  // Global search input
+  #searchwrap {
+    float: right;
+    position: relative;
+    #search {
+      background-color: rgba(0,0,0,0.1);
+      border-radius: 20px;
+      color: #504E41;
+      font-size: 16px;
+      line-height: 22px;
+      padding: 1px 28px 1px 28px;
+      right: 20px;
+      width: 400px;
+      border: 1px solid rgba(0,0,0,0.1);
+    }
+    #search-icon {
+      font-size: 19px;
+      position: absolute;
+      right: 375px;
+      top: 2px;
+      z-index: 98;
+    }
+    #viewbtn {
+      cursor: pointer;
+      font-size: 18px;
+      position: absolute;
+      right: 6px;
+      top: 2px;
+      z-index: 98;
+      opacity: 0.6;
+      transition: opacity 0.2s ease;
+      &:hover { opacity: 1; }
+    }
+    .subtext { padding-left:10px; }
+  }
+
+  // --------------------------
+  // Dropzone when upload files
   #dropzone {
     background-color: rgba(197,191,174,0.90);
     display: none;
@@ -219,4 +206,21 @@
       text-align: center;
     }
   }
+
+  // ---------------------------
+  // Little Flower (top of page)
+  #sidepanel-content:before {
+    display: block;
+    content: 'l';
+    color: rgba(0,0,0,0.3);
+    font-family: fleurons;
+    font-size: 90px;
+    height: 65px;
+    line-height: 40px;
+    overflow: hidden;
+    position: absolute;
+    top: 15px;
+    width: 230px;
+  }
+
 }

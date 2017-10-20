@@ -24,28 +24,31 @@ pk.budget = {
     this.clicktimer = null;                     // detects single vs dblclick
     this.categorynames = [];                    // category name choices
     this.params = {view:'summary', search:''};  // URL params for current view
-    this.init_elements();
-    this.bind_search_edit();
-    this.bind_view_button();
-    this.bind_row_edit();
-    this.bind_category_add();
-    this.bind_drag_files();
-    this.bind_infinite_scroll();
-    this.init_shortcuts();
+    this.init_elements();                       // cache top level elements
+    this.bind_search_edit();                    // update transactions on search
+    this.bind_view_button();                    // show or hide the transaction list
+    this.bind_row_edit();                       // handle single and dblclick events
+    this.bind_category_add();                   // create new category items
+    this.bind_drag_files();                     // show dropzone when uploading
+    this.bind_row_highlight();                  // highlight rows on mouseover
+    this.bind_infinite_scroll();                // auto-load next page of transactions
+    this.init_shortcuts();                      // bind keyboard shortcuts
+    // load initial display data
     this.update_categories();
-    // display summary or transactions
     var view = new URL(window.location.href).searchParams.get('view');
     view == 'transactions' ? this.update_transactions() : this.update_summary();
   },
 
   init_elements: function() {
-    this.searchinput = this.container.find('#search');
-    this.searchinfo = this.container.find('#searchwrap .subtext');
-    this.viewbtn = this.container.find('#viewbtn');
-    this.summary = this.container.find('#summary');
+    // cache top level elements
     this.categories = this.container.find('#categories');
-    this.transactions = this.container.find('#transactions');
     this.dropzone = this.container.find('#dropzone');
+    this.searchinfo = this.container.find('#searchwrap .subtext');
+    this.searchinput = this.container.find('#search');
+    this.sidepanel = this.container.find('#sidepanel-content');
+    this.summary = this.container.find('#summary');
+    this.transactions = this.container.find('#transactions');
+    this.viewbtn = this.container.find('#viewbtn');
   },
 
   bind_search_edit: function() {
@@ -71,7 +74,7 @@ pk.budget = {
   },
 
   bind_row_edit: function() {
-    // handle both single and dblclick events
+    // handle single and dblclick events
     var self = this;
     var selector = '#categories tbody td > div,#transactions tbody td > div';
     this.container.on('click', selector, function(event) {
@@ -81,7 +84,7 @@ pk.budget = {
         // display popover on single click
         self.clicktimer = setTimeout(function() {
           console.log('DISPLAY POPEVER');
-          //self.popover_display(td);
+          self.popover_display(td);
         }, 200);
       } else if (event.detail == 2) {
         // edit category or transaction on dblclick
@@ -186,8 +189,37 @@ pk.budget = {
     });
   },
 
+  bind_row_highlight: function() {
+    var self = this;
+    // mouse over summary row
+    self.summary.on('mouseenter', 'tbody tr', function(event) {
+      if (self.container.find('.popped').length >= 1) { return; }
+      $(this).addClass('hover');
+      self.categories.find('[data-catid='+ $(this).data('catid') +']').addClass('hover');
+    }).on('mouseleave', 'tbody tr', function(event) {
+      $(this).removeClass('hover');
+      self.categories.find('[data-catid='+ $(this).data('catid') +']').removeClass('hover');
+    });
+    // mouse over category row
+    self.categories.on('mouseenter', 'tbody tr', function(event) {
+      if (self.container.find('.popped').length >= 1) { return; }
+      $(this).addClass('hover');
+      self.summary.find('[data-catid='+ $(this).data('catid') +']').addClass('hover');
+    }).on('mouseleave', 'tbody tr', function(event) {
+      $(this).removeClass('hover');
+      self.summary.find('[data-catid='+ $(this).data('catid') +']').removeClass('hover');
+    });
+    // mouse over transaction row
+    self.transactions.on('mouseenter', 'tbody tr', function(event) {
+      if (self.container.find('.popped').length >= 1) { return; }
+      $(this).addClass('hover');
+    }).on('mouseleave', 'tbody tr', function(event) {
+      $(this).removeClass('hover');
+    });
+  },
+
   bind_infinite_scroll: function() {
-    // load more transactions if user scrolls near bottom
+    // auto-load next page of transactions
     var self = this;
     setInterval(function() {
       if (self.params.view == 'transactions') {
@@ -286,10 +318,11 @@ pk.budget = {
   },
 
   popover_display: function(td) {
+    var self = this;
     var row = td.closest('tr');
     row.popover({trigger:'manual', placement:'bottom', html:true,
       content: function() {
-        var html = $('<div style="padding:5px 10px;">This is the plan!</div>');
+        var html = self.templates.category_popover({});
         return html;
       },
     }).addClass('popped').popover('show');
@@ -303,6 +336,7 @@ pk.budget = {
     self.viewbtn.tooltip('hide').attr('data-original-title', 'View Transactions');
     self.transactions.fadeOut('fast', function() {
       self.summary.fadeIn('fast');
+      self.sidepanel.addClass('toedge');
     });
     // update the url
     var url = pk.utils.update_url(null, self.params);
@@ -316,6 +350,7 @@ pk.budget = {
     self.viewbtn.tooltip('hide').attr('data-original-title', 'View Summary');
     self.summary.fadeOut('fast', function() {
       self.transactions.fadeIn('fast');
+      self.sidepanel.removeClass('toedge');
     });
     // update the url
     var url = pk.utils.update_url(null, self.params);
@@ -479,7 +514,7 @@ pk.budget = {
     try { this.xhrcat.abort(); } catch(err) { }
     this.xhrcat = $.ajax({url:url, type:'GET', dataType:'json'});
     this.xhrcat.done(function(data, textStatus, jqXHR) {
-      var html = self.templates.listcategories(data);
+      var html = self.templates.category_list(data);
       self.categories.html(html);
       self.update_categorynames(data);
       self.bind_drag_categories();
@@ -529,7 +564,7 @@ pk.budget = {
       this.xhrtrx.done(function(data, textStatus, jqXHR) {
         if (more) { more.remove(); }
         self.searchinfo.text(data.errors || data.datefilters);
-        var html = self.templates.listtransactions(data);
+        var html = self.templates.transaction_list(data);
         if (data.previous) {
           var items = $(html).find('tbody tr');
           self.transactions.find('tbody').append(items);
@@ -552,48 +587,7 @@ pk.budget = {
   //   delempty (class): Delete category or transaction if value empty.
   templates: {
 
-    summary: Handlebars.compile([
-      '<h2>',
-      '  Summary',
-      '  <div class="subtext">',
-      '    {{addCommas this.count}} transactions',
-      '    {{yesNo this.uncategorized "|" ""}}',
-      '    {{#if this.uncategorized}}<a class="error" href="javascript:pk.budget.search(\'category=none\')">{{addCommas this.uncategorized}} uncategorized</a>{{/if}}',
-      '    {{yesNo this.unapproved "|" ""}}',
-      '    {{#if this.unapproved}}<a class="error" href="javascript:pk.budget.search(\'approved=false\')">{{addCommas this.unapproved}} unapproved</a>{{/if}}',
-      '  </div>',
-      '</h2>',
-      '<table cellpadding="0" cellspacing="0" style="clear:both;">',
-      '  <thead><tr>',
-      '    <th class="average">Average</th>',
-      '    {{#each this.categories.0.amounts}}',
-      '      <th>{{formatDate @key "%b"}}</th>',
-      '    {{/each}}',
-      '  </tr></thead>',
-      '  <tbody>',
-      '    {{#each this.categories}}',
-      '      <tr>',
-      '        <td class="average"><div>{{amountInt this.average}}</div></td>',
-      '        {{#each this.amounts}}',
-      '          <td class="{{budgetFlags ../budget this}}"><div>',
-      '            {{amountInt this}}',
-      '          </div></td>',
-      '        {{/each}}',
-      '      </tr>',
-      '    {{/each}}',
-      '  </tbody>',
-      '  <tfoot><tr>',
-      '    <td class="average"><div>{{amountInt this.avg_total}}</div></td>',
-      '    {{#each this.total}}',
-      '      <td class="{{yesNo this \'\' \'zero\'}}"><div>',
-      '        {{amountInt this}}',
-      '      </div></td>',
-      '    {{/each}}',
-      '  </tr></tfoot>',
-      '</table>',
-    ].join('\n')),
-
-    listcategories: Handlebars.compile([
+    category_list: Handlebars.compile([
       '<table cellpadding="0" cellspacing="0">',
       '  <thead><tr>',
       '    <th data-name="name">Category</th>',
@@ -602,7 +596,7 @@ pk.budget = {
       '  </tr></thead>',
       '  <tbody>',
       '    {{#each this.results}}',
-      '      <tr id="category-{{this.id}}" data-type="category" data-url="{{this.url}}" class="{{#if_eq this.id "null"}}readonly{{/if_eq}}">',
+      '      <tr id="category-{{this.id}}" data-catid="{{this.id}}" data-type="category" data-url="{{this.url}}" class="{{#if_eq this.id "null"}}readonly{{/if_eq}}">',
       '        <td data-name="name" class="delempty"><div>{{this.name}}</div></td>',
       '        <td data-name="trend" class="readonly drag"><div>&nbsp;</div></td>',
       '        <td data-name="budget" data-display="int" class="right selectall"><div>{{amountInt this.budget}}</div></td>',
@@ -624,7 +618,55 @@ pk.budget = {
       '</table>'
     ].join('\n')),
 
-    listtransactions: Handlebars.compile([
+    category_popover: Handlebars.compile([
+      '<div style="padding:5px 10px;">',
+      '  <textarea></textarea><br/>',
+      '  This is the plan!',
+      '</div>',
+    ].join('\n')),
+
+    summary: Handlebars.compile([
+      '<h2>',
+      '  Summary',
+      '  <div class="subtext">',
+      '    {{addCommas this.count}} transactions',
+      '    {{yesNo this.uncategorized "|" ""}}',
+      '    {{#if this.uncategorized}}<a class="error" href="javascript:pk.budget.search(\'category=none\')">{{addCommas this.uncategorized}} uncategorized</a>{{/if}}',
+      '    {{yesNo this.unapproved "|" ""}}',
+      '    {{#if this.unapproved}}<a class="error" href="javascript:pk.budget.search(\'approved=false\')">{{addCommas this.unapproved}} unapproved</a>{{/if}}',
+      '  </div>',
+      '</h2>',
+      '<table cellpadding="0" cellspacing="0" style="clear:both;">',
+      '  <thead><tr>',
+      '    <th class="average">Average</th>',
+      '    {{#each this.categories.0.amounts}}',
+      '      <th>{{formatDate @key "%b"}}</th>',
+      '    {{/each}}',
+      '  </tr></thead>',
+      '  <tbody>',
+      '    {{#each this.categories}}',
+      '      <tr data-catid="{{this.catid}}">',
+      '        <td class="average"><div>{{amountInt this.average}}</div></td>',
+      '        {{#each this.amounts}}',
+      '          <td class="{{budgetFlags ../budget this}}"><div>',
+      '            {{amountInt this}}',
+      '          </div></td>',
+      '        {{/each}}',
+      '      </tr>',
+      '    {{/each}}',
+      '  </tbody>',
+      '  <tfoot><tr>',
+      '    <td class="average"><div>{{amountInt this.avg_total}}</div></td>',
+      '    {{#each this.total}}',
+      '      <td class="{{yesNo this \'\' \'zero\'}}"><div>',
+      '        {{amountInt this}}',
+      '      </div></td>',
+      '    {{/each}}',
+      '  </tr></tfoot>',
+      '</table>',
+    ].join('\n')),
+
+    transaction_list: Handlebars.compile([
       '<h2>',
       '  Transactions',
       '  <div class="subtext">',
@@ -659,12 +701,15 @@ pk.budget = {
       '   {{/each}}',
       '   {{#if this.next}}',
       '     <tr id="transactions-more" data-next="{{this.next}}">',
-      '       <td colspan="100%"><span class="spinner on"></span></td>',
+      '       <td colspan="100%">Loading more transactions..</td>',
       '     </tr>',
       '   {{/if}}',
       '  </tbody>',
       '</table>',
     ].join('\n')),
+
+
+
   },
 
 };
