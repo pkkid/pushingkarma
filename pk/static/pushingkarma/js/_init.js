@@ -9,13 +9,17 @@ var pk = {  // jshint ignore:line
 };
 
 $(function() {
+  // Handlebars templates
+  pk.templates = [];
+  $.each($('script[type="text/x-handlebars-template"]'), function() {
+    pk.templates[this.getAttribute('id')] = Handlebars.compile(this.innerText);
+  });
+
   // Core website functions
   pk.utils.enable_animations();
   pk.utils.copycode();
   pk.utils.highlightjs();
   pk.utils.init_tooltips();
   pk.login.init();
-  
-  // Side projects
   pk.magnets.init('#magnets');
 });

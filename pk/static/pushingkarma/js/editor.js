@@ -38,7 +38,7 @@ pk.editor = {
   },
   
   init_editor: function() {
-    this.editor = $(this.templates.editor(this)).appendTo('body');
+    this.editor = $(pk.templates.editor(this)).appendTo('body');
     this.set_height(Cookies.get('editor-height') || 300);
     return this.editor;
   },
@@ -264,27 +264,6 @@ pk.editor = {
       tabSize: 2,
       theme: 'blackboard',
     },
-  },
-  
-  templates: {
-    editor: Handlebars.compile([
-      '<div id="editor" style="display:none;">',
-      '  <div class="slider"><div class="grip"></div></div>',
-      '  <div class="menu">',
-      '    <span class="menutitle">Markdown Editor</span>',
-      '    <span class="reset action">Reset</span>',
-      '    <span class="save action">Save</span>',
-      '    <span class="toggle action"><i class="mdi mdi-chevron-down"></i></span>',
-      '    <span class="delete action">Delete</span>',
-      '    <span class="spinner"></span>',
-      '    <span class="message"></span>',
-      '  </div>',
-      '  {{#if this.opts.show_title}}<input type="text" name="title" class="title" placeholder="Title" autocomplete="off" value=""/>{{/if}}',
-      '  <textarea style="display:none;"></textarea>',
-      '  {{#if this.opts.show_includes}}<div class="includes">Includes: </div>{{/if}}',
-      '  {{#if this.opts.show_tags}}<input type="text" name="tags" class="tags" placeholder="Tags" autocomplete="off" value=""/>{{/if}}',
-      '</div>',
-    ].join('\n')),
   },
   
 };

@@ -95,23 +95,10 @@ pk.notes = {
     this.xhr = $.ajax({url:url, type:'GET', dataType:'json'});
     this.xhr.done(function(data, textStatus, jqXHR) {
       var ctx = {notes:data.results, search:encodeURIComponent(search), noteid:noteid};
-      var html = self.templates.listitems(ctx);
+      var html = pk.templates.note_items(ctx);
       self.notelist.html(html);
       self.search = search;
     });
-  },
-  
-  templates: {
-    listitems: Handlebars.compile([
-      '{{#each this.notes}}',
-      '  <a class="notes-item {{#if_eq this.id ../noteid}}selected{{/if_eq}}" href="{{this.weburl}}{{#if ../search}}?search={{../search}}{{/if}}" data-url="{{this.url}}">',
-      '    <div class="title">{{this.title}}</div>',
-      '    <div class="subtext">',
-      '      {{#if this.tags}}{{this.tags}} - {{/if}}{{formatDate this.created "%Y-%m-%d"}}',
-      '    </div>',
-      '  </a>',
-      '{{/each}}',
-    ].join('\n')),
   },
 
 };

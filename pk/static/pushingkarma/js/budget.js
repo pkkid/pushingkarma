@@ -322,7 +322,7 @@ pk.budget = {
     var row = td.closest('tr');
     row.popover({trigger:'manual', placement:'bottom', html:true,
       content: function() {
-        var html = self.templates.category_popover({});
+        var html = pk.templates.category_popover({});
         return html;
       },
     }).addClass('popped').popover('show');
@@ -514,7 +514,7 @@ pk.budget = {
     try { this.xhrcat.abort(); } catch(err) { }
     this.xhrcat = $.ajax({url:url, type:'GET', dataType:'json'});
     this.xhrcat.done(function(data, textStatus, jqXHR) {
-      var html = self.templates.category_list(data);
+      var html = pk.templates.category_list(data);
       self.categories.html(html);
       self.update_categorynames(data);
       self.bind_drag_categories();
@@ -539,7 +539,7 @@ pk.budget = {
     this.xhrtrx = $.ajax({url:self.URL_SUMMARY, type:'GET', dataType:'json'});
     this.xhrtrx.done(function(data, textStatus, jqXHR) {
       self.searchinfo.text('');
-      var html = self.templates.summary(data);
+      var html = pk.templates.summary(data);
       self.summary.html(html);
     });
   },
@@ -564,7 +564,7 @@ pk.budget = {
       this.xhrtrx.done(function(data, textStatus, jqXHR) {
         if (more) { more.remove(); }
         self.searchinfo.text(data.errors || data.datefilters);
-        var html = self.templates.transaction_list(data);
+        var html = pk.templates.transaction_list(data);
         if (data.previous) {
           var items = $(html).find('tbody tr');
           self.transactions.find('tbody').append(items);
@@ -573,143 +573,6 @@ pk.budget = {
         }
       });
     }
-  },
-
-  // data attributes that affect ttd element behavior:
-  //   data-id: ID of the item being displayed.
-  //   data-type: category or transaction of item being displayed.
-  //   data-name: name of the model field td corresponds to.
-  //   data-default: default value if left blank.
-  //   data-display: int or float currency representaion.
-  //   data-url: API url to use when editing item.
-  //   selectall (class): Select all content when initializing edit.
-  //   readonly (class): Do not allow editing this item.
-  //   delempty (class): Delete category or transaction if value empty.
-  templates: {
-
-    category_list: Handlebars.compile([
-      '<table cellpadding="0" cellspacing="0">',
-      '  <thead><tr>',
-      '    <th data-name="name">Category</th>',
-      '    <th data-name="trend" class="center">Trend</th>',
-      '    <th data-name="budget" class="right">Budget</th>',
-      '  </tr></thead>',
-      '  <tbody>',
-      '    {{#each this.results}}',
-      '      <tr id="category-{{this.id}}" data-catid="{{this.id}}" data-type="category" data-url="{{this.url}}" class="{{#if_eq this.id "null"}}readonly{{/if_eq}}">',
-      '        <td data-name="name" class="delempty"><div>{{this.name}}</div></td>',
-      '        <td data-name="trend" class="readonly drag"><div>&nbsp;</div></td>',
-      '        <td data-name="budget" data-display="int" class="right selectall"><div>{{amountInt this.budget}}</div></td>',
-      '      </tr>',
-      '    {{/each}}',
-      '  </tbody>',
-      '  <tfoot>',
-      '    <tr id="category-total" data-type="category">',
-      '      <td data-name="name" class="readonly"><div>Total</div></td>',
-      '      <td data-name="trend" class="readonly"><div>&nbsp;</div></td>',
-      '      <td data-name="budget" data-display="int" class="readonly right"><div>{{amountInt this.total}}</div></td>',
-      '    </tr>',
-      '    <tr id="category-add" data-add="true" data-url="/api/categories/">',
-      '      <td data-name="name"><input name="name" type="text" placeholder="New Category" autocomplete="off"></td>',
-      '      <td data-name="trend" class="center">&nbsp;</td>',
-      '      <td data-name="budget" class="right" data-default="0"><input name="budget" type="integer" placeholder="$0" autocomplete="off"></td>',
-      '    </tr>',
-      '  </tfoot>',
-      '</table>'
-    ].join('\n')),
-
-    category_popover: Handlebars.compile([
-      '<div style="padding:5px 10px;">',
-      '  <textarea></textarea><br/>',
-      '  This is the plan!',
-      '</div>',
-    ].join('\n')),
-
-    summary: Handlebars.compile([
-      '<h2>',
-      '  Summary',
-      '  <div class="subtext">',
-      '    {{addCommas this.count}} transactions',
-      '    {{yesNo this.uncategorized "|" ""}}',
-      '    {{#if this.uncategorized}}<a class="error" href="javascript:pk.budget.search(\'category=none\')">{{addCommas this.uncategorized}} uncategorized</a>{{/if}}',
-      '    {{yesNo this.unapproved "|" ""}}',
-      '    {{#if this.unapproved}}<a class="error" href="javascript:pk.budget.search(\'approved=false\')">{{addCommas this.unapproved}} unapproved</a>{{/if}}',
-      '  </div>',
-      '</h2>',
-      '<table cellpadding="0" cellspacing="0" style="clear:both;">',
-      '  <thead><tr>',
-      '    <th class="average">Average</th>',
-      '    {{#each this.categories.0.amounts}}',
-      '      <th>{{formatDate @key "%b"}}</th>',
-      '    {{/each}}',
-      '  </tr></thead>',
-      '  <tbody>',
-      '    {{#each this.categories}}',
-      '      <tr data-catid="{{this.catid}}">',
-      '        <td class="average"><div>{{amountInt this.average}}</div></td>',
-      '        {{#each this.amounts}}',
-      '          <td class="{{budgetFlags ../budget this}}"><div>',
-      '            {{amountInt this}}',
-      '          </div></td>',
-      '        {{/each}}',
-      '      </tr>',
-      '    {{/each}}',
-      '  </tbody>',
-      '  <tfoot><tr>',
-      '    <td class="average"><div>{{amountInt this.avg_total}}</div></td>',
-      '    {{#each this.total}}',
-      '      <td class="{{yesNo this \'\' \'zero\'}}"><div>',
-      '        {{amountInt this}}',
-      '      </div></td>',
-      '    {{/each}}',
-      '  </tr></tfoot>',
-      '</table>',
-    ].join('\n')),
-
-    transaction_list: Handlebars.compile([
-      '<h2>',
-      '  Transactions',
-      '  <div class="subtext">',
-      '    {{addCommas this.count}} transactions',
-      '    {{yesNo this.uncategorized "|" ""}}',
-      '    {{#if this.uncategorized}}<a class="error" href="javascript:pk.budget.search(\'category=none\', true)">{{addCommas this.uncategorized}} uncategorized</a>{{/if}}',
-      '    {{yesNo this.unapproved "|" ""}}',
-      '    {{#if this.unapproved}}<a class="error" href="javascript:pk.budget.search(\'approved=false\', true)">{{addCommas this.unapproved}} unapproved</a>{{/if}}',
-      '  </div>',
-      '</h2>',
-      '<table cellpadding="0" cellspacing="0" style="clear:both;">',
-      '  <thead><tr>',
-      '    <th data-name="account">Bank</th>',
-      '    <th data-name="date">Date</th>',
-      '    <th data-name="payee">Payee</th>',
-      '    <th data-name="category">Category</th>',
-      '    <th data-name="amount" class="right">Amount</th>',
-      '    <th data-name="approved" class="center">X</th>',
-      '    <th data-name="comment">Comment</th>',
-      '  </tr></thead>',
-      '  <tbody>',
-      '   {{#each this.results}}',
-      '     <tr id="transaction-{{this.id}}" data-type="transaction" data-accountfid="{{this.accountfid}}" data-trxid="{{this.trxid}}" data-url="{{this.url}}">',
-      '       <td data-name="account" class="readonly"><div>{{this.account}}</div></td>',
-      '       <td data-name="date"><div>{{this.date}}</div></td>',
-      '       <td data-name="payee" class="selectall"><div>{{this.payee}}</div></td>',
-      '       <td data-name="category" class="selectall"><div>{{this.category}}</div></td>',
-      '       <td data-name="amount" data-display="float" class="right"><div>{{amountFloat this.amount}}</div></td>',
-      '       <td data-name="approved" data-display="bool" class="center selectall"><div>{{yesNo this.approved \'x\' \'\'}}</div></td>',
-      '       <td data-name="comment"><div>{{this.comment}}</div></td>',
-      '     </tr>',
-      '   {{/each}}',
-      '   {{#if this.next}}',
-      '     <tr id="transactions-more" data-next="{{this.next}}">',
-      '       <td colspan="100%">Loading more transactions..</td>',
-      '     </tr>',
-      '   {{/if}}',
-      '  </tbody>',
-      '</table>',
-    ].join('\n')),
-
-
-
   },
 
 };

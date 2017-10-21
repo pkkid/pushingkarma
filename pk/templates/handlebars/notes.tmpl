@@ -1,0 +1,13 @@
+{% verbatim %}
+  <!-- Template:note_items -->
+  <script id='note_items' type='text/x-handlebars-template'>
+    {{#each this.notes}}
+      <a class='notes-item {{#if_eq this.id ../noteid}}selected{{/if_eq}}' href='{{this.weburl}}{{#if ../search}}?search={{../search}}{{/if}}' data-url='{{this.url}}'>
+        <div class='title'>{{this.title}}</div>
+        <div class='subtext'>
+          {{#if this.tags}}{{this.tags}} - {{/if}}{{formatDate this.created '%Y-%m-%d'}}
+        </div>
+      </a>
+    {{/each}}
+  </script>
+{% endverbatim %}

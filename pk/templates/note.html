@@ -3,23 +3,6 @@
 {% load basefilters %}
 {% block title %}{% if note.title %}{{note.title}} - {% endif %}{% endblock %}
 
-{% block js %}
-  <script type='text/javascript'>
-    $(function() {
-      {% if user.is_authenticated %}
-        pk.editor.init('#notes .note', {
-          api_url: '/api/notes/',
-          markdown_url: '/markdown/n/',
-          show_title: true,
-          show_tags: true,
-          init_data: {{note|json}},
-        });
-      {% endif %}
-      pk.notes.init('#notes', {{note.id|default:0}}, pk.editor);
-    });
-  </script>
-{% endblock %}
-
 {% block content %}
   <div id='notes'>
     <!-- Side Panel -->
@@ -40,3 +23,22 @@
     </div>
   </div>
 {% endblock content %}
+
+{% block js %}
+  <script type='text/javascript'>
+    $(function() {
+      {% if user.is_authenticated %}
+        pk.editor.init('#notes .note', {
+          api_url: '/api/notes/',
+          markdown_url: '/markdown/n/',
+          show_title: true,
+          show_tags: true,
+          init_data: {{note|json}},
+        });
+      {% endif %}
+      pk.notes.init('#notes', {{note.id|default:0}}, pk.editor);
+    });
+  </script>
+  {% include 'handlebars/editor.tmpl' %}
+  {% include 'handlebars/notes.tmpl' %}
+{% endblock %}

@@ -2,14 +2,6 @@
 {% load basefilters %}
 {% block title %}Budget{% endblock %}
 
-{% block js %}
-  <script type='text/javascript'>
-    $(function() {
-      pk.budget.init('#budget');
-    });
-  </script>
-{% endblock %}
-
 {% block content %}
   <div id='budget'>
     <!-- Layout:SidePanel -->
@@ -32,3 +24,13 @@
     </div>
   </div>
 {% endblock content %}
+
+{% block js %}
+  <script type='text/javascript'>
+    $(function() {
+      pk.budget.init('#budget');
+    });
+  </script>
+  {% include 'handlebars/budget.tmpl' %}
+{% endblock %}
+
