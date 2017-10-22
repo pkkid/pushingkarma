@@ -83,7 +83,6 @@ pk.budget = {
       if (event.detail == 1) {
         // display popover on single click
         self.clicktimer = setTimeout(function() {
-          console.log('DISPLAY POPEVER');
           self.popover_display(td);
         }, 200);
       } else if (event.detail == 2) {
@@ -120,12 +119,10 @@ pk.budget = {
     this.categories.on('keydown', 'tfoot input', function(event) {
       if (event.keyCode == KEYS.ENTER) {
         event.preventDefault();
-        console.log(event.keyCode);
         var td = $(this).closest('td');
         var row = td.closest('tr');
         self.td_save(td, false, false, function() {
           self.update_categories(function() {
-            console.log(self.categories.find('#category-add input'));
             self.categories.find('#category-add input').first().focus();
           });
           self.update_summary();
@@ -180,11 +177,11 @@ pk.budget = {
       var xhr = $.ajax({url:'/api/transactions/upload/', type:'PUT', data:formdata,
         cache:false, contentType:false, processData:false});
       xhr.done(function(data, textStatus, jqXHR) {
-        console.log('SUCCESS?');
+        console.log('TODO: Display upload status..');
         console.log(data);
       });
       xhr.fail(function(jqXHR, textStatus, errorThrown) {
-        console.log('FAILED UPLOAD');
+        console.log('TODO: Display failed upload status..');
       });
     });
   },
@@ -195,19 +192,19 @@ pk.budget = {
     self.summary.on('mouseenter', 'tbody tr', function(event) {
       if (self.container.find('.popped').length >= 1) { return; }
       $(this).addClass('hover');
-      self.categories.find('[data-catid='+ $(this).data('catid') +']').addClass('hover');
+      self.categories.find('#category-'+ $(this).data('categoryid')).addClass('hover');
     }).on('mouseleave', 'tbody tr', function(event) {
       $(this).removeClass('hover');
-      self.categories.find('[data-catid='+ $(this).data('catid') +']').removeClass('hover');
+      self.categories.find('#category-'+ $(this).data('categoryid')).removeClass('hover');
     });
     // mouse over category row
     self.categories.on('mouseenter', 'tbody tr', function(event) {
       if (self.container.find('.popped').length >= 1) { return; }
       $(this).addClass('hover');
-      self.summary.find('[data-catid='+ $(this).data('catid') +']').addClass('hover');
+      self.summary.find('#summary-'+ $(this).data('id')).addClass('hover');
     }).on('mouseleave', 'tbody tr', function(event) {
       $(this).removeClass('hover');
-      self.summary.find('[data-catid='+ $(this).data('catid') +']').removeClass('hover');
+      self.summary.find('#summary-'+ $(this).data('id')).removeClass('hover');
     });
     // mouse over transaction row
     self.transactions.on('mouseenter', 'tbody tr', function(event) {

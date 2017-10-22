@@ -12,7 +12,11 @@ $(function() {
   // Handlebars templates
   pk.templates = [];
   $.each($('script[type="text/x-handlebars-template"]'), function() {
-    pk.templates[this.getAttribute('id')] = Handlebars.compile(this.innerText);
+    var id = this.getAttribute('id');
+    pk.templates[id] = Handlebars.compile(this.innerText);
+    if ($(this).hasClass('partial')) {
+      Handlebars.registerPartial(id, pk.templates[id]);
+    }
   });
 
   // Core website functions

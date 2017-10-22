@@ -32,7 +32,7 @@ Budget data attributes:
       </tr></thead>
       <tbody>
         {{#each this.categories}}
-          <tr data-catid='{{this.catid}}'>
+          <tr id='summary-{{this.categoryid}}' data-categoryid='{{this.categoryid}}'>
             <td class='average'><div>{{amountInt this.average}}</div></td>
             {{#each this.amounts}}
               <td class='{{budgetFlags ../budget this}}'><div>
@@ -63,7 +63,7 @@ Budget data attributes:
       </tr></thead>
       <tbody>
         {{#each this.results}}
-          <tr id='category-{{this.id}}' data-catid='{{this.id}}' data-type='category' data-url='{{this.url}}' class='{{#if_eq this.id 'null'}}readonly{{/if_eq}}'>
+          <tr id='category-{{this.id}}' data-id='{{this.id}}' data-url='{{this.url}}' class='{{#if_eq this.id 'null'}}readonly{{/if_eq}}'>
             <td data-name='name' class='delempty'><div>{{this.name}}</div></td>
             <td data-name='trend' class='readonly drag'><div>&nbsp;</div></td>
             <td data-name='budget' data-display='int' class='right selectall'><div>{{amountInt this.budget}}</div></td>
@@ -71,7 +71,7 @@ Budget data attributes:
         {{/each}}
       </tbody>
       <tfoot> 
-        <tr id='category-total' data-type='category'>
+        <tr id='category-total'>
           <td data-name='name' class='readonly'><div>Total</div></td>
           <td data-name='trend' class='readonly'><div>&nbsp;</div></td>
           <td data-name='budget' data-display='int' class='readonly right'><div>{{amountInt this.total}}</div></td>
@@ -116,7 +116,7 @@ Budget data attributes:
       </tr></thead>
       <tbody>
        {{#each this.results}}
-         <tr id='transaction-{{this.id}}' data-type='transaction' data-accountfid='{{this.accountfid}}' data-trxid='{{this.trxid}}' data-url='{{this.url}}'>
+         <tr id='transaction-{{this.id}}' data-id='{{this.id}}' data-accountfid='{{this.accountfid}}' data-trxid='{{this.trxid}}' data-url='{{this.url}}'>
            <td data-name='account' class='readonly'><div>{{this.account}}</div></td>
            <td data-name='date'><div>{{this.date}}</div></td>
            <td data-name='payee' class='selectall'><div>{{this.payee}}</div></td>

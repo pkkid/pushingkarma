@@ -31,7 +31,7 @@
       background-color: transparent;
       transition: background-color 1s ease;
       transition-delay: 0.1s;
-      &.hover { background-color: rgba(0,0,0,0.04); }
+      &.hover { background-color: rgba(0,0,0,0.06); }
       &.popped {
         background-color: rgba(0,0,0,0.06);
         td { border-top: 1px dotted rgba(0,0,0,0.2); }

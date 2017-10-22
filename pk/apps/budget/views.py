@@ -133,7 +133,7 @@ class TransactionsViewSet(viewsets.ModelViewSet):
         for category in list(Category.objects.order_by('sortindex')) + [None]:
             cdata = Bunch()
             cdata.name = UNCATEGORIZED if category is None else category.name
-            cdata.catid = None if category is None else category.id
+            cdata.categoryid = None if category is None else category.id
             cdata.budget = 0.0 if category is None else category.budget
             cdata.total = 0.0
             cdata.average = 0.0
