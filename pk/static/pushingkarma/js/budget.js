@@ -8,6 +8,7 @@ pk.budget = {
   KEYS: {TAB:9, ENTER:13, ESC:27, F3:114, UP:38, DOWN:40},
   LOADMORE_INTERVAL: 100,
   LOADMORE_DISTANCE: 200,
+  ROW:'.pkrow', ITEM:'.pkitem',
   URL_SUMMARY: window.location.origin +'/api/transactions/summary',
   URL_CATEGORIES: window.location.origin +'/api/categories',
   URL_TRANSACTIONS: window.location.origin +'/api/transactions',
@@ -76,37 +77,37 @@ pk.budget = {
   bind_row_edit: function() {
     // handle single and dblclick events
     var self = this;
-    this.container.on('click', '.rowitem > div', function(event) {
+    this.container.on('click', self.ITEM+'>div', function(event) {
       event.preventDefault();
-      var td = $(this).closest('td');
+      var item = $(this).closest(self.ITEM);
       if (event.detail == 1) {
         // display popover on single click
         self.clicktimer = setTimeout(function() {
-          self.popover_display(td);
+          self.popover_display(item);
         }, 200);
       } else if (event.detail == 2) {
         // edit category or transaction on dblclick
         clearTimeout(self.clicktimer);
-        self.td_edit(td);
+        self.item_edit(item);
       }      
     });
     // close the popover if clicking somewhere else
     $(document).on('click', function(event) {
-      var trgt = $(event.target);
-      if (!trgt.closest('tr').hasClass('popped') && !trgt.closest('.popover').length) {
-        $('tr.popped').removeClass('popped').popover('hide');
+      var target = $(event.target);
+      if (!target.closest(self.ROW).hasClass('popped') && !target.closest('.popover').length) {
+        $('.popped').removeClass('popped').popover('hide');
       }
     });
     // save category or transaction on blur
-    this.container.on('blur', 'tbody td > input', function(event) {
+    this.container.on('blur', 'tbody '+self.ITEM+'>input', function(event) {
       event.preventDefault();
       var input = $(this);
-      var td = input.closest('td');
+      var item = input.closest(self.ITEM);
       if (input.hasClass('nosave')) { return; }
-      if (td.hasClass('delempty') && !input.val()) {
-        self.td_delete(td);
+      if (item.hasClass('delempty') && !input.val()) {
+        self.item_delete(item);
       } else {
-        self.td_save(td, false, true);
+        self.item_save(item, false, true);
       }
     });
   },
@@ -118,9 +119,9 @@ pk.budget = {
     this.categories.on('keydown', 'tfoot input', function(event) {
       if (event.keyCode == KEYS.ENTER) {
         event.preventDefault();
-        var td = $(this).closest('td');
-        var row = td.closest('tr');
-        self.td_save(td, false, false, function() {
+        var item = $(this).closest(self.ITEM);
+        var row = item.closest(self.ROW);
+        self.item_save(item, false, false, function() {
           self.update_categories(function() {
             self.categories.find('#category-add input').first().focus();
           });
@@ -138,8 +139,8 @@ pk.budget = {
       update: function(event, ui) {
         $('#category-null').appendTo(self.categories.find('tbody'));
         if (ui.item.attr('id') != 'category-null') {
-          var td = ui.item.find('td').first();
-          self.td_save(td, true, true, function() {
+          var item = ui.item.find(self.ITEM).first();
+          self.item_save(item, true, true, function() {
             self.update_summary();
           });
         }
@@ -197,19 +198,19 @@ pk.budget = {
       self.categories.find('#category-'+ $(this).data('categoryid')).removeClass('hover');
     });
     // mouse over category row
-    self.categories.on('mouseenter', 'tbody tr', function(event) {
+    self.categories.on('mouseenter', self.ROW, function(event) {
       if (self.container.find('.popped').length >= 1) { return; }
       $(this).addClass('hover');
       self.summary.find('#summary-'+ $(this).data('id')).addClass('hover');
-    }).on('mouseleave', 'tbody tr', function(event) {
+    }).on('mouseleave', self.ROW, function(event) {
       $(this).removeClass('hover');
       self.summary.find('#summary-'+ $(this).data('id')).removeClass('hover');
     });
     // mouse over transaction row
-    self.transactions.on('mouseenter', 'tbody tr', function(event) {
+    self.transactions.on('mouseenter', self.ROW, function(event) {
       if (self.container.find('.popped').length >= 1) { return; }
       $(this).addClass('hover');
-    }).on('mouseleave', 'tbody tr', function(event) {
+    }).on('mouseleave', self.ROW, function(event) {
       $(this).removeClass('hover');
     });
   },
@@ -243,41 +244,41 @@ pk.budget = {
       var input = $(this);
       var watchedkey = _.valuesIn(KEYS).indexOf(event.keyCode) >= 0;
       if (watchedkey) {
-        var td = input.closest('td');
-        // enter and down select td on next row
+        var rowitem = input.closest(self.ITEM);
+        // enter and down select item on next row
         if ((event.keyCode == KEYS.ENTER || event.keyCode == KEYS.DOWN) && !self.autocomplete()) {
           event.preventDefault();
-          var row = td.closest('tr');
-          var name = td.data('name');
-          var next = row.next('.rowedit').find('td[data-name='+name+']');
-          next.length ? self.td_edit(next) : input.blur();
+          var row = rowitem.closest(self.ROW);
+          var name = rowitem.data('name');
+          var next = row.next(self.ROW).find('[data-name='+name+']');
+          next.length ? self.item_edit(next) : input.blur();
         // up selects input on prev row
         } else if ((event.keyCode == KEYS.UP) && !self.autocomplete()) {
           event.preventDefault();
-          var row = td.closest('tr');
-          var name = td.data('name');
-          var next = row.prev('.rowedit').find('td[data-name='+name+']');
-          next.length ? self.td_edit(next) : input.blur();
+          var row = rowitem.closest(self.ROW);
+          var name = rowitem.data('name');
+          var next = row.prev(self.ROW).find('[data-name='+name+']');
+          next.length ? self.item_edit(next) : input.blur();
         // shift + tab selects previous input in full table
         } else if (event.shiftKey && event.keyCode == KEYS.TAB) {
           event.preventDefault();
-          var all = td.closest('tbody').find('.rowedit');
-          var index = all.index(td) - 1;
+          var all = rowitem.closest('tbody').find(self.ITEM);
+          var index = all.index(rowitem) - 1;
           var next = index >= 0 ? all.eq(index) : null;
           if (!next) { return; }
-          next.length ? self.td_edit(next) : input.blur();
+          next.length ? self.item_edit(next) : input.blur();
         // tab selects next input in full table
         } else if (event.keyCode == KEYS.TAB) {
           event.preventDefault();
-          var all = td.closest('tbody').find('.rowedit');
-          var index = all.index(td) + 1
+          var all = rowitem.closest('tbody').find(self.ITEM);
+          var index = all.index(rowitem) + 1;
           var next = all.eq(index);
-          next.length ? self.td_edit(next) : input.blur();
+          next.length ? self.item_edit(next) : input.blur();
         // esc reverts back to init value and stops editing
         } else if (event.keyCode == KEYS.ESC) {
           event.preventDefault();
           input.addClass('nosave');
-          return self.td_display(td, td.data('init'));
+          return self.item_display(rowitem, rowitem.data('init'));
         }
       }
     });
@@ -313,9 +314,9 @@ pk.budget = {
     }
   },
 
-  popover_display: function(td) {
+  popover_display: function(item) {
     var self = this;
-    var row = td.closest('tr');
+    var row = item.closest(self.ROW);
     row.popover({trigger:'manual', placement:'bottom', html:true,
       content: function() {
         var html = pk.templates.category_popover({});
@@ -353,75 +354,75 @@ pk.budget = {
     window.history.replaceState(null, null, url);
   },
 
-  text_or_val: function(td) {
-    var child = td.children().first();
+  text_or_val: function(item) {
+    var child = item.children().first();
     if (child.is('div')) {
       // Get value from a div
       var value = child.text().trim();
-      value = td.hasClass('int') ? pk.utils.to_int(value) : value;
-      value = td.hasClass('float') ? pk.utils.to_float(value) : value;
+      value = item.hasClass('int') ? pk.utils.to_int(value) : value;
+      value = item.hasClass('float') ? pk.utils.to_float(value) : value;
     } else {
       // Get value from an input
       value = child.val().trim();
-      if ((value == '') && (td.data('default') !== undefined)) {
-        value = td.data('default');
+      if ((value == '') && (item.data('default') !== undefined)) {
+        value = item.data('default');
       }
     }
     return value;
   },
 
-  td_delete: function(td) {
+  item_delete: function(item) {
     var self = this;
-    var row = td.closest('tr');
+    var row = item.closest(self.ROW);
     var type = row.attr('id').split('-')[0];
     $.confirm({
       backgroundDismiss: true,
       cancelButton: 'Cancel',
       columnClass: 'col-6',
       confirmButton: 'Delete It',
-      content: "Are you sure you wish to delete the "+ type +" '"+ td.data('init') +"?'",
+      content: "Are you sure you wish to delete the "+ type +" '"+ item.data('init') +"?'",
       keyboardEnabled: true,
       title: 'Delete '+ _.startCase(type) +'?',
       confirm: function() {
         var url = row.data('url');
-        self.request(td, url, 'DELETE', null, {
+        self.request(item, url, 'DELETE', null, {
           done: function(data) { row.remove(); self.update_summary(); },
         });
       },
       cancel: function() {
-        self.td_display(td, td.data('init'));
+        self.item_display(item, item.data('init'));
       }
     });
   },
 
-  td_display: function(td, value) {
+  item_display: function(item, value) {
     var div = $('<div></div>');
-    if (td.hasClass('error')) {
-      return td.html(div.text(value));
+    if (item.hasClass('error')) {
+      return item.html(div.text(value));
     }
-    value = td.hasClass('int') ? pk.utils.to_amount_int(value) : value;
-    value = td.hasClass('float') ? pk.utils.to_amount_float(value) : value;
-    value = td.hasClass('bool') ? (value ? 'x' : '') : value;
-    td.html(div.text(value));
+    value = item.hasClass('int') ? pk.utils.to_amount_int(value) : value;
+    value = item.hasClass('float') ? pk.utils.to_amount_float(value) : value;
+    value = item.hasClass('bool') ? (value ? 'x' : '') : value;
+    item.html(div.text(value));
   },
 
-  td_edit: function(td) {
+  item_edit: function(item) {
     var self = this;
-    if (td.hasClass('readonly')) { return; }
-    if (td.closest('tr').attr('id') == 'category-null') { return; }
+    if (item.hasClass('readonly')) { return; }
+    if (item.closest(self.ROW).attr('id') == 'category-null') { return; }
     // create input and format value
-    var div = td.find('div');
+    var div = item.find('div');
     var input = $('<input type="text" />');
-    if (td.hasClass('error')) {
-      input.val(td.text());
+    if (item.hasClass('error')) {
+      input.val(item.text());
     } else {
       var value = div.text();
-      value = td.hasClass('int') ? pk.utils.to_int(value) : value;
-      value = td.hasClass('float') ? pk.utils.to_float(value) : value;
+      value = item.hasClass('int') ? pk.utils.to_int(value) : value;
+      value = item.hasClass('float') ? pk.utils.to_float(value) : value;
       input.val(value);
     }
     // bind autocomplete to category inputs
-    if (td.data('name') == 'category') {
+    if (item.data('name') == 'category') {
       input.autocomplete({
         source: self.categorynames,
         autoFocus: true,
@@ -430,53 +431,53 @@ pk.budget = {
       });
     }
     // repalce div with input and set focus
-    td.data('init', input.val()).html(input);
+    item.data('init', input.val()).html(input);
     input.focus();
     setTimeout(function() {
       var end = input.val().length * 2;
-      var start = td.hasClass('selectall') ? 0 : end;
+      var start = item.hasClass('selectall') ? 0 : end;
       input.get(0).setSelectionRange(start, end);
     }, 10);
   },
 
-  td_save: function(td, force, display, callback) {
+  item_save: function(item, force, display, callback) {
     var self = this;
-    var input = td.find('input');
-    var row = td.closest('tr');
+    var input = item.find('input');
+    var row = item.closest(self.ROW);
     var type = row.attr('id').split('-')[0];
     display = display === undefined ? false : display;
     // do nothing if the value is unchanged
-    if (!force && td.data('init') == input.val() && !td.hasClass('error')) {
-      return self.td_display(td, input.val());
+    if (!force && item.data('init') == input.val() && !item.hasClass('error')) {
+      return self.item_display(item, input.val());
     }
     // save the new value to the database
     var data = this['data_'+ type](row);
     var url = row.data('url');
     var method = data.id ? 'PUT' : 'POST';
-    var xhr = self.request(td, url, method, data, {
+    var xhr = self.request(item, url, method, data, {
       done: function(data, textStatus, jqXHR) {
-        if (display) { self.td_display(td, data[td.data('name')]); }
+        if (display) { self.item_display(item, data[item.data('name')]); }
         if (callback) { callback(); }
       },
       fail: function(jqXHR, textStatus, errorThrown) {
-        if (display) { self.td_display(td, data[td.data('name')]); }
+        if (display) { self.item_display(item, data[item.data('name')]); }
       }
     });
   },
 
-  request: function(td, url, method, data, opts) {
-    td.addClass('saving');
-    var row = td.closest('tr');
+  request: function(item, url, method, data, opts) {
+    item.addClass('saving');
+    var row = item.closest(self.ROW);
     var xhr = $.ajax({url:url, type:method, data:data, dataType:'json'});
     xhr.done(function(data, textStatus, jqXHR) {
-      setTimeout(function() { td.removeClass('saving'); }, 500);
-      td.removeClass('error');
+      setTimeout(function() { item.removeClass('saving'); }, 500);
+      item.removeClass('error');
       row.removeData('errors');
       if (opts.done) { opts.done(data, textStatus, jqXHR); }
     });
     xhr.fail(function(jqXHR, textStatus, errorThrown) {
-      td.removeClass('saving');
-      td.addClass('error');
+      item.removeClass('saving');
+      item.addClass('error');
       row.data('errors', jqXHR.responseJSON);
       if (opts.fail) { opts.fail(jqXHR, textStatus, errorThrown); }
     });
@@ -553,7 +554,7 @@ pk.budget = {
         self.searchinfo.text(data.errors || data.datefilters);
         var html = pk.templates.transaction_list(data);
         if (data.previous) {
-          var items = $(html).find('tbody tr');
+          var items = $(html).find(self.ROW);
           self.transactions.find('tbody').append(items);
         } else {
           self.transactions.html(html);
