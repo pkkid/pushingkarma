@@ -63,7 +63,7 @@ Budget data attributes:
       </tr></thead>
       <tbody>
         {{#each this.results}}
-          <tr id='category-{{this.id}}' data-id='{{this.id}}' data-url='{{this.url}}' class='{{#if_eq this.id 'null'}}readonly{{/if_eq}}'>
+          <tr id='category-{{this.id}}' class='category {{#if_eq this.id 'null'}}readonly{{/if_eq}}' data-id='{{this.id}}' data-url='{{this.url}}'>
             <td data-name='name' class='delempty'><div>{{this.name}}</div></td>
             <td data-name='trend' class='readonly drag'><div>&nbsp;</div></td>
             <td data-name='budget' data-display='int' class='right selectall'><div>{{amountInt this.budget}}</div></td>
@@ -116,7 +116,7 @@ Budget data attributes:
       </tr></thead>
       <tbody>
        {{#each this.results}}
-         <tr id='transaction-{{this.id}}' data-id='{{this.id}}' data-accountfid='{{this.accountfid}}' data-trxid='{{this.trxid}}' data-url='{{this.url}}'>
+         <tr id='transaction-{{this.id}}' class='transaction' data-id='{{this.id}}' data-accountfid='{{this.accountfid}}' data-trxid='{{this.trxid}}' data-url='{{this.url}}'>
            <td data-name='account' class='readonly'><div>{{this.account}}</div></td>
            <td data-name='date'><div>{{this.date}}</div></td>
            <td data-name='payee' class='selectall'><div>{{this.payee}}</div></td>
