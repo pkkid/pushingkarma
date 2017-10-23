@@ -5,10 +5,9 @@
 
 pk.budget = {
   BUDGET_SELECTOR: '#budget',
-  KEYS: {TAB:9, ENTER:13, ESC:27, F3:114, UP:38, DOWN:40},
-  LOADMORE_INTERVAL: 100,
-  LOADMORE_DISTANCE: 200,
   ROW:'.pkrow', ITEM:'.pkitem',
+  KEYS: {TAB:9, ENTER:13, ESC:27, F3:114, UP:38, DOWN:40},
+  LOADMORE_INTERVAL: 100, LOADMORE_DISTANCE: 200,
   URL_SUMMARY: window.location.origin +'/api/transactions/summary',
   URL_CATEGORIES: window.location.origin +'/api/categories',
   URL_TRANSACTIONS: window.location.origin +'/api/transactions',
@@ -174,7 +173,7 @@ pk.budget = {
       $.each(event.originalEvent.dataTransfer.files, function(i, file) {
         formdata.append(file.name, file);
       });
-      var xhr = $.ajax({url:'/api/transactions/upload/', type:'PUT', data:formdata,
+      var xhr = $.ajax({url:self.URL_UPLOAD, type:'PUT', data:formdata,
         cache:false, contentType:false, processData:false});
       xhr.done(function(data, textStatus, jqXHR) {
         console.log('TODO: Display upload status..');
