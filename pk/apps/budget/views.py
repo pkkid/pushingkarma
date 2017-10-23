@@ -9,16 +9,17 @@ from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db import connection
-from django.db.models import Min, Max
-from ofxparse import OfxParser
-from pk import log, utils
+from django.db.models import Count, Min, Max, Sum
+from pk import utils
 from pk.utils.context import Bunch
 from pk.utils.search import FIELDTYPES, SearchField, Search
 from rest_framework import viewsets
-from rest_framework.decorators import list_route
+from rest_framework.decorators import detail_route, list_route
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.reverse import reverse_lazy
+from rest_framework.reverse import reverse
 from .manager import TransactionManager
 from .models import UNCATEGORIZED, Category, CategorySerializer
 from .models import Transaction, TransactionSerializer
@@ -52,13 +53,24 @@ class CategoriesViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         categories = Category.objects.order_by('sortindex')
         page = self.paginate_queryset(categories)
-        serializer = CategorySerializer(page, context={'request':request},
-            many=True, fields=self.list_fields)
+        serializer = CategorySerializer(page, context={'request':request}, many=True, fields=self.list_fields)
         response = self.get_paginated_response(serializer.data)
         response.data['total'] = round(sum(float(c['budget']) for c in response.data['results']), 2)
-        response.data['results'].append({'id':'null', 'url':None, 'name':'Uncategorized', 'sortindex':99, 'budget':'0.00', 'comment':''})
+        response.data['results'].append({'id':'null', 'url':None, 'name':'Uncategorized',
+            'sortindex':99, 'budget':'0.00', 'comment':''})
         response.data.move_to_end('results')
         return response
+
+    @detail_route(methods=['get'])
+    def details(self, request, pk, *args, **kwargs):
+        category = Category.objects.get(pk=pk)
+        data = CategorySerializer(category, context={'request':request}).data
+        # append details
+        details = Transaction.objects.filter(category=category).aggregate(count=Count('id'), sum=Sum('amount'))
+        data['details'] = {}
+        data['details']['transactions'] = details['count']
+        data['details']['total'] = details['sum']
+        return Response(data)
 
 
 class TransactionsViewSet(viewsets.ModelViewSet):
@@ -95,17 +107,15 @@ class TransactionsViewSet(viewsets.ModelViewSet):
     @list_route(methods=['get'])
     def summary(self, request, *args, **kwargs):
         data = Bunch()
-        maxdate = datetime.today()
-        maxmonth = date(maxdate.year, maxdate.month, 1)
         # initialize data response
-        data.months = 12
-        data.mindate = maxmonth - relativedelta(months=data.months - 1)
+        maxmonth = date(datetime.today().year, datetime.today().month, 1)
+        data.mindate = maxmonth - relativedelta(months=11)
         data.maxdate = maxmonth + relativedelta(months=1)
         # count transactions
         transactions = Transaction.objects.filter(date__gte=data.mindate, date__lt=data.maxdate)
-        data.count = transactions.count()
         data.unapproved = transactions.filter(approved=False).count()
         data.uncategorized = transactions.filter(category_id=None).count()
+        data.count = transactions.count()
         # populate summary data
         self._summary_init_total(data)
         self._summary_add_cateogry_values(data)
@@ -140,10 +150,9 @@ class TransactionsViewSet(viewsets.ModelViewSet):
             cdata.amounts = Bunch()
             month = data.mindate
             while month < data.maxdate:
-                categoryid = 'null' if category is None else category.id
                 monthstr = month.strftime(DATEFORMAT)
-                hash = '%s-%s' % (categoryid, monthstr)
-                value = lookup.get(hash, 0.0)
+                categoryid = 'null' if category is None else category.id
+                value = lookup.get('%s-%s' % (categoryid, monthstr), 0.0)
                 cdata.amounts[monthstr] = value
                 cdata.total = round(cdata.total + value, 2)
                 data.total[monthstr] = round(data.total[monthstr] + value, 2)

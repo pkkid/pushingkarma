@@ -8,10 +8,10 @@ pk.budget = {
   KEYS: {TAB:9, ENTER:13, ESC:27, F3:114, UP:38, DOWN:40},
   LOADMORE_INTERVAL: 100,
   LOADMORE_DISTANCE: 200,
-  URL_SUMMARY: window.location.origin +'/api/transactions/summary/',
-  URL_CATEGORIES: window.location.origin +'/api/categories/',
-  URL_TRANSACTIONS: window.location.origin +'/api/transactions/',
-  URL_UPLOAD: window.location.origin +'/api/transactions/upload/',
+  URL_SUMMARY: window.location.origin +'/api/transactions/summary',
+  URL_CATEGORIES: window.location.origin +'/api/categories',
+  URL_TRANSACTIONS: window.location.origin +'/api/transactions',
+  URL_UPLOAD: window.location.origin +'/api/transactions/upload',
   
   init: function(selector) {
     this.container = $(selector);
@@ -76,8 +76,7 @@ pk.budget = {
   bind_row_edit: function() {
     // handle single and dblclick events
     var self = this;
-    var selector = '#categories tbody td > div,#transactions tbody td > div';
-    this.container.on('click', selector, function(event) {
+    this.container.on('click', '.rowitem > div', function(event) {
       event.preventDefault();
       var td = $(this).closest('td');
       if (event.detail == 1) {
@@ -250,19 +249,19 @@ pk.budget = {
           event.preventDefault();
           var row = td.closest('tr');
           var name = td.data('name');
-          var next = row.next(':not(.readonly)').find('td[data-name='+name+']');
+          var next = row.next('.rowedit').find('td[data-name='+name+']');
           next.length ? self.td_edit(next) : input.blur();
         // up selects input on prev row
         } else if ((event.keyCode == KEYS.UP) && !self.autocomplete()) {
           event.preventDefault();
           var row = td.closest('tr');
           var name = td.data('name');
-          var next = row.prev(':not(.readonly)').find('td[data-name='+name+']');
+          var next = row.prev('.rowedit').find('td[data-name='+name+']');
           next.length ? self.td_edit(next) : input.blur();
         // shift + tab selects previous input in full table
         } else if (event.shiftKey && event.keyCode == KEYS.TAB) {
           event.preventDefault();
-          var all = td.closest('tbody').find('td:not(.readonly)');
+          var all = td.closest('tbody').find('.rowedit');
           var index = all.index(td) - 1;
           var next = index >= 0 ? all.eq(index) : null;
           if (!next) { return; }
@@ -270,7 +269,7 @@ pk.budget = {
         // tab selects next input in full table
         } else if (event.keyCode == KEYS.TAB) {
           event.preventDefault();
-          var all = td.closest('tbody').find('td:not(.readonly)');
+          var all = td.closest('tbody').find('.rowedit');
           var index = all.index(td) + 1
           var next = all.eq(index);
           next.length ? self.td_edit(next) : input.blur();
@@ -355,16 +354,12 @@ pk.budget = {
   },
 
   text_or_val: function(td) {
-    var value = null;
     var child = td.children().first();
     if (child.is('div')) {
       // Get value from a div
-      var text = child.text().trim();
-      switch (td.data('display')) {
-        case 'int': value = pk.utils.to_int(text); break;
-        case 'float': value = pk.utils.to_float(text); break;
-        default: value = text; break;
-      }
+      var value = child.text().trim();
+      value = td.hasClass('int') ? pk.utils.to_int(value) : value;
+      value = td.hasClass('float') ? pk.utils.to_float(value) : value;
     } else {
       // Get value from an input
       value = child.val().trim();
@@ -404,13 +399,10 @@ pk.budget = {
     if (td.hasClass('error')) {
       return td.html(div.text(value));
     }
-    switch (td.data('display')) {
-      case 'int': div.text(pk.utils.to_amount_int(value)); break;
-      case 'float': div.text(pk.utils.to_amount_float(value)); break;
-      case 'bool': div.text(value ? 'x' : ''); break;
-      default: div.text(value); break;
-    }
-    td.html(div);
+    value = td.hasClass('int') ? pk.utils.to_amount_int(value) : value;
+    value = td.hasClass('float') ? pk.utils.to_amount_float(value) : value;
+    value = td.hasClass('bool') ? (value ? 'x' : '') : value;
+    td.html(div.text(value));
   },
 
   td_edit: function(td) {
@@ -423,11 +415,10 @@ pk.budget = {
     if (td.hasClass('error')) {
       input.val(td.text());
     } else {
-      switch (td.data('display')) {
-        case 'int': input.val(pk.utils.to_int(div.text())); break;
-        case 'float': input.val(pk.utils.to_float(div.text())); break;
-        default: input.val(div.text()); break;
-      }
+      var value = div.text();
+      value = td.hasClass('int') ? pk.utils.to_int(value) : value;
+      value = td.hasClass('float') ? pk.utils.to_float(value) : value;
+      input.val(value);
     }
     // bind autocomplete to category inputs
     if (td.data('name') == 'category') {
@@ -507,9 +498,8 @@ pk.budget = {
  
   update_categories: function(callback) {
     var self = this;
-    var url = '/api/categories/';
     try { this.xhrcat.abort(); } catch(err) { }
-    this.xhrcat = $.ajax({url:url, type:'GET', dataType:'json'});
+    this.xhrcat = $.ajax({url:self.URL_CATEGORIES, type:'GET', dataType:'json'});
     this.xhrcat.done(function(data, textStatus, jqXHR) {
       var html = pk.templates.category_list(data);
       self.categories.html(html);

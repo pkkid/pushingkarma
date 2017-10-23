@@ -52,7 +52,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'pk.utils.middleware.CleanHTMLMiddleware',
+    #'pk.utils.middleware.CleanHTMLMiddleware',
 )
 
 TEMPLATES = [{

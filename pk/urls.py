@@ -17,7 +17,7 @@ from pk.apps.budget import views as budget_views
 redirect = lambda url: RedirectView.as_view(url=url, permanent=False)
 template = lambda tmpl: TemplateView.as_view(template_name=tmpl)
 
-api = routers.DefaultRouter()
+api = routers.DefaultRouter(trailing_slash=False)
 api.register('account', pk_views.AccountViewSet)
 api.register('notes', note_views.NotesViewSet)
 api.register('pages', page_views.PagesViewSet)

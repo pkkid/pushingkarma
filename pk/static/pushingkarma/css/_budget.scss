@@ -40,8 +40,6 @@
     th {
       border-bottom: 1px solid rgba(0,0,0,0.5);
       padding: 0px 4px;
-      &.center { text-align:center; }
-      &.right { text-align:right; }
     }
     td {
       border-top: 1px dotted rgba(0,0,0,0.05);
@@ -62,8 +60,6 @@
       }
       div { text-overflow: ellipsis; }
       input { background-color: rgba(0,0,0,0.1); }
-      &.center { div,input { text-align:center; }}
-      &.right { div,input { text-align:right; }}
       &.saving div { background-color:rgba(0,0,255,0.1); }
       &.error > * { border:1px solid #977; background-color:rgba(150,0,0,0.1); }
     }
@@ -76,6 +72,8 @@
       div { color: #222; }
     }
     tfoot td { border-width: 0px; }
+    [data-name=trend], [data-name=approved] { text-align:center; div,input { text-align:center; }}
+    [data-name=budget], [data-name=amount] { text-align:right; div,input { text-align:right; }}
   }
 
   // ------------------------------

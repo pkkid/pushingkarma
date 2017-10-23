@@ -1,11 +1,10 @@
 <!--
 Budget data attributes:
   data-id: ID of the item being displayed.
-  data-type: category or transaction of item being displayed.
   data-name: name of the model field td corresponds to.
   data-default: default value if left blank.
-  data-display: int or float currency representaion.
   data-url: API url to use when editing item.
+  int,float,bool (class): Display int, float, or bool representaion
   selectall (class): Select all content when initializing edit.
   readonly (class): Do not allow editing this item.
   delempty (class): Delete category or transaction if value empty.
@@ -58,28 +57,28 @@ Budget data attributes:
     <table cellpadding='0' cellspacing='0'>
       <thead><tr>
         <th data-name='name'>Category</th>
-        <th data-name='trend' class='center'>Trend</th>
-        <th data-name='budget' class='right'>Budget</th>
+        <th data-name='trend'>Trend</th>
+        <th data-name='budget'>Budget</th>
       </tr></thead>
       <tbody>
         {{#each this.results}}
-          <tr id='category-{{this.id}}' class='category {{#if_eq this.id 'null'}}readonly{{/if_eq}}' data-id='{{this.id}}' data-url='{{this.url}}'>
-            <td data-name='name' class='delempty'><div>{{this.name}}</div></td>
-            <td data-name='trend' class='readonly drag'><div>&nbsp;</div></td>
-            <td data-name='budget' data-display='int' class='right selectall'><div>{{amountInt this.budget}}</div></td>
+          <tr id='category-{{this.id}}' class='{{#unless_eq this.id 'null'}}rowedit{{/unless_eq}}' data-id='{{this.id}}' data-url='{{this.url}}'>
+            <td data-name='name' class='rowitem delempty'><div>{{this.name}}</div></td>
+            <td data-name='trend' class='rowitem readonly drag'><div>&nbsp;</div></td>
+            <td data-name='budget' class='rowitem int selectall'><div>{{amountInt this.budget}}</div></td>
           </tr>
         {{/each}}
       </tbody>
       <tfoot> 
         <tr id='category-total'>
-          <td data-name='name' class='readonly'><div>Total</div></td>
-          <td data-name='trend' class='readonly'><div>&nbsp;</div></td>
-          <td data-name='budget' data-display='int' class='readonly right'><div>{{amountInt this.total}}</div></td>
+          <td data-name='name'><div>Total</div></td>
+          <td data-name='trend'><div>&nbsp;</div></td>
+          <td data-name='budget'><div>{{amountInt this.total}}</div></td>
         </tr>
-        <tr id='category-add' data-add='true' data-url='/api/categories/'>
+        <tr id='category-add' data-url='/api/categories'>
           <td data-name='name'><input name='name' type='text' placeholder='New Category' autocomplete='off'></td>
-          <td data-name='trend' class='center'>&nbsp;</td>
-          <td data-name='budget' class='right' data-default='0'><input name='budget' type='integer' placeholder='$0' autocomplete='off'></td>
+          <td data-name='trend'>&nbsp;</td>
+          <td data-name='budget' data-default='0'><input name='budget' type='integer' placeholder='$0' autocomplete='off'></td>
         </tr>
       </tfoot>
     </table>
@@ -110,20 +109,20 @@ Budget data attributes:
         <th data-name='date'>Date</th>
         <th data-name='payee'>Payee</th>
         <th data-name='category'>Category</th>
-        <th data-name='amount' class='right'>Amount</th>
-        <th data-name='approved' class='center'>X</th>
+        <th data-name='amount'>Amount</th>
+        <th data-name='approved'>X</th>
         <th data-name='comment'>Comment</th>
       </tr></thead>
       <tbody>
        {{#each this.results}}
-         <tr id='transaction-{{this.id}}' class='transaction' data-id='{{this.id}}' data-accountfid='{{this.accountfid}}' data-trxid='{{this.trxid}}' data-url='{{this.url}}'>
-           <td data-name='account' class='readonly'><div>{{this.account}}</div></td>
-           <td data-name='date'><div>{{this.date}}</div></td>
-           <td data-name='payee' class='selectall'><div>{{this.payee}}</div></td>
-           <td data-name='category' class='selectall'><div>{{this.category}}</div></td>
-           <td data-name='amount' data-display='float' class='right'><div>{{amountFloat this.amount}}</div></td>
-           <td data-name='approved' data-display='bool' class='center selectall'><div>{{yesNo this.approved 'x' ''}}</div></td>
-           <td data-name='comment'><div>{{this.comment}}</div></td>
+         <tr id='transaction-{{this.id}}' class='rowedit' data-id='{{this.id}}' data-accountfid='{{this.accountfid}}' data-trxid='{{this.trxid}}' data-url='{{this.url}}'>
+           <td data-name='account'><div>{{this.account}}</div></td>
+           <td data-name='date' class='rowitem'><div>{{this.date}}</div></td>
+           <td data-name='payee' class='rowitem selectall'><div>{{this.payee}}</div></td>
+           <td data-name='category' class='rowitem selectall'><div>{{this.category}}</div></td>
+           <td data-name='amount' class='rowitem float'><div>{{amountFloat this.amount}}</div></td>
+           <td data-name='approved' class='rowitem bool selectall'><div>{{yesNo this.approved 'x' ''}}</div></td>
+           <td data-name='comment' class='rowitem'><div>{{this.comment}}</div></td>
          </tr>
        {{/each}}
        {{#if this.next}}
