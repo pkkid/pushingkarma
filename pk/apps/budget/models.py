@@ -80,7 +80,8 @@ class TransactionSerializer(DynamicFieldsSerializer):
             'category','amount','approved','memo','comment')
 
     def validate_category(self, value):
-        if value == '': return None
+        if value == '':
+            return None
         category = utils.get_object_or_none(Category, name=value)
         if not category:
             raise ValidationError("Unknown category '%s'." % value)
@@ -90,7 +91,8 @@ class TransactionSerializer(DynamicFieldsSerializer):
         for var in ('trxid','account','date','payee','amount','approved','memo','comment'):
             value = validated_data.get(var, getattr(instance, var))
             setattr(instance, var, value)
-        catname = validated_data['category']['name']
-        instance.category_id = Category.objects.get(name=catname).id if catname else None
+        if 'category' in validated_data:
+            catname = validated_data['category']['name']
+            instance.category_id = Category.objects.get(name=catname).id if catname else None
         instance.save()
         return instance

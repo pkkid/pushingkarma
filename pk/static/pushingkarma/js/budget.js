@@ -5,7 +5,7 @@
 
 pk.budget = {
   BUDGET_SELECTOR: '#budget',
-  ROW:'.pkrow', ITEM:'.pkitem',
+  ROW:'.pkrow', EDIT:'.pkedit',
   KEYS: {TAB:9, ENTER:13, ESC:27, F3:114, UP:38, DOWN:40},
   LOADMORE_INTERVAL: 100, LOADMORE_DISTANCE: 200,
   URL_SUMMARY: window.location.origin +'/api/transactions/summary',
@@ -76,9 +76,10 @@ pk.budget = {
   bind_row_edit: function() {
     // handle single and dblclick events
     var self = this;
-    this.container.on('click', self.ITEM+'>div', function(event) {
+    var click_selector = pk.utils.format('{0} > div', self.EDIT);
+    this.container.on('click', click_selector, function(event) {
       event.preventDefault();
-      var item = $(this).closest(self.ITEM);
+      var item = $(this).closest(self.EDIT);
       if (event.detail == 1) {
         // display popover on single click
         self.clicktimer = setTimeout(function() {
@@ -98,15 +99,16 @@ pk.budget = {
       }
     });
     // save category or transaction on blur
-    this.container.on('blur', 'tbody '+self.ITEM+'>input', function(event) {
+    var blur_selector = pk.utils.format('{0} {1} > input', self.ROW, self.EDIT);
+    this.container.on('blur', blur_selector, function(event) {
       event.preventDefault();
       var input = $(this);
-      var item = input.closest(self.ITEM);
+      var item = input.closest(self.EDIT);
       if (input.hasClass('nosave')) { return; }
       if (item.hasClass('delempty') && !input.val()) {
         self.item_delete(item);
       } else {
-        self.item_save(item, false, true);
+        self.item_save(item, 'PATCH', false, true);
       }
     });
   },
@@ -115,12 +117,12 @@ pk.budget = {
     // create category when pressing enter on footer inputs
     var self = this;
     var KEYS = this.KEYS;
-    this.categories.on('keydown', 'tfoot input', function(event) {
+    this.categories.on('keydown', '#category-add input', function(event) {
       if (event.keyCode == KEYS.ENTER) {
         event.preventDefault();
-        var item = $(this).closest(self.ITEM);
+        var item = $(this).closest('td');
         var row = item.closest(self.ROW);
-        self.item_save(item, false, false, function() {
+        self.item_save(item, 'POST', true, false, function() {
           self.update_categories(function() {
             self.categories.find('#category-add input').first().focus();
           });
@@ -138,8 +140,8 @@ pk.budget = {
       update: function(event, ui) {
         $('#category-null').appendTo(self.categories.find('tbody'));
         if (ui.item.attr('id') != 'category-null') {
-          var item = ui.item.find(self.ITEM).first();
-          self.item_save(item, true, true, function() {
+          var item = ui.item.find(self.EDIT).first();
+          self.item_save(item, 'PATCH', true, true, function() {
             self.update_summary();
           });
         }
@@ -188,25 +190,21 @@ pk.budget = {
   bind_row_highlight: function() {
     var self = this;
     // mouse over summary row
-    self.summary.on('mouseenter', 'tbody tr', function(event) {
+    self.summary.on('mouseenter', '.pklight', function(event) {
       if (self.container.find('.popped').length >= 1) { return; }
-      $(this).addClass('hover');
-      self.categories.find('#category-'+ $(this).data('categoryid')).addClass('hover');
+      self.categories.find('[data-id='+ $(this).data('categoryid') +']').add($(this)).addClass('hover');
     }).on('mouseleave', 'tbody tr', function(event) {
-      $(this).removeClass('hover');
-      self.categories.find('#category-'+ $(this).data('categoryid')).removeClass('hover');
+      self.categories.find('[data-id='+ $(this).data('categoryid') +']').add($(this)).removeClass('hover');
     });
     // mouse over category row
-    self.categories.on('mouseenter', self.ROW, function(event) {
+    self.categories.on('mouseenter', '.pklight', function(event) {
       if (self.container.find('.popped').length >= 1) { return; }
-      $(this).addClass('hover');
-      self.summary.find('#summary-'+ $(this).data('id')).addClass('hover');
+      self.summary.find('[data-categoryid='+ $(this).data('id') +']').add($(this)).addClass('hover');
     }).on('mouseleave', self.ROW, function(event) {
-      $(this).removeClass('hover');
-      self.summary.find('#summary-'+ $(this).data('id')).removeClass('hover');
+      self.summary.find('[data-categoryid='+ $(this).data('id') +']').add($(this)).removeClass('hover');
     });
     // mouse over transaction row
-    self.transactions.on('mouseenter', self.ROW, function(event) {
+    self.transactions.on('mouseenter', '.pklight', function(event) {
       if (self.container.find('.popped').length >= 1) { return; }
       $(this).addClass('hover');
     }).on('mouseleave', self.ROW, function(event) {
@@ -220,7 +218,7 @@ pk.budget = {
     setInterval(function() {
       if (self.params.view == 'transactions') {
         var bottom = $(document).height() - $(window).scrollTop() - $(window).height();
-        if (bottom < self.LOADMORE_DISTANCE && self.transactions.find('#transactions-more').length) {
+        if (bottom < self.LOADMORE_DISTANCE && self.transactions.find('#loadmore').length) {
           self.update_transactions(true);
         }
       }
@@ -239,11 +237,12 @@ pk.budget = {
       }
     });
     // update budget items on enter
-    this.container.on('keydown', 'tbody input', function(event) {
+    var selector = pk.utils.format('{0} {1} input', self.ROW, self.EDIT);
+    this.container.on('keydown', selector, function(event) {
       var input = $(this);
       var watchedkey = _.valuesIn(KEYS).indexOf(event.keyCode) >= 0;
       if (watchedkey) {
-        var rowitem = input.closest(self.ITEM);
+        var rowitem = input.closest(self.EDIT);
         // enter and down select item on next row
         if ((event.keyCode == KEYS.ENTER || event.keyCode == KEYS.DOWN) && !self.autocomplete()) {
           event.preventDefault();
@@ -261,7 +260,7 @@ pk.budget = {
         // shift + tab selects previous input in full table
         } else if (event.shiftKey && event.keyCode == KEYS.TAB) {
           event.preventDefault();
-          var all = rowitem.closest('tbody').find(self.ITEM);
+          var all = rowitem.closest('tbody').find(self.EDIT);
           var index = all.index(rowitem) - 1;
           var next = index >= 0 ? all.eq(index) : null;
           if (!next) { return; }
@@ -269,7 +268,7 @@ pk.budget = {
         // tab selects next input in full table
         } else if (event.keyCode == KEYS.TAB) {
           event.preventDefault();
-          var all = rowitem.closest('tbody').find(self.ITEM);
+          var all = rowitem.closest('tbody').find(self.EDIT);
           var index = all.index(rowitem) + 1;
           var next = all.eq(index);
           next.length ? self.item_edit(next) : input.blur();
@@ -287,41 +286,52 @@ pk.budget = {
     return $('.ui-autocomplete:visible').length > 0;
   },
 
-  data_category: function(row) {
-    var data = {
-      id: row.attr('id').replace('category-', ''),
-      name: this.text_or_val(row.find('[data-name=name]')),
-      budget: this.text_or_val(row.find('[data-name=budget]')),
-      sortindex: row.attr('id') == 'category-add' ? null : row.index(),
-    };
-    data.id = data.id == 'add' ? null : data.id;
-    return data;
-  },
+  // data_category: function(row) {
+  //   var data = {
+  //     id: row.data('id'),
+  //     name: this.text_or_val(row.find('[data-name=name]')),
+  //     budget: this.text_or_val(row.find('[data-name=budget]')),
+  //     sortindex: row.attr('id') == 'category-add' ? null : row.index(),
+  //   };
+  //   data.id = data.id == 'add' ? null : data.id;
+  //   return data;
+  // },
 
-  data_transaction: function(row) {
-    return {
-      id: row.attr('id').replace('transaction-'),
-      account: this.text_or_val(row.find('[data-name=account]')),
-      accountfid: row.data('accountfid'),
-      trxid: row.data('trxid'),
-      date: this.text_or_val(row.find('[data-name=date]')),
-      payee: this.text_or_val(row.find('[data-name=payee]')),
-      category: this.text_or_val(row.find('[data-name=category]')),
-      amount: this.text_or_val(row.find('[data-name=amount]')),
-      approved: this.text_or_val(row.find('[data-name=approved]')) == 'x',
-      comment: this.text_or_val(row.find('[data-name=comment]')),
+  // data_transaction: function(row) {
+  //   return {
+  //     id: row.data('id'),
+  //     account: this.text_or_val(row.find('[data-name=account]')),
+  //     accountfid: row.data('accountfid'),
+  //     trxid: row.data('trxid'),
+  //     date: this.text_or_val(row.find('[data-name=date]')),
+  //     payee: this.text_or_val(row.find('[data-name=payee]')),
+  //     category: this.text_or_val(row.find('[data-name=category]')),
+  //     amount: this.text_or_val(row.find('[data-name=amount]')),
+  //     approved: this.text_or_val(row.find('[data-name=approved]')) == 'x',
+  //     comment: this.text_or_val(row.find('[data-name=comment]')),
+  //   }
+  // },
+
+  clean_data: function(data) {
+    for (var name in data) {
+      if (name == 'approved') { data[name] = data[name] == 'x'; }
     }
+    return data;
   },
 
   popover_display: function(item) {
     var self = this;
     var row = item.closest(self.ROW);
-    row.popover({trigger:'manual', placement:'bottom', html:true,
-      content: function() {
-        var html = pk.templates.category_popover({});
-        return html;
-      },
-    }).addClass('popped').popover('show');
+    var type = row.data('type');
+    var url = row.data('url') +'/details';
+    var xhr = $.ajax({url:url, type:'GET', dataType:'json'});
+    xhr.done(function(data, textStatus, jqXHR) {
+      row.popover({trigger:'manual', placement:'bottom', html:true,
+        content: function() {
+          return pk.templates[type +'_popover'](data);
+        }
+      }).addClass('popped').popover('show');
+    });
   },
 
   show_summary: function() {
@@ -373,7 +383,7 @@ pk.budget = {
   item_delete: function(item) {
     var self = this;
     var row = item.closest(self.ROW);
-    var type = row.attr('id').split('-')[0];
+    var type = row.data('type');
     $.confirm({
       backgroundDismiss: true,
       cancelButton: 'Cancel',
@@ -429,7 +439,7 @@ pk.budget = {
         focus: function (event, ui) { return false; },
       });
     }
-    // repalce div with input and set focus
+    // repalce div with input and set focus+
     item.data('init', input.val()).html(input);
     input.focus();
     setTimeout(function() {
@@ -439,27 +449,28 @@ pk.budget = {
     }, 10);
   },
 
-  item_save: function(item, force, display, callback) {
+  item_save: function(item, method, force, display, callback) {
+    display = display || false;
     var self = this;
+    var data = {};
     var input = item.find('input');
+    var name = item.data('name');
     var row = item.closest(self.ROW);
-    var type = row.attr('id').split('-')[0];
-    display = display === undefined ? false : display;
     // do nothing if the value is unchanged
     if (!force && item.data('init') == input.val() && !item.hasClass('error')) {
       return self.item_display(item, input.val());
     }
     // save the new value to the database
-    var data = this['data_'+ type](row);
+    data[name] = input.val();
+    data = self.clean_data(data);
     var url = row.data('url');
-    var method = data.id ? 'PUT' : 'POST';
     var xhr = self.request(item, url, method, data, {
       done: function(data, textStatus, jqXHR) {
-        if (display) { self.item_display(item, data[item.data('name')]); }
+        if (display) { self.item_display(item, data[name]); }
         if (callback) { callback(); }
       },
       fail: function(jqXHR, textStatus, errorThrown) {
-        if (display) { self.item_display(item, data[item.data('name')]); }
+        if (display) { self.item_display(item, data[name]); }
       }
     });
   },
@@ -540,7 +551,7 @@ pk.budget = {
       var more = null;
       var url = pk.utils.update_url(self.URL_TRANSACTIONS, {search:self.params.search});
     } else {
-      var more = this.transactions.find('#transactions-more');
+      var more = this.transactions.find('#loadmore');
       var url = more.data('next');
       more.addClass('on');
     }

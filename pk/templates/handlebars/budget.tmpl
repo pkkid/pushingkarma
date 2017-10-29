@@ -6,9 +6,10 @@ Budget data attributes:
   data-url: API url to use when editing item.
 pkrow class attributes:
   pkrow: Group of items relating to a category or transaction (db-row)
+  pklight: Highlight this row on hover.
   readonly: Do not allow editing this pkrow.
-pkitem class attributes:
-  pkitem: Editable category or transaction value (db-value).
+pkedit class attributes:
+  pkedit: Editable category or transaction value (db-value).
   int,float,bool: Display int, float, or bool representaion.
   selectall: Select all content when initializing edit.
   delempty: Delete category or transaction if value empty.
@@ -35,7 +36,7 @@ pkitem class attributes:
       </tr></thead>
       <tbody>
         {{#each this.categories}}
-          <tr id='summary-{{this.categoryid}}' data-categoryid='{{this.categoryid}}'>
+          <tr data-categoryid='{{this.categoryid}}' class='pklight'>
             <td class='average'><div>{{amountInt this.average}}</div></td>
             {{#each this.amounts}}
               <td class='{{budgetFlags ../budget this}}'><div>
@@ -66,10 +67,10 @@ pkitem class attributes:
       </tr></thead>
       <tbody>
         {{#each this.results}}
-          <tr id='category-{{this.id}}' class='{{#unless_eq this.id 'null'}}pkrow{{/unless_eq}}' data-id='{{this.id}}' data-url='{{this.url}}'>
-            <td data-name='name' class='pkitem delempty'><div>{{this.name}}</div></td>
+          <tr class='pkrow pklight' data-id='{{this.id}}' data-type='category' data-url='{{this.url}}'>
+            <td data-name='name' class='pkedit delempty'><div>{{this.name}}</div></td>
             <td data-name='trend' class='drag'><div>&nbsp;</div></td>
-            <td data-name='budget' class='pkitem int selectall'><div>{{amountInt this.budget}}</div></td>
+            <td data-name='budget' class='pkedit int selectall'><div>{{amountInt this.budget}}</div></td>
           </tr>
         {{/each}}
       </tbody>
@@ -79,7 +80,7 @@ pkitem class attributes:
           <td data-name='trend'><div>&nbsp;</div></td>
           <td data-name='budget'><div>{{amountInt this.total}}</div></td>
         </tr>
-        <tr id='category-add' data-url='/api/categories'>
+        <tr id='category-add' class='pkrow' data-type='category' data-url='/api/categories'>
           <td data-name='name'><input name='name' type='text' placeholder='New Category' autocomplete='off'></td>
           <td data-name='trend'>&nbsp;</td>
           <td data-name='budget' data-default='0'><input name='budget' type='integer' placeholder='$0' autocomplete='off'></td>
@@ -90,9 +91,15 @@ pkitem class attributes:
 
   <!-- Template:category_popover -->
   <script id='category_popover' type='text/x-handlebars-template'>
-    <div style="padding:5px 10px;">
-      <textarea></textarea><br/>
-      This is the plan!
+    <div class='title'>{{this.name}}</div>
+    <div class='body' style='min-width:200px;'>
+      <dl>
+        <dt>Total Transactions:</dt> <dd><span class='animated-ellipsis'>{{addCommas this.details.transactions}}</dd>
+        <dt>Total Spent:</dt> <dd><span class='animated-ellipsis'>{{amountInt this.details.total}}</dd>
+      </dl>
+      <div class='pkrow' data-id='{{this.id}}' data-url='{{this.url}}'>
+        <textarea placeholder='Notes'>{{this.comment}}</textarea>
+      </did>
     </div>
   </script>
 
@@ -119,18 +126,18 @@ pkitem class attributes:
       </tr></thead>
       <tbody>
        {{#each this.results}}
-         <tr id='transaction-{{this.id}}' class='pkrow' data-id='{{this.id}}' data-accountfid='{{this.accountfid}}' data-trxid='{{this.trxid}}' data-url='{{this.url}}'>
+         <tr class='pkrow' data-id='{{this.id}}' data-type='transaction' data-url='{{this.url}}'>
            <td data-name='account'><div>{{this.account}}</div></td>
-           <td data-name='date' class='pkitem'><div>{{this.date}}</div></td>
-           <td data-name='payee' class='pkitem selectall'><div>{{this.payee}}</div></td>
-           <td data-name='category' class='pkitem selectall'><div>{{this.category}}</div></td>
-           <td data-name='amount' class='pkitem float'><div>{{amountFloat this.amount}}</div></td>
-           <td data-name='approved' class='pkitem bool selectall'><div>{{yesNo this.approved 'x' ''}}</div></td>
-           <td data-name='comment' class='pkitem'><div>{{this.comment}}</div></td>
+           <td data-name='date' class='pkedit'><div>{{this.date}}</div></td>
+           <td data-name='payee' class='pkedit selectall'><div>{{this.payee}}</div></td>
+           <td data-name='category' class='pkedit selectall'><div>{{this.category}}</div></td>
+           <td data-name='amount' class='float'><div>{{amountFloat this.amount}}</div></td>
+           <td data-name='approved' class='pkedit bool selectall'><div>{{yesNo this.approved 'x' ''}}</div></td>
+           <td data-name='comment' class='pkedit'><div>{{this.comment}}</div></td>
          </tr>
        {{/each}}
        {{#if this.next}}
-         <tr id='transactions-more' data-next='{{this.next}}'>
+         <tr id='loadmore' data-next='{{this.next}}'>
            <td colspan='100%'>Loading more transactions..</td>
          </tr>
        {{/if}}
