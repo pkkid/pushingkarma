@@ -28,6 +28,7 @@ pk.budget = {
     this.bind_search_edit();                    // update transactions on search
     this.bind_view_button();                    // show or hide the transaction list
     this.bind_row_edit();                       // handle single and dblclick events
+    this.bind_save_notes();                     // Save popover notes on blur
     this.bind_category_add();                   // create new category items
     this.bind_drag_files();                     // show dropzone when uploading
     this.bind_row_highlight();                  // highlight rows on mouseover
@@ -76,20 +77,26 @@ pk.budget = {
   bind_row_edit: function() {
     // handle single and dblclick events
     var self = this;
-    var click_selector = pk.utils.format('{0} > div', self.EDIT);
+    var click_selector = 'tbody td';
     this.container.on('click', click_selector, function(event) {
       event.preventDefault();
-      var item = $(this).closest(self.EDIT);
+      var td = $(this);
       if (event.detail == 1) {
-        // display popover on single click
         self.clicktimer = setTimeout(function() {
-          self.popover_display(item);
+          // display popover on single click
+          if (td.closest('#categories').length) {
+            self.popover_display(td, 'category_popover');
+          } else if (td.closest('#summary').length) {
+            self.popover_display(td, 'summary_popover');
+          }
         }, 200);
       } else if (event.detail == 2) {
         // edit category or transaction on dblclick
         clearTimeout(self.clicktimer);
-        self.item_edit(item);
-      }      
+        if (td.hasClass(self.EDIT.replace('.',''))) {
+          self.item_edit(td);
+        }
+      }    
     });
     // close the popover if clicking somewhere else
     $(document).on('click', function(event) {
@@ -110,6 +117,15 @@ pk.budget = {
       } else {
         self.item_save(item, 'PATCH', false, true);
       }
+    });
+  },
+
+  bind_save_notes: function() {
+    // saves notes on blur
+    var self = this;
+    $(document).on('blur', '.popover textarea', function(event) {
+      var item = $(this).closest(self.EDIT);
+      self.item_save(item, 'PATCH', false, false);
     });
   },
 
@@ -286,32 +302,6 @@ pk.budget = {
     return $('.ui-autocomplete:visible').length > 0;
   },
 
-  // data_category: function(row) {
-  //   var data = {
-  //     id: row.data('id'),
-  //     name: this.text_or_val(row.find('[data-name=name]')),
-  //     budget: this.text_or_val(row.find('[data-name=budget]')),
-  //     sortindex: row.attr('id') == 'category-add' ? null : row.index(),
-  //   };
-  //   data.id = data.id == 'add' ? null : data.id;
-  //   return data;
-  // },
-
-  // data_transaction: function(row) {
-  //   return {
-  //     id: row.data('id'),
-  //     account: this.text_or_val(row.find('[data-name=account]')),
-  //     accountfid: row.data('accountfid'),
-  //     trxid: row.data('trxid'),
-  //     date: this.text_or_val(row.find('[data-name=date]')),
-  //     payee: this.text_or_val(row.find('[data-name=payee]')),
-  //     category: this.text_or_val(row.find('[data-name=category]')),
-  //     amount: this.text_or_val(row.find('[data-name=amount]')),
-  //     approved: this.text_or_val(row.find('[data-name=approved]')) == 'x',
-  //     comment: this.text_or_val(row.find('[data-name=comment]')),
-  //   }
-  // },
-
   clean_data: function(data) {
     for (var name in data) {
       if (name == 'approved') { data[name] = data[name] == 'x'; }
@@ -319,17 +309,22 @@ pk.budget = {
     return data;
   },
 
-  popover_display: function(item) {
+  popover_display: function(item, tmpl) {
     var self = this;
     var row = item.closest(self.ROW);
     var type = row.data('type');
     var url = row.data('url') +'/details';
     var xhr = $.ajax({url:url, type:'GET', dataType:'json'});
     xhr.done(function(data, textStatus, jqXHR) {
-      row.popover({trigger:'manual', placement:'bottom', html:true,
+      console.log('xhr.done: '+ data.comment);
+      row.popover({
+        trigger:'manual',
+        placement:'bottom',
+        html:true,
         content: function() {
-          return pk.templates[type +'_popover'](data);
-        }
+          console.log('row.popover.content: '+ data.comment);
+          return pk.templates[tmpl](data);
+        },
       }).addClass('popped').popover('show');
     });
   },
@@ -453,7 +448,7 @@ pk.budget = {
     display = display || false;
     var self = this;
     var data = {};
-    var input = item.find('input');
+    var input = item.find('input,textarea');
     var name = item.data('name');
     var row = item.closest(self.ROW);
     // do nothing if the value is unchanged

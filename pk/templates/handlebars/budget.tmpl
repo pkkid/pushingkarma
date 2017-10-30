@@ -69,7 +69,7 @@ pkedit class attributes:
         {{#each this.results}}
           <tr class='pkrow pklight' data-id='{{this.id}}' data-type='category' data-url='{{this.url}}'>
             <td data-name='name' class='pkedit delempty'><div>{{this.name}}</div></td>
-            <td data-name='trend' class='drag'><div>&nbsp;</div></td>
+            <td data-name='trend' class=' drag'><div>&nbsp;</div></td>
             <td data-name='budget' class='pkedit int selectall'><div>{{amountInt this.budget}}</div></td>
           </tr>
         {{/each}}
@@ -98,7 +98,7 @@ pkedit class attributes:
         <dt>Total Spent:</dt> <dd><span class='animated-ellipsis'>{{amountInt this.details.total}}</dd>
       </dl>
       <div class='pkrow' data-id='{{this.id}}' data-url='{{this.url}}'>
-        <textarea placeholder='Notes'>{{this.comment}}</textarea>
+        <div data-name='comment' class='pkedit'><textarea placeholder='Notes'>{{this.comment}}</textarea></div>
       </did>
     </div>
   </script>
