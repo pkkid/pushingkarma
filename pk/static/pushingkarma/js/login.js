@@ -6,8 +6,8 @@
 pk.login = {
   logo: $('#logo'),
   form: $('#logo form'),
-  login_url: '/api/account/0/login/',
-  logout_url: '/api/account/0/logout/',
+  login_url: '/api/user/login',
+  logout_url: '/api/user/logout',
   KEYS: {F2:113},
 
   init: function() {

@@ -29,7 +29,7 @@
     $(function() {
       {% if user.is_authenticated %}
         pk.editor.init('#notes .note', {
-          api_url: '/api/notes/',
+          api_url: '/api/notes',
           markdown_url: '/markdown/n/',
           show_title: true,
           show_tags: true,

@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from django.db.models import Q
 from pk import log, utils
 from rest_framework import status, viewsets
-from rest_framework.decorators import detail_route
+from rest_framework.decorators import list_route
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from .models import AccountSerializer
@@ -26,7 +26,7 @@ class AccountViewSet(viewsets.ViewSet):
         serializer = AccountSerializer(self.request.user, context={'request':request})
         return Response(serializer.data)
 
-    @detail_route(methods=['post'])
+    @list_route(methods=['post'])
     def login(self, request, *args, **kwargs):
         try:
             email = request.POST.get('email')
@@ -42,7 +42,7 @@ class AccountViewSet(viewsets.ViewSet):
             log.error(err)
         return Response(status=status.HTTP_403_FORBIDDEN)
 
-    @detail_route(methods=['post'])
+    @list_route(methods=['post'])
     def logout(self, request, *args, **kwargs):
         logout(request)
         return Response({'status': 'Successfully logged out.'})

@@ -18,9 +18,10 @@ redirect = lambda url: RedirectView.as_view(url=url, permanent=False)
 template = lambda tmpl: TemplateView.as_view(template_name=tmpl)
 
 api = routers.DefaultRouter(trailing_slash=False)
-api.register('account', pk_views.AccountViewSet)
+api.register('user', pk_views.AccountViewSet)
 api.register('notes', note_views.NotesViewSet)
 api.register('pages', page_views.PagesViewSet)
+api.register('accounts', budget_views.AccountsViewSet)
 api.register('categories', budget_views.CategoriesViewSet)
 api.register('transactions', budget_views.TransactionsViewSet)
 

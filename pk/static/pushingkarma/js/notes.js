@@ -4,7 +4,7 @@
 'use strict';
 
 pk.notes = {
-  APIROOT: '/api/notes/',
+  APIROOT: '/api/notes',
   KEYS: {TAB:9, ENTER:13, ESC:27, F3:114, UP:38, DOWN:40},
   
   init: function(selector, noteid, editor) {

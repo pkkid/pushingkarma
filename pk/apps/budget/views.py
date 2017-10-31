@@ -18,10 +18,9 @@ from rest_framework.decorators import detail_route, list_route
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from rest_framework.reverse import reverse_lazy
-from rest_framework.reverse import reverse
 from .manager import TransactionManager
-from .models import UNCATEGORIZED, Category, CategorySerializer
+from .models import Account, AccountSerializer
+from .models import Category, CategorySerializer, UNCATEGORIZED
 from .models import Transaction, TransactionSerializer
 
 ACCOUNTS = settings.BUDGET_ACCOUNTS
@@ -42,6 +41,20 @@ TRANSACTIONSEARCHFIELDS = {
 def budget(request, slug=None, tmpl='budget.html'):
     data = utils.context.core(request, menuitem='budget')
     return utils.response(request, tmpl, data)
+
+
+class AccountsViewSet(viewsets.ModelViewSet):
+    queryset = Account.objects.order_by('name')
+    serializer_class = AccountSerializer
+    permission_classes = [IsAuthenticated]
+    list_fields = AccountSerializer.Meta.fields
+
+    def list(self, request, *args, **kwargs):
+        accounts = Account.objects.order_by('name')
+        page = self.paginate_queryset(accounts)
+        serializer = AccountSerializer(page, context={'request':request}, many=True, fields=self.list_fields)
+        response = self.get_paginated_response(serializer.data)
+        return response
 
 
 class CategoriesViewSet(viewsets.ModelViewSet):
