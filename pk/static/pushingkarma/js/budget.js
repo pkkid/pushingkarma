@@ -123,9 +123,13 @@ pk.budget = {
   bind_save_notes: function() {
     // saves notes on blur
     var self = this;
-    $(document).on('blur', '.popover textarea', function(event) {
-      var item = $(this).closest(self.EDIT);
-      self.item_save(item, 'PATCH', false, false);
+    $(document).on('focus', '.popover textarea', function(event) {
+      $(this).data('init', $(this).val());
+    }).on('blur', '.popover textarea', function(event) {
+      if ($(this).val() != $(this).data('init')) {
+        var item = $(this).closest(self.EDIT);
+        self.item_save(item, 'PATCH', false, false);
+      }
     });
   },
 
@@ -315,17 +319,11 @@ pk.budget = {
     var type = row.data('type');
     var url = row.data('url') +'/details';
     var xhr = $.ajax({url:url, type:'GET', dataType:'json'});
+    row.removeData('bs.popover');
     xhr.done(function(data, textStatus, jqXHR) {
-      console.log('xhr.done: '+ data.comment);
-      row.popover({
-        trigger:'manual',
-        placement:'bottom',
-        html:true,
-        content: function() {
-          console.log('row.popover.content: '+ data.comment);
-          return pk.templates[tmpl](data);
-        },
-      }).addClass('popped').popover('show');
+      var content = pk.templates[tmpl](data);
+      row.popover({trigger:'manual', placement:'bottom', html:true,
+        content:content}).addClass('popped').popover('show');
     });
   },
 
