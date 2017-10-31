@@ -36,7 +36,7 @@ pkedit class attributes:
       </tr></thead>
       <tbody>
         {{#each this.categories}}
-          <tr data-categoryid='{{this.categoryid}}' class='pklight'>
+          <tr data-categoryid='{{yesNo this.categoryid this.categoryid 'null'}}' class='pklight'>
             <td class='average'><div>{{amountInt this.average}}</div></td>
             {{#each this.amounts}}
               <td class='{{budgetFlags ../budget this}}'><div>
@@ -94,11 +94,13 @@ pkedit class attributes:
     <div class='title'>{{this.name}}</div>
     <div class='body' style='min-width:200px;'>
       <dl>
-        <dt>Total Transactions:</dt> <dd><span class='animated-ellipsis'>{{addCommas this.details.transactions}}</dd>
-        <dt>Total Spent:</dt> <dd><span class='animated-ellipsis'>{{amountInt this.details.total}}</dd>
+        <dt>Total Transactions:</dt>
+        <dd><span class='animated-ellipsis'><a href='javascript:pk.budget.search("category=\"{{this.name}}\"", false)'>{{addCommas this.details.transactions}}</a></dd>
+        <dt>Total Spent:</dt>
+        <dd><span class='animated-ellipsis'>{{amountInt this.details.total}}</dd>
       </dl>
       <div class='pkrow' data-id='{{this.id}}' data-url='{{this.url}}'>
-        <div data-name='comment' class='pkedit'><textarea placeholder='Notes'>{{this.comment}}</textarea></div>
+        <div data-name='comment' class='pkedit'><textarea spellcheck='false' placeholder='Notes'>{{this.comment}}</textarea></div>
       </did>
     </div>
   </script>
