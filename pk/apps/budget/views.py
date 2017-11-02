@@ -27,7 +27,7 @@ from .models import Transaction, TransactionSerializer
 ACCOUNTS = settings.BUDGET_ACCOUNTS
 DATEFORMAT = '%Y-%m-%d'
 TRANSACTIONSEARCHFIELDS = {
-    'bank': SearchField(FIELDTYPES.STR, 'account'),
+    'bank': SearchField(FIELDTYPES.STR, 'account__name'),
     'date': SearchField(FIELDTYPES.DATE, 'date'),
     'payee': SearchField(FIELDTYPES.STR, 'payee'),
     'category': SearchField(FIELDTYPES.STR, 'category__name'),
