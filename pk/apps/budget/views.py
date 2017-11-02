@@ -18,6 +18,7 @@ from rest_framework.decorators import detail_route, list_route
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.reverse import reverse
 from .manager import TransactionManager
 from .models import Account, AccountSerializer
 from .models import Category, CategorySerializer, UNCATEGORIZED
@@ -54,6 +55,7 @@ class AccountsViewSet(viewsets.ModelViewSet):
         page = self.paginate_queryset(accounts)
         serializer = AccountSerializer(page, context={'request':request}, many=True, fields=self.list_fields)
         response = self.get_paginated_response(serializer.data)
+        utils.move_to_end(response.data, 'previous','next','results')
         return response
 
 
@@ -71,7 +73,7 @@ class CategoriesViewSet(viewsets.ModelViewSet):
         response.data['total'] = round(sum(float(c['budget']) for c in response.data['results']), 2)
         response.data['results'].append({'id':'null', 'url':None, 'name':'Uncategorized',
             'sortindex':99, 'budget':'0.00', 'comment':''})
-        response.data.move_to_end('results')
+        utils.move_to_end(response.data, 'previous','next','results')
         return response
 
     @detail_route(methods=['get'])
@@ -107,7 +109,9 @@ class TransactionsViewSet(viewsets.ModelViewSet):
         response.data.update(searchdata)
         response.data['unapproved'] = transactions.filter(approved=False).count()
         response.data['uncategorized'] = transactions.filter(category_id=None).count()
-        response.data.move_to_end('results')
+        response.data['summary'] = reverse('transaction-summary', request=request)
+        response.data['upload'] = reverse('transaction-upload', request=request)
+        utils.move_to_end(response.data, 'previous','next','summary','upload','results')
         return response
 
     @list_route(methods=['put'], parser_classes=[FormParser, MultiPartParser])

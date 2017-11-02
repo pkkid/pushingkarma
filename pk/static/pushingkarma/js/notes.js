@@ -4,20 +4,20 @@
 'use strict';
 
 pk.notes = {
-  APIROOT: '/api/notes',
   KEYS: {TAB:9, ENTER:13, ESC:27, F3:114, UP:38, DOWN:40},
-  
-  init: function(selector, noteid, editor) {
+  URL_NOTES: '/api/notes',
+
+  init: function(selector, opts) {
     this.container = $(selector);
     if (!this.container.length) { return; }
     console.debug('init pk.notes on '+ selector);
-    this.editor = editor;
+    this.opts = $.extend(true, {}, this.defaults, opts);
     this.xhr = null;
     this.search = null;
     this.init_elements();
     this.init_triggers();
     this.init_shortcuts();
-    this.update_list(this.searchinput.val(), noteid);
+    this.update_list(this.searchinput.val(), this.opts.init_noteid);
   },
   
   init_elements: function() {
@@ -79,11 +79,11 @@ pk.notes = {
   },
   
   new_note: function() {
-    this.editor.toggle_editor(true);
-    this.editor.history.saved = {};
-    this.editor.codemirror.setValue('');
-    this.editor.title.val('');
-    this.editor.tags.val('');
+    pk.editor.toggle_editor(true);
+    pk.editor.history.saved = {};
+    pk.editor.codemirror.setValue('');
+    pk.editor.title.val('');
+    pk.editor.tags.val('');
     window.history.replaceState('','','/n/');
   },
   
@@ -91,7 +91,7 @@ pk.notes = {
     var self = this;
     if (search == this.search) { return; }
     try { this.xhr.abort(); } catch(err) { }
-    var url = search ? this.APIROOT +'?search='+ encodeURIComponent(search) : this.APIROOT;
+    var url = search ? this.URL_NOTES +'?search='+ encodeURIComponent(search) : this.URL_NOTES;
     this.xhr = $.ajax({url:url, type:'GET', dataType:'json'});
     this.xhr.done(function(data, textStatus, jqXHR) {
       var ctx = {notes:data.results, search:encodeURIComponent(search), noteid:noteid};
@@ -99,6 +99,11 @@ pk.notes = {
       self.notelist.html(html);
       self.search = search;
     });
+  },
+
+  defaults: {
+    editor: null,         // (required) reference to pk.editor object
+    init_noteid: null,    // initial noteid to highlight
   },
 
 };

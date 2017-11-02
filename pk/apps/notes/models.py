@@ -36,7 +36,7 @@ class Note(TimeStampedModel):
 class NoteSerializer(DynamicFieldsSerializer):
     class Meta:
         model = Note
-        fields = ('id','url','weburl','title','slug','tags','body','html','created','modified')
+        fields = ('id','title','slug','tags','body','html','created','modified','url','weburl')
 
     def get_tags(self, note):
         return note.tags.split(' ')

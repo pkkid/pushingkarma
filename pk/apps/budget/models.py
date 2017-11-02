@@ -5,9 +5,10 @@ Copyright (c) 2015 PushingKarma. All rights reserved.
 """
 from django.db import models, transaction
 from django_extensions.db.models import TimeStampedModel
-from rest_framework.serializers import CharField, ValidationError
 from pk import log, utils
-from pk.utils.serializers import DynamicFieldsSerializer
+from pk.utils.serializers import DynamicFieldsSerializer, PartialFieldsSerializer
+from rest_framework.reverse import reverse
+from rest_framework.serializers import SerializerMethodField, ValidationError
 
 UNCATEGORIZED = 'Uncategorized'
 ACCOUNT_CHOICES = [('bank','Bank'), ('credit','Credit')]
@@ -63,9 +64,16 @@ class Category(TimeStampedModel):
 
 
 class CategorySerializer(DynamicFieldsSerializer):
+    details = SerializerMethodField()
+
     class Meta:
         model = Category
-        fields = ('id','url','name','sortindex','budget','comment')
+        fields = ('id','name','sortindex','budget','comment','url','details')
+
+    def get_details(self, category):
+        kwargs = {'pk': category.id}
+        request = self.context['request']
+        return reverse('category-details', kwargs=kwargs, request=request)
 
 
 class Transaction(TimeStampedModel):
@@ -87,28 +95,22 @@ class Transaction(TimeStampedModel):
 
 
 class TransactionSerializer(DynamicFieldsSerializer):
-    account = CharField(source='account.name')
-    category = CharField(source='category.name', allow_blank=True)
+    account = PartialFieldsSerializer(AccountSerializer, ('url','name'))
+    category = PartialFieldsSerializer(CategorySerializer, ('url','name','budget'))
 
     class Meta:
         model = Transaction
-        fields = ('id','url','account','trxid','date','payee','category',
-            'amount','approved','memo','comment')
-
-    def validate_category(self, value):
-        if value == '':
-            return None
-        category = utils.get_object_or_none(Category, name=value)
-        if not category:
-            raise ValidationError("Unknown category '%s'." % value)
-        return value
+        fields = ('id','url','trxid','date','payee','amount','approved',
+            'memo','comment','account','category')
 
     def update(self, instance, validated_data):
-        for var in ('date','payee','amount','approved','memo','comment'):
-            value = validated_data.get(var, getattr(instance, var))
-            setattr(instance, var, value)
-        if 'category' in validated_data:
-            catname = validated_data['category']['name']
-            instance.category_id = Category.objects.get(name=catname).id if catname else None
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        if 'category' in self.context['request'].POST:
+            category_name = self.context['request'].POST['category']
+            category = utils.get_object_or_none(Category, name=category_name)
+            if category_name and not category:
+                raise ValidationError("Unknown category '%s'." % category_name)
+            instance.category = category
         instance.save()
         return instance

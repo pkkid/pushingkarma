@@ -36,7 +36,9 @@
           init_data: {{note|json}},
         });
       {% endif %}
-      pk.notes.init('#notes', {{note.id|default:0}}, pk.editor);
+      pk.notes.init('#notes', {
+        init_noteid: {{note.id|default:0}},
+      });
     });
   </script>
   {% include 'handlebars/editor.tmpl' %}

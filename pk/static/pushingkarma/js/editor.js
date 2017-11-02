@@ -245,7 +245,7 @@ pk.editor = {
         self.init_edit_buttons();
     });
   },
-  
+
   defaults: {
     api_url: null,              // (required) url to save entry
     markdown_url: null,         // (required) url to convert markdown to html
@@ -265,5 +265,5 @@ pk.editor = {
       theme: 'blackboard',
     },
   },
-  
+
 };

@@ -19,6 +19,11 @@ def get_object_or_none(cls, *args, **kwargs):
         return None
 
 
+def move_to_end(odict, *keys):
+    for key in keys:
+        odict.move_to_end(key) 
+
+
 def response(request, template, data):
     if 'json' in request.GET:
         return response_json(data)

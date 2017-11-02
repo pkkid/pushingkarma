@@ -22,7 +22,7 @@ pk.budget = {
     this.xhrtrx = null;                         // transactions xhr reference
     this.trxpage = null;                        // last loaded trx page
     this.clicktimer = null;                     // detects single vs dblclick
-    this.categorynames = [];                    // category name choices
+    this.category_choices = [];                 // category name choices
     this.params = {view:'summary', search:''};  // URL params for current view
     this.init_elements();                       // cache top level elements
     this.bind_search_edit();                    // update transactions on search
@@ -115,7 +115,7 @@ pk.budget = {
       if (item.hasClass('delempty') && !input.val()) {
         self.item_delete(item);
       } else {
-        self.item_save(item, 'PATCH', false, true);
+        self.item_save(item, 'PATCH', {}, false, true);
       }
     });
   },
@@ -128,7 +128,7 @@ pk.budget = {
     }).on('blur', '.popover textarea', function(event) {
       if ($(this).val() != $(this).data('init')) {
         var item = $(this).closest(self.EDIT);
-        self.item_save(item, 'PATCH', false, false);
+        self.item_save(item, 'PATCH', {}, false, false);
       }
     });
   },
@@ -142,7 +142,8 @@ pk.budget = {
         event.preventDefault();
         var item = $(this).closest('td');
         var row = item.closest(self.ROW);
-        self.item_save(item, 'POST', true, false, function() {
+        var data = {name:row.find('input[name=name]').val(), budget:row.find('input[name=budget]').val()}
+        self.item_save(item, 'POST', data, true, false, function() {
           self.update_categories(function() {
             self.categories.find('#category-add input').first().focus();
           });
@@ -150,18 +151,25 @@ pk.budget = {
         });
       }
     });
+    // Display row when any input is in focus
+    this.categories.on('focus', '#category-add input', function(event) {
+      $(this).closest(self.ROW).addClass('focus');
+    }).on('blur', '#category-add input', function(event) {
+      $(this).closest(self.ROW).removeClass('focus');
+    });
   },
 
   bind_drag_categories: function() {
     // drag and drop categories
     var self = this;
     this.categories.find('tbody').sortable({
-      axis:'y', delay:150, handle:'.drag',
+      axis:'y', delay:150, handle:'.drag', items:'tr:not(:last-child)',
       update: function(event, ui) {
-        $('#category-null').appendTo(self.categories.find('tbody'));
-        if (ui.item.attr('id') != 'category-null') {
+        $('#null').appendTo(self.categories.find('tbody'));
+        if (ui.item.attr('id') != 'null') {
           var item = ui.item.find(self.EDIT).first();
-          self.item_save(item, 'PATCH', true, true, function() {
+          var data = {sortindex: item.closest(self.ROW).index()};
+          self.item_save(item, 'PATCH', data, true, true, function() {
             self.update_summary();
           });
         }
@@ -399,6 +407,7 @@ pk.budget = {
 
   item_display: function(item, value) {
     var div = $('<div></div>');
+    value = value === null ? '' : value.name || value;
     if (item.hasClass('error')) {
       return item.html(div.text(value));
     }
@@ -410,8 +419,9 @@ pk.budget = {
 
   item_edit: function(item) {
     var self = this;
+    var row = item.closest(self.ROW);
     if (item.hasClass('readonly')) { return; }
-    if (item.closest(self.ROW).attr('id') == 'category-null') { return; }
+    if (!row.data('url')) { return; }
     // create input and format value
     var div = item.find('div');
     var input = $('<input type="text" />');
@@ -426,8 +436,9 @@ pk.budget = {
     // bind autocomplete to category inputs
     if (item.data('name') == 'category') {
       input.autocomplete({
-        source: self.categorynames,
         autoFocus: true,
+        delay: 100,
+        source: self.category_choices,
         change: function (event, ui) { if (!ui.item) { $(event.target).val(''); }}, 
         focus: function (event, ui) { return false; },
       });
@@ -442,10 +453,11 @@ pk.budget = {
     }, 10);
   },
 
-  item_save: function(item, method, force, display, callback) {
+  item_save: function(item, method, data, force, display, callback) {
+    data = data || {};
+    force = force || false;
     display = display || false;
     var self = this;
-    var data = {};
     var input = item.find('input,textarea');
     var name = item.data('name');
     var row = item.closest(self.ROW);
@@ -507,20 +519,21 @@ pk.budget = {
     this.xhrcat.done(function(data, textStatus, jqXHR) {
       var html = pk.templates.category_list(data);
       self.categories.html(html);
-      self.update_categorynames(data);
+      self.update_category_choices(data);
       self.bind_drag_categories();
       if (callback) { callback(); }
     });
   },
 
-  update_categorynames: function(data) {
-    var categorynames = [];
+  update_category_choices: function(data) {
+    var category_choices = [];
     for (var i in data.results) {
-      if (data.results[i].name != 'Uncategorized') {
-        categorynames.push(data.results[i].name);
+      var category = data.results[i];
+      if (category.name != 'Uncategorized') {
+        category_choices.push(category.name);
       }
     }
-    this.categorynames = categorynames.sort();
+    this.category_choices = category_choices.sort();
   },
 
   update_summary: function() {

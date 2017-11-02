@@ -1,4 +1,4 @@
-<!--
+{% comment %}<!--
 Budget data attributes:
   data-id: ID of the item being displayed.
   data-name: name of the model field td corresponds to.
@@ -13,10 +13,9 @@ pkedit class attributes:
   int,float,bool: Display int, float, or bool representaion.
   selectall: Select all content when initializing edit.
   delempty: Delete category or transaction if value empty.
--->
+-->{% endcomment %}
 
 {% verbatim %}
-  <!-- Template:summary -->
   <script id='summary' type='text/x-handlebars-template'>
     <h2>Summary
       <div class='subtext'>
@@ -57,7 +56,6 @@ pkedit class attributes:
     </table>
   </script>
 
-  <!-- Template:category_list -->
   <script id='category_list' type='text/x-handlebars-template'>
     <table cellpadding='0' cellspacing='0'>
       <thead><tr>
@@ -69,7 +67,7 @@ pkedit class attributes:
         {{#each this.results}}
           <tr class='pkrow pklight' data-id='{{this.id}}' data-type='category' data-url='{{this.url}}'>
             <td data-name='name' class='pkedit delempty'><div>{{this.name}}</div></td>
-            <td data-name='trend' class=' drag'><div>&nbsp;</div></td>
+            <td data-name='trend' class='drag'><div>&nbsp;</div></td>
             <td data-name='budget' class='pkedit int selectall'><div>{{amountInt this.budget}}</div></td>
           </tr>
         {{/each}}
@@ -89,7 +87,6 @@ pkedit class attributes:
     </table>
   </script>
 
-  <!-- Template:category_popover -->
   <script id='category_popover' type='text/x-handlebars-template'>
     <div class='title'>{{this.name}}</div>
     <div class='body' style='min-width:200px;'>
@@ -105,7 +102,6 @@ pkedit class attributes:
     </div>
   </script>
 
-  <!-- Template:transaction_list -->
   <script id='transaction_list' type='text/x-handlebars-template'>
     <h2>Transactions
       <div class='subtext'>
@@ -129,10 +125,10 @@ pkedit class attributes:
       <tbody>
        {{#each this.results}}
          <tr class='pkrow' data-id='{{this.id}}' data-type='transaction' data-url='{{this.url}}'>
-           <td data-name='account'><div>{{this.account}}</div></td>
+           <td data-name='account'><div>{{this.account.name}}</div></td>
            <td data-name='date' class='pkedit'><div>{{this.date}}</div></td>
            <td data-name='payee' class='pkedit selectall'><div>{{this.payee}}</div></td>
-           <td data-name='category' class='pkedit selectall'><div>{{this.category}}</div></td>
+           <td data-name='category' class='pkedit selectall'><div>{{this.category.name}}</div></td>
            <td data-name='amount' class='float'><div>{{amountFloat this.amount}}</div></td>
            <td data-name='approved' class='pkedit bool selectall'><div>{{yesNo this.approved 'x' ''}}</div></td>
            <td data-name='comment' class='pkedit'><div>{{this.comment}}</div></td>

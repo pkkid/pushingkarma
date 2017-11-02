@@ -4,14 +4,13 @@
 'use strict';
 
 pk.login = {
-  logo: $('#logo'),
-  form: $('#logo form'),
-  login_url: '/api/user/login',
-  logout_url: '/api/user/logout',
+  LOGIN_URL: '/api/user/login',
   KEYS: {F2:113},
 
   init: function() {
-    console.debug('init pk.login on #'+ this.logo.attr('id'));
+    this.container = $('#logo');
+    this.form =  $('#logo form');
+    console.debug('init pk.login on #'+ this.container.attr('id'));
     this.init_triggers();
     this.init_shortcuts();
   },
@@ -19,7 +18,7 @@ pk.login = {
   init_triggers: function() {
       var self = this;
       // Display login form
-      self.logo.on('click', function(event) {
+      this.container.on('click', function(event) {
         event.stopPropagation();
         self.show_form();
       }).children().on('click', function(event) {
@@ -51,23 +50,23 @@ pk.login = {
   },
 
   show_form: function() {
-    if (this.logo.hasClass('enabled')) {
+    if (this.container.hasClass('enabled')) {
       return null;
     }
-    this.logo.addClass('enabled');
+    this.container.addClass('enabled');
     this.form.find('input[name=email]').val('').focus();
     this.form.find('input[name=password]').val('');
   },
 
   hide_form: function() {
-    this.logo.removeClass('enabled');
+    this.container.removeClass('enabled');
     this.form.removeClass('error');
   },
 
   login: function() {
     var self = this;
     var data = self.form.serializeArray();
-    var xhr = $.ajax({url:self.login_url, data:data, type:'POST', dataType:'json'});
+    var xhr = $.ajax({url:self.LOGIN_URL, data:data, type:'POST', dataType:'json'});
     self.form.removeClass('error');
     xhr.done(function(data, textStatus, jqXHR) {
       self.form.animatecss('rubberBand', function() {

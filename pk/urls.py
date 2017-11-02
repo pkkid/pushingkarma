@@ -19,14 +19,14 @@ template = lambda tmpl: TemplateView.as_view(template_name=tmpl)
 
 api = routers.DefaultRouter(trailing_slash=False)
 api.register('user', pk_views.AccountViewSet)
-api.register('notes', note_views.NotesViewSet)
 api.register('pages', page_views.PagesViewSet)
+api.register('notes', note_views.NotesViewSet)
 api.register('accounts', budget_views.AccountsViewSet)
 api.register('categories', budget_views.CategoriesViewSet)
 api.register('transactions', budget_views.TransactionsViewSet)
 
-
 urlpatterns = [
+    url(r'^api/', include(api.urls)),
     url(r'^api/', include(api.urls)),
     url(r'^404/$', template('404.html'), name='404'),
     url(r'^500/$', template('500.html'), name='500'),
