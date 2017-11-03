@@ -23,11 +23,25 @@ TRXJUNK = '#0123456789 '
 class TransactionManager:
 
     def __init__(self):
-        self.status = []
+        self.status = []            # status msg per file
+        self.errors = 0             # num errors encoundered
+        self.files = 0              # num files imported
+        self.transactions = 0       # num transactions imported
+        self.categorized = 0        # num transactions categorized
+        self.labled = 0             # num transactions labeled
+
+    def get_status(self):
+        return {
+            'files': self.files,
+            'transactions': self.transactions,
+            'categorized': self.categorized,
+            'labled': self.labled,
+            'status': '\n'.join(self.status),
+        }
 
     @lazyproperty
     def _accounts(self):
-        return {a['fid']:a for a in Account.objects.all()}
+        return {a.fid:a for a in Account.objects.all()}
 
     @lazyproperty
     def _existing(self):
@@ -39,38 +53,38 @@ class TransactionManager:
         return set((trx['account__fid'], trx['trxid']) for trx in self._existing)
 
     @lazyproperty
-    def _existing_labels(self):
-        return set((trx['account__fid'], trx['amount'])
-            for trx in self._existing if trx['payee'].startswith('<'))
-
-    @lazyproperty
     def _existing_categories(self):
         return {trx['payee'].lower().rstrip('0123456789 '):trx['category__name']
             for trx in self._existing if trx['payee'] and trx['category__name']}
 
     def _transaction_exists(self, trx, addit=False):
-        result = (int(trx['account__fid']), trx['trxid']) in self._existing_ids
+        result = (int(trx['accountfid']), trx['trxid']) in self._existing_ids
         if result is False and addit is True:
-            self._lazy__existing_ids.add((int(trx['account__fid']), trx['trxid']))
+            self._lazy__existing_ids.add((int(trx['accountfid']), trx['trxid']))
         return result
 
     def import_qfx(self, filename, handle):
         """ Import transactions from a qfx file. """
         try:
-            log.info('Importing transactions qfx file: %s' % filename)
+            self.files += 1
             transactions = []
+            log.info('Importing transactions qfx file: %s' % filename)
             qfx = OfxParser.parse(handle)
-            if qfx.account.institution.fid not in self._accounts:
-                raise Exception('Not tracking account fid.')
-            account = self._accounts[qfx.account.institution.fid]
+            fid = int(qfx.account.institution.fid)
+            print(self._accounts)
+            if fid not in self._accounts:
+                raise Exception('Not tracking account fid: %s' % fid)
+            account = self._accounts[fid]
             for trx in qfx.account.statement.transactions:
                 trx = trx.__dict__
                 trx['trxid'] = trx['id']
+                trx['accountfid'] = fid
+                print(trx)
                 if not self._transaction_exists(trx, addit=True):
                     transactions.append(Transaction(
                         account_id=account.id,
                         trxid=trx['id'],
-                        payee=trx[account.get('payee', 'payee')],
+                        payee=trx[account.payee or 'payee'],
                         amount=trx['amount'],
                         date=trx['date'].date(),
                     ))
@@ -79,9 +93,10 @@ class TransactionManager:
             log.info('Saving %s new transactions from qfx file: %s' % (len(transactions), filename))
             Transaction.objects.bulk_create(transactions)
             self.status.append('%s: added %s transactions' % (filename, len(transactions)))
+            self.transactions += len(transactions)
         except Exception as err:
             log.exception(err)
-            self.status.append('%s: %s' % (filename, err))
+            self.status.append('Error %s: %s' % (filename, err))
 
     def label_transactions(self, transactions):
         lastyear = datetime.datetime.now() - relativedelta(months=13)
@@ -91,6 +106,7 @@ class TransactionManager:
         for trx in transactions:
             if not trx.payee and trx.amount in lookup:
                 trx.payee = lookup[trx.amount]
+                self.labeled += 1
 
     def categorize_transactions(self, transactions):
         lastyear = datetime.datetime.now() - relativedelta(months=13)
@@ -101,3 +117,4 @@ class TransactionManager:
             payee = trx.payee.lower().rstrip(TRXJUNK)
             if not trx.category and payee in lookup:
                 trx.category_id = lookup[payee]
+                self.categorized += 1

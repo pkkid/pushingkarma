@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load basefilters %}
+{% load humanize %}
 {% block title %}Budget{% endblock %}
 
 {% block content %}
@@ -7,7 +8,12 @@
     <!-- Layout:SidePanel -->
     <div id='sidepanel'>
       <div id='sidepanel-content'>
+        <h2>Budget<div class='subtext'>
+          <a href='javascript:pk.budget.update_categories()'>Categories</a> |
+          <a href='javascript:pk.budget.update_accounts()'>Accounts</a>
+        </div></h2>
         <div id='categories'></div>
+        <div id='accounts' style='display:none;'></div>
       </div>
     </div>
     <!-- Layout:MainContent -->

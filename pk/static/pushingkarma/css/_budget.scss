@@ -12,14 +12,15 @@
     margin-top: 6px;
     margin-bottom: 10px;
   }
-  .subtext,.subtext a { 
+  .subtext,.subtext a {
     color: #848177;
     font-family: "Cabin", "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: 10px;
+    font-size: 11px;
     line-height: 18px;
-    padding-left: 2px;
-    .error { color:#966; }
+    padding-left: 1px;
+    a { color:#966; }
   }
+  
 
   // --------------------
   // General Table Styles
@@ -74,6 +75,7 @@
     tfoot td { border-width: 0px; }
     [data-name=trend], [data-name=approved] { text-align:center; div,input { text-align:center; }}
     [data-name=budget], [data-name=amount] { text-align:right; div,input { text-align:right; }}
+    [data-name=balance] { text-align:right; div,input { text-align:right; }}
   }
 
   // ------------------------------
@@ -81,18 +83,20 @@
   #sidepanel-content {
     overflow-y: auto;
     height: calc(100% - 42px);
-    padding: 5px 10px 10px 10px;
+    padding: 21px 10px 10px 10px;
     color: #333;
     $width:110px; [data-name='name'] { width:$width; div,input { width:$width; }}
     $width:100%; [data-name='trend'] { width:$width; text-align:center; div,input { width:$width; }}
     $width:55px; [data-name='budget'] { width:$width; div,input { width:$width; }}
+    $width:75px; [data-name='balance'] { width:$width; div,input { width:$width; }}
     &.toedge {
       padding-right: 0px;
       th[data-name='budget'] { width:65px; padding-right:14px; }
       td[data-name='budget'] { width:65px; padding-right:11px; div,input { width:55px; }}
+      #accounts { padding-right: 10px; }
     }
     #categories {
-      margin-top: 72px;
+      //margin-top: 72px;
       #category-add input {
         background-color: rgba(0,0,0,0.05);
         opacity: 0.5;
@@ -211,16 +215,17 @@
   // Little Flower (top of page)
   #sidepanel-content:before {
     display: block;
-    content: 'l';
-    color: rgba(0,0,0,0.3);
+    content: 'q';
+    color: rgba(0,0,0,0.2);
     font-family: fleurons;
-    font-size: 90px;
+    font-size: 80px;
     height: 65px;
     line-height: 40px;
     overflow: hidden;
     position: absolute;
     top: 15px;
-    width: 230px;
+    right: 6px;
+    width: 55px;
   }
 
 }

@@ -41,6 +41,7 @@ TRANSACTIONSEARCHFIELDS = {
 @login_required
 def budget(request, slug=None, tmpl='budget.html'):
     data = utils.context.core(request, menuitem='budget')
+    data.accounts = Account.objects.order_by('name')
     return utils.response(request, tmpl, data)
 
 
@@ -119,7 +120,7 @@ class TransactionsViewSet(viewsets.ModelViewSet):
         trxmanager = TransactionManager()
         for fileobj in request.FILES.values():
             trxmanager.import_qfx(fileobj.name, fileobj.file)
-        return Response(status=204)
+        return Response(trxmanager.get_status())
 
     @list_route(methods=['get'])
     def summary(self, request, *args, **kwargs):
@@ -139,8 +140,7 @@ class TransactionsViewSet(viewsets.ModelViewSet):
         self._summary_calc_averages(data)
         # cleanup output and return
         data = OrderedDict(data)
-        data.move_to_end('total')
-        data.move_to_end('categories')
+        utils.move_to_end('total', 'categories')
         return Response(data)
 
     def _summary_init_total(self, data):

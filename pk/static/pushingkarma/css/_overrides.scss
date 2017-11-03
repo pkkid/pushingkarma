@@ -2,11 +2,14 @@
 // Copyright (c) 2015 PushingKarma. All rights reserved.
 //--------------------------------------------------------
 
-
 // Boostrap Tooltips
 .tooltip.in {
   opacity: 0.9;
 }
+
+// Jquery Toast Plugin
+.jq-toast-single { background-color:#111; color:#ccc; }
+.jq-toast-loader { height:1px; top:0px; background-color:rgba(124,155,0,0.5) !important; }
 
 // Github emoji
 img.emoji {

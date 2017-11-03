@@ -9,6 +9,7 @@ pk.budget = {
   KEYS: {TAB:9, ENTER:13, ESC:27, F3:114, UP:38, DOWN:40},
   LOADMORE_INTERVAL: 100, LOADMORE_DISTANCE: 200,
   URL_SUMMARY: window.location.origin +'/api/transactions/summary',
+  URL_ACCOUNTS: window.location.origin +'/api/accounts',
   URL_CATEGORIES: window.location.origin +'/api/categories',
   URL_TRANSACTIONS: window.location.origin +'/api/transactions',
   URL_UPLOAD: window.location.origin +'/api/transactions/upload',
@@ -18,12 +19,14 @@ pk.budget = {
     if (!this.container.length) { return; }
     console.debug('init pk.budget on '+ selector);
     this.xhr = null;                            // main actions xhr reference
+    this.xhract = null;                         // accounts xhr reference
     this.xhrcat = null;                         // categories xhr reference
     this.xhrtrx = null;                         // transactions xhr reference
     this.trxpage = null;                        // last loaded trx page
     this.clicktimer = null;                     // detects single vs dblclick
     this.category_choices = [];                 // category name choices
-    this.params = {view:'summary', search:''};  // URL params for current view
+    this.params = {side:'categories',           // URL params for current view
+      view:'summary', search:''};  
     this.init_elements();                       // cache top level elements
     this.bind_search_edit();                    // update transactions on search
     this.bind_view_button();                    // show or hide the transaction list
@@ -35,13 +38,15 @@ pk.budget = {
     this.bind_infinite_scroll();                // auto-load next page of transactions
     this.init_shortcuts();                      // bind keyboard shortcuts
     // load initial display data
-    this.update_categories();
+    var side = new URL(window.location.href).searchParams.get('side');
     var view = new URL(window.location.href).searchParams.get('view');
+    side == 'accounts' ? this.update_accounts() : this.update_categories();
     view == 'transactions' ? this.update_transactions() : this.update_summary();
   },
 
   init_elements: function() {
     // cache top level elements
+    this.accounts = this.container.find('#accounts');
     this.categories = this.container.find('#categories');
     this.dropzone = this.container.find('#dropzone');
     this.searchinfo = this.container.find('#searchwrap .subtext');
@@ -206,11 +211,11 @@ pk.budget = {
       var xhr = $.ajax({url:self.URL_UPLOAD, type:'PUT', data:formdata,
         cache:false, contentType:false, processData:false});
       xhr.done(function(data, textStatus, jqXHR) {
-        console.log('TODO: Display upload status..');
-        console.log(data);
-      });
-      xhr.fail(function(jqXHR, textStatus, errorThrown) {
-        console.log('TODO: Display failed upload status..');
+        var err = '<b>Error During Import</b><br/>';
+        var ok = '<b>Imported '+ data.files +' QFX Files</b><br/>';
+        var text = data.status.toLowerCase().indexOf('error') >= 0 ? err : ok;
+        text += data.status.replace('\n', '<br/>')
+        $.toast({text:text, hideAfter:10000, loader:false});
       });
     });
   },
@@ -335,6 +340,27 @@ pk.budget = {
     });
   },
 
+  show_accounts: function() {
+    var self = this;
+    self.params.side = 'accounts';
+    self.categories.fadeOut('fast', function() {
+      self.accounts.fadeIn('fast');
+    });
+    // update the url
+    var url = pk.utils.update_url(null, self.params);
+    window.history.replaceState(null, null, url);
+  },
+
+  show_categories: function() {
+    var self = this;
+    self.params.side = 'categories';
+    self.accounts.fadeOut('fast', function() {
+      self.categories.fadeIn('fast');
+    });
+    var url = pk.utils.update_url(null, self.params);
+    window.history.replaceState(null, null, url);
+  },
+
   show_summary: function() {
     var self = this;
     self.params.view = 'summary';
@@ -345,7 +371,6 @@ pk.budget = {
       self.summary.fadeIn('fast');
       self.sidepanel.addClass('toedge');
     });
-    // update the url
     var url = pk.utils.update_url(null, self.params);
     window.history.replaceState(null, null, url);
   },
@@ -512,8 +537,20 @@ pk.budget = {
     this.update_transactions();
   },
  
+  update_accounts: function() {
+    var self = this;
+    self.show_accounts();
+    try { this.xhract.abort(); } catch(err) { }
+    this.xhract = $.ajax({url:self.URL_ACCOUNTS, type:'GET', dataType:'json'});
+    this.xhract.done(function(data, textStatus, jqXHR) {
+      var html = pk.templates.accounts_list(data);
+      self.accounts.html(html);
+    });
+  },
+
   update_categories: function(callback) {
     var self = this;
+    self.show_categories();
     try { this.xhrcat.abort(); } catch(err) { }
     this.xhrcat = $.ajax({url:self.URL_CATEGORIES, type:'GET', dataType:'json'});
     this.xhrcat.done(function(data, textStatus, jqXHR) {
