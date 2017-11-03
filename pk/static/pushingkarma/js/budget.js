@@ -216,6 +216,7 @@ pk.budget = {
         var text = data.status.toLowerCase().indexOf('error') >= 0 ? err : ok;
         text += data.status.replace('\n', '<br/>')
         $.toast({text:text, hideAfter:10000, loader:false});
+        self.update_transactions();
       });
     });
   },
