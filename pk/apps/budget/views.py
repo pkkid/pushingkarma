@@ -140,7 +140,7 @@ class TransactionsViewSet(viewsets.ModelViewSet):
         self._summary_calc_averages(data)
         # cleanup output and return
         data = OrderedDict(data)
-        utils.move_to_end('total', 'categories')
+        utils.move_to_end(data, 'total', 'categories')
         return Response(data)
 
     def _summary_init_total(self, data):
