@@ -89,10 +89,12 @@ pk.budget = {
       if (event.detail == 1) {
         self.clicktimer = setTimeout(function() {
           // display popover on single click
-          if (td.closest('#categories').length) {
-            self.popover_display(td, 'category_popover');
-          } else if (td.closest('#summary').length) {
-            self.popover_display(td, 'summary_popover');
+          if (!td.closest(self.ROW).hasClass('popped')) {
+            if (td.closest('#categories').length) {
+              self.popover_display(td, 'category_popover');
+            } else if (td.closest('#summary').length) {
+              self.popover_display(td, 'summary_popover');
+            }
           }
         }, 200);
       } else if (event.detail == 2) {
