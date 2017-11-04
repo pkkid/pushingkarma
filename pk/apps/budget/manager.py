@@ -10,6 +10,7 @@ https://console.developers.google.com/
 import datetime
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
+from django.utils import timezone
 from ofxparse import OfxParser
 from pk import log
 from pk.utils.decorators import lazyproperty
@@ -71,15 +72,15 @@ class TransactionManager:
             log.info('Importing transactions qfx file: %s' % filename)
             qfx = OfxParser.parse(handle)
             fid = int(qfx.account.institution.fid)
-            print(self._accounts)
             if fid not in self._accounts:
                 raise Exception('Not tracking account fid: %s' % fid)
             account = self._accounts[fid]
+            # Update transactions
+            trx_maxdate = None
             for trx in qfx.account.statement.transactions:
                 trx = trx.__dict__
                 trx['trxid'] = trx['id']
                 trx['accountfid'] = fid
-                print(trx)
                 if not self._transaction_exists(trx, addit=True):
                     transactions.append(Transaction(
                         account_id=account.id,
@@ -94,6 +95,12 @@ class TransactionManager:
             Transaction.objects.bulk_create(transactions)
             self.status.append('%s: added %s transactions' % (filename, len(transactions)))
             self.transactions += len(transactions)
+            # Update account balance
+            statementdt = timezone.make_aware(qfx.account.statement.end_date)
+            if account.balancedt is None or statementdt > account.balancedt:
+                account.balance = qfx.account.statement.balance
+                account.balancedt = statementdt
+                account.save()
         except Exception as err:
             log.exception(err)
             self.status.append('Error %s: %s' % (filename, err))

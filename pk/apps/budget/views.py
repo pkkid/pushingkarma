@@ -56,6 +56,7 @@ class AccountsViewSet(viewsets.ModelViewSet):
         page = self.paginate_queryset(accounts)
         serializer = AccountSerializer(page, context={'request':request}, many=True, fields=self.list_fields)
         response = self.get_paginated_response(serializer.data)
+        response.data['total'] = accounts.aggregate(sum=Sum('balance'))['sum']
         utils.move_to_end(response.data, 'previous','next','results')
         return response
 

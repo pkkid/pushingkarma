@@ -1623,7 +1623,7 @@ var helpers = {
     var flags = [];
     if (value == 0) { flags.push('zero'); }
     if (value > 10) { flags.push('income'); }
-    if (value < 10 && (value <= budget * 1.1)) { flags.push('over'); }
+    if (value < 10 && (value <= budget * 1.2)) { flags.push('over'); }
     return flags.join(' ');
   },
 
