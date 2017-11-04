@@ -83,6 +83,31 @@ pk.utils = {
     return parts.join('.');
   },
 
+  rset: function(object, property, value) {
+    var parts = property.split('.');
+    var current = parts.shift();
+    var pointer = object;
+    while (parts.length > 0) {
+      if (pointer[current] === undefined)
+        pointer[current] = {};
+      pointer = pointer[current];
+      current = parts.shift();
+    }
+    pointer[current] = value;
+  },
+
+  rget: function(object, property, delim) {
+    delim = delim === undefined ? '.' : delim;
+    var parts = property.split(delim);
+    var current = parts.shift();
+    if (object[current] !== undefined) {
+      if (parts.length >= 1)
+        return getProperty(object[current], parts.join(delim), delim);
+      return object[current];
+    }
+    return undefined;
+  },
+
   round: function(number, precision) {
     var factor = Math.pow(10, precision);
     var tempNumber = number * factor;

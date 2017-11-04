@@ -73,9 +73,11 @@
       div { color: #222; }
     }
     tfoot td { border-width: 0px; }
-    [data-name=trend], [data-name=approved] { text-align:center; div,input { text-align:center; }}
-    [data-name=budget], [data-name=amount] { text-align:right; div,input { text-align:right; }}
+    [data-name=approved] { text-align:center; div { text-align:center; border-width:0px; }}
+    [data-name=budget] { text-align:right; div,input { text-align:right; }}
+    [data-name=amount] { text-align:right; div,input { text-align:right; }}
     [data-name=balance] { text-align:right; div,input { text-align:right; }}
+    [data-name=trend] div { padding:0; margin:0px; border-width:0px; border-radius:0px; height:auto; }}
   }
 
   // ------------------------------
@@ -85,8 +87,8 @@
     height: calc(100% - 42px);
     padding: 21px 10px 10px 10px;
     color: #333;
-    $width:110px; [data-name='name'] { width:$width; div,input { width:$width; }}
-    $width:100%; [data-name='trend'] { width:$width; text-align:center; div,input { width:$width; }}
+    $width:100%; [data-name='name'] { width:$width; div,input { width:$width; }}
+    $width:55px; [data-name='trend'] { width:$width; text-align:center; div,input { width:$width; }}
     $width:55px; [data-name='budget'] { width:$width; div,input { width:$width; }}
     $width:75px; [data-name='balance'] { width:$width; div,input { width:$width; }}
     &.toedge {

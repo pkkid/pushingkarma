@@ -91,7 +91,7 @@ pkedit class attributes:
         {{#each this.results}}
           <tr class='pkrow pklight' data-id='{{this.id}}' data-type='category' data-url='{{this.url}}'>
             <td data-name='name' class='pkedit delempty'><div>{{this.name}}</div></td>
-            <td data-name='trend' class='drag'><div>&nbsp;</div></td>
+            <td data-name='trend' class='drag'></td>
             <td data-name='budget' class='pkedit int selectall'><div>{{amountInt this.budget}}</div></td>
           </tr>
         {{/each}}

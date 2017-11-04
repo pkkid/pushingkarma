@@ -561,6 +561,12 @@ pk.budget = {
       self.categories.html(html);
       self.update_category_choices(data);
       self.bind_drag_categories();
+      
+      // update trend charts
+      var selector = self.categories.find('tbody tr:first-child td[data-name=trend]');
+      var chart = pk.charts.budget_trend();
+      selector.highcharts(chart);
+
       if (callback) { callback(); }
     });
   },
