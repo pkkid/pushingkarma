@@ -29,7 +29,7 @@ class TransactionManager:
         self.files = 0              # num files imported
         self.transactions = 0       # num transactions imported
         self.categorized = 0        # num transactions categorized
-        self.labled = 0             # num transactions labeled
+        self.labeled = 0            # num transactions labeled
 
     def get_status(self):
         return {
