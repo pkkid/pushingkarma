@@ -20,7 +20,7 @@ pk.charts = {
     pk.utils.rset(chart, 'plotOptions.column.borderWidth', 0);
     pk.utils.rset(chart, 'plotOptions.column.color', '#888');
     pk.utils.rset(chart, 'plotOptions.column.enableMouseTracking', false);
-    pk.utils.rset(chart, 'plotOptions.column.minPointLength', 3);
+    pk.utils.rset(chart, 'plotOptions.column.minPointLength', 2);
     pk.utils.rset(chart, 'plotOptions.column.pointPadding', 0.02);
     pk.utils.rset(chart, 'plotOptions.column.pointWidth', 3);
     pk.utils.rset(chart, 'title.text', null);

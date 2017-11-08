@@ -14,7 +14,7 @@ pk.budget = {
   URL_TRANSACTIONS: window.location.origin +'/api/transactions',
   URL_UPLOAD: window.location.origin +'/api/transactions/upload',
   
-  init: function(selector) {
+  init: function(selector, opts) {
     this.container = $(selector);
     if (!this.container.length) { return; }
     console.debug('init pk.budget on '+ selector);
@@ -26,8 +26,11 @@ pk.budget = {
     this.clicktimer = null;                     // detects single vs dblclick
     this.category_choices = [];                 // category name choices
     this.summary_data = null;                   // summary data response
-    this.params = {side:'categories',           // URL params for current view
-      view:'summary', search:''};  
+    this.params = {                             // URL params for current view
+      side:'categories',                        // * Sidepanel: categories, accounts
+      view:'summary',                           // * Main View: summary, transactions
+      search:'',                                // * Search: current search string
+      demo:this.container.hasClass('demo')};    // * DemoMode: true, false
     this.init_elements();                       // cache top level elements
     this.bind_search_edit();                    // update transactions on search
     this.bind_view_button();                    // show or hide the transaction list

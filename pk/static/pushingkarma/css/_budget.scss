@@ -230,4 +230,21 @@
     width: 55px;
   }
 
+  // ---------------------------
+  // Demo Mode
+  &.demo {
+    tr[data-id='1'] td[data-name='budget'],
+    tr[data-id='2'] td[data-name='budget'],
+    tr[data-categoryid='1'],
+    tr[data-categoryid='2'],
+    td[data-name='amount'],
+    #category-total td[data-name='budget'],
+    #summary tfoot {
+      div,input {
+        color: transparent !important;
+        text-shadow: 0 0 10px rgba(0,0,0,0.5) !important;
+      }
+    }
+  }
+
 }
