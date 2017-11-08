@@ -73,11 +73,11 @@
       div { color: #222; }
     }
     tfoot td { border-width: 0px; }
-    [data-name=approved] { text-align:center; div { text-align:center; border-width:0px; }}
+    [data-name=approved] { text-align:center; div,input { text-align:center; border-width:0px; }}
     [data-name=budget] { text-align:right; div,input { text-align:right; }}
     [data-name=amount] { text-align:right; div,input { text-align:right; }}
     [data-name=balance] { text-align:right; div,input { text-align:right; }}
-    [data-name=trend] div { padding:0; margin:0px; border-width:0px; border-radius:0px; height:auto; }}
+    [data-name=trend] div { padding:0; margin:0px; border-width:0px; border-radius:0px; height:auto; }
   }
 
   // ------------------------------

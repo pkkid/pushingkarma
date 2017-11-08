@@ -36,7 +36,7 @@ class TransactionManager:
             'files': self.files,
             'transactions': self.transactions,
             'categorized': self.categorized,
-            'labled': self.labled,
+            'labeled': self.labeled,
             'status': '\n'.join(self.status),
         }
 

@@ -25,6 +25,7 @@ pk.budget = {
     this.trxpage = null;                        // last loaded trx page
     this.clicktimer = null;                     // detects single vs dblclick
     this.category_choices = [];                 // category name choices
+    this.summary_data = null;                   // summary data response
     this.params = {side:'categories',           // URL params for current view
       view:'summary', search:''};  
     this.init_elements();                       // cache top level elements
@@ -559,16 +560,30 @@ pk.budget = {
     this.xhrcat.done(function(data, textStatus, jqXHR) {
       var html = pk.templates.category_list(data);
       self.categories.html(html);
+      self.update_category_trends();
       self.update_category_choices(data);
       self.bind_drag_categories();
-      
-      // update trend charts
-      var selector = self.categories.find('tbody tr:first-child td[data-name=trend]');
-      var chart = pk.charts.budget_trend();
-      selector.highcharts(chart);
-
       if (callback) { callback(); }
     });
+  },
+
+  update_category_trends: function() {
+    var self = this;
+    // Wait for self.summary_data to be populated
+    if (self.summary_data === null) {
+      return setTimeout(function() { self.update_category_trends(); }, 100);
+    }
+    // update trend charts
+    for (var i in self.summary_data.categories) {
+      var summary = self.summary_data.categories[i];
+      var selector = self.categories.find('tbody tr[data-id='+ summary.categoryid +'] td[data-name=trend]');
+      var data = Object.values(summary.amounts).map(function(x) {
+        var mult = summary.name == 'Income' ? 1 : -1;
+        return Math.max(x * mult, 0);
+      });
+      var chart = pk.charts.budget_trend(data);
+      selector.highcharts(chart);
+    };
   },
 
   update_category_choices: function(data) {
@@ -588,6 +603,7 @@ pk.budget = {
     try { this.xhrtrx.abort(); } catch(err) { }
     this.xhrtrx = $.ajax({url:self.URL_SUMMARY, type:'GET', dataType:'json'});
     this.xhrtrx.done(function(data, textStatus, jqXHR) {
+      self.summary_data = data;
       self.searchinfo.text('');
       var html = pk.templates.summary(data);
       self.summary.html(html);
