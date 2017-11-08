@@ -233,10 +233,12 @@
   // ---------------------------
   // Demo Mode
   &.demo {
-    tr[data-id='1'] td[data-name='budget'],
-    tr[data-id='2'] td[data-name='budget'],
-    tr[data-categoryid='1'],
-    tr[data-categoryid='2'],
+    tr[data-id='1'] td[data-name='budget'], tr[data-categoryid='1'],
+    tr[data-id='2'] td[data-name='budget'], tr[data-categoryid='2'],
+    tr[data-id='25'] td[data-name='budget'], tr[data-categoryid='25'],
+    tr[data-id='26'] td[data-name='budget'], tr[data-categoryid='26'],
+    tr[data-id='27'] td[data-name='budget'], tr[data-categoryid='27'],
+    tr[data-id='null'] td[data-name='budget'], tr[data-categoryid='null'],
     td[data-name='amount'],
     #category-total td[data-name='budget'],
     #accounts [data-name='balance'],
