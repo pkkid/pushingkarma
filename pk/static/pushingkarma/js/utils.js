@@ -133,7 +133,7 @@ pk.utils = {
     url = url === null ? new URL(window.location.href) : new URL(url);
     for (var key in params) {
       var value = params[key];
-      if (value == '') { url.searchParams.delete(key); }
+      if (value == '' || value == null) { url.searchParams.delete(key); }
       else { url.searchParams.set(key, value); }
     }
     return url.toString();

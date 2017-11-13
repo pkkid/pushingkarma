@@ -8,7 +8,6 @@ pk.budget = {
   ROW:'.pkrow', EDIT:'.pkedit',
   KEYS: {TAB:9, ENTER:13, ESC:27, F3:114, UP:38, DOWN:40},
   LOADMORE_INTERVAL: 100, LOADMORE_DISTANCE: 200,
-  URL_SUMMARY: window.location.origin +'/api/transactions/summary',
   URL_ACCOUNTS: window.location.origin +'/api/accounts',
   URL_CATEGORIES: window.location.origin +'/api/categories',
   URL_TRANSACTIONS: window.location.origin +'/api/transactions',
@@ -17,6 +16,7 @@ pk.budget = {
   init: function(selector, opts) {
     this.container = $(selector);
     if (!this.container.length) { return; }
+    var _params = new URL(window.location.href).searchParams;
     console.debug('init pk.budget on '+ selector);
     this.xhr = null;                            // main actions xhr reference
     this.xhract = null;                         // accounts xhr reference
@@ -27,10 +27,10 @@ pk.budget = {
     this.category_choices = [];                 // category name choices
     this.summary_data = null;                   // summary data response
     this.params = {                             // URL params for current view
-      side:'categories',                        // * Sidepanel: categories, accounts
-      view:'summary',                           // * Main View: summary, transactions
-      search:'',                                // * Search: current search string
-      demo:this.container.hasClass('demo')};    // * DemoMode: true, false
+      panel:_params.get('panel','categories'),  // * Sidepanel: categories, accounts
+      view:_params.get('view','summary'),       // * Main View: summary, transactions
+      search:_params.get('search',''),          // * Search: current search string
+      demo:_params.get('demo','')};             // * DemoMode: true, false
     this.init_elements();                       // cache top level elements
     this.bind_search_edit();                    // update transactions on search
     this.bind_view_button();                    // show or hide the transaction list
@@ -42,10 +42,9 @@ pk.budget = {
     this.bind_infinite_scroll();                // auto-load next page of transactions
     this.init_shortcuts();                      // bind keyboard shortcuts
     // load initial display data
-    var side = new URL(window.location.href).searchParams.get('side');
-    var view = new URL(window.location.href).searchParams.get('view');
-    side == 'accounts' ? this.update_accounts() : this.update_categories();
-    view == 'transactions' ? this.update_transactions() : this.update_summary();
+    this.update_categories();
+    if (this.params.panel == 'accounts') { this.update_accounts(); }
+    if (this.params.view == 'transactions') { this.update_transactions(); }
   },
 
   init_elements: function() {
@@ -93,12 +92,12 @@ pk.budget = {
       if (event.detail == 1) {
         self.clicktimer = setTimeout(function() {
           // display popover on single click
-          if (!td.closest(self.ROW).hasClass('popped')) {
-            if (td.closest('#categories').length) {
-              self.popover_display(td, 'category_popover');
-            } else if (td.closest('#summary').length) {
-              self.popover_display(td, 'summary_popover');
-            }
+          if (td.find('input').length) { return; }
+          if (td.closest(self.ROW).hasClass('popped')) { return; }
+          if (td.closest('#categories').length) {
+            self.popover_display(td, 'category_popover');
+          } else if (td.closest('#summary').length) {
+            self.popover_display(td, 'summary_popover');
           }
         }, 200);
       } else if (event.detail == 2) {
@@ -349,7 +348,7 @@ pk.budget = {
 
   show_accounts: function() {
     var self = this;
-    self.params.side = 'accounts';
+    self.params.panel = 'accounts';
     self.categories.fadeOut('fast', function() {
       self.accounts.fadeIn('fast');
     });
@@ -360,7 +359,7 @@ pk.budget = {
 
   show_categories: function() {
     var self = this;
-    self.params.side = 'categories';
+    self.params.panel = 'categories';
     self.accounts.fadeOut('fast', function() {
       self.categories.fadeIn('fast');
     });
@@ -561,11 +560,17 @@ pk.budget = {
     try { this.xhrcat.abort(); } catch(err) { }
     this.xhrcat = $.ajax({url:self.URL_CATEGORIES, type:'GET', dataType:'json'});
     this.xhrcat.done(function(data, textStatus, jqXHR) {
-      var html = pk.templates.category_list(data);
-      self.categories.html(html);
+      // Update panel (categories)
+      self.categories.html(pk.templates.category_list(data));
       self.update_category_trends();
       self.update_category_choices(data);
       self.bind_drag_categories();
+      // Update view (summary)
+      if (self.params.view == 'summary') {
+        self.searchinfo.text('');
+        self.summary.html(pk.templates.summary(data.summary));
+      }
+      // Callback
       if (callback) { callback(); }
     });
   },
@@ -601,16 +606,8 @@ pk.budget = {
   },
 
   update_summary: function() {
-    var self = this;
-    self.show_summary();
-    try { this.xhrtrx.abort(); } catch(err) { }
-    this.xhrtrx = $.ajax({url:self.URL_SUMMARY, type:'GET', dataType:'json'});
-    this.xhrtrx.done(function(data, textStatus, jqXHR) {
-      self.summary_data = data;
-      self.searchinfo.text('');
-      var html = pk.templates.summary(data);
-      self.summary.html(html);
-    });
+    this.show_summary();
+    this.update_categories();
   },
 
   update_transactions: function(page) {

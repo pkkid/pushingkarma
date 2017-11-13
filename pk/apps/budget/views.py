@@ -26,6 +26,7 @@ from .models import Transaction, TransactionSerializer
 
 ACCOUNTS = settings.BUDGET_ACCOUNTS
 DATEFORMAT = '%Y-%m-%d'
+CATEGORY_NULL = {'name':UNCATEGORIZED, 'id':'null', 'url':None, 'sortindex':999, 'budget':'0.00', 'comment':''}
 TRANSACTIONSEARCHFIELDS = {
     'bank': SearchField(FIELDTYPES.STR, 'account__name'),
     'date': SearchField(FIELDTYPES.DATE, 'date'),
@@ -73,9 +74,9 @@ class CategoriesViewSet(viewsets.ModelViewSet):
         serializer = CategorySerializer(page, context={'request':request}, many=True, fields=self.list_fields)
         response = self.get_paginated_response(serializer.data)
         response.data['total'] = round(sum(float(c['budget']) for c in response.data['results']), 2)
-        response.data['results'].append({'id':'null', 'url':None, 'name':'Uncategorized',
-            'sortindex':99, 'budget':'0.00', 'comment':''})
-        utils.move_to_end(response.data, 'previous','next','results')
+        response.data['summary'] = CategorySummaryView().get_data()
+        response.data['results'].append(CATEGORY_NULL)
+        utils.move_to_end(response.data, 'previous','next','results','summary')
         return response
 
     @detail_route(methods=['get'])
@@ -111,9 +112,8 @@ class TransactionsViewSet(viewsets.ModelViewSet):
         response.data.update(searchdata)
         response.data['unapproved'] = transactions.filter(approved=False).count()
         response.data['uncategorized'] = transactions.filter(category_id=None).count()
-        response.data['summary'] = reverse('transaction-summary', request=request)
         response.data['upload'] = reverse('transaction-upload', request=request)
-        utils.move_to_end(response.data, 'previous','next','summary','upload','results')
+        utils.move_to_end(response.data, 'previous','next','upload','results')
         return response
 
     @list_route(methods=['put'], parser_classes=[FormParser, MultiPartParser])
@@ -123,28 +123,34 @@ class TransactionsViewSet(viewsets.ModelViewSet):
             trxmanager.import_qfx(fileobj.name, fileobj.file)
         return Response(trxmanager.get_status())
 
-    @list_route(methods=['get'])
-    def summary(self, request, *args, **kwargs):
-        data = Bunch()
-        # initialize data response
-        maxmonth = date(datetime.today().year, datetime.today().month, 1)
-        data.mindate = maxmonth - relativedelta(months=11)
-        data.maxdate = maxmonth + relativedelta(months=1)
-        # count transactions
-        transactions = Transaction.objects.filter(date__gte=data.mindate, date__lt=data.maxdate)
-        data.unapproved = transactions.filter(approved=False).count()
-        data.uncategorized = transactions.filter(category_id=None).count()
-        data.count = transactions.count()
-        # populate summary data
-        self._summary_init_total(data)
-        self._summary_add_cateogry_values(data)
-        self._summary_calc_averages(data)
-        # cleanup output and return
-        data = OrderedDict(data)
-        utils.move_to_end(data, 'total', 'categories')
-        return Response(data)
 
-    def _summary_init_total(self, data):
+class CategorySummaryView:
+
+    def __init__(self, months=12):
+        today = datetime.today()
+        maxmonth = date(today.year, today.month, 1)
+        # Create the dataset
+        self.data = Bunch()
+        self.data.mindate = maxmonth - relativedelta(months = months - 1)
+        self.data.maxdate = maxmonth + relativedelta(months=1)
+        # populate summary data
+        self.data = self._count_transactions(self.data)
+        self.data = self._init_total(self.data)
+        self.data = self._add_cateogry_values(self.data)
+        self.data = self._calc_averages(self.data)
+
+    def get_data(self):
+        data = OrderedDict(self.data)
+        return utils.move_to_end(data, 'total', 'categories')
+
+    def _count_transactions(self, data):
+        transactions = Transaction.objects.filter(date__gte=self.data.mindate, date__lt=self.data.maxdate)
+        self.data.unapproved = transactions.filter(approved=False).count()
+        self.data.uncategorized = transactions.filter(category_id=None).count()
+        self.data.count = transactions.count()
+        return data
+
+    def _init_total(self, data):
         """ start the totals category. """
         data.total = Bunch()
         month = data.mindate
@@ -153,8 +159,9 @@ class TransactionsViewSet(viewsets.ModelViewSet):
             data.total[monthstr] = 0.0
             month += relativedelta(months=1)
         data.total = OrderedDict(sorted(data.total.items()))
+        return data
 
-    def _summary_add_cateogry_values(self, data):
+    def _add_cateogry_values(self, data):
         """ group data by category, month => amount. """
         data.categories = []
         lookup = self._summary_query_data(data.mindate, data.maxdate)
@@ -177,6 +184,7 @@ class TransactionsViewSet(viewsets.ModelViewSet):
                 month += relativedelta(months=1)
             cdata.amounts = OrderedDict(sorted(cdata.amounts.items()))
             data.categories.append(cdata)
+        return data
 
     def _summary_query_data(self, mindate, maxdate):
         """ Returns a dictionary of {'<categoryid>-<date>': <amount>}. """
@@ -193,7 +201,7 @@ class TransactionsViewSet(viewsets.ModelViewSet):
             cursor.execute(query, (mindatestr, maxdatestr))
             return dict(cursor.fetchall())
 
-    def _summary_calc_averages(self, data):
+    def _calc_averages(self, data):
         """ update averages accounting for months with incomplete data. """
         # find number of months and daterange to use when calculating average
         start, end = data.mindate, data.maxdate
@@ -220,3 +228,4 @@ class TransactionsViewSet(viewsets.ModelViewSet):
                 category.average = round(avg_total / float(data.avg_months), 2)
                 data.avg_total += category.average
         data.avg_total = round(data.avg_total, 2)
+        return data
