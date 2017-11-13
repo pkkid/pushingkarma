@@ -15,6 +15,7 @@
     display: block;
     height: 45px;
     padding: 5px;
+    position: relative;
     text-decoration: none;
     user-select: none;
 
@@ -32,6 +33,13 @@
       font-size: 9px;
       font-family: $font-family-sans-serif;
       line-height: 18px;
+    }
+    .mdi-lock {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      font-size: 15px;
+      color: rgba(0,0,0,0.4);
     }
     &:hover,&.selected {
       background-color: rgba(0,0,0,0.1);

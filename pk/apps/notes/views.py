@@ -8,7 +8,6 @@ from pk.utils.markdown import Markdown
 from pk.utils.search import FIELDTYPES, SearchField, Search
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from rest_framework.response import Response
 from .models import Note, NoteSerializer
 
 NOTESEARCHFIELDS = {
@@ -20,9 +19,13 @@ NOTESEARCHFIELDS = {
 
 def note(request, slug=None, tmpl='note.html'):
     note = utils.get_object_or_none(Note, slug=slug)
+    if note and not request.user.is_authenticated:
+        note = None if 'private' in note.tags.lower() else note
     if note is None:
         search = request.GET.get('search')
         notes = Note.objects.order_by('-modified')
+        if not request.user.is_authenticated:
+            notes = notes.exclude(tags__icontains='private')
         notes = Search(notes, NOTESEARCHFIELDS, search).queryset() if search else notes
         note = notes[0] if notes.exists() else None
     data = utils.context.core(request, menuitem='notes')
@@ -49,6 +52,8 @@ class NotesViewSet(viewsets.ModelViewSet):
         searchdata = {}
         searchstr = request.GET.get('search')
         notes = Note.objects.order_by('-modified')
+        if not request.user.is_authenticated:
+            notes = notes.exclude(tags__icontains='private')
         if searchstr:
             search = Search(notes, NOTESEARCHFIELDS, searchstr)
             notes = search.queryset()

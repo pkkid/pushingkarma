@@ -688,57 +688,59 @@ var helpers = {
   and: function(a, b, options) {
     if (a && b) {
       return options.fn(this);
-    } else {
-      return options.inverse(this);
     }
+    return options.inverse(this);
   },
 
   gt: function(value, test, options) {
     if (value > test) {
       return options.fn(this);
-    } else {
-      return options.inverse(this);
     }
+    return options.inverse(this);
   },
 
   gte: function(value, test, options) {
     if (value >= test) {
       return options.fn(this);
-    } else {
-      return options.inverse(this);
     }
+    return options.inverse(this);
+  },
+
+  icontains: function(str, pattern, options) {
+    str = str.toLowerCase();
+    pattern = pattern.toLowerCase();
+    if (str.indexOf(pattern) !== -1) {
+      return options.fn(this);
+    }
+    return options.inverse(this);
   },
 
   is: function(value, test, options) {
     if (value === test) {
       return options.fn(this);
-    } else {
-      return options.inverse(this);
     }
+    return options.inverse(this);
   },
 
   isnt: function(value, test, options) {
     if (value !== test) {
       return options.fn(this);
-    } else {
-      return options.inverse(this);
     }
+    return options.inverse(this);
   },
 
   lt: function(value, test, options) {
     if (value < test) {
       return options.fn(this);
-    } else {
-      return options.inverse(this);
     }
+    return options.inverse(this);
   },
 
   lte: function(value, test, options) {
     if (value <= test) {
       return options.fn(this);
-    } else {
-      return options.inverse(this);
     }
+    return options.inverse(this);
   },
 
   /**
@@ -748,9 +750,8 @@ var helpers = {
   or: function(a, b, options) {
     if (a || b) {
       return options.fn(this);
-    } else {
-      return options.inverse(this);
     }
+    return options.inverse(this);
   },
 
   /**
@@ -761,9 +762,8 @@ var helpers = {
     v = v+1;
     if (v % nr === 0) {
       return options.fn(this);
-    } else {
-      return options.inverse(this);
     }
+    return options.inverse(this);
   },
 
   /**
