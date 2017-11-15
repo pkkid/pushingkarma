@@ -9,7 +9,7 @@ pk.budget = {
   KEYS: {TAB:9, ENTER:13, ESC:27, F3:114, UP:38, DOWN:40},
   LOADMORE_INTERVAL: 100, LOADMORE_DISTANCE: 200,
   URL_ACCOUNTS: window.location.origin +'/api/accounts',
-  URL_CATEGORIES: window.location.origin +'/api/categories',
+  URL_CATEGORIES: window.location.origin +'/api/categories/summary',
   URL_TRANSACTIONS: window.location.origin +'/api/transactions',
   URL_UPLOAD: window.location.origin +'/api/transactions/upload',
   
@@ -18,32 +18,33 @@ pk.budget = {
     if (!this.container.length) { return; }
     var _params = new URL(window.location.href).searchParams;
     console.debug('init pk.budget on '+ selector);
-    this.xhr = null;                            // main actions xhr reference
-    this.xhract = null;                         // accounts xhr reference
-    this.xhrcat = null;                         // categories xhr reference
-    this.xhrtrx = null;                         // transactions xhr reference
-    this.trxpage = null;                        // last loaded trx page
-    this.clicktimer = null;                     // detects single vs dblclick
-    this.category_choices = [];                 // category name choices
-    this.summary_data = null;                   // summary data response
-    this.params = {                             // URL params for current view
-      panel:_params.get('panel','categories'),  // * Sidepanel: categories, accounts
-      view:_params.get('view','summary'),       // * Main View: summary, transactions
-      search:_params.get('search',''),          // * Search: current search string
-      demo:_params.get('demo','')};             // * DemoMode: true, false
-    this.init_elements();                       // cache top level elements
-    this.bind_search_edit();                    // update transactions on search
-    this.bind_view_button();                    // show or hide the transaction list
-    this.bind_row_edit();                       // handle single and dblclick events
-    this.bind_save_notes();                     // Save popover notes on blur
-    this.bind_category_add();                   // create new category items
-    this.bind_drag_files();                     // show dropzone when uploading
-    this.bind_row_highlight();                  // highlight rows on mouseover
-    this.bind_infinite_scroll();                // auto-load next page of transactions
-    this.init_shortcuts();                      // bind keyboard shortcuts
+    this.xhr = null;                               // main actions xhr reference
+    this.xhract = null;                            // accounts xhr reference
+    this.xhrcat = null;                            // categories xhr reference
+    this.xhrtrx = null;                            // transactions xhr reference
+    this.trxpage = null;                           // last loaded trx page
+    this.clicktimer = null;                        // detects single vs dblclick
+    this.category_choices = [];                    // category name choices
+    this.summary_data = null;                      // summary data response
+    this.params = {                                // URL params for current view
+      panel:_params.get('panel') || 'categories',  // * Sidepanel: categories, accounts
+      view:_params.get('view') || 'summary',       // * Main View: summary, transactions
+      search:_params.get('search',''),             // * Search: current search string
+      demo:_params.get('demo','')};                // * DemoMode: true, false
+    this.init_elements();                          // cache top level elements
+    this.init_shortcuts();                         // bind keyboard shortcuts
+    this.bind_search_edit();                       // update transactions on search
+    this.bind_view_button();                       // show or hide the transaction list
+    this.bind_row_edit();                          // handle single and dblclick events
+    this.bind_save_notes();                        // Save popover notes on blur
+    this.bind_category_add();                      // create new category items
+    this.bind_drag_files();                        // show dropzone when uploading
+    this.bind_row_highlight();                     // highlight rows on mouseover
+    this.bind_infinite_scroll();                   // auto-load next page of transactions
     // load initial display data
     this.update_categories();
     if (this.params.panel == 'accounts') { this.update_accounts(); }
+    if (this.params.view == 'summary') { this.show_summary(); }
     if (this.params.view == 'transactions') { this.update_transactions(); }
   },
 
@@ -58,6 +59,63 @@ pk.budget = {
     this.summary = this.container.find('#summary');
     this.transactions = this.container.find('#transactions');
     this.viewbtn = this.container.find('#viewbtn');
+  },
+
+  init_shortcuts: function() {
+    var self = this;
+    var KEYS = this.KEYS;
+    // f3 puts focus on search input
+    $(document).on('keydown', function(event) {
+      if (event.keyCode == KEYS.F3) {
+        event.preventDefault();
+        event.stopPropagation();
+        self.searchinput.focus();
+      }
+    });
+    // update budget items on enter
+    var selector = pk.utils.format('{0} {1} input', self.ROW, self.EDIT);
+    this.container.on('keydown', selector, function(event) {
+      var input = $(this);
+      var watchedkey = _.valuesIn(KEYS).indexOf(event.keyCode) >= 0;
+      if (watchedkey) {
+        var rowitem = input.closest(self.EDIT);
+        // enter and down select item on next row
+        if ((event.keyCode == KEYS.ENTER || event.keyCode == KEYS.DOWN) && !self.autocomplete()) {
+          event.preventDefault();
+          var row = rowitem.closest(self.ROW);
+          var name = rowitem.data('name');
+          var next = row.next(self.ROW).find(self.EDIT +'[data-name='+name+']');
+          next.length ? self.item_edit(next) : input.blur();
+        // up selects input on prev row
+        } else if ((event.keyCode == KEYS.UP) && !self.autocomplete()) {
+          event.preventDefault();
+          var row = rowitem.closest(self.ROW);
+          var name = rowitem.data('name');
+          var next = row.prev(self.ROW).find('[data-name='+name+']');
+          next.length ? self.item_edit(next) : input.blur();
+        // shift + tab selects previous input in full table
+        } else if (event.shiftKey && event.keyCode == KEYS.TAB) {
+          event.preventDefault();
+          var all = rowitem.closest('tbody').find(self.EDIT);
+          var index = all.index(rowitem) - 1;
+          var next = index >= 0 ? all.eq(index) : null;
+          if (!next) { return; }
+          next.length ? self.item_edit(next) : input.blur();
+        // tab selects next input in full table
+        } else if (event.keyCode == KEYS.TAB) {
+          event.preventDefault();
+          var all = rowitem.closest('tbody').find(self.EDIT);
+          var index = all.index(rowitem) + 1;
+          var next = all.eq(index);
+          next.length ? self.item_edit(next) : input.blur();
+        // esc reverts back to init value and stops editing
+        } else if (event.keyCode == KEYS.ESC) {
+          event.preventDefault();
+          input.addClass('nosave');
+          return self.item_display(rowitem, rowitem.data('init'));
+        }
+      }
+    });
   },
 
   bind_search_edit: function() {
@@ -262,63 +320,6 @@ pk.budget = {
         }
       }
     }, self.LOADMORE_INTERVAL);
-  },
-
-  init_shortcuts: function() {
-    var self = this;
-    var KEYS = this.KEYS;
-    // f3 puts focus on search input
-    $(document).on('keydown', function(event) {
-      if (event.keyCode == KEYS.F3) {
-        event.preventDefault();
-        event.stopPropagation();
-        self.searchinput.focus();
-      }
-    });
-    // update budget items on enter
-    var selector = pk.utils.format('{0} {1} input', self.ROW, self.EDIT);
-    this.container.on('keydown', selector, function(event) {
-      var input = $(this);
-      var watchedkey = _.valuesIn(KEYS).indexOf(event.keyCode) >= 0;
-      if (watchedkey) {
-        var rowitem = input.closest(self.EDIT);
-        // enter and down select item on next row
-        if ((event.keyCode == KEYS.ENTER || event.keyCode == KEYS.DOWN) && !self.autocomplete()) {
-          event.preventDefault();
-          var row = rowitem.closest(self.ROW);
-          var name = rowitem.data('name');
-          var next = row.next(self.ROW).find('[data-name='+name+']');
-          next.length ? self.item_edit(next) : input.blur();
-        // up selects input on prev row
-        } else if ((event.keyCode == KEYS.UP) && !self.autocomplete()) {
-          event.preventDefault();
-          var row = rowitem.closest(self.ROW);
-          var name = rowitem.data('name');
-          var next = row.prev(self.ROW).find('[data-name='+name+']');
-          next.length ? self.item_edit(next) : input.blur();
-        // shift + tab selects previous input in full table
-        } else if (event.shiftKey && event.keyCode == KEYS.TAB) {
-          event.preventDefault();
-          var all = rowitem.closest('tbody').find(self.EDIT);
-          var index = all.index(rowitem) - 1;
-          var next = index >= 0 ? all.eq(index) : null;
-          if (!next) { return; }
-          next.length ? self.item_edit(next) : input.blur();
-        // tab selects next input in full table
-        } else if (event.keyCode == KEYS.TAB) {
-          event.preventDefault();
-          var all = rowitem.closest('tbody').find(self.EDIT);
-          var index = all.index(rowitem) + 1;
-          var next = all.eq(index);
-          next.length ? self.item_edit(next) : input.blur();
-        // esc reverts back to init value and stops editing
-        } else if (event.keyCode == KEYS.ESC) {
-          event.preventDefault();
-          input.addClass('nosave');
-          return self.item_display(rowitem, rowitem.data('init'));
-        }
-      }
-    });
   },
 
   autocomplete: function() {
@@ -568,7 +569,7 @@ pk.budget = {
       // Update view (summary)
       if (self.params.view == 'summary') {
         self.searchinfo.text('');
-        self.summary.html(pk.templates.summary(data.summary));
+        self.summary.html(pk.templates.summary(data));
       }
       // Callback
       if (callback) { callback(); }
@@ -641,4 +642,24 @@ pk.budget = {
     }
   },
 
+  // Handlebar Helpers
+  helpers: {
+    budgetFlags: function(category, month) {
+      var flags = [];
+      var _flags = function() { return flags.join(' '); }
+      if (month.amount == 0) { flags.push('zero'); }
+      if (month.amount > 10) { flags.push('income'); }
+      if (category.name == 'Ignored') { flags.push('zero'); }
+      if (category.budget < -10 && month.amount < 10 &&
+         (month.amount <= category.budget * 1.2)) { flags.push('over'); }
+      return _flags();
+    },
+  },
+
 };
+
+for (var helper in pk.budget.helpers) {
+  if (pk.budget.helpers.hasOwnProperty(helper)) {
+    Handlebars.registerHelper(helper, pk.budget.helpers[helper]);
+  }
+}

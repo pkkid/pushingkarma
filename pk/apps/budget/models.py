@@ -7,8 +7,7 @@ from django.db import models, transaction
 from django_extensions.db.models import TimeStampedModel
 from pk import log, utils
 from pk.utils.serializers import DynamicFieldsSerializer, PartialFieldsSerializer
-from rest_framework.reverse import reverse
-from rest_framework.serializers import SerializerMethodField, ValidationError
+from rest_framework.serializers import ValidationError
 
 UNCATEGORIZED = 'Uncategorized'
 ACCOUNT_CHOICES = [('bank','Bank'), ('credit','Credit')]
@@ -45,7 +44,7 @@ class Category(TimeStampedModel):
 
     @transaction.atomic
     def save(self, *args, **kwargs):
-        # Dont allow saving Uncategorized category
+        # Dont allow saving UNCATEGORIZED category
         if self.name == UNCATEGORIZED:
             raise Exception('Cannot modify category %s' % UNCATEGORIZED)
         # reorder the categories if needed
@@ -64,16 +63,10 @@ class Category(TimeStampedModel):
 
 
 class CategorySerializer(DynamicFieldsSerializer):
-    details = SerializerMethodField()
 
     class Meta:
         model = Category
-        fields = ('id','name','sortindex','budget','comment','url','details')
-
-    def get_details(self, category):
-        kwargs = {'pk': category.id}
-        request = self.context['request']
-        return reverse('category-details', kwargs=kwargs, request=request)
+        fields = ('id','name','sortindex','budget','comment','url')
 
 
 class Transaction(TimeStampedModel):

@@ -6,12 +6,18 @@
  *------------------------------------------------------- */
 'use strict';
 
+
+// -----------------------------
+// General Utils
+// https://github.com/assemble/handlebars-helpers/blob/master/lib/utils/utils.js
+// https://github.com/assemble/handlebars-helpers/blob/master/lib/utils/dates.js
+// -----------------------------
 var helperutils = {
-  
-  // -----------------------------
-  // General Utils
-  // https://github.com/assemble/handlebars-helpers/blob/master/lib/utils/utils.js
-  // -----------------------------
+  date_formats: /%(a|A|b|B|c|C|d|D|e|F|h|H|I|j|k|l|L|m|M|n|p|P|r|R|s|S|t|T|u|U|v|V|W|w|x|X|y|Y|z)/g,
+  dates_abbreviatedWeekdays: ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'],
+  dates_fullWeekdays: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+  dates_abbreviatedMonths: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+  dates_fullMonths: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
   
   isFunction: function(obj) {
     return typeof obj === 'function';
@@ -32,17 +38,6 @@ var helperutils = {
   toString: function(val) {
     return val === null ? '' : val.toString();
   },
-  
-  // -----------------------------
-  // Date Utils
-  // https://github.com/assemble/handlebars-helpers/blob/master/lib/utils/dates.js
-  // -----------------------------
-  
-  date_formats: /%(a|A|b|B|c|C|d|D|e|F|h|H|I|j|k|l|L|m|M|n|p|P|r|R|s|S|t|T|u|U|v|V|W|w|x|X|y|Y|z)/g,
-  dates_abbreviatedWeekdays: ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'],
-  dates_fullWeekdays: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-  dates_abbreviatedMonths: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-  dates_fullMonths: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
   
   padNumber: function(num, count, padCharacter) {
     if (typeof padCharacter === 'undefined') {
@@ -138,18 +133,13 @@ var helperutils = {
 };
 
 
+// -----------------------------
+// Collection Helpers
+// https://github.com/assemble/handlebars-helpers/blob/master/lib/helpers/helpers-collections.js
+// -----------------------------
+
 var helpers = {
 
-  // -----------------------------
-  // Collection Helpers
-  // https://github.com/assemble/handlebars-helpers/blob/master/lib/helpers/helpers-collections.js
-  // -----------------------------
-
-  /**
-   * {{any}}
-   * @param  {Array}  array
-   * @param  {Object} options
-   */
   any: function(array, options) {
     if (array.length > 0) {
       return options.fn(this);
@@ -168,14 +158,9 @@ var helpers = {
     return array.slice(count);
   },
 
-
   /**
    * Use all of the items in the collection after the specified count
    * inside a block.
-   * @param  {Array}  array
-   * @param  {Number} count
-   * @param  {Ojbect} options
-   * @return {Array}
    */
   withAfter: function(array, count, options) {
     array = array.slice(count);
@@ -186,13 +171,9 @@ var helpers = {
     return result;
   },
 
-
   /**
-   * {{arrayify}}
    * Converts a string such as "foo, bar, baz" to an ES Array of strings.
    * @credit: http://bit.ly/1840DsB
-   * @param  {[type]} data [description]
-   * @return {[type]}      [description]
    */
   arrayify: function(str) {
     return str.split(',').map(function(tag) {
@@ -200,26 +181,17 @@ var helpers = {
     });
   },
 
-
   /**
    * Returns all of the items in the collection before the specified
    * count. Opposite of {{after}}.
-   * @param  {Array}  array [description]
-   * @param  {[type]} count [description]
-   * @return {[type]}       [description]
    */
   before: function(array, count) {
     return array.slice(0, -count);
   },
 
-
   /**
    * Use all of the items in the collection before the specified count
    * inside a block. Opposite of {{withAfter}}
-   * @param  {Array}  array   [description]
-   * @param  {[type]} count   [description]
-   * @param  {Object} options [description]
-   * @return {[type]}         [description]
    */
   withBefore: function(array, count, options) {
     array = array.slice(0, -count);
@@ -230,14 +202,8 @@ var helpers = {
     return result;
   },
 
-
   /**
-   * {{first}}
    * Returns the first item in a collection.
-   *
-   * @param  {Array}  array
-   * @param  {[type]} count
-   * @return {[type]}
    */
   first: function(array, count) {
     if (helperutils.isUndefined(count)) {
@@ -248,13 +214,7 @@ var helpers = {
   },
 
   /**
-   * {{withFirst}}
    * Use the first item in a collection inside a block.
-   *
-   * @param  {Array}  array   [description]
-   * @param  {[type]} count   [description]
-   * @param  {Object} options [description]
-   * @return {[type]}         [description]
    */
   withFirst: function(array, count, options) {
     if (!helperutils.isUndefined(array)) {
@@ -280,9 +240,6 @@ var helpers = {
 
   /**
    * Returns the last item in a collection. Opposite of `first`.
-   * @param  {Array}  array [description]
-   * @param  {[type]} count [description]
-   * @return {[type]}       [description]
    */
   last: function(array, count) {
     if (helperutils.isUndefined(count)) {
@@ -295,10 +252,6 @@ var helpers = {
   /**
    * Use the last item in a collection inside a block.
    * Opposite of {{withFirst}}.
-   * @param  {Array}  array   [description]
-   * @param  {[type]} count   [description]
-   * @param  {Object} options [description]
-   * @return {[type]}         [description]
    */
   withLast: function(array, count, options) {
     if (helperutils.isUndefined(count)) {
@@ -317,23 +270,15 @@ var helpers = {
   /**
    * Joins all elements of a collection into a string
    * using a separator if specified.
-   * @param  {Array}  array     [description]
-   * @param  {[type]} separator [description]
-   * @return {[type]}           [description]
    */
   join: function(array, separator) {
     return array.join(helperutils.isUndefined(separator) ? ' ' : separator);
   },
 
-
   /**
    * Handlebars "joinAny" block helper that supports
    * arrays of objects or strings. implementation found here:
    * https://github.com/wycats/handlebars.js/issues/133
-   *
-   * @param  {[type]} items [description]
-   * @param  {[type]} block [description]
-   * @return {[type]}       [description]
    *
    * If "delimiter" is not speficified, then it defaults to ",".
    * You can use "start", and "end" to do a "slice" of the array.
@@ -373,7 +318,6 @@ var helpers = {
     }
   },
 
-
   sort: function(array, field) {
     if (helperutils.isUndefined(field)) {
       return array.sort();
@@ -383,7 +327,6 @@ var helpers = {
       });
     }
   },
-
 
   withSort: function(array, field, options) {
     array = _.cloneDeep(array);
@@ -431,11 +374,9 @@ var helpers = {
     return result;
   },
 
-
   length: function(array) {
     return (!array) ? 0 : array.length;
   },
-
 
   lengthEqual: function(array, length, options) {
     if (array.length === length) {
@@ -445,7 +386,6 @@ var helpers = {
     }
   },
 
-
   empty: function(array, options) {
     if (array.length <= 0) {
       return options.fn(this);
@@ -454,15 +394,6 @@ var helpers = {
     }
   },
 
-
-  /**
-   * {{inArray}}
-   *
-   * @param  {Array}  array   [description]
-   * @param  {[type]} value   [description]
-   * @param  {Object} options [description]
-   * @return {[type]}         [description]
-   */
   inArray: function(array, value, options) {
     var _indexOf = require('../utils/lib/indexOf');
     if (_indexOf.call(array, value) >= 0) {
@@ -472,14 +403,6 @@ var helpers = {
     }
   },
 
-
-  /**
-   * {{filter}}
-   * @param  {[type]} array   [description]
-   * @param  {[type]} value   [description]
-   * @param  {[type]} options [description]
-   * @return {[type]}         [description]
-   */
   filter: function(array, value, options) {
     var data = void 0;
     var content = '';
@@ -509,16 +432,10 @@ var helpers = {
   },
 
   /**
-   * {{iterate}}
-   *
    * Similar to {{#each}} helper, but treats array-like objects
    * as arrays (e.g. objects with a `.length` property that
    * is a number) rather than objects. This lets us iterate
    * over our collections items.
-   *
-   * @param  {[type]} context [description]
-   * @param  {Object} options [description]
-   * @return {[type]}         [description]
    */
   iterate: function(context, options) {
     var fn = options.fn;
@@ -551,15 +468,8 @@ var helpers = {
     return ret;
   },
 
-
   /**
-   * {{forEach}}
    * Credit: http://bit.ly/14HLaDR
-   *
-   * @param  {[type]}   array [description]
-   * @param  {Function} fn    [description]
-   * @return {[type]}         [description]
-   *
    * @example:
    *   var accounts = [
    *     {'name': 'John', 'email': 'john@example.com'},
@@ -595,15 +505,9 @@ var helpers = {
     return buffer;
   },
 
-
   /**
-   * {{eachProperty}}
    * Handlebars block helper to enumerate
    * the properties in an object
-   *
-   * @param  {[type]} context [description]
-   * @param  {Object} options [description]
-   * @return {[type]}         [description]
    */
   eachProperty: function(context, options) {
     var content = (function() {
@@ -620,17 +524,10 @@ var helpers = {
     return content.join('');
   },
 
-
   /**
-   * {{eachIndex}}
-   *
-   * @param  {Array}  array   [description]
-   * @param  {Object} options [description]
-   * @return {[type]}         [description]
-   * @example:
-   *   {{#eachIndex collection}}
-   *     {{item}} is {{index}}
-   *   {{/eachIndex}}
+   * {{#eachIndex collection}}
+   *   {{item}} is {{index}}
+   * {{/eachIndex}}
    */
   eachIndex: function(array, options) {
     var i;
@@ -642,32 +539,6 @@ var helpers = {
       result += options.fn({
         item: value,
         index: index
-      });
-    }
-    return result;
-  },
-
-  /**
-   * {{eachIndexPlusOne}}
-   *
-   * @param  {Array}  array   [description]
-   * @param  {Object} options [description]
-   * @return {[type]}         [description]
-   * @example:
-   *   {{#eachIndexPlusOne collection}}
-   *     {{item}} is {{index}}
-   *   {{/eachIndexPlusOne}}
-   */
-  eachIndexPlusOne: function(array, options) {
-    var result = '';
-    var len;
-    var i;
-    var index;
-    for (index = i = 0, len = array.length; i < len; index = ++i) {
-      var value = array[index];
-      result += options.fn({
-        item: value,
-        index: index + 1
       });
     }
     return result;
@@ -687,20 +558,6 @@ var helpers = {
 
   and: function(a, b, options) {
     if (a && b) {
-      return options.fn(this);
-    }
-    return options.inverse(this);
-  },
-
-  gt: function(value, test, options) {
-    if (value > test) {
-      return options.fn(this);
-    }
-    return options.inverse(this);
-  },
-
-  gte: function(value, test, options) {
-    if (value >= test) {
       return options.fn(this);
     }
     return options.inverse(this);
@@ -729,24 +586,6 @@ var helpers = {
     return options.inverse(this);
   },
 
-  lt: function(value, test, options) {
-    if (value < test) {
-      return options.fn(this);
-    }
-    return options.inverse(this);
-  },
-
-  lte: function(value, test, options) {
-    if (value <= test) {
-      return options.fn(this);
-    }
-    return options.inverse(this);
-  },
-
-  /**
-   * Or
-   * Conditionally render a block if one of the values is truthy.
-   */
   or: function(a, b, options) {
     if (a || b) {
       return options.fn(this);
@@ -754,11 +593,7 @@ var helpers = {
     return options.inverse(this);
   },
 
-  /**
-   * ifNth
-   * Conditionally render a block if mod(nr, v) is 0
-   */
-  ifNth: function(nr, v, options) {
+  if_nth: function(nr, v, options) {
     v = v+1;
     if (v % nr === 0) {
       return options.fn(this);
@@ -766,71 +601,6 @@ var helpers = {
     return options.inverse(this);
   },
 
-  /**
-   * {{#compare}}...{{/compare}}
-   *
-   * @credit: OOCSS
-   * @param left value
-   * @param operator The operator, must be between quotes ">", "=", "<=", etc...
-   * @param right value
-   * @param options option object sent by handlebars
-   * @return {String} formatted html
-   *
-   * @example:
-   *   {{#compare unicorns "<" ponies}}
-   *     I knew it, unicorns are just low-quality ponies!
-   *   {{/compare}}
-   *
-   *   {{#compare value ">=" 10}}
-   *     The value is greater or equal than 10
-   *     {{else}}
-   *     The value is lower than 10
-   *   {{/compare}}
-   */
-  compare: function(left, operator, right, options) {
-    /*jshint eqeqeq: false*/
-    if (arguments.length < 3) {
-      throw new Error('Handlebars Helper "compare" needs 2 parameters');
-    }
-    if (options === undefined) {
-      options = right;
-      right = operator;
-      operator = '===';
-    }
-    var operators = {
-      '==': function(l, r) { return l == r; },
-      '===': function(l, r) { return l === r; },
-      '!=': function(l, r) { return l != r; },
-      '!==': function(l, r) { return l !== r; },
-      '<': function(l, r) { return l < r; },
-      '>': function(l, r) { return l > r; },
-      '<=': function(l, r) { return l <= r; },
-      '>=': function(l, r) { return l >= r; },
-      'typeof': function(l, r) { return typeof l == r; }
-    };
-    if (!operators[operator]) {
-      throw new Error('Handlebars Helper "compare" doesn\'t know the operator ' + operator);
-    }
-    var result = operators[operator](left, right);
-    if (result) {
-      return options.fn(this);
-    } else {
-      return options.inverse(this);
-    }
-  },
-
-
-  /**
-   * {{if_eq}}
-   *
-   *
-   * @param  {[type]} value   [description]
-   * @param  {[type]} other   [description]
-   * @param  {[type]} options [description]
-   * @return {[type]}         [description]
-   *
-   * @example: {{if_eq this compare=that}}
-   */
   if_eq: function(value, other, options) {
     if (value === other) {
       return options.fn(this);
@@ -838,16 +608,6 @@ var helpers = {
     return options.inverse(this);
   },
 
-  /**
-   * {{unless_eq}}
-   *
-   * @param  {[type]} value   [description]
-   * @param  {[type]} other   [description]
-   * @param  {[type]} options [description]
-   * @return {[type]}         [description]
-   *
-   * @example: {{unless_eq this compare=that}}
-   */
   unless_eq: function(value, other, options) {
     if (value === other) {
       return options.inverse(this);
@@ -855,16 +615,6 @@ var helpers = {
     return options.fn(this);
   },
 
-  /**
-   * {{if_gt}}
-   *
-   * @param  {[type]} value   [description]
-   * @param  {[type]} other   [description]
-   * @param  {[type]} options [description]
-   * @return {[type]}         [description]
-   *
-   * @example: {{if_gt this compare=that}}
-   */
   if_gt: function(value, other, options) {
     if (value > other) {
       return options.fn(this);
@@ -872,16 +622,6 @@ var helpers = {
     return options.inverse(this);
   },
 
-  /**
-   * {{unless_gt}}
-   *
-   * @param  {[type]} value   [description]
-   * @param  {[type]} other   [description]
-   * @param  {[type]} options [description]
-   * @return {[type]}         [description]
-   *
-   * @example: {{unless_gt this compare=that}}
-   */
   unless_gt: function(value, other, options) {
     if (value > other) {
       return options.inverse(this);
@@ -889,16 +629,6 @@ var helpers = {
     return options.fn(this);
   },
 
-  /**
-   * {{if_lt}}
-   *
-   * @param  {[type]} value   [description]
-   * @param  {[type]} other   [description]
-   * @param  {[type]} options [description]
-   * @return {[type]}         [description]
-   *
-   * @example: {{if_lt this compare=that}}
-   */
   if_lt: function(value, other, options) {
     if (value < other) {
       return options.fn(this);
@@ -906,16 +636,6 @@ var helpers = {
     return options.inverse(this);
   },
 
-  /**
-   * {{unless_lt}}
-   *
-   * @param  {[type]} value   [description]
-   * @param  {[type]} other   [description]
-   * @param  {[type]} options [description]
-   * @return {[type]}         [description]
-   *
-   * @example: {{unless_lt this compare=that}}
-   */
   unless_lt: function(value, other, options) {
     if (value < other) {
       return options.inverse(this);
@@ -923,68 +643,28 @@ var helpers = {
     return options.fn(this);
   },
 
-  /**
-   * {{if_gteq}}
-   *
-   * @param  {[type]} value   [description]
-   * @param  {[type]} other   [description]
-   * @param  {[type]} options [description]
-   * @return {[type]}         [description]
-   *
-   * @example: {{if_gteq this compare=that}}
-   */
-  if_gteq: function(value, other, options) {
+  if_gte: function(value, other, options) {
     if (value >= other) {
       return options.fn(this);
     }
     return options.inverse(this);
   },
 
-  /**
-   * {{unless_gteq}}
-   *
-   * @param  {[type]} value   [description]
-   * @param  {[type]} other   [description]
-   * @param  {[type]} options [description]
-   * @return {[type]}         [description]
-   *
-   * @example: {{unless_gteq this compare=that}}
-   */
-  unless_gteq: function(value, other, options) {
+  unless_gte: function(value, other, options) {
     if (value >= other) {
       return options.inverse(this);
     }
     return options.fn(this);
   },
 
-  /**
-   * {{if_lteq}}
-   *
-   * @param  {[type]} value   [description]
-   * @param  {[type]} other   [description]
-   * @param  {[type]} options [description]
-   * @return {[type]}         [description]
-   *
-   * @example: {{if_lteq this compare=that}}
-   */
-  if_lteq: function(value, other, options) {
+  if_lte: function(value, other, options) {
     if (value <= other) {
       return options.fn(this);
     }
     return options.inverse(this);
   },
 
-  /**
-   * {{unless_lteq}}
-   *
-   * @param  {[type]} value   [description]
-   * @param  {[type]} other   [description]
-   * @param  {[type]} options [description]
-   * @return {[type]}         [description]
-   *
-   * @example: {{unless_lteq this compare=that}}
-   */
-  unless_lteq: function(value, other, options) {
+  unless_lte: function(value, other, options) {
     if (value <= other) {
       return options.inverse(this);
     }
@@ -992,15 +672,9 @@ var helpers = {
   },
 
   /**
-   * {{ifAny}}
    * Similar to {{#if}} block helper but accepts multiple arguments.
    * @author: Dan Harper <http://github.com/danharper>
-   *
-   * @param  {[type]} context [description]
-   * @param  {[type]} options [description]
-   * @return {[type]}         [description]
-   *
-   * @example: {{ifAny this compare=that}}
+   * @example: {{ifAny this that}}
    */
   ifAny: function() {
     var argLength = arguments.length - 1;
@@ -1016,21 +690,14 @@ var helpers = {
     }
     if (success) {
       return content.fn(this);
-    } else {
-      return content.inverse(this);
     }
+    return content.inverse(this);
   },
 
   /**
-   * {{ifEven}}
    * Determine whether or not the @index is an even number or not
    * @author: Stack Overflow Answer <http://stackoverflow.com/questions/18976274/odd-and-even-number-comparison-helper-for-handlebars/18993156#18993156>
    * @author: Michael Sheedy <http://github.com/sheedy> (found code and added to repo)
-   *
-   * @param  {[type]} context [description]
-   * @param  {[type]} options [description]
-   * @return {[type]}         [description]
-   *
    * @example: {{ifEven @index}}
    */
   ifEven: function(conditional, options) {
@@ -1047,38 +714,25 @@ var helpers = {
   // -----------------------------
 
   /**
-   * {{formatData}}
    * Port of formatDate-js library (http://bit.ly/18eo2xw)
-   * @param  {[type]} date   [description]
-   * @param  {[type]} format [description]
-   * @return {[type]}        [description]
    */
   formatDate: function(datestr, format) {
     var date = moment(datestr).toDate();
     return helperutils.format(date, format);
   },
 
-  /**
-   * {{now}}
-   * @param  {[type]} format [description]
-   * @return {[type]}        [description]
-   */
   now: function(format) {
     var date = new Date();
     if (helperutils.isUndefined(format)) {
       return date;
-    } else {
-      return helperutils.format(date, format);
     }
+    return helperutils.format(date, format);
   },
 
   /**
-   * {{timeago}}
    * Modified version of http://bit.ly/18WwJYf
-   * @param  {[type]} date [description]
-   * @return {[type]}      [description]
    */
-  timeago: function(date) {
+  timeAgo: function(date) {
     date = new Date(date);
     var seconds = Math.floor((new Date() - date) / 1000);
     var interval = Math.floor(seconds / 31536000);
@@ -1140,7 +794,6 @@ var helpers = {
     return Math.round(value);
   },
 
-  // Attempt to parse the int, if not class it as 0
   sum: function() {
     var args = _.flatten(arguments);
     var sum = 0;
@@ -1170,7 +823,6 @@ var helpers = {
   },
 
   /**
-   * {{#withHash}}
    * Build context from the attributes hash
    * @author Vladimir Kuznetsov <https://github.com/mistakster>
    */
@@ -1184,41 +836,29 @@ var helpers = {
   // -----------------------------
   
   /**
-   * {{addCommas}}
-   *
    * Add commas to numbers
-   * @param {[type]} number [description]
    */
   addCommas: function(number) {
     return number.toString().replace(/(\d)(?=(\d\d\d)+(?!\d))/g, "$1,");
   },
 
   /**
-   * {{amountInt}}
-   *
    * Round to the nearest int value and add commas to numbers
-   * @param {[type]} number [description]
    */
   amountInt: function(amount) {
     return pk.utils.to_amount_int(amount);
   },
 
   /**
-   * {{amountInt}}
-   *
    * Round to the nearest 2 decimals and add commas to numbers
-   * @param {[type]} number [description]
    */
   amountFloat: function(amount) {
     return pk.utils.to_amount_float(amount);
   },
 
  /**
-  * {{formatPhoneNumber number}}
-  * Output a formatted phone number
+  * Output a formatted phone number (800) 555-1212
   * @author: http://bit.ly/QlPmPr
-  * @param  {Number} phoneNumber [8005551212]
-  * @return {Number}             [(800) 555-1212]
   */
   formatPhoneNumber: function(num) {
     num = num.toString();
@@ -1226,24 +866,15 @@ var helpers = {
   },
 
   /**
-   * {{random}}
    * Generate a random number between two values
    * @author Tim Douglas <https://github.com/timdouglas>
-   * @param  {[type]} min [description]
-   * @param  {[type]} max [description]
-   * @return {[type]}     [description]
    */
   random: function(min, max) {
     return _.random(min, max);
   },
 
   /**
-   * {{toAbbr}}
-   *
    * Abbreviate numbers
-   * @param  {[type]} number [description]
-   * @param  {[type]} digits [description]
-   * @return {[type]}        [description]
    */
   toAbbr: function(number, digits) {
     if (helperutils.isUndefined(digits)) {
@@ -1305,10 +936,7 @@ var helpers = {
   // -----------------------------
   
   /**
-   * {{capitalizeFirst}}
    * Capitalize first word in a sentence
-   * @param  {[type]} str [description]
-   * @return {[type]}     [description]
    */
   capitalizeFirst: function(str) {
     if (str && typeof str === "string") {
@@ -1317,10 +945,7 @@ var helpers = {
   },
 
   /**
-   * {{capitalizeEach}}
    * Capitalize each word in a sentence
-   * @param  {[type]} str [description]
-   * @return {[type]}     [description]
    */
   capitalizeEach: function(str) {
     if (str && typeof str === "string") {
@@ -1331,11 +956,7 @@ var helpers = {
   },
 
   /**
-   * {{center}}
    * Center a string using non-breaking spaces
-   * @param  {[type]} str    [description]
-   * @param  {[type]} spaces [description]
-   * @return {[type]}        [description]
    */
   center: function(str, spaces) {
     if (str && typeof str === "string") {
@@ -1350,10 +971,7 @@ var helpers = {
   },
 
   /**
-   * {{dashify}}
    * Replace periods in string with hyphens.
-   * @param  {[type]} str [description]
-   * @return {[type]}     [description]
    */
   dashify: function(str) {
     if (str && typeof str === "string") {
@@ -1362,10 +980,7 @@ var helpers = {
   },
 
   /**
-   * {{hyphenate}}
    * Replace spaces in string with hyphens.
-   * @param  {[type]} str [description]
-   * @return {[type]}     [description]
    */
   hyphenate: function(str) {
     if (str && typeof str === "string") {
@@ -1374,10 +989,7 @@ var helpers = {
   },
 
   /**
-   * {{lowercase}}
    * Make all letters in the string lowercase
-   * @param  {[type]} str [description]
-   * @return {[type]}     [description]
    */
   lowercase: function(str) {
     if (str && typeof str === "string") {
@@ -1386,11 +998,8 @@ var helpers = {
   },
   
   /**
-   * {{plusify}}
    * Replace spaces in string with pluses.
    * @author: Stephen Way <https://github.com/stephenway>
-   * @param  {[type]} str The input string
-   * @return {[type]}     Input string with spaces replaced by plus signs
    */
   plusify: function(str) {
     if (str && typeof str === "string") {
@@ -1399,10 +1008,7 @@ var helpers = {
   },
 
   /**
-   * {{safeString}}
    * Output a Handlebars safeString
-   * @param  {[type]} str [description]
-   * @return {[type]}       [description]
    */
   safeString: function(str) {
     if (str && typeof str === "string") {
@@ -1411,10 +1017,7 @@ var helpers = {
   },
 
   /**
-   * {{sentence}}
    * Sentence case
-   * @param  {[type]} str [description]
-   * @return {[type]}     [description]
    */
   sentence: function(str) {
     if (str && typeof str === "string") {
@@ -1425,10 +1028,7 @@ var helpers = {
   },
 
   /**
-   * {{titleize}}
    * Title case. "This is Title Case"
-   * @param  {[type]} str [description]
-   * @return {[type]}     [description]
    */
   titleize: function(str) {
     if (str && typeof str === "string") {
@@ -1464,7 +1064,6 @@ var helpers = {
   },
 
   /**
-   * {{count}}
    * Return the number of occurrances of a string, within a string
    * @author: Jon Schlinkert <http://github.com/jonschlinkert>
    * @param  {String} str       The haystack
@@ -1490,13 +1089,8 @@ var helpers = {
   },
 
   /**
-   * {{replace}}
    * Replace occurrences of string "A" with string "B"
    * @author: Jon Schlinkert <http://github.com/jonschlinkert>
-   * @param  {[type]} str [description]
-   * @param  {[type]} a   [description]
-   * @param  {[type]} b   [description]
-   * @return {[type]}     [description]
    */
   replace: function(str, a, b) {
     if (str && typeof str === "string") {
@@ -1505,9 +1099,8 @@ var helpers = {
   },
 
   /**
-   * {{ellipsis}}
-   * @author: Jon Schlinkert <http://github.com/jonschlinkert>
    * Truncate the input string and removes all HTML tags
+   * @author: Jon Schlinkert <http://github.com/jonschlinkert>
    * @param  {String} str      The input string.
    * @param  {Number} limit    The number of characters to limit the string.
    * @param  {String} append   The string to append if charaters are omitted.
@@ -1520,19 +1113,13 @@ var helpers = {
     var sanitized = str.replace(/(<([^>]+)>)/g, '');
     if (sanitized.length > limit) {
       return sanitized.substr(0, limit - append.length) + append;
-    } else {
-      return sanitized;
     }
+    return sanitized;
   },
 
   /**
-   * {{truncate}}
    * Truncates a string given a specified `length`,
    * providing a custom string to denote an `omission`.
-   * @param  {[type]} str      [description]
-   * @param  {[type]} length   [description]
-   * @param  {[type]} omission [description]
-   * @return {[type]}          [description]
    */
   truncate: function(str, limit, omission) {
     if (helperutils.isUndefined(omission)) {
@@ -1540,21 +1127,14 @@ var helpers = {
     }
     if (str.length > limit) {
       return str.substring(0, limit - omission.length) + omission;
-    } else {
-      return str;
     }
+    return str;
   },
 
   /**
-   * {{startsWith}}
-   * @author: Dan Fox <http://github.com/iamdanfox>
-   *
    * Tests whether a string begins with the given prefix.
    * Behaves sensibly if the string is null.
-   * @param  {[type]} prefix     [description]
-   * @param  {[type]} testString [description]
-   * @param  {[type]} options    [description]
-   * @return {[type]}            [description]
+   * @author: Dan Fox <http://github.com/iamdanfox>
    *
    * @example:
    *   {{#startsWith "Goodbye" "Hello, world!"}}
@@ -1566,9 +1146,8 @@ var helpers = {
   startsWith: function(prefix, str, options) {
     if ((str !== null ? str.indexOf(prefix) : void 0) === 0) {
       return options.fn(this);
-    } else {
-      return options.inverse(this);
     }
+    return options.inverse(this);
   },
   
   // -----------------------------
@@ -1581,29 +1160,21 @@ var helpers = {
   },
 
   /**
-   * {{encodeURI}}
    * Encodes a Uniform Resource Identifier (URI) component
    * by replacing each instance of certain characters by
    * one, two, three, or four escape sequences representing
    * the UTF-8 encoding of the character.
-   *
    * @author: Jon Schlinkert <http://github.com/jonschlinkert>
-   * @param  {String} uri: The un-encoded string
-   * @return {String}      The endcoded string.
    */
   encodeURI: function(uri) {
     return encodeURIComponent(uri);
   },
 
   /**
-   * {{decodeURI}}
    * Decodes a Uniform Resource Identifier (URI) component
    * previously created by encodeURIComponent or by a
    * similar routine.
-   *
    * @author: Jon Schlinkert <http://github.com/jonschlinkert>
-   * @param  {[type]} encodedURI [description]
-   * @return {[type]}            [description]
    */
   decodeURI: function(encodedURI) {
     return decodeURIComponent(encodedURI);
@@ -1614,17 +1185,6 @@ var helpers = {
    */
   yesNo: function(test, yes, no) {
     return test ? yes : no;
-  },
-
-  // -----------------------------
-  // Budget Helpers
-  // -----------------------------
-  budgetFlags: function(budget, value) {
-    var flags = [];
-    if (value == 0) { flags.push('zero'); }
-    if (value > 10) { flags.push('income'); }
-    if (value < 10 && (value <= budget * 1.2)) { flags.push('over'); }
-    return flags.join(' ');
   },
 
 };

@@ -243,9 +243,15 @@
     #category-total td[data-name='budget'],
     #accounts [data-name='balance'],
     #summary tfoot {
-      div,input {
-        color: transparent !important;
-        text-shadow: 0 0 10px rgba(0,0,0,0.5) !important;
+      div,input { display: none; }
+      td {
+        height:23px;
+        &::before {
+          content: 'xxxx';
+          display: block;
+          color: transparent !important;
+          text-shadow: 0 0 10px rgba(0,0,0,0.5) !important;
+        }
       }
     }
   }
