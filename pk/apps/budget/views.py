@@ -14,7 +14,7 @@ from pk import utils
 from pk.utils.context import Bunch
 from pk.utils.search import FIELDTYPES, SearchField, Search
 from rest_framework import viewsets
-from rest_framework.decorators import list_route
+from rest_framework.decorators import detail_route, list_route
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -88,6 +88,18 @@ class CategoriesViewSet(viewsets.ModelViewSet):
             category['summary'] = summary.categories[category['name']]
         utils.move_to_end(response.data, 'previous','next','summary','results')
         return response
+
+    @detail_route(methods=['get'])
+    def details(self, request, pk, *args, **kwargs):
+        summary = CategorySummaryView()
+        category = Category.objects.get(pk=pk)
+        data = CategorySerializer(category, context={'request':request}).data
+        data['details'] = OrderedDict(summary.categories[category.name])
+        data['details']['num_months'] = summary.data['months']
+        for attr in ('mindate','maxdate','average_months','average_mindate','average_maxdate'):
+            data['details'][attr] = summary.data[attr]
+        utils.move_to_end(data['details'], 'months')
+        return Response(data)
 
 
 class TransactionsViewSet(viewsets.ModelViewSet):

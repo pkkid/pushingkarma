@@ -162,10 +162,14 @@ pkedit class attributes:
     <div class='title'>{{this.name}}</div>
     <div class='body' style='min-width:200px;'>
       <dl>
-        <dt>Total Transactions:</dt>
+        <dt>Transactions:</dt>
         <dd><span class='animated-ellipsis'><a href='javascript:pk.budget.search("category=\"{{this.name}}\"", false)'>{{addCommas this.details.transactions}}</a></dd>
-        <dt>Total Spent:</dt>
-        <dd><span class='animated-ellipsis'>{{amountInt this.details.total}}</dd>
+        <dt>Spent:</dt>
+        <dd><span class='animated-ellipsis'>{{amountInt this.details.total}}
+          <div class='subtext'>({{this.details.num_months}} months)</div></dd>
+        <dt>Average:</dt>
+        <dd><span class='animated-ellipsis'>{{amountInt this.details.average}}
+          <div class='subtext'>({{this.details.average_months}} months)</div></dd>
       </dl>
       <div class='pkrow' data-id='{{this.id}}' data-url='{{this.url}}'>
         <div data-name='comment' class='pkedit'><textarea spellcheck='false' placeholder='Notes'>{{this.comment}}</textarea></div>
