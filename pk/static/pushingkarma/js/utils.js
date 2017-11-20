@@ -5,6 +5,12 @@
 
 pk.utils = {
 
+  add_commas: function(value) {
+    var parts = value.toString().split('.');
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return parts.join('.');
+  },
+
   ajax: function(url, data, type) {
     type = type ? type : 'POST';
     var xhr = $.ajax({url:url, data:data, type:type, dataType:'json'});
@@ -14,6 +20,16 @@ pk.utils = {
         return deferred.reject(jqXHR, textStatus, data);
       return deferred.resolve(data, textStatus, jqXHR);
     });
+  },
+
+  autosize_textarea: function(jqtext, padding, lineheight, minlines) {
+    // padding and line-height must be set for this to work.
+    minlines = minlines || 2;
+    jqtext.on('input keyup', function(event) {
+      var nlines = jqtext.val().split('\n').length
+      var lines = Math.max(minlines, nlines);
+      $(this).css('height', (lines * lineheight) + padding);
+    }).trigger('input');
   },
 
   basename: function(path) {
@@ -38,17 +54,6 @@ pk.utils = {
     });
   },
   
-  hash: function(str) {
-    var hash = 0, i, chr, len;
-    if (str.length === 0) return hash;
-    for (i = 0, len = str.length; i < len; i++) {
-      chr = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + chr;
-      hash |= 0; // Convert to 32bit integer
-    }
-    return Math.abs(hash).toString(16);
-  },
-
   enable_animations: function() {
     setTimeout(function() {
       $('body').removeClass('preload');
@@ -63,6 +68,17 @@ pk.utils = {
     }
     return result;
   },
+
+  hash: function(str) {
+    var hash = 0, i, chr, len;
+    if (str.length === 0) return hash;
+    for (i = 0, len = str.length; i < len; i++) {
+      chr = str.charCodeAt(i);
+      hash = ((hash << 5) - hash) + chr;
+      hash |= 0; // Convert to 32bit integer
+    }
+    return Math.abs(hash).toString(16);
+  },
   
   highlightjs: function(selector) {
     selector = this.set_default(selector, 'article pre code');
@@ -75,12 +91,6 @@ pk.utils = {
     selector = this.set_default(selector, '[data-toggle="tooltip"]');
     console.debug('init tooltips on '+ selector);
     $(selector).tooltip({delay:{show:200, hide:50}});
-  },
-
-  add_commas: function(value) {
-    var parts = value.toString().split('.');
-    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    return parts.join('.');
   },
 
   rset: function(object, property, value) {

@@ -24,6 +24,7 @@ api.register('notes', note_views.NotesViewSet)
 api.register('accounts', budget_views.AccountsViewSet)
 api.register('categories', budget_views.CategoriesViewSet)
 api.register('transactions', budget_views.TransactionsViewSet)
+api.register('keyval', budget_views.KeyValueViewSet)
 
 urlpatterns = [
     url(r'^api/', include(api.urls)),

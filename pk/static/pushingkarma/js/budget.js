@@ -44,7 +44,7 @@ pk.budget = {
     // load initial display data
     this.update_categories();
     if (this.params.panel == 'accounts') { this.update_accounts(); }
-    if (this.params.view == 'summary') { this.show_summary(); }
+    if (this.params.view == 'summary') { this.update_summary(); }
     if (this.params.view == 'transactions') { this.update_transactions(); }
   },
 
@@ -59,9 +59,11 @@ pk.budget = {
     this.summary = this.container.find('#summary');
     this.transactions = this.container.find('#transactions');
     this.viewbtn = this.container.find('#viewbtn');
+    this.panelbtn = this.container.find('#panelbtn');
   },
 
   init_shortcuts: function() {
+    // initialize keyboard shortcuts
     var self = this;
     var KEYS = this.KEYS;
     // f3 puts focus on search input
@@ -121,7 +123,7 @@ pk.budget = {
   bind_search_edit: function() {
     // update transactions when search input changes
     var self = this;
-    this.searchinput.on('change paste keyup', function(event) {
+    this.searchinput.on('input', function(event) {
       event.preventDefault();
       $(this).val() ? self.update_transactions() : self.update_summary();
     });
@@ -285,6 +287,8 @@ pk.budget = {
   },
 
   bind_row_highlight: function() {
+    // highlight the current row on mouseover (this highlights both
+    // the summary and category tables together).
     var self = this;
     // mouse over summary row
     self.summary.on('mouseenter', '.pklight', function(event) {
@@ -323,10 +327,12 @@ pk.budget = {
   },
 
   autocomplete: function() {
+    // return true if autocomplete is visisble on the page.
     return $('.ui-autocomplete:visible').length > 0;
   },
 
   clean_data: function(data) {
+    // clean data before sending it home to server.
     for (var name in data) {
       if (name == 'approved') { data[name] = data[name] == 'x'; }
     }
@@ -334,6 +340,7 @@ pk.budget = {
   },
 
   popover_display: function(item, tmpl) {
+    // display popover content.
     var self = this;
     var row = item.closest(self.ROW);
     var type = row.data('type');
@@ -341,70 +348,30 @@ pk.budget = {
     var xhr = $.ajax({url:url, type:'GET', dataType:'json'});
     row.removeData('bs.popover');
     xhr.done(function(data, textStatus, jqXHR) {
-      var content = pk.templates[tmpl](data);
+      var content = $(pk.templates[tmpl](data));
+      pk.utils.autosize_textarea($(content).find('textarea'), 4, 15);
       row.popover({trigger:'manual', placement:'bottom', html:true,
         content:content}).addClass('popped').popover('show');
     });
   },
 
-  show_accounts: function() {
-    var self = this;
-    self.params.panel = 'accounts';
-    self.categories.fadeOut('fast', function() {
-      self.accounts.fadeIn('fast');
-    });
-    // update the url
-    var url = pk.utils.update_url(null, self.params);
-    window.history.replaceState(null, null, url);
-  },
-
-  show_categories: function() {
-    var self = this;
-    self.params.panel = 'categories';
-    self.accounts.fadeOut('fast', function() {
-      self.categories.fadeIn('fast');
-    });
-    var url = pk.utils.update_url(null, self.params);
-    window.history.replaceState(null, null, url);
-  },
-
-  show_summary: function() {
-    var self = this;
-    self.params.view = 'summary';
-    self.params.search = '';
-    self.viewbtn.attr('class', 'mdi mdi-format-list-bulleted');
-    self.viewbtn.tooltip('hide').attr('data-original-title', 'View Transactions');
-    self.transactions.fadeOut('fast', function() {
-      self.summary.fadeIn('fast');
-      self.sidepanel.addClass('toedge');
-    });
-    var url = pk.utils.update_url(null, self.params);
-    window.history.replaceState(null, null, url);
-  },
-
-  show_transactions: function() {
-    var self = this;
-    self.params.view = 'transactions';
-    self.viewbtn.attr('class', 'mdi mdi-close-circle-outline');
-    self.viewbtn.tooltip('hide').attr('data-original-title', 'View Summary');
-    self.summary.fadeOut('fast', function() {
-      self.transactions.fadeIn('fast');
-      self.sidepanel.removeClass('toedge');
-    });
-    // update the url
-    var url = pk.utils.update_url(null, self.params);
-    window.history.replaceState(null, null, url);
+  toggle_panel() {
+    // toggle panel content between categories and accounts.
+    var categories = this.params.panel == 'categories';
+    categories ? this.update_accounts() : this.update_categories();
   },
 
   text_or_val: function(item) {
+    // get value of a cell from input or div based on current edit mode.
+    // Remember we replace div with input on the fly when editing content.
     var child = item.children().first();
     if (child.is('div')) {
-      // Get value from a div
+      // get value from a div
       var value = child.text().trim();
       value = item.hasClass('int') ? pk.utils.to_int(value) : value;
       value = item.hasClass('float') ? pk.utils.to_float(value) : value;
     } else {
-      // Get value from an input
+      // get value from an input
       value = child.val().trim();
       if ((value == '') && (item.data('default') !== undefined)) {
         value = item.data('default');
@@ -414,6 +381,8 @@ pk.budget = {
   },
 
   item_delete: function(item) {
+    // display popup making sure we want to delete an item; then
+    // perform the requested action.
     var self = this;
     var row = item.closest(self.ROW);
     var type = row.data('type');
@@ -438,6 +407,7 @@ pk.budget = {
   },
 
   item_display: function(item, value) {
+    // update table cell for display.
     var div = $('<div></div>');
     value = value === null ? '' : value.name || value;
     if (item.hasClass('error')) {
@@ -450,6 +420,7 @@ pk.budget = {
   },
 
   item_edit: function(item) {
+    // update table cell for editing.
     var self = this;
     var row = item.closest(self.ROW);
     if (item.hasClass('readonly')) { return; }
@@ -486,6 +457,7 @@ pk.budget = {
   },
 
   item_save: function(item, method, data, force, display, callback) {
+    // save the current contents of the table cell.
     data = data || {};
     force = force || false;
     display = display || false;
@@ -513,6 +485,7 @@ pk.budget = {
   },
 
   request: function(item, url, method, data, opts) {
+    // helper function to send a request to the server.
     item.addClass('saving');
     var row = item.closest(self.ROW);
     var xhr = $.ajax({url:url, type:method, data:data, dataType:'json'});
@@ -535,6 +508,7 @@ pk.budget = {
   },
 
   search: function(query, append) {
+    // update search input and display matching transactions
     if (append == true) {
       var searchval = this.searchinput.val();
       var exists = searchval.toLowerCase().indexOf(query.toLowerCase()) >= 0;
@@ -545,8 +519,13 @@ pk.budget = {
   },
  
   update_accounts: function() {
+    // updates and displays accounts in the side panel.
     var self = this;
-    self.show_accounts();
+    self.update_url('panel', 'accounts');
+    self.panelbtn.text('View Categories');
+    self.categories.fadeOut('fast', function() {
+      self.accounts.fadeIn('fast');
+    });
     try { this.xhract.abort(); } catch(err) { }
     this.xhract = $.ajax({url:self.URL_ACCOUNTS, type:'GET', dataType:'json'});
     this.xhract.done(function(data, textStatus, jqXHR) {
@@ -556,46 +535,44 @@ pk.budget = {
   },
 
   update_categories: function(callback) {
+    // updates and displays categories in the side panel.
     var self = this;
-    self.show_categories();
-    try { this.xhrcat.abort(); } catch(err) { }
-    this.xhrcat = $.ajax({url:self.URL_CATEGORIES, type:'GET', dataType:'json'});
-    this.xhrcat.done(function(data, textStatus, jqXHR) {
-      // Update panel (categories)
+    self.update_url('panel', 'categories');
+    self.panelbtn.text('View Accounts');
+    self.accounts.fadeOut('fast', function() {
+      self.categories.fadeIn('fast');
+    });
+    try { self.xhrcat.abort(); } catch(err) { }
+    self.xhrcat = $.ajax({url:self.URL_CATEGORIES, type:'GET', dataType:'json'});
+    self.xhrcat.done(function(data, textStatus, jqXHR) {
       self.categories.html(pk.templates.category_list(data));
-      self.update_category_trends();
+      //self.update_category_trends(data);   // TODO: RE-ENABLE THIS
       self.update_category_choices(data);
       self.bind_drag_categories();
-      // Update view (summary)
       if (self.params.view == 'summary') {
         self.searchinfo.text('');
         self.summary.html(pk.templates.summary(data));
       }
-      // Callback
       if (callback) { callback(); }
     });
   },
 
-  update_category_trends: function() {
+  update_category_trends: function(data, i) {
+    // loop through each category to generate a trand column
+    // chart of the last 12 months spend.
     var self = this;
-    // Wait for self.summary_data to be populated
-    if (self.summary_data === null) {
-      return setTimeout(function() { self.update_category_trends(); }, 100);
+    for (var i=0; i<data.results.length; i++) {
+      var category = data.results[i];
+      var selector = self.categories.find('tbody tr[data-id='+ category.id +'] td[data-name=trend]');
+      var mult = category.name == 'Income' ? 1 : -1;
+      var cdata = category.summary.months.map(x => Math.max(mult * x.amount, 0));
+      selector.highcharts(pk.charts.budget_trend(cdata));
+      selector.find('.highcharts-container').fadeIn('fast');
     }
-    // update trend charts
-    for (var i in self.summary_data.categories) {
-      var summary = self.summary_data.categories[i];
-      var selector = self.categories.find('tbody tr[data-id='+ summary.categoryid +'] td[data-name=trend]');
-      var data = Object.values(summary.amounts).map(function(x) {
-        var mult = summary.name == 'Income' ? 1 : -1;
-        return Math.max(x * mult, 0);
-      });
-      var chart = pk.charts.budget_trend(data);
-      selector.highcharts(chart);
-    };
   },
 
   update_category_choices: function(data) {
+    // updates the category choices used when editing a transaction.
     var category_choices = [];
     for (var i in data.results) {
       var category = data.results[i];
@@ -607,23 +584,34 @@ pk.budget = {
   },
 
   update_summary: function() {
-    this.show_summary();
-    this.update_categories();
+    // updates and displays summary overview in the main container.
+    var self = this;
+    self.update_url('view', 'summary');
+    self.update_url('search', '');
+    self.viewbtn.attr('class', 'mdi mdi-format-list-bulleted');
+    self.viewbtn.tooltip('hide').attr('data-original-title', 'View Transactions');
+    self.transactions.fadeOut('fast', function() {
+      self.summary.fadeIn('fast');
+      self.sidepanel.addClass('toedge');
+    });
+    self.update_categories();
   },
 
   update_transactions: function(page) {
+    // updates and displays transactions overview in the main container.
     var self = this;
-    self.params.search = this.searchinput.val();
-    self.show_transactions();
-    if (!page) {
-      self.trxpage = null;
-      var more = null;
-      var url = pk.utils.update_url(self.URL_TRANSACTIONS, {search:self.params.search});
-    } else {
-      var more = this.transactions.find('#loadmore');
-      var url = more.data('next');
-      more.addClass('on');
-    }
+    self.update_url('view', 'transactions');
+    self.update_url('search', self.searchinput.val());
+    self.viewbtn.attr('class', 'mdi mdi-close-circle-outline');
+    self.viewbtn.tooltip('hide').attr('data-original-title', 'View Summary');
+    self.summary.fadeOut('fast', function() {
+      self.transactions.fadeIn('fast');
+      self.sidepanel.removeClass('toedge');
+    });
+    // load the initial or 'more' transactions.
+    var initurl = pk.utils.update_url(self.URL_TRANSACTIONS, {search:self.params.search})
+    var more = page ? this.transactions.find('#loadmore') : null;
+    var url = page ? more.data('next') : initurl;
     if (self.trxpage != url) {
       self.trxpage = url;
       try { this.xhrtrx.abort(); } catch(err) { }
@@ -639,24 +627,37 @@ pk.budget = {
           self.transactions.html(html);
         }
       });
+    } else {
+      self.trxpage = null;
     }
   },
 
-  // Handlebar Helpers
-  helpers: {
-    budgetFlags: function(category, month) {
-      var flags = [];
-      var _flags = function() { return flags.join(' '); }
-      if (month.amount == 0) { flags.push('zero'); }
-      if (month.amount > 10) { flags.push('income'); }
-      if (category.name == 'Ignored') { flags.push('zero'); }
-      if (category.budget < -10 && month.amount < 10 &&
-         (month.amount <= category.budget * 1.2)) { flags.push('over'); }
-      return _flags();
-    },
+  update_url: function(key, value) {
+    // update the browser URL to reflect current params
+    this.params[key] = value;
+    var url = pk.utils.update_url(null, this.params);
+    window.history.replaceState(null, null, url);
   },
 
 };
+
+
+//-------------------------
+// Handlebar Helpers
+//-------------------------
+pk.budget.helpers = {
+  budgetFlags: function(category, month) {
+    var flags = [];
+    var _flags = function() { return flags.join(' '); }
+    if (month.amount == 0) { flags.push('zero'); }
+    if (month.amount > 10) { flags.push('income'); }
+    if (category.name == 'Ignored') { flags.push('zero'); }
+    if (category.budget < -10 && month.amount < 10 &&
+       (month.amount <= category.budget * 1.2)) { flags.push('over'); }
+    return _flags();
+  },
+};
+
 
 for (var helper in pk.budget.helpers) {
   if (pk.budget.helpers.hasOwnProperty(helper)) {

@@ -55,7 +55,7 @@ def deploy_dbbackup():
         delete=True, extra_opts='--quiet --links --omit-dir-times')
 
 
-def get_db():
+def getdb():
     """ Download production database to local environment. """
     dbpath = os.path.join(env.directory, 'db.sqlite3')
     get(dbpath, dbpath)

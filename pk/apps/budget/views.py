@@ -23,10 +23,12 @@ from .manager import TransactionManager
 from .models import Account, AccountSerializer
 from .models import Category, CategorySerializer, UNCATEGORIZED
 from .models import Transaction, TransactionSerializer
+from .models import KeyValue, KeyValueSerializer
 
 ACCOUNTS = settings.BUDGET_ACCOUNTS
 DATEFORMAT = '%Y-%m-%d'
 CATEGORY_NULL = {'id':'null', 'name':UNCATEGORIZED, 'url':None, 'sortindex':999, 'budget':'0.00', 'comment':''}
+REVERSE = True   # Set 'True' or 'False' for reversed month order.
 TRANSACTIONSEARCHFIELDS = {
     'bank': SearchField(FIELDTYPES.STR, 'account__name'),
     'date': SearchField(FIELDTYPES.DATE, 'date'),
@@ -135,6 +137,13 @@ class TransactionsViewSet(viewsets.ModelViewSet):
         return Response(trxmanager.get_status())
 
 
+class KeyValueViewSet(viewsets.ModelViewSet):
+    queryset = KeyValue.objects.order_by('key')
+    serializer_class = KeyValueSerializer
+    permission_classes = [IsAuthenticated]
+    list_fields = KeyValueSerializer.Meta.fields
+
+
 class CategorySummaryView:
 
     def __init__(self, months=12):
@@ -150,7 +159,7 @@ class CategorySummaryView:
         self.data = self._count_transactions(self.data)
         self.data = self._init_total(self.data)
         self.data = self._add_cateogry_months(self.data)
-        self.data.totals = self.data.totals.values()
+        self.data.totals = sorted(self.data.totals.values(), key=lambda x:x['month'], reverse=REVERSE)
         self.data = self._calc_averages(self.data)
 
     def get_data(self):
@@ -180,6 +189,7 @@ class CategorySummaryView:
     def _add_cateogry_months(self, data):
         """ group data by category, month => amount. """
         lookup = self._summary_query_data(data.mindate, data.maxdate)
+        comments = dict(KeyValue.objects.values_list('key', 'value'))
         for category in list(Category.objects.order_by('sortindex')) + [None]:
             cdata = Bunch()
             cdata.total = 0.0
@@ -191,7 +201,7 @@ class CategorySummaryView:
                 # pull data from lookup dict
                 monthstr = month.strftime(DATEFORMAT)
                 categoryid = 'null' if category is None else category.id
-                key = '%s-%s' % (categoryid, monthstr)
+                key = '%s:%s' % (monthstr, categoryid)
                 transactions, amount = lookup.get(key, [0, 0.0])
                 # update total data
                 data.totals[monthstr].transactions += transactions
@@ -204,11 +214,14 @@ class CategorySummaryView:
                 mdata.month = monthstr
                 mdata.transactions = transactions
                 mdata.amount = amount
+                mdata.comment = comments.get(key, '')
                 cdata.months.append(mdata)
                 # next month
                 month += relativedelta(months=1)
             name = UNCATEGORIZED if category is None else category.name
             self.categories[name] = cdata
+            if REVERSE:
+                cdata.months = cdata.months[::-1]
         return data
 
     def _summary_query_data(self, mindate, maxdate):
@@ -216,8 +229,9 @@ class CategorySummaryView:
         with connection.cursor() as cursor:
             mindatestr = mindate.strftime(DATEFORMAT)
             maxdatestr = maxdate.strftime(DATEFORMAT)
-            query = "SELECT printf('%%s-%%s', ifnull(c.id, 'null'),"
-            query += "  substr(datetime(t.date, 'start of month'),0,11)) as key,\n"
+            query = "SELECT printf('%%s:%%s',"
+            query += "   substr(datetime(t.date, 'start of month'),0,11),"
+            query += "   ifnull(c.id, 'null')) as key,\n"
             query += "  count(t.id) as transactions,\n"
             query += "  round(sum(t.amount), 2) as amount"
             query += " FROM budget_transaction t\n"

@@ -98,15 +98,13 @@
       #accounts { padding-right: 10px; }
     }
     #categories {
-      //margin-top: 72px;
       #category-add input {
         background-color: rgba(0,0,0,0.05);
         opacity: 0.3;
         transition: opacity 0.3s ease;
       }
-      #category-add.focus input {
-        opacity: 1;
-      }
+      #category-add.focus input { opacity:1; }
+      .highcharts-container { display:none; }
     }
   }
 
@@ -133,7 +131,7 @@
       }
       .average {
         background-color: rgba(0,0,0,0.05);
-        border-right: 1px solid rgba(0,0,0,0.2);
+        border-left: 1px solid rgba(0,0,0,0.2);
         position: relative;
       }
       td.average { border-bottom: 1px dotted rgba(0,0,0,0.14); }

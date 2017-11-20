@@ -17,8 +17,9 @@ pk.charts = {
     pk.utils.rset(chart, 'credits.enabled', false);
     pk.utils.rset(chart, 'exporting.enabled', null);
     pk.utils.rset(chart, 'legend.enabled', false);
+    pk.utils.rset(chart, 'plotOptions.column.animation.duration', 0);
     pk.utils.rset(chart, 'plotOptions.column.borderWidth', 0);
-    pk.utils.rset(chart, 'plotOptions.column.color', '#888');
+    pk.utils.rset(chart, 'plotOptions.column.color', '#777b');
     pk.utils.rset(chart, 'plotOptions.column.enableMouseTracking', false);
     pk.utils.rset(chart, 'plotOptions.column.minPointLength', 2);
     pk.utils.rset(chart, 'plotOptions.column.pointPadding', 0.02);
@@ -32,6 +33,11 @@ pk.charts = {
     pk.utils.rset(chart, 'yAxis.labals.enabled', false);
     pk.utils.rset(chart, 'yAxis.title.enabled', false);
     chart.series = [{data: data}];
+    // highlight max values
+    // var max = Math.max(...data);
+    // for (var i=0; i<data.length; i++) {
+    //     if (data[i] == max) { data[i] = {y:data[i], color:'#955b'}; }
+    // }
     return chart;
   },
 

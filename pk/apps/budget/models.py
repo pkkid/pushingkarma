@@ -107,3 +107,14 @@ class TransactionSerializer(DynamicFieldsSerializer):
             instance.category = category
         instance.save()
         return instance
+
+
+class KeyValue(TimeStampedModel):
+    key = models.SlugField(primary_key=True, max_length=255, unique=True, null=False)
+    value = models.TextField()
+
+
+class KeyValueSerializer(DynamicFieldsSerializer):
+    class Meta:
+        model = KeyValue
+        fields = ('key','value','url')

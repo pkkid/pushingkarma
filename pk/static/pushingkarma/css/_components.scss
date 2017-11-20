@@ -153,6 +153,8 @@ div.fancyhr {
     font-size: 10px;
     height: 100px;
     resize: none;
+    white-space: nowrap;
+    overflow-x: hidden;
     width: 100%;
     &::selection { background: #999; }
   }
