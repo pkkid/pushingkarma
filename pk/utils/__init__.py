@@ -21,7 +21,8 @@ def get_object_or_none(cls, *args, **kwargs):
 
 def move_to_end(odict, *keys):
     for key in keys:
-        odict.move_to_end(key) 
+        if key in odict:
+            odict.move_to_end(key)
     return odict
 
 

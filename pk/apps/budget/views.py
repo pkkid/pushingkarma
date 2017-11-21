@@ -10,7 +10,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db import connection
 from django.db.models import Min, Max, Sum
-from pk import utils
+from pk import log, utils
 from pk.utils.context import Bunch
 from pk.utils.search import FIELDTYPES, SearchField, Search
 from rest_framework import viewsets
@@ -26,8 +26,9 @@ from .models import Transaction, TransactionSerializer
 from .models import KeyValue, KeyValueSerializer
 
 ACCOUNTS = settings.BUDGET_ACCOUNTS
-DATEFORMAT = '%Y-%m-%d'
 CATEGORY_NULL = {'id':'null', 'name':UNCATEGORIZED, 'url':None, 'sortindex':999, 'budget':'0.00', 'comment':''}
+DATEFORMAT = '%Y-%m-%d'
+IGNORED = 'Ignored'
 REVERSE = True   # Set 'True' or 'False' for reversed month order.
 TRANSACTIONSEARCHFIELDS = {
     'bank': SearchField(FIELDTYPES.STR, 'account__name'),
@@ -81,7 +82,7 @@ class CategoriesViewSet(viewsets.ModelViewSet):
 
     @list_route(methods=['get'])
     def summary(self, request, *args, **kwargs):
-        summary = CategorySummaryView()
+        summary = CategorySummaryView(request)
         response = self.list(request, *args, **kwargs)
         response.data['total'] = round(sum(float(c['budget']) for c in response.data['results']), 2)
         response.data['summary'] = summary.get_data()
@@ -93,14 +94,30 @@ class CategoriesViewSet(viewsets.ModelViewSet):
 
     @detail_route(methods=['get'])
     def details(self, request, pk, *args, **kwargs):
-        summary = CategorySummaryView()
+        # check the month was passed in
+        month = request.GET.get('month')
+        if month: return self.details_month(request, pk, month)
+        # return summary for all month
         category = Category.objects.get(pk=pk)
+        summary = CategorySummaryView(request, category=category)
         data = CategorySerializer(category, context={'request':request}).data
         data['details'] = OrderedDict(summary.categories[category.name])
         data['details']['num_months'] = summary.data['months']
         for attr in ('mindate','maxdate','average_months','average_mindate','average_maxdate'):
             data['details'][attr] = summary.data[attr]
         utils.move_to_end(data['details'], 'months')
+        return Response(data)
+
+    def details_month(self, request, pk, monthstr):
+        category = Category.objects.get(pk=pk)
+        data = CategorySerializer(category, context={'request':request}).data
+        month = datetime.strptime(monthstr, '%Y-%m-%d').date()
+        summary = CategorySummaryView(request, category=category, max_month=month,
+            num_months=1, include_transactions=10)
+        data['details'] = OrderedDict(summary.categories[category.name])
+        data['details'].update(data['details']['months'][0])
+        del data['details']['months']
+        del data['details']['amount']
         return Response(data)
 
 
@@ -146,16 +163,26 @@ class KeyValueViewSet(viewsets.ModelViewSet):
 
 class CategorySummaryView:
 
-    def __init__(self, months=12):
-        self.data = Bunch()
-        self.categories = defaultdict()
+    def __init__(self, request, category=None, max_month=None, num_months=12, include_transactions=0):
+        """ Generate a summary view of transactions. Available opts include:
+            * max_month (date): max month to include in summary (default current month).
+            * num_months (int): num months to include in summary (default 12).
+            * include_transactions (int): Set to number of recent transactions to include (default 0).
+        """
         today = datetime.today()
-        maxmonth = date(today.year, today.month, 1)
-        # Create the dataset
-        self.data.months = months
-        self.data.mindate = maxmonth - relativedelta(months = months - 1)
-        self.data.maxdate = maxmonth + relativedelta(months=1)
-        # populate summary data
+        self.data = Bunch()
+        self.request = request
+        self.category = category
+        self.max_month = max_month or date(today.year, today.month, 1)
+        self.num_months = num_months
+        self.include_transactions = include_transactions
+        self.calc_summary()
+
+    def calc_summary(self):
+        self.categories = defaultdict()
+        self.data.months = self.num_months
+        self.data.mindate = self.max_month - relativedelta(months=self.num_months - 1)
+        self.data.maxdate = self.max_month + relativedelta(months=1)
         self.data = self._count_transactions(self.data)
         self.data = self._init_total(self.data)
         self.data = self._add_cateogry_months(self.data)
@@ -168,6 +195,8 @@ class CategorySummaryView:
 
     def _count_transactions(self, data):
         transactions = Transaction.objects.filter(date__gte=self.data.mindate, date__lt=self.data.maxdate)
+        if self.category:
+            transactions = transactions.filter(category=self.category)
         self.data.transactions = transactions.count()
         self.data.unapproved = transactions.filter(approved=False).count()
         self.data.uncategorized = transactions.filter(category_id=None).count()
@@ -193,7 +222,6 @@ class CategorySummaryView:
         for category in list(Category.objects.order_by('sortindex')) + [None]:
             cdata = Bunch()
             cdata.total = 0.0
-            cdata.average = 0.0
             cdata.transactions = 0
             cdata.months = []
             month = data.mindate
@@ -205,7 +233,7 @@ class CategorySummaryView:
                 transactions, amount = lookup.get(key, [0, 0.0])
                 # update total data
                 data.totals[monthstr].transactions += transactions
-                if category and category.name != 'Ignored':
+                if category and category.name != IGNORED:
                     data.totals[monthstr].amount = round(data.totals[monthstr].amount + amount, 2)
                 # update category data
                 cdata.transactions += transactions
@@ -215,14 +243,27 @@ class CategorySummaryView:
                 mdata.transactions = transactions
                 mdata.amount = amount
                 mdata.comment = comments.get(key, '')
+                mdata.url = '{}?month={}'.format(reverse('category-details',
+                    args=[categoryid], request=self.request), monthstr)
                 cdata.months.append(mdata)
+                # recent transactions
+                if self.include_transactions:
+                    mdata.recent = self._category_month_transactions(category, month)
                 # next month
                 month += relativedelta(months=1)
             name = UNCATEGORIZED if category is None else category.name
             self.categories[name] = cdata
-            if REVERSE:
-                cdata.months = cdata.months[::-1]
+            if REVERSE: cdata.months = cdata.months[::-1]
         return data
+
+    def _category_month_transactions(self, category, month):
+        monthend = month + relativedelta(months=1)
+        transactions = Transaction.objects.filter(date__gte=month, date__lt=monthend)
+        transactions = transactions.filter(category=self.category)
+        transactions = transactions.order_by('-date')[:self.include_transactions]
+        serializer = TransactionSerializer(transactions, context={'request':self.request},
+            many=True, fields=TransactionsViewSet.list_fields)
+        return serializer.data
 
     def _summary_query_data(self, mindate, maxdate):
         """ Returns a dictionary of {'<categoryid>-<date>': <amount>}. """
@@ -237,6 +278,8 @@ class CategorySummaryView:
             query += " FROM budget_transaction t\n"
             query += " LEFT JOIN budget_category c ON t.category_id = c.id\n"
             query += " WHERE t.date >= %s AND t.date < %s\n"
+            if self.category:
+                query += "  AND c.name = '%s'\n" % self.category.name
             query += " GROUP BY datetime(t.date, 'start of month'), c.sortindex\n"
             query += " ORDER BY datetime(t.date, 'start of month'), c.sortindex;"
             cursor.execute(query, (mindatestr, maxdatestr))
@@ -254,19 +297,22 @@ class CategorySummaryView:
             start = date(start.year, start.month, 1)
         if (end + relativedelta(days=1)).day != 1:
             end = date(end.year, end.month, 1)
-        data.average_months = relativedelta(end, start).months
-        data.average_mindate = start
-        data.average_maxdate = end
-        data.average_total = 0.0
-        # calculate the average for each category
-        if data.average_months:
-            for cdata in self.categories.values():
-                average_total = 0.0
-                for mdata in cdata.months:
-                    cdate = datetime.strptime(mdata.month, DATEFORMAT).date()
-                    if start <= cdate < end:
-                        average_total += mdata.amount
-                cdata.average = round(average_total / float(data.average_months), 2)
-                data.average_total += cdata.average
-        data.average_total = round(data.average_total, 2)
+        avg_months = relativedelta(end, start).months
+        # Calculate the averages if applicable
+        if avg_months:
+            data.average_months = avg_months
+            data.average_mindate = start
+            data.average_maxdate = end
+            data.average_total = 0.0
+            # calculate the average for each category
+            if data.average_months:
+                for cdata in self.categories.values():
+                    average_total = 0.0
+                    for mdata in cdata.months:
+                        cdate = datetime.strptime(mdata.month, DATEFORMAT).date()
+                        if start <= cdate < end:
+                            average_total += mdata.amount
+                    cdata.average = round(average_total / float(data.average_months), 2)
+                    data.average_total += cdata.average
+            data.average_total = round(data.average_total, 2)
         return data
