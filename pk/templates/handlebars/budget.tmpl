@@ -41,7 +41,7 @@ pkedit class attributes:
         {{#each this.results as |category c|}}
           <tr data-categoryid='{{yesNo this.id this.id 'null'}}' class='pklight'>
             {{#each this.summary.months as |month m|}}
-              <td class='{{budgetFlags category month}}'><div>
+              <td class='{{budgetFlags category month}}' data-details='{{this.details}}'><div>
                 {{amountInt this.amount}}
               </div></td>
             {{/each}}
@@ -58,49 +58,18 @@ pkedit class attributes:
         <td class='average'><div>{{amountInt this.summary.average_total}}</div></td>
       </tr></tfoot>
     </table>
-
   </script>
 
-
-
-  <script id='summary2' type='text/x-handlebars-template'>
-    <h2>Summary
-      <div class='subtext'>
-        {{addCommas this.count}} transactions
-        {{yesNo this.uncategorized '|' ''}}
-        {{#if this.uncategorized}}<a class='error' href='javascript:pk.budget.search("category=none")'>{{addCommas this.uncategorized}} uncategorized</a>{{/if}}
-        {{yesNo this.unapproved '|' ''}}
-        {{#if this.unapproved}}<a class='error' href='javascript:pk.budget.search("approved=false")'>{{addCommas this.unapproved}} unapproved</a>{{/if}}
-      </div>
-    </h2>
-    <table cellpadding='0' cellspacing='0' style='clear:both;'>
-      <thead><tr>
-        <th class='average'>Average</th>
-        {{#each this.categories.0.amounts}}
-          <th>{{formatDate @key '%b'}}</th>
-        {{/each}}
-      </tr></thead>
-      <tbody>
-        {{#each this.categories}}
-          <tr data-categoryid='{{yesNo this.categoryid this.categoryid 'null'}}' class='pklight'>
-            <td class='average'><div>{{amountInt this.average}}</div></td>
-            {{#each this.amounts}}
-              <td class='{{budgetFlags ../budget this}}'><div>
-                {{amountInt this}}
-              </div></td>
-            {{/each}}
-          </tr>
-        {{/each}}
-      </tbody>
-      <tfoot><tr>
-        <td class='average'><div>{{amountInt this.avg_total}}</div></td>
-        {{#each this.total}}
-          <td class='{{yesNo this '' 'zero'}}'><div>
-            {{amountInt this}}
-          </div></td>
-        {{/each}}
-      </tr></tfoot>
-    </table>
+  <script id='summary_popover' type='text/x-handlebars-template'>
+    <div class='title'>{{formatDate this.details.month '%B'}} {{this.name}}</div>
+    <div class='body' style='min-width:200px;'>
+      Hello Mom!
+      <div class='pkrow' data-id='{{this.id}}' data-url='{{this.url}}'>
+        <div data-name='comment' class='pkedit'>
+          <textarea spellcheck='false' placeholder='Notes'>{{this.details.comment}}</textarea>
+        </div>
+      </did>
+    </div>
   </script>
 
   <script id='accounts_list' type='text/x-handlebars-template'>
@@ -136,7 +105,7 @@ pkedit class attributes:
       </tr></thead>
       <tbody>
         {{#each this.results}}
-          <tr class='pkrow pklight' data-id='{{this.id}}' data-type='category' data-url='{{this.url}}'>
+          <tr class='pkrow pklight' data-id='{{this.id}}' data-type='category' data-url='{{this.url}}' data-details='{{this.details}}'>
             <td data-name='name' class='{{yesNo this.url 'pkedit' ''}} delempty'><div>{{this.name}}</div></td>
             <td data-name='trend' class='drag'></td>
             <td data-name='budget' class='{{yesNo this.url 'pkedit' ''}} int selectall'><div>{{amountInt this.budget}}</div></td>

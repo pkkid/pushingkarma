@@ -153,9 +153,9 @@ pk.budget = {
         self.clicktimer = setTimeout(function() {
           // display popover on single click
           if (td.find('input').length) { return; }
-          if (td.closest(self.ROW).hasClass('popped')) { return; }
           if (td.closest('#categories').length) {
-            self.popover_display(td, 'category_popover');
+            var item = td.closest(self.ROW);
+            self.popover_display(item, 'category_popover');
           } else if (td.closest('#summary').length) {
             self.popover_display(td, 'summary_popover');
           }
@@ -341,16 +341,16 @@ pk.budget = {
 
   popover_display: function(item, tmpl) {
     // display popover content.
+    // check we are not already popped first
+    if (item.hasClass('popped')) { return; }
     var self = this;
-    var row = item.closest(self.ROW);
-    var type = row.data('type');
-    var url = row.data('url') +'/details';
+    var url = item.data('details');
     var xhr = $.ajax({url:url, type:'GET', dataType:'json'});
-    row.removeData('bs.popover');
+    item.removeData('bs.popover');
     xhr.done(function(data, textStatus, jqXHR) {
       var content = $(pk.templates[tmpl](data));
       pk.utils.autosize_textarea($(content).find('textarea'), 4, 15);
-      row.popover({trigger:'manual', placement:'bottom', html:true,
+      item.popover({trigger:'manual', placement:'bottom', html:true,
         content:content}).addClass('popped').popover('show');
     });
   },

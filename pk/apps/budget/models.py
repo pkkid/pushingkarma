@@ -7,7 +7,8 @@ from django.db import models, transaction
 from django_extensions.db.models import TimeStampedModel
 from pk import log, utils
 from pk.utils.serializers import DynamicFieldsSerializer, PartialFieldsSerializer
-from rest_framework.serializers import ValidationError
+from rest_framework.reverse import reverse
+from rest_framework.serializers import SerializerMethodField, ValidationError
 
 UNCATEGORIZED = 'Uncategorized'
 ACCOUNT_CHOICES = [('bank','Bank'), ('credit','Credit')]
@@ -63,10 +64,15 @@ class Category(TimeStampedModel):
 
 
 class CategorySerializer(DynamicFieldsSerializer):
+    details = SerializerMethodField()
 
     class Meta:
         model = Category
-        fields = ('id','name','sortindex','budget','comment','url')
+        fields = ('id','name','sortindex','budget','comment','url','details')
+
+    def get_details(self, obj):
+        request = self.context['request']
+        return reverse('category-details', kwargs={'pk':obj.pk}, request=request)
 
 
 class Transaction(TimeStampedModel):

@@ -10,7 +10,7 @@ from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.db import connection
 from django.db.models import Min, Max, Sum
-from pk import log, utils
+from pk import utils
 from pk.utils.context import Bunch
 from pk.utils.search import FIELDTYPES, SearchField, Search
 from rest_framework import viewsets
@@ -243,7 +243,7 @@ class CategorySummaryView:
                 mdata.transactions = transactions
                 mdata.amount = amount
                 mdata.comment = comments.get(key, '')
-                mdata.url = '{}?month={}'.format(reverse('category-details',
+                mdata.details = '{}?month={}'.format(reverse('category-details',
                     args=[categoryid], request=self.request), monthstr)
                 cdata.months.append(mdata)
                 # recent transactions
