@@ -766,6 +766,10 @@ var helpers = {
   // https://github.com/assemble/handlebars-helpers/blob/master/lib/helpers/helpers-math.js
   // -----------------------------
   
+  abs: function(value) {
+    return Math.abs(value);
+  },
+
   add: function(value, addition) {
     return value + addition;
   },
@@ -847,6 +851,10 @@ var helpers = {
    */
   amountInt: function(amount) {
     return pk.utils.to_amount_int(amount);
+  },
+
+  amountIntAbs: function(amount) {
+    return pk.utils.to_amount_int(Math.abs(amount));
   },
 
   /**

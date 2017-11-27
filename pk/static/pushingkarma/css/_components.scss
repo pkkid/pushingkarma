@@ -120,6 +120,7 @@ div.fancyhr {
   $arrowsize: 5px;
   background-color: $bgcolor;
   font-size: 12px;
+  max-width: 550px;
 
   &.bs-popover-bottom { margin-top: ($arrowsize - 1); }
   &.bs-popover-bottom .arrow::after { border-bottom-color:$bgcolor; top:-$arrowsize; margin-left:-($arrowsize / 2); }

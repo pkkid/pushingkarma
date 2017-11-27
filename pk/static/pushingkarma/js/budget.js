@@ -656,6 +656,20 @@ pk.budget.helpers = {
        (month.amount <= category.budget * 1.2)) { flags.push('over'); }
     return _flags();
   },
+
+  remaining: function(num1, num2) {
+    return pk.utils.to_amount_int(num1 - num2);
+  },
+
+  budgetMath: function(budget, spent) {
+    var mult = budget > 0 ? 1 : -1;
+    var value = budget - spent;
+    var over = budget > 0 ? value < -1 : value > 1;
+    var cls = over ? 'over' : 'ok';
+    return new helperutils.safeString(
+        '<span class="'+cls+'">'+pk.utils.to_amount_int(value * mult)+'</span>'
+      );
+  },
 };
 
 

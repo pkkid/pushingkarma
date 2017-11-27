@@ -61,14 +61,31 @@ pkedit class attributes:
   </script>
 
   <script id='summary_popover' type='text/x-handlebars-template'>
+    {{log this}}
     <div class='title'>{{formatDate this.details.month '%B'}} {{this.name}}</div>
-    <div class='body' style='min-width:200px;'>
-      Hello Mom!
+    <div class='body' style='min-width:300px;'>
+      <div class='math'>
+        <div class='number'><span class='subtext'>budget</span>{{amountIntAbs this.budget}}</div>
+        <div class='number'><span class='subtext'>&nbsp;</span>-</div>
+        <div class='number'><span class='subtext'>spent</span>{{amountIntAbs this.details.total}}</div>
+        <div class='number'><span class='subtext'>&nbsp;</span>=</div>
+        <div class='number'><span class='subtext'>remaining</span>{{budgetMath this.budget this.details.total}}</div>
       <div class='pkrow' data-id='{{this.id}}' data-url='{{this.url}}'>
         <div data-name='comment' class='pkedit'>
           <textarea spellcheck='false' placeholder='Notes'>{{this.details.comment}}</textarea>
         </div>
-      </did>
+      </div>
+      <table cellpadding='0' cellspacing='0' style='clear:both;'>
+        <tbody>
+         {{#each this.details.recent}}
+           <tr class='pkrow' data-id='{{this.id}}' data-type='transaction' data-url='{{this.url}}'>
+             <td data-name='date' class='pkedit'><div>{{this.date}}</div></td>
+             <td data-name='payee' class='pkedit selectall'><div>{{this.payee}}</div></td>
+             <td data-name='amount' class='float'><div>{{amountFloat this.amount}}</div></td>
+           </tr>
+         {{/each}}
+        </tbody>
+      </table>
     </div>
   </script>
 
@@ -132,19 +149,17 @@ pkedit class attributes:
     <div class='body' style='min-width:200px;'>
       <dl>
         <dt>Transactions:</dt>
-        <dd><span class='animated-ellipsis'><a href='javascript:pk.budget.search("category=\"{{this.name}}\"", false)'>{{addCommas this.details.transactions}}</a></dd>
-        <dt>Spent:</dt>
-        <dd><span class='animated-ellipsis'>{{amountInt this.details.total}}
+          <dd><a href='javascript:pk.budget.search("category=\"{{this.name}}\"", false)'>{{addCommas this.details.transactions}}</a></dd>
+        <dt>Spent:</dt><dd>{{amountInt this.details.total}}
           <div class='subtext'>({{this.details.num_months}} months)</div></dd>
-        <dt>Average:</dt>
-        <dd><span class='animated-ellipsis'>{{amountInt this.details.average}}
+        <dt>Average:</dt><dd>{{amountInt this.details.average}}
           <div class='subtext'>({{this.details.average_months}} months)</div></dd>
       </dl>
       <div class='pkrow' data-id='{{this.id}}' data-url='{{this.url}}'>
         <div data-name='comment' class='pkedit'>
           <textarea spellcheck='false' placeholder='Notes'>{{this.comment}}</textarea>
         </div>
-      </did>
+      </div>
     </div>
   </script>
 

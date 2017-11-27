@@ -63,6 +63,10 @@
       input { background-color: rgba(0,0,0,0.1); }
       &.saving div { background-color:rgba(0,0,255,0.1); }
       &.error > * { border:1px solid #977; background-color:rgba(150,0,0,0.1); }
+      &.popped {
+        background-color: rgba(0,0,0,0.06);
+        border-top: 1px dotted rgba(0,0,0,0.2);
+      }
     }
     tbody, tfoot {
       font-family: verdana;
@@ -211,6 +215,8 @@
     }
   }
 
+  
+
   // ---------------------------
   // Little Flower (top of page)
   // #sidepanel-content:before {
@@ -254,4 +260,45 @@
     }
   }
 
+}
+
+
+// --------------------------
+// Popover Content
+.popover .popover-body {
+  .math {
+    font-size: 20px; 
+    color: #777;
+    .number {
+      margin-right: 5px;
+      float: left;
+      text-shadow: 0px -1px rgba(0,0,0,1);
+      .subtext {
+        display: block;
+        font-size: 9px;
+        margin-top: 2px;
+        margin-bottom: -4px;
+      }
+    }
+    .over { color: #900; }
+    .ok { color: #080; }
+  }
+  table {
+    font-size: 10px;
+    line-height: 14px;
+    td div {
+      color: #777;
+      font-size: 10px;
+      overflow-x: hidden;
+      padding-right: 10px;
+      white-space: nowrap;
+    }
+    td[data-name='payee'] div {
+      max-width: 170px;
+      text-overflow: ellipsis;
+    }
+    td[data-name='amount'] div {
+      text-align: right;
+    }
+  }
 }
