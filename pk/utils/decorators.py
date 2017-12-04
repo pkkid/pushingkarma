@@ -3,6 +3,31 @@
 """
 Copyright (c) 2015 PushingKarma. All rights reserved.
 """
+import functools, os, time
+from django.db import connection
+from pk import log
+
+COLORS = {'blue':34, 'cyan':36, 'green':32, 'grey':30, 'magenta':35, 'red':31, 'white':37, 'yellow':33}
+RESET = '\033[0m'
+
+
+class ContextDecorator(object):
+    def __call__(self, f):
+        @functools.wraps(f)
+        def decorated(*args, **kwds):
+            with self:
+                return f(*args, **kwds)
+        return decorated
+
+
+def color(text, color=None):
+    """ Colorize text {red, green, yellow, blue, magenta, cyan, white}. """
+    if os.getenv('ANSI_COLORS_DISABLED') is None:
+        fmt_str = '\033[%dm%s'
+        if color is not None:
+            text = fmt_str % (COLORS[color], text)
+        text += RESET
+    return text
 
 
 def lazyproperty(func):
@@ -17,3 +42,44 @@ def lazyproperty(func):
             setattr(self, attr_name, func(self))
         return getattr(self, attr_name)
     return wrapper
+
+
+class logqueries(ContextDecorator):
+    def __init__(self, label=None, filter=None, show_queries=True):
+        self.label = label
+        self.filter = filter
+        self.show_queries = show_queries
+
+    def __enter__(self):
+        if self.label:
+            log.info(color("------------------------", 'blue'))
+            log.info(color("%s - start of profiling" % self.label, 'blue'))
+            log.info(color("------------------------", 'blue'))
+        self.sqltime, self.longest, self.numshown = 0.0, 0.0, 0
+        self.initqueries = len(connection.queries)
+        self.starttime = time.time()
+        return self
+
+    def __exit__(self, *exc):
+        for query in connection.queries[self.initqueries:]:
+            self.sqltime += float(query['time'].strip('[]s'))
+            self.longest = max(self.longest, float(query['time'].strip('[]s')))
+            if self.show_queries:
+                if not self.filter or self.filter in query['sql']:
+                    self.numshown += 1
+                    querystr = color("[%ss] " % query['time'], 'yellow')
+                    querystr += color(query['sql'], 'blue')
+                    log.info("")
+                    log.info(querystr)
+        numqueries = len(connection.queries) - self.initqueries
+        numhidden = numqueries - self.numshown
+        runtime = round(time.time() - self.starttime, 3)
+        proctime = round(runtime - self.sqltime, 3)
+        log.info(color("-------", 'blue'))
+        if self.label:
+            log.info(color("%s - end of profiling" % self.label, 'blue'))
+            log.info(color("-------", 'blue'))
+        log.info(color('Total Time:  %ss' % runtime, 'yellow'))
+        log.info(color('Proc Time:   %ss' % proctime, 'yellow'))
+        log.info(color('Query Time:  %ss (longest: %ss)' % (self.sqltime, self.longest), 'yellow'))
+        log.info(color('Num Queries: %s (%s hidden)\n' % (numqueries, numhidden), 'yellow'))

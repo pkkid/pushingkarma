@@ -219,7 +219,10 @@ class CategorySummaryView:
         """ group data by category, month => amount. """
         lookup = self._summary_query_data(data.mindate, data.maxdate)
         comments = dict(KeyValue.objects.values_list('key', 'value'))
-        for category in list(Category.objects.order_by('sortindex')) + [None]:
+        categories = Category.objects.order_by('sortindex')
+        if self.category:
+            categories = categories.filter(pk=self.category.pk)
+        for category in list(categories) + [None]:
             cdata = Bunch()
             cdata.total = 0.0
             cdata.transactions = 0
@@ -260,6 +263,7 @@ class CategorySummaryView:
         monthend = month + relativedelta(months=1)
         transactions = Transaction.objects.filter(date__gte=month, date__lt=monthend)
         transactions = transactions.filter(category=self.category)
+        transactions = transactions.select_related('account', 'category')
         transactions = transactions.order_by('-date')[:self.include_transactions]
         serializer = TransactionSerializer(transactions, context={'request':self.request},
             many=True, fields=TransactionsViewSet.list_fields)
