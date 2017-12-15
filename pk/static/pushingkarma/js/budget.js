@@ -147,7 +147,6 @@ pk.budget = {
     var self = this;
     var click_selector = '#budget tbody td';
     $(document).on('click', function(event) {
-      event.preventDefault();
       var target = $(event.target);
       var td = target.closest('#budget tbody td');
       if (event.detail == 1) {
@@ -158,11 +157,14 @@ pk.budget = {
           var pop = target.closest('.popover');
           var popped = $('.popped').length >= 1;
           if (popped && !pop.length) {
+            event.preventDefault();
             $('.popped').removeClass('popped').popover('hide');
           } else if (td.closest('#categories').length) {
+            event.preventDefault();
             var item = td.closest(self.ROW);
             self.popover_display(item, 'category_popover');
           } else if (td.closest('#summary').length) {
+            event.preventDefault();
             self.popover_display(td, 'summary_popover');
           }
         }, 200);
