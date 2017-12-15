@@ -76,7 +76,7 @@ class CategorySerializer(DynamicFieldsSerializer):
 
 
 class Transaction(TimeStampedModel):
-    account = models.ForeignKey(Account)
+    account = models.ForeignKey(Account, on_delete=models.CASCADE)
     trxid = models.CharField(max_length=255, db_index=True)
     date = models.DateField(db_index=True)
     payee = models.CharField(max_length=255, blank=True, db_index=True)

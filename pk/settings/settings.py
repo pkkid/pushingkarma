@@ -3,7 +3,7 @@
 """
 Copyright (c) 2015 PushingKarma. All rights reserved.
 """
-import copy, platform
+import platform
 from os import makedirs
 from os.path import abspath, dirname, expanduser, join
 from . import secrets
@@ -18,6 +18,7 @@ LOGIN_URL = 'index'
 STATIC_URL = '/static/'
 STATIC_ROOT = '%s/collectstatic/' % BASE_DIR
 SECRET_KEY = secrets.SECRET_KEY
+INTERNAL_IPS = ['127.0.0.1']
 
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
@@ -43,16 +44,16 @@ INSTALLED_APPS = (
     'pk.apps.pages',
 )
 
-MIDDLEWARE_CLASSES = (
+MIDDLEWARE = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    #'pk.utils.middleware.CleanHTMLMiddleware',
+    # 'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
+    # 'pk.utils.middleware.CleanHTMLMiddleware',
 )
 
 TEMPLATES = [{
@@ -144,7 +145,7 @@ SESSION_ENGINE = 'redis_sessions.session'
 SESSION_COOKIE_AGE = 7776000  # 90 days
 
 # Django Websockets Redis
-# REDSOCKS_ALLOWED_CHANNELS = 'pk.websocket.subscriber.allowed_channels'
+REDSOCKS_ALLOWED_CHANNELS = 'pk.websocket.subscriber.allowed_channels'
 WSGI_APPLICATION = 'redsocks.runserver.server.application'
 WEBSOCKET_URL = '/ws/'
 REDSOCKS_CONNECTION = {'host':'localhost'}

@@ -145,15 +145,21 @@ pk.budget = {
   bind_row_edit: function() {
     // handle single and dblclick events
     var self = this;
-    var click_selector = 'tbody td';
-    this.container.on('click', click_selector, function(event) {
+    var click_selector = '#budget tbody td';
+    $(document).on('click', function(event) {
       event.preventDefault();
-      var td = $(this);
+      var target = $(event.target);
+      var td = target.closest('#budget tbody td');
       if (event.detail == 1) {
         self.clicktimer = setTimeout(function() {
-          // display popover on single click
-          if (td.find('input').length) { return; }
-          if (td.closest('#categories').length) {
+          // hide or display popover on single click
+          if (td.find('input').length) { return null; }
+          var row = target.closest('#budget .pkrow');
+          var pop = target.closest('.popover');
+          var popped = $('.popped').length >= 1;
+          if (popped && !pop.length) {
+            $('.popped').removeClass('popped').popover('hide');
+          } else if (td.closest('#categories').length) {
             var item = td.closest(self.ROW);
             self.popover_display(item, 'category_popover');
           } else if (td.closest('#summary').length) {
@@ -163,17 +169,11 @@ pk.budget = {
       } else if (event.detail == 2) {
         // edit category or transaction on dblclick
         clearTimeout(self.clicktimer);
+        $('.popped').removeClass('popped').popover('hide');
         if (td.hasClass(self.EDIT.replace('.',''))) {
           self.item_edit(td);
         }
       }    
-    });
-    // close the popover if clicking somewhere else
-    $(document).on('click', function(event) {
-      var target = $(event.target);
-      if (!target.closest(self.ROW).hasClass('popped') && !target.closest('.popover').length) {
-        $('.popped').removeClass('popped').popover('hide');
-      }
     });
     // save category or transaction on blur
     var blur_selector = pk.utils.format('{0} {1} > input', self.ROW, self.EDIT);
