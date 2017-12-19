@@ -32,7 +32,7 @@ pk.budget = {
       search:_params.get('search',''),             // * Search: current search string
       demo:_params.get('demo','')};                // * DemoMode: true, false
     this.init_elements();                          // cache top level elements
-    this.init_shortcuts();                         // bind keyboard shortcuts
+    this.init_keyboard_shortcuts();                // bind keyboard shortcuts
     this.bind_search_edit();                       // update transactions on search
     this.bind_view_button();                       // show or hide the transaction list
     this.bind_row_edit();                          // handle single and dblclick events
@@ -62,7 +62,7 @@ pk.budget = {
     this.panelbtn = this.container.find('#panelbtn');
   },
 
-  init_shortcuts: function() {
+  init_keyboard_shortcuts: function() {
     // initialize keyboard shortcuts
     var self = this;
     var KEYS = this.KEYS;
@@ -516,7 +516,8 @@ pk.budget = {
       var exists = searchval.toLowerCase().indexOf(query.toLowerCase()) >= 0;
       query = exists ? searchval : searchval +' '+ query;
     }
-    this.searchinput.val(query);
+    $('.popped').removeClass('popped').popover('hide');
+    this.searchinput.val(query.toLowerCase());
     this.update_transactions();
   },
  

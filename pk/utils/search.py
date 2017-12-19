@@ -11,10 +11,11 @@ from pk import log
 from types import SimpleNamespace
 
 NONE = ('none', 'null')
-OPERATIONS = {'=':'', '>':'__gt', '>=':'__gte', '<=':'__lte', '<':'__lt', ':': '__icontains'}
+OPERATIONS = {'=':'__iexact', '>':'__gt', '>=':'__gte', '<=':'__lte', '<':'__lt', ':': '__icontains'}
 REVERSEOP = {'__gt':'__lte', '__gte':'__lt', '__lte':'__gt', '__lt':'__gte'}
 STOPWORDS = ('and', '&&', '&', 'or', '||', '|')
 MONTHNAMES = [m.lower() for m in list(calendar.month_name)[1:] + list(calendar.month_abbr)[1:] + ['sept']]
+DEFAULT_MODIFIER = lambda value: value
 
 FIELDTYPES = SimpleNamespace()
 FIELDTYPES.BOOL = 'bool'
@@ -148,8 +149,8 @@ class SearchChunk:
                     self.value = parts[1]
                     # fetch the qfield, qoperation, and qvalue
                     self.qfield = self._get_qfield()
-                    self.qoperation = self._get_qoperation()
                     self.qvalue = self._get_qvalue()
+                    self.qoperation = self._get_qoperation()
                     break  # only use one operation
         except SearchError as err:
             log.error(err)
@@ -171,6 +172,8 @@ class SearchChunk:
         operation = OPERATIONS[self.operation]
         if self.is_value_list and self.operation == '=':
             operation = '__in'
+        elif isinstance(self.qvalue, bool):
+            operation = ''
         return operation
         
     def _get_qvalue(self):
@@ -178,7 +181,7 @@ class SearchChunk:
         if self.value.lower() in NONE:
             return True
         # get correct modifier
-        modifier = lambda value: value
+        modifier = DEFAULT_MODIFIER
         if self.qfield.modifier:
             modifier = self.qfield.modifier
         elif self.searchtype == FIELDTYPES.BOOL:

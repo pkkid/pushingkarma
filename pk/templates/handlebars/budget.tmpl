@@ -21,8 +21,8 @@ pkedit class attributes:
       <div class='subtext'>
         {{addCommas this.summary.transactions}} transactions
         {{yesNo this.summary.uncategorized '|' ''}}
-        {{#if this.summaryuncategorized}}
-          <a class='error' href='javascript:pk.budget.search("category=none")'>{{addCommas this.summaryuncategorized}} uncategorized</a>
+        {{#if this.summary.uncategorized}}
+          <a class='error' href='javascript:pk.budget.search("category=none")'>{{addCommas this.summary.uncategorized}} uncategorized</a>
         {{/if}}
         {{yesNo this.summary.unapproved '|' ''}}
         {{#if this.summary.unapproved}}
@@ -70,6 +70,7 @@ pkedit class attributes:
         <div class='number'><span class='subtext'>spent</span>{{amountIntAbs this.details.total}}</div>
         <div class='number'><span class='subtext'>&nbsp;</span>=</div>
         <div class='number'><span class='subtext'>remaining</span>{{budgetMath this.budget this.details.total}}</div>
+      </div>
       <div class='pkrow' data-id='{{this.id}}' data-url='{{this.url}}'>
         <div data-name='comment' class='pkedit'>
           <textarea spellcheck='false' placeholder='Notes'>{{this.details.comment}}</textarea>
@@ -86,6 +87,7 @@ pkedit class attributes:
          {{/each}}
         </tbody>
       </table>
+      <a class='error' href="javascript:pk.budget.search('date={{formatDate this.details.month '%b'}} category=\'{{this.name}}\'')">view transactions</a>
     </div>
   </script>
 
@@ -148,18 +150,16 @@ pkedit class attributes:
     <div class='title'>{{this.name}}</div>
     <div class='body' style='min-width:200px;'>
       <dl>
-        <dt>Transactions:</dt>
-          <dd><a href='javascript:pk.budget.search("category=\"{{this.name}}\"", false)'>{{addCommas this.details.transactions}}</a></dd>
-        <dt>Spent:</dt><dd>{{amountInt this.details.total}}
-          <div class='subtext'>({{this.details.num_months}} months)</div></dd>
-        <dt>Average:</dt><dd>{{amountInt this.details.average}}
-          <div class='subtext'>({{this.details.average_months}} months)</div></dd>
+        <dt>Transactions:</dt><dd>{{addCommas this.details.transactions}}</dd>
+        <dt>Spent:</dt><dd>{{amountInt this.details.total}}<div class='subtext'>({{this.details.num_months}} months)</div></dd>
+        <dt>Average:</dt><dd>{{amountInt this.details.average}}<div class='subtext'>({{this.details.average_months}} months)</div></dd>
       </dl>
       <div class='pkrow' data-id='{{this.id}}' data-url='{{this.url}}'>
         <div data-name='comment' class='pkedit'>
           <textarea spellcheck='false' placeholder='Notes'>{{this.comment}}</textarea>
         </div>
       </div>
+      <a class='error' href="javascript:pk.budget.search('category=\'{{this.name}}\'', false)">view transactions</a>
     </div>
   </script>
 

@@ -75,63 +75,25 @@ DATABASES = {
     }
 }
 
-
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': True,
-    'handlers': {},
-    'loggers': {},
-    'formatters': {},
-}
-LOGGING['handlers']['console'] = {
-    'level': 'INFO',
-    'class': 'logging.StreamHandler',
-    'formatter': 'standard',
-}
-
-
+LOGLEVEL = 'INFO'
+LOGFORMAT = '%(asctime)-.19s %(module)12s:%(lineno)-3s %(levelname)-7s %(message)s'
+LOGDIR = '/home/mjs7231/Logs/pushingkarma/'
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
     'handlers': {
-        'console': {
-            'level': 'INFO',
-            'class': 'logging.StreamHandler',
-            'formatter': 'standard',
-        },
-        'file': {
-            'level': 'INFO',
-            'class': 'logging.handlers.RotatingFileHandler',
-            'filename': '/home/mjs7231/Logs/pushingkarma/pushingkarma.log',
-            'maxBytes': 1000000,
-            'backupCount': 3,
-            'formatter': 'standard',
-        },
+        'console': {'level':LOGLEVEL, 'class':'logging.StreamHandler', 'formatter':'standard'},
+        'file': {'level': LOGLEVEL, 'class':'logging.handlers.RotatingFileHandler',
+            'filename':join(LOGDIR,'pushingkarma.log'), 'maxBytes':1000000, 'backupCount':3,
+            'formatter': 'standard'},
     },
     'loggers': {
-        # 'django': {
-        #     'handlers': ['file', 'console'],
-        #     'level': 'INFO',
-        #     'propagate': True,
-        # },
-        'pk': {
-            'handlers': ['file', 'console'],
-            'level': 'INFO',
-            'propagate': True,
-        },
-        'redsocks': {
-            'handlers': ['file', 'console'],
-            'level': 'INFO',
-            'propagate': False,
-        },
+        'pk': {'handlers':['file','console'], 'level':LOGLEVEL, 'propagate':True},
+        'redsocks': {'handlers':['file','console'], 'level':LOGLEVEL, 'propagate':False},
     },
-    'formatters': {
-        'standard': {
-            'format': '%(asctime)-.19s %(module)12s:%(lineno)-3s %(levelname)-7s %(message)s'
-        },
-    },
+    'formatters':{'standard':{'format':LOGFORMAT}},
 }
-makedirs(dirname(LOGGING['handlers']['file']['filename']), exist_ok=True)
+makedirs(LOGDIR, exist_ok=True)
 
 # Django Rest Framework
 REST_FRAMEWORK = {
