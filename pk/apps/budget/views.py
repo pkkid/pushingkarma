@@ -92,11 +92,12 @@ class CategoriesViewSet(viewsets.ModelViewSet):
         utils.move_to_end(response.data, 'previous','next','summary','results')
         return response
 
-    @detail_route(methods=['get'])
+    @detail_route(methods=['get','patch'])
     def details(self, request, pk, *args, **kwargs):
         # check the month was passed in
         month = request.GET.get('month')
-        if month: return self.details_month(request, pk, month)
+        if month:
+            return self.details_month(request, pk, month)
         # return summary for all month
         category = Category.objects.get(pk=pk)
         summary = CategorySummaryView(request, category=category)
@@ -109,7 +110,12 @@ class CategoriesViewSet(viewsets.ModelViewSet):
         return Response(data)
 
     def details_month(self, request, pk, monthstr):
+        # check we are patching in notes
         category = Category.objects.get(pk=pk)
+        comment = request.data.get('comment')
+        if request.method == 'PATCH' and comment is not None:
+            self._update_details_month_comment(category, monthstr, comment)
+        # return details for the specified monthstr
         data = CategorySerializer(category, context={'request':request}).data
         month = datetime.strptime(monthstr, '%Y-%m-%d').date()
         summary = CategorySummaryView(request, category=category, max_month=month,
@@ -119,6 +125,12 @@ class CategoriesViewSet(viewsets.ModelViewSet):
         del data['details']['months']
         del data['details']['amount']
         return Response(data)
+
+    def _update_details_month_comment(self, category, monthstr, comment):
+        key = '%s:%s' % (monthstr, category.id)
+        if comment.strip() == '':
+            return KeyValue.objects.filter(key=key).delete()
+        KeyValue.objects.update_or_create(key=key, defaults={'value':comment})
 
 
 class TransactionsViewSet(viewsets.ModelViewSet):

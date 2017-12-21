@@ -41,7 +41,7 @@ pkedit class attributes:
         {{#each this.results as |category c|}}
           <tr data-categoryid='{{yesNo this.id this.id 'null'}}' class='pklight'>
             {{#each this.summary.months as |month m|}}
-              <td class='{{budgetFlags category month}}' data-details='{{this.details}}'><div>
+              <td class='{{budgetFlags category month}}' data-details='{{this.details}}' {{#if this.comment}}data-comment='true'{{/if}}><div>
                 {{amountInt this.amount}}
               </div></td>
             {{/each}}
@@ -71,7 +71,7 @@ pkedit class attributes:
         <div class='number'><span class='subtext'>&nbsp;</span>=</div>
         <div class='number'><span class='subtext'>remaining</span>{{budgetMath this.budget this.details.total}}</div>
       </div>
-      <div class='pkrow' data-id='{{this.id}}' data-url='{{this.url}}'>
+      <div class='pkrow' data-id='{{this.id}}' data-url='{{this.details.details}}'>
         <div data-name='comment' class='pkedit'>
           <textarea spellcheck='false' placeholder='Notes'>{{this.details.comment}}</textarea>
         </div>
@@ -127,7 +127,7 @@ pkedit class attributes:
           <tr class='pkrow pklight' data-id='{{this.id}}' data-type='category' data-url='{{this.url}}' data-details='{{this.details}}'>
             <td data-name='name' class='{{yesNo this.url 'pkedit' ''}} delempty'><div>{{this.name}}</div></td>
             <td data-name='trend' class='drag'></td>
-            <td data-name='budget' class='{{yesNo this.url 'pkedit' ''}} int selectall'><div>{{amountInt this.budget}}</div></td>
+            <td data-name='budget' class='{{yesNo this.url 'pkedit' ''}} int selectall' {{#if this.comment}}data-comment='true'{{/if}}><div>{{amountInt this.budget}}</div></td>
           </tr>
         {{/each}}
       </tbody>
