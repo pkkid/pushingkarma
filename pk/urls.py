@@ -10,6 +10,7 @@ from django.conf.urls.static import static
 from django.views.generic import RedirectView, TemplateView
 from rest_framework import routers
 from pk import views as pk_views
+from pk.apps.calendar import views as calendar_views
 from pk.apps.notes import views as note_views
 from pk.apps.pages import views as page_views
 from pk.apps.budget import views as budget_views
@@ -45,6 +46,8 @@ urlpatterns = [
     url(r'^markdown/n/$', note_views.markdown, name='note_markdown'),
     # PushingkKarma Budget
     url(r'^budget/$', budget_views.budget, name='budget'),
+    # o365 Calendar
+    url(r'^calendar/$', calendar_views.calendar, name='calendar'),
 ]
 
 if settings.DEBUG:

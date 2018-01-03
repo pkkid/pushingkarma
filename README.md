@@ -10,34 +10,59 @@ means let me know. :)
 ### Installation
 ```bash
 # Create Python Virtualenv
-> git clone git@github.com:mjs7231/pushingkarma.git ~/Projects/pushingkarma
-> mkvirtualenv --python=/usr/bin/python3 -a /home/mjs7231/Projects/pushingkarma pk
-> rm ~/.virtualenvs/pk/bin/postactivate
-> ln -s ~/Projects/pushingkarma/conf/postactivate ~/.virtualenvs/pk/bin/postactivate
-> workon pk
+mkdir -p ~/Projects/pushingkarma
+git clone git@github.com:mjs7231/pushingkarma.git ~/Projects/pushingkarma
+mkvirtualenv --python=/usr/bin/python3 -a /home/mjs7231/Projects/pushingkarma pk
+rm ~/.virtualenvs/pk/bin/postactivate
+ln -s ~/Projects/pushingkarma/conf/postactivate ~/.virtualenvs/pk/bin/postactivate
+workon pk
 
 # Install Python Requirements
-> pip install -U pip
-> pip install -r ~/Projects/pushingkarma/conf/requirements.pip
+pip install -U pip
+pip install -r ~/Projects/pushingkarma/conf/requirements.pip
 ```
 
 ### Dev Environment
 ```bash
 # Install Development Utilities
-> sudo apt-get install ruby ruby-dev nodejs npm
-> sudo su -c "gem install sass"
-> npm install -g gulp bower
-> npm install
-> bower install  # choose bootstrap 4.0.0-beta
-> gulp
+sudo apt-get install ruby ruby-dev nodejs npm
+sudo su -c "gem install sass"
+npm install -g gulp bower
+npm install
+bower install  # choose bootstrap 4.0.0-beta
+gulp
 
 # Install Redis and django-redsocks
-> sudo apt-get install redis-server
-> git clone git@github.com:pkkid/django-redsocks.git ~/Projects/django-redsocks
-> ln -s ~/Projects/django-redsocks/redsocks ~/.virtualenvs/pk/lib/python3.*/site-packages/
+sudo apt-get install redis-server
+git clone git@github.com:pkkid/django-redsocks.git ~/Projects/django-redsocks
+ln -s ~/Projects/django-redsocks/redsocks ~/.virtualenvs/pk/lib/python3.*/site-packages/
 
 # Kickstart the Database
-> django-admin migrate
+django-admin migrate
+```
+
+### Production Environment
+```bash
+# Install services and tools
+sudo apt-get update && sudo apt-get upgrade
+sudo apt autoremove
+sudo apt-get install python-pip python-setuptools
+sudo apt-get install virtualenv virtualenvwrapper
+sudo apt-get install nginx uwsgi
+
+# Create virtualenv and copy source
+mkvirtualenv --python=/usr/bin/python3 pk
+
+# Install nginx & uwsgi
+ln -s $HOME/Projects/pushingkarma/conf/pushingkarma-nginx.conf /etc/nginx/sites-enabled/pushingkarma-nginx.conf
+ln -s $HOME/Projects/pushingkarma/conf/uwsgi.service /etc/systemd/system/uwsgi.service
+ln -s $HOME/Projects/pushingkarma/conf/pushingkarma-uwsgi-django.ini /etc/uwsgi/apps-enabled/pushingkarma-uwsgi-django.ini
+ln -s $HOME/Projects/pushingkarma/conf/pushingkarma-uwsgi-web.ini /etc/uwsgi/apps-enabled/pushingkarma-uwsgi-web.ini
+ln -s $HOME/Projects/pushingkarma/conf/postactivate $HOME/.virtualenvs/pk/bin/postactivate
+
+# Setup Logging
+mkdir -p /var/log/pushingkarma
+crontab $HOME/Projects/pushingkarma/conf/crontab.txt
 ```
 
 -----
