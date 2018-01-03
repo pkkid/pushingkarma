@@ -11,25 +11,27 @@ from pk import log
 
 def calendar(request, status=200):
     """ Convert o365 calendar events to ics because MS does it wrong. """
-    url = request.GET.get('url')
-    session = requests.Session()
-    config, folders = _load_calendar(session, url)
-    events = _load_events(session, url, config)
-    ics = Calendar()
-    for event in events:
-        ics.events.append(Event(
-            name=event['Subject'],
-            location=event['Location']['DisplayName'],
-            begin=event['Start'],
-            end=event['End'],
-        ))
-    return HttpResponse(str(ics), content_type='text/calendar', status=status)
+    try:
+        url = request.GET.get('url')
+        session = requests.Session()
+        config, folders = _load_calendar(session, url)
+        events = _load_events(session, url, config)
+        ics = Calendar()
+        for event in events:
+            ics.events.append(Event(
+                name=event['Subject'],
+                location=event['Location']['DisplayName'],
+                begin=event['Start'],
+                end=event['End'],
+            ))
+        return HttpResponse(str(ics), content_type='text/calendar', status=status)
+    except Exception as err:
+        log.exception(err)
 
 
 def _load_calendar(session, url):
     config, folders = None, None
     body = session.get(url).content.decode('utf8')
-    log.info(body)
     for line in body.split('\n'):
         line = line.strip(' ')
         if line.startswith('PageDataPayload.owaUserConfig'):
@@ -46,7 +48,7 @@ def _load_calendar(session, url):
 def _load_events(session, url, config):
     service = url.replace('calendar.html', 'service.svc')
     response = session.post(service, data=_data(config), headers=_headers(url))
-    events = json.loads(response.content)['Body']['ResponseMessages']['Items'][0]['RootFolder']['Items']
+    events = json.loads(response.content.decode('utf8'))['Body']['ResponseMessages']['Items'][0]['RootFolder']['Items']
     return events
 
 
