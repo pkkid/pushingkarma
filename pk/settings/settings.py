@@ -68,12 +68,10 @@ TEMPLATES = [{
     ]},
 }]
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': join(dirname(BASE_DIR), 'db.sqlite3'),
-    }
-}
+DATABASES = {'default': {
+    'ENGINE': 'django.db.backends.sqlite3',
+    'NAME': join(dirname(BASE_DIR), 'db.sqlite3'),
+}}
 
 LOGLEVEL = 'INFO'
 LOGFORMAT = '%(asctime)-.19s %(module)12s:%(lineno)-3s %(levelname)-7s %(message)s'

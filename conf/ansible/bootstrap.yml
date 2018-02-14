@@ -1,0 +1,61 @@
+- hosts: all
+  vars:
+    - root_password: 'HASHED_PASSWORD'
+    - user_password: "{{ lookup('pipe','getent') }}"
+    - user: pkkid
+ 
+  tasks:
+  - name: Change root password
+    user:
+      name=root
+      password={{ root_password }}
+ 
+  - name: Add new user {{ user }}
+    user:
+      name={{ user }}
+      password={{ user_password }}
+ 
+  - name: Add SSH public key to user {{ user }}
+    authorized_key:
+      user={{ user }}
+      key="{{ lookup('file', "~/Priavte/ssh/mykeypass.pub") }}"
+ 
+  - name: Add user {{ user }} to sudoers
+    lineinfile:
+      "dest=/etc/sudoers
+      regexp='^{{ user }} ALL'
+      line='{{ user }} ALL=(ALL) NOPASSWD: ALL'
+      state=present"
+ 
+  - name: Disallow root SSH access
+    lineinfile:
+      dest=/etc/ssh/sshd_config
+      regexp="^PermitRootLogin"
+      line="PermitRootLogin no"
+      state=present
+    notify:
+      - restart sshd
+ 
+  - name: Disallow SSH password authentication
+    lineinfile:
+      dest=/etc/ssh/sshd_config
+      regexp="^PasswordAuthentication"
+      line="PasswordAuthentication no"
+      state=present
+    notify:
+      - restart sshd
+ 
+  - name: Disallow SSH GSS API authentication
+    lineinfile:
+      dest=/etc/ssh/sshd_config
+      regexp="^GSSAPIAuthentication"
+      line="GSSAPIAuthentication no"
+      state=present
+    notify:
+      - restart sshd
+
+  handlers:
+  - name: restart sshd
+    service: 
+      name=sshd
+      state=restarted

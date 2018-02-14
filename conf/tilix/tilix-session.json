@@ -2,7 +2,7 @@
     "child": {
         "child1": {
             "directory": "\/home\/mjs7231\/Projects\/pushingkarma",
-            "overrideCommand": "/bin/bash --init-file /home/mjs7231/Projects/pushingkarma/conf/tilix-cmd.sh",
+            "overrideCommand": "/bin/bash --init-file /home/mjs7231/Projects/pushingkarma/conf/tilix/tilix-cmd.sh",
             "height": 678,
             "profile": "2b7c4080-0ddd-46c5-8f23-563fd3ba789d",
             "readOnly": false,
@@ -13,7 +13,7 @@
         "child2": {
             "child1": {
                 "directory": "\/home\/mjs7231\/Projects\/pushingkarma",
-                "overrideCommand": "/bin/bash --init-file /home/mjs7231/Projects/pushingkarma/conf/tilix-runserver.sh",
+                "overrideCommand": "/bin/bash --init-file /home/mjs7231/Projects/pushingkarma/conf/tilix/tilix-runserver.sh",
                 "height": 336,
                 "profile": "2b7c4080-0ddd-46c5-8f23-563fd3ba789d",
                 "readOnly": false,
@@ -23,7 +23,7 @@
             },
             "child2": {
                 "directory": "\/home\/mjs7231\/Projects\/pushingkarma",
-                "overrideCommand": "/bin/bash --init-file /home/mjs7231/Projects/pushingkarma/conf/tilix-gulp.sh",
+                "overrideCommand": "/bin/bash --init-file /home/mjs7231/Projects/pushingkarma/conf/tilix/tilix-gulp.sh",
                 "height": 332,
                 "profile": "2b7c4080-0ddd-46c5-8f23-563fd3ba789d",
                 "readOnly": false,

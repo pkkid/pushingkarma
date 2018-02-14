@@ -4,9 +4,12 @@
 Copyright (c) 2018 PushingKarma. All rights reserved.
 """
 import json, requests
+from datetime import datetime, timedelta
 from django.http import HttpResponse
 from ics import Calendar, Event
 from pk import log
+
+DATEFORMAT = '%Y-%m-%dT00:00:00.000'
 
 
 def calendar(request, status=200):
@@ -65,7 +68,7 @@ def _headers(url):
         'X-OWA-ActionName': 'GetCalendarItemsAction_Month',
         'X-OWA-Attempt': '1',
         'X-OWA-CANARY': 'g-tE1GiI5E6WWEMp1lDla_BAl3ubUdUYu6hk9jTzoKy1ib_TcvPJnrplm1iU5_NM8hh_9oYupmk.',
-        'X-OWA-ClientBegin': '2018-01-02T04:45:31.544',
+        'X-OWA-ClientBegin': datetime.now().strftime(DATEFORMAT),
         'X-OWA-ClientBuildVersion': '16.2080.5.2459088',
         'X-OWA-CorrelationId': 'A1AA550B559D43C387DB995A9EEDE008_151486833154404',
         'X-Requested-With': 'XMLHttpRequest',
@@ -74,6 +77,9 @@ def _headers(url):
 
 def _data(config):
     # Order matters here, not work making an ordered dict.
+    now = datetime.now()
+    lastweek = now - timedelta(days=7)
+    nextmonth = now + timedelta(days=30)
     return '{"__type":"FindItemJsonRequest:#Exchange",' \
         '"Header":{"__type":"JsonRequestHeaders:#Exchange",' \
         '  "RequestServerVersion":"Exchange2013",' \
@@ -115,9 +121,11 @@ def _data(config):
         '    "ChangeKey":"%(parentFolderChangeKey)s"}],' \
         '  "Traversal":"Shallow",' \
         '  "Paging":{"__type":"CalendarPageView:#Exchange",' \
-        '    "StartDate":"2017-12-31T00:00:00.001",' \
-        '    "EndDate":"2018-02-04T00:00:00.000"}' \
+        '    "StartDate":"%(lastweek)s",' \
+        '    "EndDate":"%(nextmonth)s"}' \
         '}}' % {
             'parentFolderId': config['SessionSettings']['DefaultFolderIds'][0]['Id'],
             'parentFolderChangeKey': config['SessionSettings']['DefaultFolderIds'][0]['ChangeKey'],
+            'lastweek': lastweek.strftime(DATEFORMAT),
+            'nextmonth': nextmonth.strftime(DATEFORMAT),
         }

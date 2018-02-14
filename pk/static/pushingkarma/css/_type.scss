@@ -45,5 +45,34 @@ ul, ol {
 
 article ul,
 article ol {
-  width: 80%;
+  width: 85%;
+  ul, ol {
+    width: 100%;
+  }
+}
+article ul.task-list {
+  list-style: none;
+  padding-left: 20px;
+  input[type=checkbox] {
+    -webkit-appearance: none;
+    border-color: #888;
+    border-radius: 2px;
+    margin-right: 5px;
+    position: relative;
+    top: 1px;
+    width: 13px;
+    height: 13px;
+    background-color: rgba(255,255,255,0.25);
+    &:checked:before {
+      content: '';
+      display: block;
+      width: 5px;
+      height: 9px;
+      border: solid #666;
+      border-width: 0 2px 2px 0;
+      transform: rotate(45deg);
+      margin-left: 3px;
+      margin-top: 0px;
+    }
+  }
 }

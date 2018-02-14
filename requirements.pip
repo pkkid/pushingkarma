@@ -1,6 +1,7 @@
 # Python requirements for Pushingkarma.com
 # Copyright (c) 2015 PushingKarma. All rights reserved.
 
+ansible==2.4.3.0
 beautifulsoup4==4.4.1
 django-dbbackup>=3.2.0
 django-debug-toolbar==1.9.1
@@ -13,7 +14,7 @@ Django==2.0
 djangorestframework==3.7.3
 gevent==1.1rc3
 ics==0.3.1
-Markdown==2.6.2
+Markdown==2.6.11
 ofxparse==0.16
 paramiko==2.2.1
 pygsheets==1.1.3

@@ -68,7 +68,7 @@ def migrate_database():
 
 def pip_install():
     """ Update to the latest requirements.pip. """
-    requirments = '%s/conf/requirements.pip' % env.directory
+    requirments = '%s/requirements.pip' % env.directory
     _virtualenv('pip install -qUr %s' % requirments)
 
 
