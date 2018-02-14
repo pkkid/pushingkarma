@@ -7,7 +7,7 @@ pk.budget = {
   BUDGET_SELECTOR: '#budget',
   ROW:'.pkrow', EDIT:'.pkedit',
   KEYS: {TAB:9, ENTER:13, ESC:27, F3:114, UP:38, DOWN:40},
-  LOADMORE_INTERVAL: 100, LOADMORE_DISTANCE: 200,
+  LOADMORE_INTERVAL: 200, LOADMORE_DISTANCE: 200,
   URL_ACCOUNTS: window.location.origin +'/api/accounts',
   URL_CATEGORIES: window.location.origin +'/api/categories/summary',
   URL_TRANSACTIONS: window.location.origin +'/api/transactions',
@@ -321,7 +321,6 @@ pk.budget = {
     setInterval(function() {
       if (self.params.view == 'transactions') {
         var bottom = $(document).height() - $(window).scrollTop() - $(window).height();
-        //console.log('bottom:'+ bottom +'; dist:'+ self.LOADMORE_DISTANCE +'; more:'+ self.transactions.find('#loadmore').length);
         if (bottom < self.LOADMORE_DISTANCE && self.transactions.find('#loadmore').length) {
           self.update_transactions(true);
         }
@@ -625,7 +624,7 @@ pk.budget = {
         self.searchinfo.text(data.errors || data.datefilters);
         var html = pk.templates.transaction_list(data);
         if (data.previous) {
-          var items = $(html).find(self.ROW);
+          var items = $(html).find(self.ROW +',#loadmore');
           self.transactions.find('tbody').append(items);
         } else {
           self.transactions.html(html);
