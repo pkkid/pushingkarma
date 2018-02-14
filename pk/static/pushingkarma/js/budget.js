@@ -321,6 +321,7 @@ pk.budget = {
     setInterval(function() {
       if (self.params.view == 'transactions') {
         var bottom = $(document).height() - $(window).scrollTop() - $(window).height();
+        //console.log('bottom:'+ bottom +'; dist:'+ self.LOADMORE_DISTANCE +'; more:'+ self.transactions.find('#loadmore').length);
         if (bottom < self.LOADMORE_DISTANCE && self.transactions.find('#loadmore').length) {
           self.update_transactions(true);
         }
@@ -630,8 +631,6 @@ pk.budget = {
           self.transactions.html(html);
         }
       });
-    } else {
-      self.trxpage = null;
     }
   },
 
