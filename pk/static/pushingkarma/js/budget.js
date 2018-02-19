@@ -549,7 +549,7 @@ pk.budget = {
     self.xhrcat = $.ajax({url:self.URL_CATEGORIES, type:'GET', dataType:'json'});
     self.xhrcat.done(function(data, textStatus, jqXHR) {
       self.categories.html(pk.templates.category_list(data));
-      //self.update_category_trends(data);   // TODO: RE-ENABLE THIS
+      self.update_category_trends(data);
       self.update_category_choices(data);
       self.bind_drag_categories();
       if (self.params.view == 'summary') {
@@ -564,14 +564,17 @@ pk.budget = {
     // loop through each category to generate a trand column
     // chart of the last 12 months spend.
     var self = this;
-    for (var i=0; i<data.results.length; i++) {
-      var category = data.results[i];
+    var index = 0;
+    var _update_trend = function() {
+      var category = data.results[index];
       var selector = self.categories.find('tbody tr[data-id='+ category.id +'] td[data-name=trend]');
       var mult = category.name == 'Income' ? 1 : -1;
       var cdata = category.summary.months.map(x => Math.max(mult * x.amount, 0));
       selector.highcharts(pk.charts.budget_trend(cdata));
       selector.find('.highcharts-container').fadeIn('fast');
+      if (index < data.results.length-1) { index += 1; setTimeout(_update_trend, 0); }
     }
+    setTimeout(_update_trend, 0);
   },
 
   update_category_choices: function(data) {
