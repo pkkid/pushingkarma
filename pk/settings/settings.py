@@ -35,6 +35,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.messages',
     'django_extensions',
+    'corsheaders',
     'rest_framework',
     'redsocks',
     'dbbackup',
@@ -52,8 +53,10 @@ MIDDLEWARE = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    # Custom Middleware
     # 'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     # 'pk.utils.middleware.CleanHTMLMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 )
 
 TEMPLATES = [{
@@ -134,3 +137,7 @@ DBBACKUP_STORAGE_OPTIONS = {
 BUDGET_ACCOUNTS = secrets.BUDGET_ACCOUNTS
 BUDGET_GSHEETS_CREDSTORE = expanduser('~/Private/googleapi/')
 BUDGET_GSHEETS_SECRETS = join(BUDGET_GSHEETS_CREDSTORE, 'googlesheets-oauth2.json')
+
+# Django-cors-headers - Cross-Origin Resource Sharing
+CORS_ORIGIN_WHITELIST = ['bugs.nasuni.net']
+CORS_ALLOW_METHODS = ['GET']
