@@ -47,14 +47,6 @@ def deploy_redsocks():
         delete=True, extra_opts='--quiet --links --omit-dir-times')
 
 
-def deploy_dbbackup():
-    """ Deploy django-dbbackup project. """
-    local = os.path.join(env.projects, 'django-dbbackup')
-    remote = os.path.join(env.sources)
-    rsync_project(local_dir=local, remote_dir=remote, exclude=RSYNC_EXCLUDE,
-        delete=True, extra_opts='--quiet --links --omit-dir-times')
-
-
 def getdb():
     """ Download production database to local environment. """
     dbpath = os.path.join(env.directory, 'db.sqlite3')
@@ -84,7 +76,6 @@ def deploy():
     build_static()
     deploy_pushingkarma()
     deploy_redsocks()
-    deploy_dbbackup()
     pip_install()
     migrate_database()
     reload_server()

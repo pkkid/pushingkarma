@@ -38,7 +38,6 @@ INSTALLED_APPS = (
     'corsheaders',
     'rest_framework',
     'redsocks',
-    'dbbackup',
     'pk',
     'pk.apps.budget',
     'pk.apps.notes',
@@ -117,20 +116,6 @@ REDSOCKS_HEARTBEAT = 'heartbeat'
 REDSOCKS_PREFIX = 'ws'
 REDSOCKS_SUBSCRIBERS = {
     'magnets': 'pk.websocket.magnets.MagnetsSubscriber',
-}
-
-# DBBackup Settings
-DBBACKUP_STORAGE = 'storages.backends.sftpstorage.SFTPStorage'
-DBBACKUP_STORAGE_OPTIONS = {
-    'root_path': '/home',
-    'host': secrets.DBBACKUP_SFTP_HOST,
-    'params': {
-        'username': secrets.DBBACKUP_SFTP_USER,
-        'password': secrets.DBBACKUP_SFTP_PASS,
-        'port': secrets.DBBACKUP_SFTP_PORT,
-        'allow_agent': False,
-        'look_for_keys': False,
-    },
 }
 
 # PushingKarma Budget Settings
