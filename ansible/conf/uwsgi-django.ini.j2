@@ -1,0 +1,18 @@
+# Django uWSGI Configuration
+# location: /etc/uwsgi/apps-enabled/
+[uwsgi]
+chdir = {{project_dir}}
+virtualenv = {{virtualenv}}
+module = wsgi_django:application
+pidfile2 = {{project_dir}}/django.pid
+socket = {{project_dir}}/django.sock
+chown-socket = root:root
+chmod-socket = 664
+uid = root
+gid = root
+
+master = true
+no-orphans = true
+vacuum = true
+workers = 5
+max-requests = 5000

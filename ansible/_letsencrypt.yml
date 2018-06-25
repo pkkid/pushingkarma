@@ -1,0 +1,10 @@
+# _letsencrypt.yml
+# Install and configure Certbot
+---
+- name: Installing Nginx Server
+  apt: name={{item}}
+  with_items:
+    - python3-certbot-nginx
+
+# certbot --nginx
+# certbot renew --dry-run

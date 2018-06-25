@@ -1,0 +1,29 @@
+# playbook.yml
+# Main Ansible Playbook File
+#
+# Example Usage:
+#  > ansible-playbook -i inventory.ini playbook.yml
+#  > ansible-playbook -i inventory.ini playbook.yml --tags=deploy
+---
+- hosts: web
+  remote_user: root
+  become: yes
+  become_method: sudo
+  vars_files: ['_vars.yml']
+
+  tasks:
+    - include: _upload.yml
+    - include: _system.yml
+    - include: _redis.yml
+    - include: _nginx.yml
+    - include: _uwsgi.yml
+
+  post_tasks: 
+    - name: Restart Services
+      tags: ['deploy']
+      service: name={{item}} state=restarted
+      with_items:
+        - redis
+        - nginx
+        # - uwsgi
+

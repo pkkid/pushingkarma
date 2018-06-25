@@ -129,8 +129,3 @@ DBBACKUP_STORAGE_OPTIONS = {
         'look_for_keys': False,
     },
 }
-
-# PushingKarma Budget Settings
-BUDGET_ACCOUNTS = secrets.BUDGET_ACCOUNTS
-BUDGET_GSHEETS_CREDSTORE = expanduser('~/Private/googleapi/')
-BUDGET_GSHEETS_SECRETS = join(BUDGET_GSHEETS_CREDSTORE, 'googlesheets-oauth2.json')

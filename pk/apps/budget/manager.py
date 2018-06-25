@@ -9,15 +9,12 @@ https://console.developers.google.com/
 """
 import datetime
 from dateutil.relativedelta import relativedelta
-from django.conf import settings
 from django.utils import timezone
 from ofxparse import OfxParser
 from pk import log
 from pk.utils.decorators import lazyproperty
 from .models import Account, Transaction
 
-GSHEETS_CREDSTORE = getattr(settings, 'BUDGET_GSHEETS_CREDSTORE', None)
-GSHEETS_SECRETS = getattr(settings, 'BUDGET_GSHEETS_SECRETS', None)
 TRXJUNK = '#0123456789 '
 
 

@@ -1,0 +1,20 @@
+# Web uWSGI Configuration
+# location: /etc/uwsgi/apps-enabled/
+[uwsgi]
+chdir = {{project_dir}}
+virtualenv = {{virtualenv}}
+module = wsgi_web:application
+pidfile2 = {{project_dir}}/web.pid
+http-socket = {{project_dir}}/web.sock
+http-websockets = true
+chown-socket = root:root
+chmod-socket = 664
+uid = root
+gid = root
+
+master = true
+no-orphans = true
+vacuum = true
+workers = 2
+max-requests = 5000
+gevent = 123

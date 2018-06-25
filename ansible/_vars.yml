@@ -1,0 +1,9 @@
+# _vars.yml
+# Shared Ansible Variables
+---
+project_name: pushingkarma
+root_dir: /var/www
+project_dir: '{{root_dir}}/{{project_name}}'
+virtualenv: '{{root_dir}}/venvs/{{project_name}}'
+requirements: '{{project_dir}}/requirements.pip'
+settings: '{{project_name}}.settings'

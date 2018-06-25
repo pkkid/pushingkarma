@@ -1,0 +1,8 @@
+# _upload.yml
+# Synchronize project files to {{project_dir}}
+---
+- name: Synchronizing Project Files
+  tags: ['deploy']
+  synchronize:
+    src: ../pk/
+    dest: '{{project_dir}}'
