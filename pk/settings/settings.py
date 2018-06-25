@@ -35,9 +35,9 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'django.contrib.messages',
     'django_extensions',
+    'corsheaders',
     'rest_framework',
     'redsocks',
-    'dbbackup',
     'pk',
     'pk.apps.budget',
     'pk.apps.notes',
@@ -52,8 +52,10 @@ MIDDLEWARE = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
+    # Custom Middleware
     # 'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
     # 'pk.utils.middleware.CleanHTMLMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 )
 
 TEMPLATES = [{
@@ -116,16 +118,6 @@ REDSOCKS_SUBSCRIBERS = {
     'magnets': 'pk.websocket.magnets.MagnetsSubscriber',
 }
 
-# DBBackup Settings
-DBBACKUP_STORAGE = 'storages.backends.sftpstorage.SFTPStorage'
-DBBACKUP_STORAGE_OPTIONS = {
-    'root_path': '/home',
-    'host': secrets.DBBACKUP_SFTP_HOST,
-    'params': {
-        'username': secrets.DBBACKUP_SFTP_USER,
-        'password': secrets.DBBACKUP_SFTP_PASS,
-        'port': secrets.DBBACKUP_SFTP_PORT,
-        'allow_agent': False,
-        'look_for_keys': False,
-    },
-}
+# Django-cors-headers - Cross-Origin Resource Sharing
+CORS_ORIGIN_WHITELIST = ['bugs.nasuni.net']
+CORS_ALLOW_METHODS = ['GET']
