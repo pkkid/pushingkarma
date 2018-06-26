@@ -19,6 +19,3 @@
     src=/etc/nginx/sites-available/{{project_name}}.conf
     dest=/etc/nginx/sites-enabled/{{project_name}}.conf
     state=link
-
-# - name: Test Nginx Config
-#   command: service nginx configtest

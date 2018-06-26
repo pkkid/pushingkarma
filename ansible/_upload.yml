@@ -1,6 +1,11 @@
 # _upload.yml
 # Synchronize project files to {{project_dir}}
 ---
+- name: Creating Project Directory
+  file:
+    path=/var/www
+    state=directory
+
 - name: Synchronizing Project Files
   tags: ['deploy']
   synchronize:

@@ -1,0 +1,38 @@
+#----------------------------------
+# WebServer Bash Aliases
+#----------------------------------
+white='\[\033[1;37m\]'; grey='\[\033[0;37m\]'; black='\[\[\033[0;90m\]'
+red='\[\033[0;31m\]'; green='\[\033[0;32m\]'; yellow='\[\033[0;33m\]'
+blue='\[\033[0;34m\]'; purple='\[\033[0;35m\]'; cyan='\[\033[0;36m\]'
+lred='\[\033[1;31m\]'; lgreen='\[\033[1;32m\]'; lyellow='\[\033[1;33m\]'
+lblue='\[\033[1;34m\]'; lpurple='\[\033[1;35m\]'; lcyan='\[\033[1;36m\]'
+reset='\[\033[0;0m\]'; hostcolor=$red
+
+export PS1="\t ${red}\h${yellow} \w${reset}: "
+export EDITOR="/usr/bin/vim"
+
+# Useful Aliases
+alias ls="LC_COLLATE=C ls -F --color"
+alias ll="ls -lh -F --color --group-directories-first"
+alias grep="grep --color"
+alias ps?="ps ax | grep -v grep | grep -i"
+
+# Aptitude
+alias details="dpkg-query -L"
+alias install="sudo apt-get install"
+alias installed="apt list --installed"
+alias remove="sudo apt-get remove"
+alias search="sudo apt-cache search"
+alias update="sudo apt-get update"
+alias upgrade="sudo apt-get upgrade"
+
+# Function Definitions
+export GREP_EXCLUDES="--exclude-dir=bower --exclude-dir=node_modules --exclude-dir=.hg --exclude-dir=.git"
+export GREP_EXCLUDES="$GREP_EXCLUDES --exclude-dir=docs --exclude-dir=migrations"
+export GREP_EXCLUDES="$GREP_EXCLUDES --exclude=*.sublime-* --exclude=*.map --exclude=vendor.*"
+export GREP_EXCLUDES="$GREP_EXCLUDES --exclude=cscope.out --exclude=filer.js --exclude=filer.css"
+export GREP_EXCLUDES="$GREP_EXCLUDES --exclude=nmc.js --exclude=nmc.css --exclude=SeleniumExamples.html"
+export GREP_EXCLUDES="$GREP_EXCLUDES --exclude=cifsweb.js --exclude=cifsweb.css"
+export GREP_EXCLUDES="$GREP_EXCLUDES --exclude=pushingkarma.*"
+function greps { grep -riIn $GREP_EXCLUDES $* *; }
+function Greps { grep -rIn $GREP_EXCLUDES $* *; }
