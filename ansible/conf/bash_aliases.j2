@@ -27,12 +27,8 @@ alias update="sudo apt-get update"
 alias upgrade="sudo apt-get upgrade"
 
 # Function Definitions
-export GREP_EXCLUDES="--exclude-dir=bower --exclude-dir=node_modules --exclude-dir=.hg --exclude-dir=.git"
+export GREP_EXCLUDES="--exclude-dir=bower --exclude-dir=node_modules"
+export GREP_EXCLUDES="$GREP_EXCLUDES --exclude-dir=.hg --exclude-dir=.git"
 export GREP_EXCLUDES="$GREP_EXCLUDES --exclude-dir=docs --exclude-dir=migrations"
-export GREP_EXCLUDES="$GREP_EXCLUDES --exclude=*.sublime-* --exclude=*.map --exclude=vendor.*"
-export GREP_EXCLUDES="$GREP_EXCLUDES --exclude=cscope.out --exclude=filer.js --exclude=filer.css"
-export GREP_EXCLUDES="$GREP_EXCLUDES --exclude=nmc.js --exclude=nmc.css --exclude=SeleniumExamples.html"
-export GREP_EXCLUDES="$GREP_EXCLUDES --exclude=cifsweb.js --exclude=cifsweb.css"
-export GREP_EXCLUDES="$GREP_EXCLUDES --exclude=pushingkarma.*"
 function greps { grep -riIn $GREP_EXCLUDES $* *; }
 function Greps { grep -rIn $GREP_EXCLUDES $* *; }

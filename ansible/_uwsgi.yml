@@ -1,32 +1,37 @@
 # _uwsgi.yml
 # Install and configure uWSGI
 ---
-- name: Installing uWSGI
+- name: Install uWSGI
   apt: name=uwsgi
 
-- name: Copying uWSGI App {{project_name}}-web.ini
+- name: Create uWSGI App {{project_name}}-web.ini
   template:
     src=conf/uwsgi-web.ini.j2
     dest=/etc/uwsgi/apps-available/{{project_name}}-web.ini
+  notify: Restart Services
 
-- name: Enabling uWSGI App {{project_name}}-web.ini
+- name: Enable uWSGI App {{project_name}}-web.ini
   file:
     src=/etc/uwsgi/apps-available/{{project_name}}-web.ini
     dest=/etc/uwsgi/apps-enabled/{{project_name}}-web.ini
     state=link
+  notify: Restart Services
 
-- name: Copying uWSGI App {{project_name}}-django.ini
+- name: Create uWSGI App {{project_name}}-django.ini
   template:
     src=conf/uwsgi-django.ini.j2
     dest=/etc/uwsgi/apps-available/{{project_name}}-django.ini
+  notify: Restart Services
 
-- name: Enabling uWSGI App {{project_name}}-django.ini
+- name: Enable uWSGI App {{project_name}}-django.ini
   file:
     src=/etc/uwsgi/apps-available/{{project_name}}-django.ini
     dest=/etc/uwsgi/apps-enabled/{{project_name}}-django.ini
     state=link
+  notify: Restart Services
 
-- name: Copying uWSGI Systemd File
+- name: Create uWSGI Service
   template:
     src=conf/uwsgi.service.j2
     dest=/etc/systemd/system/uwsgi.service
+  notify: Restart Services

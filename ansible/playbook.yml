@@ -4,23 +4,27 @@
 # Example Usage:
 #  > ansible-playbook -i inventory.ini playbook.yml
 #  > ansible-playbook -i inventory.ini playbook.yml --tags=deploy
+# 
+# _secrets.yml not checked in; contains: email
 ---
 - hosts: web
   remote_user: root
   become: yes
   become_method: sudo
-  vars_files: ['_vars.yml']
+  vars_files:
+    - _secrets.yml
+    - _vars.yml
 
   tasks:
     - include: _upload.yml
     - include: _system.yml
+    - include: _certbot.yml
     - include: _redis.yml
     - include: _nginx.yml
     - include: _uwsgi.yml
 
-  post_tasks: 
+  handlers:
     - name: Restart Services
-      tags: ['deploy']
       service: name={{item}} state=restarted
       with_items:
         - redis

@@ -1,10 +1,11 @@
 # _django.yml
 # Run Django makemigrations, migrate, collectstatic
 ---
-- name: Initializing Django
-  tags: ["deploy"]
+- name: Initialize Django
+  tags: ['deploy']
   django_manage: command={{item}} app_path={{project_dir}} virtualenv={{virtualenv}} settings={{settings}}
   with_items:
     - makemigrations
     - migrate
     - collectstatic
+  notify: Restart Services

@@ -1,10 +1,21 @@
-# _letsencrypt.yml
-# Install and configure Certbot
+# _certbot.yml
+# Install and configure certbot for LetsEncrypt
 ---
-- name: Installing Nginx Server
-  apt: name={{item}}
-  with_items:
-    - python3-certbot-nginx
+- name: Install Certbot
+  apt: name=certbot
 
-# certbot --nginx
-# certbot renew --dry-run
+- name: Check SSL Certificates
+  stat:
+    path: /etc/letsencrypt/live/{{project_name}}/cert.pem
+  register: certbot_cert
+
+- name: Generate New SSL Certitificate
+  shell: 'certbot certonly --standalone --noninteractive --agree-tos --email {{email}} -d {{project_name}}.com,www.{{project_name}}.com'
+  when: not certbot_cert.stat.exists
+
+- name: Create Certbot Cronjob
+  cron:
+    name: certbot-renew
+    job: 'certbot renew --quiet --no-self-upgrade'
+    hour: 1
+

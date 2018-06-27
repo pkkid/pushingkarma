@@ -1,21 +1,24 @@
 # _redis.yml
 # Install and configure Nginx
 ---
-- name: Installing Nginx Server
+- name: Install Nginx Server
   apt: name=nginx
 
-- name: Removing Nginx default.conf
+- name: Remove Nginx default.conf
   file:
     path=/etc/nginx/sites-enabled/default
     state=absent
+  notify: Restart Services
 
-- name: Writing Nginx {{project_name}}.conf
+- name: Create Nginx {{project_name}}.conf
   template:
     src=conf/nginx.conf.j2
     dest=/etc/nginx/sites-available/{{project_name}}.conf
+  notify: Restart Services
 
-- name: Enabling Nginx {{project_name}}.conf
+- name: Enable Nginx {{project_name}}.conf
   file:
     src=/etc/nginx/sites-available/{{project_name}}.conf
     dest=/etc/nginx/sites-enabled/{{project_name}}.conf
     state=link
+  notify: Restart Services

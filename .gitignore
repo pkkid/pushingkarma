@@ -10,4 +10,5 @@ node_modules/*
 pk/collectstatic/*
 pk/static/bower/*
 pk/static/dist/*
-settings/secrets.py
+*secrets.py
+*secrets.yml

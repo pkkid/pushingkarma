@@ -1,6 +1,10 @@
 #!/usr/bin/env python
 # encoding: utf-8
 """
+secrets.py not checked in; contains: SECRET_KEY, DBBACKUP_SFTP_HOST,
+DBBACKUP_SFTP_USER, DBBACKUP_SFTP_PASS, DBBACKUP_SFTP_PORT,
+BUDGET_ACCOUNTS, DIGITAL_TOKEN
+
 Copyright (c) 2015 PushingKarma. All rights reserved.
 """
 import platform

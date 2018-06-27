@@ -1,21 +1,23 @@
 # _packages.yml
 # Install apt and pip packages
 ---
-- name: Installing .bash_aliases
+- name: Create .bash_aliases
   template:
     src=conf/bash_aliases.j2
     dest=~/.bash_aliases
 
-- name: Installing Aptitude
+- name: Install Aptitude
   apt: name=aptitude
 
-- name: Updating System Packages
+- name: Update System Packages
+  tags: ['update']
   apt:
     upgrade: yes
     update_cache: yes
     cache_valid_time: 86400
+  notify: Restart Services
 
-- name: Installing System Packages
+- name: Install System Packages
   apt: name={{item}}
   with_items:
     - git
@@ -25,11 +27,14 @@
     - sqlite3
     - vim
     - virtualenvwrapper
+  notify: Restart Services
 
-- name: Installing requirements.pip
+- name: Install requirements.pip
+  tags: ['update', 'deploy']
   pip: requirements={{requirements}} virtualenv={{virtualenv}}
+  notify: Restart Services
 
-- name: Creating Log Directory
+- name: Create Log Directory
   file:
     path={{project_dir}}/log
     state=directory
