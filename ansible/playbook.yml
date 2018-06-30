@@ -29,5 +29,5 @@
       with_items:
         - redis
         - nginx
-        # - uwsgi
+        - uwsgi
 

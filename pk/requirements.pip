@@ -21,3 +21,4 @@ python-dateutil==2.6.1
 redis==2.10.5
 requests==2.18.4
 timelib==0.2.4
+uwsgi==2.0.17

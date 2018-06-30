@@ -1,10 +1,10 @@
 # Systemd Script for uWSGI.
 # location: /etc/systemd/system/
 [Unit]
-Description=uWSGI application server in Emperor mode
+Description=uWSGI
 
 [Service]
-ExecStart=/usr/local/bin/uwsgi --master --die-on-term --emperor /etc/uwsgi/apps-enabled
+ExecStart=/usr/local/bin/uwsgi --master --emperor /etc/uwsgi/apps-enabled --die-on-term --uid www-data --gid www-data --logto {{project_dir}}/log/uwsgi.log
 ExecReload=/bin/kill -HUP $MAINPID
 ExecStop=/bin/kill -INT $MAINPID
 Restart=on-failure

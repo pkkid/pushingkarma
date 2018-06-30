@@ -111,9 +111,9 @@ SESSION_ENGINE = 'redis_sessions.session'
 SESSION_COOKIE_AGE = 7776000  # 90 days
 
 # Django Websockets Redis
-REDSOCKS_ALLOWED_CHANNELS = 'pk.websocket.subscriber.allowed_channels'
-WSGI_APPLICATION = 'redsocks.runserver.server.application'
 WEBSOCKET_URL = '/ws/'
+WSGI_APPLICATION = 'redsocks.runserver.server.application'
+REDSOCKS_ALLOWED_CHANNELS = 'pk.websocket.subscriber.allowed_channels'
 REDSOCKS_CONNECTION = {'host':'localhost'}
 REDSOCKS_EXPIRE = 3600
 REDSOCKS_HEARTBEAT = 'heartbeat'
@@ -125,3 +125,6 @@ REDSOCKS_SUBSCRIBERS = {
 # Django-cors-headers - Cross-Origin Resource Sharing
 CORS_ORIGIN_WHITELIST = ['bugs.nasuni.net']
 CORS_ALLOW_METHODS = ['GET']
+
+# Budget Accounts
+BUDGET_ACCOUNTS = secrets.BUDGET_ACCOUNTS

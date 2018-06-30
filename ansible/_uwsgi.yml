@@ -1,9 +1,6 @@
 # _uwsgi.yml
 # Install and configure uWSGI
 ---
-- name: Install uWSGI
-  apt: name=uwsgi
-
 - name: Create uWSGI App {{project_name}}-web.ini
   template:
     src=conf/uwsgi-web.ini.j2
