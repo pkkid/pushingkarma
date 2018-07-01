@@ -12,7 +12,7 @@
 
 - name: Create Nginx {{project_name}}.conf
   template:
-    src=conf/nginx.conf.j2
+    src=templates/nginx.conf.j2
     dest=/etc/nginx/sites-available/{{project_name}}.conf
   notify: Restart Services
 

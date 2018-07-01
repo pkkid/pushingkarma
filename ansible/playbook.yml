@@ -12,17 +12,17 @@
   become: yes
   become_method: sudo
   vars_files:
-    - _secrets.yml
-    - _vars.yml
+    - vars/main.yml
+    - vars/secrets.yml
 
   tasks:
-    - include_tasks: _upload.yml
-    - include_tasks: _system.yml
-    - include_tasks: _django.yml
-    - include_tasks: _certbot.yml
-    - include_tasks: _redis.yml
-    - include_tasks: _nginx.yml
-    - include_tasks: _uwsgi.yml
+    - include_tasks: tasks/upload.yml
+    - include_tasks: tasks/system.yml
+    - include_tasks: tasks/django.yml
+    - include_tasks: tasks/certbot.yml
+    - include_tasks: tasks/redis.yml
+    - include_tasks: tasks/nginx.yml
+    - include_tasks: tasks/uwsgi.yml
 
   handlers:
     - name: Restart Services

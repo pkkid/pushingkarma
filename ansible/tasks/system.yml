@@ -3,7 +3,7 @@
 ---
 - name: Create .bash_aliases
   template:
-    src=conf/bash_aliases.j2
+    src=templates/bash_aliases.j2
     dest=~/.bash_aliases
 
 - name: Install Aptitude
@@ -36,7 +36,7 @@
 
 - name: Install postactivate Script
   template:
-    src=conf/postactivate.j2
+    src=templates/postactivate.j2
     dest={{virtualenv}}/bin/postactivate
 
 - name: Create Log Directory
