@@ -1,16 +1,17 @@
 # Web uWSGI Configuration
-# location: /etc/uwsgi/apps-enabled/
+# location: /etc/uwsgi/sites/
 [uwsgi]
 chdir = {{project_dir}}
+pythonpath = {{root_dir}}
 virtualenv = {{virtualenv}}
 module = wsgi_web:application
 pidfile2 = {{project_dir}}/web.pid
 http-socket = {{project_dir}}/web.sock
 http-websockets = true
-chown-socket = root:root
+chown-socket = www-data:www-data
 chmod-socket = 664
-uid = root
-gid = root
+uid = www-data
+gid = www-data
 
 master = true
 no-orphans = true

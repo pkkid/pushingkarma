@@ -34,6 +34,11 @@
   pip: requirements={{requirements}} virtualenv={{virtualenv}}
   notify: Restart Services
 
+- name: Install postactivate Script
+  template:
+    src=conf/postactivate.j2
+    dest={{virtualenv}}/bin/postactivate
+
 - name: Create Log Directory
   file:
     path={{project_dir}}/log

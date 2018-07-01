@@ -9,13 +9,14 @@ Copyright (c) 2015 PushingKarma. All rights reserved.
 """
 import platform
 from os import makedirs
-from os.path import abspath, dirname, expanduser, join
+from os.path import abspath, dirname, join
 from . import secrets
 
 # Django Core Settings
 HOSTNAME = platform.node()
 ALLOWED_HOSTS = ['.pushingkarma.com', 'localhost']
 BASE_DIR = dirname(dirname(abspath(__file__)))
+LOG_DIR = join(BASE_DIR, 'log')
 DEBUG = HOSTNAME in ['pkkid-work3', 'pkkid-home']
 ROOT_URLCONF = 'pk.urls'
 LOGIN_URL = 'index'
@@ -76,28 +77,29 @@ TEMPLATES = [{
 
 DATABASES = {'default': {
     'ENGINE': 'django.db.backends.sqlite3',
-    'NAME': join(dirname(BASE_DIR), 'db.sqlite3'),
+    'NAME': join(BASE_DIR, 'db.sqlite3'),
 }}
 
+makedirs(LOG_DIR, exist_ok=True)
 LOGLEVEL = 'INFO'
-LOGFORMAT = '%(asctime)-.19s %(module)12s:%(lineno)-3s %(levelname)-7s %(message)s'
-LOGDIR = '/home/mjs7231/Logs/pushingkarma/'
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
     'handlers': {
         'console': {'level':LOGLEVEL, 'class':'logging.StreamHandler', 'formatter':'standard'},
         'file': {'level': LOGLEVEL, 'class':'logging.handlers.RotatingFileHandler',
-            'filename':join(LOGDIR,'pushingkarma.log'), 'maxBytes':1000000, 'backupCount':3,
+            'filename':join(LOG_DIR,'django.log'), 'maxBytes':1000000, 'backupCount':3,
             'formatter': 'standard'},
     },
     'loggers': {
         'pk': {'handlers':['file','console'], 'level':LOGLEVEL, 'propagate':True},
         'redsocks': {'handlers':['file','console'], 'level':LOGLEVEL, 'propagate':False},
     },
-    'formatters':{'standard':{'format':LOGFORMAT}},
+    'formatters':{
+        'standard':{'format':'%(asctime)-.19s %(module)12s:%(lineno)-3s %(levelname)-7s %(message)s'}
+    },
 }
-makedirs(LOGDIR, exist_ok=True)
+
 
 # Django Rest Framework
 REST_FRAMEWORK = {

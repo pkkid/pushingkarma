@@ -16,12 +16,13 @@
     - _vars.yml
 
   tasks:
-    - include: _upload.yml
-    - include: _system.yml
-    - include: _certbot.yml
-    - include: _redis.yml
-    - include: _nginx.yml
-    - include: _uwsgi.yml
+    - include_tasks: _upload.yml
+    - include_tasks: _system.yml
+    - include_tasks: _django.yml
+    - include_tasks: _certbot.yml
+    - include_tasks: _redis.yml
+    - include_tasks: _nginx.yml
+    - include_tasks: _uwsgi.yml
 
   handlers:
     - name: Restart Services

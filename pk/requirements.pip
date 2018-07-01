@@ -1,10 +1,5 @@
 # Python requirements for Pushingkarma.com
 # Copyright (c) 2015 PushingKarma. All rights reserved.
-#
-# To setup a dev environment, do the following:
-#  > install virtualenvwrapper
-#  > mkvirtualenv --python=/usr/bin/python3
-#  > pip install requirements.pip
 
 ansible==2.4.3.0
 beautifulsoup4==4.4.1
@@ -26,6 +21,5 @@ python-dateutil==2.6.1
 redis==2.10.5
 requests==2.18.4
 timelib==0.2.4
-uwsgi==2.0.17
 
 git+https://github.com/pkkid/django-redsocks.git

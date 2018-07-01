@@ -11,4 +11,24 @@
   synchronize:
     src: ../pk/
     dest: '{{project_dir}}'
+    rsync_opts:
+      - '--exclude=*.db'
+      - '--exclude=*.sock'
+      - '--exclude=*.sqlite3'
+      - '--exclude=__pycache__'
+      - '--exclude=log'
+      - '--exclude=secrets.py'
   notify: Restart Services
+
+- name: Set Owner/Group on Project Files
+  file:
+    dest='{{project_dir}}'
+    owner=www-data
+    group=www-data
+    recurse=yes
+
+- name: Copy Secrets
+  tags: ['deploy']
+  copy:
+    src: ../pk/settings/secrets.py
+    dest: '{{project_dir}}/settings/secrets.py'

@@ -3,71 +3,34 @@ This is the core code running pushingkarma.com.  Feel free to borrow
 some ideas for your own site.  If you find anything useful, by all
 means let me know. :)
 
-### Requirements
-* Python3, Pip, Virtualenv, Fabric
-* Npm, Bower, Sass, Autoprefixer, Gulp
 
-### Installation
+### Setup Dev Environment
 ```bash
-# Create Python Virtualenv
-mkdir -p ~/Projects/pushingkarma
-git clone git@github.com:mjs7231/pushingkarma.git ~/Projects/pushingkarma
-mkvirtualenv --python=/usr/bin/python3 -a /home/mjs7231/Projects/pushingkarma pk
-rm ~/.virtualenvs/pk/bin/postactivate
-ln -s ~/Projects/pushingkarma/conf/postactivate ~/.virtualenvs/pk/bin/postactivate
-workon pk
+# Create a virtualenv environment
+sudo apt install virtualenvwrapper redis-server
+mkvirtualenv --python=/usr/bin/python3
+pip install -r pk/requirements.pip
 
-# Install Python Requirements
-pip install -U pip
-pip install -r ~/Projects/pushingkarma/conf/requirements.pip
-```
-
-### Dev Environment
-```bash
-# Install Development Utilities
-sudo apt-get install ruby ruby-dev nodejs npm
-sudo su -c "gem install sass"
+# Setup npm, gulp and bower
+sudo apt install ruby ruby-dev nodejs npm
+sudo su -c 'gem install sass'
 npm install -g gulp bower
 npm install
 bower install  # choose bootstrap 4.0.0-beta
 gulp
 
-# Install Redis and django-redsocks
-sudo apt-get install redis-server
-git clone git@github.com:pkkid/django-redsocks.git ~/Projects/django-redsocks
-ln -s ~/Projects/django-redsocks/redsocks ~/.virtualenvs/pk/lib/python3.*/site-packages/
-
-# Kickstart the Database
-django-admin migrate
+# Run the development server
+./manage.py runserver 0.0.0.0:8000
 ```
 
-### Production Environment
-```bash
-# Install services and tools
-sudo apt-get update && sudo apt-get upgrade
-sudo apt autoremove
-sudo apt-get install python-pip python-setuptools
-sudo apt-get install virtualenv virtualenvwrapper
-sudo apt-get install nginx uwsgi
 
-# Create virtualenv and copy source
-mkvirtualenv --python=/usr/bin/python3 pk
+### Setup Production Environment
+1. Create a new Ubuntu instance
+2. Update ansible/inventory.ini with the IP address of the new instance
+3. cd ansible && ansible-playbook -i inventory.ini playbook.yml
 
-# Install nginx & uwsgi
-ln -s $HOME/Projects/pushingkarma/conf/pushingkarma-nginx.conf /etc/nginx/sites-enabled/pushingkarma-nginx.conf
-ln -s $HOME/Projects/pushingkarma/conf/uwsgi.service /etc/systemd/system/uwsgi.service
-ln -s $HOME/Projects/pushingkarma/conf/pushingkarma-uwsgi-django.ini /etc/uwsgi/apps-enabled/pushingkarma-uwsgi-django.ini
-ln -s $HOME/Projects/pushingkarma/conf/pushingkarma-uwsgi-web.ini /etc/uwsgi/apps-enabled/pushingkarma-uwsgi-web.ini
-ln -s $HOME/Projects/pushingkarma/conf/postactivate $HOME/.virtualenvs/pk/bin/postactivate
 
-# Setup Logging
-mkdir -p /var/log/pushingkarma
-crontab $HOME/Projects/pushingkarma/conf/crontab.txt
-```
-
------
 ### License
-
 Create Commons Attribution-ShareAlike 2.5 Generic (CC BY-SA 2.5)
 https://creativecommons.org/licenses/by-sa/2.5/
 
@@ -91,5 +54,3 @@ public domain or where your use is permitted by an applicable exception or
 limitation. No warranties are given. The license may not give you all of the 
 permissions necessary for your intended use. For example, other rights such as
 publicity, privacy, or moral rights may limit how you use the material.
-
-[![Analytics](https://ga-beacon.appspot.com/UA-87461-7/pushingkarma/home)](https://github.com/igrigorik/ga-beacon)

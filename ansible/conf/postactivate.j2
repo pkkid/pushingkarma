@@ -3,9 +3,9 @@
 # Copyright (c) 2015 PushingKarma. All rights reserved.
 
 PS1="[pk] $_OLD_VIRTUAL_PS1"
-export PATH="$PATH:$HOME/Projects/pushingkarma/node_modules/.bin"
-export PYTHONPATH="$HOME/Projects/pushingkarma:$PYTHONPATH"
+export PATH="$PATH:{{project_dir}}/node_modules/.bin"
+export PYTHONPATH="{{root_dir}}:$PYTHONPATH"
 export DJANGO_SETTINGS_MODULE="pk.settings.settings"
-if [ -f /home/mjs7231/Sources/django/extras/django_bash_completion ]
-  then source /home/mjs7231/Sources/django/extras/django_bash_completion
+if [ -f {{virtualenv}}/src/django/extras/django_bash_completion ]
+  then source {{virtualenv}}/src/django/extras/django_bash_completion
 fi
