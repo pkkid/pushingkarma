@@ -1,5 +1,5 @@
-# _upload.yml
-# Synchronize project files to {{project_dir}}
+# Synchronize project files to project_dir
+# (c) 2018 M.Shepanski. All rights reserved.
 ---
 - name: Create Project Directory
   file:
@@ -11,24 +11,14 @@
   synchronize:
     src: ../pk/
     dest: '{{project_dir}}'
+    copy_links: yes
+    checksum: yes
     rsync_opts:
+      - "--usermap=*:www-data"
+      - "--groupmap=*:www-data"
       - '--exclude=*.db'
       - '--exclude=*.sock'
       - '--exclude=*.sqlite3'
       - '--exclude=__pycache__'
       - '--exclude=log'
-      - '--exclude=secrets.py'
   notify: Restart Services
-
-- name: Set Owner/Group on Project Files
-  file:
-    dest='{{project_dir}}'
-    owner=www-data
-    group=www-data
-    recurse=yes
-
-- name: Copy Secrets
-  tags: ['deploy']
-  copy:
-    src: ../pk/settings/secrets.py
-    dest: '{{project_dir}}/settings/secrets.py'

@@ -1,10 +1,10 @@
-# _uwsgi.yml
 # Install and configure uWSGI
+# (c) 2018 M.Shepanski. All rights reserved.
 ---
 - name: Install uWSGI
   pip: name=uwsgi
 
-- name: Create uWSGI hosts dir
+- name: Create uWSGI Sites Dir
   file:
     path=/etc/uwsgi/sites
     state=directory

@@ -1,5 +1,5 @@
-# _django.yml
-# Run Django makemigrations, migrate, collectstatic
+# Run Django makemigrations, migrate.
+# (c) 2018 M.Shepanski. All rights reserved.
 ---
 - name: Initialize Django
   tags: ['deploy']

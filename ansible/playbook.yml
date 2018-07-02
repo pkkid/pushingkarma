@@ -1,11 +1,9 @@
-# playbook.yml
 # Main Ansible Playbook File
+# (c) 2018 M.Shepanski. All rights reserved.
 #
 # Example Usage:
 #  > ansible-playbook -i inventory.ini playbook.yml
 #  > ansible-playbook -i inventory.ini playbook.yml --tags=deploy
-# 
-# _secrets.yml not checked in; contains: email
 ---
 - hosts: web
   remote_user: root
@@ -13,7 +11,6 @@
   become_method: sudo
   vars_files:
     - vars/main.yml
-    - vars/secrets.yml
 
   tasks:
     - include_tasks: tasks/upload.yml
@@ -25,10 +22,11 @@
     - include_tasks: tasks/uwsgi.yml
 
   handlers:
+    - name: Restart Redis
+      service: name=redis state=restarted
+
     - name: Restart Services
       service: name={{item}} state=restarted
       with_items:
-        - redis
         - nginx
         - uwsgi
-

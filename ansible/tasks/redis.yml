@@ -1,5 +1,5 @@
-# _redis.yml
-# Install and configure Redis
+# Install and configure Redis server.
+# (c) 2018 M.Shepanski. All rights reserved.
 ---
 - name: Install Redis Server
   apt: name=redis-server
@@ -9,4 +9,4 @@
     path: /etc/redis/redis.conf
     regexp: '\#*\s*bind 127.0.0.1'
     line: 'bind 127.0.0.1 ::1'
-  notify: Restart Services
+  notify: Restart Redis

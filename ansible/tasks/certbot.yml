@@ -1,21 +1,25 @@
-# _certbot.yml
-# Install and configure certbot for LetsEncrypt
+# Install and configure certbot for letsencrypt.
+# (c) 2018 M.Shepanski. All rights reserved.
 ---
 - name: Install Certbot
   apt: name=certbot
 
 - name: Check SSL Certificates
   stat:
-    path: /etc/letsencrypt/live/{{project_name}}/cert.pem
-  register: certbot_cert
+    path: /etc/letsencrypt/live/{{project_name}}.com/cert.pem
+  register: cert
+
+- name: Fetch Email From Secrets
+  command: "python {{project_dir}}/settings/secrets.py EMAIL"
+  register: email
+  when: not cert.stat.exists
 
 - name: Generate New SSL Certitificate
-  shell: 'certbot certonly --standalone --noninteractive --agree-tos --email {{email}} -d {{project_name}}.com,www.{{project_name}}.com'
-  when: not certbot_cert.stat.exists
+  shell: 'certbot certonly --standalone --noninteractive --agree-tos --email {{email.stdout}} -d {{project_name}}.com,www.{{project_name}}.com'
+  when: not cert.stat.exists
 
 - name: Create Certbot Cronjob
   cron:
     name: certbot-renew
     job: 'certbot renew --quiet --no-self-upgrade'
     hour: 1
-

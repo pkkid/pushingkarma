@@ -1,7 +1,8 @@
-# _packages.yml
 # Install apt and pip packages
+# (c) 2018 M.Shepanski. All rights reserved.
 ---
 - name: Create .bash_aliases
+  tags: ['update']
   template:
     src=templates/bash_aliases.j2
     dest=~/.bash_aliases
@@ -18,6 +19,7 @@
   notify: Restart Services
 
 - name: Install System Packages
+  tags: ['update']
   apt: name={{item}}
   with_items:
     - git
@@ -35,6 +37,7 @@
   notify: Restart Services
 
 - name: Install postactivate Script
+  tags: ['update']
   template:
     src=templates/postactivate.j2
     dest={{virtualenv}}/bin/postactivate

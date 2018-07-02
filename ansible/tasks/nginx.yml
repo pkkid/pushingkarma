@@ -1,5 +1,5 @@
-# _redis.yml
-# Install and configure Nginx
+# Install and configure Nginx server.
+# (c) 2018 M.Shepanski. All rights reserved.
 ---
 - name: Install Nginx Server
   apt: name=nginx
