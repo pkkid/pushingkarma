@@ -1,5 +1,4 @@
 # Install and configure Redis server.
-# (c) 2018 M.Shepanski. All rights reserved.
 ---
 - name: Install Redis Server
   apt: name=redis-server

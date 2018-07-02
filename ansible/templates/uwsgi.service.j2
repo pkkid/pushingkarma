@@ -4,7 +4,7 @@
 Description=uWSGI
 
 [Service]
-ExecStart=/usr/local/bin/uwsgi --master --emperor /etc/uwsgi/sites --die-on-term --uid www-data --gid www-data --logto {{logs}}/uwsgi.log
+ExecStart={{virtualenv}}/bin/uwsgi --master --emperor /etc/uwsgi/sites --die-on-term --uid www-data --gid www-data --logto {{logs}}/uwsgi.log
 ExecReload=/bin/kill -HUP $MAINPID
 ExecStop=/bin/kill -INT $MAINPID
 Restart=on-failure

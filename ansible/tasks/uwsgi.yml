@@ -1,13 +1,18 @@
 # Install and configure uWSGI
-# (c) 2018 M.Shepanski. All rights reserved.
 ---
+- name: Install System Packages
+  apt: name=libssl-dev
+  notify: Restart Services
+
 - name: Install uWSGI
   pip: name=uwsgi
+  notify: Restart Services
 
 - name: Create uWSGI Sites Dir
   file:
     path=/etc/uwsgi/sites
     state=directory
+  notify: Restart Services
 
 - name: Create uWSGI App {{project_name}}-web.ini
   template:

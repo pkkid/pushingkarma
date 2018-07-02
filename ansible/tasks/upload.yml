@@ -1,5 +1,4 @@
 # Synchronize project files to project_dir
-# (c) 2018 M.Shepanski. All rights reserved.
 ---
 - name: Create Project Directory
   file:

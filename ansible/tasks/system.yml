@@ -1,5 +1,4 @@
 # Install apt and pip packages
-# (c) 2018 M.Shepanski. All rights reserved.
 ---
 - name: Create .bash_aliases
   tags: ['update']

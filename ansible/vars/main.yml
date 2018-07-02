@@ -1,5 +1,4 @@
 # Shared Ansible Variables
-# (c) 2018 M.Shepanski. All rights reserved.
 ---
 project_name: pushingkarma
 root_dir: /var/www

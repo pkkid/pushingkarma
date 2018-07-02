@@ -1,5 +1,4 @@
 # Install and configure certbot for letsencrypt.
-# (c) 2018 M.Shepanski. All rights reserved.
 ---
 - name: Install Certbot
   apt: name=certbot

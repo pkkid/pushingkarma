@@ -1,5 +1,4 @@
 # Main Ansible Playbook File
-# (c) 2018 M.Shepanski. All rights reserved.
 #
 # Example Usage:
 #  > ansible-playbook -i inventory.ini playbook.yml
