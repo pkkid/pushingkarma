@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 # encoding: utf-8
-"""
-Copyright (c) 2015 PushingKarma. All rights reserved.
-"""
 from pk import utils
 from pk.utils import context
 from pk.utils.markdown import Markdown

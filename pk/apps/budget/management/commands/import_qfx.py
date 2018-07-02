@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 # encoding: utf-8
-"""
-Import transactions from qfx file.
-Copyright (c) 2015 PushingKarma. All rights reserved.
-"""
+# Import transactions from qfx file.
 import os
 from django.core.management.base import BaseCommand
 from ...manager import TransactionManager

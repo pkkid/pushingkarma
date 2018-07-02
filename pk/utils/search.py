@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 # encoding: utf-8
-"""
-Copyright (c) 2015 PushingKarma. All rights reserved.
-"""
 import calendar, datetime, re, shlex, timelib
 from dateutil.relativedelta import relativedelta
 from django.db.models import Q

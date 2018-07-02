@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 # encoding: utf-8
-"""
-Copyright (c) 2015 PushingKarma. All rights reserved.
-"""
 import re
 
 class CleanHTMLMiddleware(object):
@@ -34,4 +31,3 @@ class CleanHTMLMiddleware(object):
             if '<pre' in stripped: script = True
             indent = newindent
         return '\n'.join(newhtml)
-

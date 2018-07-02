@@ -1,9 +1,8 @@
 #!/usr/bin/env python
 # encoding: utf-8
-"""
-Pulled from django-rest-framework documentation
-http://www.django-rest-framework.org/api-guide/serializers/#dynamically-modifying-fields
-"""
+#
+# Pulled from django-rest-framework documentation:
+# http://www.django-rest-framework.org/api-guide/serializers/#dynamically-modifying-fields
 from rest_framework import serializers
 
 

@@ -1,5 +1,5 @@
-# Python requirements for Pushingkarma.com
-# Copyright (c) 2015 PushingKarma. All rights reserved.
+# pip requirements file
+# pip install -r requirements.pip
 
 ansible==2.4.3.0
 beautifulsoup4==4.4.1

@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 # encoding: utf-8
-"""
-Copyright (c) 2015 PushingKarma. All rights reserved.
-"""
 import json
 from django.conf import settings
 from django.forms.utils import ErrorDict

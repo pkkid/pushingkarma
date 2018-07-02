@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 # encoding: utf-8
-"""
-Copyright (c) 2015 PushingKarma. All rights reserved.
-"""
 from django.db import models, transaction
 from django_extensions.db.models import TimeStampedModel
 from pk import log, utils

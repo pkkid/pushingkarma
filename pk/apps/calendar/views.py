@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 # encoding: utf-8
-"""
-Copyright (c) 2018 PushingKarma. All rights reserved.
-"""
 import json, requests
 from datetime import datetime, timedelta
 from django.http import HttpResponse

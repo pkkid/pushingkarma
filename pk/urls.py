@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 # encoding: utf-8
-"""
-Copyright (c) 2015 PushingKarma. All rights reserved.
-"""
 import pk.utils.auth
 from django.conf import settings
 from django.conf.urls import include, url
@@ -35,16 +32,16 @@ urlpatterns = [
     url(r'^auth/login/$', pk.utils.auth.user_login, name='auth_login'),
     url(r'^auth/logout/$', pk.utils.auth.user_logout, name='auth_logout'),
     url(r'^favicon\.ico$', redirect('/static/pushingkarma/img/favicon.ico'), name='favicon'),
-    # PushingKarma Pages
+    # Pages
     url(r'^$', page_views.page, name='index'),
     url(r'^$', page_views.page, name='pages'),
     url(r'^p/(?P<slug>.*?)/$', page_views.page, name='page'),
     url(r'^markdown/p/$', page_views.markdown, name='page_markdown'),
-    # PushingKarma Notes
+    # Notes
     url(r'^n/$', note_views.note, name='notes'),
     url(r'^n/(?P<slug>.*?)/$', note_views.note, name='note'),
     url(r'^markdown/n/$', note_views.markdown, name='note_markdown'),
-    # PushingkKarma Budget
+    # Budget
     url(r'^budget/$', budget_views.budget, name='budget'),
     # o365 Calendar
     url(r'^calendar/$', calendar_views.calendar, name='calendar'),

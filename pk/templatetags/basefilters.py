@@ -1,6 +1,5 @@
-"""
-General useful filters.
-"""
+#!/usr/bin/env python
+# encoding: utf-8
 import json as _json
 from django import template
 from django.utils.html import escape

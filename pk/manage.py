@@ -1,8 +1,5 @@
 #!/usr/bin/env python
 # encoding: utf-8
-"""
-Copyright (c) 2015 PushingKarma. All rights reserved.
-"""
 import os, sys
 from django.core.management import execute_from_command_line
 from os.path import abspath, dirname

@@ -1,9 +1,6 @@
 #!/usr/bin/env python
 # encoding: utf-8
-"""
-Redis Subscriber class to recieve and parse messages.
-Copyright (c) 2015 PushingKarma. All rights reserved.
-"""
+# Redis Subscriber class to recieve and parse messages.
 import json
 from redsocks.subscriber import RedisSubscriber
 from redsocks import utils

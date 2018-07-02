@@ -1,12 +1,9 @@
 #!/usr/bin/env python
 # encoding: utf-8
-"""
-Copyright (c) 2015 PushingKarma. All rights reserved.
-
-References:
-https://github.com/jseutter/ofxparse
-https://console.developers.google.com/
-"""
+#
+# References:
+#  https://github.com/jseutter/ofxparse
+#  https://console.developers.google.com/
 import datetime
 from dateutil.relativedelta import relativedelta
 from django.utils import timezone

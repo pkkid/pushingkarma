@@ -1,6 +1,4 @@
-/*----------------------------------------------------------
- * Copyright (c) 2015 PushingKarma. All rights reserved.
- *------------------------------------------------------- */
+// Encoding: UTF-8
 'use strict';
 
 pk.charts = {

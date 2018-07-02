@@ -1,9 +1,8 @@
-/*----------------------------------------------------------
- * Collection of handlebar helpers from the following git
- * repo formatted for use on the web.
- * SOURCE: https://github.com/assemble/handlebars-helpers
- * LICENSE: https://github.com/assemble/handlebars-helpers/blob/master/LICENSE-MIT
- *------------------------------------------------------- */
+// Encoding: UTF-8
+// Collection of handlebar helpers from the following git
+// repo formatted for use on the web.
+// SOURCE: https://github.com/assemble/handlebars-helpers
+// LICENSE: https://github.com/assemble/handlebars-helpers/blob/master/LICENSE-MIT
 'use strict';
 
 
