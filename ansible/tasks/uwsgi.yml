@@ -1,6 +1,6 @@
 # Install and configure uWSGI
 ---
-- name: Install System Packages
+- name: Install libssl-dev
   apt: name=libssl-dev
   notify: Restart Services
 
