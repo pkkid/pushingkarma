@@ -1,6 +1,5 @@
-/*----------------------------------------------------------
- * Copyright (c) 2015 PushingKarma. All rights reserved.
- *------------------------------------------------------- */
+// Encoding: UTF-8
+// gulp tasks: js, css, codemirror, watch
 'use strict';
 
 var gulp = require('gulp');
@@ -14,15 +13,15 @@ var watch = require('gulp-watch');
 
 // Javascript
 gulp.task('js', function() {
-  gulp.src('./pk/static/pushingkarma/js/*.js')
-  .pipe(concat('pushingkarma.js', {newLine:'\n\n\n'}))
+  gulp.src('./pk/static/site/js/*.js')
+  .pipe(concat('main.js', {newLine:'\n\n\n'}))
   .pipe(gulp.dest('./pk/static/dist'));
 });
 
 
 // CSS
 gulp.task('css', function () {
-  gulp.src('pk/static/pushingkarma/css/pushingkarma.scss')
+  gulp.src('pk/static/site/css/main.scss')
   .pipe(sourcemaps.init())
   .pipe(sass({style:'expanded'}))
   .on('error', sass.logError)
@@ -68,7 +67,7 @@ gulp.task('codemirror', function() {
 
 // Watch
 gulp.task('watch', function () {
-  watch(['**/js/*.js', '!**/js/pushingkarma.js'], batch(function(events, done) {
+  watch(['**/js/*.js', '!**/js/main.js'], batch(function(events, done) {
     gulp.start('js', done);
   }));
   watch('**/css/*.scss', batch(function(events, done) {

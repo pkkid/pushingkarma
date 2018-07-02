@@ -5,20 +5,20 @@
 <!-- |  __/| |_| \__ \ | | | | | | | (_| | . \ (_| | |  | | | | | | (_| | -->
 <!-- |_|    \__,_|___/_| |_|_|_| |_|\__, |_|\_\__,_|_|  |_| |_| |_|\__,_| -->
 <!--                                |___/                                 -->
-<!-- This website is written using the Django Web Framework.              -->
-<!-- View source here: https://github.com/mjs7231/pushingkarma            -->
+<!-- This website is written using the Django Web Framework. -->
+<!-- View source here: https://github.com/mjs7231/pushingkarma -->
 <html lang='en'>
   <head>
     <meta charset='UTF-8'/>
-    <title>{% block title %}{% endblock %}PushingKarma</title>
-    <link rel='shortcut icon' href='/static/pushingkarma/img/favicon.ico'/>
+    <title>{% block title %}{% endblock %}{{settings.SITE_NAME}}</title>
+    <link rel='shortcut icon' href='/static/site/img/favicon.ico'/>
     <link rel='stylesheet' type='text/css' href='/static/bower/animate.css/animate.css'/>
     <link rel='stylesheet' type='text/css' href='/static/bower/bootstrap/dist/css/bootstrap.min.css'/>
     <link rel='stylesheet' type='text/css' href='/static/bower/mdi/css/materialdesignicons.min.css'/>
     <link rel='stylesheet' type='text/css' href='/static/bower/jquery-confirm2/dist/jquery-confirm.min.css'/>
     <link rel='stylesheet' type='text/css' href='/static/bower/jquery-toast-plugin/dist/jquery.toast.min.css'/>
     <link rel='stylesheet' type='text/css' href='/static/dist/codemirror.css'/>
-    <link rel='stylesheet' type='text/css' href='/static/dist/pushingkarma.css'/>
+    <link rel='stylesheet' type='text/css' href='/static/dist/main.css'/>
     <link rel='stylesheet' type='text/css' href='https://fonts.googleapis.com/css?family=Josefin+Sans:400,600|Roboto+Mono|Crimson+Text|Cabin:400,500,600'/>
     {% block css %}{% endblock %}
   </head>
@@ -27,7 +27,7 @@
       <div id='layout' class='no-preload-animation'>
         <header>
           <div id='logo' class='no-preload-animation'>
-            <div class='title'>PushingKarma</div>
+            <div class='title'>{{settings.SITE_NAME}}</div>
             <div class='subtitle'>Website for Michael Shepanski</div>
             <form method='POST'>
               {% if user.is_authenticated %}
@@ -50,7 +50,7 @@
         </div>
       </div>
       <footer class='no-preload-animation'>
-        Copyright (c) 2015 PushingKarma. All rights reserved.
+        Copyright (c) 2015 {{settings.SITE_NAME}}. All rights reserved.
       </footer>
     </div>
   </body>
@@ -71,7 +71,7 @@
   <script src='/static/bower/lodash/dist/lodash.min.js'></script>
   <script src='/static/bower/moment/moment.js'></script>
   <script src='/static/dist/codemirror.js'></script>
-  <script src='/static/dist/pushingkarma.js'></script>
+  <script src='/static/dist/main.js'></script>
   <script src='/static/redsocks/redsocket.js'></script>
   {% if not settings.DEBUG %}
     <script type='text/javascript'>

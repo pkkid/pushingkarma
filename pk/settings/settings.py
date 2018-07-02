@@ -7,6 +7,7 @@ from . import secrets
 
 # Django Core Settings
 HOSTNAME = platform.node()
+SITE_NAME = 'PushingKarma'
 ALLOWED_HOSTS = ['.pushingkarma.com', 'localhost']
 BASE_DIR = dirname(dirname(abspath(__file__)))
 LOG_DIR = join(BASE_DIR, 'log')
