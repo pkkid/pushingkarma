@@ -45,4 +45,7 @@
 - name: Create Log Directory
   file:
     path={{project_dir}}/log
+    owner=www-data
+    group=www-data
     state=directory
+

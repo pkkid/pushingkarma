@@ -26,11 +26,10 @@ gulp
 
 ### Setup Production Environment
 1. Create a new Ubuntu instance
-2. Update ansible/inventory.ini with the IP address of the new instance
-3. cd ansible && ansible-playbook -i inventory.ini playbook.yml
+2. Update `ansible/inventory.ini` with the IP address of the new instance
+3. Run: `cd ansible && ansible-playbook -i inventory.ini playbook.yml`
 
 
 ### License
-Create Commons Attribution-ShareAlike 2.5 Generic (CC BY-SA 2.5)
-
+Create Commons Attribution-ShareAlike 2.5 Generic (CC BY-SA 2.5) - 
 https://creativecommons.org/licenses/by-sa/2.5/

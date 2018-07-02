@@ -3,6 +3,8 @@
 ---
 - name: Initialize Django
   tags: ['deploy']
+  become: yes
+  become_user: www-data
   django_manage:
     command={{item}}
     app_path={{project_dir}}
@@ -12,3 +14,4 @@
     - makemigrations
     - migrate
   notify: Restart Services
+
