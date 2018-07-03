@@ -115,7 +115,7 @@ REDSOCKS_EXPIRE = 3600
 REDSOCKS_HEARTBEAT = 'heartbeat'
 REDSOCKS_PREFIX = 'ws'
 REDSOCKS_SUBSCRIBERS = {
-    'magnets': 'pk.websocket.magnets.MagnetsSubscriber',
+    'magnets': 'pk.apps.magnets.websock.MagnetsSubscriber',
 }
 
 # Django-cors-headers - Cross-Origin Resource Sharing
