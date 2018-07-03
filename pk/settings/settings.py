@@ -41,6 +41,7 @@ INSTALLED_APPS = (
     'pk.apps.budget',
     'pk.apps.notes',
     'pk.apps.pages',
+    'pk.apps.raspi',
 )
 
 MIDDLEWARE = (

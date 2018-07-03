@@ -13,11 +13,8 @@ def calendar(request, status=200):
     """ Convert o365 calendar events to ics because MS does it wrong. """
     try:
         url = request.GET.get('url')
-        session = requests.Session()
-        config, folders = _load_calendar(session, url)
-        events = _load_events(session, url, config)
         ics = Calendar()
-        for event in events:
+        for event in get_events(url):
             ics.events.append(Event(
                 name=event['Subject'],
                 location=event['Location']['DisplayName'],
@@ -27,6 +24,12 @@ def calendar(request, status=200):
         return HttpResponse(str(ics), content_type='text/calendar', status=status)
     except Exception as err:
         log.exception(err)
+
+
+def get_events(url):
+    session = requests.Session()
+    config, folders = _load_calendar(session, url)
+    return _load_events(session, url, config)
 
 
 def _load_calendar(session, url):

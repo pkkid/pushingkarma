@@ -1,0 +1,24 @@
+<html lang='en'>
+  <head>
+    <meta charset='UTF-8'/>
+    <title>{% block title %}{% endblock %}{{settings.SITE_NAME}}</title>
+    <link rel='shortcut icon' href='/static/site/img/favicon.ico'/>
+    <link rel='stylesheet' type='text/css' href='/static/bower/animate.css/animate.css'/>
+    <link rel='stylesheet' type='text/css' href='/static/bower/bootstrap/dist/css/bootstrap.min.css'/>
+    <link rel='stylesheet' type='text/css' href='/static/bower/mdi/css/materialdesignicons.min.css'/>
+    <link rel='stylesheet' type='text/css' href='/static/bower/jquery-confirm2/dist/jquery-confirm.min.css'/>
+    <link rel='stylesheet' type='text/css' href='/static/bower/jquery-toast-plugin/dist/jquery.toast.min.css'/>
+    <link rel='stylesheet' type='text/css' href='/static/dist/codemirror.css'/>
+    <link rel='stylesheet' type='text/css' href='/static/dist/main.css'/>
+    <link rel='stylesheet' type='text/css' href='https://fonts.googleapis.com/css?family=Josefin+Sans:400,600|Roboto+Mono|Crimson+Text|Cabin:400,500,600'/>
+    {% block css %}{% endblock %}
+  </head>
+  <body>
+    <div id='raspi'>
+      Hi Mom!
+      <div class='lichesstv'>
+        <script src="https://lichess.org/tv/embed?theme=grey&bg=dark"></script>
+      </div>
+    </div>
+  </body>
+</html>
