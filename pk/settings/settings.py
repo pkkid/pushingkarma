@@ -3,7 +3,7 @@
 import platform
 from os import makedirs
 from os.path import abspath, dirname, join
-from . import secrets
+from .secrets import *
 
 # Django Core Settings
 HOSTNAME = platform.node()
@@ -16,7 +16,6 @@ ROOT_URLCONF = 'pk.urls'
 LOGIN_URL = 'index'
 STATIC_URL = '/static/'
 STATIC_ROOT = '%s/collectstatic/' % BASE_DIR
-SECRET_KEY = secrets.SECRET_KEY
 INTERNAL_IPS = ['127.0.0.1']
 
 LANGUAGE_CODE = 'en-us'
@@ -122,6 +121,3 @@ REDSOCKS_SUBSCRIBERS = {
 # Django-cors-headers - Cross-Origin Resource Sharing
 CORS_ORIGIN_WHITELIST = ['bugs.nasuni.net']
 CORS_ALLOW_METHODS = ['GET']
-
-# Budget Accounts
-BUDGET_ACCOUNTS = secrets.BUDGET_ACCOUNTS

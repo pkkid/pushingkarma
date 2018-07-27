@@ -1,14 +1,10 @@
 #!/usr/bin/env python
 # encoding: utf-8
-import requests
+import pprint, requests
 from django.conf import settings
 from django.core.management.base import BaseCommand
+from pk.apps.calendar.views import get_events
 from pk import log
-
-# Weather Underground Settings
-WU_APIKEY = getattr(settings, 'RASPI_WUNDERGROUND_APIKEY', '')
-WU_LOCATION = getattr(settings, 'RASPI_WUNDERGROUND_LOCATION', '')
-WU_URL = 'http://api.WU.com/api/%(apikey)s/conditions/forecast10day/astronomy/q/%(location)s.json'
 
 
 class Command(BaseCommand):
@@ -24,14 +20,17 @@ class Command(BaseCommand):
 
     def _update_weather(self):
         try:
-            url = WU_URL % {'apikey':WU_APIKEY, 'location':WU_LOCATION}
-            response = requests.get(url)
-            print(response.json)
+            response = requests.get(settings.RASPI_WU_URL)
+            pprint.pprint(response.json())
         except Exception as err:
             log.exception(err)
 
     def _update_calendar(self):
-        pass
+        try:
+            response = get_events(settings.RASPI_CALENDAR_URL)
+            pprint.pprint(response)
+        except Exception as err:
+            log.exception(err)
 
     def _update_news(self):
         pass
