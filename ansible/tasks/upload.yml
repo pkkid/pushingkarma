@@ -2,7 +2,7 @@
 ---
 - name: Create Project Directory
   file:
-    path=/var/www
+    path='{{root_dir}}'
     state=directory
 
 - name: Sync Project Files
