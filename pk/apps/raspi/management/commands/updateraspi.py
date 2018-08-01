@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # encoding: utf-8
-import pprint, requests
+import requests
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from pk.apps.calendar.views import get_events
@@ -19,7 +19,7 @@ class Command(BaseCommand):
         if opts['resource'] in [None, 'calendar']: self._update_calendar()
         if opts['resource'] in [None, 'news']: self._update_news()
 
-    @cached()
+    @cached(timeout=900, key='raspi-weather')
     def _update_weather(self):
         try:
             response = requests.get(settings.RASPI_WU_URL)
@@ -27,7 +27,7 @@ class Command(BaseCommand):
         except Exception as err:
             log.exception(err)
 
-    @cached()
+    @cached(key='raspi-calendar')
     def _update_calendar(self):
         try:
             response = get_events(settings.RASPI_CALENDAR_URL)
@@ -35,6 +35,6 @@ class Command(BaseCommand):
         except Exception as err:
             log.exception(err)
 
-    @cached()
+    @cached(key='raspi-news')
     def _update_news(self):
         return None

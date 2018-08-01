@@ -3,7 +3,7 @@
 import platform
 from os import makedirs
 from os.path import abspath, dirname, join
-from .secrets import *
+from .secrets import *  # noqa
 
 # Django Core Settings
 HOSTNAME = platform.node()
@@ -42,7 +42,6 @@ INSTALLED_APPS = (
     'pk.apps.pages',
     'pk.apps.raspi',
 )
-
 MIDDLEWARE = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -51,12 +50,8 @@ MIDDLEWARE = (
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    # Custom Middleware
-    # 'django.contrib.auth.middleware.SessionAuthenticationMiddleware',
-    # 'pk.utils.middleware.CleanHTMLMiddleware',
     'corsheaders.middleware.CorsMiddleware',
 )
-
 TEMPLATES = [{
     'BACKEND': 'django.template.backends.django.DjangoTemplates',
     'DIRS': ['%s/templates' % BASE_DIR],
@@ -68,12 +63,20 @@ TEMPLATES = [{
         'django.contrib.messages.context_processors.messages',
     ]},
 }]
-
 DATABASES = {'default': {
     'ENGINE': 'django.db.backends.sqlite3',
     'NAME': join(BASE_DIR, 'db.sqlite3'),
 }}
 
+# Django Cache
+REDIS_HOST = 'localhost'
+REDIS_PORT = 6379
+CACHES = {'default': {
+    'BACKEND': 'redis_cache.RedisCache',
+    'LOCATION': ['%s:%s' % (REDIS_HOST, REDIS_PORT)],
+}}
+
+# Logging
 makedirs(LOG_DIR, exist_ok=True)
 LOGLEVEL = 'INFO'
 LOGGING = {
@@ -94,7 +97,6 @@ LOGGING = {
     },
 }
 
-
 # Django Rest Framework
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticatedOrReadOnly',),
@@ -110,7 +112,7 @@ SESSION_COOKIE_AGE = 7776000  # 90 days
 WEBSOCKET_URL = '/ws/'
 WSGI_APPLICATION = 'redsocks.runserver.server.application'
 REDSOCKS_ALLOWED_CHANNELS = 'pk.websocket.subscriber.allowed_channels'
-REDSOCKS_CONNECTION = {'host':'localhost'}
+REDSOCKS_CONNECTION = {'host':REDIS_HOST}
 REDSOCKS_EXPIRE = 3600
 REDSOCKS_HEARTBEAT = 'heartbeat'
 REDSOCKS_PREFIX = 'ws'

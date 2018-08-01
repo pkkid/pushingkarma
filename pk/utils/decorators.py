@@ -19,22 +19,21 @@ class ContextDecorator(object):
         return decorated
 
 
-def cached(timeout=3600, expires=86400, key=None):
+def cached(timeout=900, expires=86400, key=None):
     def wrapper1(func):
         def wrapper2(self, *args, **kwargs):
             now = int(time.time())
-            cachekey = key or func.__name__
-            cachekey = '%s(%s)' % (cachekey, hash_args(*args, **kwargs))
+            cachekey = key
+            if not key:
+                cachekey = key or func.__name__
+                cachekey = '%s(%s)' % (cachekey, hash_args(*args, **kwargs))
             cachevalue = cache.get(cachekey)
             cachevalue = json.loads(cachevalue) if cachevalue else {}
             cacheage = now - cachevalue.get('lastupdate', 0)
-            print('value: %s' % str(cachevalue)[:150])
-            print('age: %s' % cacheage)
             if cachevalue and cacheage <= timeout:
                 return cachevalue
             data = func(self, *args, **kwargs)
             newvalue = json.dumps({'lastupdate':int(time.time()), 'data':data})
-            print('saving: %s' % newvalue[:150])
             cache.set(cachekey, newvalue, expires)
             return data
         return wrapper2
@@ -73,9 +72,9 @@ class logqueries(ContextDecorator):
 
     def __enter__(self):
         if self.label:
-            log.info(color("------------------------", 'blue'))
-            log.info(color("%s - start of profiling" % self.label, 'blue'))
-            log.info(color("------------------------", 'blue'))
+            log.info(color('-' * 25, 'blue'))
+            log.info(color('%s - start of profiling' % self.label, 'blue'))
+            log.info(color('-' * 25, 'blue'))
         self.sqltime, self.longest, self.numshown = 0.0, 0.0, 0
         self.initqueries = len(connection.queries)
         self.starttime = time.time()
@@ -88,18 +87,18 @@ class logqueries(ContextDecorator):
             if self.show_queries:
                 if not self.filter or self.filter in query['sql']:
                     self.numshown += 1
-                    querystr = color("[%ss] " % query['time'], 'yellow')
+                    querystr = color('[%ss] ' % query['time'], 'yellow')
                     querystr += color(query['sql'], 'blue')
-                    log.info("")
+                    log.info('')
                     log.info(querystr)
         numqueries = len(connection.queries) - self.initqueries
         numhidden = numqueries - self.numshown
         runtime = round(time.time() - self.starttime, 3)
         proctime = round(runtime - self.sqltime, 3)
-        log.info(color("-------", 'blue'))
+        log.info(color('-' * 8, 'blue'))
         if self.label:
-            log.info(color("%s - end of profiling" % self.label, 'blue'))
-            log.info(color("-------", 'blue'))
+            log.info(color('%s - end of profiling' % self.label, 'blue'))
+            log.info(color('-' * 8, 'blue'))
         log.info(color('Total Time:  %ss' % runtime, 'yellow'))
         log.info(color('Proc Time:   %ss' % proctime, 'yellow'))
         log.info(color('Query Time:  %ss (longest: %ss)' % (self.sqltime, self.longest), 'yellow'))

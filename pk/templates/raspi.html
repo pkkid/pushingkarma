@@ -3,11 +3,9 @@
     <meta charset='UTF-8'/>
     <title>{% block title %}{% endblock %}{{settings.SITE_NAME}}</title>
     <link rel='shortcut icon' href='/static/site/img/favicon.ico'/>
-    <link rel='stylesheet' type='text/css' href='/static/bower/animate.css/animate.css'/>
     <link rel='stylesheet' type='text/css' href='/static/bower/bootstrap/dist/css/bootstrap.min.css'/>
     <link rel='stylesheet' type='text/css' href='/static/bower/mdi/css/materialdesignicons.min.css'/>
-    <link rel='stylesheet' type='text/css' href='/static/bower/jquery-confirm2/dist/jquery-confirm.min.css'/>
-    <link rel='stylesheet' type='text/css' href='/static/bower/jquery-toast-plugin/dist/jquery.toast.min.css'/>
+    <link rel='stylesheet' type='text/css' href='/static/bower/weather-underground-icons/dist/wu-icons-style.min.css'/>
     <link rel='stylesheet' type='text/css' href='/static/dist/codemirror.css'/>
     <link rel='stylesheet' type='text/css' href='/static/dist/main.css'/>
     <link rel='stylesheet' type='text/css' href='https://fonts.googleapis.com/css?family=Josefin+Sans:400,600|Roboto+Mono|Crimson+Text|Cabin:400,500,600'/>
@@ -15,7 +13,21 @@
   </head>
   <body>
     <div id='raspi'>
-      Hi Mom!
+      <div class='weather'>
+        location: {{weather.data.current_observation.display_location.city}}<br/>
+        temp: {{weather.data.current_observation.temp_f}}'F<br/>
+        feels: {{weather.data.current_observation.feelslike_f}}'F<br/>
+        icon: {{weather.data.current_observation.icon}}<br/>
+        weather: {{weather.data.current_observation.weather}}<br/>
+        visibility: {{weather.data.current_observation.visibility_mi}} mph<br/>
+        humidity: {{weather.data.current_observation.relative_humidity}}<br/>
+        pressure: {{weather.data.current_observation.pressure_in}}{{weather.data.current_observation.pressure_trend}} in<br/>
+        sunrise: {{weather.data.sun_phase.sunrise.hour}}:{{weather.data.sun_phase.sunrise.minute}}<br/>
+        sunset: {{weather.data.sun_phase.sunset.hour}}:{{weather.data.sun_phase.sunset.minute}}<br/>
+        moon: {{weather.data.moon_phase.ageOfMoon}} ({{weather.data.moon_phase.percentIlluminated}}%)<br/>
+        updated: {{weather.lastupdate}}<br/>
+      </div>
+
       <div class='lichesstv'>
         <script src="https://lichess.org/tv/embed?theme=grey&bg=dark"></script>
       </div>

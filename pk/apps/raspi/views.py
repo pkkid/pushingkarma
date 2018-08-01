@@ -1,12 +1,16 @@
 #!/usr/bin/env python
 # encoding: utf-8
+import json
+from django.core.cache import cache
 from pk import utils
-from pk.apps.calendar.views import get_events
-from pk.settings.secrets import RASPI_CALENDAR_URL
+from pk.utils import context
 
+import pprint
 
 def raspi(request, tmpl='raspi.html'):
-    events = get_events(RASPI_CALENDAR_URL)
-    events = [e for e in events if e['Start'].startswith('2018-07-02')]
-    print(events)
-    return utils.response(request, tmpl, {})
+    data = context.core(request)
+    data.weather = json.loads(cache.get('raspi-weather', '{}'))
+    data.calendar = json.loads(cache.get('raspi-calendar', '{}'))
+    data.news = json.loads(cache.get('raspi-news', '{}'))
+    pprint.pprint(data.weather)
+    return utils.response(request, tmpl, data)
