@@ -4,6 +4,7 @@ import pprint, requests
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from pk.apps.calendar.views import get_events
+from pk.utils.decorators import cached
 from pk import log
 
 
@@ -18,19 +19,22 @@ class Command(BaseCommand):
         if opts['resource'] in [None, 'calendar']: self._update_calendar()
         if opts['resource'] in [None, 'news']: self._update_news()
 
+    @cached()
     def _update_weather(self):
         try:
             response = requests.get(settings.RASPI_WU_URL)
-            pprint.pprint(response.json())
+            return response.json()
         except Exception as err:
             log.exception(err)
 
+    @cached()
     def _update_calendar(self):
         try:
             response = get_events(settings.RASPI_CALENDAR_URL)
-            pprint.pprint(response)
+            return response
         except Exception as err:
             log.exception(err)
 
+    @cached()
     def _update_news(self):
-        pass
+        return None

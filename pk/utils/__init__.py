@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # encoding: utf-8
-import json
+import json, hashlib
 from django.conf import settings
 from django.forms.utils import ErrorDict
 from django.http import HttpResponse
@@ -14,6 +14,16 @@ def get_object_or_none(cls, *args, **kwargs):
         return cls._default_manager.get(*args, **kwargs)
     except cls.DoesNotExist:
         return None
+
+
+def hash_args(*args, **kwargs):
+    hash = hashlib.md5()
+    for arg in sorted(args):
+        hash.update(str(arg).encode())
+    for key, value in sorted(kwargs.items()):
+        hash.update(str(key).encode())
+        hash.update(str(value).encode())
+    return hash.hexdigest()[:7]
 
 
 def move_to_end(odict, *keys):
