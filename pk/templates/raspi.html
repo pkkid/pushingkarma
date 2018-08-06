@@ -1,3 +1,4 @@
+{% load basefilters %}
 <html lang='en'>
   <head>
     <meta charset='UTF-8'/>
@@ -14,6 +15,7 @@
   <body>
     <div id='raspi'>
       <div class='weather'>
+        <!-- Weather
         location: {{weather.data.current_observation.display_location.city}}<br/>
         temp: {{weather.data.current_observation.temp_f}}'F<br/>
         feels: {{weather.data.current_observation.feelslike_f}}'F<br/>
@@ -26,8 +28,32 @@
         sunset: {{weather.data.sun_phase.sunset.hour}}:{{weather.data.sun_phase.sunset.minute}}<br/>
         moon: {{weather.data.moon_phase.ageOfMoon}} ({{weather.data.moon_phase.percentIlluminated}}%)<br/>
         updated: {{weather.lastupdate}}<br/>
+        -->
+        <div class='weather-today'>
+          <div class='weather-today-summary'>
+            <div class='weather-location'>{{weather.data.current_observation.display_location.city}}</div>
+            <div class='weather-description'>{{weather.data.current_observation.weather}}</div>
+          </div>
+          <div class='weather-today-icon'>
+            <i class='wu wu-white wu-32 wu-{{weather.data.current_observation.icon}}'></i>
+          </div>
+          <div class='weather-today-details'>
+            <div class='weather-temp'>{{weather.data.current_observation.temp_f|to_int}}°F</div>
+            <div class='weather-feelslike'>Feels: {{weather.data.current_observation.feelslike_f|to_int}}°</div>
+          </div>
+        </div>
+        <div class='forecast' style='clear:both'>
+          {% for this in weather.data.forecast.simpleforecast.forecastday|slice:'5' %}
+            <div class='forecast-day' style='float:left;'>
+              <i class='wu wu-solid-white wu-32 wu-{{this.icon}}'></i>
+              <div class='forecast-weekday'>{{this.date.weekday_short}}</div>
+              <div class='forecast-highlow'>{{this.high.fahrenheit}}°/{{this.low.fahrenheit}}°</div>
+            </div>
+          {% endfor %}
+        </div>
       </div>
 
+      <!-- Lichess -->
       <div class='lichesstv'>
         <script src="https://lichess.org/tv/embed?theme=grey&bg=dark"></script>
       </div>

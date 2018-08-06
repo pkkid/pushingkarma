@@ -60,3 +60,8 @@ def to_bool(arg, default='false'):
     if isinstance(arg, bool): return arg
     if isinstance(arg, str) and arg.lower() == 'true': return True
     return True if default.lower() == 'true' else False
+
+
+@register.filter
+def to_int(value):
+    return int(value)
