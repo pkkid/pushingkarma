@@ -12,6 +12,13 @@
     - vars/main.yml
 
   tasks:
+    - import_tasks: tasks/upload.yml
+    - import_tasks: tasks/system.yml
+    - import_tasks: tasks/django.yml
+    - import_tasks: tasks/certbot.yml
+    - import_tasks: tasks/redis.yml
+    - import_tasks: tasks/nginx.yml
+    - import_tasks: tasks/uwsgi.yml
 
   handlers:
     - name: Restart Redis
