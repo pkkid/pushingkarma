@@ -14,21 +14,9 @@
   </head>
   <body>
     <div id='raspi'>
+
+      <!-- Weather -->
       <div class='weather'>
-        <!-- Weather
-        location: {{weather.data.current_observation.display_location.city}}<br/>
-        temp: {{weather.data.current_observation.temp_f}}'F<br/>
-        feels: {{weather.data.current_observation.feelslike_f}}'F<br/>
-        icon: {{weather.data.current_observation.icon}}<br/>
-        weather: {{weather.data.current_observation.weather}}<br/>
-        visibility: {{weather.data.current_observation.visibility_mi}} mph<br/>
-        humidity: {{weather.data.current_observation.relative_humidity}}<br/>
-        pressure: {{weather.data.current_observation.pressure_in}}{{weather.data.current_observation.pressure_trend}} in<br/>
-        sunrise: {{weather.data.sun_phase.sunrise.hour}}:{{weather.data.sun_phase.sunrise.minute}}<br/>
-        sunset: {{weather.data.sun_phase.sunset.hour}}:{{weather.data.sun_phase.sunset.minute}}<br/>
-        moon: {{weather.data.moon_phase.ageOfMoon}} ({{weather.data.moon_phase.percentIlluminated}}%)<br/>
-        updated: {{weather.lastupdate}}<br/>
-        -->
         <div class='weather-today'>
           <div class='weather-today-summary'>
             <div class='weather-location'>{{weather.data.current_observation.display_location.city}}</div>
@@ -57,6 +45,7 @@
       <div class='lichesstv'>
         <script src="https://lichess.org/tv/embed?theme=grey&bg=dark"></script>
       </div>
+      
     </div>
   </body>
 </html>

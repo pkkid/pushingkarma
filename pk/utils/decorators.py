@@ -21,7 +21,7 @@ class ContextDecorator(object):
 
 def cached(timeout=900, expires=86400, key=None):
     def wrapper1(func):
-        def wrapper2(self, *args, **kwargs):
+        def wrapper2(*args, **kwargs):
             now = int(time.time())
             cachekey = key
             if not key:
@@ -32,7 +32,7 @@ def cached(timeout=900, expires=86400, key=None):
             cacheage = now - cachevalue.get('lastupdate', 0)
             if cachevalue and cacheage <= timeout:
                 return cachevalue
-            data = func(self, *args, **kwargs)
+            data = func(*args, **kwargs)
             newvalue = json.dumps({'lastupdate':int(time.time()), 'data':data})
             cache.set(cachekey, newvalue, expires)
             return data

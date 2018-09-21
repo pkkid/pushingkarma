@@ -64,4 +64,7 @@ def to_bool(arg, default='false'):
 
 @register.filter
 def to_int(value):
-    return int(value)
+    try:
+        return int(value)
+    except Exception:
+        return '--'
