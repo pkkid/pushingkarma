@@ -3,7 +3,10 @@
 from pk import utils
 from pk.utils.markdown import Markdown
 from pk.utils.search import FIELDTYPES, SearchField, Search
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
+from rest_framework.decorators import detail_route
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from .models import Note, NoteSerializer
 
@@ -61,3 +64,9 @@ class NotesViewSet(viewsets.ModelViewSet):
         response.data.update(searchdata)
         response.data.move_to_end('results')
         return response
+
+    @detail_route(methods=['get'])
+    def raw(self, request, pk, *args, **kwargs):
+        note = get_object_or_404(Note, pk=pk)
+        js = note.body.replace('```javascript\n','').replace('\n```','')
+        return HttpResponse(js, content_type='text/javascript')
