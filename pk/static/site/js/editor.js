@@ -259,6 +259,7 @@ pk.editor = {
       matchBrackets: true,
       mode: 'gfm',
       scrollbarStyle: 'simple',
+      smartIndent: false,
       tabSize: 2,
       theme: 'blackboard',
     },
