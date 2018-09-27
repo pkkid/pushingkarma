@@ -22,7 +22,7 @@ class Note(TimeStampedModel):
 
     def html(self):
         if getattr(self, '_md', None) is None:
-            self._md = Markdown(self.body)
+            self._md = Markdown(self.body, Note, '/n/')
         return self._md.html
 
     def save(self, *args, **kwargs):

@@ -35,7 +35,7 @@ def note(request, slug=None, tmpl='note.html'):
 
 def markdown(request):
     body = request.POST.get('body', '')
-    md = Markdown(body)
+    md = Markdown(body, Note, '/n/')
     html = md.html
     if request.POST.get('title',''):
         html = '<h2>%s</h2>%s' % (request.POST['title'], html)
@@ -68,5 +68,8 @@ class NotesViewSet(viewsets.ModelViewSet):
     @detail_route(methods=['get'])
     def raw(self, request, pk, *args, **kwargs):
         note = get_object_or_404(Note, pk=pk)
-        js = note.body.replace('```javascript\n','').replace('\n```','')
-        return HttpResponse(js, content_type='text/javascript')
+        source = Markdown(note.body, Note, '/n/').raw
+        source = source.replace('```javascript\n', '')
+        source = source.replace('```python\n', '')
+        source = source.replace('\n```', '')
+        return HttpResponse(source, content_type='text/javascript')

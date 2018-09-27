@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # encoding: utf-8
-import markdown
+import markdown, re
 from bs4 import BeautifulSoup
 from collections import defaultdict
 from pk import utils
@@ -21,9 +21,9 @@ class Markdown(object):
         self.prefix = prefix
         self.kwvars = kwvars or {}
         self.meta = defaultdict(dict)
-        self.html = self._render_html()
 
-    def _render_html(self):
+    @property
+    def html(self):
         text = self._explicit_linefeeds(self.text)
         text = self._replace_kwvars(text)
         html = markdown.markdown(text, extensions=MARKDOWN_EXTENSIONS)
@@ -35,6 +35,13 @@ class Markdown(object):
         self._clean_linefeeds(soup)
         return str(soup) or self.NO_CONTENT
 
+    @property
+    def raw(self):
+        text = self._replace_kwvars(self.text)
+        if self.cls:
+            text = self._replace_raw_includes(text)
+        return text or self.NO_CONTENT
+
     def _replace_kwvars(self, text):
         for key, val in self.kwvars.items():
             text = text.replace('{{%s}}' % key, val)
@@ -45,7 +52,8 @@ class Markdown(object):
             slug = elem.attrs.get('href','').replace(self.prefix,'').strip('/')
             subitem = utils.get_object_or_none(self.cls, slug=slug)
             if subitem:
-                kwvars = dict(elem.attrs); kwvars['text'] = elem.text.strip()
+                kwvars = dict(elem.attrs)
+                kwvars['text'] = elem.text.strip()
                 submd = Markdown(subitem.body, self.cls, self.prefix, kwvars)
                 elem.replaceWith(BeautifulSoup(submd.html, 'html.parser'))
                 self.meta['includes'][slug] = self.VALID
@@ -55,6 +63,17 @@ class Markdown(object):
                 link = '<a class="invalid" href="%s">[template:%s]</a>' % (href, href)
                 elem.replaceWith(BeautifulSoup(link, 'html.parser'))
                 self.meta['includes'][slug] = self.INVALID
+
+    def _replace_raw_includes(self, text):
+        # TODO: This regex does not support kwargs yet..
+        # No need to track included items in self.meta here.
+        for match in re.findall("(<include\s+href=[\'\"](.+?)[\'\"]\s*/>)", text):
+            slug = match[1].replace(self.prefix,'').strip('/')
+            subitem = utils.get_object_or_none(self.cls, slug=slug)
+            if subitem:
+                submd = Markdown(subitem.body, self.cls, self.prefix)
+                text = text.replace(match[0], submd.raw)
+        return text
 
     def _replace_links(self, soup):
         for elem in soup.find_all('a'):
