@@ -5,6 +5,12 @@
     path='{{root_dir}}'
     state=directory
 
+- name: Create Project Symlink
+  file:
+    src={{project_dir}}
+    dest=~/pk
+    state=link
+
 - name: Sync Project Files
   tags: ['deploy']
   synchronize:

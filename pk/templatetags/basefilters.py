@@ -66,5 +66,5 @@ def to_bool(arg, default='false'):
 def to_int(value):
     try:
         return int(value)
-    except:
+    except Exception:
         return '--'
