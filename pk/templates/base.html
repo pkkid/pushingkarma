@@ -11,6 +11,7 @@
   <head>
     <meta charset='UTF-8'/>
     <title>{% block title %}{% endblock %}{{settings.SITE_NAME}}</title>
+    <meta name='google-signin-client_id' content='910136763601-nm3knsgkf5pbt4n6drlnsfea7ibf2mfm.apps.googleusercontent.com'>
     <link rel='shortcut icon' href='/static/site/img/favicon.ico'/>
     <link rel='stylesheet' type='text/css' href='/static/bower/animate.css/animate.css'/>
     <link rel='stylesheet' type='text/css' href='/static/bower/bootstrap/dist/css/bootstrap.min.css'/>
@@ -32,7 +33,9 @@
             <form method='POST'>
               {% if user.is_authenticated %}
                 <span class='mdi mdi-account'></span>
-                Hello {{user.first_name|default:user.username}}! | <a href='{% url "auth_logout" %}'>Logout</a>
+                Hello {{user.first_name|default:user.username}}! |
+                <a id='gauth' href='#'>Google Auth</a> |
+                <a href='{% url "auth_logout" %}'>Logout</a>
               {% else %}
                 <span class='mdi mdi-minus-circle-outline icon-notification'></span>
                 <input type='text' name='email' placeholder='Email' autocomplete='off'/>
@@ -73,6 +76,28 @@
   <script src='/static/dist/codemirror.js'></script>
   <script src='/static/dist/main.js'></script>
   <script src='/static/redsocks/redsocket.js'></script>
+  {% if user.is_authenticated %}
+    <!-- google oauth login -->
+    <!-- https://developers.google.com/identity/sign-in/web/server-side-flow -->
+    <script src='https://apis.google.com/js/client:platform.js?onload=gauth_init' async defer></script>
+    <script type='text/javascript'>
+      $('#gauth').click(function() {
+        auth2.grantOfflineAccess().then(gauth_signedin);
+      });
+      function gauth_init() {
+        gapi.load('auth2', function() {
+          auth2 = gapi.auth2.init({
+            client_id: '910136763601-nm3knsgkf5pbt4n6drlnsfea7ibf2mfm.apps.googleusercontent.com',
+            //scope: 'https://www.googleapis.com/auth/tasks.readonly',
+          });
+        });
+      }
+      function gauth_signedin(code) {
+        console.log(code);
+      }
+    </script>
+  {% endif %}
+  {% comment %}
   {% if not settings.DEBUG %}
     <script type='text/javascript'>
       console.debug('init google analytics');
@@ -83,5 +108,6 @@
       ga('create', 'UA-87461-5', 'auto'); ga('send', 'pageview');
     </script>
   {% endif %}
+  {% endcomment %}
   {% block js %}{% endblock %}
 </html>
