@@ -77,5 +77,5 @@ gulp.task('watch', function () {
 });
 
 
-// Default
-gulp.task('default', ['js', 'css', 'codemirror']);
+gulp.task('default', ['watch']);
+gulp.task('build', ['js', 'css', 'codemirror']);

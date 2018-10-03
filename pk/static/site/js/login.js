@@ -1,16 +1,26 @@
 // Encoding: UTF-8
+// Guath Docs: https://developers.google.com/identity/sign-in/web/server-side-flow
 'use strict';
 
 pk.login = {
   LOGIN_URL: '/api/user/login',
+  GAUTH_CLIENTID: '910136763601-nm3knsgkf5pbt4n6drlnsfea7ibf2mfm.apps.googleusercontent.com',
   KEYS: {F2:113},
 
   init: function() {
     this.container = $('#logo');
-    this.form =  $('#logo form');
+    this.form = $('#logo form');
     console.debug('init pk.login on #'+ this.container.attr('id'));
+    this.init_gauth();
     this.init_triggers();
     this.init_shortcuts();
+  },
+
+  init_gauth: function() {
+    var self = this;
+    gapi.load('auth2', function() {
+      self.gauth = gapi.auth2.init({client_id:self.GAUTH_CLIENTID});
+    });
   },
 
   init_triggers: function() {
@@ -32,6 +42,12 @@ pk.login = {
         event.preventDefault();
         event.stopPropagation();
         self.login();
+      });
+      // Sign in to Google
+      $('#gauth').on('click', function() {
+        self.gauth.grantOfflineAccess().then(function(data) {
+          if (data['code']) { self.login(data); }
+        });
       });
   },
 
@@ -61,9 +77,9 @@ pk.login = {
     this.form.removeClass('error');
   },
 
-  login: function() {
+  login: function(data) {
     var self = this;
-    var data = self.form.serializeArray();
+    var data = data || self.form.serializeArray();
     var xhr = $.ajax({url:self.LOGIN_URL, data:data, type:'POST', dataType:'json'});
     self.form.removeClass('error');
     xhr.done(function(data, textStatus, jqXHR) {
@@ -76,4 +92,5 @@ pk.login = {
       self.form.addClass('error');
     });
   },
+
 };

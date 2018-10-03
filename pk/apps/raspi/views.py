@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # encoding: utf-8
 import requests
-from googleapiclient.discovery import build
 from django.conf import settings
 from pk import log, utils
 from pk.apps.calendar.views import get_events
@@ -15,7 +14,6 @@ def raspi(request, tmpl='raspi.html'):
     data.calendar = _get_calendar()
     data.news = _get_news()
     data.tasks = _get_tasks()
-    # import pprint; pprint.pprint(data.weather)
     return utils.response(request, tmpl, data)
 
 
