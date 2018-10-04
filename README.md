@@ -14,10 +14,9 @@ pip install -r pk/requirements.pip
 # Setup npm, gulp and bower
 sudo apt install ruby ruby-dev nodejs npm
 sudo su -c 'gem install sass'
-npm install -g gulp bower
-npm install
-bower install  # choose bootstrap 4.0.0-beta
-gulp
+npm install -g gulp gulp-cli
+./npminstall.sh
+gulp build
 
 # Run the development server
 ./manage.py runserver 0.0.0.0:8000
@@ -27,7 +26,7 @@ gulp
 ### Setup Production Environment
 1. Create a new Ubuntu instance
 2. Update `ansible/inventory.ini` with the IP address of the new instance
-3. Run: `cd ansible && ansible-playbook -i inventory.ini playbook.yml`
+3. Run: `./deploy setup`
 
 
 ### License
