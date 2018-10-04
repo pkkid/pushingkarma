@@ -15,7 +15,8 @@ DEBUG = HOSTNAME in ['pkkid-work3', 'pkkid-home']
 ROOT_URLCONF = 'pk.urls'
 LOGIN_URL = 'index'
 STATIC_URL = '/static/'
-STATIC_ROOT = '%s/collectstatic/' % BASE_DIR
+STATIC_ROOT = join(BASE_DIR, 'collectstatic/')
+STATICFILES_DIRS = [join(BASE_DIR, 'static/dist/')]
 INTERNAL_IPS = ['127.0.0.1']
 
 LANGUAGE_CODE = 'en-us'

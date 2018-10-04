@@ -48,5 +48,3 @@ urlpatterns = [
     url(r'^raspi/$', raspi_views.raspi, name='raspi'),
 ]
 
-if settings.DEBUG:
-    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT, show_indexes=True)

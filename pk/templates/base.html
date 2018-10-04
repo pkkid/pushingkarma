@@ -13,13 +13,13 @@
     <title>{% block title %}{% endblock %}{{settings.SITE_NAME}}</title>
     <meta name='google-signin-client_id' content='910136763601-nm3knsgkf5pbt4n6drlnsfea7ibf2mfm.apps.googleusercontent.com'>
     <link rel='shortcut icon' href='/static/site/img/favicon.ico'/>
-    <link rel='stylesheet' type='text/css' href='/static/bower/animate.css/animate.css'/>
-    <link rel='stylesheet' type='text/css' href='/static/bower/bootstrap/dist/css/bootstrap.min.css'/>
-    <link rel='stylesheet' type='text/css' href='/static/bower/mdi/css/materialdesignicons.min.css'/>
-    <link rel='stylesheet' type='text/css' href='/static/bower/jquery-confirm2/dist/jquery-confirm.min.css'/>
-    <link rel='stylesheet' type='text/css' href='/static/bower/jquery-toast-plugin/dist/jquery.toast.min.css'/>
-    <link rel='stylesheet' type='text/css' href='/static/dist/codemirror.css'/>
-    <link rel='stylesheet' type='text/css' href='/static/dist/main.css'/>
+    <link rel='stylesheet' type='text/css' href='/static/animate.css/animate.min.css'/>
+    <link rel='stylesheet' type='text/css' href='/static/bootstrap/css/bootstrap.min.css'/>
+    <link rel='stylesheet' type='text/css' href='/static/mdi/css/materialdesignicons.min.css'/>
+    <link rel='stylesheet' type='text/css' href='/static/jquery-confirm/jquery-confirm.min.css'/>
+    <link rel='stylesheet' type='text/css' href='/static/jquery-toast-plugin/jquery.toast.min.css'/>
+    <link rel='stylesheet' type='text/css' href='/static/codemirror/codemirror.css'/>
+    <link rel='stylesheet' type='text/css' href='/static/site/site.css'/>
     <link rel='stylesheet' type='text/css' href='https://fonts.googleapis.com/css?family=Josefin+Sans:400,600|Roboto+Mono|Crimson+Text|Cabin:400,500,600'/>
     {% block css %}{% endblock %}
   </head>
@@ -58,23 +58,23 @@
     </div>
   </body>
   <!-- core libs (must be first) -->
-  <script src='/static/bower/jquery/dist/jquery.min.js'></script>
-  <script src='/static/bower/jquery-ui/jquery-ui.min.js'></script>
-  <script src='/static/bower/popper.js/dist/umd/popper.min.js'></script>
-  <script src='/static/bower/tether/dist/js/tether.min.js'></script>
-  <script src='/static/bower/bootstrap/dist/js/bootstrap.min.js'></script>
+  <script src='/static/jquery/jquery.min.js'></script>
+  <script src='/static/jquery-ui/jquery-ui.min.js'></script>
+  <script src='/static/popper.js/popper.min.js'></script>
+  <script src='/static/tether/js/tether.min.js'></script>
+  <script src='/static/bootstrap/js/bootstrap.min.js'></script>
   <!-- plugins and helpers -->
-  <script src='/static/bower/clipboard/dist/clipboard.min.js'></script>
-  <script src='/static/bower/handlebars/handlebars.min.js'></script>
-  <script src='/static/bower/highcharts/highcharts.src.js'></script>
-  <script src='/static/bower/highlightjs/highlight.pack.min.js'></script>
-  <script src='/static/bower/jquery-confirm2/dist/jquery-confirm.min.js'></script>
-  <script src='/static/bower/jquery-toast-plugin/dist/jquery.toast.min.js'></script>
-  <script src='/static/bower/js-cookie/src/js.cookie.js'></script>
-  <script src='/static/bower/lodash/dist/lodash.min.js'></script>
-  <script src='/static/bower/moment/moment.js'></script>
-  <script src='/static/dist/codemirror.js'></script>
-  <script src='/static/dist/main.js'></script>
+  <script src='/static/clipboard/clipboard.min.js'></script>
+  <script src='/static/handlebars/handlebars.min.js'></script>
+  <script src='/static/highcharts/highcharts.js'></script>
+  <script src='/static/highlightjs/highlight.pack.min.js'></script>
+  <script src='/static/jquery-confirm/jquery-confirm.min.js'></script>
+  <script src='/static/jquery-toast-plugin/jquery.toast.min.js'></script>
+  <script src='/static/js-cookie/js.cookie.js'></script>
+  <script src='/static/lodash/lodash.min.js'></script>
+  <script src='/static/moment/moment.min.js'></script>
+  <script src='/static/codemirror/codemirror.js'></script>
+  <script src='/static/site/site.js'></script>
   <script src='/static/redsocks/redsocket.js'></script>
   <!-- google -->
   <script src='https://apis.google.com/js/client:platform.js?onload=gauth_init'></script>
