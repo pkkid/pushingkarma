@@ -33,14 +33,14 @@
             <form method='POST'>
               {% if user.is_authenticated %}
                 <span class='mdi mdi-account'></span>
-                Hello {{user.first_name|default:user.username}}! |
+                <span>Hello {{user.first_name|default:user.username}}! |</span>
                 <a href='{% url "auth_logout" %}'>Logout</a>
               {% else %}
                 <span class='mdi mdi-minus-circle-outline icon-notification'></span>
                 <input type='text' name='email' placeholder='Email' autocomplete='off'/>
                 <input type='password' name='password' placeholder='Password' autocomplete='off'/>
                 <button type='submit'><span class='mdi mdi-chevron-double-right'></span></button>
-                <div style='clear:left'><a id='gauth' href='#'>Sign in with Google</a></div>
+                <div style='clear:left; margin-left:4px;'><a id='gauth' href='#'>Sign in with Google</a></div>
               {% endif %}
             </form>
           </div>
