@@ -6,6 +6,7 @@
 *.sass-cache*
 *__pycache__*
 .env
+package-lock.json
 node_modules/*
 pk/collectstatic/*
 pk/static/bower/*
