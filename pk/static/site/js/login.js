@@ -28,7 +28,19 @@ pk.login = {
       // Display login form
       this.container.on('click', function(event) {
         event.stopPropagation();
+        setTimeout(function() {
+          var clicks = parseInt(self.container.data('clicks'));
+          if (clicks > 0) {
+            self.container.data('clicks', clicks-1);
+          } else {
+            window.top.location = '/';
+          }
+        }, 200);
+      }).on('dblclick', function(event) {
+        event.stopPropagation();
+        self.container.data('clicks', 2);
         self.show_form();
+        window.getSelection().removeAllRanges();
       }).children().on('click', function(event) {
         event.stopPropagation();
       });
