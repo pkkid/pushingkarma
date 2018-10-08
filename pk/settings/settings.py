@@ -3,7 +3,10 @@
 import platform
 from os import makedirs
 from os.path import abspath, dirname, join
-from .secrets import *  # noqa
+try:
+    from .secrets import *  # noqa
+except ImportError as err:
+    raise SystemExit('Error: Secrets file not present.')
 
 # Django Core Settings
 HOSTNAME = platform.node()

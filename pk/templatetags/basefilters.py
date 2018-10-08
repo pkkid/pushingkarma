@@ -65,6 +65,6 @@ def to_bool(arg, default='false'):
 @register.filter
 def to_int(value):
     try:
-        return int(value)
+        return int(float(value))
     except Exception:
         return '--'

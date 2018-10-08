@@ -5,7 +5,7 @@ from django.conf import settings
 from pk import log, utils
 from pk.apps.calendar.views import get_events
 from pk.utils import auth, context
-from pk.utils.decorators import cached
+from pk.utils.decorators import softcache
 
 
 def raspi(request, tmpl='raspi.html'):
@@ -17,7 +17,7 @@ def raspi(request, tmpl='raspi.html'):
     return utils.response(request, tmpl, data)
 
 
-@cached(timeout=900, key='raspi-weather')
+@softcache(timeout=900, key='raspi-weather')
 def _get_weather(request):
     try:
         response = requests.get(settings.RASPI_WU_URL)
@@ -26,7 +26,7 @@ def _get_weather(request):
         log.exception(err)
 
 
-@cached(key='raspi-calendar')
+@softcache(key='raspi-calendar')
 def _get_calendar(request):
     try:
         response = get_events(settings.RASPI_CALENDAR_URL)
@@ -35,17 +35,20 @@ def _get_calendar(request):
         log.exception(err)
 
 
-#@cached(key='raspi-tasks')
+@softcache(key='raspi-tasks')
 def _get_tasks(request):
     try:
         service = auth.get_gauth_service(request.user, 'tasks')
-        results = service.tasklists().list(maxResults=99).execute()
-        # items = results.get('items', [])
-        import pprint; pprint.pprint(results)
+        tasklists = service.tasklists().list().execute()
+        tasklists = {tlist['title']:tlist for tlist in tasklists['items']}
+        tasklist = tasklists['My Tasks']
+        tasks = service.tasks().list(tasklist=tasklist['id']).execute()
+        tasks = sorted(tasks['items'], key=lambda x:x['position'])
+        return tasks
     except Exception as err:
         log.exception(err)
 
 
-@cached(key='raspi-news')
+@softcache(key='raspi-news')
 def _get_news(request):
     return None

@@ -3,7 +3,6 @@
 import functools, json, os, time
 from django.core.cache import cache
 from django.db import connection
-from pk.utils import hash_args
 from pk import log
 
 COLORS = {'blue':34, 'cyan':36, 'green':32, 'grey':30, 'magenta':35, 'red':31, 'white':37, 'yellow':33}
@@ -19,23 +18,24 @@ class ContextDecorator(object):
         return decorated
 
 
-def cached(timeout=900, expires=86400, key=None):
+def softcache(timeout=900, expires=86400, key=None):
     def wrapper1(func):
         def wrapper2(*args, **kwargs):
             now = int(time.time())
-            cachekey = key
-            if not key:
-                cachekey = key or func.__name__
-                cachekey = '%s(%s)' % (cachekey, hash_args(*args, **kwargs))
-            cachevalue = cache.get(cachekey)
-            cachevalue = json.loads(cachevalue) if cachevalue else {}
-            cacheage = now - cachevalue.get('lastupdate', 0)
-            if cachevalue and cacheage <= timeout:
-                return cachevalue
-            data = func(*args, **kwargs)
-            newvalue = json.dumps({'lastupdate':int(time.time()), 'data':data})
-            cache.set(cachekey, newvalue, expires)
-            return data
+            value = json.loads(cache.get(key, '{}'))
+            age = now - value.get('lastupdate', 0)
+            if value and age <= timeout:
+                log.info('Returning cached value for: %s', key)
+                return value['data']
+            try:
+                log.info('Fetching new value for: %s', key)
+                result = func(*args, **kwargs)
+                cache.set(key, json.dumps({'lastupdate':now,
+                    'data':result}), expires)
+                return result
+            except Exception as err:
+                log.warning('Error fetching new value: %s', err)
+                return value['data']
         return wrapper2
     return wrapper1
 

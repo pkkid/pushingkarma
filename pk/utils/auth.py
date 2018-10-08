@@ -73,7 +73,7 @@ def auth_google(request):
     if user and user.is_active:
         login(request, user)
         key = GAUTH_KEY.replace('{email}', user.email)
-        cache.set(key, credentials.to_json())
+        cache.set(key, credentials.to_json(), 31557600)  # 1yr
         log.info('Logged in via Google as %s' % user.email)
         return user
 
