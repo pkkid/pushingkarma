@@ -75,6 +75,7 @@ REDIS_PORT = 6379
 CACHES = {'default': {
     'BACKEND': 'redis_cache.RedisCache',
     'LOCATION': ['%s:%s' % (REDIS_HOST, REDIS_PORT)],
+    'OPTIONS': {'DB':0},
 }}
 
 # Logging

@@ -4,7 +4,6 @@
 
 pk.login = {
   LOGIN_URL: '/api/user/login',
-  GAUTH_CLIENTID: '910136763601-nm3knsgkf5pbt4n6drlnsfea7ibf2mfm.apps.googleusercontent.com',
   KEYS: {F2:113},
 
   init: function() {
@@ -19,7 +18,10 @@ pk.login = {
   init_gauth: function() {
     var self = this;
     gapi.load('auth2', function() {
-      self.gauth = gapi.auth2.init({client_id:self.GAUTH_CLIENTID});
+      self.gauth = gapi.auth2.init({
+        client_id: GOOGLE_CLIENTID,
+        scope: GOOGLE_SCOPES
+      });
     });
   },
 

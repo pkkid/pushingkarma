@@ -1,13 +1,9 @@
 #!/usr/bin/env python
 # encoding: utf-8
-import httplib2
-from apiclient import discovery
-from django.conf import settings
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import logout
 from django.contrib.auth.models import User
-from django.db.models import Q
-from oauth2client import client
-from pk import log, utils
+from pk import log
+from pk.utils.auth import auth_django, auth_google
 from rest_framework import status, viewsets
 from rest_framework.decorators import list_route
 from rest_framework.permissions import AllowAny
@@ -30,26 +26,10 @@ class AccountViewSet(viewsets.ViewSet):
     @list_route(methods=['post'])
     def login(self, request, *args, **kwargs):
         try:
-            authcode = request.POST.get('code')
-            if authcode:
-                # Google Login
-                # https://developers.google.com/identity/sign-in/web/server-side-flow
-                # https://developers.google.com/gmail/api/auth/web-server#exchange_the_authorization_code_for_an_access_token
-                credentials = client.credentials_from_clientsecrets_and_code(
-                    settings.GOOGLE_CLIENT_SECRET, settings.GOOGLE_SCOPES, authcode)
-                credentials.authorize(httplib2.Http())
-                user = User.objects.get(email=credentials.id_token['email'])
-            else:
-                # Regular Django login
-                email = request.POST.get('email')
-                test = utils.get_object_or_none(User, Q(email=email) | Q(username=email))
-                passwd = request.POST.get('password')
-                user = authenticate(username=test.username, password=passwd)
-            # Login
+            code = request.POST.get('code')
+            user = auth_google(request) if code else auth_django(request)
             if user and user.is_active:
-                login(request, user)
                 serializer = AccountSerializer(user, context={'request':request})
-                log.info('Logged in as %s' % serializer.data)
                 return Response(serializer.data)
         except Exception as err:
             log.error(err, exc_info=1)

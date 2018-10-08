@@ -93,6 +93,7 @@ gulp.task('npm', function() {
     gulp.src(nm('moment/min/moment.min.js')).pipe(gulp.dest(dist('moment'))),
     gulp.src(nm('popper.js/dist/umd/*min*')).pipe(gulp.dest(dist('popper.js'))),
     gulp.src(nm('tether/dist/**/*min*')).pipe(gulp.dest(dist('tether'))),
+    gulp.src(nm('weather-underground-icons/dist/**/*')).pipe(gulp.dest(dist('wu-icons'))),
   );
 })
 
