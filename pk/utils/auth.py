@@ -78,9 +78,9 @@ def auth_google(request):
         return user
 
 
-def get_gauth_service(user, service, version='v1'):
+def get_gauth_service(email, service, version='v1'):
     """ Return gauth credentials for the specified user or None. """
-    key = GAUTH_KEY.replace('{email}', user.email)
+    key = GAUTH_KEY.replace('{email}', email)
     credentials = client.OAuth2Credentials.from_json(cache.get(key))
     httpauth = credentials.authorize(httplib2.Http())
     service = discovery.build(service, version, http=httpauth)

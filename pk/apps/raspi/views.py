@@ -38,7 +38,7 @@ def _get_calendar(request):
 @softcache(key='raspi-tasks')
 def _get_tasks(request):
     try:
-        service = auth.get_gauth_service(request.user, 'tasks')
+        service = auth.get_gauth_service(settings.EMAIL, 'tasks')
         tasklists = service.tasklists().list().execute()
         tasklists = {tlist['title']:tlist for tlist in tasklists['items']}
         tasklist = tasklists['My Tasks']

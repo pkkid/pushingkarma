@@ -24,7 +24,7 @@ def softcache(timeout=900, expires=86400, key=None):
             now = int(time.time())
             value = json.loads(cache.get(key, '{}'))
             age = now - value.get('lastupdate', 0)
-            if value and age <= timeout:
+            if value and age <= timeout and value.get('data'):
                 log.info('Returning cached value for: %s', key)
                 return value['data']
             try:
