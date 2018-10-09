@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 # encoding: utf-8
 import functools, json, os, time
+from django.conf import settings
 from django.core.cache import cache
 from django.db import connection
+from django.http import Http404
 from pk import log
 
 COLORS = {'blue':34, 'cyan':36, 'green':32, 'grey':30, 'magenta':35, 'red':31, 'white':37, 'yellow':33}
@@ -55,12 +57,20 @@ def lazyproperty(func):
         http://stevenloria.com/lazy-evaluated-properties-in-python/
     """
     attr_name = '_lazy_%s' % func.__name__
-
-    @property
+    @property  # noqa
     def wrapper(self):
         if not hasattr(self, attr_name):
             setattr(self, attr_name, func(self))
         return getattr(self, attr_name)
+    return wrapper
+
+
+def login_or_apikey_required(func):
+    apikey = getattr(settings, 'APIKEY', None)
+    def wrapper(request, *args, **kwargs):  # noqa
+        if request.user.is_authenticated or (apikey and request.GET.get('apikey') == apikey):
+            return func(request, *args, **kwargs)
+        return Http404()
     return wrapper
 
 

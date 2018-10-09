@@ -9,5 +9,6 @@
 package-lock.json
 node_modules/*
 pk/collectstatic/*
+pk/log/*
 pk/static/bower/*
 pk/static/dist/*

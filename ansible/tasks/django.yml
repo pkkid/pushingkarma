@@ -12,5 +12,6 @@
   with_items:
     - makemigrations
     - migrate
+    - collectstatic --noinput
   notify: Restart Services
 
