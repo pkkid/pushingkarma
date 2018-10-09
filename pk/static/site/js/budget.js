@@ -648,6 +648,15 @@ pk.budget = {
 // Handlebar Helpers
 //-------------------------
 pk.budget.helpers = {
+
+  _register: function() {
+    for (var helper in this) {
+      if (helper.charAt(0) != '_') {
+        Handlebars.registerHelper(helper, this[helper]);
+      }
+    }
+  },
+
   budgetFlags: function(category, month) {
     var flags = [];
     var _flags = function() { return flags.join(' '); }
@@ -673,10 +682,3 @@ pk.budget.helpers = {
       );
   },
 };
-
-
-for (var helper in pk.budget.helpers) {
-  if (pk.budget.helpers.hasOwnProperty(helper)) {
-    Handlebars.registerHelper(helper, pk.budget.helpers[helper]);
-  }
-}

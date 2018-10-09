@@ -7,15 +7,22 @@ var pk = {  // jshint ignore:line
 };
 
 $(function() {
-  // Handlebars templates
-  pk.templates = [];
-  $.each($('script[type="text/x-handlebars-template"]'), function() {
-    var id = this.getAttribute('id');
-    pk.templates[id] = Handlebars.compile(this.innerText);
-    if ($(this).hasClass('partial')) {
-      Handlebars.registerPartial(id, pk.templates[id]);
-    }
-  });
+  
+  pk.init_handlebars = function() {
+    // register handlebar helpers
+    console.log('init handlebar helpers and templates');
+    helpers._register();
+    pk.budget.helpers._register();
+    // compile handlebar templates
+    pk.templates = [];
+    $.each($('script[type="text/x-handlebars-template"]'), function() {
+      var id = this.getAttribute('id');
+      pk.templates[id] = Handlebars.compile(this.innerText);
+      if ($(this).hasClass('partial')) {
+        Handlebars.registerPartial(id, pk.templates[id]);
+      }
+    });
+  };
 
   // Core website functions
   pk.utils.enable_animations();

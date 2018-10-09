@@ -75,7 +75,6 @@ gulp.task('npm', function() {
   return merge(
     gulp.src('./pk/static/site/font/*').pipe(gulp.dest(dist('site/font'))),
     gulp.src('./pk/static/site/img/*').pipe(gulp.dest(dist('site/img'))),
-    // third party
     gulp.src(nm('@mdi/font/css/*min*')).pipe(gulp.dest(dist('mdi/css'))),
     gulp.src(nm('@mdi/font/fonts/*')).pipe(gulp.dest(dist('mdi/fonts'))),
     gulp.src(nm('animate.css/animate.min.css')).pipe(gulp.dest(dist('animate.css'))),
@@ -93,6 +92,7 @@ gulp.task('npm', function() {
     gulp.src(nm('moment/min/moment.min.js')).pipe(gulp.dest(dist('moment'))),
     gulp.src(nm('popper.js/dist/umd/*min*')).pipe(gulp.dest(dist('popper.js'))),
     gulp.src(nm('tether/dist/**/*min*')).pipe(gulp.dest(dist('tether'))),
+    gulp.src(nm('vue/dist/vue.min.js')).pipe(gulp.dest(dist('vue'))),
     gulp.src(nm('weather-underground-icons/dist/**/*')).pipe(gulp.dest(dist('wu-icons'))),
   );
 })

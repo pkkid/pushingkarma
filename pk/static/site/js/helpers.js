@@ -139,6 +139,14 @@ var helperutils = {
 
 var helpers = {
 
+  _register: function() {
+    for (var helper in this) {
+      if (helper.charAt(0) != '_') {
+        Handlebars.registerHelper(helper, this[helper]);
+      }
+    }
+  },
+
   any: function(array, options) {
     if (array.length > 0) {
       return options.fn(this);
@@ -1195,9 +1203,3 @@ var helpers = {
   },
 
 };
-
-for (var helper in helpers) {
-  if (helpers.hasOwnProperty(helper)) {
-    Handlebars.registerHelper(helper, helpers[helper]);
-  }
-}
