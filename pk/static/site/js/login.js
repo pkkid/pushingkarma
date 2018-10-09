@@ -8,8 +8,9 @@ pk.login = {
 
   init: function() {
     this.container = $('#logo');
-    this.form = $('#logo form');
+    if (!this.container.length) { return; }
     console.debug('init pk.login on #'+ this.container.attr('id'));
+    this.form = $('#logo form');
     this.init_gauth();
     this.init_triggers();
     this.init_shortcuts();

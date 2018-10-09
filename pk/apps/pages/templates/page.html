@@ -10,7 +10,6 @@
   {% if user.is_authenticated %}
     <script type='text/javascript'>
       $(function() {
-        pk.init_handlebars();
         pk.editor.init('#page', {
           api_url: '/api/page',
           markdown_url: '/markdown/p/',

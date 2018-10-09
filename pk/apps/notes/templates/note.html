@@ -27,7 +27,6 @@
 {% block js %}
   <script type='text/javascript'>
     $(function() {
-      pk.init_handlebars();
       {% if user.is_authenticated %}
         pk.editor.init('#notes .note', {
           api_url: '/api/notes',

@@ -7,27 +7,10 @@ var pk = {  // jshint ignore:line
 };
 
 $(function() {
-  
-  pk.init_handlebars = function() {
-    // register handlebar helpers
-    console.log('init handlebar helpers and templates');
-    helpers._register();
-    pk.budget.helpers._register();
-    // compile handlebar templates
-    pk.templates = [];
-    $.each($('script[type="text/x-handlebars-template"]'), function() {
-      var id = this.getAttribute('id');
-      pk.templates[id] = Handlebars.compile(this.innerText);
-      if ($(this).hasClass('partial')) {
-        Handlebars.registerPartial(id, pk.templates[id]);
-      }
-    });
-  };
-
-  // Core website functions
-  pk.utils.enable_animations();
-  pk.utils.copycode();
-  pk.utils.highlightjs();
+  pk.utils.init_animations();
+  pk.utils.init_handlebars();
+  pk.utils.init_copycode();
+  pk.utils.init_highlightjs();
   pk.utils.init_tooltips();
   pk.login.init();
   pk.magnets.init('#magnets');

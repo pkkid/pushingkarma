@@ -33,30 +33,6 @@ pk.utils = {
   basename: function(path) {
     return path.split('/').reverse()[0];
   },
-
-  copycode: function(selector) {
-    // initilize the clipboard plugin
-    var clippy = new Clipboard('article pre .copycode', {
-      text: function(trigger) {
-        return _.trimEnd($(trigger).parents('pre').text());
-      }
-    });
-    clippy.on('success', function(event) {
-      $(event.trigger).animatecss('bounce');
-    });
-    // append copy button to each code block
-    selector = this.set_default(selector, 'article pre code');
-    $(selector).each(function(i, block) {
-      var btn = $('<span class="copycode mdi mdi-content-duplicate"></span>');
-      $(block).prepend(btn);
-    });
-  },
-  
-  enable_animations: function() {
-    setTimeout(function() {
-      $('body').removeClass('preload');
-    }, 500);
-  },
   
   format: function() {
     var result = arguments[0];
@@ -77,15 +53,61 @@ pk.utils = {
     }
     return Math.abs(hash).toString(16);
   },
-  
-  highlightjs: function(selector) {
+
+  init_animations: function() {
+    setTimeout(function() {
+      $('body').removeClass('preload');
+    }, 500);
+  },
+
+  init_copycode: function(selector) {
+    if (window.ClipboardJS === undefined) { return; }
     selector = this.set_default(selector, 'article pre code');
+    console.log('init copycode on '+ selector)
+    // initilize the clipboard plugin
+    var clippy = new ClipboardJS('article pre .copycode', {
+      text: function(trigger) {
+        return _.trimEnd($(trigger).parents('pre').text());
+      }
+    });
+    clippy.on('success', function(event) {
+      $(event.trigger).animatecss('bounce');
+    });
+    // append copy button to each code block
+    $(selector).each(function(i, block) {
+      var btn = $('<span class="copycode mdi mdi-content-duplicate"></span>');
+      $(block).prepend(btn);
+    });
+  },
+
+  init_handlebars: function() {
+    if (window.Handlebars === undefined) { return; }
+    // register handlebar helpers
+    console.log('init handlebars');
+    helpers._register();
+    pk.budget.helpers._register();
+    // compile handlebar templates
+    pk.templates = [];
+    $.each($('script[type="text/x-handlebars-template"]'), function() {
+      var id = this.getAttribute('id');
+      pk.templates[id] = Handlebars.compile(this.innerText);
+      if ($(this).hasClass('partial')) {
+        Handlebars.registerPartial(id, pk.templates[id]);
+      }
+    });
+  },
+
+  init_highlightjs: function(selector) {
+    if (window.hljs === undefined) { return; }
+    selector = this.set_default(selector, 'article pre code');
+    console.log('init highlightjs on '+ selector);
     $(selector).each(function(i, block) {
       hljs.highlightBlock(block);
     });
   },
 
   init_tooltips: function(selector) {
+    if (jQuery().tooltip === undefined) { return; }
     selector = this.set_default(selector, '[data-toggle="tooltip"]');
     console.debug('init tooltips on '+ selector);
     $(selector).tooltip({delay:{show:200, hide:50}});
