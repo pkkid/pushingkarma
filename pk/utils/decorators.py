@@ -70,7 +70,8 @@ def login_or_apikey_required(func):
     def wrapper(request, *args, **kwargs):  # noqa
         if request.user.is_authenticated or (apikey and request.GET.get('apikey') == apikey):
             return func(request, *args, **kwargs)
-        return Http404()
+        from django.shortcuts import redirect
+        return redirect(settings.LOGIN_URL)
     return wrapper
 
 

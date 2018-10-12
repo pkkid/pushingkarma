@@ -159,6 +159,16 @@ pk.utils = {
     return pk.utils.format('{0}//{1}{2}{3}{4}', protocol, hostname, port, pathname, search);
   },
 
+  url_params: function(url) {
+    var params = {};
+    var regex = /[?&]+([^=&]+)=([^&]*)/gi;
+    var url = url || window.location.href;
+    var parts = url.replace(regex, function(m, key, value) {
+        params[key] = value;
+    });
+    return params;
+  },
+
   update_url: function(url, params) {
     url = url === null ? new URL(window.location.href) : new URL(url);
     for (var key in params) {

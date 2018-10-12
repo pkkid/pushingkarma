@@ -12,6 +12,7 @@ pk.raspi = {
       console.debug('init pk.raspi on '+ selector);
       self.data = {};
       self.xhr = null;
+      self.init_update_url();
       self.init_elements();
       self.init_triggers();
       // main loop
@@ -20,6 +21,13 @@ pk.raspi = {
       setInterval(this.update_data, self.UPDATE_INTERVAL);
       this.update_data();
       this.update_clock();
+    },
+
+    init_update_url: function() {
+      var params = pk.utils.url_params();
+      if (params.apikey) {
+        this.UPDATE_URL += '&apikey='+ params.apikey;
+      }
     },
 
     init_elements: function() {

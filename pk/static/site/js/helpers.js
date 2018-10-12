@@ -731,13 +731,10 @@ var helpers = {
   },
 
   now: function(format) {
-    console.log('--- 1 ---');
-    console.log(format)
     var date = new Date();
     if (helperutils.isUndefined(format)) {
       return date;
     }
-    console.log('--- 2 ---');
     return helperutils.format(date, format);
   },
 
