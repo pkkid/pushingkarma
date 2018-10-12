@@ -12,7 +12,7 @@
 // https://github.com/assemble/handlebars-helpers/blob/master/lib/utils/dates.js
 // -----------------------------
 var helperutils = {
-  date_formats: /%(a|A|b|B|c|C|d|D|e|F|h|H|I|j|k|l|L|m|M|n|p|P|r|R|s|S|t|T|u|U|v|V|W|w|x|X|y|Y|z)/g,
+  date_formats: /%(a|A|b|B|c|C|d|D|e|F|h|H|I|j|k|l|L|m|M|n|p|P|q|r|R|s|S|t|T|u|U|v|V|W|w|x|X|y|Y|z)/g,
   dates_abbreviatedWeekdays: ['Sun', 'Mon', 'Tue', 'Wed', 'Thur', 'Fri', 'Sat'],
   dates_fullWeekdays: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
   dates_abbreviatedMonths: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
@@ -23,7 +23,7 @@ var helperutils = {
   },
    
   isUndefined: function(value) {
-    return typeof value === 'undefined' || this.toString.call(value) === '[object Function]' || (value.hash !== null);
+    return value === undefined;
   },
   
   result: function(value) {
@@ -72,6 +72,7 @@ var helperutils = {
   },
 
   tweleveHour: function(date) {
+    if (date.getHours() == 0) { return 12; }
     return date.getHours() > 12 ? date.getHours() - 12 : date.getHours();
   },
 
@@ -107,6 +108,7 @@ var helperutils = {
         case 'M': return self.padNumber(date.getMinutes(), 2);
         case 'n': return '\n';
         case 'p': return date.getHours() > 11 ? 'PM' : 'AM';
+        case 'q': return date.getHours() > 11 ? 'pm' : 'am';
         case 'P': return self.format(date, '%p').toLowerCase();
         case 'r': return self.format(date, '%I:%M:%S %p');
         case 'R': return self.format(date, '%H:%M');
@@ -729,10 +731,13 @@ var helpers = {
   },
 
   now: function(format) {
+    console.log('--- 1 ---');
+    console.log(format)
     var date = new Date();
     if (helperutils.isUndefined(format)) {
       return date;
     }
+    console.log('--- 2 ---');
     return helperutils.format(date, format);
   },
 

@@ -7,6 +7,7 @@ from django.http import HttpResponse
 from django.shortcuts import render
 from django.template import RequestContext
 from django.template.loader import render_to_string
+from threading import Thread
 
 
 def get_object_or_none(cls, *args, **kwargs):
@@ -75,7 +76,7 @@ def rget(obj, attrstr, default=None, delim='.'):
         elif isinstance(obj, object): value = getattr(obj, attr)
         if attrstr: return rget(value, attrstr, default, delim)
         return value
-    except:
+    except Exception:
         return default
 
 
@@ -86,6 +87,26 @@ def rset(obj, attrstr, value, delim='.'):
     if attr not in obj: obj[attr] = {}
     if attrstr: rset(obj[attr], attrstr, value, delim)
     else: obj[attr] = value
+
+
+def threaded(**kwargs):
+    """ Call all resultkey -> (callback, [*args]) pairs in parallel.
+        Results are returned as a dictionary with kwarg key as the keys.
+    """
+    threads, results = [], {}
+    for key, meta in kwargs.items():
+        results[key] = None
+        args = meta + [results, key]
+        threads.append(Thread(target=_wrap, args=args))
+        threads[-1].setDaemon(True)
+        threads[-1].start()
+    for thread in threads:
+        thread.join()
+    return results
+
+
+def _wrap(callback, args, results, key):
+    results[key] = callback(*args)
 
 
 def update(obj, **kwargs):

@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 # encoding: utf-8
-import praw, requests
+import praw, random, requests
 from django.conf import settings
 from pk import log, utils
 from pk.apps.calendar.views import get_events
-from pk.utils import auth, context
+from pk.utils import auth, context, threaded
 from pk.utils.decorators import softcache, login_or_apikey_required
 
 REDDIT_SUBREDDITS = {'news':10, 'technology':5, 'worldnews':10, 'boston':10}
@@ -14,14 +14,17 @@ REDDIT_ATTRS = ['title', 'author.name', 'score', 'permalink', 'domain']
 @login_or_apikey_required
 def raspi(request, tmpl='raspi.html'):
     data = context.core(request)
-    data.weather = _get_weather(request)
-    data.calendar = _get_calendar(request)
-    data.news = _get_news(request)
-    data.tasks = _get_tasks(request)
+    if request.GET.get('json'):
+        data.update(threaded(
+            weather=[_get_weather, [request]],
+            calendar=[_get_calendar, [request]],
+            news=[_get_news, [request]],
+            tasks=[_get_tasks, [request]],
+        ))
     return utils.response(request, tmpl, data)
 
 
-@softcache(timeout=900, key='raspi-weather')
+@softcache(timeout=1800, key='raspi-weather')
 def _get_weather(request):
     try:
         response = requests.get(settings.RASPI_WU_URL)
@@ -30,7 +33,7 @@ def _get_weather(request):
         log.exception(err)
 
 
-@softcache(key='raspi-calendar')
+@softcache(timeout=900, key='raspi-calendar')
 def _get_calendar(request):
     try:
         return get_events(settings.RASPI_CALENDAR_URL)
@@ -38,7 +41,7 @@ def _get_calendar(request):
         log.exception(err)
 
 
-@softcache(key='raspi-tasks')
+@softcache(timeout=300, key='raspi-tasks')
 def _get_tasks(request):
     try:
         service = auth.get_gauth_service(settings.EMAIL, 'tasks')
@@ -52,21 +55,31 @@ def _get_tasks(request):
         log.exception(err)
 
 
-@softcache(key='raspi-news')
+@softcache(timeout=1800, key='raspi-news')
 def _get_news(request):
     try:
-        stories = []
         reddit = praw.Reddit(**settings.REDDIT_ACCOUNT)
-        for subreddit, count in REDDIT_SUBREDDITS.items():
-            substories = []
-            limit = count * 2
-            for post in reddit.subreddit(subreddit).top('day', limit=limit):
-                if 'self.' not in post.domain:
-                    story = {attr.replace('.','_'): utils.rget(post,attr) for attr in REDDIT_ATTRS}
-                    story['subreddit'] = subreddit
-                    substories.append(story)
-            substories = sorted(substories, key=lambda x: x['score'])
-            stories += substories[:count]
+        stories = threaded(
+            news=[_get_subreddit_items, [reddit, 'news', 5]],
+            technology=[_get_subreddit_items, [reddit, 'technology', 5]],
+            worldnews=[_get_subreddit_items, [reddit, 'worldnews', 5]],
+            boston=[_get_subreddit_items, [reddit, 'boston', 5]],
+        )
+        # return a flat shuffled list
+        stories = [item for sublist in stories.values() for item in sublist]
+        random.shuffle(stories)
         return stories
     except Exception as err:
         log.exception(err)
+
+
+def _get_subreddit_items(reddit, subreddit, count):
+    substories = []
+    limit = count * 2
+    for post in reddit.subreddit(subreddit).top('day', limit=limit):
+        if 'self.' not in post.domain:
+            story = {attr.replace('.','_'): utils.rget(post,attr) for attr in REDDIT_ATTRS}
+            story['subreddit'] = subreddit
+            substories.append(story)
+        substories = sorted(substories, key=lambda x: x['score'])
+    return substories

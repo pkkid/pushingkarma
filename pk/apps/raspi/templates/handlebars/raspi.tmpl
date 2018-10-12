@@ -2,7 +2,8 @@
 
   <!-- Template:clock -->
   <script id='clock' type='text/x-handlebars-template'>
-    Yo Matt!
+    <div class='date'>{{now "%A, %b %e, %Y"}}</div>
+    <div class='time'>{{now "%I:%M%q"}}</div>
   </script>
 
   <!-- Template:calendar -->
@@ -38,7 +39,8 @@
 
   <!-- Template:news -->
   <script id='news' type='text/x-handlebars-template'>
-    Hey Bro!
+    <div class='title'><p style='-webkit-box-orient:vertical'>{{article.title}}</p></div>
+    <div class='subtext'>{{article.subreddit}} | {{article.domain}}</div>
   </script>
 
   <!-- Template:tasks -->

@@ -16,6 +16,19 @@ $color-dim: #aaa;
   font-family: 'Josefin Sans';
   &.hidecursor { cursor: none; }
 
+  // Clock
+  #clock {
+    top: 20px;
+    left: 20px;
+    position: absolute;
+    .date {
+      font-size: 23px;
+      color: $color-dim;
+      margin-bottom: -15px;
+    }
+    .time { font-size: 60px; }
+  }
+
 
   // Weather
   #weather {
@@ -43,6 +56,28 @@ $color-dim: #aaa;
       .forecast-weekday { margin-top:7px; }
       .forecast-temp { font-size: 14px; }
       .wu { width:25px; height:25px; opacity:0.6; filter: grayscale(100%); }
+    }
+  }
+
+  // news
+  #news {
+    bottom: 20px;
+    height: 65px;
+    margin-left: 50px;
+    position: absolute;
+    width: 700px;
+    .title p {
+      display: -webkit-box;
+      font-size: 20px;
+      line-height: 22px;
+      margin: 0px;
+      max-height: 44px;
+      overflow: hidden;
+      -webkit-line-clamp: 2;
+    }
+    .subtext {
+      font-size: 12px;
+      color: $color-dim;
     }
   }
 
