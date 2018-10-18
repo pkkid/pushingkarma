@@ -239,7 +239,7 @@ pk.editor = {
     this.request('POST', this.opts.markdown_url, function(data) {
         self.container.html(data.html);
         self.set_includes(data.includes);
-        pk.utils.highlightjs();
+        pk.utils.init_highlightjs();
         self.init_edit_buttons();
     });
   },

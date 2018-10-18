@@ -4,7 +4,6 @@
 
 var gulp = require('gulp');
 var autoprefixer = require('gulp-autoprefixer');
-var batch = require('gulp-batch');
 var concat = require('gulp-concat');
 var merge = require('merge-stream');
 var sass = require('gulp-sass');
@@ -92,7 +91,6 @@ gulp.task('npm', function() {
     gulp.src(nm('moment/min/moment.min.js')).pipe(gulp.dest(dist('moment'))),
     gulp.src(nm('popper.js/dist/umd/*min*')).pipe(gulp.dest(dist('popper.js'))),
     gulp.src(nm('tether/dist/**/*min*')).pipe(gulp.dest(dist('tether'))),
-    gulp.src(nm('vue/dist/vue.min.js')).pipe(gulp.dest(dist('vue'))),
     gulp.src(nm('weather-underground-icons/dist/**/*')).pipe(gulp.dest(dist('wu-icons'))),
   );
 })

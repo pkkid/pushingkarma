@@ -9,7 +9,6 @@
     "bootstrap": "^4.1.3",
     "clipboard": "^2.0.1",
     "codemirror": "^5.30.0",
-    "fsevents": "^1.2.4",
     "handlebars": "^4.0.5",
     "highcharts": "^6.0.2",
     "highlightjs": "^9.1.0",
@@ -22,20 +21,24 @@
     "moment": "^2.19.1",
     "popper.js": "^1.14.4",
     "tether": "^1.1.0",
-    "vue": "^2.5.17",
     "weather-underground-icons": "^1.0.0"
   },
   "devDependencies": {
-    "autoprefixer": "^6.0.2",
     "gulp": "^4.0.0",
     "gulp-autoprefixer": "^3.0.1",
     "gulp-batch": "^1.0.5",
     "gulp-cli": "^2.0.1",
     "gulp-concat": "^2.6.0",
-    "gulp-ruby-sass": "^2.0.3",
     "gulp-sass": "^2.0.4",
     "gulp-sourcemaps": "^1.5.2",
     "gulp-watch": "^4.3.5",
-    "merge-stream": "^1.0.1"
+    "merge-stream": "^1.0.1",
+    "napa": "^3.0.0"
+  },
+  "scripts": {
+    "install": "napa"
+  },
+  "napa": {
+    
   }
 }

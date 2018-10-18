@@ -100,7 +100,6 @@ pk.utils = {
   init_highlightjs: function(selector) {
     if (window.hljs === undefined) { return; }
     selector = this.set_default(selector, 'article pre code');
-    console.log('init highlightjs on '+ selector);
     $(selector).each(function(i, block) {
       hljs.highlightBlock(block);
     });
