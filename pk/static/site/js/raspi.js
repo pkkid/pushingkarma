@@ -17,7 +17,7 @@ pk.raspi = {
       self.init_triggers();
       // main loop
       setInterval(function() { self.update_clock(); }, 10000);
-      setInterval(function() { self.update_news(); }, 10000);
+      setInterval(function() { self.update_news(); }, 20000);
       setInterval(this.update_data, self.UPDATE_INTERVAL);
       this.update_data();
       this.update_clock();
