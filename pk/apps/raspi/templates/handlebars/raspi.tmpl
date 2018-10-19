@@ -3,18 +3,24 @@
   <!-- Template:clock -->
   <script id='clock' type='text/x-handlebars-template'>
     <div class='date'>{{now "%A, %b %e, %Y"}}</div>
-    <div class='time'>{{now "%I:%M%q"}}</div>
+    <div class='time'>{{now "%l:%M%q"}}</div>
   </script>
 
   <!-- Template:calendar -->
   <script id='calendar' type='text/x-handlebars-template'>
     <div class='title'>Upcoming Events</div>
-    {{#withBefore calendar 3}}
-      <div class='event'>
-        <div class='subject'>{{this.Subject}}</div>
-        <div class='details'>time | location</div>
+    {{#if events.length}}
+      {{#withBefore events 3}}
+        <div class='event'>
+          <div class='subject'>{{this.Subject}}</div>
+          <div class='details'>{{formatDate this.Start '%l:%M'}} - {{formatDate this.End '%l:%M'}} | {{this.Location.DisplayName}}</div>
+        </div>
+      {{/withBefore}}
+    {{else}}
+      <div class='noevents'>
+        No events
       </div>
-    {{/withBefore}}
+    {{/if}}
   </script>
 
   <!-- Template:weather -->
@@ -48,15 +54,21 @@
     <div class='title'><p style='-webkit-box-orient:vertical'>
       <a target='_blank' href='http://reddit.com{{article.permalink}}'>{{article.title}}</a>
     </p></div>
-    <div class='subtext'>{{timeAgo article.created}} | {{article.subreddit}} | {{article.domain}}</div>
+    <div class='subtext'>{{timeAgo article.created_utc}} | {{article.subreddit}} | {{article.domain}}</div>
   </script>
 
   <!-- Template:tasks -->
   <script id='tasks' type='text/x-handlebars-template'>
     <div class='title'>My Tasks</div>
-    {{#withBefore tasks 4}}
-      <div class='task'>{{this.title}}</div>
-    {{/withBefore}}
+    {{#if tasks.length}}
+      {{#withBefore tasks 4}}
+        <div class='task'>{{this.title}}</div>
+      {{/withBefore}}
+    {{else}}
+      <div class='notasks'>
+        No tasks
+      </div>
+    {{/if}}
   </script>
 
   <!-- Template:chess -->

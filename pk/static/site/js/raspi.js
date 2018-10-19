@@ -17,6 +17,7 @@ pk.raspi = {
       self.init_triggers();
       // main loop
       setInterval(function() { self.update_clock(); }, 10000);
+      setInterval(function() { self.update_calendar(); }, 60000);
       setInterval(function() { self.update_news(); }, 20000);
       setInterval(this.update_data, self.UPDATE_INTERVAL);
       this.update_data();
@@ -51,14 +52,28 @@ pk.raspi = {
       self.xhr.done(function(data, textStatus, jqXHR) {
         self.data = data;
         self.weather.html(pk.templates.weather(self.data)).fadeIn();
-        self.calendar.html(pk.templates.calendar(self.data)).fadeIn();
         self.tasks.html(pk.templates.tasks(self.data)).fadeIn();
+        self.update_calendar();
         self.update_news();
       });
     },
 
     update_clock: function() {
       this.clock.html(pk.templates.clock()).fadeIn();
+    },
+
+    update_calendar: function() {
+      var events = [];
+      var now = moment();
+      var max = moment().add(12, 'hours');
+      for (var i=0; i < this.data.calendar.length; i++) {
+        var start = moment(this.data.calendar[i].Start);
+        var end = moment(this.data.calendar[i].End);
+        if ((end > now) && (start < max)) {
+          events.push(this.data.calendar[i]);
+        }
+      }
+      this.calendar.html(pk.templates.calendar({events:events})).fadeIn();
     },
 
     update_news: function() {

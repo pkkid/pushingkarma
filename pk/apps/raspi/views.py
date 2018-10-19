@@ -1,14 +1,16 @@
 #!/usr/bin/env python
 # encoding: utf-8
 import praw, random, requests
+from datetime import datetime
 from django.conf import settings
 from pk import log, utils
 from pk.apps.calendar.views import get_events
 from pk.utils import auth, context, threaded
 from pk.utils.decorators import softcache, login_or_apikey_required
 
-DISABLE_CACHE = False
-REDDIT_ATTRS = ['title', 'author.name', 'score', 'permalink', 'domain', 'created']
+DISABLE_CACHE = True
+DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S%z"
+REDDIT_ATTRS = ['title', 'author.name', 'score', 'permalink', 'domain', 'created_utc']
 
 
 @login_or_apikey_required
