@@ -203,9 +203,10 @@ var helpers = {
    * inside a block. Opposite of {{withAfter}}
    */
   withBefore: function(array, count, options) {
-    array = array.slice(0, -count);
+    array = array.slice(0, count);
     var result = '';
     for (var item in array) {
+      console.log()
       result += options.fn(array[item]);
     }
     return result;

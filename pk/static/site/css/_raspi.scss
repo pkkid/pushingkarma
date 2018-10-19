@@ -1,8 +1,9 @@
 // Encoding: UTF-8
 
-$color-bright: #eee;
+$bright: #eee;
 $color: #ccc;
-$color-dim: #aaa;
+$dim: #999;
+$highlight: transparent;
 
 
 #raspi {
@@ -19,24 +20,58 @@ $color-dim: #aaa;
 
   // Clock
   #clock {
-    top: 20px;
+    background-color: $highlight;
     left: 20px;
     position: absolute;
+    top: 20px;
+    width: 300px;
     .date {
       font-size: 23px;
-      color: $color-dim;
+      color: $dim;
       margin-bottom: -15px;
     }
     .time { font-size: 60px; }
+  }
+
+  // Calendar
+  #calendar {
+    background-color: $highlight;
+    left: 20px;
+    position: absolute;
+    top: 140px;
+    width: 400px;
+    .title {
+      border-bottom: 1px solid #555;
+      color: $dim;
+      font-size: 16px;
+    }
+    .event {
+      margin-top:3px;
+    }
+    .subject {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .details {
+      font-size: 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      color: $dim;
+      position: relative;
+      top: -5px;
+    }
   }
 
 
   // Weather
   #weather {
     position: absolute;
-    top: 20px;
     right: 20px;
-    width: 300px;
+    top: 20px;
+    width: 350px;
+    background-color: $highlight;
     .weather-today {
       font-size: 16px;
       line-height: 14px;
@@ -47,24 +82,52 @@ $color-dim: #aaa;
       .weather-temp { font-size:35px; line-height:36px; }
     }
     .forecast {
-      color: $color-dim;
+      color: $dim;
       float: right;
       font-size: 14px;
       line-height: 16px;
       padding-top: 20px;
-      width: 255px;
+      width: 275px;
 
-      .forecast-day { width:35px; margin-left:20px; text-align:center; float:left; }
-      .forecast-day:first-child { margin-left:0px; }
+      .forecast-day { width:30px; margin-left:25px; text-align:center; float:left; }
       .forecast-weekday { padding-bottom:2px; }
       [class^='diw-']:before { font-size:20px; }
       .forecast-temp { padding-top:6px; }
+    }
+  }
 
+  // Tasks
+  #tasks {
+    background-color: $highlight;
+    right: 20px;
+    position: absolute;
+    top: 190px;
+    width: 275px;
+    .title {
+      border-bottom: 1px solid #555;
+      color: $dim;
+      font-size: 16px;
+      margin-bottom: 3px;
+    }
+    .task {
+      position: relative;
+      padding-left: 20px;
+      &:before {
+        content: ' ';
+        position: absolute;
+        border: 2px solid $dim;
+        border-radius: 3px;
+        width: 10px;
+        height: 10px;
+        top: 7px;
+        left: 3px;
+      }
     }
   }
 
   // news
   #news {
+    background-color: $highlight;
     bottom: 20px;
     height: 65px;
     margin-left: 50px;
@@ -81,7 +144,7 @@ $color-dim: #aaa;
     }
     .subtext {
       font-size: 12px;
-      color: $color-dim;
+      color: $dim;
     }
   }
 

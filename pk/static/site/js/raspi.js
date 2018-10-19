@@ -50,13 +50,15 @@ pk.raspi = {
       self.xhr = $.ajax({url:self.UPDATE_URL, type:'GET', dataType:'json'});
       self.xhr.done(function(data, textStatus, jqXHR) {
         self.data = data;
-        self.weather.html(pk.templates.weather(self.data));
+        self.weather.html(pk.templates.weather(self.data)).fadeIn();
+        self.calendar.html(pk.templates.calendar(self.data)).fadeIn();
+        self.tasks.html(pk.templates.tasks(self.data)).fadeIn();
         self.update_news();
       });
     },
 
     update_clock: function() {
-      this.clock.html(pk.templates.clock());
+      this.clock.html(pk.templates.clock()).fadeIn();
     },
 
     update_news: function() {
@@ -65,8 +67,7 @@ pk.raspi = {
         self.news.fadeOut(function() {
           var index = Math.floor(Math.random() * self.data.news.length)
           var data = {article: self.data.news[index]};
-          self.news.html(pk.templates.news(data));
-          self.news.fadeIn();
+          self.news.html(pk.templates.news(data)).fadeIn();
         });
       }
     },

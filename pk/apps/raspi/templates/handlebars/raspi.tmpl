@@ -8,7 +8,13 @@
 
   <!-- Template:calendar -->
   <script id='calendar' type='text/x-handlebars-template'>
-    Hi Mom!
+    <div class='title'>Upcoming Events</div>
+    {{#withBefore calendar 3}}
+      <div class='event'>
+        <div class='subject'>{{this.Subject}}</div>
+        <div class='details'>time | location</div>
+      </div>
+    {{/withBefore}}
   </script>
 
   <!-- Template:weather -->
@@ -27,7 +33,7 @@
       </div>
     </div>
     <div class='forecast' style='clear:both'>
-      {{#withBefore weather.forecast.simpleforecast.forecastday 5 }}
+      {{#withBefore weather.forecast.simpleforecast.forecastday 5}}
         <div class='forecast-day'>
           <div class='forecast-weekday'>{{this.date.weekday_short}}</div>
           <i class='diw-{{this.icon}}'></i>
@@ -40,14 +46,17 @@
   <!-- Template:news -->
   <script id='news' type='text/x-handlebars-template'>
     <div class='title'><p style='-webkit-box-orient:vertical'>
-      <a href='http://reddit.com{{article.permalink}}'>{{article.title}}</a>
+      <a target='_blank' href='http://reddit.com{{article.permalink}}'>{{article.title}}</a>
     </p></div>
     <div class='subtext'>{{timeAgo article.created}} | {{article.subreddit}} | {{article.domain}}</div>
   </script>
 
   <!-- Template:tasks -->
   <script id='tasks' type='text/x-handlebars-template'>
-    Sup Koi!
+    <div class='title'>My Tasks</div>
+    {{#withBefore tasks 4}}
+      <div class='task'>{{this.title}}</div>
+    {{/withBefore}}
   </script>
 
   <!-- Template:chess -->
