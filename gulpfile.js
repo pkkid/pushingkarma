@@ -72,7 +72,7 @@ gulp.task('codemirror', function() {
 // NPM - copy npm resources to dashboard/static/dist
 gulp.task('npm', function() {
   return merge(
-    gulp.src('./pk/static/site/font/*').pipe(gulp.dest(dist('site/font'))),
+    gulp.src('./pk/static/site/font/**/*').pipe(gulp.dest(dist('site/font'))),
     gulp.src('./pk/static/site/img/*').pipe(gulp.dest(dist('site/img'))),
     gulp.src(nm('@mdi/font/css/*min*')).pipe(gulp.dest(dist('mdi/css'))),
     gulp.src(nm('@mdi/font/fonts/*')).pipe(gulp.dest(dist('mdi/fonts'))),

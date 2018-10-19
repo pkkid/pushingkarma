@@ -742,6 +742,7 @@ var helpers = {
    * Modified version of http://bit.ly/18WwJYf
    */
   timeAgo: function(date) {
+    if (Number.isInteger(date) && date < 99999999999) { date *= 1000; }
     date = new Date(date);
     var seconds = Math.floor((new Date() - date) / 1000);
     var interval = Math.floor(seconds / 31536000);

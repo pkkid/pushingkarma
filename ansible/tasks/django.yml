@@ -1,5 +1,11 @@
 # Run Django makemigrations, migrate.
 ---
+- name: Delete Collectstatic
+  tags: ['deploy']
+  file:
+    state: absent
+    path: '{{project_dir}}/collectstatic'
+
 - name: Initialize Django
   tags: ['deploy']
   become: yes
