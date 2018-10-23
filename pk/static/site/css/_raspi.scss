@@ -1,13 +1,12 @@
 // Encoding: UTF-8
 
-$bright: #eee;
-$color: #ccc;
-$dim: #999;
+$color: #e5d9c0;
+$dim: darken($color, 15%);
 $highlight: transparent;
-
+//$highlight: rgba(255,0,0,0.1);
 
 #raspi {
-  background-color: #111;
+  background-color: #000;
   color: $color;
   width: 800px;
   height: 480px;
@@ -162,5 +161,18 @@ $highlight: transparent;
     position: absolute;
     right: 20px;
     bottom: 20px;
+  }
+
+  // IP Address
+  #ip {
+    background-color: $highlight;
+    bottom: 2px;
+    color: #444;
+    font-size: 12px;
+    line-height: 12px;
+    position: absolute;
+    right: 5px;
+    text-align: right;
+    width: 150px;
   }
 }
