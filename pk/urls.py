@@ -43,5 +43,6 @@ urlpatterns = [
     # Misc
     url(r'^budget/$', budget_views.budget, name='budget'),
     url(r'^calendar/$', calendar_views.calendar, name='calendar'),
+    url(r'^focus/$', focus_views.focus, name='focus'),
     url(r'^raspi/$', focus_views.raspi, name='raspi'),
 ]

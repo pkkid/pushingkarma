@@ -7,21 +7,26 @@ from pk.apps.calendar.views import get_events
 from pk.utils import auth, context, threaded
 from pk.utils.decorators import softcache, login_or_apikey_required
 
-DISABLE_CACHE = True
+DISABLE_CACHE = False
 DATETIME_FORMAT = "%Y-%m-%dT%H:%M:%S%z"
 REDDIT_ATTRS = ['title', 'author.name', 'score', 'permalink', 'domain', 'created_utc']
 
 
 @login_or_apikey_required
+def focus(request):
+    data = context.core(request)
+    data.update(threaded(
+        weather=[_get_weather, [request]],
+        calendar=[_get_calendar, [request]],
+        news=[_get_news, [request]],
+        tasks=[_get_tasks, [request]],
+    ))
+    return utils.response_json(data)
+
+
+@login_or_apikey_required
 def raspi(request, tmpl='raspi.html'):
     data = context.core(request)
-    if request.GET.get('json'):
-        data.update(threaded(
-            weather=[_get_weather, [request]],
-            calendar=[_get_calendar, [request]],
-            news=[_get_news, [request]],
-            tasks=[_get_tasks, [request]],
-        ))
     return utils.response(request, tmpl, data)
 
 

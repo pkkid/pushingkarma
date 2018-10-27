@@ -2,8 +2,9 @@
 'use strict';
 
 pk.focus = {
-    UPDATE_URL: '/raspi/?json=1',
-    UPDATE_INTERVAL: 300 * 1000,
+    UPDATE_URL: '/focus/',    // data url
+    UPDATE_INTERVAL: 300000,  // 5 minutes
+    REGEX_IP: /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/,
 
     init: function(selector, opts) {
       var self = this;
@@ -22,6 +23,7 @@ pk.focus = {
       setInterval(this.update_data, self.UPDATE_INTERVAL);
       this.update_data();
       this.update_clock();
+      this.update_ip();
     },
 
     init_update_url: function() {
@@ -37,6 +39,7 @@ pk.focus = {
       this.weather = this.container.find('#weather');
       this.tasks = this.container.find('#tasks');
       this.news = this.container.find('#news');
+      this.ip = this.container.find('#ip');
     },
 
     init_triggers: function() {
@@ -60,6 +63,22 @@ pk.focus = {
 
     update_clock: function() {
       this.clock.html(pk.templates.clock()).fadeIn();
+    },
+
+    update_ip: function() {
+      var self = this;
+      window.RTCPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
+      var pc = new RTCPeerConnection({iceServers:[]})
+      var noop = function(){};      
+      pc.createDataChannel('');  //create a bogus data channel
+      pc.createOffer(pc.setLocalDescription.bind(pc), noop);  // create offer and set local description
+      pc.onicecandidate = function(ice) {
+        if (ice && ice.candidate && ice.candidate.candidate) {
+          var ip = self.REGEX_IP.exec(ice.candidate.candidate)[1];
+          console.log('IP: ', ip); self.ip.text(ip).fadeIn();
+          pc.onicecandidate = noop;
+        }
+      };
     },
 
     update_calendar: function() {
