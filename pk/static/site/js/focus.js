@@ -2,8 +2,8 @@
 'use strict';
 
 pk.focus = {
-    UPDATE_URL: '/focus/',    // data url
-    UPDATE_INTERVAL: 300000,  // 5 minutes
+    UPDATE_URL: '/focus/?json=1',   // data url
+    UPDATE_INTERVAL: 300000,        // 5 minutes
     REGEX_IP: /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/,
 
     init: function(selector, opts) {

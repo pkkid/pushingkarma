@@ -13,20 +13,16 @@ REDDIT_ATTRS = ['title', 'author.name', 'score', 'permalink', 'domain', 'created
 
 
 @login_or_apikey_required
-def focus(request):
+def focus(request, tmpl='focus.html'):
     data = context.core(request)
-    data.update(threaded(
-        weather=[_get_weather, [request]],
-        calendar=[_get_calendar, [request]],
-        news=[_get_news, [request]],
-        tasks=[_get_tasks, [request]],
-    ))
-    return utils.response_json(data)
-
-
-@login_or_apikey_required
-def raspi(request, tmpl='raspi.html'):
-    data = context.core(request)
+    if request.GET.get('json'):
+        data.update(threaded(
+            weather=[_get_weather, [request]],
+            calendar=[_get_calendar, [request]],
+            news=[_get_news, [request]],
+            tasks=[_get_tasks, [request]],
+        ))
+    data.cls = request.GET.get('cls', 'newtab')
     return utils.response(request, tmpl, data)
 
 
