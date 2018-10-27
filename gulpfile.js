@@ -96,8 +96,9 @@ gulp.task('npm', function() {
 })
 
 // Build & Watch
-gulp.task('default', gulp.parallel('js', 'css', 'npm', 'codemirror'));
+gulp.task('build', gulp.parallel('js', 'css', 'npm', 'codemirror'));
 gulp.task('watch', function() {
   gulp.watch(['**/js/*.js', '!**/js/site.js'], gulp.parallel('js'));
   gulp.watch('**/css/*.scss', gulp.parallel('css'));
 });
+gulp.task('default', gulp.series('build', 'watch'));

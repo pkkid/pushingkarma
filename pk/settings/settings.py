@@ -44,7 +44,7 @@ INSTALLED_APPS = (
     'pk.apps.budget',
     'pk.apps.notes',
     'pk.apps.pages',
-    'pk.apps.raspi',
+    'pk.apps.focus',
 )
 MIDDLEWARE = (
     'django.contrib.sessions.middleware.SessionMiddleware',

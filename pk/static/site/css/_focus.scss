@@ -6,7 +6,7 @@ $dim: #999;
 $highlight: transparent;
 
 
-#raspi {
+#focus {
   background-color: #111;
   color: $color;
   width: 800px;
@@ -16,7 +16,7 @@ $highlight: transparent;
   position: relative;
   font-family: 'Josefin Sans';
   &.hidecursor { cursor: none; }
-  a,a:hover,a:visited { color:$color } 
+  a,a:hover,a:visited { color:$color }
 
   // Clock
   #clock {

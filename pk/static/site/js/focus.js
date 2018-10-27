@@ -1,7 +1,7 @@
 // Encoding: UTF-8
 'use strict';
 
-pk.raspi = {
+pk.focus = {
     UPDATE_URL: '/raspi/?json=1',
     UPDATE_INTERVAL: 300 * 1000,
 
@@ -9,7 +9,7 @@ pk.raspi = {
       var self = this;
       this.container = $(selector);
       if (!this.container.length) { return; }
-      console.debug('init pk.raspi on '+ selector);
+      console.debug('init pk.focus on '+ selector);
       self.data = {};
       self.xhr = null;
       self.init_update_url();

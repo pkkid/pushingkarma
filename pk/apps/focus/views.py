@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # encoding: utf-8
 import praw, random, requests
-from datetime import datetime
 from django.conf import settings
 from pk import log, utils
 from pk.apps.calendar.views import get_events
@@ -26,24 +25,24 @@ def raspi(request, tmpl='raspi.html'):
     return utils.response(request, tmpl, data)
 
 
-@softcache(timeout=1800, key='raspi-weather', force=DISABLE_CACHE)
+@softcache(timeout=1800, key='focus-weather', force=DISABLE_CACHE)
 def _get_weather(request):
     try:
-        response = requests.get(settings.RASPI_WU_URL)
+        response = requests.get(settings.FOCUS_WU_URL)
         return response.json()
     except Exception as err:
         log.exception(err)
 
 
-@softcache(timeout=900, key='raspi-calendar', force=DISABLE_CACHE)
+@softcache(timeout=900, key='focus-calendar', force=DISABLE_CACHE)
 def _get_calendar(request):
     try:
-        return get_events(settings.RASPI_CALENDAR_URL)
+        return get_events(settings.FOCUS_CALENDAR_URL)
     except Exception as err:
         log.exception(err)
 
 
-@softcache(timeout=300, key='raspi-tasks', force=DISABLE_CACHE)
+@softcache(timeout=300, key='focus-tasks', force=DISABLE_CACHE)
 def _get_tasks(request):
     try:
         service = auth.get_gauth_service(settings.EMAIL, 'tasks')
@@ -57,7 +56,7 @@ def _get_tasks(request):
         log.exception(err)
 
 
-@softcache(timeout=1800, key='raspi-news', force=DISABLE_CACHE)
+@softcache(timeout=1800, key='focus-news', force=DISABLE_CACHE)
 def _get_news(request):
     try:
         reddit = praw.Reddit(**settings.REDDIT_ACCOUNT)

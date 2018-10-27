@@ -13,7 +13,7 @@
     {% block css %}{% endblock %}
   </head>
   <body>
-    <div id='raspi'>
+    <div id='focus'>
       <div id='clock' style='display:none'></div>
       <div id='calendar' style='display:none'></div>
       <div id='weather' style='display:none'></div>
@@ -27,7 +27,7 @@
   <script src='/static/handlebars/handlebars.min.js'></script>
   <script src='/static/site/site.js'></script>
   <script type='text/javascript'>
-    $(function() { pk.raspi.init('#raspi'); });
+    $(function() { pk.focus.init('#focus'); });
   </script>
-  {% include 'handlebars/raspi.tmpl' %}
+  {% include 'handlebars/focus.tmpl' %}
 </html>
