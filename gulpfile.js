@@ -5,18 +5,15 @@
 var gulp = require('gulp');
 var autoprefixer = require('gulp-autoprefixer');
 var concat = require('gulp-concat');
-var merge = require('merge-stream');
 var sass = require('gulp-sass');
 var sourcemaps = require('gulp-sourcemaps');
 var watch = require('gulp-watch');
-
-var dist = function(path) { return './pk/static/dist/'+ path };
 
 // Javascript
 gulp.task('js', function() {
   return gulp.src('./pk/static/site/js/*.js')
     .pipe(concat('site.js', {newLine:'\n\n\n'}))
-    .pipe(gulp.dest(dist('site')));
+    .pipe(gulp.dest('./pk/static/dist/site'));
 });
 
 // CSS
@@ -27,7 +24,7 @@ gulp.task('css', function() {
     .on('error', sass.logError)
     .pipe(autoprefixer('last 2 versions', '> 1%'))
     .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest(dist('site')));
+    .pipe(gulp.dest('./pk/static/dist/site'));
 });
 
 // Build & Watch

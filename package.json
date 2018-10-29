@@ -6,12 +6,9 @@
   "devDependencies": {
     "gulp": "^4.0.0",
     "gulp-autoprefixer": "^3.0.1",
-    "gulp-batch": "^1.0.5",
     "gulp-concat": "^2.6.0",
     "gulp-sass": "^2.0.4",
     "gulp-sourcemaps": "^1.5.2",
-    "gulp-watch": "^4.3.5",
-    "merge-stream": "^1.0.1",
-    "napa": "^3.0.0"
+    "gulp-watch": "^4.3.5"
   }
 }

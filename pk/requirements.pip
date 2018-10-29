@@ -11,6 +11,7 @@ django-redis-sessions==0.5.0
 django-storages==1.6.5
 Django==2.0
 djangorestframework==3.7.3
+flickrapi==2.4.0
 gevent==1.1rc3
 google-api-python-client==1.7.4
 ics==0.3.1
