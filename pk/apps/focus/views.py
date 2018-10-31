@@ -3,6 +3,7 @@
 import flickrapi, json, os, praw, random, requests
 import urllib.request
 from django.conf import settings
+from django.core.cache import cache
 from pk import log, utils
 from pk.apps.calendar.views import get_events
 from pk.utils import auth, context, threaded
@@ -11,10 +12,10 @@ from pk.utils.decorators import softcache, login_or_apikey_required
 DISABLE_CACHE = False
 DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S%z'
 FLICKR_GROUPID = '830711@N25'  # Best Landscape Photographers
-FLICKR_DOWNLOAD = os.path.join(settings.BASE_DIR, 'collectstatic/site/flickr.jpg')
-if settings.DEBUG:
-    FLICKR_DOWNLOAD = os.path.join(settings.BASE_DIR, 'static/site/img/flickr.jpg')
 REDDIT_ATTRS = ['title', 'author.name', 'score', 'permalink', 'domain', 'created_utc']
+# FLICKR_DOWNLOAD = os.path.join(settings.BASE_DIR, 'collectstatic/site/flickr.jpg')
+# if settings.DEBUG:
+#     FLICKR_DOWNLOAD = os.path.join(settings.BASE_DIR, 'static/site/img/flickr.jpg')
 
 
 @login_or_apikey_required
@@ -29,7 +30,8 @@ def focus(request, id='newtab', tmpl='focus.html'):
             tasks=[_get_tasks, [request]],
         ))
     if id == 'newtab':
-        data.bgimg = FLICKR_DOWNLOAD.replace(settings.BASE_DIR, '')
+        background = json.loads(cache.get('focus-background', '{}'))
+        data.bgimg = background.get('data',{}).get('url_h','')
     return utils.response(request, tmpl, data)
 
 
@@ -55,10 +57,10 @@ def _get_background(request):
         photos = list(filter(_filter_photos, json.loads(response)['photos']['photo']))
         photo = random.choice(photos)
         # Download the photo
-        log.info('Downloading new background: %s', photo['url_h'])
-        image = urllib.request.urlopen(photo['url_h'])
-        with open(FLICKR_DOWNLOAD, 'wb') as handle:
-            handle.write(image.read())
+        # log.info('Downloading new background: %s', photo['url_h'])
+        # image = urllib.request.urlopen(photo['url_h'])
+        # with open(FLICKR_DOWNLOAD, 'wb') as handle:
+        #     handle.write(image.read())
         return photo
     except Exception as err:
         log.exception(err)
