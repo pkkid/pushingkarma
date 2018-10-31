@@ -47,7 +47,7 @@ def _get_background(request):
         https://stuvel.eu/flickrapi-doc/
     """
     try:
-        flickr = flickrapi.FlickrAPI(cache=True, format='json', **settings.FLICKR)
+        flickr = flickrapi.FlickrAPI(**settings.FLICKR)
         # Find number of pages in photo gallery
         response = flickr.groups.pools.getPhotos(group_id=FLICKR_GROUPID, per_page=500)
         pages = json.loads(response)['photos']['pages']
