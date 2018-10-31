@@ -2,22 +2,25 @@
 # encoding: utf-8
 import flickrapi, json, praw, random, requests
 from django.conf import settings
+from django.shortcuts import redirect
 from pk import log, utils
 from pk.apps.calendar.views import get_events
 from pk.utils import auth, context, threaded
 from pk.utils.decorators import softcache, login_or_apikey_required
 
-DISABLE_CACHE = False
 DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S%z'
 FLICKR_GROUPID = '830711@N25'  # Best Landscape Photographers
 FLICKR_EXTRAS = 'description,owner_name,url_h,geo'
 FLICKER_PAGESIZE = 500
 REDDIT_ATTRS = ['title','author.name','score','permalink','domain','created_utc']
+GOOGLE_URL = 'https://www.google.com/search?q={q}'
 LUCKY_URL = 'http://google.com/search?btnI=I%27m+Feeling+Lucky&sourceid=navclient&q={domain}%20{title}'
 
 
 @login_or_apikey_required
 def focus(request, id='newtab', tmpl='focus.html'):
+    if request.GET.get('q'):
+        redirect(GOOGLE_URL.format(q=request.GET['q']))
     data = context.core(request, id=id)
     data.data = threaded(
         photo=[_get_photo, [request]],
@@ -34,7 +37,7 @@ def raspi(request):
     return focus(request, id='raspi')
 
 
-@softcache(timeout=64800, expires=2592000, key='focus-background', force=DISABLE_CACHE)
+@softcache(timeout=64800, expires=2592000, key='focusphoto')
 def _get_photo(request):
     """ Get a new background image from Flickr.
         https://www.flickr.com/services/api/flickr.galleries.getPhotos.html
@@ -60,7 +63,7 @@ def _filter_photos(photo):
     return True
 
 
-@softcache(timeout=1800, key='focus-weather', force=DISABLE_CACHE)
+@softcache(timeout=1800, key='focusweather')
 def _get_weather(request):
     """ Get weather information from Weather Underground.
         https://www.wunderground.com/weather/api/d/docs
@@ -72,7 +75,7 @@ def _get_weather(request):
         log.exception(err)
 
 
-@softcache(timeout=900, key='focus-calendar', force=DISABLE_CACHE)
+@softcache(timeout=900, key='focuscalendar')
 def _get_calendar(request):
     """ Get calendar information from Office365. """
     try:
@@ -81,7 +84,7 @@ def _get_calendar(request):
         log.exception(err)
 
 
-@softcache(timeout=300, key='focus-tasks', force=DISABLE_CACHE)
+@softcache(timeout=300, key='focustasks')
 def _get_tasks(request):
     """ Get open tasks from Google Tasks.
         https://developers.google.com/tasks/v1/reference/
@@ -98,7 +101,7 @@ def _get_tasks(request):
         log.exception(err)
 
 
-@softcache(timeout=1800, key='focus-news', force=DISABLE_CACHE)
+@softcache(timeout=1800, key='focusnews')
 def _get_news(request):
     """ Get news from various Reddit subreddits using PRAW.
         https://praw.readthedocs.io/en/latest/code_overview/reddit_instance.html

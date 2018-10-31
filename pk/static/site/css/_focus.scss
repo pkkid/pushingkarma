@@ -46,6 +46,12 @@ $highlight: transparent;
     top: 130px;
     transition: $transition_fast;
     max-width: 400px;
+    .mdi-autorenew {
+      font-size: 16px;
+      position: relative;
+      top: 2px;
+      cursor: pointer;
+    }
     .title { font-size:14px; }
     &.hidedetails { opacity: 0; }
   }

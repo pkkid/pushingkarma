@@ -4,6 +4,7 @@ import functools, json, os, time
 from django.conf import settings
 from django.core.cache import cache
 from django.db import connection
+from django.http import HttpRequest
 from pk import log
 
 COLORS = {'blue':34, 'cyan':36, 'green':32, 'grey':30, 'magenta':35, 'red':31, 'white':37, 'yellow':33}
@@ -19,15 +20,22 @@ class ContextDecorator(object):
         return decorated
 
 
-def softcache(timeout=900, expires=86400, key=None, force=False):
+def softcache(timeout=900, expires=86400, key=None):
     def wrapper1(func):
         def wrapper2(*args, **kwargs):
+            # Check we want to force this value
+            force = False
+            if args and isinstance(args[0], HttpRequest):
+                if args[0].GET.get('force%s' % key.lower()) or args[0].GET.get('forceupdate'):
+                    force = True
+            # Get the current value from cache, check it's age
             now = int(time.time())
             value = json.loads(cache.get(key, '{}'))
             age = now - value.get('lastupdate', 0)
             if value and age <= timeout and value.get('data') and not force:
                 log.info('Returning cached value for: %s', key)
                 return value['data']
+            # Value is old; Lets update it
             try:
                 log.info('Fetching new value for: %s', key)
                 result = func(*args, **kwargs)

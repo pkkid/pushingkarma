@@ -16,14 +16,13 @@ pk.focus = {
       self.init_elements();
       self.init_triggers();
       // main loop
+      this.update_widgets();
+      this.update_clock();
+      this.update_ip();
       setInterval(function() { self.update_clock(); }, 10000);      // 10 seconds
       setInterval(function() { self.update_news(); }, 20000);       // 20 seconds
       setInterval(function() { self.update_calendar(); }, 60000);   // 1 minute
       setInterval(this.update_data, 300000);                        // 5 minutes
-      this.update_widgets();
-      this.update_clock();
-      this.update_photo();
-      this.update_ip();
     },
 
     init_update_url: function() {
@@ -54,11 +53,16 @@ pk.focus = {
       this.clock.on('click', function() {
         self.photo.toggleClass('hidedetails');
       });
+      this.photo.on('click', '.mdi-autorenew', function() {
+        self.update_data('&forcefocusphoto=1');
+      });
     },
     
-    update_data: function(initdata) {
+    update_data: function(appendurl) {
       var self = this;
-      self.xhr = $.ajax({url:self.UPDATE_URL, type:'GET', dataType:'json'});
+      var url = self.UPDATE_URL;
+      if (appendurl) { url += appendurl; }
+      self.xhr = $.ajax({url:url, type:'GET', dataType:'json'});
       self.xhr.done(function(data, textStatus, jqXHR) {
         self.data = data.data;
         self.update_widgets();
@@ -66,6 +70,7 @@ pk.focus = {
     },
 
     update_widgets: function() {
+      this.update_photo();
       this.weather.html(pk.templates.weather(this.data)).css('opacity', 1);
       this.tasks.html(pk.templates.tasks(this.data)).css('opacity', 1);
       this.update_calendar();
@@ -78,6 +83,7 @@ pk.focus = {
 
     update_photo: function() {
       this.photo.html(pk.templates.photo(this.data));
+      $('body').css('background-image', 'url("'+ this.data.photo.url_h +'")');
     },
 
     update_ip: function() {
