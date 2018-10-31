@@ -1,5 +1,5 @@
 {% load basefilters %}
-<html lang='en'>
+<html id='{{id}}' lang='en' {% if bgimg %}style='background-image:url({{bgimg}});'{% endif %}>
   <head>
     <meta charset='UTF-8'/>
     <title>{% block title %}{% endblock %}{{settings.SITE_NAME}}</title>
@@ -12,7 +12,7 @@
     {% block css %}{% endblock %}
   </head>
   <body>
-    <div id='focus' class='{{cls}} hidecursor'>
+    <div id='focus' class='hidecursor'>
       <div id='clock' style='display:none'></div>
       <div id='calendar' style='display:none'></div>
       <div id='weather' style='display:none'></div>

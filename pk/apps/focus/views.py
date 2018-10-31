@@ -8,19 +8,18 @@ from pk.apps.calendar.views import get_events
 from pk.utils import auth, context, threaded
 from pk.utils.decorators import softcache, login_or_apikey_required
 
-
-DISABLE_CACHE = True
+DISABLE_CACHE = False
 DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S%z'
 FLICKR_GROUPID = '830711@N25'  # Best Landscape Photographers
 FLICKR_DOWNLOAD = os.path.join(settings.BASE_DIR, 'collectstatic/site/flickr.jpg')
 if settings.DEBUG:
-    FLICKR_DOWNLOAD = os.path.join(settings.BASE_DIR, 'static/dist/flickr.jpg')
+    FLICKR_DOWNLOAD = os.path.join(settings.BASE_DIR, 'static/site/img/flickr.jpg')
 REDDIT_ATTRS = ['title', 'author.name', 'score', 'permalink', 'domain', 'created_utc']
 
 
 @login_or_apikey_required
-def focus(request, cls='newtab', tmpl='focus.html'):
-    data = context.core(request, cls=cls)
+def focus(request, id='newtab', tmpl='focus.html'):
+    data = context.core(request, id=id)
     if request.GET.get('json'):
         data.update(threaded(
             background=[_get_background, [request]],
@@ -29,12 +28,14 @@ def focus(request, cls='newtab', tmpl='focus.html'):
             news=[_get_news, [request]],
             tasks=[_get_tasks, [request]],
         ))
+    if id == 'newtab':
+        data.bgimg = FLICKR_DOWNLOAD.replace(settings.BASE_DIR, '')
     return utils.response(request, tmpl, data)
 
 
 @login_or_apikey_required
 def raspi(request):
-    return focus(request, cls='raspi')
+    return focus(request, id='raspi')
 
 
 @softcache(timeout=64800, expires=2592000, key='focus-background', force=DISABLE_CACHE)
@@ -50,12 +51,12 @@ def _get_background(request):
         pages = json.loads(response)['photos']['pages']
         # Choose a random photo from the gallery
         response = flickr.groups.pools.getPhotos(group_id=FLICKR_GROUPID, per_page=500,
-            page=random.randrange(pages), get_user_info=1, extras='url_k,geo')
+            page=random.randrange(pages), get_user_info=1, extras='url_h,geo')
         photos = list(filter(_filter_photos, json.loads(response)['photos']['photo']))
         photo = random.choice(photos)
         # Download the photo
-        log.info('Downloading new background: %s', photo['url_k'])
-        image = urllib.request.urlopen(photo['url_k'])
+        log.info('Downloading new background: %s', photo['url_h'])
+        image = urllib.request.urlopen(photo['url_h'])
         with open(FLICKR_DOWNLOAD, 'wb') as handle:
             handle.write(image.read())
         return photo
@@ -64,8 +65,8 @@ def _get_background(request):
 
 
 def _filter_photos(photo):
-    if not photo.get('url_k'): return False
-    if int(photo.get('width_k',0)) < int(photo.get('height_k',0)): return False
+    if not photo.get('url_h'): return False
+    if int(photo.get('width_h',0)) < int(photo.get('height_h',0)): return False
     return True
 
 
