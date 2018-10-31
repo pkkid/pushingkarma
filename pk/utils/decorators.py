@@ -4,7 +4,6 @@ import functools, json, os, time
 from django.conf import settings
 from django.core.cache import cache
 from django.db import connection
-from django.http import Http404
 from pk import log
 
 COLORS = {'blue':34, 'cyan':36, 'green':32, 'grey':30, 'magenta':35, 'red':31, 'white':37, 'yellow':33}
@@ -32,8 +31,9 @@ def softcache(timeout=900, expires=86400, key=None, force=False):
             try:
                 log.info('Fetching new value for: %s', key)
                 result = func(*args, **kwargs)
-                cache.set(key, json.dumps({'lastupdate':now,
-                    'data':result}), expires)
+                if not result:
+                    raise Exception('No result')
+                cache.set(key, json.dumps({'lastupdate':now, 'data':result}), expires)
                 return result
             except Exception as err:
                 log.warning('Error fetching new value: %s', err)

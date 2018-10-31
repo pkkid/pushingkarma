@@ -1,5 +1,5 @@
 {% load basefilters %}
-<html id='{{id}}' lang='en' {% if bgimg %}style='background-image:url({{bgimg}});'{% endif %}>
+<html id='{{id}}' lang='en' {% if id == 'newtab' %}style='background-image:url({{data.photo.url_h}});'{% endif %}>
   <head>
     <meta charset='UTF-8'/>
     <title>{% block title %}{% endblock %}{{settings.SITE_NAME}}</title>
@@ -14,6 +14,7 @@
   <body>
     <div id='focus' class='hidecursor'>
       <div id='clock' style='display:none'></div>
+      <div id='photo' style='display:none'></div>
       <div id='calendar' style='display:none'></div>
       <div id='weather' style='display:none'></div>
       <div id='news' style='display:none'></div>
@@ -26,7 +27,7 @@
   <script src='https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.12/handlebars.min.js'></script>
   <script src='/static/site/site.js'></script>
   <script type='text/javascript'>
-    $(function() { pk.focus.init('#focus'); });
+    $(function() { pk.focus.init('#focus', {{data|json}}); });
   </script>
   {% include 'handlebars/focus.tmpl' %}
 </html>

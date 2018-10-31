@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
-import flickrapi, json, os, praw, random, requests
-import urllib.request
+import flickrapi, json, praw, random, requests
 from django.conf import settings
-from django.core.cache import cache
 from pk import log, utils
 from pk.apps.calendar.views import get_events
 from pk.utils import auth, context, threaded
@@ -12,26 +10,21 @@ from pk.utils.decorators import softcache, login_or_apikey_required
 DISABLE_CACHE = False
 DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S%z'
 FLICKR_GROUPID = '830711@N25'  # Best Landscape Photographers
-REDDIT_ATTRS = ['title', 'author.name', 'score', 'permalink', 'domain', 'created_utc']
-# FLICKR_DOWNLOAD = os.path.join(settings.BASE_DIR, 'collectstatic/site/flickr.jpg')
-# if settings.DEBUG:
-#     FLICKR_DOWNLOAD = os.path.join(settings.BASE_DIR, 'static/site/img/flickr.jpg')
+FLICKR_EXTRAS = 'description,owner_name,url_h,geo'
+FLICKER_PAGESIZE = 500
+REDDIT_ATTRS = ['title','author.name','score','permalink','domain','created_utc']
 
 
 @login_or_apikey_required
 def focus(request, id='newtab', tmpl='focus.html'):
     data = context.core(request, id=id)
-    if request.GET.get('json'):
-        data.update(threaded(
-            background=[_get_background, [request]],
-            weather=[_get_weather, [request]],
-            calendar=[_get_calendar, [request]],
-            news=[_get_news, [request]],
-            tasks=[_get_tasks, [request]],
-        ))
-    if id == 'newtab':
-        background = json.loads(cache.get('focus-background', '{}'))
-        data.bgimg = background.get('data',{}).get('url_h','')
+    data.data = threaded(
+        photo=[_get_photo, [request]],
+        weather=[_get_weather, [request]],
+        calendar=[_get_calendar, [request]],
+        news=[_get_news, [request]],
+        tasks=[_get_tasks, [request]],
+    )
     return utils.response(request, tmpl, data)
 
 
@@ -41,7 +34,7 @@ def raspi(request):
 
 
 @softcache(timeout=64800, expires=2592000, key='focus-background', force=DISABLE_CACHE)
-def _get_background(request):
+def _get_photo(request):
     """ Get a new background image from Flickr.
         https://www.flickr.com/services/api/flickr.galleries.getPhotos.html
         https://stuvel.eu/flickrapi-doc/
@@ -49,19 +42,13 @@ def _get_background(request):
     try:
         flickr = flickrapi.FlickrAPI(**settings.FLICKR)
         # Find number of pages in photo gallery
-        response = flickr.groups.pools.getPhotos(group_id=FLICKR_GROUPID, per_page=500)
-        pages = json.loads(response)['photos']['pages']
+        response = flickr.groups.pools.getPhotos(group_id=FLICKR_GROUPID, per_page=FLICKER_PAGESIZE)
+        pages = json.loads(response.decode('utf8'))['photos']['pages']
         # Choose a random photo from the gallery
-        response = flickr.groups.pools.getPhotos(group_id=FLICKR_GROUPID, per_page=500,
-            page=random.randrange(pages), get_user_info=1, extras='url_h,geo')
-        photos = list(filter(_filter_photos, json.loads(response)['photos']['photo']))
-        photo = random.choice(photos)
-        # Download the photo
-        # log.info('Downloading new background: %s', photo['url_h'])
-        # image = urllib.request.urlopen(photo['url_h'])
-        # with open(FLICKR_DOWNLOAD, 'wb') as handle:
-        #     handle.write(image.read())
-        return photo
+        response = flickr.groups.pools.getPhotos(group_id=FLICKR_GROUPID, per_page=FLICKER_PAGESIZE,
+            page=random.randrange(pages), get_user_info=1, extras=FLICKR_EXTRAS)
+        photos = list(filter(_filter_photos, json.loads(response.decode('utf8'))['photos']['photo']))
+        return random.choice(photos)
     except Exception as err:
         log.exception(err)
 

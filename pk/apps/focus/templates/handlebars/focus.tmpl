@@ -6,6 +6,16 @@
     <div class='time'>{{now "%l:%M%q"}}</div>
   </script>
 
+  <!-- Template:photo -->
+  <script id='photo' type='text/x-handlebars-template'>
+    <div class='location'>{{this.photo.location}}</div>
+    <div class='author'>
+      {{this.photo.title}}
+      {{#if this.photo.title}}|{{/if}}
+      {{this.photo.ownername}}
+    </div>
+  </script>
+
   <!-- Template:calendar -->
   <script id='calendar' type='text/x-handlebars-template'>
     <div class='title'>Upcoming Events</div>
@@ -13,7 +23,10 @@
       {{#withBefore events 3}}
         <div class='event'>
           <div class='subject'>{{this.Subject}}</div>
-          <div class='details'>{{formatDate this.Start '%l:%M'}} - {{formatDate this.End '%l:%M'}} | {{this.Location.DisplayName}}</div>
+          <div class='details'>
+            {{formatDate this.Start '%l:%M'}} - {{formatDate this.End '%l:%M'}}
+            {{#if this.Location.DisplayName}}| {{this.Location.DisplayName}}{{/if}}
+          </div>
         </div>
       {{/withBefore}}
     {{else}}
