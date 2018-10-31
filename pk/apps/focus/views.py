@@ -13,6 +13,7 @@ FLICKR_GROUPID = '830711@N25'  # Best Landscape Photographers
 FLICKR_EXTRAS = 'description,owner_name,url_h,geo'
 FLICKER_PAGESIZE = 500
 REDDIT_ATTRS = ['title','author.name','score','permalink','domain','created_utc']
+LUCKY_URL = 'http://google.com/search?btnI=I%27m+Feeling+Lucky&sourceid=navclient&q={domain}%20{title}'
 
 
 @login_or_apikey_required
@@ -125,6 +126,10 @@ def _get_subreddit_items(reddit, subreddit, count):
         if 'self.' not in post.domain:
             story = {attr.replace('.','_'):utils.rget(post,attr) for attr in REDDIT_ATTRS}
             story['subreddit'] = subreddit
+            story['redditurl'] = 'https://reddit.com%s' % story['permalink']
+            story['url'] = 'https://reddit.com%s' % story['permalink']
+            if 'reddit' not in story['domain'].replace('.',''):
+                story['url'] = LUCKY_URL.format(**story)
             substories.append(story)
         substories = sorted(substories, key=lambda x:x['score'], reverse=True)[:limit]
     return substories

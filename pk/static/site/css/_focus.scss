@@ -1,24 +1,30 @@
 // Encoding: UTF-8
+$transition_slow: opacity 1s ease-in;
+$transition_fast: opacity 0.3s ease-in;
 $highlight: transparent;
 //$highlight: rgba(255,0,0,0.1);
 
+
 #focus {
   $color: #fff;
-  $dim: rgba(255,255,255,0.8);
+  $dim: #eee;
   color: $color;
   font-family: 'Josefin Sans';
   position: relative;
   text-shadow: 0px 1px 3px rgba(0,0,0,0.8);
-  a,a:hover,a:visited { color:$color }
+  a,a:hover,a:visited { color:$color; text-decoration:none; }
 
   // Clock
   #clock {
     background-color: $highlight;
     left: calc(50% - 150px);
+    opacity: 0;
     position: absolute;
     text-align: center;
     top: 20px;
+    transition: $transition_slow;
     width: 300px;
+    cursor: pointer;
     .date {
       color: $dim;
       font-size: 23px;
@@ -31,21 +37,27 @@ $highlight: transparent;
 
   #photo {
     background-color: $highlight;
-    font-size: 12px;
     color: $dim;
-    position: absolute;
-    top: 120px;
-    left: calc(50% - 200px);
-    width: 400px;
-    text-align: center;
+    display: table;
+    margin:0 auto;
+    font-size: 12px;
+    opacity: 1;
+    position: relative;
+    top: 130px;
+    transition: $transition_fast;
+    max-width: 400px;
+    .title { font-size:14px; }
+    &.hidedetails { opacity: 0; }
   }
 
   // Calendar
   #calendar {
     background-color: $highlight;
     left: 20px;
+    opacity: 0;
     position: absolute;
     top: 20px;
+    transition: $transition_slow;
     width: 400px;
     .title {
       border-bottom: 1px solid rgba(255,255,255,0.3);
@@ -70,8 +82,9 @@ $highlight: transparent;
       white-space: nowrap;
     }
     .noevents {
-      color: rgba(255,255,255,0.2);
+      color: rgba(255,255,255,0.3);
       font-size: 20px;
+      text-shadow: none;
     }
   }
 
@@ -79,18 +92,21 @@ $highlight: transparent;
   // Weather
   #weather {
     background-color: $highlight;
+    opacity: 0;
     position: absolute;
     right: 20px;
     top: 20px;
+    transition: $transition_slow;
     width: 350px;
     .weather-today {
       font-size: 16px;
       line-height: 14px;
       text-align: right;
-      & > div { float:right; padding-left:30px; }
+      & > div { float:right; padding-left:20px; }
       .weather-location { font-size:25px; line-height:27px; padding:4px 0px 4px 0px;}
-      .weather-today-icon { font-size:50px; }
+      .weather-today-icon { font-size:50px; cursor:pointer; }
       .weather-temp { font-size:35px; line-height:36px; }
+      .weather-today-details { cursor:pointer; }
     }
     .forecast {
       color: $dim;
@@ -99,20 +115,24 @@ $highlight: transparent;
       line-height: 16px;
       padding-top: 20px;
       width: 275px;
-
+      transition: $transition_fast;
       .forecast-day { width:30px; margin-left:25px; text-align:center; float:left; }
       .forecast-weekday { padding-bottom:2px; }
       [class^='diw-']:before { font-size:20px; }
       .forecast-temp { padding-top:6px; }
     }
+    .weather-today-summary { transition: $transition_fast; }
+    &.hidedetails { .weather-today-summary,.forecast { opacity:0; }}
   }
 
   // Tasks
   #tasks {
     background-color: $highlight;
+    bottom: 20px;
+    opacity: 0;
     position: absolute;
     right: 20px;
-    bottom: 20px;
+    transition: $transition_slow;
     width: 275px;
     .title {
       border-bottom: 1px solid rgba(255,255,255,0.3);
@@ -135,8 +155,9 @@ $highlight: transparent;
       }
     }
     .notasks {
+      color: rgba(255,255,255,0.3);
       font-size: 20px;
-      color: rgba(255,255,255,0.2);
+      text-shadow: none;
     }
   }
 
@@ -144,9 +165,10 @@ $highlight: transparent;
   #news {
     background-color: $highlight;
     bottom: 20px;
-    max-height: 65px;
     left: 20px;
+    max-height: 65px;
     position: absolute;
+    display: none;
     width: 700px;
     .title p {
       display: -webkit-box;
@@ -170,9 +192,11 @@ $highlight: transparent;
     color: rgba(255,255,244,0.2);
     font-size: 12px;
     line-height: 12px;
+    opacity: 0;
     position: absolute;
     right: 5px;
     text-align: right;
+    transition: $transition_slow;
     width: 150px;
   }
 }
@@ -217,7 +241,7 @@ $highlight: transparent;
     .date { color: $dim; }
   }
   #photo {
-    display: none !important;
+    display: none;
   }
   #calendar {
     left: 20px;
@@ -231,6 +255,7 @@ $highlight: transparent;
     top: 20px;
     width: 350px;
     .forecast { color: $dim; }
+    &.hidedetails { .weather-today-summary,.forecast { opacity:1; }}
   }
   #tasks {
     right: 20px;
@@ -242,7 +267,7 @@ $highlight: transparent;
   #news {
     bottom: 20px;
     height: 65px;
-    margin-left: 50px;
+    left: 20px;
     width: 700px;
     .subtext { color: $dim; }
   }

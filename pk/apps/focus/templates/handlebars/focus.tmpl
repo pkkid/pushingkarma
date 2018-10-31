@@ -9,17 +9,15 @@
   <!-- Template:photo -->
   <script id='photo' type='text/x-handlebars-template'>
     <div class='location'>{{this.photo.location}}</div>
-    <div class='author'>
-      {{this.photo.title}}
-      {{#if this.photo.title}}|{{/if}}
-      {{this.photo.ownername}}
+    <div class='title'>{{this.photo.title}} {{#if this.photo.title}}|{{/if}} {{this.photo.ownername}}
     </div>
+    <div class='description'>{{this.photo.description._content}}</div>
   </script>
 
   <!-- Template:calendar -->
   <script id='calendar' type='text/x-handlebars-template'>
-    <div class='title'>Upcoming Events</div>
     {{#if events.length}}
+      <div class='title'>Upcoming Events</div>
       {{#withBefore events 3}}
         <div class='event'>
           <div class='subject'>{{this.Subject}}</div>
@@ -65,15 +63,19 @@
   <!-- Template:news -->
   <script id='news' type='text/x-handlebars-template'>
     <div class='title'><p style='-webkit-box-orient:vertical'>
-      <a target='_blank' href='http://reddit.com{{article.permalink}}'>{{article.title}}</a>
+      <a target='_blank' href='{{article.url}}'>{{article.title}}</a>
     </p></div>
-    <div class='subtext'>{{timeAgo article.created_utc}} | {{article.subreddit}} | {{article.domain}}</div>
+    <div class='subtext'>
+      {{timeAgo article.created_utc}} |
+      <a target='_blank' href='{{article.redditurl}}'>{{article.subreddit}}</a> |
+      <a target='_blank' href='https://{{article.domain}}'>{{article.domain}}</a>
+    </div>
   </script>
 
   <!-- Template:tasks -->
   <script id='tasks' type='text/x-handlebars-template'>
-    <div class='title'>My Tasks</div>
     {{#if tasks.length}}
+      <div class='title'>My Tasks</div>
       {{#withBefore tasks 4}}
         <div class='task'>{{this.title}}</div>
       {{/withBefore}}

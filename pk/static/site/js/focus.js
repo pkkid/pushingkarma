@@ -48,6 +48,12 @@ pk.focus = {
       this.container.on('click', function() {
         self.container.toggleClass('hidecursor');
       });
+      this.weather.on('click', '.weather-today-icon,.weather-today-details', function() {
+        self.weather.toggleClass('hidedetails');
+      });
+      this.clock.on('click', function() {
+        self.photo.toggleClass('hidedetails');
+      });
     },
     
     update_data: function(initdata) {
@@ -60,18 +66,18 @@ pk.focus = {
     },
 
     update_widgets: function() {
-      this.weather.html(pk.templates.weather(this.data)).fadeIn('slow');
-      this.tasks.html(pk.templates.tasks(this.data)).fadeIn('slow');
+      this.weather.html(pk.templates.weather(this.data)).css('opacity', 1);
+      this.tasks.html(pk.templates.tasks(this.data)).css('opacity', 1);
       this.update_calendar();
       this.update_news();
     },
 
     update_clock: function() {
-      this.clock.html(pk.templates.clock()).fadeIn('slow');
+      this.clock.html(pk.templates.clock()).css('opacity', 1);
     },
 
     update_photo: function() {
-      this.photo.html(pk.templates.photo(this.data)).fadeIn('slow');
+      this.photo.html(pk.templates.photo(this.data));
     },
 
     update_ip: function() {
@@ -84,7 +90,7 @@ pk.focus = {
       pc.onicecandidate = function(ice) {
         if (ice && ice.candidate && ice.candidate.candidate) {
           var ip = self.REGEX_IP.exec(ice.candidate.candidate)[1];
-          console.log('IP: ', ip); self.ip.text(ip).fadeIn('slow');
+          console.log('IP: ', ip); self.ip.text(ip).css('opacity', 1);
           pc.onicecandidate = noop;
         }
       };
@@ -101,13 +107,13 @@ pk.focus = {
           events.push(this.data.calendar[i]);
         }
       }
-      this.calendar.html(pk.templates.calendar({events:events})).fadeIn('slow');
+      this.calendar.html(pk.templates.calendar({events:events})).css('opacity', 1);
     },
 
     update_news: function() {
       var self = this;
       if (self.data.news) {
-        self.news.fadeOut(function() {
+        self.news.fadeOut('slow', function() {
           var index = Math.floor(Math.random() * self.data.news.length)
           var data = {article: self.data.news[index]};
           self.news.html(pk.templates.news(data)).fadeIn('slow');
