@@ -54,7 +54,8 @@ pk.focus = {
         self.photo.toggleClass('hidedetails');
       });
       this.photo.on('click', '.mdi-autorenew', function() {
-        self.update_data('&forcefocusphoto=1');
+        self.update_data('&forceupdate=1');
+        $(this).animatecss('rotateOut');
       });
     },
     

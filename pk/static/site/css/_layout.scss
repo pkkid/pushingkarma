@@ -2,16 +2,12 @@
 $LAYOUT_WIDTH: 1000px;
 $LAYOUT_BORDER_WIDTH: 13px;
 
-html {
+body {
   background-attachment: fixed;
   background-color: #301c0f;
   background-image: url('#{$imgroot}/layout/background-hardwood.jpg');
   background-position: center top;
   color: #eee;
-  font-size: 14px;
-}
-body {
-  background-color: transparent;
   font-family: $font-family-serif;
   font-size: 18px;
   padding: 25px 0px 15px 0px;

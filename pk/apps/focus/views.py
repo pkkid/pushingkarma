@@ -20,7 +20,7 @@ LUCKY_URL = 'http://google.com/search?btnI=I%27m+Feeling+Lucky&sourceid=navclien
 @login_or_apikey_required
 def focus(request, id='newtab', tmpl='focus.html'):
     if request.GET.get('q'):
-        redirect(GOOGLE_URL.format(q=request.GET['q']))
+        return redirect(GOOGLE_URL.format(q=request.GET['q']))
     data = context.core(request, id=id)
     data.data = threaded(
         photo=[_get_photo, [request]],

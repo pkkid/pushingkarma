@@ -1,9 +1,10 @@
 {% load basefilters %}
-<html id='{{id}}' lang='en' style='background-image:none;'>
+<html id='{{id}}' lang='en'>
   <head>
     <meta charset='UTF-8'/>
     <title>{% block title %}{% endblock %}{{settings.SITE_NAME}}</title>
     <link rel='shortcut icon' href='/static/site/img/favicon.ico'/>
+    <link rel='stylesheet' type='text/css' href='https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css'/>
     <link rel='stylesheet' type='text/css' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css'/>
     <link rel='stylesheet' type='text/css' href='https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/3.0.39/css/materialdesignicons.min.css'/>
     <link rel='stylesheet' type='text/css' href='https://fonts.googleapis.com/css?family=Josefin+Sans:400,600|Roboto+Mono|Crimson+Text|Cabin:400,500,600'/>
@@ -11,14 +12,16 @@
     <link rel='stylesheet' type='text/css' href='/static/site/font/dripicons/dripicons-weather.css'/>
     {% block css %}{% endblock %}
   </head>
-  <body id='focus' class='hidecursor' style='background-image:url({{data.photo.url_h}});'>
-    <div id='clock'></div>
-    <div id='photo' class='hidedetails'></div>
-    <div id='calendar'></div>
-    <div id='weather' class='hidedetails'></div>
-    <div id='news'></div>
-    <div id='tasks'></div>
-    <div id='ip'></div>
+  <body id='{{id}}' class='hidecursor' style='background-image:url({{data.photo.url_h}});'>
+    <div id='focus'>
+      <div id='clock'></div>
+      <div id='photo' class='hidedetails'></div>
+      <div id='calendar'></div>
+      <div id='weather' class='hidedetails'></div>
+      <div id='news'></div>
+      <div id='tasks'></div>
+      <div id='ip'></div>
+    </div>
   </body>
   <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
   <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js'></script>
