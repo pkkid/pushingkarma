@@ -3,6 +3,7 @@
 import flickrapi, json, praw, random, requests
 from django.conf import settings
 from django.shortcuts import redirect
+from django.views.decorators.clickjacking import xframe_options_exempt
 from pk import log, utils
 from pk.apps.calendar.views import get_events
 from pk.utils import auth, context, threaded
@@ -17,6 +18,7 @@ GOOGLE_URL = 'https://www.google.com/search?q={q}'
 LUCKY_URL = 'http://google.com/search?btnI=I%27m+Feeling+Lucky&sourceid=navclient&q={domain}%20{title}'
 
 
+@xframe_options_exempt
 @login_or_apikey_required
 def focus(request, id='newtab', tmpl='focus.html'):
     if request.GET.get('q'):
