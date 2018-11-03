@@ -72,59 +72,95 @@ pk.focus = {
 
     update_widgets: function() {
       this.update_photo();
-      this.weather.html(pk.templates.weather(this.data)).css('opacity', 1);
-      this.tasks.html(pk.templates.tasks(this.data)).css('opacity', 1);
+      this.update_weather();
+      this.update_tasks();
       this.update_calendar();
       this.update_news();
     },
 
     update_clock: function() {
-      this.clock.html(pk.templates.clock()).css('opacity', 1);
+      try {
+        this.clock.html(pk.templates.clock()).css('opacity', 1);
+      } catch(err) {
+        console.log('Error updating clock.');
+      }
     },
 
     update_photo: function() {
-      this.photo.html(pk.templates.photo(this.data));
-      $('body').css('background-image', 'url("'+ this.data.photo.url_h +'")');
+      try {
+        this.photo.html(pk.templates.photo(this.data));
+        $('body').css('background-image', 'url("'+ this.data.photo.url_h +'")');
+      } catch(err) {
+        console.log('Error updating photo.');
+      }
+    },
+
+    update_weather: function() {
+      try {
+        this.weather.html(pk.templates.weather(this.data)).css('opacity', 1);
+      } catch(err) {
+        console.log('Error updating weather.');
+      }
+    },
+
+    update_tasks: function() {
+      try {
+        this.tasks.html(pk.templates.tasks(this.data)).css('opacity', 1);
+      } catch(err) {
+        console.log('Error updating tasks.');
+      }
     },
 
     update_ip: function() {
-      var self = this;
-      window.RTCPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
-      var pc = new RTCPeerConnection({iceServers:[]})
-      var noop = function(){};      
-      pc.createDataChannel('');  //create a bogus data channel
-      pc.createOffer(pc.setLocalDescription.bind(pc), noop);  // create offer and set local description
-      pc.onicecandidate = function(ice) {
-        if (ice && ice.candidate && ice.candidate.candidate) {
-          var ip = self.REGEX_IP.exec(ice.candidate.candidate)[1];
-          console.log('IP: ', ip); self.ip.text(ip).css('opacity', 1);
-          pc.onicecandidate = noop;
-        }
-      };
+      try {
+        var self = this;
+        window.RTCPeerConnection = window.RTCPeerConnection || window.mozRTCPeerConnection || window.webkitRTCPeerConnection;
+        var pc = new RTCPeerConnection({iceServers:[]})
+        var noop = function(){};      
+        pc.createDataChannel('');  //create a bogus data channel
+        pc.createOffer(pc.setLocalDescription.bind(pc), noop);  // create offer and set local description
+        pc.onicecandidate = function(ice) {
+          if (ice && ice.candidate && ice.candidate.candidate) {
+            var ip = self.REGEX_IP.exec(ice.candidate.candidate)[1];
+            console.log('IP: ', ip); self.ip.text(ip).css('opacity', 1);
+            pc.onicecandidate = noop;
+          }
+        };
+      } catch(err) {
+        console.log('Error updating ip.');
+      }
     },
 
     update_calendar: function() {
-      var events = [];
-      var now = moment();
-      var max = moment().add(12, 'hours');
-      for (var i=0; i < this.data.calendar.length; i++) {
-        var start = moment(this.data.calendar[i].Start);
-        var end = moment(this.data.calendar[i].End);
-        if ((end > now) && (start < max)) {
-          events.push(this.data.calendar[i]);
+      try {
+        var events = [];
+        var now = moment();
+        var max = moment().add(12, 'hours');
+        for (var i=0; i < this.data.calendar.length; i++) {
+          var start = moment(this.data.calendar[i].Start);
+          var end = moment(this.data.calendar[i].End);
+          if ((end > now) && (start < max)) {
+            events.push(this.data.calendar[i]);
+          }
         }
+        this.calendar.html(pk.templates.calendar({events:events})).css('opacity', 1);
+      } catch(err) {
+        console.log('Error updating calendar.');
       }
-      this.calendar.html(pk.templates.calendar({events:events})).css('opacity', 1);
     },
 
     update_news: function() {
-      var self = this;
-      if (self.data.news) {
-        self.news.fadeOut('slow', function() {
-          var index = Math.floor(Math.random() * self.data.news.length)
-          var data = {article: self.data.news[index]};
-          self.news.html(pk.templates.news(data)).fadeIn('slow');
-        });
+      try {
+        var self = this;
+        if (self.data.news) {
+          self.news.fadeOut('slow', function() {
+            var index = Math.floor(Math.random() * self.data.news.length)
+            var data = {article: self.data.news[index]};
+            self.news.html(pk.templates.news(data)).fadeIn('slow');
+          });
+        }
+      } catch(err) {
+        console.log('Error updating news.');
       }
     },
 
