@@ -2,7 +2,6 @@
 # encoding: utf-8
 import flickrapi, json, praw, random, requests
 from django.conf import settings
-from django.shortcuts import redirect
 from django.views.decorators.clickjacking import xframe_options_exempt
 from pk import log, utils
 from pk.apps.calendar.views import get_events
@@ -14,15 +13,12 @@ FLICKR_GROUPID = '830711@N25'  # Best Landscape Photographers
 FLICKR_EXTRAS = 'description,owner_name,url_h,geo'
 FLICKER_PAGESIZE = 500
 REDDIT_ATTRS = ['title','author.name','score','permalink','domain','created_utc']
-GOOGLE_URL = 'https://www.google.com/search?q={q}'
 LUCKY_URL = 'http://google.com/search?btnI=I%27m+Feeling+Lucky&sourceid=navclient&q={domain}%20{title}'
 
 
 @xframe_options_exempt
 @login_or_apikey_required
 def focus(request, id='newtab', tmpl='focus.html'):
-    if request.GET.get('q'):
-        return redirect(GOOGLE_URL.format(q=request.GET['q']))
     data = context.core(request, id=id)
     data.data = threaded(
         photo=[_get_photo, [request]],
