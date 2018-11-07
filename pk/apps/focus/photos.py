@@ -1,16 +1,22 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import json, random, re, requests
+import json, re, requests
 from django.conf import settings
 from flickrapi import FlickrAPI
-from pk.utils import rget
+from pk import log
+from pk.utils import rget, threaded
+from pk.utils.decorators import DAYS, softcache
 
 USERAGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36'  # noqa
 
 
 class PhotosFromFlickr:
-    """ Get photos from Flickr. """
-    RPP = 100           # Results per page
+    """ Get photos from Flickr.
+        https://www.flickr.com/services/api/flickr.galleries.getPhotos.html
+        https://stuvel.eu/flickrapi-doc/
+    """
+    RPP = 500           # Results per page
+    EXTRAS = 'description,owner_name,url_h,geo'
     GROUPIDS = [        # Vetted flickr groupids
         '830711@N25'    # Best Landscape Photographers
     ]
@@ -18,28 +24,36 @@ class PhotosFromFlickr:
     def __init__(self):
         self.flickr = FlickrAPI(**settings.FLICKR)
 
-    def get_photo(self, groupid=None, rpp=RPP):
-        groupid = groupid or self.GROUPIDS[0]
-        # Find number of pages in photo gallery
-        response = self.flickr.groups.pools.getPhotos(group_id=groupid, per_page=rpp)
-        pages = json.loads(response.decode('utf8'))['photos']['pages']
-        # Choose a random photo from the gallery
-        page = random.randrange(pages) + 1
-        response = self.flickr.groups.pools.getPhotos(extras='description,owner_name,url_h,geo',
-            get_user_info=1, group_id=groupid, page=page, per_page=rpp)
-        photos = json.loads(response.decode('utf8'))['photos']['photo']
-        photos = list(filter(_filter, photos))
-        photo = random.choice(photos)
-        return _photo(photo, 'url_h', 'ownername', 'title', 'description._content')
+    def get_photos(self):
+        photos = []
+        for groupid in self.GROUPIDS:
+            response = self.flickr.groups.pools.getPhotos(group_id=groupid, per_page=self.RPP)
+            pages = response.json()['photos']['pages']
+            kwargs = {str(p):[self._get_page,groupid,p] for p in range(1, pages+1)}
+            results = threaded(numthreads=20, **kwargs)
+            for page, result in results.items():
+                photos += result
+        log.info('Finished processing %s photos from Flickr' % len(photos))
+        return photos
+
+    def _get_page(self, groupid, page):
+        photos = []
+        log.info('Fetching Flickr photos: %s page %s' % (groupid, page))
+        response = self.flickr.groups.pools.getPhotos(extras=self.EXTRAS,
+            get_user_info=1, group_id=groupid, page=page, per_page=self.RPP)
+        for photo in response.json()['photos']['photo']:
+            if _filter(photo, 'width_h', 'height_h'):
+                photos.append(_photo(photo, 'url_h', 'ownername', 'title', 'description._content'))
+        return photos
 
 
 class PhotosFrom500px:
     """ Get photos from 500px. """
-    RPP = 100           # Results per page
+    RPP = 1           # Results per page
     HOME = 'https://500px.com'  # 500px homepage (to grab csrf-token)
     FEED = 'https://api.500px.com/v1/photos?feature=user&stream=photos&user_id={userid}&include_states=true&image_size%5B%5D=1600&page={page}&rpp={rpp}'  # noqa
     USERIDS = [         # Vetted 500px userids
-        14026643,       # Tobias Hägg (airpixels); 500 landscape photos, no watermark
+        14026643,       # Tobias Hägg (airpixels); 500 landscapes, no watermark
     ]
 
     def __init__(self):
@@ -49,25 +63,34 @@ class PhotosFrom500px:
         """ Get an authenticated 500px session. """
         session = requests.Session()
         response = session.get(self.HOME)
-        for line in response.content.split('\n'):
+        for line in response.content.decode('utf8').split('\n'):
             if 'csrf-token' in line.lower():
                 token = re.findall('content=\"(.+?)\"', line)
                 session.headers.update({'X-CSRF-Token': token[0]})
         return session
 
-    def get_photo(self, userid=None, rpp=RPP):
-        """ Return a random photo for the specified userid. """
-        userid = userid or self.USERIDS[0]
-        # Inital request just to get the number of pages
-        url = self.FEED.format(userid=userid, page=1, rpp=rpp)
+    def get_photos(self, rpp=RPP):
+        photos = []
+        for userid in self.USERIDS:
+            url = self.FEED.format(userid=userid, page=1, rpp=rpp)
+            response = self.session.get(url)
+            pages = response.json()['total_pages']
+            # kwargs = {str(p):[self._get_page,userid,p] for p in range(1, 2)}
+            kwargs = {str(p):[self._get_page,userid,p] for p in range(1, pages+1)}
+            results = threaded(numthreads=10, **kwargs)
+            for page, result in results.items():
+                photos += result
+        log.info('Finished processing %s photos from 500px' % len(photos))
+        return photos
+
+    def _get_page(self, userid, page):
+        photos = []
+        url = self.FEED.format(userid=userid, page=page, rpp=self.RPP)
         response = self.session.get(url)
-        data = response.json()
-        # Second request to a random page number
-        page = random.randrange(data['total_pages'] + 1)
-        url = self.FEED.format(userid=userid, page=page, rpp=rpp)
-        response = self.session.get(url)
-        data = response.json()
-        import pprint; pprint.pprint(data)
+        for photo in response.json()['photos']:
+            if _filter(photo, 'width', 'height'):
+                photos.append(_photo(photo, 'images.0.url', 'user.fullname', 'name', 'description'))
+        return photos
 
 
 def _filter(photo, wkey='width', hkey='height', **kwargs):
@@ -89,6 +112,14 @@ def _photo(photo, urlkey, userkey, titlekey, desckey):
         'title': rget(photo, titlekey, ''),
         'description': rget(photo, desckey, ''),
     }
+
+
+@softcache(timeout=30*DAYS, expires=60*DAYS, key='focusalbum')
+def get_album(request, cls):
+    try:
+        return cls().get_photos()
+    except Exception as err:
+        log.exception(err)
 
 
 if __name__ == '__main__':

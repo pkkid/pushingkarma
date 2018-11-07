@@ -1,17 +1,15 @@
 #!/usr/bin/env python
 # encoding: utf-8
-import flickrapi, json, praw, random, requests
+import praw, random, requests
 from django.conf import settings
 from django.views.decorators.clickjacking import xframe_options_exempt
 from pk import log, utils
 from pk.apps.calendar.views import get_events
 from pk.utils import auth, context, threaded
+from pk.utils.decorators import MINS, HOURS, DAYS
 from pk.utils.decorators import softcache, login_or_apikey_required
+from .photos import get_album, PhotosFrom500px
 
-DATETIME_FORMAT = '%Y-%m-%dT%H:%M:%S%z'
-FLICKR_GROUPID = '830711@N25'  # Best Landscape Photographers
-FLICKR_EXTRAS = 'description,owner_name,url_h,geo'
-FLICKER_PAGESIZE = 500
 REDDIT_ATTRS = ['title','author.name','score','permalink','domain','created_utc']
 LUCKY_URL = 'http://google.com/search?btnI=I%27m+Feeling+Lucky&sourceid=navclient&q={domain}%20{title}'
 
@@ -21,11 +19,11 @@ LUCKY_URL = 'http://google.com/search?btnI=I%27m+Feeling+Lucky&sourceid=navclien
 def focus(request, id='newtab', tmpl='focus.html'):
     data = context.core(request, id=id)
     data.data = threaded(
-        photo=[_get_photo, [request]],
-        weather=[_get_weather, [request]],
-        calendar=[_get_calendar, [request]],
-        news=[_get_news, [request]],
-        tasks=[_get_tasks, [request]],
+        photo=[_get_photo, request],
+        weather=[_get_weather, request],
+        calendar=[_get_calendar, request],
+        news=[_get_news, request],
+        tasks=[_get_tasks, request],
     )
     return utils.response(request, tmpl, data)
 
@@ -35,33 +33,17 @@ def raspi(request):
     return focus(request, id='raspi')
 
 
-@softcache(timeout=64800, expires=2592000, key='focusphoto')
+@softcache(timeout=18*HOURS, expires=30*DAYS, key='focusphoto')
 def _get_photo(request):
-    """ Get a new background image from Flickr.
-        https://www.flickr.com/services/api/flickr.galleries.getPhotos.html
-        https://stuvel.eu/flickrapi-doc/
-    """
+    """ Get background photo information from the interwebs. """
     try:
-        flickr = flickrapi.FlickrAPI(**settings.FLICKR)
-        # Find number of pages in photo gallery
-        response = flickr.groups.pools.getPhotos(group_id=FLICKR_GROUPID, per_page=FLICKER_PAGESIZE)
-        pages = json.loads(response.decode('utf8'))['photos']['pages']
-        # Choose a random photo from the gallery
-        response = flickr.groups.pools.getPhotos(group_id=FLICKR_GROUPID, per_page=FLICKER_PAGESIZE,
-            page=random.randrange(pages), get_user_info=1, extras=FLICKR_EXTRAS)
-        photos = list(filter(_filter_photos, json.loads(response.decode('utf8'))['photos']['photo']))
+        photos = get_album(request, cls=PhotosFrom500px)
         return random.choice(photos)
     except Exception as err:
         log.exception(err)
 
 
-def _filter_photos(photo):
-    if not photo.get('url_h'): return False
-    if int(photo.get('width_h',0)) < int(photo.get('height_h',0)): return False
-    return True
-
-
-@softcache(timeout=1800, key='focusweather')
+@softcache(timeout=30*MINS, key='focusweather')
 def _get_weather(request):
     """ Get weather information from Weather Underground.
         https://www.wunderground.com/weather/api/d/docs
@@ -73,7 +55,7 @@ def _get_weather(request):
         log.exception(err)
 
 
-@softcache(timeout=900, key='focuscalendar')
+@softcache(timeout=15*MINS, key='focuscalendar')
 def _get_calendar(request):
     """ Get calendar information from Office365. """
     try:
@@ -82,7 +64,7 @@ def _get_calendar(request):
         log.exception(err)
 
 
-@softcache(timeout=300, key='focustasks')
+@softcache(timeout=15*MINS, key='focustasks')
 def _get_tasks(request):
     """ Get open tasks from Google Tasks.
         https://developers.google.com/tasks/v1/reference/
@@ -99,7 +81,7 @@ def _get_tasks(request):
         log.exception(err)
 
 
-@softcache(timeout=1800, key='focusnews')
+@softcache(timeout=30*MINS, key='focusnews')
 def _get_news(request):
     """ Get news from various Reddit subreddits using PRAW.
         https://praw.readthedocs.io/en/latest/code_overview/reddit_instance.html
@@ -107,14 +89,13 @@ def _get_news(request):
     try:
         reddit = praw.Reddit(**settings.REDDIT)
         stories = threaded(
-            news=[_get_subreddit_items, [reddit, 'news', 10]],
-            technology=[_get_subreddit_items, [reddit, 'technology', 10]],
-            worldnews=[_get_subreddit_items, [reddit, 'worldnews', 10]],
-            boston=[_get_subreddit_items, [reddit, 'boston', 10]],
+            news=[_get_subreddit_items, reddit, 'news', 10],
+            technology=[_get_subreddit_items, reddit, 'technology', 10],
+            worldnews=[_get_subreddit_items, reddit, 'worldnews', 10],
+            boston=[_get_subreddit_items, reddit, 'boston', 10],
         )
         # return a flat shuffled list
         stories = [item for sublist in stories.values() for item in sublist]
-        random.shuffle(stories)
         return stories
     except Exception as err:
         log.exception(err)

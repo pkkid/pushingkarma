@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # encoding: utf-8
-import json, hashlib
+import hashlib, json, queue
 from django.conf import settings
 from django.forms.utils import ErrorDict
 from django.http import HttpResponse
@@ -89,15 +89,18 @@ def rset(obj, attrstr, value, delim='.'):
     else: obj[attr] = value
 
 
-def threaded(**kwargs):
+def threaded(numthreads=10, **kwargs):
     """ Call all resultkey -> (callback, [*args]) pairs in parallel.
         Results are returned as a dictionary with kwarg key as the keys.
     """
+    jobs = queue.Queue()
     threads, results = [], {}
+    numthreads = min(numthreads, len(kwargs))
     for key, meta in kwargs.items():
         results[key] = None
-        args = meta + [results, key]
-        threads.append(Thread(target=_wrap, args=args))
+        jobs.put([key] + meta)
+    for _ in range(numthreads):
+        threads.append(Thread(target=_threadwrap, args=[jobs, results]))
         threads[-1].setDaemon(True)
         threads[-1].start()
     for thread in threads:
@@ -105,8 +108,13 @@ def threaded(**kwargs):
     return results
 
 
-def _wrap(callback, args, results, key):
-    results[key] = callback(*args)
+def _threadwrap(jobs, results):
+    try:
+        while True:
+            key, callback, *args = jobs.get_nowait()
+            results[key] = callback(*args)
+    except queue.Empty:
+        pass
 
 
 def update(obj, **kwargs):

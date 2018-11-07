@@ -7,6 +7,9 @@ from django.db import connection
 from django.http import HttpRequest
 from pk import log
 
+MINS = 60
+HOURS = 60 * MINS
+DAYS = 24 * HOURS
 COLORS = {'blue':34, 'cyan':36, 'green':32, 'grey':30, 'magenta':35, 'red':31, 'white':37, 'yellow':33}
 RESET = '\033[0m'
 
@@ -20,13 +23,13 @@ class ContextDecorator(object):
         return decorated
 
 
-def softcache(timeout=900, expires=86400, key=None):
+def softcache(timeout=15*MINS, expires=1*DAYS, key=None):
     def wrapper1(func):
         def wrapper2(*args, **kwargs):
             # Check we want to force this value
             force = False
             if args and isinstance(args[0], HttpRequest):
-                if args[0].GET.get('force%s' % key.lower()) or args[0].GET.get('forceupdate'):
+                if args[0].GET.get('force%s' % key.lower()) or args[0].GET.get('forceall'):
                     force = True
             # Get the current value from cache, check it's age
             now = int(time.time())

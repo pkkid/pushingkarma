@@ -8,9 +8,9 @@
 
   <!-- Template:photo -->
   <script id='photo' type='text/x-handlebars-template'>
-    <div class='title'>{{this.photo.title}} {{#if this.photo.title}}|{{/if}} {{this.photo.ownername}}</div>
+    <div class='title'>{{this.photo.title}} {{#if this.photo.title}}|{{/if}} {{this.photo.user}}</div>
     <span class='mdi mdi-autorenew'></span>
-    <div class='description'>{{{this.photo.description._content}}}</div>
+    <div class='description'>{{{this.photo.description}}}</div>
   </script>
 
   <!-- Template:calendar -->

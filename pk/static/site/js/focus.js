@@ -54,7 +54,7 @@ pk.focus = {
         self.photo.toggleClass('hidedetails');
       });
       this.photo.on('click', '.mdi-autorenew', function() {
-        self.update_data('&forceupdate=1');
+        self.update_data('&forcefocusphoto=1');
         $(this).animatecss('rotateOut');
       });
     },
@@ -88,8 +88,18 @@ pk.focus = {
 
     update_photo: function() {
       try {
-        this.photo.html(pk.templates.photo(this.data));
-        $('body').css('background-image', 'url("'+ this.data.photo.url_h +'")');
+        var self = this;
+        var timer = $('body').css('opacity') == 0 ? 0 : 333;
+        $('<img/>').attr('src', this.data.photo.url).on('load', function() {
+          var that = this;
+          $('body').css('opacity', 0);
+          setTimeout(function() {
+            self.photo.html(pk.templates.photo(self.data));
+            $('body').css('background-image', 'url("'+ self.data.photo.url +'")');
+            $('body').css('opacity', 1);
+            $(that).remove();
+          }, timer);
+        });
       } catch(err) {
         console.log('Error updating photo.');
       }
@@ -154,7 +164,7 @@ pk.focus = {
         var self = this;
         if (self.data.news) {
           self.news.fadeOut('slow', function() {
-            var index = Math.floor(Math.random() * self.data.news.length)
+            var index = Math.floor(Math.random() * self.data.news.length);
             var data = {article: self.data.news[index]};
             self.news.html(pk.templates.news(data)).fadeIn('slow');
           });
