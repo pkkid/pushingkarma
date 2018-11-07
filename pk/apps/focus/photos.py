@@ -85,6 +85,7 @@ class PhotosFrom500px:
 
     def _get_page(self, userid, page):
         photos = []
+        log.info('Fetching 500px photos: %s page %s' % (userid, page))
         url = self.FEED.format(userid=userid, page=page, rpp=self.RPP)
         response = self.session.get(url)
         for photo in response.json()['photos']:
