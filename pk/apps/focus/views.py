@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # encoding: utf-8
-import praw, random, requests
+import praw, random, re, requests
 from django.conf import settings
 from django.views.decorators.clickjacking import xframe_options_exempt
 from pk import log, utils
@@ -11,6 +11,7 @@ from pk.utils.decorators import softcache, login_or_apikey_required
 from .photos import get_album, PhotosFrom500px
 
 REDDIT_ATTRS = ['title','author.name','score','permalink','domain','created_utc']
+REDDIT_BADDOMAINS = ['i.redd.it', 'imgur.com', '^self\.']
 LUCKY_URL = 'http://google.com/search?btnI=I%27m+Feeling+Lucky&sourceid=navclient&q={domain}%20{title}'
 
 
@@ -89,10 +90,10 @@ def _get_news(request):
     try:
         reddit = praw.Reddit(**settings.REDDIT)
         stories = threaded(
-            news=[_get_subreddit_items, reddit, 'news', 10],
-            technology=[_get_subreddit_items, reddit, 'technology', 10],
-            worldnews=[_get_subreddit_items, reddit, 'worldnews', 10],
-            boston=[_get_subreddit_items, reddit, 'boston', 10],
+            news=[_get_subreddit_items, [reddit, 'news', 15]],
+            technology=[_get_subreddit_items, [reddit, 'technology', 15]],
+            worldnews=[_get_subreddit_items, [reddit, 'worldnews', 15]],
+            boston=[_get_subreddit_items, [reddit, 'boston', 10]],
         )
         # return a flat shuffled list
         stories = [item for sublist in stories.values() for item in sublist]
@@ -103,15 +104,21 @@ def _get_news(request):
 
 def _get_subreddit_items(reddit, subreddit, count):
     substories = []
-    limit = count * 2
-    for post in reddit.subreddit(subreddit).top('day', limit=limit):
-        if 'self.' not in post.domain:
-            story = {attr.replace('.','_'):utils.rget(post,attr) for attr in REDDIT_ATTRS}
-            story['subreddit'] = subreddit
-            story['redditurl'] = 'https://reddit.com%s' % story['permalink']
-            story['url'] = 'https://reddit.com%s' % story['permalink']
-            if 'reddit' not in story['domain'].replace('.',''):
-                story['url'] = LUCKY_URL.format(**story)
-            substories.append(story)
-        substories = sorted(substories, key=lambda x:x['score'], reverse=True)[:limit]
+    for post in reddit.subreddit(subreddit).top('day', limit=count*2):
+        # Check this is a bad domain
+        for regex in REDDIT_BADDOMAINS:
+            if re.findall(regex, post.domain):
+                continue
+        # Clenaup and add this story to the return set
+        story = {attr.replace('.','_'):utils.rget(post,attr) for attr in REDDIT_ATTRS}
+        story['subreddit'] = subreddit
+        story['redditurl'] = 'https://reddit.com%s' % story['permalink']
+        story['url'] = 'https://reddit.com%s' % story['permalink']
+        if 'reddit' not in story['domain'].replace('.',''):
+            story['url'] = LUCKY_URL.format(**story)
+        substories.append(story)
+    substories = sorted(substories, key=lambda x:x['score'], reverse=True)[:count]
+    print('\n%s' % subreddit)
+    for story in substories:
+        print(story['score'], story['title'])
     return substories
