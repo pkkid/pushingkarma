@@ -115,7 +115,7 @@ def _photo(photo, urlkey, userkey, titlekey, desckey):
     }
 
 
-@softcache(timeout=30*DAYS, expires=60*DAYS, key='focusalbum')
+@softcache(timeout=30*DAYS, expires=60*DAYS, key='album')
 def get_album(request, cls):
     try:
         return cls().get_photos()

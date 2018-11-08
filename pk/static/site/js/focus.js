@@ -2,7 +2,7 @@
 'use strict';
 
 pk.focus = {
-    UPDATE_URL: '/focus/?json=1',   // data url
+    UPDATE_URL: '/focus/?json=1',
     REGEX_IP: /([0-9]{1,3}(\.[0-9]{1,3}){3}|[a-f0-9]{1,4}(:[a-f0-9]{1,4}){7})/,
 
     init: function(selector, initdata) {
@@ -54,7 +54,7 @@ pk.focus = {
         self.photo.toggleClass('hidedetails');
       });
       this.photo.on('click', '.mdi-autorenew', function() {
-        self.update_data('&forcefocusphoto=1');
+        self.update_data('&forcephoto=1&forcenews=1&forcecalendar=1&forcetasks=1&forceweather=1');
         $(this).animatecss('rotateOut');
       });
     },
