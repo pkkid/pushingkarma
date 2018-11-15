@@ -76,7 +76,7 @@ def _get_tasks(request):
         tasklists = {tlist['title']:tlist for tlist in tasklists['items']}
         tasklist = tasklists['My Tasks']
         tasks = service.tasks().list(tasklist=tasklist['id']).execute()
-        tasks = sorted(tasks['items'], key=lambda x:x['position'])
+        tasks = sorted(tasks.get('items',[]), key=lambda x:x['position'])
         return tasks
     except Exception as err:
         log.exception(err)

@@ -35,20 +35,20 @@ def softcache(timeout=15*MINS, expires=1*DAYS, key=None):
             now = int(time.time())
             value = json.loads(cache.get(key, '{}'))
             age = now - value.get('lastupdate', 0)
-            if value and age <= timeout and value.get('data') and not force:
+            if value and age <= timeout and value.get('data') is not None and not force:
                 log.info('Returning cached value for: %s', key)
                 return value['data']
             # Value is old; Lets update it
             try:
                 log.info('Fetching new value for: %s', key)
                 result = func(*args, **kwargs)
-                if not result:
+                if result is None:
                     raise Exception('No result')
                 cache.set(key, json.dumps({'lastupdate':now, 'data':result}), expires)
                 return result
             except Exception as err:
                 log.warning('Error fetching new value: %s', err)
-                return value['data']
+                return value.get('data')
         return wrapper2
     return wrapper1
 
