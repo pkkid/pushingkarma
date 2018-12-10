@@ -6,10 +6,10 @@ from datetime import datetime, timedelta
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.utils.timezone import make_aware
-from ...models import FUNCTION, Stock
+from ...models import FUNCTION_KEY, Stock
 from pk import log
 
-URL = 'https://www.alphavantage.co/query?function={function}&symbol={ticker}&apikey={apikey}'
+URL = 'https://www.alphavantage.co/query?symbol={ticker}&function={function}&apikey={apikey}'
 
 
 class Command(BaseCommand):
@@ -19,11 +19,13 @@ class Command(BaseCommand):
         tz = pytz.timezone(settings.TIME_ZONE)
         now = make_aware(datetime.now())
         expires = now - timedelta(hours=12)
-        for stock in Stock.objects.all():
+        stocks = Stock.objects.all()
+        log.info('--- Updating %s Stocks ---', stocks.count())
+        for stock in stocks:
             try:
                 modified = stock.modified.astimezone(tz)
                 if not stock.history or stock.modified < expires:
-                    url = URL.format(function=FUNCTION, ticker=stock.ticker, apikey=settings.ALPHAVANTAGE_APIKEY)
+                    url = URL.format(function=FUNCTION_KEY, ticker=stock.ticker, apikey=settings.ALPHAVANTAGE_APIKEY)
                     log.info(f'Updating stock {stock.ticker}: {url}')
                     response = requests.get(url)
                     stock.data = json.dumps(response.json())  # validate json

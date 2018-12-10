@@ -24,5 +24,5 @@
 - name: Add Update Stocks Cronjob
   cron:
     name: update-stocks
-    job: '/usr/bin/python3 /root/pk/manage.py update_stocks'
+    job: '/var/www/venvs/pk/bin/python /root/pk/manage.py update_stocks >> /root/pk/log/update_stocks.log 2>&1'
     hour: 2

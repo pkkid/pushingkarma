@@ -6,6 +6,7 @@ from django_extensions.db.models import TimeStampedModel
 from pk.utils.serializers import DynamicFieldsSerializer
 
 FUNCTION = 'Weekly Adjusted Time Series'
+FUNCTION_KEY = 'TIME_SERIES_WEEKLY_ADJUSTED'
 OPEN = '1. open'
 HIGH = '2. high'
 LOW = '3. low'
