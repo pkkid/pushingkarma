@@ -23,7 +23,7 @@ STATICFILES_DIRS = [join(BASE_DIR, 'static/dist/')]
 INTERNAL_IPS = ['127.0.0.1']
 
 LANGUAGE_CODE = 'en-us'
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'US/Eastern'
 USE_I18N = True
 USE_L10N = True
 USE_TZ = True
@@ -42,9 +42,10 @@ INSTALLED_APPS = (
     'redsocks',
     'pk',
     'pk.apps.budget',
+    'pk.apps.focus',
     'pk.apps.notes',
     'pk.apps.pages',
-    'pk.apps.focus',
+    'pk.apps.stocks',
 )
 MIDDLEWARE = (
     'django.contrib.sessions.middleware.SessionMiddleware',

@@ -5,11 +5,12 @@ from django.conf.urls import include, url
 from django.views.generic import RedirectView, TemplateView
 from rest_framework import routers
 from pk import views as pk_views
+from pk.apps.budget import views as budget_views
 from pk.apps.calendar import views as calendar_views
+from pk.apps.focus import views as focus_views
 from pk.apps.notes import views as note_views
 from pk.apps.pages import views as page_views
-from pk.apps.budget import views as budget_views
-from pk.apps.focus import views as focus_views
+from pk.apps.stocks import views as stock_views
 
 redirect = lambda url: RedirectView.as_view(url=url, permanent=False)
 template = lambda tmpl: TemplateView.as_view(template_name=tmpl)
@@ -21,6 +22,7 @@ api.register('notes', note_views.NotesViewSet)
 api.register('accounts', budget_views.AccountsViewSet)
 api.register('categories', budget_views.CategoriesViewSet)
 api.register('transactions', budget_views.TransactionsViewSet)
+api.register('stocks', stock_views.StocksViewSet)
 api.register('keyval', budget_views.KeyValueViewSet)
 
 urlpatterns = [

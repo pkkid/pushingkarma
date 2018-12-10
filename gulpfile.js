@@ -6,6 +6,7 @@ var gulp = require('gulp');
 var autoprefixer = require('gulp-autoprefixer');
 var concat = require('gulp-concat');
 var sass = require('gulp-sass');
+var spawn = require('child_process').spawn;
 var sourcemaps = require('gulp-sourcemaps');
 var watch = require('gulp-watch');
 
@@ -27,10 +28,16 @@ gulp.task('css', function() {
     .pipe(gulp.dest('./pk/static/dist/site'));
 });
 
+// Runserver
+gulp.task('runserver', function() {
+  return spawn(process.env['VIRTUAL_ENV'] +'/bin/python',
+    ['pk/manage.py', 'runserver'], {stdio: 'inherit'});
+});
+
 // Build & Watch
 gulp.task('build', gulp.parallel('js', 'css'));
 gulp.task('watch', function() {
   gulp.watch(['**/js/*.js', '!**/js/site.js'], gulp.parallel('js'));
   gulp.watch('**/css/*.scss', gulp.parallel('css'));
 });
-gulp.task('default', gulp.series('build', 'watch'));
+gulp.task('default', gulp.series('build', gulp.parallel('watch', 'runserver')));
