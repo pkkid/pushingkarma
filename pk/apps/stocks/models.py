@@ -18,6 +18,7 @@ DIVAMT = '7. dividend amount'
 class Stock(TimeStampedModel):
     ticker = models.CharField(max_length=5, unique=True)
     data = models.TextField(help_text='AlphaVantage data')
+    description = models.CharField(max_length=255, blank=True, default='')
     tags = models.CharField(max_length=255, blank=True, help_text='space delimited')
 
     def __init__(self, *args, **kwargs):
@@ -61,4 +62,5 @@ class Stock(TimeStampedModel):
 class StockSerializer(DynamicFieldsSerializer):
     class Meta:
         model = Stock
-        fields = ('id','url','ticker','close','mindate','maxdate','modified','tags','history')
+        fields = ('id','url','ticker','description','close',
+            'mindate','maxdate','modified','tags','history')

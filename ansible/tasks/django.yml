@@ -21,3 +21,8 @@
     - collectstatic --noinput
   notify: Restart Services
 
+- name: Add Update Stocks Cronjob
+  cron:
+    name: update-stocks
+    job: '/usr/bin/python3 /root/pk/manage.py update_stocks'
+    hour: 2

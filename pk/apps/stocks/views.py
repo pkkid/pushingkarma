@@ -8,7 +8,8 @@ from .models import Stock, StockSerializer
 class StocksViewSet(viewsets.ModelViewSet):
     queryset = Stock.objects.order_by('ticker')
     serializer_class = StockSerializer
-    list_fields = ['id','url','ticker','close','mindate','maxdate','tags']
+    list_fields = ['id','url','ticker','description',
+        'close','mindate','maxdate','tags']
 
     def list(self, request, *args, **kwargs):
         queryset = Stock.objects.order_by('ticker')

@@ -22,7 +22,7 @@ class Command(BaseCommand):
         for stock in Stock.objects.all():
             try:
                 modified = stock.modified.astimezone(tz)
-                if not stock.history() or stock.modified < expires:
+                if not stock.history or stock.modified < expires:
                     url = URL.format(function=FUNCTION, ticker=stock.ticker, apikey=settings.ALPHAVANTAGE_APIKEY)
                     log.info(f'Updating stock {stock.ticker}: {url}')
                     response = requests.get(url)
