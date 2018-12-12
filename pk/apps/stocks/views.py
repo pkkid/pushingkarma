@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 import csv
+from datetime import datetime, timedelta
 from django.http import HttpResponse, HttpResponseBadRequest
 from rest_framework import viewsets
 from rest_framework.response import Response
@@ -32,10 +33,12 @@ class StocksViewSet(viewsets.ModelViewSet):
         elif 'tag' in request.GET:
             tag = request.GET.get('tag','').lower()
             stocks = Stock.objects.filter(tags__icontains=tag).order_by('ticker')
+        years = request.GET.get('years', 4)
         # Verify we have stocks to return and get the oldest date
         if not stocks:
             return HttpResponseBadRequest(content='No tickers specified')
-        oldest = sorted(stocks, key=lambda x:x.mindate, reverse=True)[0]
+        oldest = sorted(stocks, key=lambda x:x.mindate)[0]
+        yearsago = (datetime.now() - timedelta(days=366*years)).strftime('%Y-%m-%d')
         # Build the csv response
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="stocks.csv"'
@@ -44,4 +47,5 @@ class StocksViewSet(viewsets.ModelViewSet):
         writer.writerow([''] + [s.description for s in stocks])
         for datestr in oldest.history.keys():
             writer.writerow([datestr] + [s.history.get(datestr,{}).get(ADJCLOSE,'') for s in stocks])
+            if datestr < yearsago: break
         return response
