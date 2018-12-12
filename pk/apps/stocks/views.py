@@ -40,7 +40,7 @@ class StocksViewSet(viewsets.ModelViewSet):
         response = HttpResponse(content_type='text/csv')
         response['Content-Disposition'] = 'attachment; filename="stocks.csv"'
         writer = csv.writer(response)
-        writer.writerow(['Date'] + [s.ticker for s in stocks])
+        writer.writerow(['Date'] + [s.ticker.replace('.','') for s in stocks])
         for datestr in oldest.history.keys():
             writer.writerow([datestr] + [s.history.get(datestr,{}).get(ADJCLOSE,'') for s in stocks])
         return response

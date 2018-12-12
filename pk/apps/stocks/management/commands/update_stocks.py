@@ -10,6 +10,7 @@ from ...models import FUNCTION_KEY, Stock
 from pk import log
 
 URL = 'https://www.alphavantage.co/query?symbol={ticker}&function={function}&apikey={apikey}'
+APIKEY = settings.ALPHAVANTAGE_APIKEY
 
 
 class Command(BaseCommand):
@@ -25,7 +26,8 @@ class Command(BaseCommand):
             try:
                 modified = stock.modified.astimezone(tz)
                 if not stock.history or stock.modified < expires:
-                    url = URL.format(function=FUNCTION_KEY, ticker=stock.ticker, apikey=settings.ALPHAVANTAGE_APIKEY)
+                    ticker = stock.ticker.replace('.','')
+                    url = URL.format(function=FUNCTION_KEY, ticker=ticker, apikey=APIKEY)
                     log.info(f'Updating stock {stock.ticker}: {url}')
                     response = requests.get(url)
                     stock.data = json.dumps(response.json())  # validate json
