@@ -24,4 +24,5 @@
   cron:
     name: certbot-renew
     job: 'certbot renew --quiet --no-self-upgrade >> /root/pk/log/certbot.log 2>&1'
+    minute: 0
     hour: 1
