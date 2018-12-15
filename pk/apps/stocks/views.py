@@ -46,6 +46,19 @@ class StocksViewSet(viewsets.ModelViewSet):
         writer.writerow([''] + [s.ticker.replace('.','') for s in stocks])
         writer.writerow([''] + [s.description for s in stocks])
         for datestr in oldest.history.keys():
-            writer.writerow([datestr] + [s.history.get(datestr,{}).get(ADJCLOSE,'') for s in stocks])
-            if datestr < yearsago: break
+            row = [datestr]
+            for stock in stocks:
+                value = stock.history.get(datestr,{}).get(ADJCLOSE,'')
+                if not value:
+                    value = self._look_ahead(datestr, stock)
+                row.append(value)
+            writer.writerow(row)
+            if datestr < yearsago:
+                break
         return response
+
+    def _look_ahead(self, datestr, stock):
+        keys = stock.history.keys()
+        keys = sorted([key for key in keys if key > datestr])
+        nextkey = keys[0] if keys else None
+        return stock.history.get(nextkey,{}).get(ADJCLOSE,'')
