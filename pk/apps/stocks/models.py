@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 # encoding: utf-8
 import json
+from django.core.management import call_command
 from django.db import models
+from django.dispatch import receiver
 from django_extensions.db.models import TimeStampedModel
 from pk.utils.serializers import DynamicFieldsSerializer
+from pk import log
 
 FUNCTION = 'Weekly Adjusted Time Series'
 FUNCTION_KEY = 'TIME_SERIES_WEEKLY_ADJUSTED'
@@ -65,3 +68,10 @@ class StockSerializer(DynamicFieldsSerializer):
         model = Stock
         fields = ('id','url','ticker','description','close',
             'mindate','maxdate','modified','tags','history')
+
+
+@receiver(models.signals.post_save, sender=Stock)
+def post_save(sender, instance, created, *args, **kwargs):
+    if created:
+        log.info(f'Calling Django command: update_stocks --ticker={instance.ticker}')
+        call_command('update_stocks', ticker=instance.ticker)
