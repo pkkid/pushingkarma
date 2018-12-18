@@ -27,7 +27,8 @@ class Stock(TimeStampedModel):
 
     def __init__(self, *args, **kwargs):
         super(TimeStampedModel, self).__init__(*args, **kwargs)
-        self._history = None
+        self._history = None    # cached decoded json history
+        self._keys = None       # cached history keys (dates)
 
     def __str__(self):
         return self.ticker
@@ -38,6 +39,12 @@ class Stock(TimeStampedModel):
             data = json.loads(self.data or '{}')
             self._history = data.get(FUNCTION, {})
         return self._history
+
+    @property
+    def keys(self):
+        if self._keys is None:
+            self._keys = sorted(self.history.keys())
+        return self._keys
 
     @property
     def mindate(self):
