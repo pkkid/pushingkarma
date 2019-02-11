@@ -25,4 +25,5 @@
   cron:
     name: update-stocks
     job: '/var/www/venvs/pk/bin/python /root/pk/manage.py update_stocks >> /root/pk/log/update_stocks.log 2>&1'
+    minute: 0
     hour: 2
