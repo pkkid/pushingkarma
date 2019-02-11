@@ -22,7 +22,8 @@ pk.focus = {
       setInterval(function() { self.update_clock(); }, 10000);      // 10 seconds
       setInterval(function() { self.update_news(); }, 20000);       // 20 seconds
       setInterval(function() { self.update_calendar(); }, 60000);   // 1 minute
-      setInterval(this.update_data, 300000);                        // 5 minutes
+      setInterval(function() { self.update_tasks(); }, 60000);      // 1 minute
+      setInterval(function() { self.update_data(); }, 300000);      // 5 minutes
     },
 
     init_update_url: function() {
@@ -132,7 +133,7 @@ pk.focus = {
         pc.onicecandidate = function(ice) {
           if (ice && ice.candidate && ice.candidate.candidate) {
             var ip = self.REGEX_IP.exec(ice.candidate.candidate)[1];
-            console.log('IP: ', ip); self.ip.text(ip).css('opacity', 1);
+            console.log('IP:', ip); self.ip.text(ip).css('opacity', 1);
             pc.onicecandidate = noop;
           }
         };
