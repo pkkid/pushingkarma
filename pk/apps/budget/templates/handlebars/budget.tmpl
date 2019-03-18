@@ -19,14 +19,18 @@ pkedit class attributes:
   <script id='summary' type='text/x-handlebars-template'>
     <h2>Summary
       <div class='subtext'>
-        {{addCommas this.summary.transactions}} transactions
+        <span class='numtransactions'>{{addCommas this.summary.transactions}}</span> transactions
         {{yesNo this.summary.uncategorized '|' ''}}
         {{#if this.summary.uncategorized}}
-          <a class='error' href='javascript:pk.budget.search("category=none")'>{{addCommas this.summary.uncategorized}} uncategorized</a>
+          <a class='error' href='javascript:pk.budget.search("category=none")'>
+            <span class='numuncategorized'>{{addCommas this.summary.uncategorized}}</span> uncategorized
+          </a>
         {{/if}}
         {{yesNo this.summary.unapproved '|' ''}}
         {{#if this.summary.unapproved}}
-          <a class='error' href='javascript:pk.budget.search("approved=false")'>{{addCommas this.summary.unapproved}} unapproved</a>
+          <a class='error' href='javascript:pk.budget.search("approved=false")'>
+            <span class='numunapproved'>{{addCommas this.summary.unapproved}} unapproved
+          </a>
         {{/if}}
       </div>
     </h2>
@@ -166,11 +170,19 @@ pkedit class attributes:
   <script id='transaction_list' type='text/x-handlebars-template'>
     <h2>Transactions
       <div class='subtext'>
-        {{addCommas this.count}} transactions
+        <span class='numtransactions'>{{addCommas this.count}}</span> transactions
         {{yesNo this.uncategorized '|' ''}}
-        {{#if this.uncategorized}}<a class='error' href='javascript:pk.budget.search("category=none", true)'>{{addCommas this.uncategorized}} uncategorized</a>{{/if}}
+        {{#if this.uncategorized}}
+          <a class='error' href='javascript:pk.budget.search("category=none", true)'>
+            <span class='numuncategorized'>{{addCommas this.uncategorized}}</span> uncategorized
+          </a>
+        {{/if}}
         {{yesNo this.unapproved '|' ''}}
-        {{#if this.unapproved}}<a class='error' href='javascript:pk.budget.search("approved=false", true)'>{{addCommas this.unapproved}} unapproved</a>{{/if}}
+        {{#if this.unapproved}}
+          <a class='error' href='javascript:pk.budget.search("approved=false", true)'>
+            <span class='numunapproved'>{{addCommas this.unapproved}}</span> unapproved
+          </a>
+        {{/if}}
       </div>
     </h2>
     <table cellpadding='0' cellspacing='0' style='clear:both;'>

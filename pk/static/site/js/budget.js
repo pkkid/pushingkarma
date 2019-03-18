@@ -55,9 +55,11 @@ pk.budget = {
     this.searchinput = this.container.find('#search');
     this.sidepanel = this.container.find('#sidepanel-content');
     this.summary = this.container.find('#summary');
-    this.transactions = this.container.find('#transactions');
     this.viewbtn = this.container.find('#viewbtn');
     this.panelbtn = this.container.find('#panelbtn');
+    this.transactions = this.container.find('#transactions');
+    this.numuncategorized = 'span.numuncategorized';
+    this.numunapproved = 'span.numunapproved';
   },
 
   init_keyboard_shortcuts: function() {
@@ -185,7 +187,16 @@ pk.budget = {
       if (item.hasClass('delempty') && !input.val()) {
         self.item_delete(item);
       } else {
-        self.item_save(item, 'PATCH', {}, false, true);
+        self.item_save(item, 'PATCH', {}, false, true, function() {
+          // increment counters
+          var name = item.data('name');
+          var init = item.data('init');
+          var value = item.text();
+          if ((name == 'category') && (init == '') && (value != '')) { self.increment_value(self.numuncategorized, -1); };
+          if ((name == 'category') && (init != '') && (value == '')) { self.increment_value(self.numuncategorized, 1); };
+          if ((name == 'approved') && (init == '') && (value == 'x')) { self.increment_value(self.numunapproved, -1); };
+          if ((name == 'approved') && (init == 'x') && (value == '')) { self.increment_value(self.numunapproved, 1); };
+        });
       }
     });
   },
@@ -378,6 +389,14 @@ pk.budget = {
       }
     }
     return value;
+  },
+
+  increment_value: function(selector, amount) {
+    // increment or decrement the specified value.
+    var item = this.container.find(selector);
+    if (item.length) {
+      item.text(parseInt(item.text()) + amount);
+    }
   },
 
   item_delete: function(item) {
