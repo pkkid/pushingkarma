@@ -17,7 +17,7 @@ def calendar(request, status=200):
         for event in get_events(url):
             ics.events.append(Event(
                 name=event['Subject'],
-                id=event['Id'],
+                uid=event['ItemId']['Id'],
                 location=event['Location']['DisplayName'],
                 begin=event['Start'],
                 end=event['End'],
