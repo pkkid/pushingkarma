@@ -50,7 +50,7 @@ def _get_weather(request):
         https://www.wunderground.com/weather/api/d/docs
     """
     try:
-        response = requests.get(settings.WEATHERUNDERGROUND_URL)
+        response = requests.get(settings.DARKSKY_URL)
         return response.json()
     except Exception as err:
         log.exception(err)

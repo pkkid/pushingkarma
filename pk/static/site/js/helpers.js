@@ -83,6 +83,8 @@ var helperutils = {
   },
 
   format: function(date, format) {
+    // This is not the helper function for handlebars,
+    // you are looking for formatDate.
     var self = this;
     var match = null;
     return format.replace(this.date_formats, function(m, p) {
@@ -727,8 +729,43 @@ var helpers = {
    * Port of formatDate-js library (http://bit.ly/18eo2xw)
    */
   formatDate: function(datestr, format) {
+    var ts = parseInt(datestr);
+    if (ts && (999999999999 > ts) && (ts > 999999999)) {
+      datestr = datestr * 1000;
+    }
     var date = moment(datestr).toDate();
     return helperutils.format(date, format);
+  },
+
+  /**
+   * DarkSky to WeatherUndereground icon translation
+   */
+  ds2wuIcon: function(dsicon) {
+    dsicon = dsicon.replace('-day', '');
+    dsicon = dsicon.replace('-night', '');
+    switch(dsicon) {
+      case '': var wuicon = 'chanceflurries'; break;
+      case '': var wuicon = 'chancerain'; break;
+      case '': var wuicon = 'chancesleet'; break;
+      case '': var wuicon = 'chancesnow'; break;
+      case '': var wuicon = 'chancetstorms'; break;
+      case 'clear': var wuicon = 'clear'; break;
+      case 'cloudy': var wuicon = 'cloudy'; break;
+      case '': var wuicon = 'flurries'; break;
+      case 'fog': var wuicon = 'fog'; break;
+      case '': var wuicon = 'hazy'; break;
+      case '': var wuicon = 'mostlycloudy'; break;
+      case '': var wuicon = 'mostlysunny'; break;
+      case 'partly-cloudy': var wuicon = 'partlycloudy'; break;
+      case '': var wuicon = 'partlysunny'; break;
+      case 'rain': var wuicon = 'rain'; break;
+      case 'sleet': var wuicon = 'sleet'; break;
+      case 'snow': var wuicon = 'snow'; break;
+      case '': var wuicon = 'sunny'; break;
+      case '': var wuicon = 'tstorms'; break;
+      default: var wuicon = 'unknown'; break;
+    }
+    return wuicon;
   },
 
   now: function(format) {

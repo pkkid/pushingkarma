@@ -109,7 +109,7 @@ pk.focus = {
       try {
         this.weather.html(pk.templates.weather(this.data)).css('opacity', 1);
       } catch(err) {
-        console.log('Error updating weather.');
+        console.log('Error updating weather: '+ err);
       }
     },
 
