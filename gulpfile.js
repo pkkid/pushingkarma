@@ -8,7 +8,6 @@ var concat = require('gulp-concat');
 var sass = require('gulp-sass');
 var spawn = require('child_process').spawn;
 var sourcemaps = require('gulp-sourcemaps');
-var watch = require('gulp-watch');
 
 // Javascript
 gulp.task('js', function() {
