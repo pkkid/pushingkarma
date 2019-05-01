@@ -29,7 +29,7 @@ gulp.task('css', function() {
 
 // Runserver
 gulp.task('runserver', function() {
-  return spawn(process.env['VIRTUAL_ENV'] +'/bin/python',
+  return spawn(process.env.VIRTUAL_ENV +'/bin/python',
     ['pk/manage.py', 'runserver'], {stdio: 'inherit'});
 });
 
