@@ -22,9 +22,9 @@ paramiko==2.2.1
 praw==6.0.0
 pymdown-extensions==1.0.1
 python-dateutil==2.6.1
-pytz
 redis==2.10.5
 requests==2.18.4
 timelib==0.2.4
 
+pytz
 git+https://github.com/pkkid/django-redsocks.git
