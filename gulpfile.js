@@ -8,6 +8,7 @@ var concat = require('gulp-concat');
 var sass = require('gulp-sass');
 var spawn = require('child_process').spawn;
 var sourcemaps = require('gulp-sourcemaps');
+var react = require('gulp-react');
 
 // Javascript
 gulp.task('js', function() {
@@ -23,6 +24,14 @@ gulp.task('css', function() {
     .pipe(sass({style:'expanded'}))
     .on('error', sass.logError)
     .pipe(autoprefixer('last 2 versions', '> 1%'))
+    .pipe(sourcemaps.write('.'))
+    .pipe(gulp.dest('./pk/static/dist/site'));
+});
+
+// React
+gulp.task('react', function () {
+  return gulp.src('pk/static/site/js/app.jsx')
+    .pipe(react())
     .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest('./pk/static/dist/site'));
 });

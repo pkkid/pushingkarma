@@ -12,98 +12,11 @@
     <meta charset='UTF-8'/>
     <title>{% block title %}{% endblock %}{{settings.SITE_NAME}}</title>
     <link rel='shortcut icon' href='/static/site/img/favicon.ico'/>
-    <!-- third-party styles -->
-    <link rel='stylesheet' type='text/css' href='https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.0/animate.min.css'/>
-    <link rel='stylesheet' type='text/css' href='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css'/>
-    <link rel='stylesheet' type='text/css' href='https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/3.0.39/css/materialdesignicons.min.css'/>
-    <link rel='stylesheet' type='text/css' href='https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.css'/>
-    <link rel='stylesheet' type='text/css' href='https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.css'/>
-    <link rel='stylesheet' type='text/css' href='https://fonts.googleapis.com/css?family=Josefin+Sans:400,600|Roboto+Mono|Crimson+Text|Cabin:400,500,600'/>
-    <!-- codemirror styles -->
-    <link rel='stylesheet' type='text/css' href='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.41.0/codemirror.min.css'/>
-    <link rel='stylesheet' type='text/css' href='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.41.0/addon/dialog/dialog.min.css'/>
-    <link rel='stylesheet' type='text/css' href='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.41.0/addon/scroll/simplescrollbars.min.css'/>
-    <link rel='stylesheet' type='text/css' href='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.41.0/theme/blackboard.min.css'/>
-    <link rel='stylesheet' type='text/css' href='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.41.0/theme/solarized.min.css'/>
-    <!-- site styles -->
-    <link rel='stylesheet' type='text/css' href='/static/site/site.css'/>
-    <link rel='stylesheet' type='text/css' href='/static/site/font/dripicons/dripicons-weather.css'/>
     {% block css %}{% endblock %}
   </head>
-  <body class='{{user.is_authenticated|yesno:"authenticated,"}} {% block bodyclass %}preload{% endblock %}'>
-    <div id='layoutwrap' class='no-preload-animation'>
-      <div id='layout' class='no-preload-animation'>
-        <header>
-          <div id='logo' class='no-preload-animation'>
-            <div class='title'>{{settings.SITE_NAME}}</div>
-            <div class='subtitle'>Website for Michael Shepanski</div>
-            <form method='POST'>
-              {% if user.is_authenticated %}
-                <span class='mdi mdi-account'></span>
-                <span>Hello {{user.first_name|default:user.username}}! |</span>
-                <a href='{% url "auth_logout" %}'>Logout</a>
-              {% else %}
-                <span class='mdi mdi-minus-circle-outline icon-notification'></span>
-                <input type='text' name='email' placeholder='Email' autocomplete='off'/>
-                <input type='password' name='password' placeholder='Password' autocomplete='off'/>
-                <button type='submit'><span class='mdi mdi-chevron-double-right'></span></button>
-                <div style='clear:left; margin-left:4px;'><a id='gauth' href='#'>Sign in with Google</a></div>
-              {% endif %}
-            </form>
-          </div>
-        </header>
-        {% include 'basenav.html' %}
-        <div class='container-fluid'>
-          <div class='row-fluid'>
-            {% block content %}[block:content]{% endblock %}
-          </div>
-        </div>
-      </div>
-      <footer class='no-preload-animation'>
-        Copyright (c) 2015 {{settings.SITE_NAME}}. All rights reserved.
-      </footer>
-    </div>
+  <body>
+    Hi Mom!
   </body>
-  <!-- core libs (must be first) -->
-  <script type='text/javascript'>
-    var GOOGLE_CLIENTID = '{{settings.GOOGLE_CLIENTID}}';
-    var GOOGLE_SCOPES = '{{settings.GOOGLE_SCOPES|join:' '}}';
-  </script>
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js'></script>
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js'></script>
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js'></script>
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.4/js/tether.min.js'></script>
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.min.js'></script>
-  <!-- plugins and helpers -->
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.1/clipboard.min.js'></script>
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.0.12/handlebars.min.js'></script>
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/highcharts/6.2.0/highcharts.js'></script>
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.13.1/highlight.min.js'></script>
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery-confirm/3.3.2/jquery-confirm.min.js'></script>
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/jquery-toast-plugin/1.3.2/jquery.toast.min.js'></script>
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/js-cookie/2.2.0/js.cookie.min.js'></script>
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.11/lodash.min.js'></script>
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js'></script>
-  <script src='https://apis.google.com/js/client:platform.js?onload=gauth_init'></script>
-  <!-- codemirror -->
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.41.0/codemirror.min.js'></script>
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.41.0/addon/dialog/dialog.min.js'></script>
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.41.0/addon/edit/continuelist.min.js'></script>
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.41.0/addon/mode/overlay.min.js'></script>
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.41.0/addon/scroll/simplescrollbars.min.js'></script>
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.41.0/addon/search/search.min.js'></script>
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.41.0/addon/search/searchcursor.min.js'></script>
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.41.0/keymap/sublime.min.js'></script>
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.41.0/mode/css/css.min.js'></script>
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.41.0/mode/django/django.min.js'></script>
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.41.0/mode/gfm/gfm.min.js'></script>
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.41.0/mode/javascript/javascript.min.js'></script>
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.41.0/mode/markdown/markdown.min.js'></script>
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.41.0/mode/python/python.min.js'></script>
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.41.0/mode/sass/sass.min.js'></script>
-  <script src='https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.41.0/mode/xml/xml.min.js'></script>
-  <!-- site libraries -->
-  <script src='/static/site/site.js'></script>
-  <script src='/static/redsocks/redsocket.js'></script>
+  <script src='/static/site/app.js'></script>
   {% block js %}{% endblock %}
 </html>
