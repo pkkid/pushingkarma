@@ -27,24 +27,15 @@ api.register('keyval', budget_views.KeyValueViewSet)
 
 urlpatterns = [
     url(r'^api/', include(api.urls)),
-    url(r'^api/', include(api.urls)),
     url(r'^404/$', template('404.html'), name='404'),
     url(r'^500/$', template('500.html'), name='500'),
     url(r'^auth/login/$', pk.utils.auth.user_login, name='auth_login'),
     url(r'^auth/logout/$', pk.utils.auth.user_logout, name='auth_logout'),
     url(r'^favicon\.ico$', redirect('/static/site/img/favicon.ico'), name='favicon'),
-    # Pages
-    url(r'^$', page_views.page, name='index'),
-    url(r'^$', page_views.page, name='pages'),
-    url(r'^p/(?P<slug>.*?)/$', page_views.page, name='page'),
     url(r'^markdown/p/$', page_views.markdown, name='page_markdown'),
-    # Notes
-    url(r'^n/$', note_views.note, name='notes'),
-    url(r'^n/(?P<slug>.*?)/$', note_views.note, name='note'),
     url(r'^markdown/n/$', note_views.markdown, name='note_markdown'),
-    # Misc
-    url(r'^budget/$', budget_views.budget, name='budget'),
     url(r'^calendar/$', calendar_views.calendar, name='calendar'),
     url(r'^focus/$', focus_views.focus, name='focus'),
     url(r'^raspi/$', focus_views.raspi, name='raspi'),
+    url(r'^$', template('index.html'), name='index'),
 ]
