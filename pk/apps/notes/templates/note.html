@@ -1,6 +1,5 @@
 {% extends 'base.html' %}
 {% load humanize %}
-{% load basefilters %}
 {% block title %}{% if note.title %}{{note.title}} - {% endif %}{% endblock %}
 
 {% block content %}
@@ -18,7 +17,7 @@
     <div id='maincontent'>
       <article class='note'>
         <h2>{{note.title}}</h2>
-        {{note.html|safe}}
+        {{note.html|escapejs}}
       </article>
     </div>
   </div>

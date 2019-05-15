@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-{% load basefilters %}
 {% block title %}{% if page.title %}{{page.title}} - {% endif %}{% endblock %}
 
 {% block content %}
@@ -14,7 +13,7 @@
           api_url: '/api/page',
           markdown_url: '/markdown/p/',
           show_includes: true,
-          init_data: {{page|json}},
+          init_data: {{page|escapejs}},
         });
       });
     </script>
