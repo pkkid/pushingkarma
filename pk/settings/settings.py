@@ -5,7 +5,7 @@ from os import makedirs
 from os.path import abspath, dirname, join
 try:
     from .secrets import *  # noqa
-except ImportError as err:
+except ImportError:
     raise SystemExit('Error: Secrets file not present.')
 
 # Django Core Settings
@@ -13,7 +13,7 @@ HOSTNAME = platform.node()
 SITE_NAME = 'PushingKarma'
 ALLOWED_HOSTS = ['.pushingkarma.com', 'localhost']
 BASE_DIR = dirname(dirname(abspath(__file__)))
-LOG_DIR = join(BASE_DIR, 'log')
+LOG_DIR = join(BASE_DIR, '.data')
 DEBUG = HOSTNAME in ['pkkid-work', 'pkkid-home']
 ROOT_URLCONF = 'pk.urls'
 LOGIN_URL = 'index'
@@ -70,7 +70,7 @@ TEMPLATES = [{
 }]
 DATABASES = {'default': {
     'ENGINE': 'django.db.backends.sqlite3',
-    'NAME': join(BASE_DIR, 'db.sqlite3'),
+    'NAME': join(BASE_DIR, '.data', 'db.sqlite3'),
 }}
 
 # Django Cache
@@ -91,12 +91,12 @@ LOGGING = {
     'handlers': {
         'console': {'level':LOGLEVEL, 'class':'logging.StreamHandler', 'formatter':'standard'},
         'file': {'level': LOGLEVEL, 'class':'logging.handlers.RotatingFileHandler',
-            'filename':join(LOG_DIR,'django.log'), 'maxBytes':1000000, 'backupCount':3,
+            'filename':join(LOG_DIR, 'django.log'), 'maxBytes':1000000, 'backupCount':3,
             'formatter': 'standard'},
     },
     'loggers': {
-        'pk': {'handlers':['file','console'], 'level':LOGLEVEL, 'propagate':True},
-        'redsocks': {'handlers':['file','console'], 'level':LOGLEVEL, 'propagate':False},
+        'pk': {'handlers':['file', 'console'], 'level':LOGLEVEL, 'propagate':True},
+        'redsocks': {'handlers':['file', 'console'], 'level':LOGLEVEL, 'propagate':False},
     },
     'formatters':{
         'standard':{'format':'%(asctime)-.19s %(module)12s:%(lineno)-3s %(levelname)-7s %(message)s'}

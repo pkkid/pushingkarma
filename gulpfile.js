@@ -11,20 +11,20 @@ var sourcemaps = require('gulp-sourcemaps');
 
 // Javascript
 gulp.task('js', function() {
-  return gulp.src('./pk/static/site/js/*.js')
+  return gulp.src('./pk/static/js/*.js')
     .pipe(concat('site.js', {newLine:'\n\n\n'}))
-    .pipe(gulp.dest('./pk/static/dist/site'));
+    .pipe(gulp.dest('./pk/static/dist'));
 });
 
 // CSS
 gulp.task('css', function() {
-  return gulp.src('pk/static/site/css/site.scss')
+  return gulp.src('pk/static/css/site.scss')
     .pipe(sourcemaps.init())
     .pipe(sass({style:'expanded'}))
     .on('error', sass.logError)
     .pipe(autoprefixer('last 2 versions', '> 1%'))
     .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest('./pk/static/dist/site'));
+    .pipe(gulp.dest('./pk/static/dist'));
 });
 
 // Runserver

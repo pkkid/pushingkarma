@@ -17,7 +17,7 @@ yarn-error.log*
 /build
 /coverage
 /pk/collectstatic
-/pk/log
+/pk/data
 /pk/static/bower
 /pk/static/dist
 

@@ -1,30 +1,28 @@
 #!/usr/bin/env python
 # encoding: utf-8
 import hashlib, json, queue
+from threading import Thread
 from django.conf import settings
 from django.forms.utils import ErrorDict
 from django.http import HttpResponse
 from django.shortcuts import render
-from django.template import RequestContext
-from django.template.loader import render_to_string
-from threading import Thread
 
 
 def get_object_or_none(cls, *args, **kwargs):
     try:
-        return cls._default_manager.get(*args, **kwargs)
+        return cls._default_manager.get(*args, **kwargs)  # noqa; pylint:disable=protected-access
     except cls.DoesNotExist:
         return None
 
 
 def hash_args(*args, **kwargs):
-    hash = hashlib.md5()
+    hashobj = hashlib.md5()
     for arg in sorted(args):
-        hash.update(str(arg).encode())
+        hashobj.update(str(arg).encode())
     for key, value in sorted(kwargs.items()):
-        hash.update(str(key).encode())
-        hash.update(str(value).encode())
-    return hash.hexdigest()[:7]
+        hashobj.update(str(key).encode())
+        hashobj.update(str(value).encode())
+    return hashobj.hexdigest()[:7]
 
 
 def move_to_end(odict, *keys):
@@ -50,7 +48,7 @@ def response_json(data, status=200):
 def response_json_error(errors, data=None):
     data = data or {}
     data['success'] = False
-    data['errors'] = errors if type(errors) in [dict, ErrorDict] else {'__all__': errors}
+    data['errors'] = errors if isinstance(errors, (dict, ErrorDict)) else {'__all__': errors}
     return response_json(data)
 
 
@@ -58,11 +56,6 @@ def response_json_success(data=None):
     data = data or {}
     data['success'] = True
     return response_json(data)
-
-
-def response_modal(request, template, data):
-    modal = render_to_string(template, data, context_instance=RequestContext(request))
-    return response_json_success(dict(modal=modal))
 
 
 def rget(obj, attrstr, default=None, delim='.'):
@@ -118,6 +111,6 @@ def _threadwrap(jobs, results):
 
 
 def update(obj, **kwargs):
-    for key,val in kwargs.items():
+    for key, val in kwargs.items():
         setattr(obj, key, val)
     obj.save()

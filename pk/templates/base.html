@@ -1,22 +1,10 @@
 <!doctype html>
-<!--  ____            _     _             _  __                           -->
-<!-- |  _ \ _   _ ___| |__ (_)_ __   __ _| |/ /__ _ _ __ _ __ ___   __ _  -->
-<!-- | |_) | | | / __| '_ \| | '_ \ / _` | ' // _` | '__| '_ ` _ \ / _` | -->
-<!-- |  __/| |_| \__ \ | | | | | | | (_| | . \ (_| | |  | | | | | | (_| | -->
-<!-- |_|    \__,_|___/_| |_|_|_| |_|\__, |_|\_\__,_|_|  |_| |_| |_|\__,_| -->
-<!--                                |___/                                 -->
-<!-- This website is written using the Django Web Framework. -->
-<!-- View source here: https://github.com/mjs7231/pushingkarma -->
 <html lang='en'>
   <head>
     <meta charset='UTF-8'/>
-    <title>{% block title %}{% endblock %}{{settings.SITE_NAME}}</title>
+    <title>{{settings.SITE_NAME}}</title>
     <link rel='shortcut icon' href='/static/site/img/favicon.ico'/>
-    {% block css %}{% endblock %}
   </head>
-  <body>
-    Hi Mom!
-  </body>
-  <script src='/static/site/app.js'></script>
-  {% block js %}{% endblock %}
+  <body></body>
+  <script src='https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue{{settings.DEBUG|yesno:',.min'}}.js'></script>
 </html>
