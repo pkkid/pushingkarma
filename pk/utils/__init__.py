@@ -1,11 +1,24 @@
 #!/usr/bin/env python
 # encoding: utf-8
-import hashlib, json, queue
-from threading import Thread
+import hashlib, json, os, queue
+from django import template, conf
 from django.conf import settings
 from django.forms.utils import ErrorDict
 from django.http import HttpResponse
 from django.shortcuts import render
+from threading import Thread
+
+register = template.Library()
+
+
+@register.simple_tag
+def include_verbatim(path):
+    for template_dir in conf.settings.TEMPLATE_DIRS:
+        filepath = '%s/%s' % (template_dir, path)
+        if os.path.isfile(filepath):
+            break
+    with open(filepath, 'r') as fp:
+        return fp.read()
 
 
 def get_object_or_none(cls, *args, **kwargs):

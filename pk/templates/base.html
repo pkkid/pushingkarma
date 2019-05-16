@@ -1,3 +1,4 @@
+{% load basefilters %}
 <!doctype html>
 <html lang='en'>
   <head>
@@ -5,6 +6,9 @@
     <title>{{settings.SITE_NAME}}</title>
     <link rel='shortcut icon' href='/static/site/img/favicon.ico'/>
   </head>
-  <body></body>
+  <body>
+    {% include_verbatim 'login.vue' %}
+  </body>
   <script src='https://cdnjs.cloudflare.com/ajax/libs/vue/2.6.10/vue{{settings.DEBUG|yesno:',.min'}}.js'></script>
+  <script src='/static/dist/site.js'></script>
 </html>

@@ -21,6 +21,7 @@
         "process",
         "require",
         "Redsocket",
-        "XML"
+        "XML",
+        "Vue"
     ]
 }
