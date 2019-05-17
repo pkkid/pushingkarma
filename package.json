@@ -2,6 +2,9 @@
   "name": "pk",
   "version": "1.0.0",
   "private": true,
+  "scripts": {
+    "dev": "cd vue && npm run serve & ../pk/manage.py runserver"
+  },
   "devDependencies": {
     "gulp": "^4.0.0",
     "gulp-autoprefixer": "^3.0.1",
