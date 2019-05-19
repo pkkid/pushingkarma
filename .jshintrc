@@ -1,27 +1,17 @@
 {
-    "browser": true,
+    "browser": false,
     "jquery": true,
     "moz": true,
     "proto": true,
-    "strict": true,
-    "globalstrict": true,
+    "strict": "implied",
+    "esversion": 6,
+    "asi": true,
     "predef": [
-        "_",
-        "alert",
-        "CodeMirror",
         "console",
-        "Cookies",
-        "global",
-        "Handlebars",
-        "hljs",
         "imports",
-        "Nasuni",
-        "NUI",
-        "pk",
+        "module",
         "process",
         "require",
-        "Redsocket",
-        "XML",
         "Vue"
     ]
 }
