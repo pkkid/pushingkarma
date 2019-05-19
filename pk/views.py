@@ -12,7 +12,7 @@ from pk.utils.auth import auth_django, auth_google
 from .models import AccountSerializer
 
 
-def index(request, tmpl='page.html'):
+def index(request, tmpl='index.html'):
     return utils.response(request, tmpl, {})
 
 
