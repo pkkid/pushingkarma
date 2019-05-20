@@ -59,7 +59,7 @@ MIDDLEWARE = (
 )
 TEMPLATES = [{
     'BACKEND': 'django.template.backends.django.DjangoTemplates',
-    'DIRS': [   
+    'DIRS': [
         join(BASE_DIR, 'pk/templates'),
         join(BASE_DIR, 'vue/dist'),
     ],
