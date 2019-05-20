@@ -41,8 +41,8 @@
       text-transform: uppercase;
       font-family: arial;
       font-weight: bold;
-      font-size: 14px;
-      letter-spacing: 3px;
+      font-size: 15px;
+      letter-spacing: 4px;
       margin-bottom: 50px;
       border-bottom: 1px solid rgba(255,255,255,.1);
       box-sizing: border-box;

@@ -16,22 +16,27 @@
     "@vue/cli-plugin-babel": "^3.7.0",
     "@vue/cli-plugin-eslint": "^3.7.0",
     "@vue/cli-service": "^3.7.0",
+    "autoprefixer": "^9.5.1",
     "babel-eslint": "^10.0.1",
-    "eslint-plugin-vue": "^5.0.0",
     "eslint": "^5.16.0",
+    "eslint-plugin-vue": "^5.0.0",
     "node-sass": "^4.12.0",
     "sass-loader": "^7.1.0",
     "vue-template-compiler": "^2.5.21"
   },
   "eslintConfig": {
     "root": true,
-    "env": {"node": true},
+    "env": {
+      "node": true
+    },
     "extends": [
       "plugin:vue/essential",
       "eslint:recommended"
     ],
     "rules": {},
-    "parserOptions": {"parser": "babel-eslint"}
+    "parserOptions": {
+      "parser": "babel-eslint"
+    }
   },
   "postcss": {
     "plugins": {
