@@ -18,7 +18,6 @@
 <script>
   export default {
     name: 'SideNav',
-    components: {}
   }
 </script>
 
@@ -48,5 +47,57 @@
       box-sizing: border-box;
       img { width: 130px; margin-bottom: 10px; }
     }
+
+    .menuwrap {
+      width: 100%;
+      height: auto;
+      clear: both;
+      float: left;
+      padding: 0px 20px 0px 60px;
+      box-sizing: border-box;
+      ul {
+        margin: 0px;
+        padding: 0px;
+        list-style-type: none;
+        font-family: Montserrat, Arial;
+        li {
+          margin: 0px;
+          text-align: left;
+        }
+        a {
+          text-decoration: none;
+          color: #fff;
+          font-family: Montserrat, Arial;
+          font-size: 16px;
+          font-weight: 500;
+          text-transform: uppercase;
+          position: relative;
+          display: inline-block;
+          padding-bottom: 19px;
+          transition: all .3s ease;
+          line-height: 29px;
+          font-family: Montserrat, Arial;
+        }
+        a:before {
+          position: absolute;
+          content: "";
+          height: 2px;
+          width: 0px;
+          background-color: #E3872D;
+          top: 14px;
+          transform: translateY(-50%);
+          left: 100%;
+          margin-left: 10px;
+          transition: all .3s ease;
+        }
+        a:hover { color:#E3872D; }
+        a:hover:before{ width:35px; }
+      }
+    }
+
+    .socialicons {
+
+    }
+
   }
 </style>

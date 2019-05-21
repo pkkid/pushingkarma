@@ -23,6 +23,7 @@ export default {
 
 <!-- Styles -->
 <style lang='scss'>
+  @import url('https://fonts.googleapis.com/css?family=Montserrat:300,400,500&display=swap');
   body {
     background-color: #283247;
     color: #f8f8f8;
