@@ -100,9 +100,5 @@
       }
     }
 
-    .socialicons {
-
-    }
-
   }
 </style>
