@@ -24,6 +24,8 @@ export default {
 <!-- Styles -->
 <style lang='scss'>
   @import url('https://fonts.googleapis.com/css?family=Montserrat:300,400,500&display=swap');
+  @import url('https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/3.0.39/css/materialdesignicons.min.css');
+
   body {
     background-color: #283247;
     color: #f8f8f8;

@@ -4,14 +4,17 @@
       <img class='logo' src='../assets/pk.svg'/><br/>
       PushingKarma
     </div>
-    <div class='menuwrap'>
-      <ul class='nav'>
-        <li><a href='#home'>Home</a></li>
-        <li><a href='#about'>About</a></li>
-        <li><a href='#services'>Projects</a></li>
-        <li><a href='#portfolio'>Notes</a></li>
-      </ul>
-    </div>
+    <div class='menuwrap'><ul>
+      <li><a href='#home'>Home</a></li>
+      <li><a href='#about'>About</a></li>
+      <li><a href='#services'>Projects</a></li>
+      <li><a href='#portfolio'>Notes</a></li>
+    </ul></div>
+    <div class='socialwrap'><ul>
+      <li><a href='#'><i class='xcon-github'>Github</i></a></li>
+      <li><a href='#'><i class='xcon-linkedin'>LinkedIn</i></a></li>
+      <li><a href='#'><i class='xcon-facebook'>Facebook</i></a></li>
+    </ul></div>
   </div>
 </template>
 
@@ -22,6 +25,8 @@
 </script>
 
 <style lang='scss'>
+  
+
   #sidenav {
     background-color: #041230;
     bottom: 0px;
