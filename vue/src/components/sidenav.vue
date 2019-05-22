@@ -11,9 +11,9 @@
       <li><a href='#portfolio'>Notes</a></li>
     </ul></div>
     <div class='socialwrap'><ul>
-      <li><a href='#'><i class='xcon-github'>Github</i></a></li>
-      <li><a href='#'><i class='xcon-linkedin'>LinkedIn</i></a></li>
-      <li><a href='#'><i class='xcon-facebook'>Facebook</i></a></li>
+      <li><a href='#'><i class='mdi mdi-github-box'>Github</i></a></li>
+      <li><a href='#'><i class='mdi mdi-linkedin-box'>LinkedIn</i></a></li>
+      <li><a href='#'><i class='mdi mdi-facebook-box'>Facebook</i></a></li>
     </ul></div>
   </div>
 </template>
@@ -25,8 +25,8 @@
 </script>
 
 <style lang='scss'>
+  @import url('https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/3.0.39/css/materialdesignicons.min.css');
   
-
   #sidenav {
     background-color: #041230;
     bottom: 0px;
