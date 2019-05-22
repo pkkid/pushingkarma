@@ -7,13 +7,13 @@
     <div class='menuwrap'><ul>
       <li><a href='#home'>Home</a></li>
       <li><a href='#about'>About</a></li>
-      <li><a href='#services'>Projects</a></li>
-      <li><a href='#portfolio'>Notes</a></li>
+      <li><a href='#projects'>Projects</a></li>
+      <li><a href='#notes'>Notes</a></li>
     </ul></div>
     <div class='socialwrap'><ul>
-      <li><a href='#'><i class='mdi mdi-github-box'>Github</i></a></li>
-      <li><a href='#'><i class='mdi mdi-linkedin-box'>LinkedIn</i></a></li>
-      <li><a href='#'><i class='mdi mdi-facebook-box'>Facebook</i></a></li>
+      <li><a href='https://github.com/pkkid'><i class='mdi mdi-github-box'></i></a></li>
+      <li><a href='https://www.linkedin.com/in/shepanski'><i class='mdi mdi-linkedin-box'></i></a></li>
+      <li><a href='https://www.facebook.com/mshepanski'><i class='mdi mdi-facebook-box'></i></a></li>
     </ul></div>
   </div>
 </template>
@@ -36,6 +36,24 @@
     transition: all .3s ease;
     width: 300px;
     z-index: 100;
+    color: #fff;
+
+    a, a:visited {
+      color: #fff;
+      transition: all .3s ease;
+      &:hover { color:#E3872D; }
+    }
+
+    ul {
+      margin: 0px;
+      padding: 0px;
+      list-style-type: none;
+      font-family: Montserrat, Arial;
+      li {
+        margin: 0px;
+        text-align: left;
+      }
+    }
 
     #logo {
       padding: 50px 20px;
@@ -54,49 +72,56 @@
     }
 
     .menuwrap {
-      width: 100%;
-      height: auto;
+      box-sizing: border-box;
       clear: both;
       float: left;
+      height: auto;
       padding: 0px 20px 0px 60px;
-      box-sizing: border-box;
-      ul {
-        margin: 0px;
-        padding: 0px;
-        list-style-type: none;
+      width: 100%;
+
+      a {
+        display: inline-block;
         font-family: Montserrat, Arial;
-        li {
-          margin: 0px;
-          text-align: left;
-        }
-        a {
-          text-decoration: none;
-          color: #fff;
-          font-family: Montserrat, Arial;
-          font-size: 16px;
-          font-weight: 500;
-          text-transform: uppercase;
-          position: relative;
-          display: inline-block;
-          padding-bottom: 19px;
-          transition: all .3s ease;
-          line-height: 29px;
-          font-family: Montserrat, Arial;
-        }
-        a:before {
-          position: absolute;
-          content: "";
-          height: 2px;
-          width: 0px;
-          background-color: #E3872D;
-          top: 14px;
-          transform: translateY(-50%);
-          left: 100%;
-          margin-left: 10px;
-          transition: all .3s ease;
-        }
-        a:hover { color:#E3872D; }
-        a:hover:before{ width:35px; }
+        font-family: Montserrat, Arial;
+        font-size: 16px;
+        font-weight: 500;
+        line-height: 29px;
+        padding-bottom: 19px;
+        position: relative;
+        text-decoration: none;
+        text-transform: uppercase;
+      }
+      a:before {
+        background-color: #E3872D;
+        content: "";
+        height: 2px;
+        left: 100%;
+        margin-left: 10px;
+        position: absolute;
+        top: 14px;
+        transform: translateY(-50%);
+        transition: all .3s ease;
+        width: 0px;
+      }
+      a:hover:before{ width:35px; }
+    }
+
+    .socialwrap {
+      bottom: 38px;
+      box-sizing: border-box;
+      float: left;
+      font-size: 22px;
+      height: auto;
+      left: -2px;
+      margin-bottom: 10px;
+      padding: 0px 20px 0px 60px;
+      position: absolute;
+      text-align: left;
+      width: 100%;
+
+      li {
+        margin: 0px 15px 0px 0px;
+        display: inline-block;
       }
     }
 
