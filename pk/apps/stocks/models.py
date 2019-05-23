@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # encoding: utf-8
 import json
 from django.core.management import call_command

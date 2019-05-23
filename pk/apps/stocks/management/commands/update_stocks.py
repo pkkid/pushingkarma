@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # encoding: utf-8
 # Update strock values from AlphaVantage
 import json, pytz, requests, time

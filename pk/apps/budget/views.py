@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # encoding: utf-8
 from collections import OrderedDict, defaultdict
 from datetime import date, datetime

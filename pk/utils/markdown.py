@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # encoding: utf-8
 import markdown, re
 from bs4 import BeautifulSoup

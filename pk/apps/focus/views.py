@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # encoding: utf-8
 import praw, random, re, requests
 from django.conf import settings

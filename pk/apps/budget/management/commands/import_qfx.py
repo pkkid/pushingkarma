@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # encoding: utf-8
 # Import transactions from qfx file.
 import os

@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # encoding: utf-8
 import calendar, datetime, re, shlex, timelib
 from dateutil.relativedelta import relativedelta

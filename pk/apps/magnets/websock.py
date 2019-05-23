@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # encoding: utf-8
 # Redis Subscriber class to recieve and parse messages.
 import json

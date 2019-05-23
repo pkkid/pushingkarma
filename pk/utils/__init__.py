@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # encoding: utf-8
 import hashlib, json, os, queue
 from django import template, conf

@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # encoding: utf-8
 import re
 from django.urls import reverse

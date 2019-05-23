@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # encoding: utf-8
 from django.contrib.auth import logout
 from django.contrib.auth.models import User

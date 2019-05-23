@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # encoding: utf-8
 import pk.utils.auth
 from django.conf.urls import include, url

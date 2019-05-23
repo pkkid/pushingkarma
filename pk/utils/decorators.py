@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # encoding: utf-8
 import functools, json, os, time
 from django.conf import settings

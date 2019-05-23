@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 # encoding: utf-8
 import httplib2
 from apiclient import discovery
