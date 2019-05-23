@@ -1,34 +1,11 @@
 {
   "name": "pk",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "scripts": {
     "django": "~/.venvs/pk/bin/python pk/manage.py runserver",
-    "serve": "cd vue && vue-cli-service serve",
-    "build": "cd vue && vue-cli-service build",
-    "lint": "cd vue && vue-cli-service lint"
-  },
-  "dependencies": {
-    "core-js": "^2.6.5",
-    "vue": "^2.6.10"
-  },
-  "devDependencies": {
-    "@vue/cli-plugin-babel": "^3.7.0",
-    "@vue/cli-plugin-eslint": "^3.7.0",
-    "@vue/cli-service": "^3.7.0",
-    "autoprefixer": "^9.5.1",
-    "babel-eslint": "^10.0.1",
-    "eslint-plugin-vue": "^5.0.0",
-    "eslint": "^5.16.0",
-    "node-sass": "^4.12.0",
-    "sass-loader": "^7.1.0",
-    "vue-template-compiler": "^2.5.21"
-  },
-  "eslintConfig": {
-    "env": {"node": true},
-    "extends": ["plugin:vue/essential", "eslint:recommended"],
-    "parserOptions": {"parser": "babel-eslint"},
-    "root": true,
-    "rules": {}
+    "serve": "cd vue && npm run serve",
+    "build": "cd vue && npm run build",
+    "lint": "cd vue && npm run lint"
   }
 }
