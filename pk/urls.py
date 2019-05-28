@@ -26,6 +26,10 @@ api.register('keyval', budget_views.KeyValueViewSet)
 
 urlpatterns = [
     url(r'^api/', include(api.urls)),
+    url(r'^calendar/$', calendar_views.calendar, name='calendar'),
+    url(r'^focus/$', focus_views.focus, name='focus'),
+    url(r'^raspi/$', focus_views.raspi, name='raspi'),
+    url(r'^$', pk_views.index, name='index'),
     # url(r'^404/$', template('404.html'), name='404'),
     # url(r'^500/$', template('500.html'), name='500'),
     # url(r'^auth/login/$', pk.utils.auth.user_login, name='auth_login'),
@@ -33,8 +37,4 @@ urlpatterns = [
     # url(r'^favicon\.ico$', redirect('/static/site/img/favicon.ico'), name='favicon'),
     # url(r'^markdown/p/$', page_views.markdown, name='page_markdown'),
     # url(r'^markdown/n/$', note_views.markdown, name='note_markdown'),
-    url(r'^calendar/$', calendar_views.calendar, name='calendar'),
-    url(r'^focus/$', focus_views.focus, name='focus'),
-    url(r'^raspi/$', focus_views.raspi, name='raspi'),
-    url(r'^$', pk_views.index, name='index'),
 ]
