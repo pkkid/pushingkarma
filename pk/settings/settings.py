@@ -43,7 +43,6 @@ INSTALLED_APPS = (
     'pk.apps.budget',
     'pk.apps.focus',
     'pk.apps.notes',
-    'pk.apps.pages',
     'pk.apps.stocks',
 )
 MIDDLEWARE = (

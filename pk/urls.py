@@ -18,7 +18,7 @@ api.register('keyval', budget_views.KeyValueViewSet)
 
 urlpatterns = [
     url(r'^api', include(api.urls)),
-    url(r'^login$', pk.utils.auth.user_login, name='auth_login'),
-    url(r'^logout$', pk.utils.auth.user_logout, name='auth_logout'),
+    # url(r'^login$', pk.utils.auth.user_login, name='auth_login'),
+    # url(r'^logout$', pk.utils.auth.user_logout, name='auth_logout'),
     url(r'', pk_views.index, name='index'),
 ]

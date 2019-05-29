@@ -14,6 +14,7 @@ yarn-error.log*
 **/dist/
 **/package-lock.json
 **/node_modules/
+**/.data/
 /.vscode
 /build
 /coverage
