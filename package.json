@@ -1,7 +1,5 @@
 {
-  "name": "pk",
-  "version": "1.0.0",
-  "private": true,
+  "name": "pushingkarma",
   "scripts": {
     "django": "~/.venvs/pk/bin/python pk/manage.py runserver",
     "serve": "cd vue && npm run serve",

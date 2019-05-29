@@ -11,7 +11,7 @@
 
 <!-- Script -->
 <script>
-import SideNav from './components/sidenav.vue'
+import SideNav from './components/SideNav.vue'
 
 export default {
   name: 'app',
