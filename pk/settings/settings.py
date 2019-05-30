@@ -38,6 +38,7 @@ INSTALLED_APPS = (
     'django_extensions',
     'corsheaders',
     'rest_framework',
+    'graphene_django',
     'redsocks',
     'pk',
     'pk.apps.budget',
