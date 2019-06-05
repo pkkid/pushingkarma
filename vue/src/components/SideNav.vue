@@ -10,7 +10,7 @@
       <li><a href='#projects'>Projects</a></li>
       <li><a href='#notes'>Notes</a></li>
     </ul></div>
-    <div class='socialwrap'><ul>
+    <div class='linkwrap'><ul>
       <li><a href='https://github.com/pkkid'><i class='mdi mdi-github-box'></i></a></li>
       <li><a href='https://www.linkedin.com/in/shepanski'><i class='mdi mdi-linkedin-box'></i></a></li>
       <li><a href='https://www.facebook.com/mshepanski'><i class='mdi mdi-facebook-box'></i></a></li>
@@ -107,7 +107,7 @@
       a:hover:before{ width:35px; }
     }
 
-    .socialwrap {
+    .linkwrap {
       bottom: 38px;
       box-sizing: border-box;
       float: left;
