@@ -26,22 +26,23 @@
 
 <style lang='scss'>
   @import url('https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/3.0.39/css/materialdesignicons.min.css');
-  
+  @import '@/assets/css/colors.scss';
+
   #sidenav {
-    background-color: #041230;
+    background-color: $dark-bg0;
     bottom: 0px;
+    color: $light-bgh;
     left: 0px;
     position: fixed;
     top: 0px;
     transition: all .3s ease;
     width: 300px;
     z-index: 100;
-    color: #fff;
 
     a, a:visited {
-      color: #fff;
+      color: $dark-fg0;
       transition: all .3s ease;
-      &:hover { color:#E3872D; }
+      &:hover { color: $dark-orange1; }
     }
 
     ul {
@@ -66,7 +67,7 @@
       font-size: 15px;
       letter-spacing: 4px;
       margin-bottom: 50px;
-      border-bottom: 1px solid rgba(255,255,255,.1);
+      border-bottom: 1px solid $dark-bg1;
       box-sizing: border-box;
       img { width: 130px; margin-bottom: 10px; }
     }
@@ -92,7 +93,7 @@
         text-transform: uppercase;
       }
       a:before {
-        background-color: #E3872D;
+        background-color: $dark-orange1;
         content: "";
         height: 2px;
         left: 100%;
@@ -118,6 +119,7 @@
       position: absolute;
       text-align: left;
       width: 100%;
+      color: $light-bgh;
 
       li {
         margin: 0px 15px 0px 0px;
