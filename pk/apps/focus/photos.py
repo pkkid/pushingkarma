@@ -49,10 +49,11 @@ class PhotosFromFlickr:
 class PhotosFrom500px:
     """ Get photos from 500px. """
     RPP = 100           # Results per page
-    HOME = 'https://500px.com'  # 500px homepage (to grab csrf-token)
+    HOME = 'https://500px.com/popular'  # 500px homepage (to grab csrf-token)
     FEED = 'https://api.500px.com/v1/photos?feature=user&stream=photos&user_id={userid}&include_states=true&image_size%5B%5D=1600&page={page}&rpp={rpp}'  # noqa
     USERIDS = [         # Vetted 500px userids
         14026643,       # Tobias Hägg (airpixels); 500 landscapes, no watermark
+        72777941,       # Simon W Xu; Landscapes
     ]
 
     def __init__(self):
@@ -124,4 +125,5 @@ def get_album(request, cls):
 
 if __name__ == '__main__':
     api = PhotosFrom500px()
-    api.get_photo()
+    photos = api.get_photos()
+    print(photos)
