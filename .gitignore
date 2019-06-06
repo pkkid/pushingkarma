@@ -14,3 +14,4 @@ pk/collectstatic/*
 pk/log/*
 pk/static/bower/*
 pk/static/dist/*
+vue/*
