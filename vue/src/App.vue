@@ -1,8 +1,8 @@
 <!-- Template -->
 <template>
   <div id="app">
-    <h1>Hello PushingKarma!</h1>
     <SideNav/>
+    <Content/>
     <!-- <Splash/>
     <AboutMe/>
     <Projects/> -->
@@ -12,11 +12,13 @@
 <!-- Script -->
 <script>
 import SideNav from './components/SideNav.vue'
+import Content from './components/Content.vue'
 
 export default {
   name: 'app',
   components: {
-    SideNav
+    SideNav,
+    Content,
   }
 }
 </script>
@@ -26,15 +28,17 @@ export default {
   @import url('https://fonts.googleapis.com/css?family=Montserrat:300,400,500&display=swap');
   @import '@/assets/css/colors.scss';
 
-  body {
+  body, html {
     background-color: #f8f8f8;
     color: $light-fg0;
+    padding: 0px;
+    margin: 0px;
   }
   #app {
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
     text-align: center;
     margin-left: 300px;
-    margin-top: 60px;
-    padding: 0px 20px;
+    margin-top: 0px;
+    padding: 0px;
   }
 </style>
