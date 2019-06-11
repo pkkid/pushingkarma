@@ -1,0 +1,37 @@
+// Encoding: UTF-8
+// Parallax images
+//
+// <div class='parallax-wrapper'>
+//   <div class='parallax-bg'>Hi Mom!</div>
+//   <div class='parallax-static'>Hi Dad!</div>
+// </div>
+//
+// #home::after { background-image:url('../assets/image.jpg'); }
+// .parallax-static { background:white; }
+
+.parallax-wrapper {
+  height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  perspective: 2px;
+
+  .parallax-bg,
+  .parallax-static {
+      position: relative;
+      height: 100vh;
+  }
+  .parallax-bg::after {
+      content: " ";
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: -3px;
+      transform: translateZ(-1px) scale(1.5);
+      background-size: cover;
+      background-position-x: 50%;
+      background-position-y: 50%;
+      z-index: -1;
+  }
+}
+  

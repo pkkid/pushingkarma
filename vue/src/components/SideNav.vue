@@ -83,7 +83,6 @@
       a {
         display: inline-block;
         font-family: Montserrat, Arial;
-        font-family: Montserrat, Arial;
         font-size: 16px;
         font-weight: 500;
         line-height: 29px;

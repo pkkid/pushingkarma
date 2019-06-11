@@ -1,9 +1,10 @@
 <template>
   <div id='content' class='parallax-wrapper'>
-    <div id='home' class='section parallax-bg bg1'>
-      Hi Mom!
+    <div id='home' class='parallax-bg'>
+      <div class='photowrap'><img src='../assets/photo.jpg'/></div>
+      <div class='name'>Michael <span>Shepanski</span></div>
     </div>
-    <div id='about' class='section parallax-static'>
+    <div id='about' class='parallax-static'>
       Hi Dad!
     </div>
   </div>
@@ -16,77 +17,49 @@
 </script>
 
 <style lang='scss'>
+  @import '@/assets/css/colors.scss';
+  @import '@/assets/css/parallax.scss';
+
   #content {
     margin: 0px;
     padding: 0px;
-  }
-
-  .parallax-wrapper {
-    height: 100vh;
-    overflow-x: hidden;
-    overflow-y: auto;
-    perspective: 2px;
-  }
-  .parallax-bg,
-  .parallax-static {
-    position: relative;
-    height: 100vh;
-    /* for text formatting. */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    text-shadow: 0 0 5px #000;
-  }
-  .parallax-bg::after {
-    content: " ";
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: -3px;
-    transform: translateZ(-1px) scale(1.5);
-    background-size: cover;
-    background-position-x: 50%;
-    background-position-y: 50%;
-    z-index: -1;
-  }
-  /* The styling for the static div. */
-  .parallax-static {
-    background: white;
+    color: $light-bgh;
   }
 
   #home::after {
     background-image: url('../assets/sichuan.jpg');
   }
+  #home {
+    align-items: center;
+    background-color: rgba(21,21,21,0.7);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    .photowrap {
+      width: 216px;
+      height: 216px;
+      display: inline-block;
+      margin-bottom: 38px;
+      img {
+        width: 200px;
+        border-radius: 100%;
+        border: 8px solid rgba(101,92,85,.7);
+      }
+    }
+    .name {
+      text-align: center;
+      font-family: "Montserrat";
+      text-transform: uppercase;
+      font-size: 50px;
+      font-weight: 300;
+      span {
+        color: $dark-orange1;
+      }
+    }
+  }
 
+  #about {
+    background-color: #eee;
+  }
 
-
-
-  // #home .bgimage {
-  //   position: absolute;
-  //   width: 100%;
-  //   top: 0px;
-  //   bottom: 0px;
-  //   background-image: url('../assets/sichuan.jpg');
-  //   background-size: 100%;
-  //   background-position-x: 50%;
-  //   background-position-y: 50%;
-  //   background-attachment: fixed;
-  //   margin-left: 300px;
-  //   left:-300px;
-  // }
-  // #home .overlay {
-  //   position: absolute;
-  //   width: 100%;
-  //   top: 0px;
-  //   bottom: 0px;
-  //   background-color: rgba(0,0,0,.5);
-  // }
-  // #home .hero {
-  //   height: 100vh;
-  // }
-  // #about {
-  //   height: 400px;
-  // }
 </style>
