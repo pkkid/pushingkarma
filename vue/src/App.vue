@@ -35,7 +35,7 @@ export default {
     margin: 0px;
   }
   #app {
-    font-family: 'Avenir', Helvetica, Arial, sans-serif;
+    font-family: 'Montserrat', Helvetica, Arial, sans-serif;
     text-align: center;
     margin-left: 300px;
     margin-top: 0px;
