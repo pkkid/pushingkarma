@@ -19,11 +19,11 @@
           passion is finding simple and elegant ways to display complex information.
         </p>
       </div>
-      <!-- Projects -->
       <div style='clear:both;'></div>
-      <div id='projects' class='parallax-static'>
-        <h3>Projects <span>Whats been keeping me busy</span></h3>
-      </div>
+    </div>
+    <!-- Projects -->
+    <div id='projects' class='parallax-static'>
+      <h3>Projects <span>Whats been keeping me busy</span></h3>
     </div>
   </div>
 </template>
@@ -39,26 +39,35 @@
   @import '@/assets/css/colors.scss';
   @import '@/assets/css/parallax.scss';
 
-  h3 {
-    font-size: 50px;
-    margin-top: 0px;
-    text-transform: uppercase;
-    font-weight: 600;
-    border-left: 6px solid $light-orange0;
-    padding-left: 25px;
-    span {
-      font-size: 16px;
-      text-transform: none;
-      display: block;
-      padding-bottom: 3px;
-      font-weight: 100;
-    }
-  }
-
   #content {
     margin: 0px;
     padding: 0px;
     color: $light-bgh;
+  }
+
+  .parallax-bg {
+    height: 100vh;
+  }
+  .parallax-static {
+    background-color: #eee;
+    color: $dark-bg0;
+    padding: 100px 40px;
+    text-align: left;
+    h3 {
+      font-size: 50px;
+      margin-top: 0px;
+      text-transform: uppercase;
+      font-weight: 600;
+      border-left: 6px solid $light-orange0;
+      padding-left: 25px;
+      span {
+        font-size: 16px;
+        text-transform: none;
+        display: block;
+        padding-bottom: 3px;
+        font-weight: 100;
+      }
+    }
   }
 
   #home::after {
@@ -104,10 +113,6 @@
   }
 
   #about {
-    background-color: #eee;
-    color: $dark-bg0;
-    padding: 100px 40px;
-    text-align: left;
     .photo {
       float: left;
       border: 10px solid $dark-bg0;
@@ -140,11 +145,6 @@
       p { line-height: 28px; }
     }
 
-    #projects {
-      background-color: #eee;
-      border-top: 1px solid rgba(0,0,0,0);
-      margin-top: 200px;
-    }
   }
 
 </style>
