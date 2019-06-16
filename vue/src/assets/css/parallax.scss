@@ -19,6 +19,15 @@
   .parallax-static {
       position: relative;
   }
+  .parallax-bg {
+    height: 100vh;
+  }
+  .parallax-static {
+    background-color: #eee;
+    color: $dark-bg0;
+    padding: 100px 40px;
+    text-align: left;
+  }
   .parallax-bg::after {
       content: " ";
       position: absolute;

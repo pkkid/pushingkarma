@@ -2,23 +2,20 @@
 <template>
   <div id="app">
     <SideNav/>
-    <Content/>
-    <!-- <Splash/>
-    <AboutMe/>
-    <Projects/> -->
+    <Home/>
   </div>
 </template>
 
 <!-- Script -->
 <script>
 import SideNav from './components/SideNav.vue'
-import Content from './components/Content.vue'
+import Home from './components/Home.vue'
 
 export default {
   name: 'app',
   components: {
     SideNav,
-    Content,
+    Home,
   }
 }
 </script>

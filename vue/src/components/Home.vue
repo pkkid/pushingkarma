@@ -6,31 +6,21 @@
       <div class='name'>Michael <span>Shepanski</span></div>
       <div class='arrow'><i class='mdi mdi-chevron-double-down'></i></div>
     </div>
-    <!-- About -->
-    <div id='about' class='parallax-static'>
-      <h3>About Me <span>My background and motivation</span></h3>
-      <div class='photo'><img src='../assets/family.jpg'/></div>
-      <div class='aboutme'>
-        <h4>I am Michael Shepanski and <span>Developer</span></h4>
-        <p>I've been developing software in the Boston area for over 14 years,
-          using Python since 2004 & Django since early 2009. Web development
-          used to be a hobby to me. As web applications started becoming more
-          complex and the demand so high, it turned into a full-time job. My
-          passion is finding simple and elegant ways to display complex information.
-        </p>
-      </div>
-      <div style='clear:both;'></div>
-    </div>
-    <!-- Projects -->
-    <div id='projects' class='parallax-static'>
-      <h3>Projects <span>Whats been keeping me busy</span></h3>
-    </div>
+    <About/>
+    <Projects/>
   </div>
 </template>
 
 <script>
+  import About from './HomeAbout.vue'
+  import Projects from './HomeProjects.vue'
+
   export default {
-    name: 'SideNav',
+    name: 'Home',
+    components: {
+      About,
+      Projects,
+    }
   }
 </script>
 
@@ -43,16 +33,6 @@
     margin: 0px;
     padding: 0px;
     color: $light-bgh;
-  }
-
-  .parallax-bg {
-    height: 100vh;
-  }
-  .parallax-static {
-    background-color: #eee;
-    color: $dark-bg0;
-    padding: 100px 40px;
-    text-align: left;
     h3 {
       font-size: 50px;
       margin-top: 0px;
@@ -70,9 +50,6 @@
     }
   }
 
-  #home::after {
-    background-image: url('../assets/sichuan.jpg');
-  }
   #home {
     align-items: center;
     background-color: rgba($dark-bgh, 0.7);
@@ -97,9 +74,7 @@
       font-size: 50px;
       font-weight: 300;
       margin-bottom: 100px;
-      span {
-        color: $dark-orange1;
-      }
+      span { color: $dark-orange1; }
     }
     .arrow {
       animation: bounce 2s infinite;
@@ -111,40 +86,7 @@
       z-index: 55;
     }
   }
-
-  #about {
-    .photo {
-      float: left;
-      border: 10px solid $dark-bg0;
-      box-sizing: border-box;
-      width: 400px;
-      height: 300px;
-      position: relative;
-      top: 20px;
-      left: 20px;
-      margin-top: 40px;
-      img {
-        width: 400px;
-        position: relative;
-        top: -30px;
-        left: -30px;
-      }
-    }
-    .aboutme {
-      margin-left: 500px;
-      margin-right: 50px;
-      h4 {
-        margin-bottom: 20px;
-        font-size: 24px;
-        font-weight: 500;
-        span {
-          color: $light-orange0;
-          font-weight: 500;
-        }
-      }
-      p { line-height: 28px; }
-    }
-
+  #home::after {
+    background-image: url('../assets/sichuan.jpg');
   }
-
 </style>
