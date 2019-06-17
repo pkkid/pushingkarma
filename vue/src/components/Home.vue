@@ -2,9 +2,9 @@
   <div id='content' class='parallax-wrapper'>
     <!-- Home -->
     <div id='home' class='parallax-bg'>
-      <div class='photo'><img src='../assets/photo.jpg'/></div>
+      <div class='photo'><img src='../assets/img/photo.jpg'/></div>
       <div class='name'>Michael <span>Shepanski</span></div>
-      <div class='arrow'><i class='mdi mdi-chevron-double-down'></i></div>
+      <div class='arrow'><a href='#about'><i class='mdi mdi-chevron-double-down'></i></a></div>
     </div>
     <About/>
     <Projects/>
@@ -56,6 +56,10 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    a, a:visited {
+      text-decoration: none;
+      color: $light-bgh;
+    }
     .photo {
       width: 216px;
       height: 216px;
@@ -87,6 +91,6 @@
     }
   }
   #home::after {
-    background-image: url('../assets/sichuan.jpg');
+    background-image: url('../assets/img/sichuan.jpg');
   }
 </style>

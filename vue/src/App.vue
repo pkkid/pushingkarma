@@ -28,8 +28,8 @@ export default {
   body, html {
     background-color: #f8f8f8;
     color: $light-fg0;
-    padding: 0px;
     margin: 0px;
+    padding: 0px;
   }
   #app {
     font-family: 'Montserrat', Helvetica, Arial, sans-serif;

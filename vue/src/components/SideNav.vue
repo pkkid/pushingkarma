@@ -1,13 +1,13 @@
 <template>
   <div id='sidenav'>
     <div id='logo'>
-      <img class='logo' src='../assets/pk.svg'/><br/>
+      <img class='logo' src='../assets/img/pk.svg'/><br/>
       PushingKarma
     </div>
     <div class='menuwrap'><ul>
-      <li><a href='#home'>Home</a></li>
-      <li><a href='#about'>About</a></li>
-      <li><a href='#projects'>Projects</a></li>
+      <li><a href='#home' v-smooth-scroll>Home</a></li>
+      <li><a href='#about' v-smooth-scroll>About</a></li>
+      <li><a href='#projects' v-smooth-scroll>Projects</a></li>
       <li><a href='#notes'>Notes</a></li>
     </ul></div>
     <div class='linkwrap'><ul>
@@ -17,12 +17,6 @@
     </ul></div>
   </div>
 </template>
-
-<script>
-  export default {
-    name: 'SideNav',
-  }
-</script>
 
 <style lang='scss'>
   @import url('https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/3.0.39/css/materialdesignicons.min.css');
