@@ -17,6 +17,11 @@
         <div class='title'>Django DBBackup</div>
         <p>Management commands to backup and restore project database to AmazonS3, Dropbox or Local Disk.</p>
       </a></li>
+      <li><a href='https://github.com/pkkid/link-manager'>
+        <i class='mdi mdi-link'></i>
+        <div class='title'>Link Manager</div>
+        <p>Collection of scripts to help easily sync specific configuration files across all your Linux computers.</p>
+      </a></li>
       <li><a href='https://github.com/pkkid/pkmeter-conky'>
         <i class='mdi mdi-speedometer'></i>
         <div class='title'>PKMeter-Conky</div>
