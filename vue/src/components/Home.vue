@@ -8,18 +8,21 @@
     </div>
     <About/>
     <Projects/>
+    <Footer/>
   </div>
 </template>
 
 <script>
   import About from './HomeAbout.vue'
   import Projects from './HomeProjects.vue'
+  import Footer from './Footer.vue'
 
   export default {
     name: 'Home',
     components: {
       About,
       Projects,
+      Footer,
     }
   }
 </script>
