@@ -1,7 +1,5 @@
 <template>
-  <div id='notes'>
-    Notes
-  </div>
+  <div id='notes'>Hello Notes</div>
 </template>
 
 <script>

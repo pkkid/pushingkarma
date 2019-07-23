@@ -1,7 +1,9 @@
 <template>
   <div id="app">
     <Navigation/>
-    <router-view></router-view>
+    <transition name='fade'>
+      <router-view></router-view>
+    </transition>
   </div>
 </template>
 
@@ -23,6 +25,7 @@ export default {
     color: $light-fg0;
     margin: 0px;
     padding: 0px;
+    overflow-y: hidden;
   }
   #app {
     font-family: 'Montserrat', Helvetica, Arial, sans-serif;
@@ -31,4 +34,7 @@ export default {
     margin-top: 0px;
     padding: 0px;
   }
+
+  .fade-enter-active, .fade-leave-active { transition: opacity .5s; }
+  .fade-enter, .fade-leave-to { opacity:0; }
 </style>
