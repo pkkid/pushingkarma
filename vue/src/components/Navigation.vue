@@ -1,14 +1,16 @@
 <template>
   <div id='sidenav'>
     <div id='logo'>
-      <img class='logo' src='../assets/img/pk.svg'/><br/>
-      PushingKarma
+      <a href='/'>
+        <img class='logo' src='../assets/img/pk.svg'/><br/>
+        PushingKarma
+      </a>
     </div>
     <div class='menuwrap'><ul>
-      <li><a href='#home' v-smooth-scroll>Home</a></li>
-      <li><a href='#about' v-smooth-scroll>About</a></li>
-      <li><a href='#projects' v-smooth-scroll>Projects</a></li>
-      <li><a href='#notes'>Notes</a></li>
+      <li><router-link to='/#home'>Home</router-link></li>
+      <li><router-link to='/#about'>About</router-link></li>
+      <li><router-link to='/#projects'>Projects</router-link></li>
+      <li><router-link to='/notes'>Notes</router-link></li>
     </ul></div>
     <div class='linkwrap'><ul>
       <li><a href='https://github.com/pkkid'><i class='mdi mdi-github-box'></i></a></li>
@@ -36,7 +38,13 @@
     a, a:visited {
       color: $dark-fg0;
       transition: all .3s ease;
+      cursor: pointer;
       &:hover { color: $dark-orange1; }
+    }
+
+    #logo a, #logo a:visited {
+      text-decoration: none;
+      color: $dark-fg0;
     }
 
     ul {
@@ -97,7 +105,7 @@
         transition: all .3s ease;
         width: 0px;
       }
-      a:hover:before{ width:35px; }
+      a:hover:before { width:35px; }
     }
 
     .linkwrap {

@@ -8,6 +8,7 @@
     "asi": true,
     "predef": [
         "console",
+        "document",
         "imports",
         "module",
         "process",

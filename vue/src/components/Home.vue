@@ -1,6 +1,5 @@
 <template>
-  <div id='content' class='parallax-wrapper'>
-    <!-- Home -->
+  <div id='homewrap' class='parallax-wrapper'>
     <div id='home' class='parallax-bg'>
       <div class='photo'><img src='../assets/img/photo.jpg'/></div>
       <div class='name'>Michael <span>Shepanski</span></div>
@@ -19,11 +18,7 @@
 
   export default {
     name: 'Home',
-    components: {
-      About,
-      Projects,
-      Footer,
-    }
+    components: {About, Projects, Footer}
   }
 </script>
 
@@ -32,7 +27,7 @@
   @import '@/assets/css/colors.scss';
   @import '@/assets/css/parallax.scss';
 
-  #content {
+  #homewrap {
     margin: 0px;
     padding: 0px;
     color: $light-bgh;

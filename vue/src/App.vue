@@ -1,26 +1,19 @@
-<!-- Template -->
 <template>
   <div id="app">
-    <SideNav/>
-    <Home/>
+    <Navigation/>
+    <router-view></router-view>
   </div>
 </template>
 
-<!-- Script -->
 <script>
-import SideNav from './components/SideNav.vue'
-import Home from './components/Home.vue'
+import Navigation from './components/Navigation.vue';
 
 export default {
-  name: 'app',
-  components: {
-    SideNav,
-    Home,
-  }
+  name: 'App',
+  components: {Navigation},
 }
 </script>
 
-<!-- Styles -->
 <style lang='scss'>
   @import url('https://fonts.googleapis.com/css?family=Montserrat:300,400,500&display=swap');
   @import '@/assets/css/colors.scss';
