@@ -1,6 +1,6 @@
 <template>
-  <div id='homewrap' class='parallax-wrapper'>
-    <div id='home' class='parallax-bg'>
+  <div id='home' class='parallax-wrapper'>
+    <div class='header parallax-bg'>
       <div class='photo'><img src='../assets/img/photo.jpg'/></div>
       <div class='name'>Michael <span>Shepanski</span></div>
       <div class='arrow'><a href='#about'><i class='mdi mdi-chevron-double-down'></i></a></div>
@@ -18,7 +18,10 @@
 
   export default {
     name: 'Home',
-    components: {About, Projects, Footer}
+    components: {About, Projects, Footer},
+    beforeCreate: function() {
+      document.getElementById('navigation').classList.remove('topnav');
+    }
   }
 </script>
 
@@ -27,7 +30,7 @@
   @import '@/assets/css/colors.scss';
   @import '@/assets/css/parallax.scss';
 
-  #homewrap {
+  #home {
     margin: 0px;
     padding: 0px;
     color: $light-bgh;
@@ -48,7 +51,7 @@
     }
   }
 
-  #home {
+  #home > .header {
     align-items: center;
     background-color: rgba($dark-bgh, 0.7);
     display: flex;
@@ -88,7 +91,7 @@
       z-index: 55;
     }
   }
-  #home::after {
+  #home > .header::after {
     background-image: url('../assets/img/sichuan.jpg');
   }
 </style>

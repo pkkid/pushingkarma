@@ -21,15 +21,14 @@ export default {
   @import '@/assets/css/colors.scss';
 
   body, html {
-    background-color: #f8f8f8;
-    color: $light-fg0;
+    background-color: $dark-bg0;
+    color: $light-bgh;
     margin: 0px;
     padding: 0px;
     overflow-y: hidden;
   }
   #app {
     font-family: 'Montserrat', Helvetica, Arial, sans-serif;
-    text-align: center;
     margin-left: 300px;
     margin-top: 0px;
     padding: 0px;
