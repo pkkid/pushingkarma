@@ -15,7 +15,7 @@
 </script>
 
 <style lang='scss'>
-  @import '@/assets/css/colors.scss';
+  @import '@/assets/css/layout.scss';
 
   #notes {
     padding-top: 60px;

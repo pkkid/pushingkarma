@@ -1,6 +1,5 @@
 // Encoding: UTF-8
 // Global color scheme
-
 $dark-bgh: #1d2021;
 $dark-bg0: #282828;
 $dark-bgs: #32302f;
@@ -56,3 +55,17 @@ $light-aqua0: #689d6a;
 $light-aqua1: #427b58;
 $light-orange0: #d65d0e;
 $light-orange1: #af3a03;
+
+// Global Layout
+body, html {
+  background-color: $dark-bg0;
+  box-sizing: border-box;
+  color: $light-bgh;
+  font-family: 'Montserrat', Helvetica, Arial, sans-serif;
+  margin: 0px;
+  overflow-y: hidden;
+  padding: 0px;
+}
+*, *:before, *:after {
+  box-sizing: inherit;
+}

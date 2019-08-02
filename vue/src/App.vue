@@ -18,17 +18,10 @@ export default {
 
 <style lang='scss'>
   @import url('https://fonts.googleapis.com/css?family=Montserrat:300,400,500&display=swap');
-  @import '@/assets/css/colors.scss';
+  @import url('https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css');
+  @import '@/assets/css/layout.scss';
 
-  body, html {
-    background-color: $dark-bg0;
-    color: $light-bgh;
-    margin: 0px;
-    padding: 0px;
-    overflow-y: hidden;
-  }
   #app {
-    font-family: 'Montserrat', Helvetica, Arial, sans-serif;
     margin-left: 300px;
     margin-top: 0px;
     padding: 0px;

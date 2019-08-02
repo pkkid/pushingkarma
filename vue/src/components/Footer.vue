@@ -5,7 +5,7 @@
 </template>
 
 <style lang='scss'>
-  @import '@/assets/css/colors.scss';
+  @import '@/assets/css/layout.scss';
 
   #footer {
     padding: 52px 40px;

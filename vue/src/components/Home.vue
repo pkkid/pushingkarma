@@ -26,8 +26,7 @@
 </script>
 
 <style lang='scss'>
-  @import '@/assets/css/animate.scss';
-  @import '@/assets/css/colors.scss';
+  @import '@/assets/css/layout.scss';
   @import '@/assets/css/parallax.scss';
 
   #home {

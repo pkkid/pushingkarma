@@ -16,7 +16,7 @@
 </template>
 
 <style lang='scss'>
-  @import '@/assets/css/colors.scss';
+  @import '@/assets/css/layout.scss';
 
   #about {
     .photo {
