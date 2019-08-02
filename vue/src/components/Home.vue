@@ -1,13 +1,16 @@
 <template>
-  <div id='home' class='parallax-wrapper'>
-    <div class='header parallax-bg'>
-      <div class='photo'><img src='../assets/img/photo.jpg'/></div>
-      <div class='name'>Michael <span>Shepanski</span></div>
-      <div class='arrow'><a href='#about'><i class='mdi mdi-chevron-double-down'></i></a></div>
+  <div id='home' >
+    <Navigation/>
+    <div class='content parallax-wrapper'>
+      <div class='header parallax-bg'>
+        <div class='photo'><img src='../assets/img/photo.jpg'/></div>
+        <div class='name'>Michael <span>Shepanski</span></div>
+        <div class='arrow'><a href='#about'><i class='mdi mdi-chevron-double-down'></i></a></div>
+      </div>
+      <About/>
+      <Projects/>
+      <Footer/>
     </div>
-    <About/>
-    <Projects/>
-    <Footer/>
   </div>
 </template>
 
@@ -15,12 +18,13 @@
   import About from './HomeAbout.vue'
   import Projects from './HomeProjects.vue'
   import Footer from './Footer.vue'
+  import Navigation from './Navigation.vue';
 
   export default {
     name: 'Home',
-    components: {About, Projects, Footer},
+    components: {About, Projects, Footer, Navigation},
     beforeCreate: function() {
-      document.getElementById('navigation').classList.remove('topnav');
+      document.getElementById('logo').classList.remove('topnav');
     }
   }
 </script>
@@ -29,8 +33,8 @@
   @import '@/assets/css/layout.scss';
   @import '@/assets/css/parallax.scss';
 
-  #home {
-    margin: 0px;
+  #home .content {
+    margin-left: 300px;
     padding: 0px;
     color: $light-bgh;
     h3 {
@@ -50,7 +54,7 @@
     }
   }
 
-  #home > .header {
+  #home .content > .header {
     align-items: center;
     background-color: rgba($dark-bgh, 0.7);
     display: flex;
@@ -90,7 +94,12 @@
       z-index: 55;
     }
   }
-  #home > .header::after {
+  #home .content > .header::after {
     background-image: url('../assets/img/sichuan.jpg');
+  }
+  @keyframes bounce {	
+    0%, 20%, 50%, 80%, 100% { transform: translateY(0); }	
+    40% { transform: translateY(-15px); }	
+    60% { transform: translateY(-8px); }	
   }
 </style>

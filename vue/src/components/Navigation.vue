@@ -1,11 +1,5 @@
 <template>
-  <div id='navigation'>
-    <div class='logo'>
-      <router-link to='/#home'>
-        <img src='../assets/img/pk.svg'/><br/>
-        <span class='title'>PushingKarma</span>
-      </router-link>
-    </div>
+  <div id='navigation' :class='cls'>
     <div class='menu'><ul>
       <li><router-link to='/#home'>Home</router-link></li>
       <li><router-link to='/#about'>About</router-link></li>
@@ -19,6 +13,13 @@
     </ul></div>
   </div>
 </template>
+
+<script>
+export default {
+  name: 'Navigation',
+  props: ['cls'],
+}
+</script>
 
 <style lang='scss'>
   @import url('https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/3.0.39/css/materialdesignicons.min.css');
@@ -34,6 +35,7 @@
     top: 0px;
     width: 300px;
     z-index: 100;
+    padding-top: 220px;
     
     a, a:visited {
       color: $dark-fg0;
@@ -48,29 +50,6 @@
       li { margin: 0px; }
     }
 
-    .logo {
-      font-family: arial;
-      font-size: 15px;
-      font-weight: bold;
-      height: 220px;
-      letter-spacing: 4px;
-      position: relative;
-      text-transform: uppercase;
-      transition: all $duration ease;
-      width: 100%;
-      img {
-        height: 85px;
-        left: 80px;
-        top: 50px;
-        transition: all $duration ease;
-      }
-      .title {
-        left: 65px;
-        top: 150px;
-        transition: all $duration ease;
-      }
-      a, a:visited { color: $dark-fg0; }
-    }
     .menu {
       border-top: 1px solid $dark-bg1;
       padding: 50px 20px 0px 60px;
@@ -117,11 +96,23 @@
   }
 
   #navigation.topnav {
-    .logo {
-      padding: 10px 20px;
-      height: 60px;
-      img { height:40px; top:10px; left:20px; }
-      .title { top:20px; left:100px; }
+    background-color: $dark-bg0;
+    height: 60px;
+    width: 100%;
+    padding: 0px 0px 0px 300px;
+    .menu {
+      padding: 0px;
+      line-height: 60px;
+      li {
+        float: left;
+        margin-right: 80px;
+      }
+    }
+    .links {
+      left: 1000px;
+      right: 50px;
+      top: 10px;
+      width: 200px;
     }
   }
 </style>
