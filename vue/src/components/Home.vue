@@ -18,13 +18,13 @@
   import About from './HomeAbout.vue'
   import Projects from './HomeProjects.vue'
   import Footer from './Footer.vue'
-  import Navigation from './Navigation.vue';
+  import Navigation from './Navigation.vue'
 
   export default {
     name: 'Home',
     components: {About, Projects, Footer, Navigation},
     beforeCreate: function() {
-      document.getElementById('logo').classList.remove('topnav');
+      document.getElementById('logo').classList.remove('topnav')
     }
   }
 </script>

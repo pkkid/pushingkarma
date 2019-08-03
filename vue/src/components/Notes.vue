@@ -22,13 +22,13 @@
 </template>
 
 <script>
-  import Navigation from './Navigation.vue';
+  import Navigation from './Navigation.vue'
 
   export default {
     name: 'Notes',
     components: {Navigation},
     beforeCreate: function() {
-      document.getElementById('logo').classList.add('topnav');
+      document.getElementById('logo').classList.add('topnav')
     }
   }
 </script>

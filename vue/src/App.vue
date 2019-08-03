@@ -1,5 +1,5 @@
 <template>
-  <div id='app'>
+  <div id='app' :class='layout'>
     <div id='logo'>
       <router-link to='/#home'>
         <img src='./assets/img/pk.svg'/><br/>
@@ -13,9 +13,13 @@
 </template>
 
 <script>
+import { sync } from 'vuex-pathify'
 
 export default {
   name: 'App',
+  computed: {
+   ...sync('*'),
+  },
 }
 </script>
 
@@ -28,7 +32,6 @@ export default {
   #app {
     margin-top: 0px;
     padding: 0px;
-    //position: relative;
   }
 
   #logo {
