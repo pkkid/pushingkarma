@@ -32,13 +32,18 @@ export default {
   #app {
     margin-top: 0px;
     padding: 0px;
+    overflow-y: hidden;
   }
 
   $animate_duration: .5s;
   #logo {
+    border-bottom: 1px solid $dark-bg1;
+    height: 220px;
     left: 0px;
-    position: absolute;
+    position: fixed;
     top: 0px;
+    width: 300px;
+    z-index: 999;
     img {
       height: 85px;
       left: 80px;
@@ -62,6 +67,7 @@ export default {
 
   .topnav #logo {
     padding: 10px 20px;
+    height: 61px;
     img { height: 40px; top: 10px; left: 20px; }
     .title { top: 20px; left: 100px; }
   }

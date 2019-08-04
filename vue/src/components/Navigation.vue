@@ -35,6 +35,7 @@ export default {
     width: 300px;
     z-index: 100;
     padding-top: 220px;
+    background-color: $dark-bg0;
     
     a, a:visited {
       color: $dark-fg0;
@@ -50,7 +51,6 @@ export default {
     }
 
     .menu {
-      border-top: 1px solid $dark-bg1;
       padding: 50px 20px 0px 60px;
       width: 100%;
       a {
@@ -97,7 +97,7 @@ export default {
   #navigation.topnav {
     height: 60px;
     width: 100%;
-    padding: 0px 0px 0px 320px;
+    padding: 0px 20px 0px 320px;
     .menu {
       padding: 0px;
       line-height: 60px;
@@ -107,9 +107,10 @@ export default {
       }
     }
     .links {
-      left: 1000px;
-      right: 50px;
-      top: 10px;
+      left: auto;
+      line-height: 60px;
+      right: 0px;
+      top: 0px;
       width: 200px;
     }
   }

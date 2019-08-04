@@ -36,19 +36,16 @@
   @import '@/assets/css/layout.scss';
 
   #notes .sidebar {
-    position: absolute;
+    position: fixed;
     top: 60px;
     left: 0;
   }
   #notes .note {
     background-color: #eee;
-    border: 1px solid #444;
     box-sizing: border-box;
     color: $dark-bg0;
     margin-left: 300px;
     min-height: 100vh;
     margin-top: 60px;
-    overflow-y: scroll;
-    height: 1vh;
   }
 </style>
