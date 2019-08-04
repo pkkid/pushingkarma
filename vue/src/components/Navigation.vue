@@ -27,7 +27,6 @@ export default {
   $duration: .4s;
 
   #navigation {
-    background-color: $dark-bg0;
     color: $light-bgh;
     height: 100vh;
     left: 0px;
@@ -96,10 +95,9 @@ export default {
   }
 
   #navigation.topnav {
-    background-color: $dark-bg0;
     height: 60px;
     width: 100%;
-    padding: 0px 0px 0px 300px;
+    padding: 0px 0px 0px 320px;
     .menu {
       padding: 0px;
       line-height: 60px;

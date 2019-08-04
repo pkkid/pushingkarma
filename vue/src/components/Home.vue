@@ -1,5 +1,5 @@
 <template>
-  <div id='home' >
+  <div id='home'>
     <Navigation/>
     <div class='content parallax-wrapper'>
       <div class='header parallax-bg'>
@@ -24,7 +24,7 @@
     name: 'Home',
     components: {About, Projects, Footer, Navigation},
     beforeCreate: function() {
-      document.getElementById('logo').classList.remove('topnav')
+      this.$store.set('layout', 'sidenav')
     }
   }
 </script>

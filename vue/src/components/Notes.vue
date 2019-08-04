@@ -16,7 +16,6 @@
       Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>
       Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>
       Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>
-
     </div>
   </div>
 </template>
@@ -28,7 +27,7 @@
     name: 'Notes',
     components: {Navigation},
     beforeCreate: function() {
-      document.getElementById('logo').classList.add('topnav')
+      this.$store.set('layout', 'topnav')
     }
   }
 </script>
@@ -36,7 +35,12 @@
 <style lang='scss'>
   @import '@/assets/css/layout.scss';
 
-  #notes {
+  #notes .sidebar {
+    position: absolute;
+    top: 60px;
+    left: 0;
+  }
+  #notes .note {
     background-color: #eee;
     border: 1px solid #444;
     box-sizing: border-box;
@@ -44,6 +48,7 @@
     margin-left: 300px;
     min-height: 100vh;
     margin-top: 60px;
-    overflow-y: auto;
+    overflow-y: scroll;
+    height: 1vh;
   }
 </style>
