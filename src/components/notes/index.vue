@@ -25,8 +25,8 @@
 </template>
 
 <script>
-  import Navigation from './Navigation.vue'
-  import router from '../router'
+  import Navigation from '@/components/navigation'
+  import Router from '@/router'
 
   export default {
     name: 'Notes',
@@ -42,7 +42,7 @@
     },
     methods: {
       updateSearch: function() {
-        router.push({path:'/notes', query:{search:this.search}})
+        Router.push({path:'/notes', query:{search:this.search}})
       },
     }
   }

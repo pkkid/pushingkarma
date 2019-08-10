@@ -19,7 +19,6 @@ const fixScroll = {
   },
 }
 
-
 new Vue({
   mixins: [fixScroll],
   render: h => h(App),

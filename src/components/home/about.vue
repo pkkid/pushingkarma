@@ -1,7 +1,7 @@
 <template>
   <div id='about' class='parallax-static'>
     <h3>About Me <span>My background and motivation</span></h3>
-    <div class='photo'><img src='../assets/img/family.jpg'/></div>
+    <div class='photo'><img src='@/assets/img/family.jpg'/></div>
     <div class='aboutme'>
       <h4>I am Michael Shepanski and <span>Developer</span></h4>
       <p>I've been developing software in the Boston area for over 14 years,

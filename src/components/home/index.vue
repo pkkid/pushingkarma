@@ -3,7 +3,7 @@
     <Navigation/>
     <div class='content parallax-wrapper'>
       <div class='header parallax-bg'>
-        <div class='photo'><img src='../assets/img/photo.jpg'/></div>
+        <div class='photo'><img src='@/assets/img/photo.jpg'/></div>
         <div class='name'>Michael <span>Shepanski</span></div>
         <div class='arrow'><a href='#about'><i class='mdi mdi-chevron-double-down'></i></a></div>
       </div>
@@ -15,10 +15,10 @@
 </template>
 
 <script>
-  import About from './HomeAbout.vue'
-  import Projects from './HomeProjects.vue'
-  import Footer from './Footer.vue'
-  import Navigation from './Navigation.vue'
+  import About from '@/components/home/about'
+  import Projects from '@/components/home/projects'
+  import Footer from '@/components/footer'
+  import Navigation from '@/components/navigation'
 
   export default {
     name: 'Home',
@@ -95,9 +95,9 @@
     }
   }
   #home .content > .header::after {
-    background-image: url('../assets/img/sichuan.jpg');
+    background-image: url('../../assets/img/sichuan.jpg');
   }
-  @keyframes bounce {	
+  @keyframes bounce {
     0%, 20%, 50%, 80%, 100% { transform: translateY(0); }	
     40% { transform: translateY(-15px); }	
     60% { transform: translateY(-8px); }	
