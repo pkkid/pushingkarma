@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "django": "~/.venvs/pk/bin/python pk/manage.py runserver",
+    "django": "~/.virtualenvs/pk/bin/python pk/manage.py runserver",
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint"
