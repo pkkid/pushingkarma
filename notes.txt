@@ -1,0 +1,26 @@
+
+// --- NOTE ---
+query {
+  note(id:29) {
+    id title slug
+  }
+}
+
+// --- NOTES ---
+query {
+  notes(page:2) {
+    page numPages hasNext hasPrev
+    objects {
+      id slug title tags
+    }
+  }
+}
+
+// --- NOTES2 ---
+query {
+  notes2(first:2) {
+    id title slug tags
+  }
+}
+
+
