@@ -12,16 +12,19 @@
     "@vue/cli-service": "^3.7.0",
     "autoprefixer": "^9.5.1",
     "babel-eslint": "^10.0.1",
-    "eslint-plugin-vue": "^5.0.0",
     "eslint": "^5.16.0",
+    "eslint-plugin-vue": "^5.0.0",
     "node-sass": "^4.12.0",
+    "npm-run-all": "^4.1.5",
     "sass-loader": "^7.1.0",
     "vue-template-compiler": "^2.5.21"
   },
   "scripts": {
-    "django": "~/.virtualenvs/pk/bin/python pk/manage.py runserver",
-    "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "buildwatch": "vue-cli-service build",
+    "devel": "npm-run-all -p buildwatch django",
+    "django": "~/.virtualenvs/pk/bin/python pk/manage.py runserver",
+    "lint": "vue-cli-service lint",
+    "serve": "vue-cli-service serve"
   }
 }

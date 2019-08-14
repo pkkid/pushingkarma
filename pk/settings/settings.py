@@ -18,7 +18,7 @@ ROOT_URLCONF = 'pk.urls'
 LOGIN_URL = 'index'
 STATIC_URL = '/static/'
 STATIC_ROOT = join(BASE_DIR, 'pk/collectstatic/')
-STATICFILES_DIRS = [join(BASE_DIR, 'vue/dist/')]
+STATICFILES_DIRS = [join(BASE_DIR, 'dist/')]
 INTERNAL_IPS = ['127.0.0.1']
 
 LANGUAGE_CODE = 'en-us'
@@ -58,10 +58,7 @@ MIDDLEWARE = (
 )
 TEMPLATES = [{
     'BACKEND': 'django.template.backends.django.DjangoTemplates',
-    'DIRS': [
-        join(BASE_DIR, 'pk/templates'),
-        join(BASE_DIR, 'vue/dist'),
-    ],
+    'DIRS': [join(BASE_DIR, 'dist')],
     'APP_DIRS': True,
     'OPTIONS': {'context_processors': [
         'django.template.context_processors.debug',
