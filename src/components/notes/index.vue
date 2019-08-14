@@ -26,7 +26,7 @@
 
 <script>
   import Navigation from '@/components/navigation'
-  import Router from '@/router'
+  import router from '@/router'
 
   export default {
     name: 'Notes',
@@ -42,7 +42,7 @@
     },
     methods: {
       updateSearch: function() {
-        Router.push({path:'/notes', query:{search:this.search}})
+        router.push({path:'/notes', query:{search:this.search}})
       },
     }
   }

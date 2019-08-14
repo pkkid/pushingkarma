@@ -13,12 +13,12 @@
 </template>
 
 <script>
-import { sync } from 'vuex-pathify'
+import {sync} from 'vuex-pathify'
 
 export default {
   name: 'App',
   computed: {
-   ...sync('*'),
+    ...sync('*'),
   },
 }
 </script>
