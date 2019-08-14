@@ -1,7 +1,7 @@
 <template>
   <div id='navigation' :class='cls'>
     <div class='menu'><ul>
-      <li><router-link to='/#home'>Home</router-link></li>
+      <li><router-link to='/#splash'>Home</router-link></li>
       <li><router-link to='/#about'>About</router-link></li>
       <li><router-link to='/#projects'>Projects</router-link></li>
       <li><router-link to='/notes'>Notes</router-link></li>

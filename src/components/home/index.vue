@@ -2,7 +2,7 @@
   <div id='home'>
     <Navigation/>
     <div class='content parallax-wrapper'>
-      <div class='header parallax-bg'>
+      <div id='splash' class='header parallax-bg'>
         <div class='photo'><img src='@/assets/img/photo.jpg'/></div>
         <div class='name'>Michael <span>Shepanski</span></div>
         <div class='arrow'><a href='#about'><i class='mdi mdi-chevron-double-down'></i></a></div>

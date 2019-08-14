@@ -1,7 +1,7 @@
 <template>
   <div id='app' :class='layout'>
     <div id='logo'>
-      <router-link to='/#home'>
+      <router-link to='/#splash'>
         <img src='./assets/img/pk.svg'/><br/>
         <span class='title'>PushingKarma</span>
       </router-link>

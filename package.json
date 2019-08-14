@@ -20,11 +20,11 @@
     "vue-template-compiler": "^2.5.21"
   },
   "scripts": {
-    "build": "vue-cli-service build",
-    "buildwatch": "vue-cli-service build",
-    "devel": "npm-run-all -p buildwatch django",
-    "django": "~/.virtualenvs/pk/bin/python pk/manage.py runserver",
-    "lint": "vue-cli-service lint",
-    "serve": "vue-cli-service serve"
+    "devel": "npm-run-all -p vue-watch django-serve",
+    "django-serve": "~/.virtualenvs/pk/bin/python pk/manage.py runserver",
+    "vue-build": "vue-cli-service build",
+    "vue-lint": "vue-cli-service lint",
+    "vue-serve": "vue-cli-service serve",
+    "vue-watch": "vue-cli-service build --watch"
   }
 }
