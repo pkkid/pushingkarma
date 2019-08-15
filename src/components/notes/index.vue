@@ -2,9 +2,7 @@
   <div id='notes'>
     <Navigation :cls="'topnav'"/>
     <div class='sidebar'>
-      <span id='search-icon' class='mdi mdi-magnify'></span>
-      <input id='search' type='text' v-model='search' v-on:input='updateSearch'
-        autofocus='true' spellcheck='false' autocomplete='off'>
+      <Search/>
     </div>
     <div class='note'>
       Top Hello Notes<br/><br/><br/><br/><br/><br/><br/><br/>
@@ -24,52 +22,14 @@
 
 <script>
   import Navigation from '@/components/navigation'
-  import router from '@/router'
-  import axios from 'axios'
+  import Search from '@/components/notes/search'
 
   export default {
     name: 'Notes',
-    components: { Navigation },
-    data: function() { return {
-      search: '',
-      notes: {},
-      xhrcancel: null,
-    }},
-
+    components: { Navigation, Search },
     beforeCreate: function() {
       this.$store.set('layout', 'topnav')
     },
-
-    created: function() {
-      this.search = this.$route.query.search
-    },
-
-    methods: {
-
-      // Update search results when typing
-      updateSearch: function() {
-        let self = this
-        this.cancelSearch()
-        this.xhrcancel = axios.CancelToken.source()
-        axios.post('/graphql?', {
-          query: `query { note(id:29) { id title slug }}`,
-          variables: null
-        },{
-          cancelToken: this.xhrcancel.token
-        }).then(function(response) {
-          console.log(response)
-          router.push({path:'/notes', query:{search:self.search}})
-        }).catch(function(error) {
-          console.log(error)
-        })
-      },
-
-      // Cancel search
-      cancelSearch: function() {
-        if (this.xhrcancel) { this.xhrcancel.cancel()}
-      },
-
-    }
   }
 </script>
 
@@ -80,32 +40,6 @@
     position: fixed;
     top: 60px;
     left: 0;
-
-    // Search Input
-    #search {
-      background-color: $dark-bgh;
-      border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-      border-width: 0px;
-      color: $light-yellow0;
-      font-size: 20px;
-      height: 40px;
-      line-height: 40px;
-      padding: 0px 10px 0px 40px;
-      position: relative;
-      width: 300px;
-      &:focus {
-        border-width: 0px;
-        outline: none;
-      }
-    }
-    #search-icon {
-      font-size: 20px;
-      left: 10px;
-      line-height: 40px;
-      position: absolute;
-      top: 0px;
-      z-index: 1;
-    }
   }
 
   // Note Layout
