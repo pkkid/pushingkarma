@@ -7,19 +7,17 @@
         autofocus='true' spellcheck='false' autocomplete='off'>
     </div>
     <div class='note'>
-      Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>
-      Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>
-      Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>
-      Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>
-      Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>
-      Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>
-      Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>
-      Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>
-      Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>
-      Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>
-      Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>
-      Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>
-      Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>Hello Notes<br/>
+      Top Hello Notes<br/><br/><br/><br/><br/><br/><br/><br/>
+      Hello Notes<br/><br/><br/><br/><br/><br/><br/><br/>
+      Hello Notes<br/><br/><br/><br/><br/><br/><br/><br/>
+      Hello Notes<br/><br/><br/><br/><br/><br/><br/><br/>
+      Hello Notes<br/><br/><br/><br/><br/><br/><br/><br/>
+      Hello Notes<br/><br/><br/><br/><br/><br/><br/><br/>
+      Hello Notes<br/><br/><br/><br/><br/><br/><br/><br/>
+      Hello Notes<br/><br/><br/><br/><br/><br/><br/><br/>
+      Hello Notes<br/><br/><br/><br/><br/><br/><br/><br/>
+      Hello Notes<br/><br/><br/><br/><br/><br/><br/><br/>
+      Hello Notes<br/><br/><br/><br/><br/><br/><br/><br/>
     </div>
   </div>
 </template>
@@ -27,23 +25,50 @@
 <script>
   import Navigation from '@/components/navigation'
   import router from '@/router'
+  import axios from 'axios'
 
   export default {
     name: 'Notes',
     components: { Navigation },
-    data() { return {
+    data: function() { return {
       search: '',
+      notes: {},
+      xhrcancel: null,
     }},
+
     beforeCreate: function() {
       this.$store.set('layout', 'topnav')
     },
+
     created: function() {
       this.search = this.$route.query.search
     },
+
     methods: {
+
+      // Update search results when typing
       updateSearch: function() {
-        router.push({path:'/notes', query:{search:this.search}})
+        let self = this
+        this.cancelSearch()
+        this.xhrcancel = axios.CancelToken.source()
+        axios.post('/graphql?', {
+          query: `query { note(id:29) { id title slug }}`,
+          variables: null
+        },{
+          cancelToken: this.xhrcancel.token
+        }).then(function(response) {
+          console.log(response)
+          router.push({path:'/notes', query:{search:self.search}})
+        }).catch(function(error) {
+          console.log(error)
+        })
       },
+
+      // Cancel search
+      cancelSearch: function() {
+        if (this.xhrcancel) { this.xhrcancel.cancel()}
+      },
+
     }
   }
 </script>
