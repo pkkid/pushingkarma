@@ -28,7 +28,7 @@
     name: 'Notes',
     components: { Navigation, Search },
     beforeCreate: function() {
-      this.$store.set('layout', 'topnav')
+      this.$store.set('site/layout', 'topnav')
     },
   }
 </script>

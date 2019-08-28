@@ -17,12 +17,11 @@
       cancelxhr: null,
     }},
     computed: {
-      search: sync('notes_search'),
-      list: sync('notes_list'),
+      ...sync('notes/*'),
     },
 
     created: function() {
-      this.$store.set('notes_search', this.$route.query.search)
+      this.$store.set('notes/search', this.$route.query.search)
     },
 
     methods: {
@@ -38,6 +37,7 @@
         }).then(function(response) {
           console.log(response)
           router.push({path:'/notes', query:{search:self.search}})
+          self.list = response.data   // Not generic
         }).catch(function(error) {
           console.log(error)
         })

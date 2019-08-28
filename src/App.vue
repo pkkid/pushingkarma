@@ -18,7 +18,7 @@ import {sync} from 'vuex-pathify'
 export default {
   name: 'App',
   computed: {
-    layout: sync('layout'),
+    layout: sync('site/layout'),
   },
 }
 </script>
