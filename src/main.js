@@ -2,7 +2,7 @@ import Vue from 'vue'
 import axios from 'axios'
 import store from './store'
 import router from './router'
-import {fixScroll} from './plugins'
+import {fixScroll} from './utils/plugins'
 import App from './App.vue'
 import Cookie from "js-cookie"
 

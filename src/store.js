@@ -3,25 +3,26 @@ import Vuex from 'vuex'
 import notes from './components/notes/store'
 import pathify from 'vuex-pathify'
 import {make} from 'vuex-pathify'
-import {forEach} from 'lodash'
 Vue.use(Vuex)
 
-const site = {
-  layout: 'navtop',
-}
-
-var modules = {}
-forEach({site, notes}, function(store, name) {
-  modules[name] = {
+var makeModule = function(store) {
+  return {
     namespaced: true,
     state: store,
     getters: make.getters(store),
     actions: make.actions(store),
     mutations: make.mutations(store),
   }
-})
+}
+
+const site = {
+  layout: 'navtop',
+}
 
 export default new Vuex.Store({
   plugins: [pathify.plugin],
-  modules: modules,
+  modules: {
+    site: makeModule(site),
+    notes: makeModule(notes),
+  },
 })
