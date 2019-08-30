@@ -10,6 +10,7 @@
   import router from '@/router'
   import axios from 'axios'
   import {sync} from 'vuex-pathify'
+  import {strfmt} from '@/pk/utils'
 
   var QUERY_NOTES = `query {
     notes(search:"kick", page:1) {
@@ -20,7 +21,7 @@
   export default {
     name: 'Search',
     data: function() { return {
-      cancel: null,
+      ctoken: null,
     }},
     computed: {
       ...sync('notes/*'),
@@ -33,24 +34,26 @@
     methods: {
       updateSearch: function() {
         let self = this
-        this.cancelSearch()
-        this.cancel = axios.CancelToken.source()
-        axios.post('/graphql',
-          {query: QUERY_NOTES},
-          {cancelToken: this.cancel.token}
+        this.abortxhr()
+        this.ctoken = axios.CancelToken.source()
+        let xhr = axios.post('/graphql?', {
+            query: QUERY_NOTES,
+            variables: null
+          },
+          {cancelToken: this.ctoken.token},
         )
-        .then(function(response) {
+        xhr.then(function(response) {
           console.log(response)
           router.push({path:'/notes', query:{search:self.search}})
-          self.list = response.data   // Not generic
+          self.list = response.data
         })
-        .catch(function(error) {
+        xhr.catch(function(error) {
           console.log(error)
         })
       },
 
-      cancelSearch: function() {
-        if (this.cancel) { this.cancel.cancel('Starting new search..') }
+      abortxhr: function() {
+        if (this.ctoken) { this.ctoken.cancel('Aborting search..') }
       },
     }
   }
