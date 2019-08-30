@@ -11,10 +11,16 @@
   import axios from 'axios'
   import {sync} from 'vuex-pathify'
 
+  var QUERY_NOTES = `query {
+    notes(search:"kick", page:1) {
+      page numPages hasNext hasPrev
+      objects { id slug title tags }
+    }}`
+
   export default {
     name: 'Search',
     data: function() { return {
-      cancelxhr: null,
+      cancel: null,
     }},
     computed: {
       ...sync('notes/*'),
@@ -28,23 +34,23 @@
       updateSearch: function() {
         let self = this
         this.cancelSearch()
-        this.cancelxhr = axios.CancelToken.source()
-        axios.post('/graphql?', {
-          query: `query { note(id:29) { id title slug }}`,
-          variables: null
-        },{
-          cancelToken: this.cancelxhr.token
-        }).then(function(response) {
+        this.cancel = axios.CancelToken.source()
+        axios.post('/graphql',
+          {query: QUERY_NOTES},
+          {cancelToken: this.cancel.token}
+        )
+        .then(function(response) {
           console.log(response)
           router.push({path:'/notes', query:{search:self.search}})
           self.list = response.data   // Not generic
-        }).catch(function(error) {
+        })
+        .catch(function(error) {
           console.log(error)
         })
       },
 
       cancelSearch: function() {
-        if (this.cancelxhr) { this.cancelxhr.cancel('Starting new search..') }
+        if (this.cancel) { this.cancel.cancel('Starting new search..') }
       },
     }
   }
