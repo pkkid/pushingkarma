@@ -1,5 +1,4 @@
 import axios from 'axios';
-const CancelToken = axios.CancelToken;
 
 /**
  * String Format - Format the specified template with the key/value object mapping.
@@ -25,7 +24,7 @@ export function query(query, vars) {
     query: sfmt(query, vars),
     variables: null
   },{
-    cancelToken: new CancelToken(function executor(c) { cancel = c; })
+    cancelToken: new axios.CancelToken(function executor(c) { cancel = c; })
   });
   return {xhr, cancel};
 }

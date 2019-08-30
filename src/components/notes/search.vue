@@ -32,7 +32,7 @@
         this.request = query(QUERY_NOTES, {search:self.search, page:1});
         this.request.xhr.then(function(response) {
           router.push({path:'/notes', query:{search:self.search}});
-          self.list = response.data;
+          self.notes = response.data.data.notes;
         });
       },
 
