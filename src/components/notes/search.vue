@@ -7,56 +7,37 @@
 </template>
 
 <script>
-  import router from '@/router'
-  import axios from 'axios'
-  import {sync} from 'vuex-pathify'
-  import {strfmt} from '@/pk/utils'
+  import router from '@/router';
+  import {sync} from 'vuex-pathify';
+  import {query} from '@/pk/utils';
 
   var QUERY_NOTES = `query {
-    notes(search:"kick", page:1) {
+    notes(search:"{search}", page:{page}) {
       page numPages hasNext hasPrev
       objects { id slug title tags }
-    }}`
+    }}`;
 
   export default {
     name: 'Search',
-    data: function() { return {
-      ctoken: null,
-    }},
-    computed: {
-      ...sync('notes/*'),
-    },
-
-    created: function() {
-      this.$store.set('notes/search', this.$route.query.search)
-    },
-
+    data: function() { return { request: null }; },
+    computed: { ...sync('notes/*') },
+    created: function() { this.$store.set('notes/search', this.$route.query.search); },
     methods: {
+      
+      /** Update Search - Update the list of notes to display */
       updateSearch: function() {
-        let self = this
-        this.abortxhr()
-        this.ctoken = axios.CancelToken.source()
-        let xhr = axios.post('/graphql?', {
-            query: QUERY_NOTES,
-            variables: null
-          },
-          {cancelToken: this.ctoken.token},
-        )
-        xhr.then(function(response) {
-          console.log(response)
-          router.push({path:'/notes', query:{search:self.search}})
-          self.list = response.data
-        })
-        xhr.catch(function(error) {
-          console.log(error)
-        })
+        let self = this;
+        if (self.search.length < 3) { return; }
+        if (this.request) { this.request.cancel(); }
+        this.request = query(QUERY_NOTES, {search:self.search, page:1});
+        this.request.xhr.then(function(response) {
+          router.push({path:'/notes', query:{search:self.search}});
+          self.list = response.data;
+        });
       },
 
-      abortxhr: function() {
-        if (this.ctoken) { this.ctoken.cancel('Aborting search..') }
-      },
     }
-  }
+  };
 </script>
 
 <style lang='scss'>

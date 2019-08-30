@@ -1,9 +1,9 @@
-import Vue from 'vue'
-import Vuex from 'vuex'
-import notes from './components/notes/store'
-import pathify from 'vuex-pathify'
-import {make} from 'vuex-pathify'
-Vue.use(Vuex)
+import Vue from 'vue';
+import Vuex from 'vuex';
+import notes from './components/notes/store';
+import pathify from 'vuex-pathify';
+import {make} from 'vuex-pathify';
+Vue.use(Vuex);
 
 var makeModule = function(store) {
   return {
@@ -12,12 +12,12 @@ var makeModule = function(store) {
     getters: make.getters(store),
     actions: make.actions(store),
     mutations: make.mutations(store),
-  }
-}
+  };
+};
 
 const site = {
   layout: 'navtop',
-}
+};
 
 export default new Vuex.Store({
   plugins: [pathify.plugin],
@@ -25,4 +25,4 @@ export default new Vuex.Store({
     site: makeModule(site),
     notes: makeModule(notes),
   },
-})
+});

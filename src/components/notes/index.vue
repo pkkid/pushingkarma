@@ -21,16 +21,16 @@
 </template>
 
 <script>
-  import Navigation from '@/components/navigation'
-  import Search from '@/components/notes/search'
+  import Navigation from '@/components/navigation';
+  import Search from '@/components/notes/search';
 
   export default {
     name: 'Notes',
     components: { Navigation, Search },
     beforeCreate: function() {
-      this.$store.set('site/layout', 'topnav')
+      this.$store.set('site/layout', 'topnav');
     },
-  }
+  };
 </script>
 
 <style lang='scss'>

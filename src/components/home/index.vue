@@ -15,18 +15,18 @@
 </template>
 
 <script>
-  import About from '@/components/home/about'
-  import Projects from '@/components/home/projects'
-  import Footer from '@/components/footer'
-  import Navigation from '@/components/navigation'
+  import About from '@/components/home/about';
+  import Projects from '@/components/home/projects';
+  import Footer from '@/components/footer';
+  import Navigation from '@/components/navigation';
 
   export default {
     name: 'Home',
     components: {About, Projects, Footer, Navigation},
     beforeCreate: function() {
-      this.$store.set('site/layout', 'sidenav')
+      this.$store.set('site/layout', 'sidenav');
     }
-  }
+  };
 </script>
 
 <style lang='scss'>
