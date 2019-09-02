@@ -5,6 +5,7 @@ import router from './router';
 import {fixScroll} from './pk/plugins';
 import App from './App.vue';
 import Cookie from "js-cookie";
+import './pk/filters';
 
 Vue.config.productionTip = false;
 axios.defaults.headers.common['X-CSRFToken'] = Cookie.get('csrftoken');

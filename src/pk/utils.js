@@ -28,3 +28,11 @@ export function query(query, vars) {
   });
   return {xhr, cancel};
 }
+
+/**
+ * minmax - Make sure the specified value is within min and max (inclusive).
+ */
+export function minmax(value, min, max) {
+  value = Math.max(value, min);
+  return Math.min(value, max);
+}

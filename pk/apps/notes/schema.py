@@ -37,4 +37,4 @@ class NoteQuery(ObjectType):
         if search:
             searchcls = Search(notes, NOTESEARCHFIELDS, search)
             notes = searchcls.queryset()
-        return paginator(notes, 10, page, NotePageType)
+        return paginator(notes, 30, page, NotePageType)

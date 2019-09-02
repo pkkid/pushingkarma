@@ -15,10 +15,10 @@
 </template>
 
 <script>
-export default {
-  name: 'Navigation',
-  props: ['cls'],
-};
+  export default {
+    name: 'Navigation',
+    props: ['cls'],
+  };
 </script>
 
 <style lang='scss'>

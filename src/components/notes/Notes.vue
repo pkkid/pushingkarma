@@ -1,9 +1,7 @@
 <template>
   <div id='notes'>
     <Navigation :cls="'topnav'"/>
-    <div class='sidebar'>
-      <Search/>
-    </div>
+    <div class='sidebar'><Search/></div>
     <div class='note'>
       Top Hello Notes<br/><br/><br/><br/><br/><br/><br/><br/>
       Hello Notes<br/><br/><br/><br/><br/><br/><br/><br/>
@@ -21,8 +19,8 @@
 </template>
 
 <script>
-  import Navigation from '@/components/navigation';
-  import Search from '@/components/notes/search';
+  import Navigation from '../Navigation';
+  import Search from './NotesSearch';
 
   export default {
     name: 'Notes',
@@ -37,9 +35,10 @@
   @import '@/assets/css/layout.scss';
 
   #notes .sidebar {
-    position: fixed;
-    top: 60px;
-    left: 0;
+    float: left;
+    width: 300px;
+    height: calc(100vh - 60px);
+    overflow: hidden;
   }
 
   // Note Layout
