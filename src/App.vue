@@ -24,8 +24,9 @@ export default {
 </script>
 
 <style lang='scss'>
-  @import url('https://fonts.googleapis.com/css?family=Montserrat:300,400,500&display=swap');
+  @import url('https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/4.2.95/css/materialdesignicons.min.css');
   @import url('https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css');
+  @import url('https://fonts.googleapis.com/css?family=Montserrat:300,400,500&display=swap');
   @import '@/assets/css/layout.scss';
   $animate_duration: 0.5s;
 

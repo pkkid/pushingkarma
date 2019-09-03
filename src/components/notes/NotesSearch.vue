@@ -13,7 +13,9 @@
     <div id='search-results'>
       <div class='scrollwrap'>
       <div class='scrollbox'>
-        <div class='result' v-for='(note, i) in notes.objects' v-bind:key='note.id' v-bind:class='{selected:i == selected}'>
+        <div class='result' v-for='(note, i) in notes.objects' v-bind:key='note.id'
+          v-bind:class='{selected:i == selected}'
+          v-on:click='updateNote($event, i)'>
           {{note.title}}
           <div class='subtext'>
             {{note.tags}} <span v-if='note.tags'>-</span>
@@ -59,7 +61,7 @@
     created: function() {
       /** Init function when this component is created. */
       this.search = trim(this.search || this.$route.query.search || '');
-      this.updateSearch(this.updateNote);
+      this.updateSearch(null, this.updateNote);
     },
 
     methods: {
@@ -71,19 +73,23 @@
       },
 
       /** Update Note - Update the selected note. */
-      updateNote: function(callback) {
+      updateNote: function(event, idx, callback) {
         let self = this;
-        let noteid = this.notes.objects[this.selected].id;
+        idx = idx || this.selected;
+        this.selected = idx;
+        let noteid = this.notes.objects[idx].id;
+        this.$refs.search.focus();
         if (this.request_note) { this.request_note.cancel(); }
         this.request_note = query(QUERY_NOTE, {id:noteid});
         this.request_note.xhr.then(function(response) {
           self.note = response.data.data.note;
+          self.editor.setContent(self.note.title + self.note.body);
           if (callback) { callback(); }
         });
       },
 
       /** Update Search - Update the list of notes to display. */
-      updateSearch: function(callback) {
+      updateSearch: function(event, callback) {
         let self = this;
         if (this.request_search) { this.request_search.cancel(); }
         this.request_search = query(QUERY_NOTES, {search:self.search, page:1});
@@ -157,16 +163,17 @@
     }
 
     .result {
-      color: $light-bgh;
-      cursor: pointer;
-      padding: 10px 15px 10px 12px;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      white-space: nowrap;
-      width: 294px;
+      border-bottom-right-radius: 8px;
       border-left: 3px solid transparent;
       border-top-right-radius: 8px;
-      border-bottom-right-radius: 8px;
+      color: $light-bgh;
+      cursor: pointer;
+      font-size: 14px;
+      overflow: hidden;
+      padding: 10px 15px 10px 12px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      width: 294px;
       &.selected,
       &:hover {
         border-left: 3px solid $dark-orange1;

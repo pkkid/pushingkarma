@@ -2,5 +2,6 @@
 export default {
   search: '',
   notes: {},
-  note: null,
+  note: {body: ''},
+  editor: null,
 };

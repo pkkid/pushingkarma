@@ -22,7 +22,6 @@
 </script>
 
 <style lang='scss'>
-  @import url('https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/3.0.39/css/materialdesignicons.min.css');
   @import '@/assets/css/layout.scss';
   $duration: .4s;
 

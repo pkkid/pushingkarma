@@ -12,10 +12,11 @@
   @import '@/assets/css/layout.scss';
 
   #footer {
-    padding: 52px 40px;
-    color: $dark-fg0;
     background-color: $dark-bg0;
-    text-align: left;
+    color: $dark-fg0;
     font-size: 13px;
+    height: 150px;
+    line-height: 150px;
+    text-align: left;
   }
 </style>
