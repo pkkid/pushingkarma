@@ -10,14 +10,27 @@
       <li><a href='https://github.com/pkkid'><i class='mdi mdi-github-box'></i></a></li>
       <li><a href='https://www.linkedin.com/in/shepanski'><i class='mdi mdi-linkedin-box'></i></a></li>
       <li><a href='https://www.facebook.com/mshepanski'><i class='mdi mdi-facebook-box'></i></a></li>
+      <li><a href='javascript:void(0);' @click='displayAccountModal=true'><i class='mdi mdi-account-circle'></i></a></li>
     </ul></div>
+    <Modal v-if='displayAccountModal' @close='displayAccountModal=false'>
+      Hi Mom!
+    </Modal>
   </div>
 </template>
 
 <script>
+  import Modal from '@/components/utils/modal';
+
   export default {
     name: 'Navigation',
+    components: {Modal},
     props: ['cls'],
+
+    data: function() {
+      return {
+        displayAccountModal: false,
+      };
+    }
   };
 </script>
 
@@ -32,7 +45,7 @@
     position: fixed;
     top: 0px;
     width: 300px;
-    z-index: 100;
+    z-index: 99;
     padding-top: 220px;
     background-color: $dark-bg0;
     
@@ -110,7 +123,7 @@
       line-height: 60px;
       right: 0px;
       top: 0px;
-      width: 200px;
+      width: 230px;
     }
   }
 </style>
