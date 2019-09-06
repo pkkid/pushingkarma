@@ -84,7 +84,7 @@
     margin-left: 300px;
     margin-top: 60px;
     .note {
-      width: 800px;
+      width: 900px;
       margin: 20px auto;
       min-height: calc(100vh - 70px);
     }
