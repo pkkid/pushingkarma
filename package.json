@@ -5,6 +5,7 @@
     "js-cookie": "^2.2.1",
     "lodash": "^4.17.15",
     "moment": "^2.24.0",
+    "portal-vue": "^2.1.6",
     "tiptap": "^1.25.0",
     "tiptap-extensions": "^1.27.0",
     "vue": "^2.6.10",
@@ -26,7 +27,7 @@
     "vue-template-compiler": "^2.5.21"
   },
   "scripts": {
-    "development": "npm-run-all -p vue-watch django-serve google-chrome",
+    "development": "npm-run-all -p vue-watch django-serve django-chrome",
     "django-chrome": "sleep 3 && google-chrome http://localhost:8000",
     "django-serve": "~/.virtualenvs/pk/bin/python pk/manage.py runserver",
     "vue-build": "vue-cli-service build",

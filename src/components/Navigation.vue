@@ -45,7 +45,7 @@
     position: fixed;
     top: 0px;
     width: 300px;
-    z-index: 99;
+    z-index: 97;
     padding-top: 220px;
     background-color: $dark-bg0;
     

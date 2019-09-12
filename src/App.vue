@@ -9,6 +9,8 @@
     <transition name='fade'>
       <router-view></router-view>
     </transition>
+    <portal-target name='modal-container'>
+    </portal-target>
   </div>
 </template>
 
@@ -44,7 +46,7 @@ export default {
     position: fixed;
     top: 0px;
     width: 300px;
-    z-index: 999;
+    z-index: 98;
     img {
       height: 85px;
       left: 80px;
