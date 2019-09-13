@@ -56,7 +56,7 @@
 
   #home .content > .header {
     align-items: center;
-    background-color: rgba($dark-bgh, 0.7);
+    background-color: rgba($dark-bgh, 0.5);
     display: flex;
     flex-direction: column;
     justify-content: center;

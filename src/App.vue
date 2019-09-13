@@ -1,14 +1,16 @@
 <template>
   <div id='app' :class='layout'>
-    <div id='logo'>
-      <router-link to='/#splash'>
-        <img src='./assets/img/pk.svg'/><br/>
-        <span class='title'>PushingKarma</span>
-      </router-link>
+    <div id='content' :class={blur}>
+      <div id='logo'>
+        <router-link to='/#splash'>
+          <img src='./assets/img/pk.svg'/><br/>
+          <span class='title'>PushingKarma</span>
+        </router-link>
+      </div>
+      <transition name='fade'>
+        <router-view></router-view>
+      </transition>
     </div>
-    <transition name='fade'>
-      <router-view></router-view>
-    </transition>
     <portal-target name='modal-container'>
     </portal-target>
   </div>
@@ -20,7 +22,7 @@ import {sync} from 'vuex-pathify';
 export default {
   name: 'App',
   computed: {
-    layout: sync('site/layout'),
+    ...sync('site/*'),
   },
 };
 </script>
@@ -66,6 +68,11 @@ export default {
       transition: all $animate_duration cubic-bezier(.47,1.64,.41,.8);
     }
     a, a:visited { color: $dark-fg0; }
+  }
+
+  #content {
+    transition: filter .3s ease;
+    &.blur { filter: blur(2px); }
   }
 
   .topnav #logo {

@@ -10,27 +10,23 @@
       <li><a href='https://github.com/pkkid'><i class='mdi mdi-github-box'></i></a></li>
       <li><a href='https://www.linkedin.com/in/shepanski'><i class='mdi mdi-linkedin-box'></i></a></li>
       <li><a href='https://www.facebook.com/mshepanski'><i class='mdi mdi-facebook-box'></i></a></li>
-      <li><a href='javascript:void(0);' @click='displayAccountModal=true'><i class='mdi mdi-account-circle'></i></a></li>
+      <li><a href='javascript:void(0);' @click='$refs.login.display=true; blur=true'><i class='mdi mdi-account-circle'></i></a></li>
     </ul></div>
-    <Modal v-if='displayAccountModal' @close='displayAccountModal=false'>
-      Hi Mom!
-    </Modal>
+    <Login ref='login'/>
   </div>
 </template>
 
 <script>
-  import Modal from '@/components/utils/modal';
+  import Login from '@/components/Login';
+  import {sync} from 'vuex-pathify';
 
   export default {
     name: 'Navigation',
-    components: {Modal},
+    components: {Login},
     props: ['cls'],
-
-    data: function() {
-      return {
-        displayAccountModal: false,
-      };
-    }
+    computed: {
+      blur: sync('site/blur'),
+    },
   };
 </script>
 

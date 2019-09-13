@@ -17,6 +17,7 @@ var makeModule = function(store) {
 
 const site = {
   layout: 'navtop',
+  blur: false,
 };
 
 export default new Vuex.Store({

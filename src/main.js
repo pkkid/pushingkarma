@@ -11,7 +11,6 @@ import './pk/filters';
 Vue.use(PortalVue);
 Vue.config.productionTip = false;
 axios.defaults.headers.common['X-CSRFToken'] = Cookie.get('csrftoken');
-console.log('csrftoken: '+ Cookie.get('csrftoken'));
 
 new Vue({
   mixins: [fixScroll],

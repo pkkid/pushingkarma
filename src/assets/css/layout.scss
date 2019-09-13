@@ -71,3 +71,7 @@ body, html {
 :focus {
   outline: none !important;
 }
+a, a:hover {
+  color: $dark-bgh;
+  text-decoration: none;
+}
