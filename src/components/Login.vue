@@ -1,16 +1,18 @@
 <template>
-  <Modal v-if='display' @close='display=false; blur=false' :width='"800px"' :padding='"0px"' :bgClose=true :escClose=true>
+  <Modal v-if='display' @close='display=false' :width='"800px"' :padding='"0px"' :bgClose=true :escClose=true>
     <div slot='body'>
       <div id='login'>
         <div class='bgimg'></div>
         <div class='loginform'>
           <h3>Login to PushingKarma <span>Amazing things await you</span></h3>
           <img class='google' src='@/assets/img/google_signin.png'/>
-          <label for='username'>Username</label>
-          <input type='text' id='username' name='username' spellcheck='false' autocomplete='off' autofocus='true'/>
-          <label for='password'>Password</label>
-          <input type='password' id='password' name='password'/>
-          <button type='submit'>Login</button>
+          <form>
+            <label for='username'>Username</label>
+            <input type='text' id='username' name='username' spellcheck='false' autocomplete='off' autofocus='true'/>
+            <label for='password'>Password</label>
+            <input type='password' id='password' name='password' autocomplete='off'/>
+            <button type='submit'>Login</button>
+          </form>
           <div class='footnote'>
             © 2019 PushingKarma. All Rights Reserved.<br/>
             Sunrise graphic by <a href='https://dribbble.com/shots/3200530-Sunrise-wallpaper'>Louis Coyle</a>.
@@ -22,20 +24,14 @@
 </template>
 
 <script>
-  import Modal from '@/components/utils/modal';
-  import {sync} from 'vuex-pathify';
+  import Modal from '@/components/utils/Modal';
 
   export default {
     name: 'Navigation',
     components: {Modal},
-    data: function() {
-      return {
-        display: false
-      };
-    },
-    computed: {
-      blur: sync('site/blur'),
-    }
+    data: () => ({
+      display: false
+    }),
   };
 </script>
 

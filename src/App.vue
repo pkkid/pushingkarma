@@ -1,6 +1,6 @@
 <template>
   <div id='app' :class='layout'>
-    <div id='content' :class={blur}>
+    <div id='content'>
       <div id='logo'>
         <router-link to='/#splash'>
           <img src='./assets/img/pk.svg'/><br/>
@@ -71,8 +71,14 @@ export default {
   }
 
   #content {
+    // Border and margin fix chrome blur rendering
+    // when a modal window is open.
+    border-top: 1px solid $dark-bg0;
+    margin-top: -1px;
     transition: filter .3s ease;
-    &.blur { filter: blur(2px); }
+  }
+  body.modalOpen #content {
+    filter: blur(2px);
   }
 
   .topnav #logo {

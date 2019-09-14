@@ -30,10 +30,9 @@
 </template>
 
 <script>
-  import router from '@/router';
   import {sync} from 'vuex-pathify';
   import {minmax, query} from '@/pk/utils';
-  import {trim} from 'lodash';
+  import {trim, isEqual} from 'lodash';
 
   var QUERY_NOTES = `query {
     notes(search:"{search}", page:{page}) {
@@ -50,13 +49,11 @@
     name: 'Search',
     computed: { ...sync('notes/*') },
     
-    data: function() {
-      return {
-        request_search: null,
-        request_note: null,
-        selected: 0,
-      };
-    },
+    data: () => ({
+      request_search: null,
+      request_note: null,
+      selected: 0,
+    }),
 
     created: function() {
       /** Init function when this component is created. */
@@ -69,7 +66,9 @@
       updateHistory: function() {
         let query = {};
         if (this.search.length >= 1) { query.search = this.search; }
-        router.push({path:'/notes', query:query});
+        if (!isEqual(query, this.$router.history.current.query)) {
+          this.$router.push({query});
+        }
       },
 
       /** Update Note - Update the selected note. */
@@ -97,7 +96,7 @@
           self.updateHistory();
           self.notes = response.data.data.notes;
           self.selected = 0;
-          if (callback) { callback(); }
+          if ((self.notes.length) && (callback)) { callback(); }
         });
       },
 

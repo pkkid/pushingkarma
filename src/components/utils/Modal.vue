@@ -33,11 +33,13 @@
 
     /** Start listening to keyup events. */
     mounted: function() {
+      document.body.classList.add('modalOpen');
       if (this.escClose) { document.addEventListener('keyup', this.keyClose); }
     },
 
     /** Stop listening to keyup events. */
     beforeDestroy: function() {
+      document.body.classList.remove('modalOpen');
       if (this.escClose) { document.removeEventListener('keyup', this.keyClose); }
     },
   };
