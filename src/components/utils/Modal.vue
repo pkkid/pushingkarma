@@ -6,7 +6,7 @@
         <div class='modal-wrapper'>
           <div class='modal-container' :style='{width,height,padding}'>
             <div class='modal-body'><slot name='body'>Default Body</slot></div>
-            <div class='modal-close' @click='$emit("close")'>×</div>
+            <div class='modal-close' v-if='xClose' @click='$emit("close")'>×</div>
           </div>
         </div>
       </div>
@@ -23,6 +23,7 @@
       padding: {default: '20px 30px'},
       bgClose: {default: false},
       escClose: {default: false},
+      xClose: {default: true},
     },
     methods: {
       /** Check to close the model when pressing esc. **/

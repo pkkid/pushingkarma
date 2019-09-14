@@ -1,5 +1,5 @@
 <template>
-  <Modal v-if='display' @close='display=false' :width='"800px"' :padding='"0px"' :bgClose=true :escClose=true>
+  <Modal v-if='display' @close='display=false' :width='"800px"' :padding='"0px"' :escClose=true>
     <div slot='body'>
       <div id='login'>
         <div class='bgimg'></div>
