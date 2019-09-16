@@ -1,8 +1,12 @@
 # encoding: utf-8
 import graphene
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
+from django.db.models import Q
+from pk import log, utils
 from pk.apps.notes.schema import NoteQuery
 from graphene_django.types import DjangoObjectType, ObjectType
+from graphql.error import GraphQLError
 
 
 class UserType(DjangoObjectType):
@@ -14,6 +18,7 @@ class UserType(DjangoObjectType):
 class UserQuery(ObjectType):
     user = graphene.Field(UserType, id=graphene.Int())
     users = graphene.List(UserType)
+    login = graphene.Field(UserType, email=graphene.String(), password=graphene.String())
 
     def resolve_user(self, info, **kwargs):
         userid = kwargs.get('id')
@@ -23,6 +28,30 @@ class UserQuery(ObjectType):
 
     def resolve_users(self, info, **kwargs):
         return User.objects.all()
+    
+    def resolve_login(self, info, email=None, password=None, code=None, **kwargs):
+        user = _auth_django(info.context, email, password)
+        if user and user.is_active:
+            return user
+        raise GraphQLError('Unknown username of password.')
+        # try:
+        #     code = request.POST.get('code')
+        #     user = auth_google(request) if code else auth_django(request)
+        #     if user and user.is_active:
+        #         serializer = AccountSerializer(user, context={'request':request})
+        #         return Response(serializer.data)
+        # except Exception as err:
+        #     log.error(err, exc_info=1)
+        # return Response(status=status.HTTP_403_FORBIDDEN)
+
+
+def _auth_django(request, email, password):
+    test = utils.get_object_or_none(User, Q(email=email) | Q(username=email))
+    user = authenticate(username=test.username, password=password)
+    if user and user.is_active:
+        login(request, user)
+        log.info('Logged in via Django as %s', user.email)
+        return user
 
 
 class Query(UserQuery, NoteQuery, ObjectType):
