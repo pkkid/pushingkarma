@@ -34,7 +34,7 @@ class UserQuery(ObjectType):
 
     def resolve_current_user(self, info):
         if info.context.user.is_active:
-            return info.content.user
+            return info.context.user
         return None
     
     def resolve_login(self, info, email=None, password=None, code=None, **kwargs):

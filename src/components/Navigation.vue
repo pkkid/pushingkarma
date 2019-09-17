@@ -18,15 +18,17 @@
 
 <script>
   import Login from '@/components/Login';
+  import {sync} from 'vuex-pathify';
 
   export default {
     name: 'Navigation',
     components: {Login},
     props: ['cls'],
+    computed: {
+      user: sync('global/user'),
+    },
     mounted: function() {
-      this.$refs.login.updateCurrentUser(function(user) {
-        console.log(user);
-      });
+      this.$refs.login.updateCurrentUser();
     },
   };
 </script>

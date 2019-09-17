@@ -1,4 +1,5 @@
 import axios from 'axios';
+import Cookie from "js-cookie";
 
 /**
  * String Format - Format the specified template with the key/value object mapping.
@@ -22,9 +23,9 @@ export function query(query, vars) {
   let cancel;
   let xhr = axios.post('/graphql', {
     query: sfmt(query, vars),
-    withCredentials: true,
   },{
-    cancelToken: new axios.CancelToken(function executor(c) { cancel = c; })
+    cancelToken: new axios.CancelToken(function executor(c) { cancel = c; }),
+    headers: {'X-CSRFToken': Cookie.get('csrftoken')},
   });
   return {xhr, cancel};
 }
