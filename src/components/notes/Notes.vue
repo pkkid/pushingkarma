@@ -46,8 +46,9 @@
     computed: { ...sync('notes/*') },
 
     mounted: function() {
-      // https://github.com/scrumpy/tiptap
-      // https://tiptap.scrumpy.io/docs
+      // Tiptap Documentation References:
+      // * https://github.com/scrumpy/tiptap
+      // * https://tiptap.scrumpy.io/docs
       this.$store.set('global/layout', 'topnav');
       this.editor = new Editor({
         extensions: [new Blockquote(), new BulletList(), new CodeBlock(), new HardBreak(),

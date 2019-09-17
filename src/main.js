@@ -2,9 +2,9 @@ import Vue from 'vue';
 import store from './store';
 import router from './router';
 import PortalVue from 'portal-vue';
-import {fixScroll} from './pk/plugins';
+import {fixScroll} from './utils/plugins';
 import App from './App.vue';
-import './pk/filters';
+import './utils/filters';
 
 Vue.use(PortalVue);
 Vue.config.productionTip = false;

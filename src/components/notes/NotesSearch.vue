@@ -31,7 +31,7 @@
 
 <script>
   import {sync} from 'vuex-pathify';
-  import {minmax, query} from '@/pk/utils';
+  import {minmax, query} from '@/utils/utils';
   import {trim, isEqual} from 'lodash';
 
   var QUERY_NOTES = `query {

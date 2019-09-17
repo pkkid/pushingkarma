@@ -25,7 +25,7 @@
 
 <script>
   import Modal from '@/components/utils/Modal';
-  import {query} from '@/pk/utils';
+  import {query} from '@/utils/utils';
   import {sync} from 'vuex-pathify';
 
   var QUERY_CURRENT_USER = `query {
