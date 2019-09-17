@@ -23,6 +23,11 @@
     name: 'Navigation',
     components: {Login},
     props: ['cls'],
+    mounted: function() {
+      this.$refs.login.updateCurrentUser(function(user) {
+        console.log(user);
+      });
+    },
   };
 </script>
 

@@ -48,7 +48,7 @@
     mounted: function() {
       // https://github.com/scrumpy/tiptap
       // https://tiptap.scrumpy.io/docs
-      this.$store.set('site/layout', 'topnav');
+      this.$store.set('global/layout', 'topnav');
       this.editor = new Editor({
         extensions: [new Blockquote(), new BulletList(), new CodeBlock(), new HardBreak(),
           new Heading({levels: [1, 2, 3]}), new ListItem(), new OrderedList(), new TodoItem(),

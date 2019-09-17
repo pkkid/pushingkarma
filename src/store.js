@@ -15,14 +15,15 @@ var makeModule = function(store) {
   };
 };
 
-const site = {
+const global = {
   layout: 'navtop',
+  user: {},
 };
 
 export default new Vuex.Store({
   plugins: [pathify.plugin],
   modules: {
-    site: makeModule(site),
+    global: makeModule(global),
     notes: makeModule(notes),
   },
 });

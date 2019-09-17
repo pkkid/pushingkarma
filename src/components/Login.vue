@@ -6,11 +6,11 @@
         <div class='loginform'>
           <h3>Login to PushingKarma <span>Amazing things await you</span></h3>
           <img class='google' src='@/assets/img/google_signin.png'/>
-          <form>
-            <label for='username'>Username</label>
-            <input type='text' id='username' name='username' spellcheck='false' autocomplete='off' autofocus='true'/>
+          <form @submit.prevent="login">
+            <label for='email'>Email Address</label>
+            <input type='text' id='email' name='email' v-model='email' spellcheck='false' autocomplete='off' autofocus='true'/>
             <label for='password'>Password</label>
-            <input type='password' id='password' name='password' autocomplete='off'/>
+            <input type='password' id='password' name='password' v-model='password' autocomplete='off'/>
             <button type='submit'>Login</button>
           </form>
           <div class='footnote'>
@@ -25,13 +25,60 @@
 
 <script>
   import Modal from '@/components/utils/Modal';
+  import {query} from '@/pk/utils';
+  import {sync} from 'vuex-pathify';
+
+  var QUERY_CURRENT_USER = `query {
+      currentUser { id email }
+    }`;
+  var QUERY_LOGIN = `query {
+    login(email:"{email}", password:"{password}") {
+      id email
+    }}`;
 
   export default {
     name: 'Navigation',
     components: {Modal},
     data: () => ({
-      display: false
+      display: false,
+      email: '',
+      password: '',
     }),
+    computed: {
+      user: sync('global/user'),
+    },
+    methods: {
+      // Update Current User - Update global/user user in vuex store
+      updateCurrentUser: function(callback) {
+        let self = this;
+        let request = query(QUERY_CURRENT_USER);
+        request.xhr.then(function(response) {
+          let user = response.data.data.currentUser;
+          self.user = user;
+          console.log(self.user);
+          if (callback) { callback(user); }
+        });
+      },
+
+      // Login - Login using username/password to Google auth
+      login: function() {
+        console.log('Login!');
+        console.log(this.email);
+        let self = this;
+        let data = {email:this.email, password:this.password};
+        let request = query(QUERY_LOGIN, data);
+        request.xhr.then(function(response) {
+          self.user = response.data.data.login;
+          console.log(self.user);
+        });
+      },
+
+      // Logout - Logout of the site
+      logout: function() {
+
+      },
+    }
+
   };
 </script>
 

@@ -22,7 +22,7 @@ export function query(query, vars) {
   let cancel;
   let xhr = axios.post('/graphql', {
     query: sfmt(query, vars),
-    variables: null
+    withCredentials: true,
   },{
     cancelToken: new axios.CancelToken(function executor(c) { cancel = c; })
   });

@@ -24,7 +24,7 @@
     name: 'Home',
     components: {About, Projects, Footer, Navigation},
     beforeCreate: function() {
-      this.$store.set('site/layout', 'sidenav');
+      this.$store.set('global/layout', 'sidenav');
     }
   };
 </script>

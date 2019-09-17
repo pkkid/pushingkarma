@@ -17,14 +17,14 @@
 </template>
 
 <script>
-import {sync} from 'vuex-pathify';
-
-export default {
-  name: 'App',
-  computed: {
-    ...sync('site/*'),
-  },
-};
+  import {sync} from 'vuex-pathify';
+  
+  export default {
+    name: 'App',
+    computed: {
+      layout: sync('global/layout'),
+    },
+  };
 </script>
 
 <style lang='scss'>
