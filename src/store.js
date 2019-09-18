@@ -17,7 +17,7 @@ var makeModule = function(store) {
 
 const global = {
   layout: 'navtop',
-  user: {},
+  user: '',
 };
 
 export default new Vuex.Store({

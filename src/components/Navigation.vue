@@ -10,7 +10,10 @@
       <li><a href='https://github.com/pkkid'><i class='mdi mdi-github-box'></i></a></li>
       <li><a href='https://www.linkedin.com/in/shepanski'><i class='mdi mdi-linkedin-box'></i></a></li>
       <li><a href='https://www.facebook.com/mshepanski'><i class='mdi mdi-facebook-box'></i></a></li>
-      <li><a href='javascript:void(0);' @click='$refs.login.display=true'><i class='mdi mdi-account-circle'></i></a></li>
+      <li><a href='javascript:void(0);' @click='$refs.login.display=true'>
+        <i v-if='user' class='avatar'></i>
+        <i v-if='!user' class='mdi mdi-account-circle'></i>
+      </a></li>
     </ul></div>
     <Login ref='login'/>
   </div>

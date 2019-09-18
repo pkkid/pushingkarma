@@ -49,27 +49,23 @@
     },
     methods: {
       // Update Current User - Update global/user user in vuex store
-      updateCurrentUser: function(callback) {
+      updateCurrentUser: function() {
         let self = this;
         let request = query(QUERY_CURRENT_USER);
         request.xhr.then(function(response) {
-          let user = response.data.data.currentUser;
-          self.user = user;
-          console.log(self.user);
-          if (callback) { callback(user); }
+          self.user = response.data.data.currentUser.email;
+          console.log('Current user: '+ self.user);
         });
       },
 
       // Login - Login using username/password to Google auth
       login: function() {
-        console.log('Login!');
-        console.log(this.email);
         let self = this;
         let data = {email:this.email, password:this.password};
         let request = query(QUERY_LOGIN, data);
         request.xhr.then(function(response) {
-          self.user = response.data.data.login;
-          console.log(self.user);
+          self.user = response.data.data.login.email;
+          console.log('Logged in as: '+ self.user);
         });
       },
 
