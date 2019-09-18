@@ -11,8 +11,8 @@
       <li><a href='https://www.linkedin.com/in/shepanski'><i class='mdi mdi-linkedin-box'></i></a></li>
       <li><a href='https://www.facebook.com/mshepanski'><i class='mdi mdi-facebook-box'></i></a></li>
       <li><a href='javascript:void(0);' @click='$refs.login.display=true'>
-        <i v-if='user' class='avatar' :style="{backgroundImage:avatar}"></i>
-        <i v-if='!user' class='mdi mdi-account-circle'></i>
+        <i v-if='user.email' class='avatar' :style="{backgroundImage:avatar}"></i>
+        <i v-else class='mdi mdi-account-circle'></i>
       </a></li>
     </ul></div>
     <Login ref='login'/>
@@ -21,22 +21,17 @@
 
 <script>
   import Login from '@/components/Login';
-  import {sync} from 'vuex-pathify';
+  import {get} from 'vuex-pathify';
   import md5 from 'js-md5';
 
   export default {
     name: 'Navigation',
     components: {Login},
     props: ['cls'],
-    data: () => ({
-      avatar: '',
-    }),
     computed: {
-      user: sync('global/user'),
-    },
-    watch: {
-      user: function() {
-        this.avatar = "url('https://www.gravatar.com/avatar/"+ md5(this.user) +"')";
+      user: get('global.user'),
+      avatar: function() {
+        return "url('https://www.gravatar.com/avatar/"+ md5(this.user.email) +"')";
       },
     },
     mounted: function() {
@@ -63,6 +58,8 @@
     a, a:visited {
       color: $dark-fg0;
       text-decoration: none;
+      transition: color 0.2s ease;
+
       img, .title { position: absolute; }
       &:hover { color: $dark-orange1; }
     }
@@ -122,8 +119,8 @@
         border-radius: 3px;
         position: relative;
         top: 2px;
-        transition: top 0.2s ease;
-        &:hover { top:0px; }
+        transition: box-shadow 0.3s ease;
+        &:hover { box-shadow: 0px 0px 10px rgba($dark-fg0, 0.3); }
       }
     }
   }

@@ -29,11 +29,12 @@
   import {sync} from 'vuex-pathify';
 
   var QUERY_CURRENT_USER = `query {
-      currentUser { id email }
-    }`;
+    currentUser {
+      id email firstName lastName dateJoined lastLogin
+    }}`;
   var QUERY_LOGIN = `query {
     login(email:"{email}", password:"{password}") {
-      id email
+      id email firstName lastName dateJoined lastLogin
     }}`;
 
   export default {
@@ -53,8 +54,8 @@
         let self = this;
         let request = query(QUERY_CURRENT_USER);
         request.xhr.then(function(response) {
-          self.user = response.data.data.currentUser.email;
-          console.log('Current user: '+ self.user);
+          self.user = response.data.data.currentUser;
+          console.log('Current user: '+ self.user.email);
         });
       },
 
@@ -64,8 +65,8 @@
         let data = {email:this.email, password:this.password};
         let request = query(QUERY_LOGIN, data);
         request.xhr.then(function(response) {
-          self.user = response.data.data.login.email;
-          console.log('Logged in as: '+ self.user);
+          self.user = response.data.data.login;
+          console.log('Logged in as: '+ self.user.email);
         });
       },
 

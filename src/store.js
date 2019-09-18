@@ -17,7 +17,15 @@ var makeModule = function(store) {
 
 const global = {
   layout: 'navtop',
-  user: '',
+  userEmail: '',
+  user: {
+    id: null,
+    email: null,
+    firstName: null,
+    lastName: null,
+    dateJoined: null,
+    lastLogin: null,
+  },
 };
 
 export default new Vuex.Store({

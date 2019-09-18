@@ -12,7 +12,7 @@ from graphql.error import GraphQLError
 class UserType(DjangoObjectType):
     class Meta:
         model = User
-        only_fields = ['id', 'email']
+        only_fields = ['id', 'email', 'first_name', 'last_name', 'date_joined', 'last_login']
 
 
 class UserQuery(ObjectType):
