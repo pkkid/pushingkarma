@@ -128,7 +128,7 @@
 </template>
 
 <script>
-import { Editor } from 'tiptap'
+import { Editor } from 'tiptap';
 import {
   // Nodes
   BlockquoteNode, BulletListNode, HardBreakNode, HeadingNode, ListItemNode, OrderedListNode,
@@ -136,14 +136,14 @@ import {
   BoldMark, ItalicMark, StrikeMark, UnderlineMark,
   // General Extensions
   HistoryExtension, MentionNode
-} from 'tiptap-extensions'
-import ParagraphAlignmentNode from './editorExtensions/Paragraph.js'
-import FormatFontSize from './editorExtensions/FontSize.js'
-import FormatFontFamily from './editorExtensions/FontFamily.js'
-import FormatFontTextColor from './editorExtensions/FontTextColor.js'
-import FormatFontFillColor from './editorExtensions/FontFillColor.js'
-import FormatFontFunctions from './editorExtensions/FontFunctions.js'
-import swatch from './swatchColors'
+} from 'tiptap-extensions';
+import ParagraphAlignmentNode from './editorExtensions/Paragraph.js';
+import FormatFontSize from './editorExtensions/FontSize.js';
+import FormatFontFamily from './editorExtensions/FontFamily.js';
+import FormatFontTextColor from './editorExtensions/FontTextColor.js';
+import FormatFontFillColor from './editorExtensions/FontFillColor.js';
+import FormatFontFunctions from './editorExtensions/FontFunctions.js';
+import swatch from './swatchColors';
 
 export default {
     components: { Editor, swatch },
@@ -181,18 +181,18 @@ export default {
                 'margin-bottom': '.5rem',
                 'padding': '.3rem'
             }
-        }
+        };
     },
     methods: {
         inited(event) {
-            this.$emit('init', event)
-            var self = this
+            this.$emit('init', event);
+            var self = this;
             event.view.dom.addEventListener('blur', function() {
-                self.$emit('blured')
+                self.$emit('blured');
             });
         }
     }
-}
+};
 </script>
 
 <style scoped>

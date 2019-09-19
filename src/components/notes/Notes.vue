@@ -81,7 +81,7 @@
   #notes .content {
     background-color: #eee;
     box-sizing: border-box;
-    color: $dark-bg0;
+    color: #282828;
     margin-left: 300px;
     margin-top: 60px;
     .note {

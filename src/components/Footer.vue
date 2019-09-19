@@ -12,8 +12,8 @@
   @import '@/assets/css/layout.scss';
 
   #footer {
-    background-color: $dark-bg0;
-    color: $dark-fg0;
+    background-color: #282828;
+    color: #fbf1c7;
     font-size: 13px;
     height: 150px;
     line-height: 150px;

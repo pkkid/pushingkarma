@@ -52,7 +52,7 @@
     a {
       box-shadow: 0 0 20px rgba(0,0,0,.1);
       box-sizing: border-box;
-      color: $dark-bgh;
+      color: #1d2021;
       display: block;
       float: left;
       margin-bottom: 30px;

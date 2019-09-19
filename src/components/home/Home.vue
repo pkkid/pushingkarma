@@ -30,8 +30,7 @@
 </script>
 
 <style lang='scss'>
-  @import '@/assets/css/layout.scss';
-  @import '@/assets/css/parallax.scss';
+  @import '@/assets/css/main.scss';
 
   #home .content {
     margin-left: 300px;
@@ -39,13 +38,13 @@
   }
   #home .content > .header {
     align-items: center;
-    background-color: rgba($dark-bgh, 0.5);
+    background-color: rgba(#1d2021, 0.5);
     display: flex;
     flex-direction: column;
     justify-content: center;
     a, a:visited {
       text-decoration: none;
-      color: $light-bgh;
+      color: #f9f5d7;
     }
     .photo {
       width: 216px;
@@ -55,7 +54,7 @@
       img {
         width: 200px;
         border-radius: 100%;
-        border: 8px solid rgba($dark-bg3, 0.7);
+        border: 8px solid rgba(#665c54, 0.7);
       }
     }
     .name {
@@ -65,8 +64,8 @@
       font-size: 50px;
       font-weight: 300;
       margin-bottom: 100px;
-      color: $light-bgh;
-      span { color: $dark-orange1; }
+      color: #f9f5d7;
+      span { color: #fe8019; }
     }
     .arrow {
       animation: bounce 2s infinite;

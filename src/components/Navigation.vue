@@ -76,7 +76,7 @@
         text-transform: uppercase;
       }
       a:before {
-        background-color: $dark-orange1;
+        background-color: #fe8019;
         content: "";
         height: 2px;
         left: 100%;
@@ -98,7 +98,7 @@
       position: absolute;
       text-align: left;
       width: 100%;
-      color: $light-bgh;
+      color: #f9f5d7;
       li {
         margin: 0px 15px 0px 0px;
         display: inline-block;
@@ -112,7 +112,7 @@
         position: relative;
         top: 2px;
         transition: box-shadow 0.3s ease;
-        &:hover { box-shadow: 0px 0px 10px rgba($dark-fg0, 0.3); }
+        &:hover { box-shadow: 0px 0px 10px rgba(#fbf1c7, 0.3); }
       }
     }
   }

@@ -73,7 +73,7 @@
     background-color: $content-bg;
     border-radius: 8px;
     box-shadow: 0 2px 20px rgba(0, 0, 0, .8);
-    color: $dark-bg0;
+    color: #282828;
     margin: 0px auto;
     position: relative;
     transition: all .3s ease;

@@ -124,7 +124,7 @@
       padding: 20px 30px;
       height: 500px;
       width: 350px;
-      color: $dark-bg0;
+      color: #282828;
       h3 {
         font-size: 20px;
         padding-left: 15px;

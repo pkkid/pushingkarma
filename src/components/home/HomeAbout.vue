@@ -21,7 +21,7 @@
   #about {
     .photo {
       float: left;
-      border: 10px solid $dark-bg0;
+      border: 10px solid #282828;
       box-sizing: border-box;
       width: 400px;
       height: 300px;

@@ -42,7 +42,7 @@
 
   $animate_duration: .5s;
   #logo {
-    border-bottom: 1px solid $dark-bg1;
+    border-bottom: 1px solid #3c3836;
     height: 220px;
     left: 0px;
     position: fixed;
@@ -67,13 +67,13 @@
       top: 150px;
       transition: all $animate_duration cubic-bezier(.47,1.64,.41,.8);
     }
-    a, a:visited { color: $dark-fg0; }
+    a, a:visited { color: #fbf1c7; }
   }
 
   #content {
     // Border and margin fix margin collapsing
     // when a modal window is open.
-    border-top: 1px solid $dark-bg0;
+    border-top: 1px solid #282828;
     margin-top: -1px;
     transition: filter .3s ease;
   }
