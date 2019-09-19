@@ -119,11 +119,12 @@
     .searchwrap { position: relative; }
   }
   #search-input {
-    background-color: #1d2021;
+    background-color: darken($darkbg-color, 5%);
     border-bottom: 1px solid rgba(0, 0, 0, 0.2);
     border-width: 0px;
-    color: #d79921;
-    font-size: 20px;
+    color: $darkbg-input;
+    font-size: 15px;
+    font-weight: 500;
     height: 40px;
     line-height: 40px;
     padding: 0px 10px 0px 40px;
@@ -153,10 +154,19 @@
         height: calc(100vh - 100px);
         &::-webkit-scrollbar { width:6px; }
         &::-webkit-scrollbar,
-        &::-webkit-scrollbar-thumb { overflow:visible; border-radius:4px; }
-        &::-webkit-scrollbar-thumb { background:rgba(255,255,255,.3); }
-        &:before { content:' '; position:absolute; background-color: #282828; height:100%;
-          top:0; right:0; width:6px; transition:all .5s; opacity:1; }
+        &::-webkit-scrollbar-thumb { overflow: visible; border-radius: 4px; }
+        &::-webkit-scrollbar-thumb { background: lighten($darkbg-color, 40%); }
+        &:before {
+          content: ' ';
+          position: absolute;
+          background-color: $darkbg-color;
+          height: 100%;
+          top: 0;
+          right: 0;
+          width: 6px;
+          transition: all .5s ease;
+          opacity: 1;
+        }
       }
       &:hover .scrollbox:before { opacity: 0; }
     }
@@ -165,24 +175,27 @@
       border-bottom-right-radius: 8px;
       border-left: 3px solid transparent;
       border-top-right-radius: 8px;
-      color: #f9f5d7;
+      color: $darkbg-text;
       cursor: pointer;
       font-size: 14px;
+      font-weight: 500;
       overflow: hidden;
-      padding: 10px 15px 10px 12px;
+      padding: 15px 15px 15px 12px;
       text-overflow: ellipsis;
       white-space: nowrap;
       width: 294px;
       &.selected,
       &:hover {
-        border-left: 3px solid #fe8019;
-        background-color: rgba(255,255,255,0.05);
+        border-left: 3px solid $darkbg-accent;
+        background-color: lighten($darkbg-color, 5%);
       }
       
     }
     .subtext {
       font-size: 10px;
-      color: #a89984;
+      font-weight: 300;
+      color: $darkbg-text-dim;
+      padding-top: 2px;
     }
   }
 </style>

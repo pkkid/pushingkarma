@@ -27,22 +27,27 @@
 // blue0   #458588;  blue1   #076678;
 // aqua0   #689d6a;  aqua1   #427b58;
 // purple0 #b16286;  purple1 #8f3f71;
+@import url('https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/4.2.95/css/materialdesignicons.min.css');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css');
+@import url('https://fonts.googleapis.com/css?family=Montserrat:300,400,500,600,700&display=swap');
 
+$font-serif: 'Montserrat', Helvetica, Arial, sans-serif;
+$bounce: cubic-bezier(.47,1.64,.41,.8);
 
-// Content Variables
-$content-font: 'Montserrat', Helvetica, Arial, sans-serif;
-$content-bg: #eeeeee;
-$content-color: #1d2021;
-$content-color-light: #888888;
-$content-link: '';
-$content-link-hover: '';
-$content-label: '';
+$lightbg-color:      #eeeeee;
+$lightbg-text:       #1d2021;
+$lightbg-text-dim:   #777777;
+$lightbg-link:       #ff0000;
+$lightbg-link-hover: #00ff00;
+$lightbg-accent:     #d65d0e;
 
-$nav-font: 'Montserrat', Helvetica, Arial, sans-serif;
-$nav-bg: #282828;
-$nav-color: #f9f5d7;
-$nav-link: #fbf1c7;
-$nav-link-hover: #fe8019;
+$darkbg-color:       #282828;
+$darkbg-text:        #f9f5d7;
+$darkbg-text-dim:    #bdae93;
+$darkbg-link:        #fbf1c7;
+$darkbg-link-hover:  #fe8019;
+$darkbg-accent:      #fe8019;
+$darkbg-input:       #d79921;
 
 
 // Style Reset
@@ -50,9 +55,9 @@ body, html {
   box-sizing: border-box;
   margin: 0px;
   padding: 0px;
-  background-color: $nav-bg;
-  color: $nav-color;
-  font-family: $nav-font;
+  background-color: $darkbg-color;
+  color: $darkbg-text;
+  font-family:$font-serif;
 }
 *, *:before, *:after { box-sizing: inherit; }
 :focus { outline: none !important; }
@@ -62,7 +67,7 @@ body, html {
 // Content Styles
 //-------------------------
 .content {
-  color: $content-color;
+  color: $lightbg-text;
 
   a,a:hover {
     color: #1d2021;
@@ -72,7 +77,7 @@ body, html {
     font-size: 50px;
     text-transform: uppercase;
     font-weight: 600;
-    border-left: 6px solid #d65d0e;
+    border-left: 6px solid $lightbg-accent;
     padding-left: 25px;
     span {
       font-size: 16px;
@@ -86,10 +91,7 @@ body, html {
     margin-bottom: 20px;
     font-size: 24px;
     font-weight: 500;
-    span {
-      color: #d65d0e;
-      font-weight: 500;
-    }
+    span.accent { color: $lightbg-accent; }
   }
   p {
     line-height: 28px;
@@ -109,10 +111,13 @@ body, html {
     padding: 10px;
   }
   button {
+    
     background-color: #076678;
-    color: #f9f5d7;
+    background-image: linear-gradient(#076678, darken(#076678, 5%));
+    color: $darkbg-text;
     width: 100%;
     padding: 12px;
+    font-weight: 500;
     border-radius: 6px;
     border-width: 0px;
     cursor: pointer;
@@ -127,7 +132,7 @@ body, html {
       float: left;
       font-size: 11px;
       margin-right: 10px;
-      color: #888888;
+      color: $lightbg-text-dim;
       text-transform: uppercase;
     }
   }
@@ -135,7 +140,7 @@ body, html {
     position: absolute;
     bottom: 20px;
     text-align: center;
-    color: #888888;
+    color: $lightbg-text-dim;
     font-size: 12px;
     margin-top: 30px;
     width: 290px;
@@ -147,14 +152,14 @@ body, html {
 // Navigation Styles
 //-------------------------
 .nav {
-  background-color: $nav-bg;
-  color: $nav-color;
+  background-color: $darkbg-color;
+  color: $darkbg-text;
 
   a,a:visited {
-    color: $nav-link;
+    color: $darkbg-link;
     text-decoration: none;
     transition: color 0.2s ease;
-    &:hover { color: $nav-link-hover; }
+    &:hover { color: $darkbg-link-hover; }
   }
 
 }

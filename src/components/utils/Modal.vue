@@ -70,7 +70,7 @@
     vertical-align: middle;
   }
   .modal-container {
-    background-color: $content-bg;
+    background-color: $lightbg-color;
     border-radius: 8px;
     box-shadow: 0 2px 20px rgba(0, 0, 0, .8);
     color: #282828;
@@ -83,7 +83,7 @@
     position: absolute;
     top: -4px;
     right: 5px;
-    color: $content-bg;
+    color: $lightbg-color;
     font-size: 40px;
     cursor: pointer;
   }

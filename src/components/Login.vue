@@ -104,7 +104,7 @@
 </script>
 
 <style lang='scss'>
-  @import '@/assets/css/layout.scss';
+  @import '@/assets/css/main.scss';
 
   #login {
     .bgimg {
@@ -116,7 +116,7 @@
       background-position: 0px -28px;
       border-top-right-radius: 8px;
       border-bottom-right-radius: 8px;
-      box-shadow: inset 0 0 100px rgba(0,0,0,0.5);
+      box-shadow: inset 0 0 100px rgba($darkbg-color, 0.5);
       position: relative;
       left: 2px;
     }
@@ -124,10 +124,12 @@
       padding: 20px 30px;
       height: 500px;
       width: 350px;
-      color: #282828;
+      color: $lightbg-text;
       h3 {
         font-size: 20px;
-        padding-left: 15px;
+        padding-left: 0px;
+        border-left-width: 0px;
+        text-transform: none;
         span { font-size:13px; }
       }
       .avatar {

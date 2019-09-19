@@ -28,21 +28,16 @@
 </script>
 
 <style lang='scss'>
-  @import url('https://cdnjs.cloudflare.com/ajax/libs/MaterialDesign-Webfont/4.2.95/css/materialdesignicons.min.css');
-  @import url('https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css');
-  @import url('https://fonts.googleapis.com/css?family=Montserrat:300,400,500&display=swap');
-  @import '@/assets/css/layout.scss';
-  $animate_duration: 0.5s;
+  
+  @import '@/assets/css/main.scss';
 
   #app {
     margin-top: 0px;
     padding: 0px;
     overflow-y: hidden;
   }
-
-  $animate_duration: .5s;
   #logo {
-    border-bottom: 1px solid #3c3836;
+    border-bottom: 1px solid lighten($darkbg-color, 7%);
     height: 220px;
     left: 0px;
     position: fixed;
@@ -54,7 +49,7 @@
       left: 80px;
       position: absolute;
       top: 50px;
-      transition: all $animate_duration cubic-bezier(.47,1.64,.41,.8);
+      transition: all 0.5s $bounce;
     }
     .title {
       font-family: arial;
@@ -65,15 +60,15 @@
       position: absolute;
       text-transform: uppercase;
       top: 150px;
-      transition: all $animate_duration cubic-bezier(.47,1.64,.41,.8);
+      transition: all 0.5s $bounce;
     }
-    a, a:visited { color: #fbf1c7; }
+    a, a:visited { color: $darkbg-text; }
   }
 
   #content {
     // Border and margin fix margin collapsing
     // when a modal window is open.
-    border-top: 1px solid #282828;
+    border-top: 1px solid $darkbg-color;
     margin-top: -1px;
     transition: filter .3s ease;
   }
@@ -84,7 +79,7 @@
   .topnav #logo {
     padding: 10px 20px;
     height: 61px;
-    img { height: 40px; top: 10px; left: 20px; }
-    .title { top: 20px; left: 100px; }
+    img { height:40px; top:10px; left:20px; }
+    .title { top:20px; left:100px; }
   }
 </style>

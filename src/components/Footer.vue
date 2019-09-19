@@ -9,11 +9,11 @@
 </script>
 
 <style lang='scss'>
-  @import '@/assets/css/layout.scss';
+  @import '@/assets/css/main.scss';
 
   #footer {
-    background-color: #282828;
-    color: #fbf1c7;
+    background-color: $darkbg-color;
+    color: $darkbg-text;
     font-size: 13px;
     height: 150px;
     line-height: 150px;

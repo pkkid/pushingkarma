@@ -41,8 +41,7 @@
 </script>
 
 <style lang='scss'>
-  @import '@/assets/css/layout.scss';
-  $duration: .4s;
+  @import '@/assets/css/main.scss';
 
   #navigation {
     height: 100vh;
@@ -76,7 +75,7 @@
         text-transform: uppercase;
       }
       a:before {
-        background-color: #fe8019;
+        background-color: $darkbg-link-hover;
         content: "";
         height: 2px;
         left: 100%;
@@ -98,7 +97,7 @@
       position: absolute;
       text-align: left;
       width: 100%;
-      color: #f9f5d7;
+      color: $darkbg-link;
       li {
         margin: 0px 15px 0px 0px;
         display: inline-block;
@@ -111,8 +110,8 @@
         border-radius: 3px;
         position: relative;
         top: 2px;
-        transition: box-shadow 0.3s ease;
-        &:hover { box-shadow: 0px 0px 10px rgba(#fbf1c7, 0.3); }
+        transition: box-shadow 0.2s ease;
+        &:hover { box-shadow: 0px 0px 8px rgba($darkbg-link, 0.4); }
       }
     }
   }
