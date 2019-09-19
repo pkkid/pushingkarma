@@ -1,5 +1,5 @@
 <template>
-  <div id='navigation' :class='cls'>
+  <div id='navigation' :class='{"nav":true, "topnav":cls=="topnav"}'>
     <div class='menu'><ul>
       <li><router-link to='/#splash'>Home</router-link></li>
       <li><router-link to='/#about'>About</router-link></li>
@@ -45,24 +45,18 @@
   $duration: .4s;
 
   #navigation {
-    color: $light-bgh;
     height: 100vh;
     left: 0px;
+    padding-top: 220px;
     position: fixed;
     top: 0px;
     width: 300px;
     z-index: 97;
-    padding-top: 220px;
-    background-color: $dark-bg0;
     
-    a, a:visited {
-      color: $dark-fg0;
-      text-decoration: none;
-      transition: color 0.2s ease;
-
+    a,a:visited {
       img, .title { position: absolute; }
-      &:hover { color: $dark-orange1; }
     }
+
     ul {
       margin: 0px;
       padding: 0px;
@@ -132,10 +126,7 @@
     .menu {
       padding: 0px;
       line-height: 60px;
-      li {
-        float: left;
-        margin-right: 80px;
-      }
+      li { float:left; margin-right:80px; }
     }
     .links {
       left: auto;

@@ -36,24 +36,7 @@
   #home .content {
     margin-left: 300px;
     padding: 0px;
-    color: $light-bgh;
-    h3 {
-      font-size: 50px;
-      margin-top: 0px;
-      text-transform: uppercase;
-      font-weight: 600;
-      border-left: 6px solid $light-orange0;
-      padding-left: 25px;
-      span {
-        font-size: 16px;
-        text-transform: none;
-        display: block;
-        padding-bottom: 3px;
-        font-weight: 100;
-      }
-    }
   }
-
   #home .content > .header {
     align-items: center;
     background-color: rgba($dark-bgh, 0.5);
@@ -82,6 +65,7 @@
       font-size: 50px;
       font-weight: 300;
       margin-bottom: 100px;
+      color: $light-bgh;
       span { color: $dark-orange1; }
     }
     .arrow {

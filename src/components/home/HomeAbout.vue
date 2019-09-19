@@ -39,16 +39,6 @@
     .aboutme {
       margin-left: 500px;
       margin-right: 50px;
-      h4 {
-        margin-bottom: 20px;
-        font-size: 24px;
-        font-weight: 500;
-        span {
-          color: $light-orange0;
-          font-weight: 500;
-        }
-      }
-      p { line-height: 28px; }
     }
   }
 </style>

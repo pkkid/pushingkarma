@@ -1,5 +1,5 @@
 <template>
-  <Modal v-if='display' @close='display=false' :width='"800px"' :padding='"0px"' :escClose=true>
+  <Modal v-if='display' @close='display=false' :width='"800px"' :padding='"0px"' :escClose=true :bgClose=true>
     <div slot='body'>
       <div id='login'>
         <div class='bgimg'></div>
@@ -118,7 +118,6 @@
       position: relative;
       left: 2px;
     }
-
     .content {
       padding: 20px 30px;
       height: 500px;
@@ -126,31 +125,13 @@
       color: $dark-bg0;
       h3 {
         font-size: 20px;
-      }
-      h3 span {
-        font-size: 13px;
-        display: block;
-        padding: 3px 0px;
-        font-weight: 100;
-      }
-      dl {
-        margin: 10px 0px;
-        font-size: 15px;
-        line-height: 23px;
-        dt {
-          width: 60px;
-          float: left;
-          font-size: 11px;
-          margin-right: 10px;
-          color: #888;
-          text-transform: uppercase;
-        }
+        padding-left: 15px;
+        span { font-size:13px; }
       }
       .avatar {
         background-size: 80px;
         background-position: center center;
-        border-radius: 15px;
-        border: 5px solid rgba($light-fg0,0.5);
+        border-radius: 10px;
         box-shadow: 0px 1px 2px rgba(0,0,0,0.3);
         box-sizing: content-box;
         display: block;
@@ -164,40 +145,6 @@
         position: relative;
         right: 2px;
         margin: 20px 0px;
-      }
-      label {
-        font-size: 13px;
-        display: block;
-        padding: 3px 0px;
-        font-weight: 100;
-        margin-top: 10px;
-      }
-      input {
-        width: 100%;
-        border-radius: 6px;
-        border: 2px solid #ddd;
-        background-color: #f8f8f8;
-        padding: 10px;
-      }
-      button {
-        background-color: $light-blue1;
-        color: $light-bgh;
-        width: 100%;
-        padding: 12px;
-        border-radius: 6px;
-        border-width: 0px;
-        cursor: pointer;
-        margin-top: 30px;
-      }
-      .footnote {
-        position: absolute;
-        bottom: 20px;
-        text-align: center;
-        color: #888;
-        font-size: 12px;
-        margin-top: 30px;
-        width: 290px;
-        line-height: 16px;
       }
     }
   }
