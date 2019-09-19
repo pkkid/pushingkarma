@@ -5,9 +5,8 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import list_route
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from pk import log
-from pk import utils
-from pk.utils.auth import auth_django, auth_google
+from pk import log, utils
+from pk.utils import auth
 from .models import AccountSerializer
 
 
@@ -30,8 +29,11 @@ class AccountViewSet(viewsets.ViewSet):
     @list_route(methods=['post'])
     def login(self, request, *args, **kwargs):
         try:
+            email = request.POST.get('email')
+            passwd = request.POST.get('password')
             code = request.POST.get('code')
-            user = auth_google(request) if code else auth_django(request)
+            if code: user = auth.auth_google(request, code)
+            elif email: user = auth.auth_django(request, email, passwd)
             if user and user.is_active:
                 serializer = AccountSerializer(user, context={'request':request})
                 return Response(serializer.data)

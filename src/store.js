@@ -15,17 +15,19 @@ var makeModule = function(store) {
   };
 };
 
+export const DEFAULT_USER = {
+  id: null,
+  email: null,
+  firstName: null,
+  lastName: null,
+  dateJoined: null,
+  lastLogin: null,
+};
+
 const global = {
   layout: 'navtop',
   userEmail: '',
-  user: {
-    id: null,
-    email: null,
-    firstName: null,
-    lastName: null,
-    dateJoined: null,
-    lastLogin: null,
-  },
+  user: DEFAULT_USER,
 };
 
 export default new Vuex.Store({

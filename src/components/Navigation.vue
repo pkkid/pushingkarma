@@ -11,7 +11,7 @@
       <li><a href='https://www.linkedin.com/in/shepanski'><i class='mdi mdi-linkedin-box'></i></a></li>
       <li><a href='https://www.facebook.com/mshepanski'><i class='mdi mdi-facebook-box'></i></a></li>
       <li><a href='javascript:void(0);' @click='$refs.login.display=true'>
-        <i v-if='user.email' class='avatar' :style="{backgroundImage:avatar}"></i>
+        <i v-if='user.id' class='avatar' :style="{backgroundImage:avatar}"></i>
         <i v-else class='mdi mdi-account-circle'></i>
       </a></li>
     </ul></div>

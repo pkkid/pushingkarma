@@ -25,5 +25,5 @@ urlpatterns = [
 ]
 
 # import pk.utils.auth
-# url(r'^login$', pk.utils.auth.user_login, name='auth_login'),
-# url(r'^logout$', pk.utils.auth.user_logout, name='auth_logout'),
+# url(r'^login$', pk.utils.auth.django_login, name='login'),
+# url(r'^logout$', pk.utils.auth.django_logout, name='logout'),
