@@ -56,14 +56,12 @@
     a,a:visited {
       img, .title { position: absolute; }
     }
-
     ul {
       margin: 0px;
       padding: 0px;
       list-style-type: none;
       li { margin: 0px; }
     }
-
     .menu {
       padding: 50px 20px 0px 60px;
       width: 100%;
