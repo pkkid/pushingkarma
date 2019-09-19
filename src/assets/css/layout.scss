@@ -153,3 +153,15 @@ body, html {
   }
 
 }
+
+//-------------------------
+// Vue Transitions
+//-------------------------
+.fade-enter { opacity:0; }
+.fade-enter-active { transition: opacity 0.3s; }
+
+.zoomfade-enter { opacity:0; }
+.zoomfade-enter-active { transition: all .3s ease; }
+.zoomfade-leave-active { opacity:0; }
+.zoomfade-enter .zoom,
+.zoomfade-leave-active .zoom { transform: scale(1.1); }

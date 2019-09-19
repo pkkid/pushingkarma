@@ -71,7 +71,7 @@
   }
 
   #content {
-    // Border and margin fix chrome blur rendering
+    // Border and margin fix margin collapsing
     // when a modal window is open.
     border-top: 1px solid $dark-bg0;
     margin-top: -1px;
@@ -87,7 +87,4 @@
     img { height: 40px; top: 10px; left: 20px; }
     .title { top: 20px; left: 100px; }
   }
-
-  .fade-enter { opacity:0; }
-  .fade-enter-active { transition: opacity $animate_duration; }
 </style>

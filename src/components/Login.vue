@@ -4,27 +4,29 @@
       <div id='login'>
         <div class='bgimg'></div>
         <div class='content'>
-          <div v-if='user.id' class='welcome'>
-            <div class='avatar' :style="{backgroundImage:avatar}"></div>
-            <h3>Welcome {{user.firstName}}! <span>Great to see you</span></h3>
-            <dl>
-              <dt>Joined</dt><dd>{{user.dateJoined | formatDate('MMM DD, YYYY')}}</dd>
-              <dt>Login</dt><dd>{{user.lastLogin | formatDate('MMM DD, YYYY h:mm a')}}</dd>
-              <dt>Email</dt><dd>{{user.email}}</dd>
-            </dl>
-            <button @click='logout'>Log Out</button>
-          </div>
-          <div v-else class='loginform'>
-            <h3>Login to PushingKarma <span>Amazing things await you</span></h3>
-            <img class='google' src='@/assets/img/google_signin.png'/>
-            <form @submit.prevent="login">
-              <label for='email'>Email Address</label>
-              <input type='text' id='email' name='email' v-model='loginform.email' spellcheck='false' autocomplete='off' autofocus='true'/>
-              <label for='password'>Password</label>
-              <input type='password' id='password' name='password' v-model='loginform.password' autocomplete='off'/>
-              <button type='submit'>Login</button>
-            </form>
-          </div>
+          <transition name='fade' appear>
+            <div v-if='user.id' class='welcome'>
+              <div class='avatar' :style="{backgroundImage:avatar}"></div>
+              <h3>Welcome {{user.firstName}}! <span>Great to see you</span></h3>
+              <dl>
+                <dt>Joined</dt><dd>{{user.dateJoined | formatDate('MMM DD, YYYY')}}</dd>
+                <dt>Login</dt><dd>{{user.lastLogin | formatDate('MMM DD, YYYY h:mm a')}}</dd>
+                <dt>Email</dt><dd>{{user.email}}</dd>
+              </dl>
+              <button @click='logout'>Log Out</button>
+            </div>
+            <div v-else class='loginform'>
+              <h3>Login to PushingKarma <span>Amazing things await you</span></h3>
+              <img class='google' src='@/assets/img/google_signin.png'/>
+              <form @submit.prevent="login">
+                <label for='email'>Email Address</label>
+                <input type='text' id='email' name='email' v-model='loginform.email' spellcheck='false' autocomplete='off' autofocus='true'/>
+                <label for='password'>Password</label>
+                <input type='password' id='password' name='password' v-model='loginform.password' autocomplete='off'/>
+                <button type='submit'>Login</button>
+              </form>
+            </div>
+          </transition>
           <div class='footnote'>
             © 2019 PushingKarma. All Rights Reserved.<br/>
             Sunrise graphic by <a href='https://dribbble.com/shots/3200530-Sunrise-wallpaper'>Louis Coyle</a>.

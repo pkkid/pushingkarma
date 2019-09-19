@@ -1,10 +1,10 @@
 <template>
   <portal to='modal-container'>
-    <transition name='modal' :appear='true'>
+    <transition name='zoomfade' appear>
       <div class='modal'>
         <div class='modal-overlay' @click='bgClose && $emit("close")'></div>
         <div class='modal-wrapper'>
-          <div class='modal-container' :style='{width,height,padding}'>
+          <div class='modal-container zoom' :style='{width,height,padding}'>
             <div class='modal-body'><slot name='body'>Default Body</slot></div>
             <div class='modal-close' v-if='xClose' @click='$emit("close")'>×</div>
           </div>
@@ -70,7 +70,7 @@
     vertical-align: middle;
   }
   .modal-container {
-    background-color: #eee;
+    background-color: $content-bg;
     border-radius: 8px;
     box-shadow: 0 2px 20px rgba(0, 0, 0, .8);
     color: $dark-bg0;
@@ -83,15 +83,14 @@
     position: absolute;
     top: -4px;
     right: 5px;
-    color: #eee;
+    color: $content-bg;
     font-size: 40px;
     cursor: pointer;
   }
   
-  
-  .modal-enter { opacity:0; }
-  .modal-enter-active { transition: all .3s ease; }
-  .modal-leave-active { opacity:0; }
-  .modal-enter .modal-container,
-  .modal-leave-active .modal-container { transform: scale(1.1); }
+  // .modal-enter { opacity:0; }
+  // .modal-enter-active { transition: all .3s ease; }
+  // .modal-leave-active { opacity:0; }
+  // .modal-enter .modal-container,
+  // .modal-leave-active .modal-container { transform: scale(1.1); }
 </style>
