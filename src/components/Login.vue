@@ -17,7 +17,7 @@
             </div>
             <div v-else class='loginform' key='loginform'>
               <h3>Login to PushingKarma <span>Amazing things await you</span></h3>
-              <img class='google' src='@/assets/img/google_signin.png'/>
+              <img class='google' src='@/assets/img/google_signin.png' @click='gauth_login'/>
               <form @submit.prevent="login">
                 <label for='email'>Email Address</label>
                 <input type='text' id='email' name='email' v-model='loginform.email' spellcheck='false' autocomplete='off' autofocus='true'/>
@@ -43,7 +43,7 @@
   import {query} from '@/utils/utils';
   import {sync} from 'vuex-pathify';
   import {DEFAULT_USER} from '@/store.js';
-
+  
   var USER_FIELDS = 'id email firstName lastName dateJoined lastLogin';
   var QUERY_CURRENT_USER = `query { currentUser { ${USER_FIELDS} }}`;
   var QUERY_LOGIN = `query { login(email:"{email}", password:"{password}") { ${USER_FIELDS} }}`;
@@ -77,6 +77,17 @@
           console.log('Current user: '+ self.user.email);
         });
       },
+
+      // GAuth Login - Login via Google popup box
+      // gauth_login: function() {
+      //   let gauth = null;
+      //   gapi.load('auth2', function() {
+      //     self.gauth = gapi.auth2.init({
+      //       client_id: GOOGLE_CLIENTID,
+      //       scope: GOOGLE_SCOPES
+      //     });
+      //   });
+      // },
 
       // Login - Login using username/password to Google auth
       login: function() {

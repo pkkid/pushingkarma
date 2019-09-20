@@ -4,9 +4,9 @@ from django.contrib.auth import logout
 from django.contrib.auth.models import User
 from graphene_django.types import DjangoObjectType, ObjectType
 from graphql.error import GraphQLError
-from pk import log
-from pk.utils import auth
 from pk.apps.notes.schema import NoteQuery
+from pk.utils import auth
+from pk import log
 
 
 class UserType(DjangoObjectType):

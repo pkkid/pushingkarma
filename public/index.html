@@ -6,6 +6,13 @@
     <meta name='viewport' content='width=device-width,initial-scale=1.0'>
     <link rel='icon' href='<%= BASE_URL %>favicon.ico'>
     <title>PushingKarma</title>
+    <script type='text/javascript'>
+      var globals = {
+        DEBUG: {{settings.DEBUG|yesno:'true,false'}},
+        GOOGLE_CLIENTID: '{{settings.GOOGLE_CLIENTID}}',
+        GOOGLE_SCOPES: '{{settings.GOOGLE_SCOPES|join:";"}}',
+      };
+    </script>
   </head>
   <body>
     <noscript>
