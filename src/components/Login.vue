@@ -4,8 +4,8 @@
       <div id='login'>
         <div class='bgimg'></div>
         <div class='content'>
-          <transition name='fade' appear>
-            <div v-if='user.id' class='welcome'>
+          <transition name='fadeslow' appear>
+            <div v-if='user.id' class='welcome' key='welcome'>
               <div class='avatar' :style="{backgroundImage:avatar}"></div>
               <h3>Welcome {{user.firstName}}! <span>Great to see you</span></h3>
               <dl>
@@ -15,7 +15,7 @@
               </dl>
               <button @click='logout'>Log Out</button>
             </div>
-            <div v-else class='loginform'>
+            <div v-else class='loginform' key='loginform'>
               <h3>Login to PushingKarma <span>Amazing things await you</span></h3>
               <img class='google' src='@/assets/img/google_signin.png'/>
               <form @submit.prevent="login">
@@ -84,8 +84,11 @@
         let data = {email:this.loginform.email, password:this.loginform.password};
         let request = query(QUERY_LOGIN, data);
         request.xhr.then(function(response) {
-          self.user = response.data.data.login || DEFAULT_USER;
-          console.log('Logged in as: '+ self.user.email);
+          if (response.data.data.login.id) {
+            self.display = false;
+            self.user = response.data.data.login || DEFAULT_USER;
+            console.log('Logged in as: '+ self.user.email);
+          }
         });
       },
 

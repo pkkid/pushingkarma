@@ -69,7 +69,7 @@
 </script>
 
 <style lang='scss'>
-  @import '@/assets/css/layout.scss';
+  @import '@/assets/css/main.scss';
 
   #notes .sidebar {
     float: left;
@@ -79,9 +79,9 @@
   }
 
   #notes .content {
-    background-color: #eee;
+    background-color: $lightbg-color;
     box-sizing: border-box;
-    color: #282828;
+    color: $lightbg-text;
     margin-left: 300px;
     margin-top: 60px;
     .note {
@@ -91,15 +91,17 @@
     }
 
     button {
-      border: 0px;
-      background-color: transparent;
-      margin-right: 5px;
+      background-color: darken($lightbg-color, 1%);
+      background-image: none;
       border-radius: 5px;
-      font-size: 20px;
-      color: #333;
+      border: 0px;
+      color: $lightbg-text-dim;
       cursor: pointer;
-      &:hover { background-color: #ddd; }
-      &.active { background-color: #ccc; }
+      font-size: 20px;
+      margin-right: 5px;
+      width: auto;
+      &:hover { background-color: darken($lightbg-color, 4%); }
+      &.active { background-color: darken($lightbg-color, 8%); }
     }
   }
 </style>

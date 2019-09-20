@@ -43,7 +43,7 @@
 </template>
 
 <style lang='scss'>
-  @import '@/assets/css/layout.scss';
+  @import '@/assets/css/main.scss';
 
   .projectlist {
     padding: 0px;
@@ -52,39 +52,38 @@
     a {
       box-shadow: 0 0 20px rgba(0,0,0,.1);
       box-sizing: border-box;
-      color: #1d2021;
+      color: $lightbg-text;
       display: block;
       float: left;
       margin-bottom: 30px;
       margin-left: 30px;
+      min-width: 310px;
       padding: 40px 40px 33px 40px;
       position: relative;
       text-decoration: none;
       top: 0px;
       transition: all .2s ease-out;
       width: 30%;
-      min-width: 310px;
       .mdi {
         font-size: 55px;
         position: relative;
         left: -6px;
       }
       .title {
-        font-family: "Montserrat";
         font-size: 22px;
         font-weight: 600;
+        left: -1px;
         line-height: 1;
         margin: 15px 0px 18px 0px;
         position: relative;
-        left: -1px;
       }
       p {
         font-size: 14px;
-        line-height: 1.8;
-        letter-spacing: 0.5px;
-        word-wrap: break-word;
         font-weight: 400;
         height: 75px;
+        letter-spacing: 0.5px;
+        line-height: 1.8;
+        word-wrap: break-word;
       }
       &:hover {
         top: -10px;

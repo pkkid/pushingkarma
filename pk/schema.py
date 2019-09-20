@@ -38,8 +38,8 @@ class UserQuery(ObjectType):
     
     def resolve_login(self, info, email=None, password=None, code=None, **kwargs):
         try:
-            if code: user = auth.auth_google(info.context, code)
-            elif email: user = auth.auth_django(info.context, email, password)
+            user = (auth.auth_google(info.context, code) if code
+                else auth.auth_django(info.context, email, password))
             if user and user.is_active:
                 return user
         except Exception as err:

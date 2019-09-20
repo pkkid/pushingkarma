@@ -47,7 +47,7 @@
 </script>
 
 <style lang='scss'>
-  @import '@/assets/css/layout.scss';
+  @import '@/assets/css/main.scss';
 
   .modal {
     z-index: 98;
@@ -87,10 +87,4 @@
     font-size: 40px;
     cursor: pointer;
   }
-  
-  // .modal-enter { opacity:0; }
-  // .modal-enter-active { transition: all .3s ease; }
-  // .modal-leave-active { opacity:0; }
-  // .modal-enter .modal-container,
-  // .modal-leave-active .modal-container { transform: scale(1.1); }
 </style>

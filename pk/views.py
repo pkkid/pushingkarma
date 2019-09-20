@@ -32,8 +32,8 @@ class AccountViewSet(viewsets.ViewSet):
             email = request.POST.get('email')
             passwd = request.POST.get('password')
             code = request.POST.get('code')
-            if code: user = auth.auth_google(request, code)
-            elif email: user = auth.auth_django(request, email, passwd)
+            user = (auth.auth_google(request, code) if code
+                else auth.auth_django(request, email, passwd))
             if user and user.is_active:
                 serializer = AccountSerializer(user, context={'request':request})
                 return Response(serializer.data)

@@ -110,7 +110,7 @@
 </script>
 
 <style lang='scss'>
-  @import '@/assets/css/layout.scss';
+  @import '@/assets/css/main.scss';
 
   // Search Input
   #search {
@@ -170,7 +170,6 @@
       }
       &:hover .scrollbox:before { opacity: 0; }
     }
-
     .result {
       border-bottom-right-radius: 8px;
       border-left: 3px solid transparent;
@@ -189,7 +188,6 @@
         border-left: 3px solid $darkbg-accent;
         background-color: lighten($darkbg-color, 5%);
       }
-      
     }
     .subtext {
       font-size: 10px;

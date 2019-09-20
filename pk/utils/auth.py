@@ -19,11 +19,12 @@ GAUTH_KEY = 'gauth:{email}'
 def auth_django(request, email, password):
     """ Authenticate with Django and return the user. """
     test = utils.get_object_or_none(User, Q(email=email) | Q(username=email))
-    user = authenticate(username=test.username, password=password)
-    if user and user.is_active:
-        login(request, user)
-        log.info('Logged in via Django as %s', user.email)
-        return user
+    if test:
+        user = authenticate(username=test.username, password=password)
+        if user and user.is_active:
+            login(request, user)
+            log.info('Logged in via Django as %s', user.email)
+            return user
 
 
 def auth_google(request, code):

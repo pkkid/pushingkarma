@@ -16,12 +16,12 @@
 </template>
 
 <style lang='scss'>
-  @import '@/assets/css/layout.scss';
+  @import '@/assets/css/main.scss';
 
   #about {
     .photo {
       float: left;
-      border: 10px solid #282828;
+      border: 10px solid $darkbg-color;
       box-sizing: border-box;
       width: 400px;
       height: 300px;
