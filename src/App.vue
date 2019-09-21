@@ -17,13 +17,25 @@
 </template>
 
 <script>
+  /* global gapi */
   import {sync} from 'vuex-pathify';
   
   export default {
     name: 'App',
     computed: {
       layout: sync('global/layout'),
+      gauth: sync('global/gauth'),
     },
+    mounted: function() {
+      let self = this;
+      let globals = JSON.parse(document.getElementById('globals').textContent);
+      gapi.load('auth2', function() {
+        self.gauth = gapi.auth2.init({
+          client_id: globals.GOOGLE_CLIENTID,
+          scope: globals.GOOGLE_SCOPES
+        });
+      });
+    }
   };
 </script>
 

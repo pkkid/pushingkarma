@@ -1,23 +1,15 @@
 <!DOCTYPE html>
 <html lang='en'>
   <head>
-    <meta charset='utf-8'>
-    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <meta name='viewport' content='width=device-width,initial-scale=1.0'>
-    <link rel='icon' href='<%= BASE_URL %>favicon.ico'>
     <title>PushingKarma</title>
-    <script type='text/javascript'>
-      var globals = {
-        DEBUG: {{settings.DEBUG|yesno:'true,false'}},
-        GOOGLE_CLIENTID: '{{settings.GOOGLE_CLIENTID}}',
-        GOOGLE_SCOPES: '{{settings.GOOGLE_SCOPES|join:";"}}',
-      };
-    </script>
+    <link rel='icon' href='<%= BASE_URL %>favicon.ico'>
+    <meta name='viewport' content='width=device-width,initial-scale=1.0'>
+    <meta charset='utf-8'>
   </head>
   <body>
-    <noscript>
-      <strong>We're sorry but vue doesn't work properly without JavaScript enabled. Please enable it to continue.</strong>
-    </noscript>
+    <noscript>This site requires JavaScript ¯\_(ツ)_/¯</noscript>
     <div id='app'></div>
+    {{settings.GLOBALS|json_script:'globals'}}
+    <script src='https://apis.google.com/js/client:platform.js?onload=gauth_init'></script>
   </body>
 </html>

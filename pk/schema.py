@@ -19,7 +19,8 @@ class UserQuery(ObjectType):
     user = graphene.Field(UserType, id=graphene.Int())
     users = graphene.List(UserType)
     current_user = graphene.Field(UserType)
-    login = graphene.Field(UserType, email=graphene.String(), password=graphene.String())
+    login = graphene.Field(UserType, email=graphene.String(),
+        password=graphene.String(), code=graphene.String())
     logout = graphene.Field(UserType)
 
     def resolve_user(self, info, **kwargs):

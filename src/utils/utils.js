@@ -19,7 +19,7 @@ export function sfmt(str, vars) {
  * @param vars - Object of key->value pairs to replace in the query string.
  * @param ctoken - Axios cancelToken to manipulate manage for aborts.
  */
-export function query(query, vars) {
+export function buildquery(query, vars) {
   let cancel;
   let xhr = axios.post('/graphql', {
     query: sfmt(query, vars),

@@ -6,6 +6,8 @@
         <div class='content'>
           <transition name='fadeslow' appear>
             <div v-if='user.id' class='welcome' key='welcome'>
+
+              <!-- Display logged in user info -->
               <div class='avatar' :style="{backgroundImage:avatar}"></div>
               <h3>Welcome {{user.firstName}}! <span>Great to see you</span></h3>
               <dl>
@@ -16,6 +18,7 @@
               <button @click='logout'>Log Out</button>
             </div>
             <div v-else class='loginform' key='loginform'>
+              <!-- Display login form -->
               <h3>Login to PushingKarma <span>Amazing things await you</span></h3>
               <img class='google' src='@/assets/img/google_signin.png' @click='gauth_login'/>
               <form @submit.prevent="login">
@@ -40,13 +43,14 @@
 <script>
   import Modal from '@/components/utils/Modal';
   import md5 from 'js-md5';
-  import {query} from '@/utils/utils';
   import {sync} from 'vuex-pathify';
+  import {buildquery} from '@/utils/utils';
   import {DEFAULT_USER} from '@/store.js';
   
   var USER_FIELDS = 'id email firstName lastName dateJoined lastLogin';
   var QUERY_CURRENT_USER = `query { currentUser { ${USER_FIELDS} }}`;
-  var QUERY_LOGIN = `query { login(email:"{email}", password:"{password}") { ${USER_FIELDS} }}`;
+  var QUERY_LOGIN_DJANGO = `query { login(email:"{email}", password:"{password}") { ${USER_FIELDS} }}`;
+  var QUERY_LOGIN_GAUTH = `query { login(code:"{code}") { ${USER_FIELDS} }}`;
   var QUERY_LOGOUT = `query { logout { ${USER_FIELDS} }}`;
 
   export default {
@@ -62,16 +66,15 @@
 
     computed: {
       user: sync('global/user'),
-      avatar: function() {
-        return "url('https://www.gravatar.com/avatar/"+ md5(this.user.email) +"')";
-      },
+      gauth: sync('global/gauth'),
+      avatar: function() { return "url('https://www.gravatar.com/avatar/"+ md5(this.user.email) +"')"; },
     },
     
     methods: {
       // Update Current User - Update global/user user in vuex store
       updateCurrentUser: function() {
         let self = this;
-        let request = query(QUERY_CURRENT_USER);
+        let request = buildquery(QUERY_CURRENT_USER);
         request.xhr.then(function(response) {
           self.user = response.data.data.currentUser || DEFAULT_USER;
           console.log('Current user: '+ self.user.email);
@@ -79,21 +82,21 @@
       },
 
       // GAuth Login - Login via Google popup box
-      // gauth_login: function() {
-      //   let gauth = null;
-      //   gapi.load('auth2', function() {
-      //     self.gauth = gapi.auth2.init({
-      //       client_id: GOOGLE_CLIENTID,
-      //       scope: GOOGLE_SCOPES
-      //     });
-      //   });
-      // },
+      gauth_login: function() {
+        let self = this;
+        this.gauth.grantOfflineAccess().then(function(data) {
+          if (data.code) {
+            self.login(data);
+          }
+        });
+      },
 
       // Login - Login using username/password to Google auth
-      login: function() {
+      login: function(data) {
         let self = this;
-        let data = {email:this.loginform.email, password:this.loginform.password};
-        let request = query(QUERY_LOGIN, data);
+        data = data || {email:this.loginform.email, password:this.loginform.password};
+        let query = data.code ? QUERY_LOGIN_GAUTH : QUERY_LOGIN_DJANGO;
+        let request = buildquery(query, data);
         request.xhr.then(function(response) {
           if (response.data.data.login.id) {
             self.display = false;
@@ -106,7 +109,7 @@
       // Logout - Logout of the site
       logout: function() {
         let self = this;
-        let request = query(QUERY_LOGOUT);
+        let request = buildquery(QUERY_LOGOUT);
         request.xhr.then(function(response) {
           self.user = DEFAULT_USER;
           console.log(response);

@@ -31,8 +31,8 @@
 
 <script>
   import {sync} from 'vuex-pathify';
-  import {minmax, query} from '@/utils/utils';
-  import {trim, isEqual} from 'lodash';
+  import {buildquery, minmax} from '@/utils/utils';
+  import {isEqual, trim} from 'lodash';
 
   var QUERY_NOTES = `query {
     notes(search:"{search}", page:{page}) {
@@ -79,7 +79,7 @@
         let noteid = this.notes.objects[idx].id;
         this.$refs.search.focus();
         if (this.request_note) { this.request_note.cancel(); }
-        this.request_note = query(QUERY_NOTE, {id:noteid});
+        this.request_note = buildquery(QUERY_NOTE, {id:noteid});
         this.request_note.xhr.then(function(response) {
           self.note = response.data.data.note;
           self.editor.setContent(self.note.title + self.note.body);
@@ -91,7 +91,7 @@
       updateSearch: function(event, callback) {
         let self = this;
         if (this.request_search) { this.request_search.cancel(); }
-        this.request_search = query(QUERY_NOTES, {search:self.search, page:1});
+        this.request_search = buildquery(QUERY_NOTES, {search:self.search, page:1});
         this.request_search.xhr.then(function(response) {
           self.updateHistory();
           self.notes = response.data.data.notes;

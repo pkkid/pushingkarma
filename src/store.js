@@ -26,8 +26,8 @@ export const DEFAULT_USER = {
 
 const global = {
   layout: 'navtop',
-  userEmail: '',
   user: DEFAULT_USER,
+  gauth: null,
 };
 
 export default new Vuex.Store({
