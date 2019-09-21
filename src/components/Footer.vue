@@ -1,6 +1,13 @@
 <template>
   <div id='footer'>
-    Copyright (c) 2019 PushingKarma. All rights reserved.
+    <div class='site'>
+    </div>
+    <div class='social'>
+    </div>
+    <div class='attribution'>
+    </div>
+    Copyright (c) 2019 PushingKarma. All rights reserved.<br/>
+    <a href='#'>Privacy Policy & Terms of Service</a>
   </div>
 </template>
 
@@ -9,8 +16,6 @@
 </script>
 
 <style lang='scss'>
-  @import '@/assets/css/main.scss';
-
   #footer {
     background-color: $darkbg-color;
     color: $darkbg-text;

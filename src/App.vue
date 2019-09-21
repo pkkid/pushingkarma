@@ -40,9 +40,6 @@
 </script>
 
 <style lang='scss'>
-  
-  @import '@/assets/css/main.scss';
-
   #app {
     margin-top: 0px;
     padding: 0px;

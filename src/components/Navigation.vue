@@ -43,8 +43,6 @@
 </script>
 
 <style lang='scss'>
-  @import '@/assets/css/main.scss';
-
   #navigation {
     height: 100vh;
     left: 0px;

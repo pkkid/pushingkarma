@@ -30,8 +30,6 @@
 </script>
 
 <style lang='scss'>
-  @import '@/assets/css/main.scss';
-
   #home .content {
     margin-left: 300px;
     padding: 0px;
@@ -59,7 +57,6 @@
     }
     .name {
       text-align: center;
-      font-family: "Montserrat";
       text-transform: uppercase;
       font-size: 50px;
       font-weight: 300;

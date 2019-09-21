@@ -121,8 +121,6 @@
 </script>
 
 <style lang='scss'>
-  @import '@/assets/css/main.scss';
-
   #login {
     .bgimg {
       background-image: url('../assets/img/louiscoyle.png');

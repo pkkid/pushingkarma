@@ -43,8 +43,6 @@
 </template>
 
 <style lang='scss'>
-  @import '@/assets/css/main.scss';
-
   .projectlist {
     padding: 0px;
     margin: 75px 0px 0px -30px;

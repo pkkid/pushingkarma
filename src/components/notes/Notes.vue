@@ -69,8 +69,6 @@
 </script>
 
 <style lang='scss'>
-  @import '@/assets/css/main.scss';
-
   #notes .sidebar {
     float: left;
     width: 300px;
