@@ -1,31 +1,30 @@
 <template>
   <div id='search'>
-  <div class='searchwrap'>
-    <!-- Search Input -->
-    <span id='search-icon' class='mdi mdi-magnify'></span>
-    <input id='search-input' type='text' v-model='search' autofocus='true'
-      spellcheck='false' autocomplete='off' ref='search'
-      v-on:input='updateSearch'
-      v-on:keydown.up.prevent='updateSelected(selected-1)'
-      v-on:keydown.down.prevent='updateSelected(selected+1)'
-      v-on:keyup.enter.prevent='updateNote'>
-    <!-- Search Results -->
-    <div id='search-results'>
-      <div class='scrollwrap'>
-      <div class='scrollbox'>
-        <div class='result' v-for='(note, i) in notes.objects' v-bind:key='note.id'
-          v-bind:class='{selected:i == selected}'
-          v-on:click='updateNote($event, i)'>
-          {{note.title}}
-          <div class='subtext'>
-            {{note.tags}} <span v-if='note.tags'>-</span>
-            {{note.created | formatDate('MMM DD, YYYY') }}
+    <div class='searchwrap'>
+      <!-- Search Input -->
+      <span id='search-icon' class='mdi mdi-magnify'></span>
+      <input id='search-input' type='text' v-model='search' autofocus='true'
+        spellcheck='false' autocomplete='off' ref='search'
+        v-on:input='updateSearch'
+        v-on:keydown.up.prevent='updateSelected(selected-1)'
+        v-on:keydown.down.prevent='updateSelected(selected+1)'
+        v-on:keyup.enter.prevent='updateNote'>
+      <!-- Search Results -->
+      <div id='search-results'>
+        <div class='scrollwrap'>
+        <div class='scrollbox'>
+          <div class='result' v-for='(note, i) in notes.objects' v-bind:key='note.id'
+            v-bind:class='{selected:i == selected}' @click='selected=i; updateNote()'>
+            {{note.title}}
+            <div class='subtext'>
+              {{note.tags}} <span v-if='note.tags'>-</span>
+              {{note.created | formatDate('MMM DD, YYYY')}}
+            </div>
           </div>
         </div>
-      </div>
+        </div>
       </div>
     </div>
-  </div>
   </div>
 </template>
 
@@ -35,7 +34,7 @@
   import {isEqual, trim} from 'lodash';
 
   var QUERY_NOTES = `query {
-    notes(search:"{search}", page:{page}) {
+    notes(search:{search}, page:{page}) {
       page numPages hasNext hasPrev
       objects { id slug title tags created }
     }}`;
@@ -72,11 +71,10 @@
       },
 
       // Update Note - Update the selected note.
-      updateNote: function(event, idx, callback) {
+      updateNote: function(event, callback) {
         let self = this;
-        idx = idx || this.selected;
-        this.selected = idx;
-        let noteid = this.notes.objects[idx].id;
+        let i = this.selected;
+        let noteid = this.notes.objects[i].id;
         this.$refs.search.focus();
         if (this.request_note) { this.request_note.cancel(); }
         this.request_note = buildquery(QUERY_NOTE, {id:noteid});

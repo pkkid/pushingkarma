@@ -23,14 +23,14 @@ class NoteQuery(ObjectType):
     note = graphene.Field(NoteType, id=graphene.Int(), slug=graphene.String())
     notes = graphene.Field(NotePageType, search=graphene.String(), page=graphene.Int())
 
-    def resolve_note(self, info, **kwargs):
+    def resolve_note(parent, info, **kwargs):
         noteid = kwargs.get('id')
         slug = kwargs.get('slug')
         if noteid: return Note.objects.get(pk=noteid)
         if slug: return Note.objects.get(slug=slug)
         return None
 
-    def resolve_notes(self, info, search='', page=1, **kwargs):
+    def resolve_notes(parent, info, search='', page=1, **kwargs):
         notes = Note.objects.order_by('-modified')
         if not info.context.user.is_authenticated:
             notes = notes.exclude(tags__icontains='private')
@@ -38,3 +38,20 @@ class NoteQuery(ObjectType):
             searchcls = Search(notes, NOTESEARCHFIELDS, search)
             notes = searchcls.queryset()
         return paginator(notes, 30, page, NotePageType)
+
+
+class SaveNote(graphene.Mutation):
+    class Arguments:
+        id = graphene.Int()
+        title = graphene.String()
+        body = graphene.String()
+
+    success = graphene.Boolean()
+    # note = graphene.Field(lambda: NoteType)
+
+    @staticmethod
+    def mutate(root, info, id, title, body):
+        print(id, title, body)
+        # note = Note(name=name)
+        success = True
+        return SaveNote(success=success)

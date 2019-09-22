@@ -21,8 +21,10 @@
             <button><i class='mdi mdi-file-code-outline'></i></button>
             <button @click='commands.undo'><i class='mdi mdi-undo'></i></button>
             <button @click='commands.redo'><i class='mdi mdi-redo'></i></button>
+            <button @click='save'>Save</button>
           </div>
         </editor-menu-bar>
+        <input name='title' v-model='note.title'/>
         <editor-content :editor='editor' />
       </div>
       <Footer/>
@@ -38,7 +40,14 @@
   import {Blockquote, BulletList, CodeBlock, HardBreak, Heading, ListItem,
     OrderedList, TodoItem, TodoList, Bold, Code, Italic, Link, Strike,
     Underline, History} from 'tiptap-extensions';
+  import {buildquery} from '@/utils/utils';
   import {sync} from 'vuex-pathify';
+
+  var QUERY_SAVENOTE = `mutation saveNote {
+    saveNote(id:{id}, title:{title}, body:{body}) {
+      note { id slug title body tags created }
+      success
+    }}`;
 
   export default {
     name: 'Notes',
@@ -46,9 +55,8 @@
     computed: { ...sync('notes/*') },
 
     mounted: function() {
-      // Tiptap Documentation References:
-      // * https://github.com/scrumpy/tiptap
-      // * https://tiptap.scrumpy.io/docs
+      // Tiptap Examples: https://github.com/scrumpy/tiptap
+      // Tiptap Documentation: https://tiptap.scrumpy.io/docs
       this.$store.set('global/layout', 'topnav');
       this.editor = new Editor({
         extensions: [new Blockquote(), new BulletList(), new CodeBlock(), new HardBreak(),
@@ -59,6 +67,18 @@
         editable: true,
         content: '<p>This is just a boring paragraph</p>',
       });
+    },
+
+    methods: {
+      save: function() {
+        console.log('save');
+        let self = this;
+        let data = {id:self.note.id, title:self.note.title, body:self.note.body};
+        let request = buildquery(QUERY_SAVENOTE, data);
+        request.xhr.then(function(response) {
+          console.log(response);
+        });
+      },
     },
 
     beforeDestroy: function() {

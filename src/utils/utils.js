@@ -8,7 +8,7 @@ import Cookie from "js-cookie";
  */
 export function sfmt(str, vars) {
   for (let key in vars) {
-    str = str.replace(`{${key}}`, vars[key], 'g');
+    str = str.replace(`{${key}}`, JSON.stringify(vars[key]), 'g');
   }
   return str;
 }

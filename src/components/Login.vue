@@ -49,8 +49,8 @@
   
   var USER_FIELDS = 'id email firstName lastName dateJoined lastLogin';
   var QUERY_CURRENT_USER = `query { currentUser { ${USER_FIELDS} }}`;
-  var QUERY_LOGIN_DJANGO = `query { login(email:"{email}", password:"{password}") { ${USER_FIELDS} }}`;
-  var QUERY_LOGIN_GAUTH = `query { login(code:"{code}") { ${USER_FIELDS} }}`;
+  var QUERY_LOGIN_DJANGO = `query { login(email:{email}, password:{password}) { ${USER_FIELDS} }}`;
+  var QUERY_LOGIN_GAUTH = `query { login(code:{code}) { ${USER_FIELDS} }}`;
   var QUERY_LOGOUT = `query { logout { ${USER_FIELDS} }}`;
 
   export default {

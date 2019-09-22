@@ -4,7 +4,7 @@ from django.contrib.auth import logout
 from django.contrib.auth.models import User
 from graphene_django.types import DjangoObjectType, ObjectType
 from graphql.error import GraphQLError
-from pk.apps.notes.schema import NoteQuery
+from pk.apps.notes.schema import NoteQuery, SaveNote
 from pk.utils import auth
 from pk import log
 
@@ -23,21 +23,21 @@ class UserQuery(ObjectType):
         password=graphene.String(), code=graphene.String())
     logout = graphene.Field(UserType)
 
-    def resolve_user(self, info, **kwargs):
+    def resolve_user(parent, info, **kwargs):
         userid = kwargs.get('id')
         if userid is not None:
             return User.objects.get(pk=id)
         return None
 
-    def resolve_users(self, info, **kwargs):
+    def resolve_users(parent, info, **kwargs):
         return User.objects.all()
 
-    def resolve_current_user(self, info):
+    def resolve_current_user(parent, info):
         if info.context.user.is_active:
             return info.context.user
         return None
     
-    def resolve_login(self, info, email=None, password=None, code=None, **kwargs):
+    def resolve_login(parent, info, email=None, password=None, code=None, **kwargs):
         try:
             user = (auth.auth_google(info.context, code) if code
                 else auth.auth_django(info.context, email, password))
@@ -56,4 +56,8 @@ class UserQuery(ObjectType):
 # we want to make available to the graphql query endpoint.
 class Query(UserQuery, NoteQuery, ObjectType):
     pass
-schema = graphene.Schema(query=Query)  # noqa
+
+class Mutations(graphene.ObjectType):  # noqa
+    save_note = SaveNote.Field()
+
+schema = graphene.Schema(query=Query, mutation=Mutations)  # noqa
