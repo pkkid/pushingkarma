@@ -73,7 +73,7 @@
       save: function() {
         console.log('save');
         let self = this;
-        let data = {id:self.note.id, title:self.note.title, body:self.note.body};
+        let data = {id:self.note.id, title:self.note.title, body:self.editor.getHTML()};
         let request = buildquery(QUERY_SAVENOTE, data);
         request.xhr.then(function(response) {
           console.log(response);

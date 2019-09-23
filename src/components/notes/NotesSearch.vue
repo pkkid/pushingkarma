@@ -80,7 +80,7 @@
         this.request_note = buildquery(QUERY_NOTE, {id:noteid});
         this.request_note.xhr.then(function(response) {
           self.note = response.data.data.note;
-          self.editor.setContent(self.note.title + self.note.body);
+          self.editor.setContent(self.note.body);
           if (callback) { callback(); }
         });
       },

@@ -1,12 +1,15 @@
 # encoding: utf-8
 import graphene
 from graphene_django.types import DjangoObjectType, ObjectType
+from pk.utils import get_object_or_none
 from pk.utils.graphene import paginated_type, paginator
 from pk.utils.search import FIELDTYPES, SearchField, Search
 from .models import Note
 
 
 class NoteType(DjangoObjectType):
+    id = graphene.Int(source='pk')
+    
     class Meta:
         model = Note
 
@@ -47,11 +50,13 @@ class SaveNote(graphene.Mutation):
         body = graphene.String()
 
     success = graphene.Boolean()
-    # note = graphene.Field(lambda: NoteType)
+    note = graphene.Field(lambda: NoteType)
 
     @staticmethod
     def mutate(root, info, id, title, body):
-        print(id, title, body)
-        # note = Note(name=name)
+        note = get_object_or_none(Note, id=id)
+        note.title = title
+        note.body = body
+        note.save()
         success = True
-        return SaveNote(success=success)
+        return SaveNote(note=note, success=success)

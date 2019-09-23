@@ -10,6 +10,8 @@ from pk import log
 
 
 class UserType(DjangoObjectType):
+    id = graphene.Int(source='pk')
+    
     class Meta:
         model = User
         only_fields = ['id', 'email', 'first_name', 'last_name', 'date_joined', 'last_login']
