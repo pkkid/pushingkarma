@@ -102,6 +102,7 @@
     color: $lightbg-text;
     margin-left: 300px;
     margin-top: 60px;
+    
     .note {
       width: 900px;
       margin: 20px auto;
@@ -120,6 +121,20 @@
       width: auto;
       &:hover { background-color: darken($lightbg-color, 4%); }
       &.active { background-color: darken($lightbg-color, 8%); }
+    }
+
+    input[name=title] {
+      background-color: transparent;
+      border-width: 0px;
+      border-left: 6px solid #d65d0e;
+      border-radius: 0px;
+      font-size: 40px;
+      font-weight: 600;
+      margin: 20px 0px 30px 0px;
+      padding: 0px 0px 0px 25px;
+      text-transform: uppercase;
+      white-space: normal;
+      margin-left: -32px;
     }
   }
 </style>
