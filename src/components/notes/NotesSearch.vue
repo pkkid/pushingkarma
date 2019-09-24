@@ -65,6 +65,7 @@
       updateHistory: function() {
         let query = {};
         if (this.search.length >= 1) { query.search = this.search; }
+        if (this.note.id) { query.id = this.note.id; }
         if (!isEqual(query, this.$router.history.current.query)) {
           this.$router.push({query});
         }
@@ -81,6 +82,7 @@
         this.request_note.xhr.then(function(response) {
           self.note = response.data.data.note;
           self.editor.setContent(self.note.body);
+          self.updateHistory();
           if (callback) { callback(); }
         });
       },
@@ -91,10 +93,10 @@
         if (this.request_search) { this.request_search.cancel(); }
         this.request_search = buildquery(QUERY_NOTES, {search:self.search, page:1});
         this.request_search.xhr.then(function(response) {
-          self.updateHistory();
           self.notes = response.data.data.notes;
           self.selected = 0;
-          if ((self.notes.length) && (callback)) { callback(); }
+          self.updateHistory();
+          if ((self.notes.objects.length) && (callback)) { callback(); }
         });
       },
 
