@@ -7,27 +7,38 @@
         <!-- Menubar -->
         <editor-menu-bar :editor="editor" v-slot="{commands, getMarkAttrs, isActive, focused}">
           <div class="menubar is-hidden" :class="{'is-focused': focused}">
+            <!-- Format Menu Dropdown -->
+            <button class='dropdown' v-on:click.prevent="showFormatMenu=!showFormatMenu">Format <i class='mdi mdi-menu-down'></i>
+              <div v-if='showFormatMenu' class='dropdown-menu'>
+                <button :class='{"active":isActive.paragraph()}' @click='commands.paragraph'>Paragraph</button>
+                <button :class='{"active":isActive.heading({level:1})}' @click='commands.heading({level:1})'>Heading 1</button>
+                <button :class='{"active":isActive.heading({level:2})}' @click='commands.heading({level:2})'>Heading 2</button>
+                <button :class='{"active":isActive.heading({level:3})}' @click='commands.heading({level:3})'>Heading 3</button>
+                <button :class='{"active":isActive.code_block()}' @click='commands.code_block'>Code Block</button>
+              </div>
+            </button>
+            <div class='separator'></div>
+            <!-- Regular Header Buttons -->
             <button :class='{"active":isActive.bold()}' @click='commands.bold'><i class='mdi mdi-format-bold'></i></button>
             <button :class='{"active":isActive.italic()}' @click='commands.italic'><i class='mdi mdi-format-italic'></i></button>
             <button :class='{"active":isActive.underline()}' @click='commands.underline'><i class='mdi mdi-format-underline'></i></button>
-            <button :class='{"active":isActive.code()}' @click='commands.code'><i class='mdi mdi-code-not-equal-variant'></i></button>
-            <button :class='{"active":isActive.paragraph()}' @click='commands.paragraph'><i class='mdi mdi-format-paragraph'></i></button>
-            <button :class='{"active":isActive.heading({level:1})}' @click='commands.heading({level:1})'><i class='mdi mdi-format-header-1'></i></button>
-            <button :class='{"active":isActive.heading({level:2})}' @click='commands.heading({level:2})'><i class='mdi mdi-format-header-2'></i></button>
-            <button :class='{"active":isActive.heading({level:3})}' @click='commands.heading({level:3})'><i class='mdi mdi-format-header-3'></i></button>
+            <div class='separator'></div>
             <button :class='{"active":isActive.bullet_list()}' @click='commands.bullet_list'><i class='mdi mdi-format-list-bulleted'></i></button>
             <button :class='{"active":isActive.ordered_list()}' @click='commands.ordered_list'><i class='mdi mdi-format-list-numbered'></i></button>
-            <button :class='{"active":isActive.blockquote()}' @click='showLinkMenu(getMarkAttrs("link"))'><i class='mdi mdi-link'></i></button>
+            <div class='separator'></div>
+            <button :class='{"active":isActive.link()}' @click='showLinkMenu(getMarkAttrs("link"))'><i class='mdi mdi-link'></i></button>
             <button :class='{"active":isActive.blockquote()}' @click='commands.blockquote'><i class='mdi mdi-format-quote-close'></i></button>
-            <button :class='{"active":isActive.code_block()}' @click='commands.code_block'><i class='mdi mdi-code-tags'></i></button>
+            <button :class='{"active":isActive.code()}' @click='commands.code'><i class='mdi mdi-code-tags'></i></button>
+            <div class='separator'></div>
             <button><i class='mdi mdi-file-code-outline'></i></button>
             <button @click='commands.undo'><i class='mdi mdi-undo'></i></button>
             <button @click='commands.redo'><i class='mdi mdi-redo'></i></button>
-            <button @click='save' style='float:right;'>Save</button>
-            <form class='link-form' v-if='linkMenuIsActive' @submit.prevent='setLinkUrl(commands.link, linkUrl)'>
-              <input class='link-input' type='text' v-model='linkUrl' placeholder='https://' ref='linkInput' @keydown.esc='hideLinkMenu'/>
-              <button class='link-button' @click='setLinkUrl(commands.link, null)' type='button'>X</button>
-            </form>
+            
+            <button @click='save' style='float:right; font-size:16px;'>Save</button>
+            <div class='link-form' v-if='linkMenuIsActive' @submit.prevent='setLinkUrl(commands.link, linkUrl)'>
+              <input type='text' v-model='linkUrl' placeholder='https://' ref='linkInput' @keydown.esc='hideLinkMenu'/>
+              <button @click='setLinkUrl(commands.link, null)'>X</button>
+            </div>
           </div>
         </editor-menu-bar>
         <!-- Content -->
@@ -64,6 +75,7 @@
     data: () => ({
       linkUrl: null,
       linkMenuIsActive: false,
+      showFormatMenu: false,
     }),
 
     mounted: function() {
@@ -136,28 +148,71 @@
     margin-top: 60px;
     
     .menubar {
+      background-color: $darkbg-color;
+      border-radius: 8px;
+      box-shadow: 0 2px 3px rgba(0, 0, 0, .3);
+      color: $darkbg-text;
+      padding: 5px 10px;
       position: fixed;
       top: 65px;
-      background-color: $darkbg-color;
-      box-shadow: 0 2px 3px rgba(0, 0, 0, .3);
-      padding: 5px 10px;
-      border-radius: 8px;
-      z-index: 50;
       width: 800px;
+      z-index: 50;
+      line-height: 23px;
+
+      .separator {
+        margin: 0px 10px 0px 5px;
+        background-color: red;
+        display: inline;
+        border-left: 1px solid #665c54;
+
+      }
 
       button {
         background-color: transparent;
         background-image: none;
         border-radius: 5px;
         border: 0px;
-        color: $darkbg-text;
+        box-shadow: none;
         padding: 3px 5px;
         cursor: pointer;
         font-size: 20px;
         margin-right: 5px;
         width: auto;
+        
         &:hover { background-color: lighten($darkbg-color, 8%); }
         &.active { background-color: lighten($darkbg-color, 16%); }
+      }
+      input {
+        width: 750px;
+        padding: 2px 8px;
+        border-width: 0px;
+        border-radius: 4px;
+        background-color: rgba(255,255,255,0.1);
+        font-size: 14px;
+        color: white;
+      }
+
+      .dropdown {
+        position: relative;
+        font-size: 16px;
+        line-height: 23px;
+      }
+      .dropdown-menu {
+        background-color: $darkbg-color;
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
+        left: -10px;
+        line-height: 30px;
+        padding: 15px 10px 2px 10px;
+        position: absolute;
+        top: 26px;
+        width: 150px;
+        z-index: 51;
+        button {
+          width: 130px;
+          text-align: left;
+          font-size: 16px;
+        }
       }
     }
 
@@ -168,7 +223,6 @@
       min-height: calc(100vh - 70px);
     }
     
-
     input[name=title] {
       background-color: transparent;
       border-width: 0px;
