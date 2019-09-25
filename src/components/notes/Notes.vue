@@ -4,7 +4,8 @@
     <div class='sidebar'><Search/></div>
     <div class='content'>
       <div class='note'>
-        <editor-menu-bar :editor="editor" v-slot="{commands, isActive, focused}">
+        <!-- Menubar -->
+        <editor-menu-bar :editor="editor" v-slot="{commands, getMarkAttrs, isActive, focused}">
           <div class="menubar is-hidden" :class="{'is-focused': focused}">
             <button :class='{"active":isActive.bold()}' @click='commands.bold'><i class='mdi mdi-format-bold'></i></button>
             <button :class='{"active":isActive.italic()}' @click='commands.italic'><i class='mdi mdi-format-italic'></i></button>
@@ -16,14 +17,20 @@
             <button :class='{"active":isActive.heading({level:3})}' @click='commands.heading({level:3})'><i class='mdi mdi-format-header-3'></i></button>
             <button :class='{"active":isActive.bullet_list()}' @click='commands.bullet_list'><i class='mdi mdi-format-list-bulleted'></i></button>
             <button :class='{"active":isActive.ordered_list()}' @click='commands.ordered_list'><i class='mdi mdi-format-list-numbered'></i></button>
+            <button :class='{"active":isActive.blockquote()}' @click='showLinkMenu(getMarkAttrs("link"))'><i class='mdi mdi-link'></i></button>
             <button :class='{"active":isActive.blockquote()}' @click='commands.blockquote'><i class='mdi mdi-format-quote-close'></i></button>
             <button :class='{"active":isActive.code_block()}' @click='commands.code_block'><i class='mdi mdi-code-tags'></i></button>
             <button><i class='mdi mdi-file-code-outline'></i></button>
             <button @click='commands.undo'><i class='mdi mdi-undo'></i></button>
             <button @click='commands.redo'><i class='mdi mdi-redo'></i></button>
-            <button @click='save'>Save</button>
+            <button @click='save' style='float:right;'>Save</button>
+            <form class='link-form' v-if='linkMenuIsActive' @submit.prevent='setLinkUrl(commands.link, linkUrl)'>
+              <input class='link-input' type='text' v-model='linkUrl' placeholder='https://' ref='linkInput' @keydown.esc='hideLinkMenu'/>
+              <button class='link-button' @click='setLinkUrl(commands.link, null)' type='button'>X</button>
+            </form>
           </div>
         </editor-menu-bar>
+        <!-- Content -->
         <input name='title' v-model='note.title'/>
         <editor-content :editor='editor' />
       </div>
@@ -51,8 +58,13 @@
 
   export default {
     name: 'Notes',
-    components: {Navigation, Footer, Search, EditorContent, EditorMenuBar},
+    components: {Navigation, Footer, Search,
+      EditorContent, EditorMenuBar},
     computed: { ...sync('notes/*') },
+    data: () => ({
+      linkUrl: null,
+      linkMenuIsActive: false,
+    }),
 
     mounted: function() {
       // Tiptap Examples: https://github.com/scrumpy/tiptap
@@ -70,6 +82,7 @@
     },
 
     methods: {
+      // Save - Save the current Title and Content to the server
       save: function() {
         console.log('save');
         let self = this;
@@ -78,6 +91,25 @@
         request.xhr.then(function(response) {
           console.log(response);
         });
+      },
+
+      // ShowLinkMenu, HideLinkMenu, SetLinkUrl
+      // https://tiptap.scrumpy.io/links
+      showLinkMenu: function(attrs) {
+        console.log('Show Link Menu!');
+        this.linkUrl = attrs.href;
+        this.linkMenuIsActive = true;
+        this.$nextTick(function() {
+          this.$refs.linkInput.focus();
+        });
+      },
+      hideLinkMenu: function() {
+        this.linkUrl = null;
+        this.linkMenuIsActive = false;
+      },
+      setLinkUrl: function(command, url) {
+        command({href: url});
+        this.hideLinkMenu();
       },
     },
 
@@ -103,25 +135,39 @@
     margin-left: 300px;
     margin-top: 60px;
     
-    .note {
-      width: 900px;
-      margin: 20px auto;
-      min-height: calc(100vh - 70px);
+    .menubar {
+      position: fixed;
+      top: 65px;
+      background-color: $darkbg-color;
+      box-shadow: 0 2px 3px rgba(0, 0, 0, .3);
+      padding: 5px 10px;
+      border-radius: 8px;
+      z-index: 50;
+      width: 800px;
+
+      button {
+        background-color: transparent;
+        background-image: none;
+        border-radius: 5px;
+        border: 0px;
+        color: $darkbg-text;
+        padding: 3px 5px;
+        cursor: pointer;
+        font-size: 20px;
+        margin-right: 5px;
+        width: auto;
+        &:hover { background-color: lighten($darkbg-color, 8%); }
+        &.active { background-color: lighten($darkbg-color, 16%); }
+      }
     }
 
-    button {
-      background-color: darken($lightbg-color, 1%);
-      background-image: none;
-      border-radius: 5px;
-      border: 0px;
-      color: $lightbg-text-dim;
-      cursor: pointer;
-      font-size: 20px;
-      margin-right: 5px;
-      width: auto;
-      &:hover { background-color: darken($lightbg-color, 4%); }
-      &.active { background-color: darken($lightbg-color, 8%); }
+    .note {
+      width: 800px;
+      margin: 20px auto;
+      padding-top: 60px;
+      min-height: calc(100vh - 70px);
     }
+    
 
     input[name=title] {
       background-color: transparent;
@@ -130,11 +176,12 @@
       border-radius: 0px;
       font-size: 40px;
       font-weight: 600;
-      margin: 20px 0px 30px 0px;
+      margin: 20px 0px 10px 0px;
       padding: 0px 0px 0px 25px;
       text-transform: uppercase;
       white-space: normal;
       margin-left: -32px;
+      line-height: 40px;
     }
   }
 </style>

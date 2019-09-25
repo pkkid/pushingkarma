@@ -1,6 +1,6 @@
 <template>
   <div id='about' class='parallax-static'>
-    <h3>About Me <span>My background and motivation</span></h3>
+    <h1>About Me <span>My background and motivation</span></h1>
     <div class='photo'><img src='@/assets/img/family.jpg'/></div>
     <div class='aboutme'>
       <h4>I am Michael Shepanski and <span class='accent'>Developer</span></h4>

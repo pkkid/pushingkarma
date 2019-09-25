@@ -1,6 +1,6 @@
 <template>
   <div id='projects' class='parallax-static'>
-    <h3>Projects <span>Whats been keeping me busy</span></h3>
+    <h1>Projects <span>Whats been keeping me busy</span></h1>
     <ul class='projectlist'>
       <li><a href='https://github.com/mjs7231/python-plexapi'>
         <i class='mdi mdi-code-braces'></i>
@@ -58,10 +58,11 @@
       min-width: 310px;
       padding: 40px 40px 33px 40px;
       position: relative;
-      text-decoration: none;
+      text-decoration: none !important;
       top: 0px;
       transition: all .2s ease-out;
       width: 30%;
+
       .mdi {
         font-size: 55px;
         position: relative;

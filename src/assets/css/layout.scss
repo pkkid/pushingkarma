@@ -55,6 +55,8 @@ body, html {
   background-color: $darkbg-color;
   color: $darkbg-text;
   font-family:$font-serif;
+  font-weight: 400;
+  font-size: 18px;
 }
 *, *:before, *:after { box-sizing: inherit; }
 :focus { outline: none !important; }
@@ -68,9 +70,9 @@ body, html {
 
   a,a:hover {
     color: #1d2021;
-    text-decoration: none;
+    text-decoration: underline;
   }
-  h3 {
+  h1 {
     font-size: 50px;
     text-transform: uppercase;
     font-weight: 600;
@@ -116,7 +118,6 @@ body, html {
     color: $darkbg-text;
     cursor: pointer;
     font-weight: 500;
-    margin-top: 30px;
     padding: 12px;
     width: 100%;
   }
