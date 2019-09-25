@@ -42,7 +42,7 @@ class NoteQuery(ObjectType):
             notes = searchcls.queryset()
         return paginator(notes, 30, page, NotePageType)
 
-
+    
 class SaveNote(graphene.Mutation):
     class Arguments:
         id = graphene.Int()

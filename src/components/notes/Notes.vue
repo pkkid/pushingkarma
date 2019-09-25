@@ -5,39 +5,48 @@
     <div class='content'>
       <div class='note'>
         <!-- Menubar -->
-        <editor-menu-bar :editor="editor" v-slot="{commands, getMarkAttrs, isActive, focused}">
-          <div class="menubar is-hidden" :class="{'is-focused': focused}">
+        <editor-menu-bar :editor='editor' v-slot='{commands, getMarkAttrs, isActive}'>
+          <div class='menubar'>
             <!-- Format Menu Dropdown -->
-            <button class='dropdown' v-on:click.prevent="showFormatMenu=!showFormatMenu">Format <i class='mdi mdi-menu-down'></i>
-              <div v-if='showFormatMenu' class='dropdown-menu'>
-                <button :class='{"active":isActive.paragraph()}' @click='commands.paragraph'>Paragraph</button>
-                <button :class='{"active":isActive.heading({level:1})}' @click='commands.heading({level:1})'>Heading 1</button>
-                <button :class='{"active":isActive.heading({level:2})}' @click='commands.heading({level:2})'>Heading 2</button>
-                <button :class='{"active":isActive.heading({level:3})}' @click='commands.heading({level:3})'>Heading 3</button>
-                <button :class='{"active":isActive.code_block()}' @click='commands.code_block'>Code Block</button>
-              </div>
+            <button class='dropdown' v-on:click.prevent="showFormatMenu=!showFormatMenu">
+              <span v-if='isActive.paragraph()'>Paragraph</span>
+              <span v-else-if='isActive.heading({level:1})'>Heading 1</span>
+              <span v-else-if='isActive.heading({level:2})'>Heading 2</span>
+              <span v-else-if='isActive.heading({level:3})'>Heading 3</span>
+              <span v-else-if='isActive.code_block()'>Code Block</span>
+              <span v-else>Format</span> <i class='mdi mdi-menu-down'></i>
             </button>
-            <div class='separator'></div>
+            <div v-if='showFormatMenu' class='dropdown-menu'>
+              <button :class='{"active":isActive.paragraph()}' @click='commands.paragraph'>Paragraph</button>
+              <button :class='{"active":isActive.heading({level:1})}' @click='commands.heading({level:1})'>Heading 1</button>
+              <button :class='{"active":isActive.heading({level:2})}' @click='commands.heading({level:2})'>Heading 2</button>
+              <button :class='{"active":isActive.heading({level:3})}' @click='commands.heading({level:3})'>Heading 3</button>
+              <button :class='{"active":isActive.code_block()}' @click='commands.code_block'>Code Block</button>
+            </div>
+            <div class='sep'></div>
             <!-- Regular Header Buttons -->
             <button :class='{"active":isActive.bold()}' @click='commands.bold'><i class='mdi mdi-format-bold'></i></button>
             <button :class='{"active":isActive.italic()}' @click='commands.italic'><i class='mdi mdi-format-italic'></i></button>
             <button :class='{"active":isActive.underline()}' @click='commands.underline'><i class='mdi mdi-format-underline'></i></button>
-            <div class='separator'></div>
+            <div class='sep'></div>
             <button :class='{"active":isActive.bullet_list()}' @click='commands.bullet_list'><i class='mdi mdi-format-list-bulleted'></i></button>
             <button :class='{"active":isActive.ordered_list()}' @click='commands.ordered_list'><i class='mdi mdi-format-list-numbered'></i></button>
-            <div class='separator'></div>
-            <button :class='{"active":isActive.link()}' @click='showLinkMenu(getMarkAttrs("link"))'><i class='mdi mdi-link'></i></button>
+            <div class='sep'></div>
+            <button :class='{"active":isActive.link()}' @click='toggleLinkMenu(getMarkAttrs("link"))'><i class='mdi mdi-link'></i></button>
             <button :class='{"active":isActive.blockquote()}' @click='commands.blockquote'><i class='mdi mdi-format-quote-close'></i></button>
             <button :class='{"active":isActive.code()}' @click='commands.code'><i class='mdi mdi-code-tags'></i></button>
-            <div class='separator'></div>
-            <button><i class='mdi mdi-file-code-outline'></i></button>
-            <button @click='commands.undo'><i class='mdi mdi-undo'></i></button>
-            <button @click='commands.redo'><i class='mdi mdi-redo'></i></button>
-            
-            <button @click='save' style='float:right; font-size:16px;'>Save</button>
-            <div class='link-form' v-if='linkMenuIsActive' @submit.prevent='setLinkUrl(commands.link, linkUrl)'>
-              <input type='text' v-model='linkUrl' placeholder='https://' ref='linkInput' @keydown.esc='hideLinkMenu'/>
-              <button @click='setLinkUrl(commands.link, null)'>X</button>
+            <!-- <div class='sep'></div> -->
+            <!-- <button><i class='mdi mdi-file-code-outline'></i></button> -->
+            <!-- <button @click='commands.undo'><i class='mdi mdi-undo'></i></button> -->
+            <!-- <button @click='commands.redo'><i class='mdi mdi-redo'></i></button> -->
+            <button @click='save' style='float:right;'><span>Save</span></button>
+            <!-- Link Form -->
+            <div class='link-form' v-if='showLinkMenu'>
+              <input type='text' name='url' v-model='linkUrl' ref='linkInput' placeholder='https://' spellcheck='false' autocomplete='off'
+                @keydown.enter.prevent='setLinkUrl(commands.link, linkUrl)'
+                @keydown.esc='hideLinkMenu'
+                @click='$refs.linkInput.focus()'/>
+              <button @click='setLinkUrl(commands.link, "")' style='margin-left:5px; font-size:14px;'>Clear</button>
             </div>
           </div>
         </editor-menu-bar>
@@ -74,7 +83,7 @@
     computed: { ...sync('notes/*') },
     data: () => ({
       linkUrl: null,
-      linkMenuIsActive: false,
+      showLinkMenu: false,
       showFormatMenu: false,
     }),
 
@@ -105,20 +114,27 @@
         });
       },
 
-      // ShowLinkMenu, HideLinkMenu, SetLinkUrl
-      // https://tiptap.scrumpy.io/links
-      showLinkMenu: function(attrs) {
-        console.log('Show Link Menu!');
-        this.linkUrl = attrs.href;
-        this.linkMenuIsActive = true;
-        this.$nextTick(function() {
-          this.$refs.linkInput.focus();
-        });
+      // Toggle Link Menu - Show or hide the link menu input
+      // see also: https://tiptap.scrumpy.io/links
+      toggleLinkMenu: function(attrs) {
+        if (this.showLinkMenu) {
+          this.hideLinkMenu();
+        } else {
+          this.linkUrl = attrs.href;
+          this.showLinkMenu = true;
+          this.$nextTick(function() {
+            this.$refs.linkInput.focus();
+          });
+        }
       },
+
+      // Hide Link Menu - Hide the link menu without changing anything
       hideLinkMenu: function() {
         this.linkUrl = null;
-        this.linkMenuIsActive = false;
+        this.showLinkMenu = false;
       },
+
+      // Set Link URL - Set the link URL then hide the link menu
       setLinkUrl: function(command, url) {
         command({href: url});
         this.hideLinkMenu();
@@ -158,54 +174,54 @@
       width: 800px;
       z-index: 50;
       line-height: 23px;
-
-      .separator {
+      .sep {
         margin: 0px 10px 0px 5px;
         background-color: red;
         display: inline;
         border-left: 1px solid #665c54;
-
       }
-
       button {
         background-color: transparent;
         background-image: none;
         border-radius: 5px;
         border: 0px;
         box-shadow: none;
-        padding: 3px 5px;
+        padding: 2px 5px;
         cursor: pointer;
         font-size: 20px;
         margin-right: 5px;
+        line-height: 23px;
         width: auto;
-        
+        span { font-size: 16px; }
+        i.mdi { position:relative; top:1px; }
         &:hover { background-color: lighten($darkbg-color, 8%); }
         &.active { background-color: lighten($darkbg-color, 16%); }
       }
       input {
-        width: 750px;
-        padding: 2px 8px;
-        border-width: 0px;
-        border-radius: 4px;
         background-color: rgba(255,255,255,0.1);
+        border-radius: 4px;
+        border-width: 0px;
+        color: $darkbg-input;
         font-size: 14px;
-        color: white;
+        font-weight: 500;
+        line-height: 23px;
+        margin-top: 5px;
+        padding: 2px 8px;
+        width: 700px;
       }
 
       .dropdown {
         position: relative;
-        font-size: 16px;
-        line-height: 23px;
+        width: 130px;
       }
       .dropdown-menu {
         background-color: $darkbg-color;
-        border-bottom-left-radius: 8px;
-        border-bottom-right-radius: 8px;
-        left: -10px;
+        border-radius: 8px;
+        left: 0px;
         line-height: 30px;
-        padding: 15px 10px 2px 10px;
+        padding: 5px 10px;
         position: absolute;
-        top: 26px;
+        top: 42px;
         width: 150px;
         z-index: 51;
         button {
