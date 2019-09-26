@@ -5,7 +5,7 @@
     <div class='content'>
       <div class='note'>
         <!-- Menubar -->
-        <editor-menu-bar :editor='editor' v-slot='{commands, getMarkAttrs, isActive}'>
+        <editor-menu-bar :editor='editor' v-slot='{commands, getMarkAttrs, isActive}' v-if='!readonly'>
           <div class='menubar'>
             <!-- Format Menu Dropdown -->
             <button class='dropdown' v-on:click.prevent="showFormatMenu=!showFormatMenu">
@@ -51,7 +51,11 @@
           </div>
         </editor-menu-bar>
         <!-- Content -->
-        <input name='title' v-model='note.title'/>
+        <h1>
+          <input name='title' v-model='note.title' :readonly=readonly />
+          <span>{{note.created | formatDate('MMM DD, YYYY')}}
+            <input name='tags' placeholder='tags' v-model='note.tags' :readonly=readonly /></span>
+        </h1>
         <editor-content :editor='editor' />
       </div>
       <Footer/>
@@ -71,23 +75,23 @@
   import {sync} from 'vuex-pathify';
 
   var QUERY_SAVENOTE = `mutation saveNote {
-    saveNote(id:{id}, title:{title}, body:{body}) {
-      note { id slug title body tags created }
+    saveNote(id:{id}, title:{title}, tags:{tags}, body:{body}) {
+      note { id slug title tags body created }
       success
     }}`;
 
   export default {
     name: 'Notes',
-    components: {Navigation, Footer, Search,
-      EditorContent, EditorMenuBar},
+    components: {Navigation, Footer, Search, EditorContent, EditorMenuBar},
     computed: { ...sync('notes/*') },
     data: () => ({
+      readonly: true,
       linkUrl: null,
       showLinkMenu: false,
       showFormatMenu: false,
     }),
 
-    mounted: function() {
+    created: function() {
       // Tiptap Examples: https://github.com/scrumpy/tiptap
       // Tiptap Documentation: https://tiptap.scrumpy.io/docs
       this.$store.set('global/layout', 'topnav');
@@ -97,8 +101,7 @@
           new TodoList(), new Link(), new Bold(), new Code(), new Italic(), new Strike(),
           new Underline(), new History(),
         ],
-        editable: true,
-        content: '<p>This is just a boring paragraph</p>',
+        editable: false,
       });
     },
 
@@ -107,7 +110,8 @@
       save: function() {
         console.log('save');
         let self = this;
-        let data = {id:self.note.id, title:self.note.title, body:self.editor.getHTML()};
+        let data = {id:self.note.id, title:self.note.title,
+          tags:self.note.tags, body:self.editor.getHTML()};
         let request = buildquery(QUERY_SAVENOTE, data);
         request.xhr.then(function(response) {
           console.log(response);
@@ -242,16 +246,23 @@
     input[name=title] {
       background-color: transparent;
       border-width: 0px;
-      border-left: 6px solid #d65d0e;
       border-radius: 0px;
       font-size: 40px;
       font-weight: 600;
-      margin: 20px 0px 10px 0px;
-      padding: 0px 0px 0px 25px;
+      margin: 5px 0px 5px -2px;
+      padding: 0px;
       text-transform: uppercase;
       white-space: normal;
-      margin-left: -32px;
       line-height: 40px;
+    }
+    input[name=tags] {
+      background-color: transparent;
+      border-width: 0px;
+      border-radius: 0px;
+      font-size: 16px;
+      font-weight: 400;
+      width: 600px;
+      padding: 0px 0px 3px 10px;
     }
   }
 </style>

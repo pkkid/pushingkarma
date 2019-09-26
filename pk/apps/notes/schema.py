@@ -47,15 +47,17 @@ class SaveNote(graphene.Mutation):
     class Arguments:
         id = graphene.Int()
         title = graphene.String()
+        tags = graphene.String()
         body = graphene.String()
 
     success = graphene.Boolean()
     note = graphene.Field(lambda: NoteType)
 
     @staticmethod
-    def mutate(root, info, id, title, body):
+    def mutate(root, info, id, title, tags, body):
         note = get_object_or_none(Note, id=id)
         note.title = title
+        note.tags = tags
         note.body = body
         note.save()
         success = True
