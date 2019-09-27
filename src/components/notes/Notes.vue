@@ -3,58 +3,57 @@
     <Navigation :cls="'topnav'"/>
     <div class='sidebar'><Search/></div>
     <div class='content'>
-      <div class='note'>
+      <div class='note' :class='{editable:editing}'>
         <!-- Menubar -->
-        <editor-menu-bar :editor='editor' v-slot='{commands, getMarkAttrs, isActive}' v-if='editor.options.editable'>
-          <div class='menubar'>
-            <!-- Format Menu Dropdown -->
-            <button class='dropdown' v-on:click.prevent="showFormatMenu=!showFormatMenu">
-              <span v-if='isActive.paragraph()'>Paragraph</span>
-              <span v-else-if='isActive.heading({level:1})'>Heading 1</span>
-              <span v-else-if='isActive.heading({level:2})'>Heading 2</span>
-              <span v-else-if='isActive.heading({level:3})'>Heading 3</span>
-              <span v-else-if='isActive.code_block()'>Code Block</span>
-              <span v-else>Format</span> <i class='mdi mdi-menu-down'></i>
-            </button>
-            <div v-if='showFormatMenu' class='dropdown-menu'>
-              <button :class='{"active":isActive.paragraph()}' @click='commands.paragraph'>Paragraph</button>
-              <button :class='{"active":isActive.heading({level:1})}' @click='commands.heading({level:1})'>Heading 1</button>
-              <button :class='{"active":isActive.heading({level:2})}' @click='commands.heading({level:2})'>Heading 2</button>
-              <button :class='{"active":isActive.heading({level:3})}' @click='commands.heading({level:3})'>Heading 3</button>
-              <button :class='{"active":isActive.code_block()}' @click='commands.code_block'>Code Block</button>
+        <transition name='fade'>
+          <editor-menu-bar :editor='editor' v-slot='{commands, getMarkAttrs, isActive}' v-if='editing'>
+            <div class='menubar'>
+              <!-- Format Menu Dropdown -->
+              <button class='dropdown' v-on:click.prevent="showFormatMenu=!showFormatMenu">
+                <span v-if='isActive.paragraph()'>Paragraph</span>
+                <span v-else-if='isActive.heading({level:1})'>Heading 1</span>
+                <span v-else-if='isActive.heading({level:2})'>Heading 2</span>
+                <span v-else-if='isActive.heading({level:3})'>Heading 3</span>
+                <span v-else-if='isActive.code_block()'>Code Block</span>
+                <span v-else>Format</span> <i class='mdi mdi-menu-down'></i>
+              </button>
+              <div v-if='showFormatMenu' class='dropdown-menu'>
+                <button :class='{"active":isActive.paragraph()}' @click='commands.paragraph'>Paragraph</button>
+                <button :class='{"active":isActive.heading({level:1})}' @click='commands.heading({level:1})'>Heading 1</button>
+                <button :class='{"active":isActive.heading({level:2})}' @click='commands.heading({level:2})'>Heading 2</button>
+                <button :class='{"active":isActive.heading({level:3})}' @click='commands.heading({level:3})'>Heading 3</button>
+                <button :class='{"active":isActive.code_block()}' @click='commands.code_block'>Code Block</button>
+              </div>
+              <div class='sep'></div>
+              <!-- Regular Header Buttons -->
+              <button :class='{"active":isActive.bold()}' @click='commands.bold'><i class='mdi mdi-format-bold'></i></button>
+              <button :class='{"active":isActive.italic()}' @click='commands.italic'><i class='mdi mdi-format-italic'></i></button>
+              <button :class='{"active":isActive.underline()}' @click='commands.underline'><i class='mdi mdi-format-underline'></i></button>
+              <div class='sep'></div>
+              <button :class='{"active":isActive.bullet_list()}' @click='commands.bullet_list'><i class='mdi mdi-format-list-bulleted'></i></button>
+              <button :class='{"active":isActive.ordered_list()}' @click='commands.ordered_list'><i class='mdi mdi-format-list-numbered'></i></button>
+              <div class='sep'></div>
+              <button :class='{"active":isActive.link()}' @click='toggleLinkMenu(getMarkAttrs("link"))'><i class='mdi mdi-link'></i></button>
+              <button :class='{"active":isActive.blockquote()}' @click='commands.blockquote'><i class='mdi mdi-format-quote-close'></i></button>
+              <button :class='{"active":isActive.code()}' @click='commands.code'><i class='mdi mdi-code-tags'></i></button>
+              <button @click='save' style='float:right;'><span>Save</span></button>
+              <!-- Link Form -->
+              <div class='link-form' v-if='showLinkMenu'>
+                <input type='text' name='url' v-model='linkUrl' ref='linkInput' placeholder='https://' spellcheck='false' autocomplete='off'
+                  @keydown.enter.prevent='setLinkUrl(commands.link, linkUrl)'
+                  @keydown.esc='hideLinkMenu'
+                  @click='$refs.linkInput.focus()'/>
+                <button @click='setLinkUrl(commands.link, "")' style='margin-left:5px; font-size:14px;'>Clear</button>
+              </div>
             </div>
-            <div class='sep'></div>
-            <!-- Regular Header Buttons -->
-            <button :class='{"active":isActive.bold()}' @click='commands.bold'><i class='mdi mdi-format-bold'></i></button>
-            <button :class='{"active":isActive.italic()}' @click='commands.italic'><i class='mdi mdi-format-italic'></i></button>
-            <button :class='{"active":isActive.underline()}' @click='commands.underline'><i class='mdi mdi-format-underline'></i></button>
-            <div class='sep'></div>
-            <button :class='{"active":isActive.bullet_list()}' @click='commands.bullet_list'><i class='mdi mdi-format-list-bulleted'></i></button>
-            <button :class='{"active":isActive.ordered_list()}' @click='commands.ordered_list'><i class='mdi mdi-format-list-numbered'></i></button>
-            <div class='sep'></div>
-            <button :class='{"active":isActive.link()}' @click='toggleLinkMenu(getMarkAttrs("link"))'><i class='mdi mdi-link'></i></button>
-            <button :class='{"active":isActive.blockquote()}' @click='commands.blockquote'><i class='mdi mdi-format-quote-close'></i></button>
-            <button :class='{"active":isActive.code()}' @click='commands.code'><i class='mdi mdi-code-tags'></i></button>
-            <!-- <div class='sep'></div> -->
-            <!-- <button><i class='mdi mdi-file-code-outline'></i></button> -->
-            <!-- <button @click='commands.undo'><i class='mdi mdi-undo'></i></button> -->
-            <!-- <button @click='commands.redo'><i class='mdi mdi-redo'></i></button> -->
-            <button @click='save' style='float:right;'><span>Save</span></button>
-            <!-- Link Form -->
-            <div class='link-form' v-if='showLinkMenu'>
-              <input type='text' name='url' v-model='linkUrl' ref='linkInput' placeholder='https://' spellcheck='false' autocomplete='off'
-                @keydown.enter.prevent='setLinkUrl(commands.link, linkUrl)'
-                @keydown.esc='hideLinkMenu'
-                @click='$refs.linkInput.focus()'/>
-              <button @click='setLinkUrl(commands.link, "")' style='margin-left:5px; font-size:14px;'>Clear</button>
-            </div>
-          </div>
-        </editor-menu-bar>
+          </editor-menu-bar>
+          <button class='edit' v-else-if='userid !== null' @click='editing=true'>Edit</button>
+        </transition>
         <!-- Content -->
         <h1>
-          <input name='title' v-model='note.title' :readonly=!editor.options.editable />
+          <input name='title' v-model='note.title' :readonly=!editing />
           <span>{{note.created | formatDate('MMM DD, YYYY')}}
-            <input name='tags' placeholder='tags' v-model='note.tags' :readonly=!editor.options.editable /></span>
+            <input name='tags' placeholder='tags' v-model='note.tags' :readonly=!editing /></span>
         </h1>
         <editor-content :editor='editor' />
       </div>
@@ -89,14 +88,14 @@
       userid: get('global/user@id'),
     },
     data: () => ({
+      editing: false,
       linkUrl: null,
-      showLinkMenu: false,
       showFormatMenu: false,
+      showLinkMenu: false,
     }),
     watch: {
-      userid: function() {
-        this.editor.setOptions({editable: this.userid !== null});
-      }
+      editing: function() { this.editor.setOptions({editable: this.userid !== null}); },
+      userid: function() { this.editing = false; }
     },
 
     created: function() {
@@ -104,7 +103,7 @@
       // Tiptap Documentation: https://tiptap.scrumpy.io/docs
       this.$store.set('global/layout', 'topnav');
       this.editor = new Editor({
-        editable: this.userid !== null,
+        editable: false,
         extensions: [new Blockquote(), new BulletList(), new CodeBlock(), new HardBreak(),
           new Heading({levels: [1, 2, 3]}), new ListItem(), new OrderedList(), new TodoItem(),
           new TodoList(), new Link(), new Bold(), new Code(), new Italic(), new Strike(),
@@ -123,6 +122,7 @@
         let request = buildquery(QUERY_SAVENOTE, data);
         request.xhr.then(function(response) {
           console.log(response);
+          self.editing = false;
         });
       },
 
@@ -175,6 +175,44 @@
     margin-left: 300px;
     margin-top: 60px;
     
+    // General Note Display
+    .note {
+      width: 800px;
+      margin: 20px auto;
+      padding-top: 10px;
+      position: relative;
+      min-height: calc(100vh - 70px);
+      transition: padding 0.2s ease;
+      &.editable { padding-top: 60px; }
+    }
+    .edit {
+      margin-left: 730px;
+      position: fixed;
+      top: 70px;
+      z-index: 50;
+    }
+    input {
+      background-color: transparent;
+      border-width: 0px;
+      border-radius: 0px;
+      &[name=title] {
+        font-size: 40px;
+        font-weight: 600;
+        margin: 5px 0px 5px -2px;
+        padding: 0px;
+        text-transform: uppercase;
+        white-space: normal;
+        line-height: 40px;
+      }
+      &[name=tags] {
+        font-size: 16px;
+        font-weight: 400;
+        width: 600px;
+        padding: 0px 0px 3px 10px;
+      }
+    }
+
+    // Menubar and Buttons
     .menubar {
       background-color: $darkbg-color;
       border-radius: 8px;
@@ -195,17 +233,10 @@
       button {
         background-color: transparent;
         background-image: none;
-        border-radius: 5px;
-        border: 0px;
-        box-shadow: none;
-        padding: 2px 5px;
-        cursor: pointer;
-        font-size: 20px;
+        color: $darkbg-text;
         margin-right: 5px;
-        line-height: 23px;
-        width: auto;
         span { font-size: 16px; }
-        i.mdi { position:relative; top:1px; }
+        i.mdi { font-size:20px; position:relative; top:1px; }
         &:hover { background-color: lighten($darkbg-color, 8%); }
         &.active { background-color: lighten($darkbg-color, 16%); }
       }
@@ -221,7 +252,6 @@
         padding: 2px 8px;
         width: 700px;
       }
-
       .dropdown {
         position: relative;
         width: 130px;
@@ -242,35 +272,6 @@
           font-size: 16px;
         }
       }
-    }
-
-    .note {
-      width: 800px;
-      margin: 20px auto;
-      padding-top: 60px;
-      min-height: calc(100vh - 70px);
-    }
-    
-    input[name=title] {
-      background-color: transparent;
-      border-width: 0px;
-      border-radius: 0px;
-      font-size: 40px;
-      font-weight: 600;
-      margin: 5px 0px 5px -2px;
-      padding: 0px;
-      text-transform: uppercase;
-      white-space: normal;
-      line-height: 40px;
-    }
-    input[name=tags] {
-      background-color: transparent;
-      border-width: 0px;
-      border-radius: 0px;
-      font-size: 16px;
-      font-weight: 400;
-      width: 600px;
-      padding: 0px 0px 3px 10px;
     }
   }
 </style>

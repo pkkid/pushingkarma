@@ -32,11 +32,12 @@ $font-serif: 'Montserrat', Helvetica, Arial, sans-serif;
 $bounce: cubic-bezier(.47,1.64,.41,.8);
 
 $lightbg-color:      #eeeeee;
-$lightbg-text:       #1d2021;
-$lightbg-text-dim:   #777777;
-$lightbg-link:       #ff0000;
-$lightbg-link-hover: #00ff00;
+$lightbg-text:       #3c3836;
+$lightbg-text-dim:   #7c6f64;
+$lightbg-link:       #282828;
+$lightbg-link-hover: #076678;
 $lightbg-accent:     #d65d0e;
+$lightbg-input:      #3c3836;
 
 $darkbg-color:       #282828;
 $darkbg-text:        #f9f5d7;
@@ -68,10 +69,14 @@ body, html {
 .content {
   color: $lightbg-text;
 
+  // Links
   a,a:hover {
     color: #1d2021;
     text-decoration: underline;
   }
+
+  // Article Elements
+  // Header, Paragraph, List
   h1 {
     font-size: 50px;
     text-transform: uppercase;
@@ -95,30 +100,6 @@ body, html {
   p {
     line-height: 28px;
   }
-  label {
-    font-size: 13px;
-    display: block;
-    padding: 3px 0px;
-    font-weight: 100;
-    margin-top: 10px;
-  }
-  input {
-    width: 100%;
-    border-radius: 6px;
-    border: 2px solid #dddddd;
-    background-color: #f8f8f8;
-    padding: 10px;
-  }
-  button {
-    background-color: #076678;
-    background-image: linear-gradient(#076678, darken(#076678, 5%));
-    border-radius: 6px;
-    border-width: 0px;
-    box-shadow: 0px 1px 0px rgba(0,0,0,0.3);
-    color: $darkbg-text;
-    cursor: pointer;
-    font-weight: 500;
-  }
   dl {
     margin: 10px 0px;
     font-size: 15px;
@@ -132,6 +113,44 @@ body, html {
       text-transform: uppercase;
     }
   }
+  
+  // Form Elements
+  // Input, Label, Button
+  input {
+    width: 100%;
+    border-radius: 6px;
+    border: 2px solid #dddddd;
+    background-color: #f8f8f8;
+    padding: 10px;
+    color: $lightbg-input;
+  }
+  label {
+    font-size: 13px;
+    display: block;
+    padding: 3px 0px;
+    font-weight: 100;
+    margin-top: 10px;
+  }
+  button {
+    background-color: darken($lightbg-color, 10%);
+    border-radius: 5px;
+    border-width: 0px;
+    color: $lightbg-text-dim;
+    line-height: 23px;
+    padding: 2px 10px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 16px;
+    &:hover { background-color:darken($lightbg-color, 15%); color:$lightbg-link; }
+    &.primary {
+      background-color: #076678;
+      color: $darkbg-text;
+      &:hover { background-color:darken(#076678, 5%); color:#fff; }
+    }
+  }
+  
+  // Custom Element Types
+  // Footnote
   .footnote {
     position: absolute;
     bottom: 20px;

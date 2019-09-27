@@ -26,7 +26,7 @@
                 <input type='text' id='email' name='email' v-model='loginform.email' spellcheck='false' autocomplete='off' autofocus='true'/>
                 <label for='password'>Password</label>
                 <input type='password' id='password' name='password' v-model='loginform.password' autocomplete='off'/>
-                <button type='submit'>Login</button>
+                <button type='submit' class='primary'>Login</button>
               </form>
             </div>
           </transition>
@@ -148,13 +148,13 @@
         padding-left: 0px;
         border-left-width: 0px;
         text-transform: none;
-        span { font-size:13px; }
+        span { font-size:13px; display:block; }
       }
       .avatar {
         background-size: 80px;
         background-position: center center;
         border-radius: 10px;
-        box-shadow: 0px 1px 2px rgba(0,0,0,0.3);
+        border-bottom: 1px solid #fff;
         box-sizing: content-box;
         display: block;
         height: 80px;
