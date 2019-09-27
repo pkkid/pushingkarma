@@ -15,7 +15,7 @@
                 <span v-else-if='isActive.heading({level:2})'>Heading 2</span>
                 <span v-else-if='isActive.heading({level:3})'>Heading 3</span>
                 <span v-else-if='isActive.code_block()'>Code Block</span>
-                <span v-else>Format</span> <i class='mdi mdi-menu-down'></i>
+                <span v-else>Format</span> <i class='mdi mdi-menu-down'/>
               </button>
               <div v-if='showFormatMenu' class='dropdown-menu'>
                 <button :class='{"active":isActive.paragraph()}' @click='commands.paragraph'>Paragraph</button>
@@ -26,16 +26,16 @@
               </div>
               <div class='sep'></div>
               <!-- Regular Header Buttons -->
-              <button :class='{"active":isActive.bold()}' @click='commands.bold'><i class='mdi mdi-format-bold'></i></button>
-              <button :class='{"active":isActive.italic()}' @click='commands.italic'><i class='mdi mdi-format-italic'></i></button>
-              <button :class='{"active":isActive.underline()}' @click='commands.underline'><i class='mdi mdi-format-underline'></i></button>
+              <button class='icon' :class='{"active":isActive.bold()}' @click='commands.bold'><i class='mdi mdi-format-bold'/></button>
+              <button class='icon' :class='{"active":isActive.italic()}' @click='commands.italic'><i class='mdi mdi-format-italic'/></button>
+              <button class='icon' :class='{"active":isActive.underline()}' @click='commands.underline'><i class='mdi mdi-format-underline'/></button>
               <div class='sep'></div>
-              <button :class='{"active":isActive.bullet_list()}' @click='commands.bullet_list'><i class='mdi mdi-format-list-bulleted'></i></button>
-              <button :class='{"active":isActive.ordered_list()}' @click='commands.ordered_list'><i class='mdi mdi-format-list-numbered'></i></button>
+              <button class='icon' :class='{"active":isActive.bullet_list()}' @click='commands.bullet_list'><i class='mdi mdi-format-list-bulleted'/></button>
+              <button class='icon' :class='{"active":isActive.ordered_list()}' @click='commands.ordered_list'><i class='mdi mdi-format-list-numbered'/></button>
               <div class='sep'></div>
-              <button :class='{"active":isActive.link()}' @click='toggleLinkMenu(getMarkAttrs("link"))'><i class='mdi mdi-link'></i></button>
-              <button :class='{"active":isActive.blockquote()}' @click='commands.blockquote'><i class='mdi mdi-format-quote-close'></i></button>
-              <button :class='{"active":isActive.code()}' @click='commands.code'><i class='mdi mdi-code-tags'></i></button>
+              <button class='icon' :class='{"active":isActive.link()}' @click='toggleLinkMenu(getMarkAttrs("link"))'><i class='mdi mdi-link'/></button>
+              <button class='icon' :class='{"active":isActive.blockquote()}' @click='commands.blockquote'><i class='mdi mdi-format-quote-close'/></button>
+              <button class='icon' :class='{"active":isActive.code()}' @click='commands.code'><i class='mdi mdi-code-tags'/></button>
               <button @click='save' style='float:right;'><span>Save</span></button>
               <!-- Link Form -->
               <div class='link-form' v-if='showLinkMenu'>
@@ -68,8 +68,8 @@
   import Search from './NotesSearch';
   import {Editor, EditorContent, EditorMenuBar} from 'tiptap';
   import {Blockquote, BulletList, CodeBlock, HardBreak, Heading, ListItem,
-    OrderedList, TodoItem, TodoList, Bold, Code, Italic, Link, Strike,
-    Underline, History} from 'tiptap-extensions';
+    OrderedList, Bold, Code, Italic, Link, Strike, Underline, History}
+    from 'tiptap-extensions';
   import {buildquery} from '@/utils/utils';
   import {get, sync} from 'vuex-pathify';
 
@@ -94,7 +94,7 @@
       showLinkMenu: false,
     }),
     watch: {
-      editing: function() { this.editor.setOptions({editable: this.userid !== null}); },
+      editing: function() { this.editor.setOptions({editable: this.editing && (this.userid !== null)}); },
       userid: function() { this.editing = false; }
     },
 
@@ -105,9 +105,8 @@
       this.editor = new Editor({
         editable: false,
         extensions: [new Blockquote(), new BulletList(), new CodeBlock(), new HardBreak(),
-          new Heading({levels: [1, 2, 3]}), new ListItem(), new OrderedList(), new TodoItem(),
-          new TodoList(), new Link(), new Bold(), new Code(), new Italic(), new Strike(),
-          new Underline(), new History(),
+          new Heading({levels: [1, 2, 3]}), new ListItem(), new OrderedList(), new Link(),
+          new Bold(), new Code(), new Italic(), new Strike(), new Underline(), new History(),
         ],
       });
     },
@@ -153,6 +152,7 @@
       },
     },
 
+    // Before Destory - Cleanup the editor
     beforeDestroy: function() {
       this.editor.destroy();
     },
@@ -239,6 +239,7 @@
         i.mdi { font-size:20px; position:relative; top:1px; }
         &:hover { background-color: lighten($darkbg-color, 8%); }
         &.active { background-color: lighten($darkbg-color, 16%); }
+        &.icon { padding: 2px 5px; }
       }
       input {
         background-color: rgba(255,255,255,0.1);
@@ -254,7 +255,7 @@
       }
       .dropdown {
         position: relative;
-        width: 130px;
+        width: 140px;
       }
       .dropdown-menu {
         background-color: $darkbg-color;
