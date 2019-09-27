@@ -63,11 +63,12 @@
         password: '',
       },
     }),
-
     computed: {
       user: sync('global/user'),
       gauth: sync('global/gauth'),
-      avatar: function() { return "url('https://www.gravatar.com/avatar/"+ md5(this.user.email) +"')"; },
+      avatar: function() {
+        return "url('https://www.gravatar.com/avatar/"+ md5(this.user.email) +"')";
+      },
     },
     
     methods: {
@@ -86,13 +87,13 @@
         let self = this;
         this.gauth.grantOfflineAccess().then(function(data) {
           if (data.code) {
-            self.login(data);
+            self.login(null, data);
           }
         });
       },
 
       // Login - Login using username/password to Google auth
-      login: function(data) {
+      login: function(event, data) {
         let self = this;
         data = data || {email:this.loginform.email, password:this.loginform.password};
         let query = data.code ? QUERY_LOGIN_GAUTH : QUERY_LOGIN_DJANGO;
@@ -101,6 +102,8 @@
           if (response.data.data.login.id) {
             self.display = false;
             self.user = response.data.data.login || DEFAULT_USER;
+            self.loginform.email = '';
+            self.loginform.password = '';
             console.log('Logged in as: '+ self.user.email);
           }
         });
@@ -110,9 +113,9 @@
       logout: function() {
         let self = this;
         let request = buildquery(QUERY_LOGOUT);
-        request.xhr.then(function(response) {
+        request.xhr.then(function() {
           self.user = DEFAULT_USER;
-          console.log(response);
+          self.display = false;
         });
       },
     }
@@ -164,6 +167,11 @@
         position: relative;
         right: 2px;
         margin: 20px 0px;
+      }
+      button {
+        width: 100%;
+        padding: 10px 20px;
+        margin-top: 30px;
       }
     }
   }

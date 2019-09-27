@@ -5,7 +5,7 @@
     <div class='content'>
       <div class='note'>
         <!-- Menubar -->
-        <editor-menu-bar :editor='editor' v-slot='{commands, getMarkAttrs, isActive}' v-if='!readonly'>
+        <editor-menu-bar :editor='editor' v-slot='{commands, getMarkAttrs, isActive}' v-if='editor.options.editable'>
           <div class='menubar'>
             <!-- Format Menu Dropdown -->
             <button class='dropdown' v-on:click.prevent="showFormatMenu=!showFormatMenu">
@@ -52,9 +52,9 @@
         </editor-menu-bar>
         <!-- Content -->
         <h1>
-          <input name='title' v-model='note.title' :readonly=readonly />
+          <input name='title' v-model='note.title' :readonly=!editor.options.editable />
           <span>{{note.created | formatDate('MMM DD, YYYY')}}
-            <input name='tags' placeholder='tags' v-model='note.tags' :readonly=readonly /></span>
+            <input name='tags' placeholder='tags' v-model='note.tags' :readonly=!editor.options.editable /></span>
         </h1>
         <editor-content :editor='editor' />
       </div>
@@ -72,7 +72,7 @@
     OrderedList, TodoItem, TodoList, Bold, Code, Italic, Link, Strike,
     Underline, History} from 'tiptap-extensions';
   import {buildquery} from '@/utils/utils';
-  import {sync} from 'vuex-pathify';
+  import {get, sync} from 'vuex-pathify';
 
   var QUERY_SAVENOTE = `mutation saveNote {
     saveNote(id:{id}, title:{title}, tags:{tags}, body:{body}) {
@@ -83,25 +83,33 @@
   export default {
     name: 'Notes',
     components: {Navigation, Footer, Search, EditorContent, EditorMenuBar},
-    computed: { ...sync('notes/*') },
+    computed: {
+      editor: sync('notes/editor'),
+      note: sync('notes/note'),
+      userid: get('global/user@id'),
+    },
     data: () => ({
-      readonly: true,
       linkUrl: null,
       showLinkMenu: false,
       showFormatMenu: false,
     }),
+    watch: {
+      userid: function() {
+        this.editor.setOptions({editable: this.userid !== null});
+      }
+    },
 
     created: function() {
       // Tiptap Examples: https://github.com/scrumpy/tiptap
       // Tiptap Documentation: https://tiptap.scrumpy.io/docs
       this.$store.set('global/layout', 'topnav');
       this.editor = new Editor({
+        editable: this.userid !== null,
         extensions: [new Blockquote(), new BulletList(), new CodeBlock(), new HardBreak(),
           new Heading({levels: [1, 2, 3]}), new ListItem(), new OrderedList(), new TodoItem(),
           new TodoList(), new Link(), new Bold(), new Code(), new Italic(), new Strike(),
           new Underline(), new History(),
         ],
-        editable: false,
       });
     },
 

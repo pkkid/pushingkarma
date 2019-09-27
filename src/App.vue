@@ -26,7 +26,7 @@
       layout: sync('global/layout'),
       gauth: sync('global/gauth'),
     },
-    mounted: function() {
+    created: function() {
       let self = this;
       let globals = JSON.parse(document.getElementById('globals').textContent);
       gapi.load('auth2', function() {
