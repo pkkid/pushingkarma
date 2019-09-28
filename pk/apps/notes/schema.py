@@ -46,19 +46,19 @@ class NoteQuery(ObjectType):
 class SaveNote(graphene.Mutation):
     class Arguments:
         id = graphene.Int()
-        title = graphene.String()
+        title = graphene.String(required=True)
+        body = graphene.String(required=True)
         tags = graphene.String()
-        body = graphene.String()
 
     success = graphene.Boolean()
     note = graphene.Field(lambda: NoteType)
 
     @staticmethod
-    def mutate(root, info, id, title, tags, body):
+    def mutate(root, info, id, title, body, tags):
         note = get_object_or_none(Note, id=id)
         note.title = title
-        note.tags = tags
         note.body = body
+        note.tags = tags
         note.save()
         success = True
         return SaveNote(note=note, success=success)

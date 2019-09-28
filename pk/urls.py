@@ -20,7 +20,7 @@ api.register('keyval', budget_views.KeyValueViewSet)
 
 urlpatterns = [
     url(r'^api', include(api.urls)),
-    url(r'^graphql$', GraphQLView.as_view(schema=schema, graphiql=settings.DEBUG)),
+    url(r'^graphql/', GraphQLView.as_view(schema=schema, graphiql=settings.DEBUG)),
     url(r'', pk_views.index, name='index'),
 ]
 

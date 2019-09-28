@@ -143,7 +143,6 @@
 
       // HotkeyEditNote: Edit the current note
       hotkeyEditNote: function(event) {
-        console.log(event);
         if (!this.editing && (this.userid !== null) && (event.srcElement.tagName != 'INPUT')) {
           event.preventDefault();
           this.editing = true;
@@ -158,10 +157,8 @@
 
       // HotkeySaveNote: Save the current note.
       hotkeySaveNote: function(event) {
-        if (this.editing) {
-          event.preventDefault();
-          this.save();
-        }
+        event.preventDefault();
+        if (this.editing) { this.save(); }
       },
 
       hotkeyStopEditing: function(event) {
@@ -178,7 +175,6 @@
           tags:self.note.tags, body:self.editor.getHTML()};
         let request = buildquery(QUERY_SAVENOTE, data);
         request.xhr.then(function(response) {
-          console.log(response);
           self.editing = false;
         });
       },
