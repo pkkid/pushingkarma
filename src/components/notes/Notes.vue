@@ -131,8 +131,6 @@
           new History(),
         ],
       });
-      console.log(this.editor);
-      this.editor.extensions.extensions[5].update();
     },
 
     methods: {
