@@ -83,6 +83,7 @@
           self.note = response.data.data.note;
           self.editor.setContent(self.note.body);
           self.updateHistory();
+          self.$refs.search.blur();
           if (callback) { callback(); }
         });
       },

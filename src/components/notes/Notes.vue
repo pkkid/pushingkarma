@@ -1,7 +1,7 @@
 <template>
-  <div id='notes'>
-    <Navigation :cls="'topnav'"/>
-    <div class='sidebar'><Search/></div>
+  <div id='notes' v-hotkey='keymap'>
+    <Navigation :cls="'topnav'" />
+    <div class='sidebar'><Search ref='search'/></div>
     <div class='content'>
       <div class='note' :class='{editable:editing}'>
         <!-- Menubar -->
@@ -41,7 +41,7 @@
               <div class='link-form' v-if='showLinkMenu'>
                 <input type='text' name='url' v-model='linkUrl' ref='linkInput' placeholder='https://' spellcheck='false' autocomplete='off'
                   @keydown.enter.prevent='setLinkUrl(commands.link, linkUrl)'
-                  @keydown.esc='hideLinkMenu'
+                  @keydown.esc.stop='hideLinkMenu'
                   @click='$refs.linkInput.focus()'/>
                 <button @click='setLinkUrl(commands.link, "")' style='margin-left:5px; font-size:14px;'>Clear</button>
               </div>
@@ -91,6 +91,12 @@
       editor: sync('notes/editor'),
       note: sync('notes/note'),
       userid: get('global/user@id'),
+      keymap: function() { return {
+        'f1': this.hotkeyFocusSearch,
+        'e': this.hotkeyEditNote,
+        'ctrl+s': this.hotkeySaveNote,
+        'esc': this.hotkeyStopEditing,
+      };},
     },
     data: () => ({
       editing: false,
@@ -134,9 +140,39 @@
     },
 
     methods: {
-      // Save - Save the current Title and Content to the server
+
+      // HotkeyEditNote: Edit the current note
+      hotkeyEditNote: function(event) {
+        console.log(event);
+        if (!this.editing && (this.userid !== null) && (event.srcElement.tagName != 'INPUT')) {
+          event.preventDefault();
+          this.editing = true;
+        }
+      },
+
+      // HotkeyFocusSearch: Focus and select all text in the search input
+      hotkeyFocusSearch: function(event) {
+        event.preventDefault();
+        this.$refs.search.$refs.search.select();
+      },
+
+      // HotkeySaveNote: Save the current note.
+      hotkeySaveNote: function(event) {
+        if (this.editing) {
+          event.preventDefault();
+          this.save();
+        }
+      },
+
+      hotkeyStopEditing: function(event) {
+        if (this.editing) {
+          event.preventDefault();
+          this.editing = false;
+        }
+      },
+
+      // Save: Save the current Title and Content to the server
       save: function() {
-        console.log('save');
         let self = this;
         let data = {id:self.note.id, title:self.note.title,
           tags:self.note.tags, body:self.editor.getHTML()};
@@ -147,8 +183,8 @@
         });
       },
 
-      // Toggle Link Menu - Show or hide the link menu input
-      // see also: https://tiptap.scrumpy.io/links
+      // ToggleLinkMenu: Show or hide the link menu input
+      // see: https://tiptap.scrumpy.io/links
       toggleLinkMenu: function(attrs) {
         if (this.showLinkMenu) {
           this.hideLinkMenu();
@@ -161,20 +197,20 @@
         }
       },
 
-      // Hide Link Menu - Hide the link menu without changing anything
+      // HideLinkMenu: Hide the link menu without changing anything
       hideLinkMenu: function() {
         this.linkUrl = null;
         this.showLinkMenu = false;
       },
 
-      // Set Link URL - Set the link URL then hide the link menu
+      // SetLinkURL: Set the link URL then hide the link menu
       setLinkUrl: function(command, url) {
         command({href: url});
         this.hideLinkMenu();
       },
     },
 
-    // Before Destory - Cleanup the editor
+    // BeforeDestory: Cleanup the editor
     beforeDestroy: function() {
       this.editor.destroy();
     },
