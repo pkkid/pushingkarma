@@ -100,6 +100,13 @@ body, html {
   p {
     line-height: 28px;
   }
+  code {
+    background-color: #d8d8d8;
+    font-size: 16px;
+    line-height: 28px;
+    padding: 3px 5px;
+    border-radius: 3px;
+  }
   dl {
     margin: 10px 0px;
     font-size: 15px;
@@ -112,6 +119,9 @@ body, html {
       color: $lightbg-text-dim;
       text-transform: uppercase;
     }
+  }
+  li p, ul p {
+    margin: 0px;
   }
   
   // Form Elements
@@ -195,3 +205,76 @@ body, html {
 .zoomfade-leave-active { opacity:0; }
 .zoomfade-enter .zoom,
 .zoomfade-leave-active .zoom { transform: scale(1.1); }
+
+//-------------------------
+// Code Highlighting
+//-------------------------
+pre,
+.content pre {
+  background-color: #3c3836;
+  color: #eee;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 14px;
+  line-height: 24px;
+
+  &::before {
+    content: attr(data-language);
+    text-transform: uppercase;
+    display: block;
+    text-align: right;
+    font-weight: bold;
+    font-size: 0.6rem;
+  }
+  code {
+    background-color: transparent;
+    padding: 0px;
+    font-size: 14px;
+    line-height: 24px;
+
+    .hljs-comment,
+    .hljs-quote {
+      color: #999999;
+    }
+    .hljs-variable,
+    .hljs-template-variable,
+    .hljs-attribute,
+    .hljs-tag,
+    .hljs-name,
+    .hljs-regexp,
+    .hljs-link,
+    .hljs-name,
+    .hljs-selector-id,
+    .hljs-selector-class {
+      color: #f2777a;
+    }
+    .hljs-number,
+    .hljs-meta,
+    .hljs-built_in,
+    .hljs-builtin-name,
+    .hljs-literal,
+    .hljs-type,
+    .hljs-params {
+      color: #f99157;
+    }
+    .hljs-string,
+    .hljs-symbol,
+    .hljs-bullet {
+      color: #99cc99;
+    }
+    .hljs-title,
+    .hljs-section {
+      color: #ffcc66;
+    }
+    .hljs-keyword,
+    .hljs-selector-tag {
+      color: #6699cc;
+    }
+    .hljs-emphasis {
+      font-style: italic;
+    }
+    .hljs-strong {
+      font-weight: 700;
+    }
+  }
+}

@@ -67,11 +67,16 @@
   import Navigation from '../Navigation';
   import Search from './NotesSearch';
   import {Editor, EditorContent, EditorMenuBar} from 'tiptap';
-  import {Blockquote, BulletList, CodeBlock, HardBreak, Heading, ListItem,
-    OrderedList, Bold, Code, Italic, Link, Strike, Underline, History}
-    from 'tiptap-extensions';
+  import {Blockquote, BulletList, CodeBlockHighlight, HardBreak, Heading,
+    ListItem, OrderedList, Bold, Code, Italic, Link, Strike, Underline,
+    History} from 'tiptap-extensions';
   import {buildquery} from '@/utils/utils';
   import {get, sync} from 'vuex-pathify';
+
+  import bash from 'highlight.js/lib/languages/bash';
+  import css from 'highlight.js/lib/languages/css';
+  import javascript from 'highlight.js/lib/languages/javascript';
+  import python from 'highlight.js/lib/languages/python';
 
   var QUERY_SAVENOTE = `mutation saveNote {
     saveNote(id:{id}, title:{title}, tags:{tags}, body:{body}) {
@@ -94,21 +99,40 @@
       showLinkMenu: false,
     }),
     watch: {
-      editing: function() { this.editor.setOptions({editable: this.editing && (this.userid !== null)}); },
-      userid: function() { this.editing = false; }
+      editing: function() {
+        let editable = this.editing && (this.userid !== null);
+        this.editor.setOptions({editable});
+      },
+      userid: function() {
+        this.editing = false;
+      }
     },
 
-    created: function() {
+    mounted: function() {
       // Tiptap Examples: https://github.com/scrumpy/tiptap
       // Tiptap Documentation: https://tiptap.scrumpy.io/docs
       this.$store.set('global/layout', 'topnav');
       this.editor = new Editor({
         editable: false,
-        extensions: [new Blockquote(), new BulletList(), new CodeBlock(), new HardBreak(),
-          new Heading({levels: [1, 2, 3]}), new ListItem(), new OrderedList(), new Link(),
-          new Bold(), new Code(), new Italic(), new Strike(), new Underline(), new History(),
+        extensions: [
+          new Blockquote(),
+          new BulletList(),
+          new CodeBlockHighlight({languages: {bash, css, javascript, python}}),
+          new HardBreak(),
+          new Heading({levels: [1, 2, 3]}),
+          new ListItem(),
+          new OrderedList(),
+          new Link(),
+          new Bold(),
+          new Code(),
+          new Italic(),
+          new Strike(),
+          new Underline(),
+          new History(),
         ],
       });
+      console.log(this.editor);
+      this.editor.extensions.extensions[5].update();
     },
 
     methods: {
