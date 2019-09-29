@@ -159,6 +159,40 @@ body, html {
       &:hover { background-color:darken(#076678, 5%); color:#fff; }
     }
   }
+
+  // Todo Lists
+  // 
+  ul[data-type='todo_list'] {
+    padding-left: 0;
+  }
+  li[data-type='todo_item'] {
+    display: flex;
+    flex-direction: row;
+  }
+  .todo-checkbox {
+    border: 2px solid $lightbg-text;
+    height: 0.9em;
+    width: 0.9em;
+    box-sizing: border-box;
+    margin-right: 10px;
+    margin-top: 0.3rem;
+    user-select: none;
+    -webkit-user-select: none;
+    cursor: pointer;
+    border-radius: 0.2em;
+    background-color: transparent;
+    transition: 0.2s background;
+  }
+  .todo-content {
+    flex: 1;
+    > p:last-of-type { margin-bottom: 0; }
+    > ul[data-type='todo_list'] { margin: .5rem 0; }
+  }
+  li[data-done='true'] {
+    > .todo-content { > p { text-decoration: line-through; opacity: 0.5; }}
+    > .todo-checkbox { background-color: lighten($lightbg-text, 20%); }
+  }
+  li[data-done='false'] { text-decoration: none; }
   
   // Custom Element Types
   // Footnote

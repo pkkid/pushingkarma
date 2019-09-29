@@ -32,6 +32,7 @@
               <div class='sep'></div>
               <button class='icon' :class='{"active":isActive.bullet_list()}' @click='commands.bullet_list'><i class='mdi mdi-format-list-bulleted'/></button>
               <button class='icon' :class='{"active":isActive.ordered_list()}' @click='commands.ordered_list'><i class='mdi mdi-format-list-numbered'/></button>
+              <button class='icon' :class='{"active":isActive.todo_list()}' @click="commands.todo_list"><i class='mdi mdi-format-list-checkbox'/></button>
               <div class='sep'></div>
               <button class='icon' :class='{"active":isActive.link()}' @click='toggleLinkMenu(getMarkAttrs("link"))'><i class='mdi mdi-link'/></button>
               <button class='icon' :class='{"active":isActive.blockquote()}' @click='commands.blockquote'><i class='mdi mdi-format-quote-close'/></button>
@@ -51,10 +52,9 @@
         </transition>
         <!-- Success/Error message -->
         <transition name='fade'>
-          <span class='message' v-if='message' :style='{color:message == "Success" ? "#79740e":"#fb4934"}'>
-            <i v-if='message == "Success"' class='mdi mdi-check-bold'/>
-            <i v-else-if='message == "Error"' class='mdi mdi-alert-circle-outline'/>
-            {{message}}
+          <span class='message' v-if='message' :style='{color:message == "Error" ? "#fb4934":"#79740e"}'>
+            <i v-if='message == "Error"' class='mdi mdi-alert-circle-outline'/>
+            <i v-else class='mdi mdi-check-bold'/> {{message}}
           </span>
         </transition>
         <!-- Content -->
@@ -76,7 +76,7 @@
   import Search from './NotesSearch';
   import {Editor, EditorContent, EditorMenuBar} from 'tiptap';
   import {Blockquote, BulletList, CodeBlockHighlight, HardBreak, Heading,
-    ListItem, OrderedList, Bold, Code, Italic, Link, Strike, Underline,
+    ListItem, OrderedList, Bold, Code, Italic, Link, Strike, TodoItem, TodoList, Underline,
     History} from 'tiptap-extensions';
   import {buildquery} from '@/utils/utils';
   import {get, sync} from 'vuex-pathify';
@@ -137,19 +137,21 @@
         editable: false,
         extensions: [
           new Blockquote(),
+          new Bold(),
           new BulletList(),
+          new Code(),
           new CodeBlockHighlight({languages: {bash, css, javascript, python}}),
           new HardBreak(),
           new Heading({levels: [1, 2, 3]}),
+          new History(),
+          new Italic(),
+          new Link(),
           new ListItem(),
           new OrderedList(),
-          new Link(),
-          new Bold(),
-          new Code(),
-          new Italic(),
           new Strike(),
+          new TodoItem({nested: true}),
+          new TodoList(),
           new Underline(),
-          new History(),
         ],
       });
     },
@@ -176,6 +178,7 @@
         if (this.editing) { this.save(); }
       },
 
+      // HotkeyStopEditing: Stop editing the current note (do not save)
       hotkeyStopEditing: function(event) {
         if (this.editing) {
           event.preventDefault();
