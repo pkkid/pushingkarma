@@ -101,6 +101,16 @@ body, html {
   p {
     line-height: 28px;
   }
+  blockquote {
+    border-left: 6px solid #ebdbb2;
+    padding-left: 25px;
+    margin-left: 0px;
+    margin-right: 0px;
+    padding: 1px 25px;
+    font-style: italic;
+    color: $lightbg-text-dim;
+    background-color: darken($lightbg-color, 1%);
+  }
   code {
     background-color: #d8d8d8;
     font-size: 16px;
@@ -119,6 +129,13 @@ body, html {
       margin-right: 10px;
       color: $lightbg-text-dim;
       text-transform: uppercase;
+    }
+  }
+  ul, ol {
+    ul, ol {
+      margin-top: 0px !important;
+      margin-bottom: 3px !important;
+      padding-left: 20px !important;
     }
   }
   li p, ul p {
@@ -161,9 +178,10 @@ body, html {
   }
 
   // Todo Lists
-  // 
+  // https://tiptap.scrumpy.io/todo-list
   ul[data-type='todo_list'] {
-    padding-left: 0;
+    padding-left: 14px;
+    ul { padding-left: 0px !important; }
   }
   li[data-type='todo_item'] {
     display: flex;
