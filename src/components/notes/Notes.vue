@@ -49,11 +49,19 @@
           </editor-menu-bar>
           <button class='edit' v-else-if='userid !== null' @click='editing=true'>Edit</button>
         </transition>
+        <!-- Success/Error message -->
+        <transition name='fade'>
+          <span class='message' v-if='message' :style='{color:message == "Success" ? "#79740e":"#fb4934"}'>
+            <i v-if='message == "Success"' class='mdi mdi-check-bold'/>
+            <i v-else-if='message == "Error"' class='mdi mdi-alert-circle-outline'/>
+            {{message}}
+          </span>
+        </transition>
         <!-- Content -->
         <h1>
-          <input name='title' v-model='note.title' :readonly=!editing />
+          <input name='title' autocomplete='off' v-model='note.title' :readonly=!editing />
           <span>{{note.created | formatDate('MMM DD, YYYY')}}
-            <input name='tags' placeholder='tags' v-model='note.tags' :readonly=!editing /></span>
+            <input name='tags' placeholder='tags' autocomplete='off' v-model='note.tags' :readonly=!editing /></span>
         </h1>
         <editor-content :editor='editor' />
       </div>
@@ -100,6 +108,7 @@
     },
     data: () => ({
       editing: false,
+      message: null,
       linkUrl: null,
       showFormatMenu: false,
       showLinkMenu: false,
@@ -108,6 +117,12 @@
       editing: function() {
         let editable = this.editing && (this.userid !== null);
         this.editor.setOptions({editable});
+      },
+      message: function() {
+        let self = this;
+        if (this.message) {
+          setTimeout(function() { self.message = null; }, 3000);
+        }
       },
       userid: function() {
         this.editing = false;
@@ -174,8 +189,12 @@
         let data = {id:self.note.id, title:self.note.title,
           tags:self.note.tags, body:self.editor.getHTML()};
         let request = buildquery(QUERY_SAVENOTE, data);
-        request.xhr.then(function(response) {
+        request.xhr.then(function() {
           self.editing = false;
+          self.message = 'Success';
+        });
+        request.xhr.catch(function() {
+          self.message = 'Error';
         });
       },
 
@@ -244,6 +263,17 @@
       position: fixed;
       top: 70px;
       z-index: 50;
+    }
+    .message {
+      right: calc(50% - 460px);
+      position: fixed;
+      text-align: right;
+      top: 70px;
+      z-index: 60;
+      font-size: 15px;
+      font-weight: 500;
+      padding: 2px 0px;
+      line-height: 23px;
     }
     input {
       background-color: transparent;
