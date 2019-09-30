@@ -1,3 +1,4 @@
+import axios from 'axios';
 import Vue from 'vue';
 import store from './store';
 import router from './router';
@@ -7,6 +8,15 @@ import {fixScroll} from './utils/plugins';
 import App from './App.vue';
 import './utils/filters';
 
+// Tell Axios we want to treat any non-json responses as errors
+// as well as any responses containing the key 'errors'
+axios.interceptors.response.use(function(response) {
+  if (response.headers['content-type'] != 'application/json') { return Promise.reject(response); }
+  else if (response.data.errors !== undefined) { return Promise.reject(response); }
+  else { return response; }
+});
+
+// Setup Vue plugins and configuration
 Vue.use(PortalVue);
 Vue.use(VueHotkey);
 Vue.config.productionTip = false;

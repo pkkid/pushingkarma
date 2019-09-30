@@ -1,5 +1,6 @@
 # encoding: utf-8
 import graphene
+from graphql_extensions.auth.decorators import login_required
 from graphene_django.types import DjangoObjectType, ObjectType
 from pk.utils import get_object_or_none
 from pk.utils.graphene import paginated_type, paginator
@@ -54,6 +55,7 @@ class SaveNote(graphene.Mutation):
     note = graphene.Field(lambda: NoteType)
 
     @staticmethod
+    @login_required
     def mutate(root, info, id, title, body, tags):
         note = get_object_or_none(Note, id=id)
         note.title = title
