@@ -76,8 +76,9 @@
   import Search from './NotesSearch';
   import {Editor, EditorContent, EditorMenuBar} from 'tiptap';
   import {Blockquote, BulletList, CodeBlockHighlight, HardBreak, Heading,
-    ListItem, OrderedList, Bold, Code, Italic, Link, Strike, TodoItem, TodoList, Underline,
+    ListItem, OrderedList, Bold, Code, Italic, Strike, TodoItem, TodoList, Underline,
     History} from 'tiptap-extensions';
+  import {Link} from '@/utils/tiptap/extensions';
   import {buildquery} from '@/utils/utils';
   import {get, sync} from 'vuex-pathify';
 
