@@ -19,20 +19,19 @@ export class Link extends BaseLink {
  * the editor to <drumroll> set the font-size.
  */
 export class FontSize extends Mark {
-	get name() {
-		return 'fontSize';
+  get name() {
+    return 'fontSize';
   }
   
-	get schema() {
-    console.log('fontSize schema');
-		return {
-			attrs: {fontSize: {default: '1em'}},
-			parseDOM: [{
+  get schema() {
+    return {
+      attrs: {fontSize: {default: '1em'}},
+      parseDOM: [{
         style: 'font-size',
-				getAttrs: value => value.indexOf('em') !== -1 ? {fontSize:value} : '',
-			}],
-			toDOM: mark => ['span', {style:`font-size: ${mark.attrs.fontSize}`}, 0],
-		};
+        getAttrs: value => value.indexOf('em') !== -1 ? {fontSize:value} : '',
+      }],
+      toDOM: mark => ['span', {style:`font-size: ${mark.attrs.fontSize}`}, 0],
+    };
   }
 
   commands({type}) {
@@ -44,7 +43,7 @@ export class FontSize extends Mark {
     };
   }
   
-	inputRules({type}) {
-		return [markInputRule(/(?:\*\*|__)([^*_]+)(?:\*\*|__)$/, type)];
-	}
+  inputRules({type}) {
+    return [markInputRule(/(?:\*\*|__)([^*_]+)(?:\*\*|__)$/, type)];
+  }
 }
