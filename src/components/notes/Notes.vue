@@ -9,23 +9,31 @@
           <editor-menu-bar :editor='editor' v-slot='{commands, getMarkAttrs, isActive}' v-if='editing'>
             <div class='menubar'>
               <!-- Format Menu Dropdown -->
-              <button class='dropdown' v-on:click.prevent="showFormatMenu=!showFormatMenu">
-                <span v-if='isActive.paragraph()'>Paragraph</span>
-                <span v-else-if='isActive.heading({level:1})'>Heading 1</span>
-                <span v-else-if='isActive.heading({level:2})'>Heading 2</span>
-                <span v-else-if='isActive.heading({level:3})'>Heading 3</span>
-                <span v-else-if='isActive.code_block()'>Code Block</span>
-                <span v-else>Format</span> <i class='mdi mdi-menu-down'/>
-              </button>
-              <div v-if='showFormatMenu' class='dropdown-menu'>
-                <button :class='{"active":isActive.paragraph()}' @click='commands.paragraph'>Paragraph</button>
-                <button :class='{"active":isActive.heading({level:1})}' @click='commands.heading({level:1})'>Heading 1</button>
-                <button :class='{"active":isActive.heading({level:2})}' @click='commands.heading({level:2})'>Heading 2</button>
-                <button :class='{"active":isActive.heading({level:3})}' @click='commands.heading({level:3})'>Heading 3</button>
-                <button :class='{"active":isActive.code_block()}' @click='commands.code_block'>Code Block</button>
-              </div>
-              <div class='sep'></div>
+              <Dropdown :width='"105px"'>
+                <div slot='text'>{{currentFormat(isActive)}}</div>
+                <div slot='menu'>
+                  <button :class='{"active":isActive.paragraph()}' @click='commands.paragraph'>Paragraph</button>
+                  <button :class='{"active":isActive.heading({level:1})}' @click='commands.heading({level:1})'>Heading 1</button>
+                  <button :class='{"active":isActive.heading({level:2})}' @click='commands.heading({level:2})'>Heading 2</button>
+                  <button :class='{"active":isActive.heading({level:3})}' @click='commands.heading({level:3})'>Heading 3</button>
+                  <button :class='{"active":isActive.code_block()}' @click='commands.code_block'>Code Block</button>
+                </div>
+              </Dropdown>
+              
+              <!-- Font Size -->
+              <Dropdown :width='"55px"'>
+                <div slot='text'>{{getMarkAttrs("fontSize").fontSize || "18px"}}</div>
+                <div slot='menu'>
+                  <button :class='{"active":getMarkAttrs("fontSize").fontSize === "12px"}' @click='commands.fontSize({fontSize:"12px"})'>12px</button>
+                  <button :class='{"active":getMarkAttrs("fontSize").fontSize === "15px"}' @click='commands.fontSize({fontSize:"15px"})'>15px</button>
+                  <button :class='{"active":!("fontSize" in getMarkAttrs("fontSize"))}' @click='commands.fontSize({fontSize:null})'>18px</button>
+                  <button :class='{"active":getMarkAttrs("fontSize").fontSize === "22px"}' @click='commands.fontSize({fontSize:"22px"})'>22px</button>
+                  <button :class='{"active":getMarkAttrs("fontSize").fontSize === "26px"}' @click='commands.fontSize({fontSize:"26px"})'>26px</button>
+                </div>
+              </Dropdown>
+
               <!-- Regular Header Buttons -->
+              <div class='sep'></div>
               <button class='icon' :class='{"active":isActive.bold()}' @click='commands.bold'><i class='mdi mdi-format-bold'/></button>
               <button class='icon' :class='{"active":isActive.italic()}' @click='commands.italic'><i class='mdi mdi-format-italic'/></button>
               <button class='icon' :class='{"active":isActive.underline()}' @click='commands.underline'><i class='mdi mdi-format-underline'/></button>
@@ -38,6 +46,7 @@
               <button class='icon' :class='{"active":isActive.blockquote()}' @click='commands.blockquote'><i class='mdi mdi-format-quote-close'/></button>
               <button class='icon' :class='{"active":isActive.code()}' @click='commands.code'><i class='mdi mdi-code-tags'/></button>
               <button @click='save' style='float:right;'><span>Save</span></button>
+
               <!-- Link Form -->
               <div class='link-form' v-if='showLinkMenu'>
                 <input type='text' name='url' v-model='linkUrl' ref='linkInput' placeholder='https://' spellcheck='false' autocomplete='off'
@@ -74,11 +83,12 @@
   import Footer from '../Footer';
   import Navigation from '../Navigation';
   import Search from './NotesSearch';
+  import Dropdown from '@/components/utils/Dropdown';
   import {Editor, EditorContent, EditorMenuBar} from 'tiptap';
   import {Blockquote, BulletList, CodeBlockHighlight, HardBreak, Heading,
     ListItem, OrderedList, Bold, Code, Italic, Strike, TodoItem, TodoList, Underline,
     History} from 'tiptap-extensions';
-  import {Link} from '@/utils/tiptap/extensions';
+  import {Link, FontSize} from '@/utils/tiptap/extensions';
   import {buildquery} from '@/utils/utils';
   import {get, sync} from 'vuex-pathify';
 
@@ -95,7 +105,7 @@
 
   export default {
     name: 'Notes',
-    components: {Navigation, Footer, Search, EditorContent, EditorMenuBar},
+    components: {Navigation, Footer, Search, EditorContent, EditorMenuBar, Dropdown},
     computed: {
       editor: sync('notes/editor'),
       note: sync('notes/note'),
@@ -111,7 +121,6 @@
       editing: false,
       message: null,
       linkUrl: null,
-      showFormatMenu: false,
       showLinkMenu: false,
     }),
     watch: {
@@ -142,6 +151,7 @@
           new BulletList(),
           new Code(),
           new CodeBlockHighlight({languages: {bash, css, javascript, python}}),
+          new FontSize(),
           new HardBreak(),
           new Heading({levels: [1, 2, 3]}),
           new History(),
@@ -158,6 +168,16 @@
     },
 
     methods: {
+
+      // CurrentFormat: Return the currently selected text format
+      currentFormat: function(isActive) {
+        if (isActive.paragraph()) { return 'Paragraph'; }
+        if (isActive.heading({level:1})) { return 'Heading 1'; }
+        if (isActive.heading({level:2})) { return 'Heading 2'; }
+        if (isActive.heading({level:3})) { return 'Heading 3'; }
+        if (isActive.code_block()) { return 'Code Block'; }
+        else { return 'Format'; }
+      },
 
       // HotkeyEditNote: Edit the current note
       hotkeyEditNote: function(event) {
@@ -343,24 +363,35 @@
       }
       .dropdown {
         position: relative;
-        width: 140px;
+        white-space: nowrap;
+        padding: 2px 5px;
+        font-size: 14px;
+        top: -2px;
+        i.mdi {
+          position: absolute;
+          right: 5px;
+          top: 2px;
+        }
       }
       .dropdown-menu {
         background-color: $darkbg-color;
-        border-radius: 8px;
-        left: 0px;
+        border-bottom-left-radius: 8px;
+        border-bottom-right-radius: 8px;
+        left: -10px;
         line-height: 30px;
         padding: 5px 10px;
         position: absolute;
-        top: 42px;
-        width: 150px;
+        top: 27px;
+        white-space: normal;
         z-index: 51;
         button {
-          width: 130px;
-          text-align: left;
+          width: 100%;
           font-size: 16px;
+          margin: 0px;
+          font-size: 14px;
         }
       }
     }
+
   }
 </style>
