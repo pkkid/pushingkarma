@@ -1,6 +1,7 @@
 # encoding: utf-8
 from django.contrib.auth import logout
 from django.contrib.auth.models import User
+from django.views.decorators.csrf import ensure_csrf_cookie
 from rest_framework import status, viewsets
 from rest_framework.decorators import list_route
 from rest_framework.permissions import AllowAny
@@ -10,6 +11,7 @@ from pk.utils import auth
 from .models import AccountSerializer
 
 
+@ensure_csrf_cookie
 def index(request, tmpl='index.html'):
     return utils.response(request, tmpl, {})
 
