@@ -83,12 +83,12 @@
   import Footer from '../Footer';
   import Navigation from '../Navigation';
   import Search from './NotesSearch';
-  import Dropdown from '@/components/utils/Dropdown';
+  import Dropdown from '@/utils/components/Dropdown';
   import {Editor, EditorContent, EditorMenuBar} from 'tiptap';
   import {Blockquote, BulletList, CodeBlockHighlight, HardBreak, Heading,
     ListItem, OrderedList, Bold, Code, Italic, Strike, TodoItem, TodoList, Underline,
     History} from 'tiptap-extensions';
-  import {Link, FontSize} from '@/utils/tiptap/extensions';
+  import {Link, FontSize} from '@/utils/tiptap-extensions';
   import {buildquery} from '@/utils/utils';
   import {get, sync} from 'vuex-pathify';
 

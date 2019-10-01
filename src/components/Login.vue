@@ -41,7 +41,7 @@
 </template>
 
 <script>
-  import Modal from '@/components/utils/Modal';
+  import Modal from '@/utils/components/Modal';
   import md5 from 'js-md5';
   import {sync} from 'vuex-pathify';
   import {buildquery} from '@/utils/utils';
