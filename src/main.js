@@ -4,6 +4,7 @@ import store from './store';
 import router from './router';
 import PortalVue from 'portal-vue';
 import VueHotkey from 'v-hotkey';
+import vClickOutside from 'v-click-outside';
 import {fixScroll} from './utils/plugins';
 import App from './App.vue';
 import './utils/filters';
@@ -19,6 +20,7 @@ axios.interceptors.response.use(function(response) {
 // Setup Vue plugins and configuration
 Vue.use(PortalVue);
 Vue.use(VueHotkey);
+Vue.use(vClickOutside);
 Vue.config.productionTip = false;
 
 new Vue({

@@ -1,9 +1,11 @@
 <template>
-  <button class='dropdown' :style='{width}' v-on:click.prevent="showMenu=!showMenu">
+  <button class='dropdown' :style='{width}' v-on:click.prevent='showMenu=!showMenu' v-click-outside='clickOutside'>
     <slot name='text' v-on:click.prevent="showMenu=!showMenu">Default Text</slot>
-    <div v-if='showMenu' class='dropdown-menu' :style='{width:"calc("+width+" + 20px)"}'>
-      <slot name='menu'>Default Menu</slot>
-    </div>
+    <transition name='fadefast'>
+      <div v-if='showMenu' class='dropdown-menu' :style='{width:"calc("+width+" + 20px)"}'>
+        <slot name='menu'>Default Menu</slot>
+      </div>
+    </transition>
   </button>
 </template>
 
@@ -16,6 +18,11 @@
     data: () => ({
       showMenu: false,
     }),
+    methods: {
+      clickOutside: function() {
+        this.showMenu = false;
+      }
+    },
   };
 </script>
 
