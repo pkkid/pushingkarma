@@ -5,5 +5,6 @@ module.exports = {
   css: {loaderOptions: {sass: {data: `
     @import "@/assets/css/layout.scss";
     @import "@/assets/css/parallax.scss";
-  `}}}
+  `}}},
+  chainWebpack: config => { config.plugins.delete("hmr"); },
 };
