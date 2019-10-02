@@ -8,6 +8,7 @@ import vClickOutside from 'v-click-outside';
 import {fixScroll} from './utils/vue-plugins';
 import App from './App.vue';
 import './utils/vue-filters';
+require('@/assets/css/index.scss');
 
 // Tell Axios we want to treat any non-json responses as errors
 // as well as any responses containing the key 'errors'

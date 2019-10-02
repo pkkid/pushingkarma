@@ -1,0 +1,46 @@
+// Encoding: UTF-8
+// Gruvbox Color Scheme
+// https://github.com/morhetz/gruvbox-contrib
+//
+// Dark Color Scheme
+//   bgh     #1d2021;  bgs     #32302f;  gray #928374;
+//   bg0     #282828;  bg1     #3c3836;  bg2  #504945;  bg3 #665c54;  bg4 #7c6f64;
+//   fg0     #fbf1c7;  fg1     #ebdbb2;  fg2  #d5c4a1;  fg3 #bdae93;  fg4 #a89984;
+//   red0    #cc241d;  red1    #fb4934;
+//   orange0 #d65d0e;  orange1 #fe8019;
+//   yellow1 #fabd2f;  yellow0 #d79921;
+//   green0  #98971a;  green1  #b8bb26;
+//   blue0   #458588;  blue1   #83a598;
+//   aqua0   #689d6a;  aqua1   #8ec07c;
+//   purple0 #b16286;  purple1 #d3869b;
+//
+// Light Color Scheme
+//   bgh     #f9f5d7;  bgs     #f2e5bc;  gray #928374;
+//   bg0     #fbf1c7;  bg1     #ebdbb2;  bg2  #d5c4a1;  bg3 #bdae93;  bg4 #a89984;
+//   fg0     #282828;  fg1     #3c3836;  fg2  #504945;  fg3 #665c54;  fg4 #7c6f64;
+//   red0    #cc241d;  red1    #9d0006;
+//   orange0 #d65d0e;  orange1 #af3a03;
+//   yellow0 #d79921;  yellow1 #b57614;
+//   green0  #98971a;  green1  #79740e;
+//   blue0   #458588;  blue1   #076678;
+//   aqua0   #689d6a;  aqua1   #427b58;
+//   purple0 #b16286;  purple1 #8f3f71;
+
+$font-serif: 'Montserrat', Helvetica, Arial, sans-serif;
+$bounce: cubic-bezier(.47,1.64,.41,.8);
+
+$lightbg-color:      #eeeeee;
+$lightbg-text:       #3c3836;
+$lightbg-text-dim:   #7c6f64;
+$lightbg-link:       #282828;
+$lightbg-link-hover: #076678;
+$lightbg-accent:     #d65d0e;
+$lightbg-input:      #3c3836;
+
+$darkbg-color:       #282828;
+$darkbg-text:        #f9f5d7;
+$darkbg-text-dim:    #bdae93;
+$darkbg-link:        #fbf1c7;
+$darkbg-link-hover:  #fe8019;
+$darkbg-accent:      #fe8019;
+$darkbg-input:       #d79921;

@@ -4,7 +4,8 @@
     <div class='photo'><img src='@/assets/img/family.jpg'/></div>
     <div class='aboutme'>
       <h2>I am Michael Shepanski and <span class='accent'>Developer</span></h2>
-      <p>I've been developing software in the Boston area for over 14 years,
+      <p style='max-width:800px;'>
+        I've been developing software in the Boston area for over 14 years,
         using Python since 2004 & Django since early 2009. Web development
         used to be a hobby to me. As web applications started becoming more
         complex and the demand so high, it turned into a full-time job. My

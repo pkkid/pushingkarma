@@ -1,0 +1,12 @@
+// Encoding: UTF-8
+
+.nav {
+  background-color: $darkbg-color;
+  color: $darkbg-text;
+  a,a:visited {
+    color: $darkbg-link;
+    text-decoration: none;
+    transition: color 0.2s ease;
+    &:hover { color: $darkbg-link-hover; }
+  }
+}

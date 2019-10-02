@@ -1,0 +1,13 @@
+// Encoding: UTF-8
+body, html {
+  box-sizing: border-box;
+  margin: 0px;
+  padding: 0px;
+  background-color: $darkbg-color;
+  color: $darkbg-text;
+  font-family:$font-serif;
+  font-weight: 400;
+  font-size: 18px;
+}
+*, *:before, *:after { box-sizing: inherit; }
+:focus { outline: none !important; }
