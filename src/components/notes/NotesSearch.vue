@@ -165,11 +165,11 @@
           position: absolute;
           right: 0;
           top: 0;
-          transition: opacity .5s ease;
+          transition: all .5s ease;
           width: 10px;
         }
       }
-      &:hover .scrollbox:before { opacity:0; width:0px; }
+      &:hover .scrollbox:before { opacity:0; width:0px; right:5px;}
     }
     .result {
       border-bottom-right-radius: 8px;
