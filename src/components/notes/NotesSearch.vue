@@ -151,23 +151,25 @@
         overflow-x: hidden;
         overflow-y: scroll;
         height: calc(100vh - 100px);
-        &::-webkit-scrollbar { width:6px; }
-        &::-webkit-scrollbar,
-        &::-webkit-scrollbar-thumb { overflow: visible; border-radius: 4px; }
-        &::-webkit-scrollbar-thumb { background: lighten($darkbg-color, 40%); }
+        &::-webkit-scrollbar { width:10px; }
+        &::-webkit-scrollbar-thumb {
+          background: lighten($darkbg-color, 40%);
+          border-radius: 5px;
+          border: 2px solid $darkbg-color;
+        }
         &:before {
           content: ' ';
-          position: absolute;
           background-color: $darkbg-color;
           height: 100%;
-          top: 0;
-          right: 0;
-          width: 6px;
-          transition: all .5s ease;
           opacity: 1;
+          position: absolute;
+          right: 0;
+          top: 0;
+          transition: opacity .5s ease;
+          width: 10px;
         }
       }
-      &:hover .scrollbox:before { opacity: 0; }
+      &:hover .scrollbox:before { opacity:0; width:0px; }
     }
     .result {
       border-bottom-right-radius: 8px;
@@ -181,7 +183,7 @@
       padding: 15px 15px 15px 12px;
       text-overflow: ellipsis;
       white-space: nowrap;
-      width: 294px;
+      width: 290px;
       &.selected,
       &:hover {
         border-left: 3px solid $darkbg-accent;
