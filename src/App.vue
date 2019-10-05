@@ -7,7 +7,7 @@
           <span class='title'>PushingKarma</span>
         </router-link>
       </div>
-      <transition name='fade'>
+      <transition name='fadein'>
         <router-view></router-view>
       </transition>
     </div>

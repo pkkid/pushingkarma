@@ -7,8 +7,8 @@
     "lodash": "^4.17.15",
     "moment": "^2.24.0",
     "portal-vue": "^2.1.6",
-    "tiptap": "^1.25.0",
-    "tiptap-extensions": "^1.27.0",
+    "tiptap": "^1.26.3",
+    "tiptap-extensions": "^1.28.3",
     "v-click-outside": "^2.1.3",
     "v-hotkey": "^0.6.0",
     "vue": "^2.6.10",
@@ -30,12 +30,10 @@
     "vue-template-compiler": "^2.5.21"
   },
   "scripts": {
-    "development": "npm-run-all -p vue-watch django-serve django-chrome",
-    "django-chrome": "sleep 3 && google-chrome http://localhost:8000",
+    "run-server": "addkeys.sh; google-chrome http://localhost:8000; npm-run-all -p vue-watch django-serve",
     "django-serve": "~/.virtualenvs/pk/bin/python pk/manage.py runserver",
     "vue-build": "vue-cli-service build",
     "vue-lint": "vue-cli-service lint",
-    "vue-serve": "vue-cli-service serve",
     "vue-watch": "vue-cli-service build --watch"
   }
 }

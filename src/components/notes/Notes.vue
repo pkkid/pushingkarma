@@ -5,7 +5,7 @@
     <div class='content'>
       <div class='note' :class='{editable:editing}'>
         <!-- Menubar -->
-        <transition name='fade'>
+        <transition name='fadein'>
           <editor-menu-bar :editor='editor' v-slot='{commands, getMarkAttrs, isActive}' v-if='editing'>
             <div class='menubar'>
               <!-- Format Menu Dropdown -->
@@ -85,10 +85,10 @@
   import Search from './NotesSearch';
   import Dropdown from '@/utils/components/Dropdown';
   import {Editor, EditorContent, EditorMenuBar} from 'tiptap';
-  import {Blockquote, BulletList, CodeBlockHighlight, HardBreak, Heading,
+  import {Blockquote, BulletList, CodeBlockHighlight, HardBreak, Heading, Link,
     ListItem, OrderedList, Bold, Code, Italic, Strike, TodoItem, TodoList, Underline,
     History} from 'tiptap-extensions';
-  import {Link, FontSize} from '@/utils/tiptap-extensions';
+  import {FontSize} from '@/utils/tiptap-extensions';
   import {buildquery} from '@/utils/utils';
   import {get, sync} from 'vuex-pathify';
 
@@ -150,13 +150,13 @@
           new Bold(),
           new BulletList(),
           new Code(),
-          new CodeBlockHighlight({languages: {bash, css, javascript, python}}),
+          new CodeBlockHighlight({languages:{bash,css,javascript,python}}),
           new FontSize(),
           new HardBreak(),
-          new Heading({levels: [1, 2, 3]}),
+          new Heading({levels:[1,2,3]}),
           new History(),
           new Italic(),
-          new Link(),
+          new Link({openOnClick:false}),
           new ListItem(),
           new OrderedList(),
           new Strike(),
