@@ -120,6 +120,7 @@
     height: 60px;
     width: 100%;
     padding: 0px 20px 0px 320px;
+    box-shadow: 0px 2px 3px rgba(0,0,0,0.3);
     .menu {
       padding: 0px;
       line-height: 60px;

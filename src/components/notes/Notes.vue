@@ -266,30 +266,39 @@
   }
 
   #notes .content {
-    background-color: $lightbg-color;
+    //background-color: $lightbg-color;
     box-sizing: border-box;
     color: $lightbg-text;
     margin-left: 300px;
-    margin-top: 60px;
+    padding: 60px 20px 40px 20px;
+    
+    background-color: darken($lightbg-color, 10%);
     
     // General Note Display
     .note {
-      width: 800px;
+      width: 900px;
       margin: 20px auto;
-      padding-top: 10px;
+      //padding-top: 10px;
       position: relative;
       min-height: calc(100vh - 70px);
       transition: padding 0.2s ease;
-      &.editable { padding-top: 60px; }
+
+      margin-top: 50px;
+      border: 1px solid darken($lightbg-color, 20%);
+      box-shadow: 0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15);
+      padding: 10px 50px;
+      background-color: $lightbg-color;
+      //&.editable { padding-top: 60px; }
     }
     .edit {
-      margin-left: 730px;
+      margin-left: 780px;
       position: fixed;
       top: 70px;
       z-index: 50;
+      background-color: darken($lightbg-color, 15%);
     }
     .message {
-      right: calc(50% - 460px);
+      right: calc(50% - 510px);
       position: fixed;
       text-align: right;
       top: 70px;
@@ -329,7 +338,8 @@
       padding: 5px 10px;
       position: fixed;
       top: 65px;
-      width: 800px;
+      width: 900px;
+      margin-left: -51px;
       z-index: 50;
       line-height: 23px;
       .sep {

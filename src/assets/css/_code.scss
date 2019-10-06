@@ -4,10 +4,12 @@ pre,
 .content pre {
   background-color: #3c3836;
   color: #eee;
-  padding: 5px 10px;
+  padding: 10px 20px;
   border-radius: 5px;
   font-size: 14px;
   line-height: 1.2;
+  width: calc(100% + 40px);
+  margin-left: -20px;
 
   &::before {
     content: attr(data-language);
