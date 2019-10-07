@@ -89,7 +89,7 @@
     }
     .links {
       bottom: 38px;
-      font-size: 1.3em;
+      font-size: 1.4em;
       left: -2px;
       margin-bottom: 10px;
       padding: 0px 20px 0px 60px;

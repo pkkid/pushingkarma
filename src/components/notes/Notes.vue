@@ -73,11 +73,16 @@
       background-color: $lightbg-color;
       //&.editable { padding-top: 60px; }
     }
+    h1 {
+      font-size: 1.9em;
+      span { font-weight: 500; }
+    }
     input {
       background-color: transparent;
       border-width: 0px;
       border-radius: 0px;
       &[name=title] {
+        line-height: 1em;
         font-weight: 600;
         margin: 5px 0px 5px -2px;
         padding: 0px;
@@ -85,7 +90,8 @@
         white-space: normal;
       }
       &[name=tags] {
-        font-weight: 400;
+        line-height: 1em;
+        font-weight: 500;
         width: 600px;
         padding: 0px 0px 3px 10px;
       }
