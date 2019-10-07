@@ -66,9 +66,8 @@
       width: 100%;
       a {
         display: inline-block;
-        font-size: 16px;
         font-weight: 500;
-        line-height: 29px;
+        line-height: 1.6em;
         padding-bottom: 19px;
         position: relative;
         text-decoration: none;
@@ -90,7 +89,7 @@
     }
     .links {
       bottom: 38px;
-      font-size: 22px;
+      font-size: 1.3em;
       left: -2px;
       margin-bottom: 10px;
       padding: 0px 20px 0px 60px;

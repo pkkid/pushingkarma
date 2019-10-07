@@ -45,7 +45,7 @@
               @keydown.enter.prevent='setLinkUrl(commands.link, linkUrl)'
               @keydown.esc.stop='hideLinkMenu'
               @click='$refs.linkInput.focus()'/>
-            <button @click='setLinkUrl(commands.link, "")' style='margin-left:5px; font-size:14px;'>Clear</button>
+            <button @click='setLinkUrl(commands.link, "")' style='margin-left:5px;'>Clear</button>
           </div>
         </div>
       </editor-menu-bar>
@@ -236,12 +236,10 @@
       text-align: right;
       top: 70px;
       z-index: 60;
-      font-size: 15px;
       font-weight: 500;
       padding: 2px 0px;
-      line-height: 23px;
+      line-height: 1.6em;
     }
-
     .editbtn {
       margin-left: 780px;
       position: fixed;
@@ -261,7 +259,7 @@
       width: 900px;
       margin-left: -51px;
       z-index: 50;
-      line-height: 23px;
+      line-height: 1.6em;
       .sep {
         margin: 0px 10px 0px 5px;
         background-color: red;
@@ -273,8 +271,8 @@
         background-image: none;
         color: $darkbg-text;
         margin-right: 5px;
-        span { font-size: 16px; }
-        i.mdi { font-size:20px; position:relative; top:1px; }
+        line-height: 1.6em;
+        i.mdi { font-size:1.3em; position:relative; top:1px; }
         &:hover { background-color: lighten($darkbg-color, 8%); }
         &.active { background-color: lighten($darkbg-color, 16%); }
         &.icon { padding: 2px 5px; }
@@ -284,9 +282,9 @@
         border-radius: 4px;
         border-width: 0px;
         color: $darkbg-input;
-        font-size: 14px;
+        font-size: 0.8em;
         font-weight: 500;
-        line-height: 23px;
+        line-height: 1.6em;
         margin-top: 5px;
         padding: 2px 8px;
         width: 700px;
@@ -295,7 +293,7 @@
         position: relative;
         white-space: nowrap;
         padding: 2px 5px;
-        font-size: 14px;
+        font-size: 0.9em;
         top: -2px;
         i.mdi { position:absolute; right:5px; top:2px; }
       }
@@ -310,7 +308,7 @@
         top: 27px;
         white-space: normal;
         z-index: 51;
-        button { width:100%; font-size:14px; margin:0px; }
+        button { width:100%; margin:0px; }
       }
     }
   }

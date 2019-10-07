@@ -78,16 +78,13 @@
       border-width: 0px;
       border-radius: 0px;
       &[name=title] {
-        font-size: 40px;
         font-weight: 600;
         margin: 5px 0px 5px -2px;
         padding: 0px;
         text-transform: uppercase;
         white-space: normal;
-        line-height: 40px;
       }
       &[name=tags] {
-        font-size: 16px;
         font-weight: 400;
         width: 600px;
         padding: 0px 0px 3px 10px;

@@ -12,14 +12,14 @@
   // Article Elements
   // Header, Paragraph, List
   h1 {
-    font-size: 50px;
     text-transform: uppercase;
+    font-size: 2.5em;
     font-weight: 600;
     border-left: 6px solid $lightbg-accent;
     padding-left: 25px;
     span {
       display: block;
-      font-size: 16px;
+      font-size: 0.4em;
       font-weight: 400;
       padding: 3px 0px;
       text-transform: none;
@@ -28,7 +28,7 @@
   h2 {
     margin-top: 40px;
     margin-bottom: 20px;
-    font-size: 24px;
+    font-size: 1.6em;
     font-weight: 500;
     span.accent { color: $lightbg-accent; }
   }
@@ -53,12 +53,11 @@
   }
   dl {
     margin: 10px 0px;
-    font-size: 15px;
-    line-height: 23px;
+    font-size: 0.8em;
+    line-height: 1.7;
     dt {
       width: 60px;
       float: left;
-      font-size: 11px;
       margin-right: 10px;
       color: $lightbg-text-dim;
       text-transform: uppercase;
@@ -86,7 +85,6 @@
     color: $lightbg-input;
   }
   label {
-    font-size: 13px;
     display: block;
     padding: 3px 0px;
     font-weight: 100;
@@ -97,11 +95,11 @@
     border-radius: 5px;
     border-width: 0px;
     color: $lightbg-text-dim;
-    line-height: 23px;
+    line-height: 1.6em;
     padding: 2px 10px;
     cursor: pointer;
     font-weight: 500;
-    font-size: 16px;
+    font-size: 0.9em;
     &:hover { background-color:darken($lightbg-color, 15%); color:$lightbg-link; }
     &.primary {
       background-color: #076678;
@@ -152,9 +150,8 @@
     bottom: 20px;
     text-align: center;
     color: $lightbg-text-dim;
-    font-size: 12px;
+    font-size: 0.7em;
     margin-top: 30px;
     width: 290px;
-    line-height: 16px;
   }
 }

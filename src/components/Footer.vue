@@ -19,9 +19,8 @@
   #footer {
     background-color: $darkbg-color;
     color: $darkbg-text;
-    font-size: 13px;
-    height: 150px;
-    line-height: 150px;
     text-align: left;
+    padding: 60px 20px;
+    font-size: 0.7em;
   }
 </style>

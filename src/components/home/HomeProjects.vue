@@ -43,7 +43,7 @@
 </template>
 
 <style lang='scss'>
-  .projectlist {
+  #home .projectlist {
     padding: 0px;
     margin: 75px 0px 0px -30px;
     list-style-type: none;
@@ -64,12 +64,12 @@
       width: 30%;
 
       .mdi {
-        font-size: 55px;
+        font-size: 3em;
         position: relative;
         left: -6px;
       }
       .title {
-        font-size: 22px;
+        font-size: 1.3em;
         font-weight: 600;
         left: -1px;
         line-height: 1;
@@ -77,7 +77,7 @@
         position: relative;
       }
       p {
-        font-size: 14px;
+        font-size: 0.8em;
         font-weight: 400;
         height: 75px;
         letter-spacing: 0.5px;

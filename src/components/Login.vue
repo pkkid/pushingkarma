@@ -144,11 +144,11 @@
       width: 350px;
       color: $lightbg-text;
       h3 {
-        font-size: 20px;
+        font-size: 1.2em;
         padding-left: 0px;
         border-left-width: 0px;
         text-transform: none;
-        span { font-size:13px; display:block; }
+        span { font-size:0.6em; font-weight:500; display:block; }
       }
       .avatar {
         background-size: 80px;

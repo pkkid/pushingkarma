@@ -133,7 +133,7 @@
     border-bottom: 1px solid rgba(0, 0, 0, 0.2);
     border-width: 0px;
     color: $darkbg-input;
-    font-size: 15px;
+    font-size: 0.9em;
     font-weight: 500;
     height: 40px;
     line-height: 40px;
@@ -146,7 +146,7 @@
     }
   }
   #search-icon {
-    font-size: 20px;
+    font-size: 1.2em;
     left: 10px;
     line-height: 40px;
     position: absolute;
@@ -155,7 +155,31 @@
   #search-results {
     position: fixed;
     top: 100px;
-
+    .result {
+      border-bottom-right-radius: 8px;
+      border-left: 3px solid transparent;
+      border-top-right-radius: 8px;
+      color: $darkbg-text;
+      cursor: pointer;
+      font-size: 0.85em;
+      font-weight: 500;
+      overflow: hidden;
+      padding: 15px 15px 15px 12px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      width: 290px;
+      &.selected,
+      &:hover {
+        border-left: 3px solid $darkbg-accent;
+        background-color: lighten($darkbg-color, 5%);
+      }
+    }
+    .subtext {
+      font-size: 0.7em;
+      font-weight: 400;
+      color: $darkbg-text-dim;
+      padding-top: 2px;
+    }
     .scrollwrap {
       position: relative;
       .scrollbox {
@@ -181,31 +205,6 @@
         }
       }
       &:hover .scrollbox:before { opacity:0; width:0px; right:5px;}
-    }
-    .result {
-      border-bottom-right-radius: 8px;
-      border-left: 3px solid transparent;
-      border-top-right-radius: 8px;
-      color: $darkbg-text;
-      cursor: pointer;
-      font-size: 14px;
-      font-weight: 500;
-      overflow: hidden;
-      padding: 15px 15px 15px 12px;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      width: 290px;
-      &.selected,
-      &:hover {
-        border-left: 3px solid $darkbg-accent;
-        background-color: lighten($darkbg-color, 5%);
-      }
-    }
-    .subtext {
-      font-size: 10px;
-      font-weight: 300;
-      color: $darkbg-text-dim;
-      padding-top: 2px;
     }
   }
 </style>

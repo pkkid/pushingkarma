@@ -5,7 +5,9 @@
       <div id='splash' class='header parallax-bg'>
         <div class='photo'><img src='@/assets/img/photo.jpg'/></div>
         <div class='name'>Michael <span>Shepanski</span></div>
-        <div class='arrow'><a href='#about'><i class='mdi mdi-chevron-double-down'></i></a></div>
+        <div id='bouncyarrow'>
+          <a href='#about'><i class='mdi mdi-chevron-double-down'></i></a>
+        </div>
       </div>
       <About/>
       <Projects/>
@@ -33,6 +35,7 @@
   #home .content {
     margin-left: 300px;
     padding: 0px;
+    p { font-size: 1.1em };
   }
   #home .content > .header {
     align-items: center;
@@ -40,6 +43,8 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    &::after { background-image: url('../../assets/img/sichuan.jpg'); }
+
     a, a:visited {
       text-decoration: none;
       color: #f9f5d7;
@@ -58,28 +63,26 @@
     .name {
       text-align: center;
       text-transform: uppercase;
-      font-size: 50px;
+      font-size: 2.8em;
       font-weight: 300;
       margin-bottom: 100px;
       color: #f9f5d7;
       span { color: #fe8019; }
     }
-    .arrow {
-      animation: bounce 2s infinite;
-      font-size: 30px;
-      bottom: 5%;
-      left: 50%;
-      margin-left: -15px;
-      position: absolute;
-      z-index: 55;
-    }
   }
-  #home .content > .header::after {
-    background-image: url('../../assets/img/sichuan.jpg');
+
+  #bouncyarrow {
+    animation: bounce 2s infinite;
+    font-size: 1.5em;
+    bottom: 5%;
+    left: 50%;
+    margin-left: -15px;
+    position: absolute;
+    z-index: 55;
   }
   @keyframes bounce {
     0%, 20%, 50%, 80%, 100% { transform: translateY(0); }	
     40% { transform: translateY(-15px); }	
-    60% { transform: translateY(-8px); }	
+    60% { transform: translateY(-8px); }
   }
 </style>
