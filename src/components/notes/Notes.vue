@@ -7,12 +7,9 @@
     <div class='content'>
       <div class='note' :class='{editable:editing}'>
         <MenuBar ref='menubar' />
-        <h1>
-          <input name='title' autocomplete='off' v-model='note.title' :readonly=!editing />
-          <span>
-            {{note.created | formatDate('MMM DD, YYYY')}}
-            <input name='tags' placeholder='tags' autocomplete='off' v-model='note.tags' :readonly=!editing />
-          </span>
+        <h1><input name='title' autocomplete='off' v-model='note.title' :readonly=!editing />
+          <span>{{note.created | formatDate('MMM DD, YYYY')}}
+          <input name='tags' placeholder='tags' autocomplete='off' v-model='note.tags' :readonly=!editing /></span>
         </h1>
         <editor-content :editor='editor' />
       </div>
@@ -27,7 +24,7 @@
   import MenuBar from './NotesMenuBar';
   import Search from './NotesSearch';
   import {EditorContent} from 'tiptap';
-  import {get, sync} from 'vuex-pathify';
+  import {sync} from 'vuex-pathify';
 
   export default {
     name: 'Notes',
@@ -35,48 +32,13 @@
     computed: {
       editing: sync('notes/editing'),
       editor: sync('notes/editor'),
-      message: sync('notes/message'),
       note: sync('notes/note'),
-      userid: get('global/user@id'),
       keymap: function() { return {
-        'f1': this.hotkeyFocusSearch,
-        'e': this.hotkeyEditNote,
-        'ctrl+s': this.hotkeySaveNote,
-        'esc': this.hotkeyStopEditing,
+        'f1': (e) => this.$refs.search.focus(e),
+        'e': (e) => this.$refs.menubar.startEditing(e),
+        'ctrl+s': (e) => this.$refs.menubar.save(e),
+        'esc': (e) => this.$refs.menubar.stopEditing(e),
       };},
-    },
-
-    methods: {
-      // HotkeyEditNote
-      // Edit the current note
-      hotkeyEditNote: function(event) {
-        let loggedin = this.userid !== null;
-        let isinput = event.srcElement.tagName == 'INPUT';
-        if (loggedin && !this.editing && !isinput) {
-          event.preventDefault();
-          this.editing = true;
-        }
-      },
-      // HotkeyFocusSearch
-      // Focus and select all text in the search input
-      hotkeyFocusSearch: function(event) {
-        event.preventDefault();
-        this.$refs.search.$refs.search.select();
-      },
-      // HotkeySaveNote
-      // Save the current note.
-      hotkeySaveNote: function(event) {
-        event.preventDefault();
-        if (this.editing) { this.$refs.menubar.save(); }
-      },
-      // HotkeyStopEditing
-      // Stop editing the current note (do not save)
-      hotkeyStopEditing: function(event) {
-        if (this.editing) {
-          event.preventDefault();
-          this.editing = false;
-        }
-      },
     },
   };
 </script>

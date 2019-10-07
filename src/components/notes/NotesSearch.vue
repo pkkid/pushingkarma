@@ -61,7 +61,15 @@
     },
 
     methods: {
-      // Update History - Update the address bar history.
+      // Focus
+      // Focus the search input
+      focus: function(event) {
+        if (event) event.preventDefault();
+        this.$refs.search.select();
+      },
+
+      // Update History
+      // Update the address bar history.
       updateHistory: function() {
         let query = {};
         if (this.search.length >= 1) { query.search = this.search; }
@@ -71,7 +79,8 @@
         }
       },
 
-      // Update Note - Update the selected note.
+      // Update Note
+      // Update the selected note.
       updateNote: function(event, callback) {
         let self = this;
         let i = this.selected;
@@ -88,7 +97,8 @@
         });
       },
 
-      // Update Search - Update the list of notes to display.
+      // Update Search
+      // Update the list of notes to display.
       updateSearch: function(event, callback) {
         let self = this;
         if (this.request_search) { this.request_search.cancel(); }
@@ -101,7 +111,8 @@
         });
       },
 
-      // Update Selected - Update the selected value.
+      // Update Selected
+      // Update the selected value.
       updateSelected(index) {
         this.selected = minmax(index, 0, this.notes.objects.length-1);
       },

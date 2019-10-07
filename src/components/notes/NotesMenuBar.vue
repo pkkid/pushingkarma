@@ -140,7 +140,8 @@
     },
 
     methods: {
-      // CurrentFormat: Return the currently selected text format
+      // CurrentFormat
+      // Return the currently selected text format
       currentFormat: function(isActive) {
         if (isActive.paragraph()) { return 'Paragraph'; }
         if (isActive.heading({level:1})) { return 'Heading 1'; }
@@ -150,22 +151,47 @@
         else { return 'Format'; }
       },
 
-      // Save: Save the current Title and Content to the server
-      save: function() {
-        let self = this;
-        let data = {id:self.note.id, title:self.note.title,
-          tags:self.note.tags, body:self.editor.getHTML()};
-        let request = buildquery(QUERY_SAVENOTE, data);
-        request.xhr.then(function() {
-          self.editing = false;
-          self.message = 'Success';
-        });
-        request.xhr.catch(function() {
-          self.message = 'Error';
-        });
+      // Save
+      // Save the current Title and Content to the server
+      save: function(event) {
+        if (event) event.preventDefault();
+        if (this.editing) {
+          let self = this;
+          let data = {id:self.note.id, title:self.note.title,
+            tags:self.note.tags, body:self.editor.getHTML()};
+          let request = buildquery(QUERY_SAVENOTE, data);
+          request.xhr.then(function() {
+            self.editing = false;
+            self.message = 'Success';
+          });
+          request.xhr.catch(function() {
+            self.message = 'Error';
+          });
+        }
       },
 
-      // ToggleLinkMenu: Show or hide the link menu input
+      // StartEditing
+      // Enable editing mode for this note
+      startEditing: function(event) {
+        let loggedin = this.userid !== null;
+        let isinput = event && event.srcElement.tagName == 'INPUT';
+        if (loggedin && !this.editing && !isinput) {
+          if (event) event.preventDefault();
+          this.editing = true;
+        }
+      },
+
+      // StopEditing
+      // Disable editing mode for this note
+      stopEditing: function(event) {
+        if (this.editing) {
+          if (event) event.preventDefault();
+          this.editing = false;
+        }
+      },
+
+      // ToggleLinkMenu
+      // Show or hide the link menu input
       // see: https://tiptap.scrumpy.io/links
       toggleLinkMenu: function(attrs) {
         if (this.showLinkMenu) {
@@ -179,13 +205,15 @@
         }
       },
 
-      // HideLinkMenu: Hide the link menu without changing anything
+      // HideLinkMenu
+      // Hide the link menu without changing anything
       hideLinkMenu: function() {
         this.linkUrl = null;
         this.showLinkMenu = false;
       },
 
-      // SetLinkURL: Set the link URL then hide the link menu
+      // SetLinkURL
+      // Set the link URL then hide the link menu
       setLinkUrl: function(command, url) {
         command({href: url});
         this.hideLinkMenu();
