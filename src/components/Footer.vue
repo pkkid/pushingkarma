@@ -8,7 +8,7 @@
         Original <a href='https://themeforest.net/item/arlo-personal-portfolio-template/23175475'>Arlo design</a> heavily
         modified by me.<br/>
         <div style='margin-top:5px;'>
-          <i class='mdi mdi-email'></i> michael.shepanski<span class='email'>+site<span>@gmail.com</span></span>
+          <i class='mdi mdi-email'></i> {{email}}<span style='display:none;'>+site</span>@gmail.com
         </div>
       </div>
     </div>
@@ -31,7 +31,12 @@
 </template>
 
 <script>
-  export default { name:'Footer' };
+  export default {
+    name: 'Footer',
+    data: () => ({
+      email: atob('bWljaGFlbC5zaGVwYW5za2k='),
+    }),
+  };
 </script>
 
 <style lang='scss'>
@@ -45,7 +50,7 @@
     .footer-section {
       float:left;
       height: 250px;
-      padding: 50px 0px;
+      padding: 50px 0px 100px 0px;
       position: relative;
       & > div { padding:0px 50px; border-right:1px solid lighten($darkbg-color, 7%); }
       &:last-child > div { border-right: 0px; }
@@ -67,16 +72,6 @@
     li {
       list-style-type: none;
       font-size: 1em;
-    }
-
-    span.email {
-      position: relative;
-      span {
-        position: absolute;
-        left: 0px;
-        top: -1px;
-        background-color: $darkbg-color;
-      }
     }
   }
 </style>
