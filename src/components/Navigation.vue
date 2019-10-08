@@ -1,5 +1,5 @@
 <template>
-  <div id='navigation' :class='{"nav":true, "topnav":cls=="topnav"}'>
+  <div id='navigation' class='darkbg' :class='{topnav:cls=="topnav"}'>
     <div class='menu'><ul>
       <li><router-link to='/#splash'>Home</router-link></li>
       <li><router-link to='/#about'>About</router-link></li>
