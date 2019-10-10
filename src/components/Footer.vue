@@ -50,6 +50,7 @@
     .footer-section {
       float:left;
       height: 250px;
+      margin-bottom: 40px;
       padding: 50px 0px 100px 0px;
       position: relative;
       & > div { padding:0px 50px; border-right:1px solid lighten($darkbg-color, 7%); }

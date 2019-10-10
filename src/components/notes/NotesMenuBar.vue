@@ -65,15 +65,7 @@
   import Dropdown from '@/utils/components/Dropdown';
   import {buildquery} from '@/utils/utils';
   import {get, sync} from 'vuex-pathify';
-  import {Editor, EditorMenuBar} from 'tiptap';
-  import {Blockquote, BulletList, CodeBlockHighlight, HardBreak, Heading, Link,
-    ListItem, OrderedList, Bold, Code, Italic, Strike, TodoItem, TodoList, Underline,
-    History} from 'tiptap-extensions';
-  import {FontSize} from '@/utils/tiptap-extensions';
-  import bash from 'highlight.js/lib/languages/bash';
-  import css from 'highlight.js/lib/languages/css';
-  import javascript from 'highlight.js/lib/languages/javascript';
-  import python from 'highlight.js/lib/languages/python';
+  import {EditorMenuBar} from 'tiptap';
 
   var QUERY_SAVENOTE = `mutation saveNote {
     saveNote(id:{id}, title:{title}, tags:{tags}, body:{body}) {
@@ -95,48 +87,29 @@
       linkUrl: null,        // Current URL text when editing links
       showLinkMenu: false,  // True when displaying link input
     }),
+
     watch: {
+      // Watch Editing
+      // When edit mode changes, make sure TipTap is informed.
       editing: function() {
         let editable = this.editing && (this.userid !== null);
         this.editor.setOptions({editable});
       },
+
+      // Watch Message
+      // A simple fading Success/Error message on save
       message: function() {
         let self = this;
         if (this.message) {
           setTimeout(function() { self.message = null; }, 3000);
         }
       },
+
+      // Watch UserID
+      // If userid ever changes, make sure we stop editing.
       userid: function() {
         this.editing = false;
       }
-    },
-
-    mounted: function() {
-      // Tiptap Examples: https://github.com/scrumpy/tiptap
-      // Tiptap Documentation: https://tiptap.scrumpy.io/docs
-      this.$store.set('global/layout', 'topnav');
-      this.editor = new Editor({
-        editable: false,
-        extensions: [
-          new Blockquote(),
-          new Bold(),
-          new BulletList(),
-          new Code(),
-          new CodeBlockHighlight({languages:{bash,css,javascript,python}}),
-          new FontSize(),
-          new HardBreak(),
-          new Heading({levels:[1,2,3]}),
-          new History(),
-          new Italic(),
-          new Link({openOnClick:false}),
-          new ListItem(),
-          new OrderedList(),
-          new Strike(),
-          new TodoItem({nested: true}),
-          new TodoList(),
-          new Underline(),
-        ],
-      });
     },
 
     methods: {
