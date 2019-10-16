@@ -25,7 +25,7 @@ export const DEFAULT_USER = {
 };
 
 const global = {
-  layout: 'navtop',
+  layout: 'topnav',
   user: DEFAULT_USER,
   gauth: null,
 };
