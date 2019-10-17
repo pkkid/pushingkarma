@@ -6,15 +6,15 @@
       <input id='search-input' type='text' v-model='search' autofocus='true'
         spellcheck='false' autocomplete='off' ref='search'
         v-on:input='updateSearch'
-        v-on:keydown.up.prevent='updateSelected(selected-1)'
-        v-on:keydown.down.prevent='updateSelected(selected+1)'
+        v-on:keydown.up.prevent='setHighlighted({i:highlighted-1})'
+        v-on:keydown.down.prevent='setHighlighted({i:highlighted+1})'
         v-on:keyup.enter.prevent='updateNote'>
       <!-- Search Results -->
       <div id='search-results'>
         <div class='scrollwrap'>
         <div class='scrollbox'>
           <div class='result' v-for='(note, i) in notes.objects' v-bind:key='note.id'
-            v-bind:class='{selected:i == selected}' @click='selected=i; updateNote()'>
+            v-bind:class='{highlighted:i == highlighted}' @click='highlighted=i; updateNote()'>
             {{note.title}}
             <div class='subtext'>
               {{note.tags}} <span v-if='note.tags'>-</span>
@@ -46,18 +46,26 @@
 
   export default {
     name: 'Search',
-    computed: { ...sync('notes/*') },
-    
+    computed: {
+      editor: sync('notes/editor'),
+      note: sync('notes/note'),
+      notes: sync('notes/notes'),
+    },
     data: () => ({
       request_search: null,
       request_note: null,
-      selected: 0,
+      highlighted: 0,
     }),
 
     created: function() {
       // Init function when this component is created.
+      var self = this;
+      var id = parseInt(self.$route.query.id);
       this.search = trim(this.search || this.$route.query.search || '');
-      this.updateSearch(null, this.updateNote);
+      this.updateSearch(null, id, function() {
+        self.updateNote();
+        self.$refs.search.focus();
+      });
     },
 
     methods: {
@@ -70,20 +78,18 @@
 
       // Update History
       // Update the address bar history.
-      updateHistory: function() {
-        let query = {};
-        if (this.search.length >= 1) { query.search = this.search; }
-        if (this.note.id) { query.id = this.note.id; }
+      updateHistory: function(changes) {
+        var query = Object.assign({}, this.$router.history.current.query, changes);
         if (!isEqual(query, this.$router.history.current.query)) {
           this.$router.push({query});
         }
       },
 
       // Update Note
-      // Update the selected note.
+      // Update the highlighted note.
       updateNote: function(event, callback) {
         let self = this;
-        let i = this.selected;
+        let i = this.highlighted;
         let noteid = this.notes.objects[i].id;
         this.$refs.search.focus();
         if (this.request_note) { this.request_note.cancel(); }
@@ -91,30 +97,39 @@
         this.request_note.xhr.then(function(response) {
           self.note = response.data.data.note;
           self.editor.setContent(self.note.body);
-          self.updateHistory();
-          self.$refs.search.blur();
+          self.updateHistory({id:self.note.id.toString()});
           if (callback) { callback(); }
         });
       },
 
       // Update Search
       // Update the list of notes to display.
-      updateSearch: function(event, callback) {
+      updateSearch: function(event, id, callback) {
         let self = this;
         if (this.request_search) { this.request_search.cancel(); }
         this.request_search = buildquery(QUERY_NOTES, {search:self.search, page:1});
         this.request_search.xhr.then(function(response) {
           self.notes = response.data.data.notes;
-          self.selected = 0;
-          self.updateHistory();
+          self.setHighlighted(id === undefined ? {i:0} : {id:id});
+          self.updateHistory({search:self.search});
           if ((self.notes.objects.length) && (callback)) { callback(); }
         });
       },
 
-      // Update Selected
-      // Update the selected value.
-      updateSelected(index) {
-        this.selected = minmax(index, 0, this.notes.objects.length-1);
+      // Update highlighted
+      // Update the highlighted value.
+      setHighlighted(opts) {
+        // Update highlighted item by index or noteid
+        if (opts.i !== undefined) {
+          this.highlighted = minmax(opts.i, 0, this.notes.objects.length-1);
+        } else if (opts.id !== undefined) {
+          for (var i=0; i<this.notes.objects.length; i++) {
+            if (opts.id == this.notes.objects[i].id) {
+              this.highlighted = i;
+            }
+          }
+        }
+        // Scroll the search window to the selected item
       },
     },
 
@@ -168,7 +183,7 @@
       text-overflow: ellipsis;
       white-space: nowrap;
       width: 290px;
-      &.selected,
+      &.highlighted,
       &:hover {
         border-left: 3px solid $darkbg-accent;
         background-color: lighten($darkbg-color, 5%);
