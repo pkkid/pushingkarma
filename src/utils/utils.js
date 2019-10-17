@@ -2,31 +2,10 @@ import axios from 'axios';
 import Cookie from "js-cookie";
 
 /**
- * String Format - Format the specified template with the key/value object mapping.
- * @param str - String to format with vars specified by brackets {var}.
- * @param vars - Object of key->value pairs to replace in the template string.
- */
-export function sfmt(str, vars) {
-  for (let key in vars) {
-    str = str.replace(`{${key}}`, JSON.stringify(vars[key]), 'g');
-  }
-  return str;
-}
-
-/**
- * ParseQueryMethod - Try to parse the method call from the specified query.
- */
-function _appendQueryMethod(url, query) {
-  let result = query.replace(/\n/g, '').match(/\{\s*(.*?)\s*[\\{\\(]/i);
-  if (result && result.length == 2) { url += '/'+result[1]; }
-  return url;
-}
-
-/**
- * Query - Run the specified GraphQL query and return the result
- * @param query - Query to run with vars specified by brackets {var}.
- * @param vars - Object of key->value pairs to replace in the query string.
- * @param ctoken - Axios cancelToken to manipulate manage for aborts.
+ * Build Query - Run the specified GraphQL query and return the result
+ *  query - Query to run with vars specified by brackets {var}.
+ *  vars - Object of key->value pairs to replace in the query string.
+ *  ctoken - Axios cancelToken to manipulate manage for aborts.
  */
 export function buildquery(querytmpl, vars) {
   let cancel;
@@ -39,10 +18,43 @@ export function buildquery(querytmpl, vars) {
   return {xhr, cancel};
 }
 
+function _appendQueryMethod(url, query) {
+  // Try to parse the method call from the specified query.
+  let result = query.replace(/\n/g, '').match(/\{\s*(.*?)\s*[\\{\\(]/i);
+  if (result && result.length == 2) { url += '/'+result[1]; }
+  return url;
+}
+
+
+/**
+ * Contains - Return a list of items contianing the specified pattern.
+ *  selector - Base querySelector input to find items to search.
+ *  regex - Regex to compare the contents of each found item.
+ */
+export function contains(selector, regex) {
+  var elems = document.querySelectorAll(selector);
+  var results = Array.prototype.filter.call(elems, function(elem) {
+    return RegExp(regex, 'i').test(elem.textContent);
+  });
+  return results.length ? results[0] : null;
+}
+
 /**
  * minmax - Make sure the specified value is within min and max (inclusive).
  */
 export function minmax(value, min, max) {
   value = Math.max(value, min);
   return Math.min(value, max);
+}
+
+/**
+ * String Format - Format the specified template with the key/value object mapping.
+ *  str - String to format with vars specified by brackets {var}.
+ *  vars - Object of key->value pairs to replace in the template string.
+ */
+export function sfmt(str, vars) {
+  for (let key in vars) {
+    str = str.replace(`{${key}}`, JSON.stringify(vars[key]), 'g');
+  }
+  return str;
 }

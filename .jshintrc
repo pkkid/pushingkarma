@@ -12,6 +12,7 @@
         "module",
         "process",
         "require",
-        "Vue"
+        "Vue",
+        "window"
     ]
 }

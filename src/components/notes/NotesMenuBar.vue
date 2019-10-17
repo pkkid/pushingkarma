@@ -49,14 +49,6 @@
           </div>
         </div>
       </editor-menu-bar>
-      <button class='editbtn' v-else-if='userid !== null' @click='editing=true'>Edit</button>
-    </transition>
-    <!-- Success/Error message -->
-    <transition name='fade'>
-      <span class='message' v-if='message' :style='{color:message == "Error" ? "#fb4934":"#79740e"}'>
-        <i v-if='message == "Error"' class='mdi mdi-alert-circle-outline'/>
-        <i v-else class='mdi mdi-check-bold'/> {{message}}
-      </span>
     </transition>
   </div>
 </template>
@@ -94,15 +86,6 @@
       editing: function() {
         let editable = this.editing && (this.userid !== null);
         this.editor.setOptions({editable});
-      },
-
-      // Watch Message
-      // A simple fading Success/Error message on save
-      message: function() {
-        let self = this;
-        if (this.message) {
-          setTimeout(function() { self.message = null; }, 3000);
-        }
       },
 
       // Watch UserID
@@ -203,24 +186,6 @@
 
 <style lang='scss'>
   #notesmenubar {
-    .message {
-      right: calc(50% - 510px);
-      position: fixed;
-      text-align: right;
-      top: 70px;
-      z-index: 60;
-      font-weight: 500;
-      padding: 2px 0px;
-      line-height: 1.6em;
-    }
-    .editbtn {
-      margin-left: 780px;
-      position: fixed;
-      top: 70px;
-      z-index: 50;
-      background-color: darken($lightbg-color, 15%);
-    }
-
     .menubar {
       background-color: $darkbg-color;
       border-radius: 8px;
@@ -228,7 +193,7 @@
       color: $darkbg-text;
       padding: 5px 10px;
       position: fixed;
-      top: 65px;
+      top: 70px;
       width: 900px;
       margin-left: -51px;
       z-index: 50;

@@ -1,6 +1,6 @@
 <template>
   <div id='projects' class='parallax-static'>
-    <h1>Projects <span>Whats been keeping me busy</span></h1>
+    <h1>Projects <div class='subtext'>Whats been keeping me busy</div></h1>
     <ul class='projectlist'>
       <li><a href='https://github.com/mjs7231/python-plexapi'>
         <i class='mdi mdi-code-braces'></i>

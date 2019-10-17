@@ -9,7 +9,7 @@ Vue.use(VueRouter);
 
 export default new VueRouter({
   mode: 'history',
-  scrollBehavior() { return {x:0, y:0}; },
+  //scrollBehavior() { return {x:0, y:0}; },
   routes: [
     {path:'/', component:Home},
     {path:'/notes', component:Notes},

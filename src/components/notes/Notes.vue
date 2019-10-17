@@ -1,23 +1,39 @@
 <template>
   <div id='notes' v-hotkey='keymap'>
     <Navigation :cls="'topnav'" />
-    <div class='sidebar'>
+    <div id='sidebar'>
       <Search ref='search'/>
     </div>
     <div class='content'>
-      <div class='notebg'>
+      <div class='notebg' :class='{editable:editing}'>
         <div class='notewrap'>
-          <div class='note' :class='{editable:editing}'>
+          <div class='note'>
             <MenuBar ref='menubar' />
             <h1><input name='title' autocomplete='off' v-model='note.title' :readonly=!editing />
-              <span>{{note.created | formatDate('MMM DD, YYYY')}}
-              <input name='tags' placeholder='tags' autocomplete='off' v-model='note.tags' :readonly=!editing /></span>
+              <div class='subtext'>
+                {{note.created | formatDate('MMM DD, YYYY')}}
+                <input name='tags' placeholder='tags' autocomplete='off' v-model='note.tags' :readonly=!editing />
+              </div>
             </h1>
             <editor-content id='editor' :editor='editor' />
           </div>
-          <div class='toc'>
-            <div v-for='item in toc' v-bind:key='item.text' :class='item.type'>
-              {{item.text}}
+          <div id='rightpanel'>
+            <div class='toc'>
+              <div v-for='item in toc' v-bind:key='item.text' :class='item.type'>
+                <router-link :to='{hash:item.slug, query:$route.query}'>{{item.text}}</router-link>
+              </div>
+            </div>
+            <div class='controls' if='userid !== null'>
+              <!-- Edit buttons -->
+              <div v-if='editing'><i class='mdi mdi-cancel'/> <a @click='editing=false'>Cancel Changes</a></div>
+              <div v-else><i class='mdi mdi-pencil-outline'/> <a @click='editing=true'>Edit Note</a></div>
+              <!-- Success/Error message -->
+              <transition name='fade'>
+                <span class='message' v-if='message' :style='{color:message == "Error" ? "#9d0006":"#79740e"}'>
+                  <i v-if='message == "Error"' class='mdi mdi-alert-circle-outline'/>
+                  <i v-else class='mdi mdi-check-bold'/>{{message}}
+                </span>
+              </transition>
             </div>
           </div>
           <div style='clear:both;'></div>
@@ -33,7 +49,7 @@
   import Navigation from '../Navigation';
   import MenuBar from './NotesMenuBar';
   import Search from './NotesSearch';
-  import {sync} from 'vuex-pathify';
+  import {get, sync} from 'vuex-pathify';
   // import {EditorContent} from 'tiptap';
   import {Editor, EditorContent} from 'tiptap';
   import {Blockquote, BulletList, CodeBlockHighlight, HardBreak, Heading, Link,
@@ -54,8 +70,10 @@
     computed: {
       editing: sync('notes/editing'),
       editor: sync('notes/editor'),
+      message: sync('notes/message'),
       note: sync('notes/note'),
       title: sync('notes/note@title'),
+      userid: get('global/user@id'),
       keymap: function() { return {
         'f1': (e) => this.$refs.search.focus(e),
         'e': (e) => this.$refs.menubar.startEditing(e),
@@ -69,6 +87,13 @@
       // Update the TOC when the note changes
       note: function() { this.updateToc(); },
       title: function() { this.updateToc(); },
+
+      // Watch Message
+      // A simple fading Success/Error message on save
+      message: function() {
+        let self = this;
+        if (this.message) { setTimeout(function() { self.message = null; }, 3000); }
+      },
     },
 
     mounted: function() {
@@ -101,16 +126,18 @@
     },
 
     methods: {
-      // OnEditorUpdate
+      // Update TOC
       // Called each time the editor is updated. We use this callback to
       // update the table of contents for the note.
       updateToc: function() {
-        let toc = [{type:'h1', text:this.note.title}];
+        let toc = [{text:this.note.title, slug:'#title', type:'h1'}];
         for (let item of this.editor.getJSON().content) {
           if (item.type == 'heading') {
+            var text = item.content[0].text;
             toc.push({
+              text: text,
+              slug: '#'+ text.toLowerCase().replace(/\s/g, '_'),
               type: 'h'+ item.attrs.level,
-              text: item.content[0].text,
             });
         }}
         this.toc = toc;
@@ -121,7 +148,7 @@
 </script>
 
 <style lang='scss'>
-  #notes .sidebar {
+  #sidebar {
     float: left;
     width: 300px;
     height: calc(100vh - 60px);
@@ -137,8 +164,10 @@
     
     // General Scaffolding
     .notebg {
-      padding: 50px 20px 60px 20px;
+      padding: 30px 20px 60px 20px;
       box-shadow: inset 1px 0px 2px rgba(0,0,0,0.3);
+      transition: padding 0.2s ease;
+      &.editable { padding-top: 60px; }
     }
     .notewrap {
       width: 1150px;
@@ -146,20 +175,31 @@
     }
   
     // Table of Contents
-    .toc {
-      border-left: 3px solid #076678;
+    #rightpanel {
       float: left;
       font-size: 0.8em;
       font-weight: 500;
       margin-left: 920px;
       margin-top: 3px;
-      padding-left: 10px;
       position: fixed;
       width: 230px;
-      line-height: 1.6em;
-      .h1 { font-weight:bold; color:darken($lightbg-text, 30%); }
-      .h2 { padding-left:0px; }
-      .h3 { padding-left:20px; }
+      line-height: 1.7em;
+      .toc {
+        border-left: 3px solid #076678;
+        padding-left: 10px;
+        .h1 { font-weight:bold; color:darken($lightbg-text, 30%); }
+        .h2 { padding-left:0px; }
+        .h3 { padding-left:20px; }
+        a {
+          color: $lightbg-text;
+          &:hover { color:$lightbg-link; text-decoration:none; }
+        }
+      }
+      .controls {
+        margin-top: 20px;
+        color: $lightbg-link;
+        .mdi { margin-right: 5px; }
+      }
     }
 
     // General Note Display
@@ -173,9 +213,8 @@
       border: 1px solid darken($lightbg-color, 20%);
       border-radius: 2px;
       box-shadow: 0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15);
-      padding: 10px 50px;
+      padding: 25px 50px;
       background-color: $lightbg-color;
-      //&.editable { padding-top: 60px; }
     }
     h1 {
       font-size: 1.9em;
