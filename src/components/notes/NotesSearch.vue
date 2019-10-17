@@ -5,10 +5,11 @@
       <span id='search-icon' class='mdi mdi-magnify'></span>
       <input id='search-input' type='text' v-model='search' autofocus='true'
         spellcheck='false' autocomplete='off' ref='search'
-        v-on:input='updateSearch'
-        v-on:keydown.up.prevent='setHighlighted({i:highlighted-1})'
-        v-on:keydown.down.prevent='setHighlighted({i:highlighted+1})'
-        v-on:keyup.enter.prevent='updateNote'>
+        @input='updateSearch'
+        @keydown.up.prevent='setHighlighted({i:highlighted-1})'
+        @keydown.down.prevent='setHighlighted({i:highlighted+1})'
+        @keyup.enter.prevent='updateNote'
+        @keydown.esc.stop='$refs.search.blur()'>
       <!-- Search Results -->
       <div id='search-results'>
         <div class='scrollwrap'>
