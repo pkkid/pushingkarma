@@ -9,7 +9,7 @@
         <div class='notewrap'>
           <div class='note'>
             <MenuBar ref='menubar' />
-            <h1><input name='title' autocomplete='off' v-model='note.title' :readonly=!editing />
+            <h1><input name='title' autocomplete='off' placeholder='Enter a Title' v-model='note.title' :readonly=!editing />
               <div class='subtext'>
                 {{note.created | formatDate('MMM DD, YYYY')}}
                 <input name='tags' placeholder='tags' autocomplete='off' v-model='note.tags' :readonly=!editing />

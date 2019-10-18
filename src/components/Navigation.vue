@@ -5,6 +5,7 @@
       <li><router-link to='/#about'>About</router-link></li>
       <li><router-link to='/#projects'>Projects</router-link></li>
       <li><router-link to='/notes'>Notes</router-link></li>
+      <li v-if='user.id'><router-link to='/budget'>Budget</router-link></li>
     </ul></div>
     <div class='links'><ul>
       <li><a href='https://github.com/pkkid'><i class='mdi mdi-github-box'></i></a></li>

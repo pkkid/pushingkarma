@@ -4,6 +4,7 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import Home from '@/components/home/Home';
 import Notes from '@/components/notes/Notes';
+import Budget from '@/components/budget/Budget';
 import NotFound from '@/components/NotFound';
 Vue.use(VueRouter);
 
@@ -13,6 +14,7 @@ export default new VueRouter({
   routes: [
     {path:'/', component:Home},
     {path:'/notes', component:Notes},
+    {path:'/budget', component:Budget},
     {path: '*', component:NotFound}
   ]
 });
