@@ -50,9 +50,9 @@ class AccountViewSet(viewsets.ViewSet):
     @list_route(methods=['post'])
     def login(self, request, *args, **kwargs):
         try:
-            email = request.data.get('email')
-            passwd = request.data.get('password')
-            code = request.data.get('code')
+            email = request.POST.get('email')
+            passwd = request.POST.get('password')
+            code = request.POST.get('code')
             user = (auth.auth_google(request, code) if code
                 else auth.auth_django(request, email, passwd))
             if user and user.is_active:
@@ -60,7 +60,8 @@ class AccountViewSet(viewsets.ViewSet):
                 return Response(serializer.data)
         except Exception as err:
             log.error(err, exc_info=1)
-        return Response(status=status.HTTP_403_FORBIDDEN)
+        return Response({'status': 'Unknown username or password.'},
+            status=status.HTTP_403_FORBIDDEN)
 
     @list_route(methods=['post'])
     def logout(self, request, *args, **kwargs):
