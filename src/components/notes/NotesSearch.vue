@@ -103,7 +103,6 @@
         this.request_search = makeRequest(axios.get, API_NOTES, {search:self.search, page:1});
         this.request_search.xhr.then(function(response) {
           self.notes = response.data.results;
-          console.log(response.data.results);
           self.setHighlighted(id === undefined ? {i:0} : {id:id});
           self.updateHistory({search:self.search});
           if ((self.notes.length) && (callback)) { callback(); }

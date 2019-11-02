@@ -1,5 +1,6 @@
 
 export default {
-  accounts: {},                  // List of notes to list in the sidebar
-  transactions: {},              // List transactions grouped by month & category
+  accounts: {},       // List of accounts.
+  transactions: {},   // List transactions grouped by month.
+  categories: {},     // List of categories grouped by month.
 };

@@ -4,7 +4,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 ANS="$DIR/ansible"
 
 if [ "$1" = "getdb" ]; then
-   scp pushingkarma.com:~/pk/db.sqlite3 $DIR/pk
+   scp pushingkarma.com:~/pk/db.sqlite3 $DIR/pk/.data
 elif [ "$1" = "full" ]; then
    ansible-playbook -i $ANS/inventory.ini $ANS/playbook.yml
 else

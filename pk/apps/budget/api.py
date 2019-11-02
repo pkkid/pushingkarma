@@ -4,7 +4,7 @@ from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
 from django.db import connection
-from django.db.models import Min, Max, Sum
+from django.db.models import Min, Max
 from pk import utils
 from pk.utils.context import Bunch
 from pk.utils.search import FIELDTYPES, SearchField, Search
@@ -37,6 +37,7 @@ TRANSACTIONSEARCHFIELDS = {
 
 
 class AccountSerializer(DynamicFieldsSerializer):
+    
     class Meta:
         model = Account
         fields = ('id','url','name','fid','type','payee','balance','balancedt')
@@ -53,8 +54,7 @@ class AccountsViewSet(viewsets.ModelViewSet):
         page = self.paginate_queryset(accounts)
         serializer = AccountSerializer(page, context={'request':request}, many=True, fields=self.list_fields)
         response = self.get_paginated_response(serializer.data)
-        response.data['total'] = accounts.aggregate(sum=Sum('balance'))['sum']
-        utils.move_to_end(response.data, 'previous','next','results')
+        utils.move_to_end(response.data, 'results')
         return response
 
 

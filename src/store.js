@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import notes from './components/notes/NotesStore';
+import budget from './components/budget/BudgetStore';
 import pathify from 'vuex-pathify';
 import {make} from 'vuex-pathify';
 Vue.use(Vuex);
@@ -35,5 +36,6 @@ export default new Vuex.Store({
   modules: {
     global: makeModule(global),
     notes: makeModule(notes),
+    budget: makeModule(budget),
   },
 });

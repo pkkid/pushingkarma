@@ -29,22 +29,21 @@ USE_L10N = True
 USE_TZ = True
 
 INSTALLED_APPS = (
-    # 'django.contrib.admin',
+    'corsheaders',
+    'django_extensions',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.humanize',
+    'django.contrib.messages',
     'django.contrib.sessions',
     'django.contrib.staticfiles',
-    'django.contrib.messages',
-    'django_extensions',
-    'corsheaders',
-    'rest_framework',
-    'redsocks',
-    'pk',
     'pk.apps.budget',
     'pk.apps.focus',
     'pk.apps.notes',
     'pk.apps.stocks',
+    'pk',
+    'rest_framework.authtoken',
+    'rest_framework',
 )
 MIDDLEWARE = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -104,6 +103,7 @@ LOGGING = {
 
 # Django Rest Framework
 REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': ('rest_framework.authentication.TokenAuthentication',),
     'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAuthenticatedOrReadOnly',),
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 100,

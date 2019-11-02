@@ -3,7 +3,6 @@ from django.conf import settings
 from django.db import models
 from django.template.defaultfilters import slugify
 from django_extensions.db.models import TimeStampedModel
-from pk.utils.markdown import Markdown
 
 
 class Note(TimeStampedModel):
@@ -17,11 +16,6 @@ class Note(TimeStampedModel):
 
     def weburl(self):
         return f'{settings.DOMAIN}/notes?id={self.id}'
-
-    def html(self):
-        if getattr(self, '_md', None) is None:
-            self._md = Markdown(self.body, Note, '/n/')
-        return self._md.html
 
     def save(self, *args, **kwargs):
         self.slug = slugify(self.title)

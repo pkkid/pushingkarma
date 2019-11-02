@@ -9,11 +9,15 @@
 
               <!-- Display logged in user info -->
               <div class='avatar' :style="{backgroundImage:avatar}"></div>
-              <h3>Welcome {{user.firstName}}! <span>Great to see you</span></h3>
+              <h3>Welcome {{user.firstName || "You"}}! <span>Great to see you</span></h3>
               <dl>
                 <dt>Joined</dt><dd>{{user.date_joined | formatDate('MMM DD, YYYY')}}</dd>
                 <dt>Login</dt><dd>{{user.last_login | formatDate('MMM DD, YYYY h:mm a')}}</dd>
                 <dt>Email</dt><dd>{{user.email}}</dd>
+                <dt>Token</dt><dd>
+                  <input type='text' class='auth_token' :value='user.auth_token || "None"' readonly/>
+                  <i class='mdi mdi-refresh' @click='genToken'/>
+                </dd>
               </dl>
               <button @click='logout'>Log Out</button>
             </div>
@@ -50,6 +54,7 @@
   var API_CURRENT_USER = '/api/user';
   var API_LOGIN = '/api/user/login';
   var API_LOGOUT = '/api/user/logout';
+  var API_GENTOKEN = '/api/user/gentoken';
 
   export default {
     name: 'Navigation',
@@ -70,7 +75,8 @@
     },
     
     methods: {
-      // Update Current User - Update global/user user in vuex store
+      // Update Current User
+      // Update global/user user in vuex store
       updateCurrentUser: function() {
         let self = this;
         let request = makeRequest(axios.get, API_CURRENT_USER);
@@ -80,7 +86,8 @@
         });
       },
 
-      // GAuth Login - Login via Google popup box
+      // GAuth Login
+      // Login via Google popup box
       gauth_login: function() {
         let self = this;
         this.gauth.grantOfflineAccess().then(function(data) {
@@ -90,7 +97,8 @@
         });
       },
 
-      // Login - Login using username/password to Google auth
+      // Login
+      // Login using username/password to Google auth
       login: function(event, data) {
         let self = this;
         data = data || {email:this.loginform.email, password:this.loginform.password};
@@ -106,7 +114,21 @@
         });
       },
 
-      // Logout - Logout of the site
+      // Generate Token
+      // Generate a new API token
+      genToken: function() {
+        console.log('gentoken!');
+        let self = this;
+        let request = makeRequest(axios.post, API_GENTOKEN);
+        request.xhr.then(function(response) {
+          if (response.data.id) {
+            self.user = response.data;
+          }
+        });
+      },
+
+      // Logout
+      // Logout of the site
       logout: function() {
         let self = this;
         let request = makeRequest(axios.post, API_LOGOUT);
@@ -169,6 +191,17 @@
         width: 100%;
         padding: 10px 20px;
         margin-top: 30px;
+      }
+      .auth_token {
+        padding: 0px;
+        width: 190px;
+        border: 0px;
+        background-color: transparent;
+        border-radius: 0px;
+        margin-right: 10px;
+      }
+      .mdi-refresh {
+        cursor: pointer;
       }
     }
   }
