@@ -3,7 +3,8 @@
     <div class='footer-section' style='width:400px'>
       <div class='site'>
         <h4>PushingKarma</h4>
-        Site created using <a href='https://www.djangoproject.com/'>Django</a>, <a href='https://graphql.org/'>Graphql</a>,
+        Site created using <a href='https://www.djangoproject.com/'>Django</a>,
+        <a href='https://www.django-rest-framework.org/'>Django Rest Framework</a>,
         <a href='https://vuejs.org/'>Vue</a>, and is hosted on <a href='https://www.digitalocean.com/'>Digital Ocean</a>.
         Original <a href='https://themeforest.net/item/arlo-personal-portfolio-template/23175475'>Arlo design</a> heavily
         modified by me.<br/>

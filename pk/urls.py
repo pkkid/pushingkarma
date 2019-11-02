@@ -1,9 +1,6 @@
 # encoding: utf-8
-from django.conf import settings
 from django.conf.urls import include, url
-from graphene_django.views import GraphQLView
 from pk import views as pk_views
-from pk.schema import schema
 from pk.apps.budget import views as budget_views
 from pk.apps.notes import views as note_views
 from pk.apps.stocks import views as stock_views
@@ -20,7 +17,6 @@ api.register('keyval', budget_views.KeyValueViewSet)
 
 urlpatterns = [
     url(r'^api/', include(api.urls)),
-    url(r'^graphql/', GraphQLView.as_view(schema=schema, graphiql=settings.DEBUG)),
     url(r'', pk_views.index, name='index'),
 ]
 
