@@ -55,15 +55,11 @@
 
 <script>
   import Dropdown from '@/utils/components/Dropdown';
-  import {buildquery} from '@/utils/utils';
+  import {axios, makeRequest} from '@/utils/utils';
   import {get, sync} from 'vuex-pathify';
   import {EditorMenuBar} from 'tiptap';
 
-  var QUERY_SAVENOTE = `mutation saveNote {
-    saveNote(id:{id}, title:{title}, tags:{tags}, body:{body}) {
-      note { id slug title tags body created }
-      success
-    }}`;
+  var API_NOTE = '/api/notes/{id}';
 
   export default {
     name: 'Notes',
@@ -115,7 +111,7 @@
           let self = this;
           let data = {id:self.note.id, title:self.note.title,
             tags:self.note.tags, body:self.editor.getHTML()};
-          let request = buildquery(QUERY_SAVENOTE, data);
+          let request = makeRequest(axios.put, API_NOTE, data);
           request.xhr.then(function() {
             self.editing = false;
             self.message = 'Success';
