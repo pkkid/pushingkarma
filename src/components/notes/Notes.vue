@@ -50,11 +50,10 @@
   import MenuBar from './NotesMenuBar';
   import Search from './NotesSearch';
   import {get, sync} from 'vuex-pathify';
-  // import {EditorContent} from 'tiptap';
   import {Editor, EditorContent} from 'tiptap';
-  import {Blockquote, BulletList, CodeBlockHighlight, HardBreak, Heading, Link,
-    ListItem, OrderedList, Bold, Code, Italic, Strike, TodoItem, TodoList, Underline,
-    History} from 'tiptap-extensions';
+  import {Blockquote, BulletList, CodeBlockHighlight, HardBreak, Heading,
+    Link, ListItem, OrderedList, Bold, Code, Italic, Strike, TodoItem,
+    TodoList, Underline, History} from 'tiptap-extensions';
   import {FontSize} from '@/utils/tiptap-extensions';
   import bash from 'highlight.js/lib/languages/bash';
   import css from 'highlight.js/lib/languages/css';

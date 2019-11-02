@@ -18,11 +18,15 @@
 <script>
   import Footer from '../Footer';
   import Navigation from '../Navigation';
-  // import {get, sync} from 'vuex-pathify';
+  import {sync} from 'vuex-pathify';
 
   export default {
     name: 'Budget',
     components: {Navigation, Footer},
+    computed: {
+      accounts: sync('budget/accounts'),
+      transactions: sync('budget/transactions'),
+    },
     
     mounted: function() {
       this.$store.set('global/layout', 'topnav');

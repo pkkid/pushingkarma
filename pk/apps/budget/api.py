@@ -3,23 +3,21 @@ from collections import OrderedDict, defaultdict
 from datetime import date, datetime
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
-from django.contrib.auth.decorators import login_required
 from django.db import connection
 from django.db.models import Min, Max, Sum
 from pk import utils
 from pk.utils.context import Bunch
 from pk.utils.search import FIELDTYPES, SearchField, Search
+from pk.utils.serializers import DynamicFieldsSerializer, PartialFieldsSerializer
 from rest_framework import viewsets
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
+from rest_framework.serializers import SerializerMethodField, ValidationError
 from .manager import TransactionManager
-from .models import Account, AccountSerializer
-from .models import Category, CategorySerializer, UNCATEGORIZED
-from .models import Transaction, TransactionSerializer
-from .models import KeyValue, KeyValueSerializer
+from .models import Account, Category, Transaction, KeyValue, UNCATEGORIZED
 
 ACCOUNTS = settings.BUDGET_ACCOUNTS
 CATEGORY_NULL = {'id':'null', 'name':UNCATEGORIZED, 'url':None, 'sortindex':999, 'budget':'0.00', 'comment':''}
@@ -38,11 +36,10 @@ TRANSACTIONSEARCHFIELDS = {
 }
 
 
-@login_required
-def budget(request, slug=None, tmpl='budget.html'):
-    data = utils.context.core(request, menuitem='budget')
-    data.accounts = Account.objects.order_by('name')
-    return utils.response(request, tmpl, data)
+class AccountSerializer(DynamicFieldsSerializer):
+    class Meta:
+        model = Account
+        fields = ('id','url','name','fid','type','payee','balance','balancedt')
 
 
 class AccountsViewSet(viewsets.ModelViewSet):
@@ -59,6 +56,18 @@ class AccountsViewSet(viewsets.ModelViewSet):
         response.data['total'] = accounts.aggregate(sum=Sum('balance'))['sum']
         utils.move_to_end(response.data, 'previous','next','results')
         return response
+
+
+class CategorySerializer(DynamicFieldsSerializer):
+    details = SerializerMethodField()
+
+    class Meta:
+        model = Category
+        fields = ('id','name','sortindex','budget','comment','url','details')
+
+    def get_details(self, obj):
+        request = self.context['request']
+        return reverse('category-details', kwargs={'pk':obj.pk}, request=request)
 
 
 class CategoriesViewSet(viewsets.ModelViewSet):
@@ -129,6 +138,28 @@ class CategoriesViewSet(viewsets.ModelViewSet):
         KeyValue.objects.update_or_create(key=key, defaults={'value':comment})
 
 
+class TransactionSerializer(DynamicFieldsSerializer):
+    account = PartialFieldsSerializer(AccountSerializer, ('url','name'))
+    category = PartialFieldsSerializer(CategorySerializer, ('url','name','budget'))
+
+    class Meta:
+        model = Transaction
+        fields = ('id','url','trxid','date','payee','amount','approved',
+            'memo','comment','account','category')
+
+    def update(self, instance, validated_data):
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        if 'category' in self.context['request'].POST:
+            category_name = self.context['request'].POST['category']
+            category = utils.get_object_or_none(Category, name=category_name)
+            if category_name and not category:
+                raise ValidationError("Unknown category '%s'." % category_name)
+            instance.category = category
+        instance.save()
+        return instance
+
+
 class TransactionsViewSet(viewsets.ModelViewSet):
     queryset = Transaction.objects.order_by('-date')
     serializer_class = TransactionSerializer
@@ -160,6 +191,34 @@ class TransactionsViewSet(viewsets.ModelViewSet):
         for fileobj in request.FILES.values():
             trxmanager.import_qfx(fileobj.name, fileobj.file)
         return Response(trxmanager.get_status())
+
+
+class TransactionSerializer(DynamicFieldsSerializer):
+    account = PartialFieldsSerializer(AccountSerializer, ('url','name'))
+    category = PartialFieldsSerializer(CategorySerializer, ('url','name','budget'))
+
+    class Meta:
+        model = Transaction
+        fields = ('id','url','trxid','date','payee','amount','approved',
+            'memo','comment','account','category')
+
+    def update(self, instance, validated_data):
+        for attr, value in validated_data.items():
+            setattr(instance, attr, value)
+        if 'category' in self.context['request'].POST:
+            category_name = self.context['request'].POST['category']
+            category = utils.get_object_or_none(Category, name=category_name)
+            if category_name and not category:
+                raise ValidationError("Unknown category '%s'." % category_name)
+            instance.category = category
+        instance.save()
+        return instance
+
+
+class KeyValueSerializer(DynamicFieldsSerializer):
+    class Meta:
+        model = KeyValue
+        fields = ('key','value','url')
 
 
 class KeyValueViewSet(viewsets.ModelViewSet):
