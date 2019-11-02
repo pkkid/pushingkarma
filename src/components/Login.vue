@@ -16,7 +16,7 @@
                 <dt>Email</dt><dd>{{user.email}}</dd>
                 <dt>Token</dt><dd>
                   <input type='text' class='auth_token' :value='user.auth_token || "None"' readonly/>
-                  <i class='mdi mdi-refresh' @click='genToken'/>
+                  <IconButton :icon='"mdi-refresh"' :click='genToken'/>
                 </dd>
               </dl>
               <button @click='logout'>Log Out</button>
@@ -46,6 +46,7 @@
 
 <script>
   import Modal from '@/utils/components/Modal';
+  import IconButton from '@/utils/components/IconButton';
   import md5 from 'js-md5';
   import {sync} from 'vuex-pathify';
   import {axios, makeRequest} from '@/utils/utils';
@@ -58,7 +59,7 @@
 
   export default {
     name: 'Navigation',
-    components: {Modal},
+    components: {IconButton, Modal},
     data: () => ({
       display: false,
       loginform: {
