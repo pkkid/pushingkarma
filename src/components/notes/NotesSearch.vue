@@ -14,7 +14,7 @@
       <div id='search-results'>
         <div class='scrollwrap'>
         <div class='scrollbox'>
-          <div class='result' v-for='(note, i) in notes.objects' v-bind:key='note.id'
+          <div class='result' v-for='(note, i) in notes' v-bind:key='note.id'
             v-bind:class='{highlighted:i == highlighted}' @click='highlighted=i; updateNote()'>
             {{note.title}}
             <div class='subtext'>
@@ -31,19 +31,11 @@
 
 <script>
   import {sync} from 'vuex-pathify';
-  import {buildquery, minmax} from '@/utils/utils';
+  import {axios, makeRequest, minmax} from '@/utils/utils';
   import {isEqual, trim} from 'lodash';
 
-  var QUERY_NOTES = `query {
-    notes(search:{search}, page:{page}) {
-      page numPages hasNext hasPrev
-      objects { id slug title tags created }
-    }}`;
-  
-  var QUERY_NOTE = `query {
-    note(id:{id}) {
-      id slug title body tags created 
-    }}`;
+  var API_NOTES = '/api/notes';
+  var API_NOTE = '/api/notes/{id}';
 
   export default {
     name: 'Search',
@@ -91,12 +83,12 @@
       updateNote: function(event, callback) {
         let self = this;
         let i = this.highlighted;
-        let noteid = this.notes.objects[i].id;
+        let noteid = this.notes[i].id;
         this.$refs.search.focus();
         if (this.request_note) { this.request_note.cancel(); }
-        this.request_note = buildquery(QUERY_NOTE, {id:noteid});
+        this.request_note = makeRequest(axios.get, API_NOTE, {id:noteid});
         this.request_note.xhr.then(function(response) {
-          self.note = response.data.data.note;
+          self.note = response.data;
           self.editor.setContent(self.note.body);
           self.updateHistory({id:self.note.id.toString()});
           if (callback) { callback(); }
@@ -108,12 +100,13 @@
       updateSearch: function(event, id, callback) {
         let self = this;
         if (this.request_search) { this.request_search.cancel(); }
-        this.request_search = buildquery(QUERY_NOTES, {search:self.search, page:1});
+        this.request_search = makeRequest(axios.get, API_NOTES, {search:self.search, page:1});
         this.request_search.xhr.then(function(response) {
-          self.notes = response.data.data.notes;
+          self.notes = response.data.results;
+          console.log(response.data.results);
           self.setHighlighted(id === undefined ? {i:0} : {id:id});
           self.updateHistory({search:self.search});
-          if ((self.notes.objects.length) && (callback)) { callback(); }
+          if ((self.notes.length) && (callback)) { callback(); }
         });
       },
 
@@ -122,10 +115,10 @@
       setHighlighted(opts) {
         // Update highlighted item by index or noteid
         if (opts.i !== undefined) {
-          this.highlighted = minmax(opts.i, 0, this.notes.objects.length-1);
+          this.highlighted = minmax(opts.i, 0, this.notes.length-1);
         } else if (opts.id !== undefined) {
-          for (var i=0; i<this.notes.objects.length; i++) {
-            if (opts.id == this.notes.objects[i].id) {
+          for (var i=0; i<this.notes.length; i++) {
+            if (opts.id == this.notes[i].id) {
               this.highlighted = i;
             }
           }

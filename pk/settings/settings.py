@@ -20,6 +20,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = join(BASE_DIR, 'pk/collectstatic/')
 STATICFILES_DIRS = [join(BASE_DIR, 'dist/')]
 INTERNAL_IPS = ['127.0.0.1']
+DOMAIN = 'http://localhost:8000' if DEBUG else 'https://pushingkarma.com'
 
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'US/Eastern'

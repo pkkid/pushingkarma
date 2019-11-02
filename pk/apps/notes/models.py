@@ -1,5 +1,5 @@
 # encoding: utf-8
-from django.urls import reverse
+from django.conf import settings
 from django.db import models
 from django.template.defaultfilters import slugify
 from django_extensions.db.models import TimeStampedModel
@@ -17,7 +17,7 @@ class Note(TimeStampedModel):
         return self.slug
 
     def weburl(self):
-        return reverse('note', kwargs={'slug':self.slug})
+        return f'{settings.DOMAIN}/notes?id={self.id}'
 
     def html(self):
         if getattr(self, '_md', None) is None:

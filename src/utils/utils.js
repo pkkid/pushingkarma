@@ -33,9 +33,10 @@ function _appendQueryMethod(url, query) {
  * Make Request
  * Run the specified request and return the result.
  */
-export function makeRequest(method, url, data) {
+export function makeRequest(method, url, vars) {
+  url = sfmt(url, vars);
   let cancel;
-  let xhr = method(url, data, {
+  let xhr = method(url, vars, {
     cancelToken: new axios.CancelToken(function executor(c) { cancel = c; }),
     headers: {'X-CSRFToken': Cookie.get('csrftoken')},
   });
