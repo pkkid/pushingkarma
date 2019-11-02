@@ -4,7 +4,6 @@ from django.db import models
 from django.template.defaultfilters import slugify
 from django_extensions.db.models import TimeStampedModel
 from pk.utils.markdown import Markdown
-from pk.utils.serializers import DynamicFieldsSerializer
 
 
 class Note(TimeStampedModel):
@@ -27,12 +26,3 @@ class Note(TimeStampedModel):
     def save(self, *args, **kwargs):
         self.slug = slugify(self.title)
         super(Note, self).save(*args, **kwargs)
-
-
-class NoteSerializer(DynamicFieldsSerializer):
-    class Meta:
-        model = Note
-        fields = ('id','title','slug','tags','body','html','created','modified','url','weburl')
-
-    def get_tags(self, note):
-        return note.tags.split(' ')
