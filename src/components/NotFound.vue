@@ -30,11 +30,12 @@
     
 
     .contentbg {
-      height: calc(100vh - 360px);
-      text-align: center;
-      padding: 100px 0px;
       font-size: 30px;
       font-weight: 500;
+      height: calc(100vh - 360px);
+      min-height: 500px;
+      padding: 100px 0px;
+      text-align: center;
       text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
     }
     .x404 {

@@ -7,4 +7,4 @@ class AccountSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('username','email','date_joined')
+        fields = ('id','email','first_name','last_name','date_joined','last_login')

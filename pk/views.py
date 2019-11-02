@@ -31,9 +31,9 @@ class AccountViewSet(viewsets.ViewSet):
     @list_route(methods=['post'])
     def login(self, request, *args, **kwargs):
         try:
-            email = request.POST.get('email')
-            passwd = request.POST.get('password')
-            code = request.POST.get('code')
+            email = request.data.get('email')
+            passwd = request.data.get('password')
+            code = request.data.get('code')
             user = (auth.auth_google(request, code) if code
                 else auth.auth_django(request, email, passwd))
             if user and user.is_active:

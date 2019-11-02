@@ -11,8 +11,8 @@
               <div class='avatar' :style="{backgroundImage:avatar}"></div>
               <h3>Welcome {{user.firstName}}! <span>Great to see you</span></h3>
               <dl>
-                <dt>Joined</dt><dd>{{user.dateJoined | formatDate('MMM DD, YYYY')}}</dd>
-                <dt>Login</dt><dd>{{user.lastLogin | formatDate('MMM DD, YYYY h:mm a')}}</dd>
+                <dt>Joined</dt><dd>{{user.date_joined | formatDate('MMM DD, YYYY')}}</dd>
+                <dt>Login</dt><dd>{{user.last_login | formatDate('MMM DD, YYYY h:mm a')}}</dd>
                 <dt>Email</dt><dd>{{user.email}}</dd>
               </dl>
               <button @click='logout'>Log Out</button>
@@ -44,14 +44,12 @@
   import Modal from '@/utils/components/Modal';
   import md5 from 'js-md5';
   import {sync} from 'vuex-pathify';
-  import {buildquery} from '@/utils/utils';
+  import {axios, makeRequest} from '@/utils/utils';
   import {DEFAULT_USER} from '@/store.js';
-  
-  var USER_FIELDS = 'id email firstName lastName dateJoined lastLogin';
-  var QUERY_CURRENT_USER = `query { currentUser { ${USER_FIELDS} }}`;
-  var QUERY_LOGIN_DJANGO = `query { login(email:{email}, password:{password}) { ${USER_FIELDS} }}`;
-  var QUERY_LOGIN_GAUTH = `query { login(code:{code}) { ${USER_FIELDS} }}`;
-  var QUERY_LOGOUT = `query { logout { ${USER_FIELDS} }}`;
+
+  var API_CURRENT_USER = '/api/user';
+  var API_LOGIN = '/api/user/login';
+  var API_LOGOUT = '/api/user/logout';
 
   export default {
     name: 'Navigation',
@@ -75,9 +73,9 @@
       // Update Current User - Update global/user user in vuex store
       updateCurrentUser: function() {
         let self = this;
-        let request = buildquery(QUERY_CURRENT_USER);
+        let request = makeRequest(axios.get, API_CURRENT_USER);
         request.xhr.then(function(response) {
-          self.user = response.data.data.currentUser || DEFAULT_USER;
+          self.user = response.data || DEFAULT_USER;
           console.log('Current user: '+ self.user.email);
         });
       },
@@ -96,12 +94,11 @@
       login: function(event, data) {
         let self = this;
         data = data || {email:this.loginform.email, password:this.loginform.password};
-        let query = data.code ? QUERY_LOGIN_GAUTH : QUERY_LOGIN_DJANGO;
-        let request = buildquery(query, data);
+        let request = makeRequest(axios.post, API_LOGIN, data);
         request.xhr.then(function(response) {
-          if (response.data.data.login.id) {
+          if (response.data.id) {
             self.display = false;
-            self.user = response.data.data.login || DEFAULT_USER;
+            self.user = response.data || DEFAULT_USER;
             self.loginform.email = '';
             self.loginform.password = '';
             console.log('Logged in as: '+ self.user.email);
@@ -112,7 +109,7 @@
       // Logout - Logout of the site
       logout: function() {
         let self = this;
-        let request = buildquery(QUERY_LOGOUT);
+        let request = makeRequest(axios.post, API_LOGOUT);
         request.xhr.then(function() {
           self.user = DEFAULT_USER;
           self.display = false;
