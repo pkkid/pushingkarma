@@ -4,6 +4,31 @@ export {axios};
 
 
 /**
+ * Insert Commas
+ * Add commas to the specified number.
+ */
+export function insertCommas(value) {
+  var parts = value.toString().split('.');
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  return parts.join('.');
+}
+
+
+/**
+ * Contains - Return a list of items contianing the specified pattern.
+ *   selector - Base querySelector input to find items to search.
+ *   regex - Regex to compare the contents of each found item.
+ */
+export function contains(selector, regex) {
+  var elems = document.querySelectorAll(selector);
+  var results = Array.prototype.filter.call(elems, function(elem) {
+    return RegExp(regex, 'i').test(elem.textContent);
+  });
+  return results.length ? results[0] : null;
+}
+
+
+/**
  * Make Request
  * Run the specified request and return the result.
  *   method - Method to request axios.get, axios.post, axios.put, etc..
@@ -22,23 +47,10 @@ export function makeRequest(method, url, vars) {
 
 
 /**
- * Contains - Return a list of items contianing the specified pattern.
- *   selector - Base querySelector input to find items to search.
- *   regex - Regex to compare the contents of each found item.
- */
-export function contains(selector, regex) {
-  var elems = document.querySelectorAll(selector);
-  var results = Array.prototype.filter.call(elems, function(elem) {
-    return RegExp(regex, 'i').test(elem.textContent);
-  });
-  return results.length ? results[0] : null;
-}
-
-/**
- * minmax
+ * Keep In Range
  * Make sure the specified value is within min and max (inclusive).
  */
-export function minmax(value, min, max) {
+export function keepInRange(value, min, max) {
   value = Math.max(value, min);
   return Math.min(value, max);
 }

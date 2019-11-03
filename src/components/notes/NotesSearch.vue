@@ -31,7 +31,7 @@
 
 <script>
   import {sync} from 'vuex-pathify';
-  import {axios, makeRequest, minmax} from '@/utils/utils';
+  import {axios, makeRequest, keepInRange} from '@/utils/utils';
   import {isEqual, trim} from 'lodash';
 
   var API_NOTES = '/api/notes';
@@ -114,7 +114,7 @@
       setHighlighted(opts) {
         // Update highlighted item by index or noteid
         if (opts.i !== undefined) {
-          this.highlighted = minmax(opts.i, 0, this.notes.length-1);
+          this.highlighted = keepInRange(opts.i, 0, this.notes.length-1);
         } else if (opts.id !== undefined) {
           for (var i=0; i<this.notes.length; i++) {
             if (opts.id == this.notes[i].id) {

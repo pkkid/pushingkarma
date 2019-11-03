@@ -3,11 +3,15 @@
     <Navigation :cls="'topnav'" />
     <div id='sidebar'>
       <div class='menuitem'><i class='mdi mdi-email-outline'/>Budget</div>
-      <div class='menuitem'><i class='mdi mdi-bank-outline'/>Accounts</div>
+      <div class='menuitem'><i class='mdi mdi-bank-outline'/>All Accounts</div>
       <div class='submenu'>
-        <div class='menuitem' v-for='account in accounts' :key='account.fid'>
-          {{account.name}}
-          {{account.balancedt}}
+        <div class='menuitem account' v-for='account in accounts' :key='account.fid'>
+          <div class='name'>{{account.name}}</div>
+          <div class='balance'>{{account.balance | usdint}}</div>
+          <div class='updated'>{{account.balancedt | timeAgo}} ago</div>
+        </div>
+        <div class='total'>
+          <div class='balance'>Total: {{balance | usdint}}</div>
         </div>
       </div>
     </div>
@@ -23,6 +27,7 @@
 <script>
   import Footer from '../Footer';
   import Navigation from '../Navigation';
+  import {sum} from 'lodash';
   import {axios, makeRequest} from '@/utils/utils';
   import {sync} from 'vuex-pathify';
 
@@ -31,13 +36,21 @@
   export default {
     name: 'Budget',
     components: {Navigation, Footer},
+    data: () => ({
+      request_accounts: null,
+      balance: 0,
+    }),
     computed: {
       accounts: sync('budget/accounts'),
       transactions: sync('budget/transactions'),
     },
-    data: () => ({
-      request_accounts: null,
-    }),
+    watch: {
+      accounts: function() {
+        var balances = this.accounts.map((a) => { return parseFloat(a.balance); });
+        this.balance = sum(balances).toFixed(2);
+      }
+    },
+    
     
     mounted: function() {
       this.$store.set('global/layout', 'topnav');
@@ -79,6 +92,27 @@
         top: 2px;
       }
     }
+    .menuitem.account {
+      line-height: 1em;
+      font-size: 0.9em;
+      color: darken($darkbg-text, 10%);
+      margin-top: 10px;
+      .name {
+        float: left;
+        padding-left: 32px;
+      }
+      .balance { float: right; }
+      .updated {
+        font-size: .6em; 
+        clear: both;
+        padding-left: 32px;
+        color: darken($darkbg-text, 50%);
+      }
+      &:first-child {
+        margin-top: 5px;
+      }
+    }
+
   }
 
   #budget .content {
