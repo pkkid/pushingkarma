@@ -134,7 +134,6 @@
       // Update Note
       // Load the specified note id.
       updateNote: function(noteid) {
-        console.log('UPDATE NOTE');
         var self = this;
         if (this.request_note) { this.request_note.cancel(); }
         this.request_note = makeRequest(axios.get, API_NOTE, {id:noteid});
