@@ -1,5 +1,5 @@
 <template>
-  <div id='budget'>
+  <div id='budget' :class={demo}>
     <Navigation :cls="'topnav'" />
     <div id='sidebar'>
       <div class='menuitem'><i class='mdi mdi-email-outline'/>Budget</div>
@@ -7,12 +7,10 @@
       <div class='submenu'>
         <div class='menuitem account' v-for='account in accounts' :key='account.fid'>
           <div class='name'>{{account.name}}</div>
-          <div class='balance'>{{account.balance | usdint}}</div>
+          <div class='balance blur'>{{account.balance | usdint}}</div>
           <div class='updated'>{{account.balancedt | timeAgo}} ago</div>
         </div>
-        <div class='total'>
-          <div class='balance'>Total: {{balance | usdint}}</div>
-        </div>
+        <div class='total'>{{balance | usdint}}</div>
       </div>
     </div>
     <div class='content'>
@@ -41,6 +39,7 @@
       balance: 0,
     }),
     computed: {
+      demo: sync('budget/demo'),
       accounts: sync('budget/accounts'),
       transactions: sync('budget/transactions'),
     },
@@ -51,9 +50,9 @@
       }
     },
     
-    
     mounted: function() {
       this.$store.set('global/layout', 'topnav');
+      this.demo = this.$route.query.demo == '1';
       this.updateAccounts();
     },
 
@@ -73,6 +72,7 @@
 </script>
 
 <style lang='scss'>
+  // Sidebar Content
   #budget #sidebar {
     float: left;
     width: 300px;
@@ -101,18 +101,24 @@
         float: left;
         padding-left: 32px;
       }
-      .balance { float: right; }
       .updated {
         font-size: .6em; 
         clear: both;
         padding-left: 32px;
         color: darken($darkbg-text, 50%);
       }
-      &:first-child {
-        margin-top: 5px;
-      }
+      .balance { float: right; }
+      &:first-child { margin-top: 5px; }
     }
-
+    .total {
+      color: darken($darkbg-text, 10%);
+      float: right;
+      font-size: 0.7em;
+      font-weight: 600;
+      margin-right: -5px;
+      padding: 3px 5px;
+      border-top: 1px solid darken($darkbg-text, 60%);
+    }
   }
 
   #budget .content {
@@ -125,5 +131,15 @@
     .budgetbg {
       min-height: calc(100vh - 60px);
     }
+  }
+
+  // Demo Mode
+  #budget.demo .blur {
+    color: transparent !important;
+    text-shadow: 0 0 10px rgba($lightbg-text, 1) !important;
+  }
+  #budget.demo #sidebar .blur {
+    color: transparent !important;
+    text-shadow: 0 0 10px rgba($darkbg-text, 1) !important;
   }
 </style>
