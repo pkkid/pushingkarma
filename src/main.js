@@ -14,7 +14,7 @@ require('@/assets/css/index.scss');
 // as well as any responses containing the key 'errors'
 axios.interceptors.response.use(function(response) {
   if (response.headers['content-type'] != 'application/json') { return Promise.reject(response); }
-  else if (response.data.errors !== undefined) { return Promise.reject(response); }
+  //else if (response.data.errors !== undefined) { return Promise.reject(response); }
   else { return response; }
 });
 

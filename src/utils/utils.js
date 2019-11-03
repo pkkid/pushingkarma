@@ -38,6 +38,7 @@ export function contains(selector, regex) {
 export function makeRequest(method, url, vars) {
   url = sfmt(url, vars);
   let cancel;
+  if (method == axios.get) { vars = {params: vars}; }
   let xhr = method(url, vars, {
     cancelToken: new axios.CancelToken(function executor(c) { cancel = c; }),
     headers: {'X-CSRFToken': Cookie.get('csrftoken')},

@@ -8,14 +8,14 @@
         @input='updateSearch'
         @keydown.up.prevent='setHighlighted({i:highlighted-1})'
         @keydown.down.prevent='setHighlighted({i:highlighted+1})'
-        @keyup.enter.prevent='updateNote'
+        @keyup.enter.prevent='updateSelection'
         @keydown.esc.stop='$refs.search.blur()'>
       <!-- Search Results -->
       <div id='search-results'>
         <div class='scrollwrap'>
         <div class='scrollbox'>
           <div class='result' v-for='(note, i) in notes' v-bind:key='note.id'
-            v-bind:class='{highlighted:i == highlighted}' @click='highlighted=i; updateNote()'>
+            v-bind:class='{highlighted:i == highlighted}' @click='highlighted=i; updateSelection()'>
             {{note.title}}
             <div class='subtext'>
               {{note.tags}} <span v-if='note.tags'>-</span>
@@ -35,10 +35,9 @@
   import {isEqual, trim} from 'lodash';
 
   var API_NOTES = '/api/notes';
-  var API_NOTE = '/api/notes/{id}';
 
   export default {
-    name: 'Search',
+    name: 'NotesSearch',
     computed: {
       editor: sync('notes/editor'),
       note: sync('notes/note'),
@@ -46,7 +45,6 @@
     },
     data: () => ({
       request_search: null,
-      request_note: null,
       highlighted: 0,
     }),
 
@@ -56,7 +54,7 @@
       var id = parseInt(self.$route.query.id);
       this.search = trim(this.search || this.$route.query.search || '');
       this.updateSearch(null, id, function() {
-        self.updateNote();
+        self.updateSelection();
         self.$refs.search.focus();
       });
     },
@@ -78,21 +76,14 @@
         }
       },
 
-      // Update Note
-      // Update the highlighted note.
-      updateNote: function(event, callback) {
-        let self = this;
+      // UpdateSelection
+      // Update the selected note
+      updateSelection: function() {
         let i = this.highlighted;
         let noteid = this.notes[i].id;
+        this.updateHistory({id:noteid.toString()});
         this.$refs.search.focus();
-        if (this.request_note) { this.request_note.cancel(); }
-        this.request_note = makeRequest(axios.get, API_NOTE, {id:noteid});
-        this.request_note.xhr.then(function(response) {
-          self.note = response.data;
-          self.editor.setContent(self.note.body);
-          self.updateHistory({id:self.note.id.toString()});
-          if (callback) { callback(); }
-        });
+        this.$emit('newSelection', noteid);
       },
 
       // Update Search
@@ -100,7 +91,7 @@
       updateSearch: function(event, id, callback) {
         let self = this;
         if (this.request_search) { this.request_search.cancel(); }
-        this.request_search = makeRequest(axios.get, API_NOTES, {search:self.search, page:1});
+        this.request_search = makeRequest(axios.get, API_NOTES, {search:self.search});
         this.request_search.xhr.then(function(response) {
           self.notes = response.data.results;
           self.setHighlighted(id === undefined ? {i:0} : {id:id});
@@ -122,10 +113,9 @@
             }
           }
         }
-        // Scroll the search window to the selected item
       },
-    },
 
+    },
   };
 </script>
 

@@ -2,7 +2,7 @@
   <div id='notes' v-hotkey='keymap'>
     <Navigation :cls="'topnav'" />
     <div id='sidebar'>
-      <Search ref='search'/>
+      <Search ref='search' @newSelection='updateNote'/>
     </div>
     <div class='content'>
       <div class='notebg' :class='{editable:editing}'>
@@ -49,7 +49,10 @@
   import Navigation from '../Navigation';
   import MenuBar from './NotesMenuBar';
   import Search from './NotesSearch';
+  import {axios, makeRequest} from '@/utils/utils';
   import {get, sync} from 'vuex-pathify';
+  
+  // Editor Imports
   import {Editor, EditorContent} from 'tiptap';
   import {Blockquote, BulletList, CodeBlockHighlight, HardBreak, Heading,
     Link, ListItem, OrderedList, Bold, Code, Italic, Strike, TodoItem,
@@ -60,10 +63,13 @@
   import javascript from 'highlight.js/lib/languages/javascript';
   import python from 'highlight.js/lib/languages/python';
 
+  var API_NOTE = '/api/notes/{id}';
+
   export default {
     name: 'Notes',
     components: {Navigation, Footer, MenuBar, Search, EditorContent},
     data: () => ({
+      request_note: null,
       toc: [],
     }),
     computed: {
@@ -125,6 +131,19 @@
     },
 
     methods: {
+      // Update Note
+      // Load the specified note id.
+      updateNote: function(noteid) {
+        console.log('UPDATE NOTE');
+        var self = this;
+        if (this.request_note) { this.request_note.cancel(); }
+        this.request_note = makeRequest(axios.get, API_NOTE, {id:noteid});
+        this.request_note.xhr.then(function(response) {
+          self.note = response.data;
+          self.editor.setContent(self.note.body);
+        });
+      },
+      
       // Update TOC
       // Called each time the editor is updated. We use this callback to
       // update the table of contents for the note.
