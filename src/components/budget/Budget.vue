@@ -4,14 +4,7 @@
     <div id='sidebar'>
       <div class='menuitem'><i class='mdi mdi-email-outline'/>Budget</div>
       <div class='menuitem'><i class='mdi mdi-bank-outline'/>All Accounts</div>
-      <div class='submenu'>
-        <div class='menuitem account' v-for='account in accounts' :key='account.fid'>
-          <div class='name'>{{account.name}}</div>
-          <div class='balance blur'>{{account.balance | usdint}}</div>
-          <div class='updated'>{{account.balancedt | timeAgo}} ago</div>
-        </div>
-        <div class='total'>{{balance | usdint}}</div>
-      </div>
+      <BudgetAccounts/>
     </div>
     <div class='content'>
       <div class='budgetbg'>
@@ -23,9 +16,9 @@
 </template>
 
 <script>
+  import BudgetAccounts from './BudgetAccounts';
   import Footer from '../Footer';
   import Navigation from '../Navigation';
-  import {sum} from 'lodash';
   import {axios, makeRequest} from '@/utils/utils';
   import {sync} from 'vuex-pathify';
 
@@ -33,21 +26,14 @@
 
   export default {
     name: 'Budget',
-    components: {Navigation, Footer},
+    components: {BudgetAccounts, Footer, Navigation},
     data: () => ({
       request_accounts: null,
-      balance: 0,
     }),
     computed: {
       demo: sync('budget/demo'),
       accounts: sync('budget/accounts'),
       transactions: sync('budget/transactions'),
-    },
-    watch: {
-      accounts: function() {
-        var balances = this.accounts.map((a) => { return parseFloat(a.balance); });
-        this.balance = sum(balances).toFixed(2);
-      }
     },
     
     mounted: function() {
@@ -91,33 +77,6 @@
         position: relative;
         top: 2px;
       }
-    }
-    .menuitem.account {
-      line-height: 1em;
-      font-size: 0.9em;
-      color: darken($darkbg-text, 10%);
-      margin-top: 10px;
-      .name {
-        float: left;
-        padding-left: 32px;
-      }
-      .updated {
-        font-size: .6em; 
-        clear: both;
-        padding-left: 32px;
-        color: darken($darkbg-text, 50%);
-      }
-      .balance { float: right; }
-      &:first-child { margin-top: 5px; }
-    }
-    .total {
-      color: darken($darkbg-text, 10%);
-      float: right;
-      font-size: 0.7em;
-      font-weight: 600;
-      margin-right: -5px;
-      padding: 3px 5px;
-      border-top: 1px solid darken($darkbg-text, 60%);
     }
   }
 
