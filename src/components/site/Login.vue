@@ -80,6 +80,7 @@
       updateCurrentUser: async function() {
         var {data} = await UsersAPI.getCurrentUser();
         this.user = data;
+        console.log(`Logged in as ${this.user.email || 'Guest'}`);
       },
 
       // GAuth Login
