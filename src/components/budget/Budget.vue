@@ -8,7 +8,9 @@
     </div>
     <div class='content'>
       <div class='budgetbg'>
+        <BudgetDropzone ref='dropzone'/>
         Heya budget Page!
+        <div>Hi Mom</div>
       </div>
       <Footer/>
     </div>
@@ -17,6 +19,7 @@
 
 <script>
   import BudgetAccounts from './BudgetAccounts';
+  import BudgetDropzone from './BudgetDropzone';
   import Footer from '../Footer';
   import Navigation from '../Navigation';
   import {axios, makeRequest} from '@/utils/utils';
@@ -26,7 +29,12 @@
 
   export default {
     name: 'Budget',
-    components: {BudgetAccounts, Footer, Navigation},
+    components: {
+      BudgetAccounts,
+      BudgetDropzone,
+      Footer,
+      Navigation
+    },
     data: () => ({
       request_accounts: null,
     }),
@@ -88,6 +96,7 @@
     background-color: darken($lightbg-color, 10%);
     
     .budgetbg {
+      position: relative;
       min-height: calc(100vh - 60px);
     }
   }
