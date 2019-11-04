@@ -10,9 +10,8 @@ import Cookie from "js-cookie";
  */
 export async function makeRequest(method, url, vars) {
   var cancel;
-  var payload = (method == axios.get) ? {params:vars} : {data:vars};
-  var promise = method(url, {
-    ...payload,
+  var payload = (method == 'get') ? {params:vars} : {data:vars};
+  var promise = axios({method, url, ...payload,
     headers: {'X-CSRFToken': Cookie.get('csrftoken')},
     cancelToken: new axios.CancelToken(function executor(c) { cancel = c; }),
   });
@@ -21,15 +20,15 @@ export async function makeRequest(method, url, vars) {
 }
 
 export const UsersAPI =  {
-  user()         { return makeRequest(axios.get, `/api/user`); },
-  login(payload) { return makeRequest(axios.post, `/api/user/login`, payload); },
-  logout()       { return makeRequest(axios.post, `/api/user/logout`); },
-  gentoken()     { return makeRequest(axios.post, `/api/user/gentoken`); },
+  getCurrentUser() { return makeRequest('get', `/api/user`); },
+  login(data) { return makeRequest('post', `/api/user/login`, data); },
+  logout() { return makeRequest('post', `/api/user/logout`); },
+  generateToken() { return makeRequest('post', `/api/user/gentoken`); },
 };
 
 export const NotesAPI = {
-  note(id)       { return makeRequest(axios.get, `/api/notes/${id}`); },
-  notes(payload) { return makeRequest(axios.get, `/api/notes`, payload); },
+  note(id) { return makeRequest('get', `/api/notes/${id}`); },
+  notes(params) { return makeRequest('get', `/api/notes`, params); },
 };
 
 export const BudgetAPI = {

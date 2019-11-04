@@ -16,7 +16,7 @@
                 <dt>Email</dt><dd>{{user.email}}</dd>
                 <dt>Token</dt><dd>
                   <input type='text' class='auth_token' :value='user.auth_token || "None"' readonly/>
-                  <IconButton :icon='"mdi-refresh"' :click='genToken'/>
+                  <IconButton :icon='"mdi-refresh"' :click='generateToken'/>
                 </dd>
               </dl>
               <button @click='logout'>Log Out</button>
@@ -25,7 +25,7 @@
               <!-- Display login form -->
               <h3>Login to PushingKarma <span>Amazing things await you</span></h3>
               <img class='google' src='@/assets/img/google_signin.png' @click='gauth_login'/>
-              <form @submit.prevent="login">
+              <form @submit.prevent="login()">
                 <label for='email'>Email Address</label>
                 <input type='text' id='email' name='email' v-model='loginform.email' spellcheck='false' autocomplete='off' autofocus='true'/>
                 <label for='password'>Password</label>
@@ -45,17 +45,12 @@
 </template>
 
 <script>
+  import * as pathify from 'vuex-pathify';
   import md5 from 'js-md5';
-  import {sync} from 'vuex-pathify';
   import IconButton from '@/components/IconButton';
   import Modal from '@/components/Modal';
-  import {axios, makeRequest} from '@/utils/utils';
   import {DEFAULT_USER} from '@/store.js';
-
-  var API_CURRENT_USER = '/api/user';
-  var API_LOGIN = '/api/user/login';
-  var API_LOGOUT = '/api/user/logout';
-  var API_GENTOKEN = '/api/user/gentoken';
+  import {UsersAPI} from '@/api';
 
   export default {
     name: 'Navigation',
@@ -68,9 +63,9 @@
       },
     }),
     computed: {
-      avatar: sync('global/avatar'),
-      gauth: sync('global/gauth'),
-      user: sync('global/user'),
+      avatar: pathify.sync('global/avatar'),
+      gauth: pathify.sync('global/gauth'),
+      user: pathify.sync('global/user'),
     },
     watch: {
       user: function() {
@@ -82,13 +77,9 @@
     methods: {
       // Update Current User
       // Update global/user user in vuex store
-      updateCurrentUser: function() {
-        let self = this;
-        let request = makeRequest(axios.get, API_CURRENT_USER);
-        request.xhr.then(function(response) {
-          self.user = response.data || DEFAULT_USER;
-          console.log('Current user: '+ self.user.email);
-        });
+      updateCurrentUser: async function() {
+        var {data} = await UsersAPI.getCurrentUser();
+        this.user = data;
       },
 
       // GAuth Login
@@ -96,51 +87,37 @@
       gauth_login: function() {
         let self = this;
         this.gauth.grantOfflineAccess().then(function(data) {
-          if (data.code) {
-            self.login(null, data);
-          }
+          if (data.code) { self.login(data); }
         });
       },
 
       // Login
       // Login using username/password to Google auth
-      login: function(event, data) {
-        let self = this;
-        data = data || {email:this.loginform.email, password:this.loginform.password};
-        let request = makeRequest(axios.post, API_LOGIN, data);
-        request.xhr.then(function(response) {
-          if (response.data.id) {
-            self.display = false;
-            self.user = response.data || DEFAULT_USER;
-            self.loginform.email = '';
-            self.loginform.password = '';
-            console.log('Logged in as: '+ self.user.email);
-          }
-        });
+      login: async function(payload) {
+        payload = payload || {email:this.loginform.email, password:this.loginform.password};
+        var {data} = await UsersAPI.login(payload);
+        if (data.id) {
+          this.display = false;
+          this.user = data || DEFAULT_USER;
+          this.loginform.email = '';
+          this.loginform.password = '';
+          console.log(`Logged in as ${this.user.email}`);
+        }
       },
 
       // Generate Token
       // Generate a new API token
-      genToken: function() {
-        console.log('gentoken!');
-        let self = this;
-        let request = makeRequest(axios.post, API_GENTOKEN);
-        request.xhr.then(function(response) {
-          if (response.data.id) {
-            self.user = response.data;
-          }
-        });
+      generateToken: async function() {
+        var {data} = await UsersAPI.generateToken();
+        if (data.id) { this.user = data; }
       },
 
       // Logout
       // Logout of the site
-      logout: function() {
-        let self = this;
-        let request = makeRequest(axios.post, API_LOGOUT);
-        request.xhr.then(function() {
-          self.user = DEFAULT_USER;
-          self.display = false;
-        });
+      logout: async function() {
+        await UsersAPI.logout();
+        this.user = DEFAULT_USER;
+        this.display = false;
       },
     }
 

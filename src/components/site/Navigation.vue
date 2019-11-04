@@ -23,16 +23,16 @@
 </template>
 
 <script>
+  import * as pathify from 'vuex-pathify';
   import Login from '@/components/site/Login';
-  import {get, sync} from 'vuex-pathify';
 
   export default {
     name: 'Navigation',
     components: {Login},
     props: ['cls'],
     computed: {
-      avatar: sync('global/avatar'),
-      user: get('global.user'),
+      avatar: pathify.sync('global/avatar'),
+      user: pathify.get('global.user'),
     },
     mounted: function() {
       this.$refs.login.updateCurrentUser();
