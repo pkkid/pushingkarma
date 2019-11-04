@@ -10,12 +10,16 @@ import App from './App.vue';
 import '@/utils/filters';
 require('@/assets/css/index.scss');
 
-// Tell Axios we want to treat any non-json responses as errors
-// as well as any responses containing the key 'errors'
+// Axios Configuiration - Tell Axios we want to include the csrf token and
+// where to get the value. The intercepter is a convenience function to
+// globally catch and respond to errors.
+axios.defaults.withCredentials = true;
+axios.defaults.xsrfHeaderName = 'X-CSRFToken';
+axios.defaults.xsrfCookieName = 'csrftoken';
 axios.interceptors.response.use(function(response) {
   if (response.headers['content-type'] != 'application/json') { return Promise.reject(response); }
-  //else if (response.data.errors !== undefined) { return Promise.reject(response); }
-  else { return response; }
+  if (response.data && response.data.errors && response.data.errors.length > 0) { return Promise.reject(response); }
+  return response;
 });
 
 // Setup Vue plugins and configuration

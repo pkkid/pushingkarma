@@ -1,39 +1,26 @@
 import axios from 'axios';
-import Cookie from "js-cookie";
+export let isCancel = axios.isCancel;
 
-/**
- * Make Request
- * Run the specified request and return the result.
- *   method - Method to request axios.get, axios.post, axios.put, etc..
- *   url - URL to send this request.
- *   vars - Object of key->value pairs to replace in the query string.
- */
-export async function makeRequest(method, url, vars) {
-  var cancel;
-  var payload = (method == 'get') ? {params:vars} : {data:vars};
-  var promise = axios({method, url, ...payload,
-    headers: {'X-CSRFToken': Cookie.get('csrftoken')},
-    cancelToken: new axios.CancelToken(function executor(c) { cancel = c; }),
-  });
-  var {data} = await promise;
-  return {data, promise, cancel};
+export function cancel(source) {
+  if (source) { source.cancel('Cancelled request'); }
+  return axios.CancelToken.source();
 }
 
 export const UsersAPI =  {
-  getCurrentUser() { return makeRequest('get', `/api/user`); },
-  login(data) { return makeRequest('post', `/api/user/login`, data); },
-  logout() { return makeRequest('post', `/api/user/logout`); },
-  generateToken() { return makeRequest('post', `/api/user/gentoken`); },
+  getCurrentUser() { return axios.get('/api/user'); },
+  login(data) { return axios.post('/api/user/login', data); },
+  logout() { return axios.post('/api/user/logout'); },
+  generateToken() { return axios.post('/api/user/gentoken'); },
 };
 
 export const NotesAPI = {
-  note(id) { return makeRequest('get', `/api/notes/${id}`); },
-  notes(params) { return makeRequest('get', `/api/notes`, params); },
+  getNote(id) { return axios.get(`/api/notes/${id}`); },
+  listNotes(params, cancelToken) { return axios.get('/api/notes', {params, cancelToken}); },
 };
 
 export const BudgetAPI = {
-  ACCOUNTS: '/api/accounts',
-  upload(data) { return makeRequest('put', `/api/transactions/upload`, data); },
+  listAccounts() { return axios.get('/api/accounts'); },
+  upload(data) { return axios.put('/api/transactions/upload', {data}); },
 };
 
 

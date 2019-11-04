@@ -5,7 +5,7 @@
       <span id='search-icon' class='mdi mdi-magnify'></span>
       <input id='search-input' type='text' v-model='search' autofocus='true'
         spellcheck='false' autocomplete='off' ref='search'
-        @input='updateSearch'
+        @input='updateSearch()'
         @keydown.up.prevent='setHighlighted({i:highlighted-1})'
         @keydown.down.prevent='setHighlighted({i:highlighted+1})'
         @keyup.enter.prevent='updateSelection'
@@ -30,33 +30,30 @@
 </template>
 
 <script>
-  import {sync} from 'vuex-pathify';
-  import {axios, makeRequest, keepInRange} from '@/utils/utils';
+  import * as pathify from 'vuex-pathify';
+  import * as utils from '@/utils/utils';
   import {isEqual, trim} from 'lodash';
-
-  var API_NOTES = '/api/notes';
+  import {cancel, isCancel, NotesAPI} from '@/api';
 
   export default {
     name: 'NotesSearch',
     computed: {
-      editor: sync('notes/editor'),
-      note: sync('notes/note'),
-      notes: sync('notes/notes'),
+      editor: pathify.sync('notes/editor'),
+      note: pathify.sync('notes/note'),
+      notes: pathify.sync('notes/notes'),
     },
     data: () => ({
-      request_search: null,
+      cancelSearch: null,
       highlighted: 0,
     }),
 
-    created: function() {
+    created: async function() {
       // Init function when this component is created.
-      var self = this;
-      var id = parseInt(self.$route.query.id);
+      var id = parseInt(this.$route.query.id);
       this.search = trim(this.search || this.$route.query.search || '');
-      this.updateSearch(null, id, function() {
-        self.updateSelection();
-        self.$refs.search.focus();
-      });
+      await this.updateSearch(id);
+      this.updateSelection();
+      this.$refs.search.focus();
     },
 
     methods: {
@@ -88,16 +85,17 @@
 
       // Update Search
       // Update the list of notes to display.
-      updateSearch: function(event, id, callback) {
-        let self = this;
-        if (this.request_search) { this.request_search.cancel(); }
-        this.request_search = makeRequest(axios.get, API_NOTES, {search:self.search});
-        this.request_search.xhr.then(function(response) {
-          self.notes = response.data.results;
-          self.setHighlighted(id === undefined ? {i:0} : {id:id});
-          self.updateHistory({search:self.search});
-          if ((self.notes.length) && (callback)) { callback(); }
-        });
+      updateSearch: async function(id) {
+        this.cancelSearch = cancel(this.cancelSearch);
+        var token = this.cancelSearch.token;
+        try {
+          var {data} = await NotesAPI.listNotes({search:this.search}, token);
+          this.notes = data.results;
+          this.setHighlighted(id === undefined ? {i:0} : {id:id});
+          this.updateHistory({search:this.search});
+        } catch(err) {
+          if (!isCancel(err)) { throw(err); }
+        }
       },
 
       // Update highlighted
@@ -105,7 +103,7 @@
       setHighlighted(opts) {
         // Update highlighted item by index or noteid
         if (opts.i !== undefined) {
-          this.highlighted = keepInRange(opts.i, 0, this.notes.length-1);
+          this.highlighted = utils.keepInRange(opts.i, 0, this.notes.length-1);
         } else if (opts.id !== undefined) {
           for (var i=0; i<this.notes.length; i++) {
             if (opts.id == this.notes[i].id) {
