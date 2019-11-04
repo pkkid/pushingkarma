@@ -4,13 +4,11 @@ export {axios};
 
 
 /**
- * Insert Commas
- * Add commas to the specified number.
+ * Cancel
+ * Cancel the specified request
  */
-export function insertCommas(value) {
-  var parts = value.toString().split('.');
-  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-  return parts.join('.');
+export function cancel(request) {
+  if (request) { request.cancel(); }
 }
 
 
@@ -25,6 +23,17 @@ export function contains(selector, regex) {
     return RegExp(regex, 'i').test(elem.textContent);
   });
   return results.length ? results[0] : null;
+}
+
+
+/**
+ * Insert Commas
+ * Add commas to the specified number.
+ */
+export function insertCommas(value) {
+  var parts = value.toString().split('.');
+  parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  return parts.join('.');
 }
 
 
