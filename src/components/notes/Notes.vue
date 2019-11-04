@@ -45,12 +45,13 @@
 </template>
 
 <script>
+  import * as pathify from 'vuex-pathify';
   import Footer from '@/components/site/Footer';
   import Navigation from '@/components/site/Navigation';
   import MenuBar from './NotesMenuBar';
   import Search from './NotesSearch';
-  import {axios, makeRequest} from '@/utils/utils';
-  import {get, sync} from 'vuex-pathify';
+  import {NotesAPI} from '@/api';
+  
   
   // Editor Imports
   import {Editor, EditorContent} from 'tiptap';
@@ -63,22 +64,19 @@
   import javascript from 'highlight.js/lib/languages/javascript';
   import python from 'highlight.js/lib/languages/python';
 
-  var API_NOTE = '/api/notes/{id}';
-
   export default {
     name: 'Notes',
     components: {Navigation, Footer, MenuBar, Search, EditorContent},
     data: () => ({
-      request_note: null,
       toc: [],
     }),
     computed: {
-      editing: sync('notes/editing'),
-      editor: sync('notes/editor'),
-      message: sync('notes/message'),
-      note: sync('notes/note'),
-      title: sync('notes/note@title'),
-      userid: get('global/user@id'),
+      editing: pathify.sync('notes/editing'),
+      editor: pathify.sync('notes/editor'),
+      message: pathify.sync('notes/message'),
+      note: pathify.sync('notes/note'),
+      title: pathify.sync('notes/note@title'),
+      userid: pathify.get('global/user@id'),
       keymap: function() { return {
         'f1': (e) => this.$refs.search.focus(e),
         'e': (e) => this.$refs.menubar.startEditing(e),
@@ -133,14 +131,10 @@
     methods: {
       // Update Note
       // Load the specified note id.
-      updateNote: function(noteid) {
-        var self = this;
-        if (this.request_note) { this.request_note.cancel(); }
-        this.request_note = makeRequest(axios.get, API_NOTE, {id:noteid});
-        this.request_note.xhr.then(function(response) {
-          self.note = response.data;
-          self.editor.setContent(self.note.body);
-        });
+      updateNote: async function(noteid) {
+        var {data} = await NotesAPI.getNote(noteid);
+        this.note = data;
+        this.editor.setContent(this.note.body);
       },
       
       // Update TOC

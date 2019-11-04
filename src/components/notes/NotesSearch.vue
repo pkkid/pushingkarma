@@ -32,7 +32,7 @@
 <script>
   import * as pathify from 'vuex-pathify';
   import * as utils from '@/utils/utils';
-  import {isEqual, trim} from 'lodash';
+  import {isEqual, trim, pickBy, identity} from 'lodash';
   import {cancel, isCancel, NotesAPI} from '@/api';
 
   export default {
@@ -68,6 +68,7 @@
       // Update the address bar history.
       updateHistory: function(changes) {
         var query = Object.assign({}, this.$router.history.current.query, changes);
+        query = pickBy(query, identity);  // remove falsey values
         if (!isEqual(query, this.$router.history.current.query)) {
           this.$router.push({query});
         }
