@@ -66,15 +66,8 @@
       // Upload
       // Upload dropped files
       upload: async function(formdata) {
-        console.log('upload');
-        console.log(formdata);
         var {data} = await BudgetAPI.upload(formdata);
         console.log(data);
-
-        // var request = makeRequest(axios.put, API_UPLOAD, formdata);
-        // request.xhr.then(function(response) {
-        //   console.log(response);
-        // });
       },
     },
   };
