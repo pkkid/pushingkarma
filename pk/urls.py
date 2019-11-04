@@ -1,6 +1,7 @@
 # encoding: utf-8
 from django.conf.urls import include, url
-from pk import api as pk_api, views as pk_views
+from django.views.decorators.csrf import ensure_csrf_cookie
+from pk import api as pk_api, utils
 from pk.apps.budget import api as budget_api
 from pk.apps.notes import api as note_api
 from pk.apps.stocks import views as stock_views
@@ -15,7 +16,11 @@ api.register('transactions', budget_api.TransactionsViewSet)
 api.register('stocks', stock_views.StocksViewSet)
 api.register('keyval', budget_api.KeyValueViewSet)
 
+@ensure_csrf_cookie
+def index(request, tmpl='index.html'):
+    return utils.response(request, tmpl, {})
+
 urlpatterns = [
     url(r'^api/', include(api.urls)),
-    url(r'', pk_views.index, name='index'),
+    url(r'', index, name='index'),
 ]

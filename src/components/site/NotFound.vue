@@ -12,8 +12,8 @@
 </template>
 
 <script>
-  import Footer from './Footer';
-  import Navigation from './Navigation';
+  import Footer from '@/components/site/Footer';
+  import Navigation from '@/components/site/Navigation';
 
   export default {
     name: 'NotFound',

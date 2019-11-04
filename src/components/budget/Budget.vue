@@ -20,8 +20,8 @@
 <script>
   import BudgetAccounts from './BudgetAccounts';
   import BudgetDropzone from './BudgetDropzone';
-  import Footer from '../Footer';
-  import Navigation from '../Navigation';
+  import Footer from '@/components/site/Footer';
+  import Navigation from '@/components/site/Navigation';
   import {axios, makeRequest} from '@/utils/utils';
   import {sync} from 'vuex-pathify';
 

@@ -45,10 +45,10 @@
 </template>
 
 <script>
-  import Modal from '@/utils/components/Modal';
-  import IconButton from '@/utils/components/IconButton';
   import md5 from 'js-md5';
   import {sync} from 'vuex-pathify';
+  import IconButton from '@/components/IconButton';
+  import Modal from '@/components/Modal';
   import {axios, makeRequest} from '@/utils/utils';
   import {DEFAULT_USER} from '@/store.js';
 
@@ -68,10 +68,14 @@
       },
     }),
     computed: {
-      user: sync('global/user'),
+      avatar: sync('global/avatar'),
       gauth: sync('global/gauth'),
-      avatar: function() {
-        return "url('https://www.gravatar.com/avatar/"+ md5(this.user.email) +"')";
+      user: sync('global/user'),
+    },
+    watch: {
+      user: function() {
+        var hash = md5(this.user.email || '');
+        this.avatar = `url('https://www.gravatar.com/avatar/${hash}')`;
       },
     },
     
@@ -146,7 +150,7 @@
 <style lang='scss'>
   #login {
     .bgimg {
-      background-image: url('../assets/img/louiscoyle.png');
+      background-image: url('../../assets/img/louiscoyle.png');
       background-size: 550px;
       float: right;
       width: 450px;

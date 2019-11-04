@@ -45,8 +45,8 @@
 </template>
 
 <script>
-  import Footer from '../Footer';
-  import Navigation from '../Navigation';
+  import Footer from '@/components/site/Footer';
+  import Navigation from '@/components/site/Navigation';
   import MenuBar from './NotesMenuBar';
   import Search from './NotesSearch';
   import {axios, makeRequest} from '@/utils/utils';
@@ -57,7 +57,7 @@
   import {Blockquote, BulletList, CodeBlockHighlight, HardBreak, Heading,
     Link, ListItem, OrderedList, Bold, Code, Italic, Strike, TodoItem,
     TodoList, Underline, History} from 'tiptap-extensions';
-  import {FontSize} from '@/utils/tiptap-extensions';
+  import {FontSize} from '@/utils/tiptap';
   import bash from 'highlight.js/lib/languages/bash';
   import css from 'highlight.js/lib/languages/css';
   import javascript from 'highlight.js/lib/languages/javascript';

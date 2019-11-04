@@ -23,19 +23,16 @@
 </template>
 
 <script>
-  import Login from '@/components/Login';
-  import {get} from 'vuex-pathify';
-  import md5 from 'js-md5';
+  import Login from '@/components/site/Login';
+  import {get, sync} from 'vuex-pathify';
 
   export default {
     name: 'Navigation',
     components: {Login},
     props: ['cls'],
     computed: {
+      avatar: sync('global/avatar'),
       user: get('global.user'),
-      avatar: function() {
-        return "url('https://www.gravatar.com/avatar/"+ md5(this.user.email) +"')";
-      },
     },
     mounted: function() {
       this.$refs.login.updateCurrentUser();

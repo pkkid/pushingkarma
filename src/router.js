@@ -5,12 +5,11 @@ import VueRouter from 'vue-router';
 import Home from '@/components/home/Home';
 import Notes from '@/components/notes/Notes';
 import Budget from '@/components/budget/Budget';
-import NotFound from '@/components/NotFound';
+import NotFound from '@/components/site/NotFound';
 Vue.use(VueRouter);
 
 export default new VueRouter({
   mode: 'history',
-  //scrollBehavior() { return {x:0, y:0}; },
   routes: [
     {path:'/', component:Home},
     {path:'/notes', component:Notes},

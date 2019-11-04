@@ -5,9 +5,9 @@ import axios from 'axios';
 import vPortal from 'portal-vue';
 import vHotkey from 'v-hotkey';
 import vClickOutside from 'v-click-outside';
-import {fixScroll} from './utils/vue-plugins';
+import {fixScroll} from '@/utils/plugins';
 import App from './App.vue';
-import './utils/vue-filters';
+import '@/utils/filters';
 require('@/assets/css/index.scss');
 
 // Tell Axios we want to treat any non-json responses as errors

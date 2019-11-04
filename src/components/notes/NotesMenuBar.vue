@@ -54,7 +54,7 @@
 </template>
 
 <script>
-  import Dropdown from '@/utils/components/Dropdown';
+  import Dropdown from '@/components/Dropdown';
   import {axios, makeRequest} from '@/utils/utils';
   import {get, sync} from 'vuex-pathify';
   import {EditorMenuBar} from 'tiptap';
