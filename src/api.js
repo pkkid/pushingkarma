@@ -33,7 +33,7 @@ export const NotesAPI = {
 
 export const BudgetAPI = {
   ACCOUNTS: '/api/accounts',
-  UPLOAD: '/api/transactions/upload',
+  upload(data) { return makeRequest('put', `/api/transactions/upload`, data); },
 };
 
 

@@ -7,12 +7,8 @@
 </template>
 
 <script>
-  import {forEach} from 'lodash';
-  import {axios, makeRequest} from '@/utils/utils';
-  var API_UPLOAD = '/api/transactions/upload';
-
   export default {
-    name: 'BudgetAccounts',
+    name: 'Dropzone',
     data: () => ({
       first: false,
       second: false,
@@ -59,14 +55,12 @@
         event.preventDefault();
         event.stopPropagation();
         this.showOverlay = false;
+        var files = event.dataTransfer.files;
         var formdata = new FormData();
-        forEach(event.dataTransfer.files, function(file) {
-          formdata.append(file.name, file);
-        });
-        var request = makeRequest(axios.put, API_UPLOAD, formdata);
-        request.xhr.then(function(response) {
-          console.log(response);
-        });
+        for (var i=0; i<event.dataTransfer.files.length; i++) {
+          formdata.append(files[i].name, files[i]);
+        }
+        this.$emit('filesDropped', formdata);
       },
     }
   };
@@ -81,6 +75,7 @@
     top: 0;
     width: 100%;
     z-index: 90;
+    background-color: rgba(255,255,255,0.8);
     .outline {
       border-radius: 20px;
       border: 5px dashed #89826F;

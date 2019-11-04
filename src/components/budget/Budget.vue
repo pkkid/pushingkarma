@@ -8,7 +8,7 @@
     </div>
     <div class='content'>
       <div class='budgetbg'>
-        <BudgetDropzone ref='dropzone'/>
+        <Dropzone @filesDropped='upload'/>
         Heya budget Page!
         <div>Hi Mom</div>
       </div>
@@ -19,9 +19,10 @@
 
 <script>
   import BudgetAccounts from './BudgetAccounts';
-  import BudgetDropzone from './BudgetDropzone';
+  import Dropzone from '@/components/Dropzone';
   import Footer from '@/components/site/Footer';
   import Navigation from '@/components/site/Navigation';
+  import {BudgetAPI} from '@/api';
   import {axios, makeRequest} from '@/utils/utils';
   import {sync} from 'vuex-pathify';
 
@@ -31,7 +32,7 @@
     name: 'Budget',
     components: {
       BudgetAccounts,
-      BudgetDropzone,
+      Dropzone,
       Footer,
       Navigation
     },
@@ -60,6 +61,20 @@
         this.request_accounts.xhr.then(function(response) {
           self.accounts = response.data.results;
         });
+      },
+
+      // Upload
+      // Upload dropped files
+      upload: async function(formdata) {
+        console.log('upload');
+        console.log(formdata);
+        var {data} = await BudgetAPI.upload(formdata);
+        console.log(data);
+
+        // var request = makeRequest(axios.put, API_UPLOAD, formdata);
+        // request.xhr.then(function(response) {
+        //   console.log(response);
+        // });
       },
     },
   };
