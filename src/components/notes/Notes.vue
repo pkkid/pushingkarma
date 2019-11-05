@@ -52,7 +52,6 @@
   import Search from './NotesSearch';
   import {NotesAPI} from '@/api';
   
-  
   // Editor Imports
   import {Editor, EditorContent} from 'tiptap';
   import {Blockquote, BulletList, CodeBlockHighlight, HardBreak, Heading,
@@ -78,10 +77,10 @@
       title: pathify.sync('notes/note@title'),
       userid: pathify.get('global/user@id'),
       keymap: function() { return {
-        'f1': (e) => this.$refs.search.focus(e),
-        'e': (e) => this.$refs.menubar.startEditing(e),
-        'ctrl+s': (e) => this.$refs.menubar.save(e),
-        'esc': (e) => this.$refs.menubar.stopEditing(e),
+        'f1': (event) => this.$refs.search.focus(event),
+        'e': (event) => this.$refs.menubar.startEditing(event),
+        'ctrl+s': (event) => this.$refs.menubar.save(event),
+        'esc': (event) => this.$refs.menubar.stopEditing(event),
       };},
     },
 

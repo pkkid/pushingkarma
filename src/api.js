@@ -15,6 +15,7 @@ export const UsersAPI =  {
 
 export const NotesAPI = {
   getNote(id) { return axios.get(`/api/notes/${id}`); },
+  saveNote(id, data) { return axios.put(`/api/notes/${id}`, data); },
   listNotes(params, cancelToken) { return axios.get('/api/notes', {params, cancelToken}); },
 };
 
