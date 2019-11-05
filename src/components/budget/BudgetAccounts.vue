@@ -11,15 +11,16 @@
 </template>
 
 <script>
+  import * as pathify from 'vuex-pathify';
   import {sum} from 'lodash';
-  import {sync} from 'vuex-pathify';
+  
   export default {
     name: 'BudgetAccounts',
     data: () => ({
       balance: 0,
     }),
     computed: {
-      accounts: sync('budget/accounts'),
+      accounts: pathify.sync('budget/accounts'),
     },
     watch: {
       accounts: function() {

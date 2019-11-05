@@ -21,6 +21,9 @@ export const NotesAPI = {
 
 export const BudgetAPI = {
   listAccounts() { return axios.get('/api/accounts'); },
+  listCategories() { return axios.get('/api/categories'); },
+  listTransactions(params, cancelToken) { return axios.get('/api/transactions', {params, cancelToken}); },
+  listKeyVals() { axios.get('/api/keyval'); },
   upload(data) { return axios.put('/api/transactions/upload', {data}); },
 };
 

@@ -18,13 +18,13 @@
 
 <script>
   /* global gapi */
-  import {sync} from 'vuex-pathify';
+  import * as pathify from 'vuex-pathify';
   
   export default {
     name: 'App',
     computed: {
-      layout: sync('global/layout'),
-      gauth: sync('global/gauth'),
+      layout: pathify.sync('global/layout'),
+      gauth: pathify.sync('global/gauth'),
     },
     created: function() {
       let self = this;

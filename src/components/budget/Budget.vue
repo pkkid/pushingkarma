@@ -18,15 +18,12 @@
 </template>
 
 <script>
+  import * as pathify from 'vuex-pathify';
   import BudgetAccounts from './BudgetAccounts';
   import Dropzone from '@/components/Dropzone';
   import Footer from '@/components/site/Footer';
   import Navigation from '@/components/site/Navigation';
   import {BudgetAPI} from '@/api';
-  import {axios, makeRequest} from '@/utils/utils';
-  import {sync} from 'vuex-pathify';
-
-  var API_ACCOUNTS = '/api/accounts';
 
   export default {
     name: 'Budget',
@@ -40,9 +37,9 @@
       request_accounts: null,
     }),
     computed: {
-      demo: sync('budget/demo'),
-      accounts: sync('budget/accounts'),
-      transactions: sync('budget/transactions'),
+      demo: pathify.sync('budget/demo'),
+      accounts: pathify.sync('budget/accounts'),
+      transactions: pathify.sync('budget/transactions'),
     },
     
     mounted: function() {
@@ -54,13 +51,9 @@
     methods: {
       // Update Accounts
       // Update the list of accounts to display.
-      updateAccounts: function() {
-        let self = this;
-        if (this.request_accounts) { this.request_accounts.cancel(); }
-        this.request_accounts = makeRequest(axios.get, API_ACCOUNTS, {search:self.search, page:1});
-        this.request_accounts.xhr.then(function(response) {
-          self.accounts = response.data.results;
-        });
+      updateAccounts: async function() {
+        var {data} = await BudgetAPI.listAccounts();
+        this.accounts = data.results;
       },
 
       // Upload
