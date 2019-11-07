@@ -14,7 +14,7 @@
       <div id='search-results'>
         <div class='scrollwrap'>
         <div class='scrollbox'>
-          <div class='result' v-for='(note, i) in notes' v-bind:key='note.id'
+          <div class='submenuitem' v-for='(note, i) in notes' v-bind:key='note.id'
             v-bind:class='{highlighted:i == highlighted}' @click='highlighted=i; updateSelection()'>
             {{note.title}}
             <div class='subtext'>
@@ -119,89 +119,43 @@
 </script>
 
 <style lang='scss'>
-  // Search Input
-  #search {
-    position: fixed;
-    top: 60px;
-    .searchwrap { position: relative; }
-  }
-  #search-input {
-    background-color: darken($darkbg-color, 5%);
-    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
-    border-width: 0px;
-    color: $darkbg-input;
-    font-size: 0.9em;
-    font-weight: 500;
-    height: 40px;
-    line-height: 40px;
-    padding: 0px 10px 0px 40px;
-    position: relative;
-    width: 300px;
-    &:focus {
+  #notes {
+    #sidebar .submenuitem {
+      padding-top: 15px;
+      padding-bottom: 15px;
+    }
+    #search {
+      position: fixed;
+      top: 60px;
+      .searchwrap { position: relative; }
+    }
+    #search-input {
+      background-color: darken($darkbg-color, 5%);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.2);
       border-width: 0px;
-      outline: none;
-    }
-  }
-  #search-icon {
-    font-size: 1.2em;
-    left: 10px;
-    line-height: 40px;
-    position: absolute;
-    z-index: 1;
-  }
-  #search-results {
-    position: fixed;
-    top: 100px;
-    .result {
-      border-bottom-right-radius: 8px;
-      border-left: 3px solid transparent;
-      border-top-right-radius: 8px;
-      color: $darkbg-text;
-      cursor: pointer;
-      font-size: 0.85em;
+      color: $darkbg-input;
+      font-size: 0.9em;
       font-weight: 500;
-      overflow: hidden;
-      padding: 15px 15px 15px 12px;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      width: 290px;
-      &.highlighted,
-      &:hover {
-        border-left: 3px solid $darkbg-accent;
-        background-color: lighten($darkbg-color, 5%);
-      }
-    }
-    .subtext {
-      font-size: 0.7em;
-      font-weight: 400;
-      color: $darkbg-text-dim;
-      padding-top: 2px;
-    }
-    .scrollwrap {
+      height: 40px;
+      line-height: 40px;
+      padding: 0px 10px 0px 40px;
       position: relative;
-      .scrollbox {
-        overflow-x: hidden;
-        overflow-y: scroll;
-        height: calc(100vh - 100px);
-        &::-webkit-scrollbar { width:10px; }
-        &::-webkit-scrollbar-thumb {
-          background: lighten($darkbg-color, 40%);
-          border-radius: 5px;
-          border: 2px solid $darkbg-color;
-        }
-        &:before {
-          content: ' ';
-          background-color: $darkbg-color;
-          height: 100%;
-          opacity: 1;
-          position: absolute;
-          right: 0;
-          top: 0;
-          transition: all .5s ease;
-          width: 10px;
-        }
+      width: 300px;
+      &:focus {
+        border-width: 0px;
+        outline: none;
       }
-      &:hover .scrollbox:before { opacity:0; width:0px; right:5px;}
+    }
+    #search-icon {
+      font-size: 1.2em;
+      left: 10px;
+      line-height: 40px;
+      position: absolute;
+      z-index: 1;
+    }
+    #search-results {
+      position: fixed;
+      top: 100px;
     }
   }
 </style>

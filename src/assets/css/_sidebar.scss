@@ -1,0 +1,82 @@
+#sidebar {
+  float: left;
+  width: 300px;
+  height: calc(100vh - 60px);
+  overflow: hidden;
+  position: fixed;
+  top: 60px;
+  padding: 30px 0px;
+  overflow-y: hidden;
+  
+  // Menu Items
+  .menuitem,
+  .submenuitem {
+    border-bottom-right-radius: 8px;
+    border-left: 3px solid transparent;
+    border-top-right-radius: 8px;
+    cursor: pointer;
+    //font-size: 0.85em;
+    font-weight: 500;
+    overflow: hidden;
+    padding: 15px 15px 15px 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    width: 290px;
+    .subtext {
+      font-size: 0.7em;
+      font-weight: 400;
+      color: $darkbg-text-dim;
+      padding-top: 2px;
+    }
+    &.highlighted,
+    &:hover {
+      border-left: 3px solid $darkbg-accent;
+      background-color: lighten($darkbg-color, 5%);
+    }
+    .mdi {
+      margin-right: 12px;
+      font-size: 1.3em;
+      position: relative;
+      top: 2px;
+    }
+  }
+  .submenuitem {
+    font-size: 0.85em;
+    padding: 7px 15px 7px 12px;
+  }
+
+  // Custom Scrollbar
+  .scrollwrap {
+    position: relative;
+    // Scroll Content
+    .scrollbox {
+      overflow-x: hidden;
+      overflow-y: scroll;
+      height: calc(100vh - 100px);
+      &::-webkit-scrollbar { width:10px; }
+      &::-webkit-scrollbar-thumb {
+        background: lighten($darkbg-color, 40%);
+        border-radius: 5px;
+        border: 2px solid $darkbg-color;
+      }
+    }
+    // Scroll Overlay (hidden)
+    .scrollbox:before {
+      content: ' ';
+      background-color: $darkbg-color;
+      height: 100%;
+      opacity: 1;
+      position: absolute;
+      right: 0;
+      top: 0;
+      transition: all .5s ease;
+      width: 10px;
+    }
+    // Scroll Overlay (hover)
+    &:hover .scrollbox:before {
+      opacity: 0;
+      right: 5px;
+      width: 0px;
+    }
+  }
+}

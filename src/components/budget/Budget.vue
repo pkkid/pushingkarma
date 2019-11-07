@@ -67,35 +67,12 @@
 </script>
 
 <style lang='scss'>
-  // Sidebar Content
-  #budget #sidebar {
-    float: left;
-    width: 300px;
-    height: calc(100vh - 60px);
-    overflow: hidden;
-    position: fixed;
-    top: 60px;
-    padding: 30px 20px;
-    .menuitem {
-      font-weight: 500;
-      line-height: 2.2;
-      cursor: pointer;
-      .mdi {
-        margin-right: 12px;
-        font-size: 1.3em;
-        position: relative;
-        top: 2px;
-      }
-    }
-  }
-
   #budget .content {
     box-sizing: border-box;
     color: $lightbg-text;
     margin-left: 300px;
     margin-top: 60px;
     background-color: darken($lightbg-color, 10%);
-    
     .budgetbg {
       position: relative;
       min-height: calc(100vh - 60px);
