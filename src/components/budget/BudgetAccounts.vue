@@ -11,8 +11,8 @@
 </template>
 
 <script>
+  import * as _ from 'lodash';
   import * as pathify from 'vuex-pathify';
-  import {sum} from 'lodash';
   
   export default {
     name: 'BudgetAccounts',
@@ -25,7 +25,7 @@
     watch: {
       accounts: function() {
         var balances = this.accounts.map((a) => { return parseFloat(a.balance); });
-        this.balance = sum(balances).toFixed(2);
+        this.balance = _.sum(balances).toFixed(2);
       }
     },
   };

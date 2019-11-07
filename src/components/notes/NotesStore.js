@@ -4,6 +4,4 @@ export default {
   editor: null,               // Reference to TipTap editor object
   message: null,              // Success, Error message to display in menubar
   note: {id:null, body:''},   // Note object from the db
-  notes: {},                  // List of notes to list in the sidebar
-  search: '',                 // Current search text
 };

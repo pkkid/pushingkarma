@@ -9,6 +9,8 @@
     <div class='content'>
       <div class='budgetbg'>
         <Dropzone @filesDropped='upload'/>
+        <BudgetMonth />
+        <BudgetTransactions />
         Heya budget Page!
         <div>Hi Mom</div>
       </div>
@@ -20,6 +22,8 @@
 <script>
   import * as pathify from 'vuex-pathify';
   import BudgetAccounts from './BudgetAccounts';
+  import BudgetMonth from './BudgetMonth';
+  import BudgetTransactions from './BudgetTransactions';
   import Dropzone from '@/components/Dropzone';
   import Footer from '@/components/site/Footer';
   import Navigation from '@/components/site/Navigation';
@@ -29,13 +33,20 @@
     name: 'Budget',
     components: {
       BudgetAccounts,
+      BudgetMonth,
+      BudgetTransactions,
       Dropzone,
       Footer,
       Navigation
     },
     data: () => ({
-      request_accounts: null,
+      view: 'budget',        // One of {budget, transactions}
+      transactions: 'all',   // One of {all, <accountid>}
     }),
+    watch: {
+      view: function() { },
+      transactions: function() { },
+    },
     computed: {
       demo: pathify.sync('budget/demo'),
       accounts: pathify.sync('budget/accounts'),

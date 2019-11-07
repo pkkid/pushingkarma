@@ -5,17 +5,16 @@
       <span id='search-icon' class='mdi mdi-magnify'></span>
       <input id='search-input' type='text' v-model='search' autofocus='true'
         spellcheck='false' autocomplete='off' ref='search'
-        @input='updateSearch()'
-        @keydown.up.prevent='setHighlighted({i:highlighted-1})'
-        @keydown.down.prevent='setHighlighted({i:highlighted+1})'
-        @keyup.enter.prevent='updateSelection'
+        @keydown.up.prevent='setHighlighted(-1)'
+        @keydown.down.prevent='setHighlighted(+1)'
+        @keyup.enter.prevent='selected=highlighted'
         @keydown.esc.stop='$refs.search.blur()'>
       <!-- Search Results -->
       <div id='search-results'>
         <div class='scrollwrap'>
         <div class='scrollbox'>
-          <div class='submenuitem' v-for='(note, i) in notes' v-bind:key='note.id'
-            v-bind:class='{highlighted:i == highlighted}' @click='highlighted=i; updateSelection()'>
+          <div class='submenuitem' v-for='note in notes' :noteid='note.id' v-bind:key='note.id'
+            v-bind:class='{highlighted:note.id == highlighted}' @click='selected=note.id'>
             {{note.title}}
             <div class='subtext'>
               {{note.tags}} <span v-if='note.tags'>-</span>
@@ -30,31 +29,61 @@
 </template>
 
 <script>
-  import * as pathify from 'vuex-pathify';
+  import * as _ from 'lodash';
+  import * as api from '@/api';
   import * as utils from '@/utils/utils';
   import Vue from 'vue';
-  import {isEqual, trim, pickBy, identity} from 'lodash';
-  import {cancel, isCancel, NotesAPI} from '@/api';
 
   export default {
     name: 'NotesSearch',
-    computed: {
-      editor: pathify.sync('notes/editor'),
-      note: pathify.sync('notes/note'),
-      notes: pathify.sync('notes/notes'),
-    },
     data: () => ({
-      cancelSearch: null,
-      highlighted: 0,
+      cancelSearch: null,  // Cancel search token
+      highlighted: null,   // Highlighed note id
+      notes: [],           // List of search results
+      selected: null,      // Selected note id
+      search: null,        // Current search string
     }),
+    watch: { 
+      // Watch Highlighted
+      // Make sure item is visible
+      highlighted: async function() {
+        await Vue.nextTick();
+        var container = document.querySelector('#search-results .scrollbox');
+        var item = document.querySelector(`#search-results .submenuitem[noteid='${this.highlighted}']`);
+        if (item) { utils.keepInView(container, item, 50, 'auto'); }
+      },
+      
+      // Watch Search
+      // Update results, history, and highlighted item.
+      search: async function() {
+        this.cancelSearch = api.cancel(this.cancelSearch);
+        var token = this.cancelSearch.token;
+        try {
+          var {data} = await api.NotesAPI.listNotes({search:this.search}, token);
+          this.notes = data.results;
+          this.highlighted = this.selected || this.notes[0].id;
+          this.selected = this.selected ? this.selected : this.highlighted;
+          utils.updateHistory(this.$router, {search:this.search});
+        } catch(err) {
+          if (!api.isCancel(err)) { throw(err); }
+        }
+      },
+
+      // Watch selected
+      // Update highlighted, history, focus, and emit event
+      selected: function(selected) {
+        this.highlighted = selected;
+        utils.updateHistory(this.$router, {noteid:this.selected});
+        this.$refs.search.focus();
+        this.$emit('newSelection', selected);
+      },
+    },
 
     created: async function() {
       // Init function when this component is created.
-      var id = parseInt(this.$route.query.id);
-      this.search = trim(this.search || this.$route.query.search || '');
-      await this.updateSearch(id, {behavior:'auto'});
-      this.updateSelection();
-      this.$refs.search.focus();
+      var noteid = this.$route.query.noteid;
+      this.selected  = noteid ? parseInt(noteid) : null;
+      this.search = _.trim(this.search || this.$route.query.search || '');
     },
 
     methods: {
@@ -65,63 +94,13 @@
         this.$refs.search.select();
       },
 
-      // Update History
-      // Update the address bar history.
-      updateHistory: function(changes) {
-        var query = Object.assign({}, this.$router.history.current.query, changes);
-        query = pickBy(query, identity);  // remove falsey values
-        if (!isEqual(query, this.$router.history.current.query)) {
-          this.$router.push({query});
-        }
+      // Set Highlighted
+      // Adjust highlighted by offset (for next / prev selection).
+      setHighlighted: function(offset) {
+        var index = utils.findIndex(this.notes, 'id', this.highlighted);
+        var newIndex = utils.keepInRange(index+offset, 0, this.notes.length-1);
+        this.highlighted = this.notes[newIndex].id;
       },
-
-      // UpdateSelection
-      // Update the selected note
-      updateSelection: function() {
-        let i = this.highlighted;
-        let noteid = this.notes[i].id;
-        this.updateHistory({id:noteid.toString()});
-        this.$refs.search.focus();
-        this.$emit('newSelection', noteid);
-      },
-
-      // Update Search
-      // Update the list of notes to display.
-      updateSearch: async function(id, opts) {
-        this.cancelSearch = cancel(this.cancelSearch);
-        var token = this.cancelSearch.token;
-        try {
-          var {data} = await NotesAPI.listNotes({search:this.search}, token);
-          var highlighted = id === undefined ? {i:0} : {id:id};
-          opts = Object.assign({}, highlighted, opts);
-          this.notes = data.results;
-          this.setHighlighted(opts);
-          this.updateHistory({search:this.search});
-        } catch(err) {
-          if (!isCancel(err)) { throw(err); }
-        }
-      },
-
-      // Update highlighted
-      // Update the highlighted value.
-      async setHighlighted(opts) {
-        // Update highlighted item by index or noteid
-        if (opts.i !== undefined) {
-          this.highlighted = utils.keepInRange(opts.i, 0, this.notes.length-1);
-        } else if (opts.id !== undefined) {
-          for (var i=0; i<this.notes.length; i++) {
-            if (opts.id == this.notes[i].id) {
-              this.highlighted = i;
-            }
-          }
-        }
-        await Vue.nextTick();
-        var behavior = opts.behavior || 'smooth';
-        var container = document.querySelector('#search-results .scrollbox');
-        var item = document.querySelector(`#search-results .submenuitem:nth-child(${this.highlighted+1})`);
-        utils.keepInView(container, item, 50, behavior);
-      },
-
     },
   };
 </script>
