@@ -50,18 +50,8 @@
   import Navigation from '@/components/site/Navigation';
   import MenuBar from './NotesMenuBar';
   import Search from './NotesSearch';
-  import {NotesAPI} from '@/api';
-  
-  // Editor Imports
   import {Editor, EditorContent} from 'tiptap';
-  import {Blockquote, BulletList, CodeBlockHighlight, HardBreak, Heading,
-    Link, ListItem, OrderedList, Bold, Code, Italic, Strike, TodoItem,
-    TodoList, Underline, History} from 'tiptap-extensions';
-  import {FontSize} from '@/utils/tiptap';
-  import bash from 'highlight.js/lib/languages/bash';
-  import css from 'highlight.js/lib/languages/css';
-  import javascript from 'highlight.js/lib/languages/javascript';
-  import python from 'highlight.js/lib/languages/python';
+  import {NotesAPI} from '@/api';
 
   export default {
     name: 'Notes',
@@ -105,25 +95,7 @@
       this.editor = new Editor({
         editable: false,
         onUpdate: this.updateToc,
-        extensions: [
-          new Blockquote(),
-          new Bold(),
-          new BulletList(),
-          new Code(),
-          new CodeBlockHighlight({languages:{bash,css,javascript,python}}),
-          new FontSize(),
-          new HardBreak(),
-          new Heading({levels:[1,2,3]}),
-          new History(),
-          new Italic(),
-          new Link({openOnClick:false}),
-          new ListItem(),
-          new OrderedList(),
-          new Strike(),
-          new TodoItem({nested: true}),
-          new TodoList(),
-          new Underline(),
-        ],
+        extensions: this.$refs.menubar.extensions(),
       });
     },
 

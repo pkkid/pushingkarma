@@ -32,6 +32,7 @@
 <script>
   import * as pathify from 'vuex-pathify';
   import * as utils from '@/utils/utils';
+  import Vue from 'vue';
   import {isEqual, trim, pickBy, identity} from 'lodash';
   import {cancel, isCancel, NotesAPI} from '@/api';
 
@@ -51,7 +52,7 @@
       // Init function when this component is created.
       var id = parseInt(this.$route.query.id);
       this.search = trim(this.search || this.$route.query.search || '');
-      await this.updateSearch(id);
+      await this.updateSearch(id, {behavior:'auto'});
       this.updateSelection();
       this.$refs.search.focus();
     },
@@ -86,13 +87,15 @@
 
       // Update Search
       // Update the list of notes to display.
-      updateSearch: async function(id) {
+      updateSearch: async function(id, opts) {
         this.cancelSearch = cancel(this.cancelSearch);
         var token = this.cancelSearch.token;
         try {
           var {data} = await NotesAPI.listNotes({search:this.search}, token);
+          var highlighted = id === undefined ? {i:0} : {id:id};
+          opts = Object.assign({}, highlighted, opts);
           this.notes = data.results;
-          this.setHighlighted(id === undefined ? {i:0} : {id:id});
+          this.setHighlighted(opts);
           this.updateHistory({search:this.search});
         } catch(err) {
           if (!isCancel(err)) { throw(err); }
@@ -101,7 +104,7 @@
 
       // Update highlighted
       // Update the highlighted value.
-      setHighlighted(opts) {
+      async setHighlighted(opts) {
         // Update highlighted item by index or noteid
         if (opts.i !== undefined) {
           this.highlighted = utils.keepInRange(opts.i, 0, this.notes.length-1);
@@ -112,6 +115,11 @@
             }
           }
         }
+        await Vue.nextTick();
+        var behavior = opts.behavior || 'smooth';
+        var container = document.querySelector('#search-results .scrollbox');
+        var item = document.querySelector(`#search-results .submenuitem:nth-child(${this.highlighted+1})`);
+        container.scroll({top:item.offsetTop-100, behavior:behavior});
       },
 
     },

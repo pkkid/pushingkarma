@@ -59,6 +59,16 @@
   import {EditorMenuBar} from 'tiptap';
   import {NotesAPI} from '@/api';
 
+  // TipTap Extensions
+  import {Blockquote, BulletList, CodeBlockHighlight, HardBreak, Heading,
+    Link, ListItem, OrderedList, Bold, Code, Italic, Strike, TodoItem,
+    TodoList, Underline, History} from 'tiptap-extensions';
+  import {FontSize} from '@/utils/tiptap';
+  import bash from 'highlight.js/lib/languages/bash';
+  import css from 'highlight.js/lib/languages/css';
+  import javascript from 'highlight.js/lib/languages/javascript';
+  import python from 'highlight.js/lib/languages/python';
+
   export default {
     name: 'Notes',
     components: {EditorMenuBar, Dropdown},
@@ -90,6 +100,30 @@
     },
 
     methods: {
+      // Extensions
+      // Returns list of enabled tiptap extensions
+      extensions: function() {
+        return [
+          new Blockquote(),
+          new Bold(),
+          new BulletList(),
+          new Code(),
+          new CodeBlockHighlight({languages:{bash,css,javascript,python}}),
+          new FontSize(),
+          new HardBreak(),
+          new Heading({levels:[1,2,3]}),
+          new History(),
+          new Italic(),
+          new Link({openOnClick:false}),
+          new ListItem(),
+          new OrderedList(),
+          new Strike(),
+          new TodoItem({nested: true}),
+          new TodoList(),
+          new Underline(),
+        ];
+      },
+
       // CurrentFormat
       // Return the currently selected text format
       currentFormat: function(isActive) {
