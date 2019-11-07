@@ -204,7 +204,7 @@
         color: $darkbg-text;
         margin-right: 5px;
         line-height: 1.6em;
-        i.mdi { font-size:1.3em; position:relative; top:1px; }
+        i.mdi { font-size:2.0rem; position:relative; top:1px; }
         &:hover { background-color: lighten($darkbg-color, 8%); }
         &.active { background-color: lighten($darkbg-color, 16%); }
         &.icon { padding: 2px 5px; }
@@ -214,7 +214,7 @@
         border-radius: 4px;
         border-width: 0px;
         color: $darkbg-input;
-        font-size: 0.8em;
+        font-size: 1.3rem;
         font-weight: 500;
         line-height: 1.6em;
         margin-top: 5px;
@@ -225,7 +225,7 @@
         position: relative;
         white-space: nowrap;
         padding: 2px 5px;
-        font-size: 0.9em;
+        font-size: 1.4rem;
         top: -2px;
         i.mdi { position:absolute; right:5px; top:2px; }
       }

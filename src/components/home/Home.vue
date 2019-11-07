@@ -35,7 +35,7 @@
   #home .content {
     margin-left: 300px;
     padding: 0px;
-    p { font-size: 1.1em };
+    p { font-size: 1.7rem };
   }
   #home .content > .header {
     align-items: center;
@@ -63,7 +63,7 @@
     .name {
       text-align: center;
       text-transform: uppercase;
-      font-size: 2.8em;
+      font-size: 4.2rem;
       font-weight: 300;
       margin-bottom: 100px;
       color: #f9f5d7;
@@ -73,7 +73,7 @@
 
   #bouncyarrow {
     animation: bounce 2s infinite;
-    font-size: 1.5em;
+    font-size: 2.4rem;
     bottom: 5%;
     left: 50%;
     margin-left: -15px;

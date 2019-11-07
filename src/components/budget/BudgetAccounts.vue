@@ -32,28 +32,32 @@
 </script>
 
 <style lang='scss'>
-  #budget #sidebar {
-    .name {
-      float: left;
-      padding-left: 32px;
-    }
-    .updated {
-      font-size: .6em; 
-      clear: both;
-      padding-left: 32px;
-    }
-    .balance {
-      float: right;
-    }
-    .total {
-      color: $darkbg-text-dim;
-      float: right;
-      font-size: 0.7em;
-      font-weight: 600;
-      margin-right: 20px;
-      margin-top: 1px;
-      padding: 3px 5px;
-      border-top: 1px solid rgba($darkbg-text-dim, .2);
+  #budget {
+    font-size: 1.6rem;
+    
+    #sidebar {
+      .name {
+        float: left;
+        padding-left: 32px;
+      }
+      .updated {
+        //font-size: 1.0rem; 
+        clear: both;
+        padding-left: 32px;
+      }
+      .balance {
+        float: right;
+      }
+      .total {
+        color: $darkbg-text-dim;
+        float: right;
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-right: 20px;
+        margin-top: 1px;
+        padding: 3px 5px;
+        border-top: 1px solid rgba($darkbg-text-dim, .2);
+      }
     }
   }
 </style>

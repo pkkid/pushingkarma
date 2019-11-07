@@ -42,8 +42,10 @@
 
 <style lang='scss'>
   #navigation {
+    font-size: 1.6rem;
     height: 100vh;
     left: 0px;
+    min-height: 600px;
     padding-top: 220px;
     position: fixed;
     top: 0px;
@@ -70,6 +72,7 @@
         position: relative;
         text-decoration: none;
         text-transform: uppercase;
+        user-select: none;
       }
       a:before {
         background-color: $darkbg-link-hover;
@@ -78,7 +81,7 @@
         left: 100%;
         margin-left: 10px;
         position: absolute;
-        top: 14px;
+        top: 13px;
         transform: translateY(-50%);
         transition: all .3s ease;
         width: 0px;
@@ -100,27 +103,30 @@
         display: inline-block;
       }
       .avatar {
-        width: 20px;
-        height: 20px;
-        display: block;
         background-size: 20px;
         border-radius: 3px;
+        display: block;
+        height: 20px;
+        margin-left: 3px;
         position: relative;
         top: 2px;
         transition: box-shadow 0.2s ease;
+        width: 20px;
         &:hover { box-shadow: 0px 0px 8px rgba($darkbg-link, 0.4); }
       }
     }
   }
 
   #navigation.topnav {
-    height: 60px;
-    width: 100%;
-    padding: 0px 20px 0px 320px;
     box-shadow: 0px 1px 2px rgba(0,0,0,0.3);
+    height: 60px;
+    min-height: 60px;
+    min-width: 1200px;
+    padding: 0px 20px 0px 320px;
+    width: 100%;
     .menu {
-      padding: 0px;
       line-height: 60px;
+      padding: 0px;
       li { float:left; margin-right:80px; }
     }
     .links {
@@ -128,7 +134,7 @@
       line-height: 60px;
       right: 0px;
       top: 0px;
-      width: 230px;
+      width: 250px;
     }
   }
 </style>

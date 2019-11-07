@@ -187,7 +187,7 @@
     // Table of Contents
     #rightpanel {
       float: left;
-      font-size: 0.8em;
+      font-size: 1.3rem;
       font-weight: 500;
       margin-left: 920px;
       margin-top: 3px;
@@ -227,7 +227,7 @@
       background-color: $lightbg-color;
     }
     h1 {
-      font-size: 1.9em;
+      font-size: 3.0rem;
       span { font-weight: 500; }
     }
     input {

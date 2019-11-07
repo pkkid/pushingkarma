@@ -7,7 +7,7 @@ body, html {
   color: $darkbg-text;
   font-family: $font-serif;
   font-weight: 400;
-  font-size: 16px;
+  font-size: 62.5%;
 }
 *, *:before, *:after { box-sizing: inherit; }
 :focus { outline: none !important; }
@@ -30,7 +30,7 @@ main { display: block; }
 // Correct the font size and margin on `h1` elements within `section` and
 // `article` contexts in Chrome, Firefox, and Safari.
 h1 {
-  font-size: 2em;
+  font-size: 3.2rem;
   margin: 0.67em 0;
 }
 
@@ -46,7 +46,7 @@ hr {
 // 2. Correct the odd `em` font sizing in all browsers.
 pre {
   font-family: monospace, monospace;
-  font-size: 1em;
+  font-size: 1.6rem;
 }
 
 // Remove the gray background on active links in IE 10.
@@ -67,7 +67,7 @@ b, strong { font-weight: bolder; }
 // 2. Correct the odd `em` font sizing in all browsers.
 code, kbd, samp {
   font-family: monospace, monospace;
-  font-size: 1em;
+  font-size: 1.6rem;
 }
 
 // Add the correct font size in all browsers.

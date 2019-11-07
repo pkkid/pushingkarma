@@ -79,7 +79,7 @@
     .outline {
       border-radius: 20px;
       border: 5px dashed #89826F;
-      font-size: 120px;
+      font-size: 7.5rem;
       margin: 50px 100px;
       padding: 50px;
       text-align: center;

@@ -16,9 +16,9 @@
     <div class='footer-section' style='width:250px'>
       <div class='social'>
         <h4>Social Media</h4>
-        <li><a href='https://github.com/pkkid'><i class='mdi mdi-github-box'></i> Github</a></li>
-        <li><a href='https://www.linkedin.com/in/shepanski'><i class='mdi mdi-linkedin-box'></i> Linked In</a></li>
-        <li><a href='https://www.facebook.com/mshepanski'><i class='mdi mdi-facebook-box'></i> Facebook</a></li>
+        <li><i class='mdi mdi-github-box'/> <a href='https://github.com/pkkid'>Github</a></li>
+        <li><i class='mdi mdi-linkedin-box'/> <a href='https://www.linkedin.com/in/shepanski'>Linked In</a></li>
+        <li><i class='mdi mdi-facebook-box'/> <a href='https://www.facebook.com/mshepanski'>Facebook</a></li>
       </div>
     </div>
     <div class='footer-section' style='width:350px'>
@@ -43,7 +43,7 @@
 <style lang='scss'>
   #footer {
     text-align: left;
-    font-size: 0.9em;
+    font-size: 1.4rem;
     line-height: 1.5;
     width: 1000px;
     margin: 0px auto;
@@ -70,10 +70,14 @@
         }
       }
     }
-
     li {
       list-style-type: none;
-      font-size: 1em;
+    }
+    .mdi {
+      font-size: 1.4em;
+      margin-right: 5px;
+      position: relative;
+      top: 2px;
     }
   }
 </style>

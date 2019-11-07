@@ -86,6 +86,7 @@
   }
 
   .topnav #logo {
+    border-bottom-width: 0px;
     padding: 10px 20px;
     height: 61px;
     img { height:40px; top:10px; left:20px; }

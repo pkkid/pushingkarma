@@ -64,12 +64,12 @@
       width: 30%;
 
       .mdi {
-        font-size: 3em;
+        font-size: 4.8rem;
         position: relative;
         left: -6px;
       }
       .title {
-        font-size: 1.3em;
+        font-size: 2.1rem;
         font-weight: 600;
         left: -1px;
         line-height: 1;
@@ -77,7 +77,7 @@
         position: relative;
       }
       p {
-        font-size: 0.8em;
+        font-size: 1.3rem;
         font-weight: 400;
         height: 75px;
         letter-spacing: 0.5px;

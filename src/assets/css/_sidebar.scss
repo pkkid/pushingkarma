@@ -15,11 +15,12 @@
     border-left: 3px solid transparent;
     border-top-right-radius: 8px;
     cursor: pointer;
-    //font-size: 0.85em;
+    font-size: 1.6rem;
     font-weight: 500;
     overflow: hidden;
     padding: 15px 15px 15px 12px;
     text-overflow: ellipsis;
+    user-select: none;
     white-space: nowrap;
     width: 290px;
     .subtext {
@@ -41,7 +42,7 @@
     }
   }
   .submenuitem {
-    font-size: 0.85em;
+    font-size: 1.4rem;
     padding: 7px 15px 7px 12px;
   }
 

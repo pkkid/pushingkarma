@@ -134,7 +134,7 @@
       border-bottom: 1px solid rgba(0, 0, 0, 0.2);
       border-width: 0px;
       color: $darkbg-input;
-      font-size: 0.9em;
+      font-size: 1.4rem;
       font-weight: 500;
       height: 40px;
       line-height: 40px;
@@ -147,7 +147,7 @@
       }
     }
     #search-icon {
-      font-size: 1.2em;
+      font-size: 1.9rem;
       left: 10px;
       line-height: 40px;
       position: absolute;
