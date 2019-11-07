@@ -65,6 +65,27 @@ export function keepInRange(value, min, max) {
   return Math.min(value, max);
 }
 
+
+/**
+ * Keep In View
+ * Scroll container to keep item in view within the specified margin.
+ */
+export function keepInView(container, item, margin, behavior) {
+  var scrollto;
+  var itemtop = item.offsetTop;
+  var itembottom = item.offsetTop + item.clientHeight;
+  var scrolltop = container.scrollTop + margin;
+  var scrollbottom = container.scrollTop + container.clientHeight - margin;
+  if (itemtop < scrolltop) {
+    scrollto = item.offsetTop - margin;
+    container.scroll({top:scrollto, behavior:behavior});
+  } else if (itembottom > scrollbottom) {
+    scrollto = item.offsetTop - container.clientHeight + margin + item.clientHeight;
+    container.scroll({top:scrollto, behavior:behavior});
+  }
+}
+
+
 /**
  * String Format
  * Format the specified template with the key/value object mapping.

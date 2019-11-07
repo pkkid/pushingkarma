@@ -119,7 +119,7 @@
         var behavior = opts.behavior || 'smooth';
         var container = document.querySelector('#search-results .scrollbox');
         var item = document.querySelector(`#search-results .submenuitem:nth-child(${this.highlighted+1})`);
-        container.scroll({top:item.offsetTop-100, behavior:behavior});
+        utils.keepInView(container, item, 50, behavior);
       },
 
     },
