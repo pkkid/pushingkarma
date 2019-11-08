@@ -7,14 +7,14 @@
         spellcheck='false' autocomplete='off' ref='search'
         @keydown.up.prevent='setHighlighted(-1)'
         @keydown.down.prevent='setHighlighted(+1)'
-        @keyup.enter.prevent='selected=highlighted'
+        @keyup.enter.prevent='$emit("newSelection", highlighted)'
         @keydown.esc.stop='$refs.search.blur()'>
       <!-- Search Results -->
       <div id='search-results'>
         <div class='scrollwrap'>
         <div class='scrollbox'>
           <div class='submenuitem' v-for='note in notes' :noteid='note.id' v-bind:key='note.id'
-            v-bind:class='{highlighted:note.id == highlighted}' @click='selected=note.id'>
+            v-bind:class='{highlighted:note.id == highlighted}' @click='$emit("newSelection", note.id)'>
             {{note.title}}
             <div class='subtext'>
               {{note.tags}} <span v-if='note.tags'>-</span>
@@ -31,6 +31,7 @@
 <script>
   import * as _ from 'lodash';
   import * as api from '@/api';
+  import * as pathify from 'vuex-pathify';
   import * as utils from '@/utils/utils';
   import Vue from 'vue';
 
@@ -40,9 +41,11 @@
       cancelSearch: null,  // Cancel search token
       highlighted: null,   // Highlighed note id
       notes: [],           // List of search results
-      selected: null,      // Selected note id
       search: null,        // Current search string
     }),
+    computed: {
+      noteid: pathify.get('notes/note@id'),
+    },
     watch: { 
       // Watch Highlighted
       // Make sure item is visible
@@ -61,28 +64,28 @@
         try {
           var {data} = await api.NotesAPI.listNotes({search:this.search}, token);
           this.notes = data.results;
-          this.highlighted = this.selected || this.notes[0].id;
-          this.selected = this.selected ? this.selected : this.highlighted;
+          this.highlighted = this.noteid || this.notes[0].id;
+          //this.selected = this.selected ? this.selected : this.highlighted;
           utils.updateHistory(this.$router, {search:this.search});
         } catch(err) {
           if (!api.isCancel(err)) { throw(err); }
         }
       },
 
-      // Watch selected
-      // Update highlighted, history, focus, and emit event
-      selected: function(selected) {
-        this.highlighted = selected;
-        utils.updateHistory(this.$router, {noteid:this.selected});
+      // Watch Note ID
+      // Update highlighted, history, focus.
+      noteid: function(noteid) {
+        this.highlighted = noteid;
+        utils.updateHistory(this.$router, {noteid});
         this.$refs.search.focus();
-        this.$emit('newSelection', selected);
       },
     },
 
+    // Created
+    // Initialize noteid and search from URL
     created: async function() {
-      // Init function when this component is created.
       var noteid = this.$route.query.noteid;
-      this.selected  = noteid ? parseInt(noteid) : null;
+      this.$emit('newSelection', noteid);
       this.search = _.trim(this.search || this.$route.query.search || '');
     },
 
