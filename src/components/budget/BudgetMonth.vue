@@ -6,7 +6,7 @@
 
 <script>
   export default {
-    name: 'BudgetMonth'
+    name: 'BudgetMonth',
   };
 </script>
 

@@ -1,18 +1,14 @@
 <template>
   <div id='budget' :class={demo}>
     <Navigation :cls="'topnav'" />
-    <div id='sidebar'>
-      <div class='menuitem'><i class='mdi mdi-email-outline'/>Budget</div>
-      <div class='menuitem'><i class='mdi mdi-bank-outline'/>All Accounts</div>
-      <BudgetAccounts/>
-    </div>
+    <BudgetAccounts/>
     <div class='content'>
       <div class='budgetbg'>
         <Dropzone @filesDropped='upload'/>
-        <BudgetMonth />
-        <BudgetTransactions />
-        Heya budget Page!
-        <div>Hi Mom</div>
+        <transition name='fadein'>
+          <BudgetMonth v-if='view=="budget"' />
+          <BudgetTransactions v-else />
+        </transition>
       </div>
       <Footer/>
     </div>
@@ -39,23 +35,16 @@
       Footer,
       Navigation
     },
-    data: () => ({
-      view: 'budget',        // One of {budget, transactions}
-      transactions: 'all',   // One of {all, <accountid>}
-    }),
-    watch: {
-      view: function() { },
-      transactions: function() { },
-    },
     computed: {
-      demo: pathify.sync('budget/demo'),
       accounts: pathify.sync('budget/accounts'),
+      demo: pathify.sync('budget/demo'),
       transactions: pathify.sync('budget/transactions'),
+      view: pathify.sync('budget/view'),
     },
     
     mounted: function() {
       this.$store.set('global/layout', 'topnav');
-      this.demo = this.$route.query.demo == '1';
+      this.demo = Boolean(this.$route.query.demo);
       this.updateAccounts();
     },
 
@@ -94,9 +83,11 @@
   #budget.demo .blur {
     color: transparent !important;
     text-shadow: 0 0 10px rgba($lightbg-text, 1) !important;
+    user-select: none;
   }
   #budget.demo #sidebar .blur {
     color: transparent !important;
     text-shadow: 0 0 10px rgba($darkbg-text, 1) !important;
+    user-select: none;
   }
 </style>

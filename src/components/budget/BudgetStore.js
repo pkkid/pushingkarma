@@ -1,7 +1,9 @@
 
 export default {
-  demo: false,
-  accounts: {},       // List of accounts
-  transactions: {},   // List transactions grouped by month
-  categories: {},     // List of categories grouped by month
+  accounts: {},        // List of accounts
+  categories: {},      // List of categories grouped by month
+  demo: false,         // Set true to hide sensative values
+  transactions: {},    // List transactions grouped by month
+  view: 'budget',      // One of {budget, transactions}
+  viewAccount: 'all',  // One of {all, <accountid>}
 };

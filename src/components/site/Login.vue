@@ -6,7 +6,6 @@
         <div class='content'>
           <transition name='fadeslow' appear>
             <div v-if='user.id' class='welcome' key='welcome'>
-
               <!-- Display logged in user info -->
               <div class='avatar' :style="{backgroundImage:avatar}"></div>
               <h3>Welcome {{user.firstName || "You"}}! <span>Great to see you</span></h3>

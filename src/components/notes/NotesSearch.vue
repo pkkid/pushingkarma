@@ -8,13 +8,13 @@
         @keydown.up.prevent='setHighlighted(-1)'
         @keydown.down.prevent='setHighlighted(+1)'
         @keyup.enter.prevent='$emit("newSelection", highlighted)'
-        @keydown.esc.stop='$refs.search.blur()'>
+        @keydown.esc.stop='$refs.search.blur()'/>
       <!-- Search Results -->
       <div id='search-results'>
         <div class='scrollwrap'>
         <div class='scrollbox'>
-          <div class='submenuitem' v-for='note in notes' :noteid='note.id' v-bind:key='note.id'
-            v-bind:class='{highlighted:note.id == highlighted}' @click='$emit("newSelection", note.id)'>
+          <div class='submenuitem' v-for='note in notes' :key='note.id' :noteid='note.id'
+            :class='{highlighted:note.id == highlighted}' @click='$emit("newSelection", note.id)'>
             {{note.title}}
             <div class='subtext'>
               {{note.tags}} <span v-if='note.tags'>-</span>
