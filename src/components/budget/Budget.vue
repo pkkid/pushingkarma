@@ -16,6 +16,8 @@
 </template>
 
 <script>
+  import * as _ from 'lodash';
+  import * as api from '@/api';
   import * as pathify from 'vuex-pathify';
   import BudgetAccounts from './BudgetAccounts';
   import BudgetMonth from './BudgetMonth';
@@ -23,7 +25,7 @@
   import Dropzone from '@/components/Dropzone';
   import Footer from '@/components/site/Footer';
   import Navigation from '@/components/site/Navigation';
-  import {BudgetAPI} from '@/api';
+  
 
   export default {
     name: 'Budget',
@@ -52,14 +54,14 @@
       // Update Accounts
       // Update the list of accounts to display.
       updateAccounts: async function() {
-        var {data} = await BudgetAPI.listAccounts();
-        this.accounts = data.results;
+        var {data} = await api.Budget.getAccounts();
+        this.accounts = _.fromPairs(data.results.map(a => [a.id, a]));
       },
 
       // Upload
       // Upload dropped files
       upload: async function(formdata) {
-        var {data} = await BudgetAPI.upload(formdata);
+        var {data} = await api.Budget.upload(formdata);
         console.log(data);
       },
     },

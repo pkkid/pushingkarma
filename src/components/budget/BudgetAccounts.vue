@@ -3,17 +3,17 @@
     <div class='menuitem' @click='view="budget"' :class='{highlighted:view=="budget"}'>
       <i class='mdi mdi-email-outline'/>Budget
     </div>
-    <div class='menuitem' @click='view="transactions"; viewAccount="all"'
-      :class='{highlighted:view=="transactions" && viewAccount=="all"}'>
+    <div class='menuitem' @click='view="transactions"; account=null'
+      :class='{highlighted:view=="transactions" && !account}'>
       <i class='mdi mdi-bank-outline'/>All Accounts
     </div>
     <div class='submenu'>
-      <div class='submenuitem account' v-for='account in accounts' :key='account.id'
-        :class='{highlighted:view=="transactions" && viewAccount==account.id}'
-        @click='view="transactions"; viewAccount=account.id'>
-          <div class='name'>{{account.name}}</div>
-          <div class='balance blur'>{{account.balance | usdint}}</div>
-          <div class='subtext updated'>{{account.balancedt | timeAgo}} ago</div>
+      <div class='submenuitem account' v-for='acct in accounts' :key='acct.id'
+        :class='{highlighted:view=="transactions" && acct==account}'
+        @click='view="transactions"; account=acct'>
+          <div class='name'>{{acct.name}}</div>
+          <div class='balance blur'>{{acct.balance | usdint}}</div>
+          <div class='subtext updated'>{{acct.balancedt | timeAgo}} ago</div>
       </div>
       <div class='total blur'>{{balance | usdint}}</div>
       <div style='clear:both;'/>
@@ -32,14 +32,12 @@
     }),
     computed: {
       view: pathify.sync('budget/view'),
-      viewAccount: pathify.sync('budget/viewAccount'),
+      account: pathify.sync('budget/account'),
       accounts: pathify.sync('budget/accounts'),
     },
     watch: {
-      // Watch Accounts
-      // Update balance
       accounts: function() {
-        var balances = this.accounts.map((a) => { return parseFloat(a.balance); });
+        var balances = _.map(this.accounts, a => parseFloat(a.balance));
         this.balance = _.sum(balances).toFixed(2);
       }
     }

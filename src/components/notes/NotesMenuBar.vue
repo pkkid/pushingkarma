@@ -54,10 +54,10 @@
 </template>
 
 <script>
+  import * as api from '@/api';
   import * as pathify from 'vuex-pathify';
   import Dropdown from '@/components/Dropdown';
   import {EditorMenuBar} from 'tiptap';
-  import {NotesAPI} from '@/api';
 
   // TipTap Extensions
   import {Blockquote, BulletList, CodeBlockHighlight, HardBreak, Heading,
@@ -141,7 +141,7 @@
         if (this.editing) {
           event.preventDefault();
           try {
-            await NotesAPI.saveNote(this.note.id, {
+            await api.Notes.saveNote(this.note.id, {
               title: this.note.title,
               tags: this.note.tags,
               body: this.editor.getHTML()

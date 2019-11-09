@@ -45,13 +45,14 @@
 </template>
 
 <script>
+  import * as api from '@/api';
   import * as pathify from 'vuex-pathify';
   import Footer from '@/components/site/Footer';
   import Navigation from '@/components/site/Navigation';
   import MenuBar from './NotesMenuBar';
   import Search from './NotesSearch';
   import {Editor, EditorContent} from 'tiptap';
-  import {NotesAPI} from '@/api';
+  
 
   export default {
     name: 'Notes',
@@ -103,7 +104,7 @@
       // Update Note
       // Load the specified note id.
       updateNote: async function(noteid) {
-        var {data} = await NotesAPI.getNote(noteid);
+        var {data} = await api.Notes.getNote(noteid);
         this.note = data;
         this.editor.setContent(this.note.body);
       },

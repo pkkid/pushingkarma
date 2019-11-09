@@ -62,7 +62,7 @@
         this.cancelSearch = api.cancel(this.cancelSearch);
         var token = this.cancelSearch.token;
         try {
-          var {data} = await api.NotesAPI.listNotes({search:this.search}, token);
+          var {data} = await api.Notes.getNotes({search:this.search}, token);
           this.notes = data.results;
           this.highlighted = this.noteid || this.notes[0].id;
           //this.selected = this.selected ? this.selected : this.highlighted;

@@ -44,12 +44,13 @@
 </template>
 
 <script>
+  import * as api from '@/api';
   import * as pathify from 'vuex-pathify';
   import md5 from 'js-md5';
   import IconButton from '@/components/IconButton';
   import Modal from '@/components/Modal';
   import {DEFAULT_USER} from '@/store.js';
-  import {UsersAPI} from '@/api';
+  
 
   export default {
     name: 'Navigation',
@@ -77,7 +78,7 @@
       // Update Current User
       // Update global/user user in vuex store
       updateCurrentUser: async function() {
-        var {data} = await UsersAPI.getCurrentUser();
+        var {data} = await api.Users.getCurrentUser();
         this.user = data;
         console.log(`Logged in as ${this.user.email || 'Guest'}`);
       },
@@ -95,7 +96,7 @@
       // Login using username/password to Google auth
       login: async function(payload) {
         payload = payload || {email:this.loginform.email, password:this.loginform.password};
-        var {data} = await UsersAPI.login(payload);
+        var {data} = await api.Users.login(payload);
         if (data.id) {
           this.display = false;
           this.user = data || DEFAULT_USER;
@@ -108,14 +109,14 @@
       // Generate Token
       // Generate a new API token
       generateToken: async function() {
-        var {data} = await UsersAPI.generateToken();
+        var {data} = await api.Users.generateToken();
         if (data.id) { this.user = data; }
       },
 
       // Logout
       // Logout of the site
       logout: async function() {
-        await UsersAPI.logout();
+        await api.Users.logout();
         this.user = DEFAULT_USER;
         this.display = false;
       },
