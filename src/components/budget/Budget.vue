@@ -26,7 +26,6 @@
   import Footer from '@/components/site/Footer';
   import Navigation from '@/components/site/Navigation';
   
-
   export default {
     name: 'Budget',
     components: {

@@ -1,5 +1,7 @@
 <template>
-  <transition name='fadeslow'>
+  <transition name='custom-classes-transition'
+      enter-active-class='animated fadeIn'
+      leave-active-class='animated fadeOut'>
     <div id='dropzone' v-if='showOverlay'>
       <div class='outline' >drop .qfx</div>
     </div>

@@ -78,11 +78,13 @@
     width: 400px;
   }
   .modal-close {
-    position: absolute;
-    top: -4px;
-    right: 5px;
     color: $lightbg-color;
-    font-size: 2.5em;
     cursor: pointer;
+    font-size: 4.5rem;
+    opacity: 0.5;
+    position: absolute;
+    right: 5px;
+    top: -4px;
+    &:hover { opacity:1; }
   }
 </style>

@@ -65,7 +65,7 @@
           var {data} = await api.Notes.getNotes({search:this.search}, token);
           this.notes = data.results;
           this.highlighted = this.noteid || this.notes[0].id;
-          //this.selected = this.selected ? this.selected : this.highlighted;
+          if (!this.noteid) { this.$emit('newSelection', this.highlighted); }
           utils.updateHistory(this.$router, {search:this.search});
         } catch(err) {
           if (!api.isCancel(err)) { throw(err); }
@@ -83,9 +83,9 @@
 
     // Created
     // Initialize noteid and search from URL
-    created: async function() {
+    created: function() {
       var noteid = this.$route.query.noteid;
-      this.$emit('newSelection', noteid);
+      if (noteid) { this.$emit('newSelection', noteid); }
       this.search = _.trim(this.search || this.$route.query.search || '');
     },
 

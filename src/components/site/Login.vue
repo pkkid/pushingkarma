@@ -4,35 +4,34 @@
       <div id='login'>
         <div class='bgimg'></div>
         <div class='content'>
-          <transition name='fadeslow' appear>
-            <div v-if='user.id' class='welcome' key='welcome'>
-              <!-- Display logged in user info -->
-              <div class='avatar' :style="{backgroundImage:avatar}"></div>
-              <h3>Welcome {{user.firstName || "You"}}! <span>Great to see you</span></h3>
-              <dl>
-                <dt>Joined</dt><dd>{{user.date_joined | formatDate('MMM DD, YYYY')}}</dd>
-                <dt>Login</dt><dd>{{user.last_login | formatDate('MMM DD, YYYY h:mm a')}}</dd>
-                <dt>Email</dt><dd>{{user.email}}</dd>
-                <dt>Token</dt><dd>
-                  <input type='text' class='auth_token' :value='user.auth_token || "None"' readonly/>
-                  <IconButton :icon='"mdi-refresh"' :click='generateToken'/>
-                </dd>
-              </dl>
-              <button @click='logout'>Log Out</button>
-            </div>
-            <div v-else class='loginform' key='loginform'>
-              <!-- Display login form -->
-              <h3>Login to PushingKarma <span>Amazing things await you</span></h3>
-              <img class='google' src='@/assets/img/google_signin.png' @click='gauth_login'/>
-              <form @submit.prevent="login()">
-                <label for='email'>Email Address</label>
-                <input type='text' id='email' name='email' v-model='loginform.email' spellcheck='false' autocomplete='off' autofocus='true'/>
-                <label for='password'>Password</label>
-                <input type='password' id='password' name='password' v-model='loginform.password' autocomplete='off'/>
-                <button type='submit' class='primary'>Login</button>
-              </form>
-            </div>
-          </transition>
+          <!-- Logged in user info -->
+          <div v-if='user.id' class='welcome' key='welcome'>
+            <div class='avatar' :style="{backgroundImage:avatar}"></div>
+            <h3>Welcome {{user.firstName || "You"}}! <span>Great to see you</span></h3>
+            <dl>
+              <dt>Joined</dt><dd>{{user.date_joined | formatDate('MMM DD, YYYY')}}</dd>
+              <dt>Login</dt><dd>{{user.last_login | formatDate('MMM DD, YYYY h:mm a')}}</dd>
+              <dt>Email</dt><dd>{{user.email}}</dd>
+              <dt>Token</dt><dd>
+                <input type='text' class='auth_token' :value='user.auth_token || "None"' readonly/>
+                <IconButton :icon='"mdi-refresh"' :click='generateToken'/>
+              </dd>
+            </dl>
+            <button @click='logout'>Log Out</button>
+          </div>
+          <!-- Login form -->
+          <div v-else class='loginform' key='loginform'>
+            <h3>Login to PushingKarma <span>Amazing things await you</span></h3>
+            <img class='google' src='@/assets/img/google_signin.png' @click='gauth_login'/>
+            <form @submit.prevent="login()">
+              <label for='email'>Email Address</label>
+              <input type='text' id='email' name='email' v-model='loginform.email' spellcheck='false' autocomplete='off' autofocus='true'/>
+              <label for='password'>Password</label>
+              <input type='password' id='password' name='password' v-model='loginform.password' autocomplete='off'/>
+              <button type='submit' class='primary'>Login</button>
+            </form>
+          </div>
+          <!-- Footnote -->
           <div class='footnote'>
             © 2019 PushingKarma. All Rights Reserved.<br/>
             Sunrise graphic by <a href='https://dribbble.com/shots/3200530-Sunrise-wallpaper'>Louis Coyle</a>.

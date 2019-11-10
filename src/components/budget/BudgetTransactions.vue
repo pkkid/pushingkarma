@@ -17,7 +17,7 @@
           <td class='date editable'><div>{{trx.date}}</div></td>
           <td class='payee editable selectall'><div>{{trx.payee}}</div></td>
           <td class='category editable selectall'><div>{{trx.category ? trx.category.name : ''}}</div></td>
-          <td class='amount float'><div>{{trx.amount}}</div></td>
+          <td class='amount float blur'><div>{{trx.amount}}</div></td>
           <td class='approved bool selectall'><div>X</div></td>
           <td class='comment editable'><div>{{trx.comment}}</div></td>
         </tr>

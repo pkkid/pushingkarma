@@ -13,15 +13,18 @@
     </div>
     <portal-target name='modal-container'>
     </portal-target>
+    <Notification />
   </div>
 </template>
 
 <script>
   /* global gapi */
   import * as pathify from 'vuex-pathify';
+  import Notification from '@/components/Notification';
   
   export default {
     name: 'App',
+    components: {Notification},
     computed: {
       layout: pathify.sync('global/layout'),
       gauth: pathify.sync('global/gauth'),

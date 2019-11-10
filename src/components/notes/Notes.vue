@@ -27,13 +27,6 @@
               <!-- Edit buttons -->
               <div v-if='editing'><i class='mdi mdi-cancel'/> <a @click='editing=false'>Cancel Changes</a></div>
               <div v-else><i class='mdi mdi-pencil-outline'/> <a @click='editing=true'>Edit Note</a></div>
-              <!-- Success/Error message -->
-              <transition name='fade'>
-                <span class='message' v-if='message' :style='{color:message == "Error" ? "#9d0006":"#79740e"}'>
-                  <i v-if='message == "Error"' class='mdi mdi-alert-circle-outline'/>
-                  <i v-else class='mdi mdi-check-bold'/>{{message}}
-                </span>
-              </transition>
             </div>
           </div>
           <div style='clear:both;'></div>
@@ -63,7 +56,6 @@
     computed: {
       editing: pathify.sync('notes/editing'),
       editor: pathify.sync('notes/editor'),
-      message: pathify.sync('notes/message'),
       note: pathify.sync('notes/note'),
       title: pathify.sync('notes/note@title'),
       userid: pathify.get('global/user@id'),
@@ -80,13 +72,6 @@
       // Update the TOC when the note changes
       note: function() { this.updateToc(); },
       title: function() { this.updateToc(); },
-
-      // Watch Message
-      // A simple fading Success/Error message on save
-      message: function() {
-        let self = this;
-        if (this.message) { setTimeout(function() { self.message = null; }, 3000); }
-      },
     },
 
     mounted: function() {

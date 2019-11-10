@@ -12,10 +12,8 @@
       <li><a href='https://www.linkedin.com/in/shepanski'><i class='mdi mdi-linkedin-box'></i></a></li>
       <li><a href='https://www.facebook.com/mshepanski'><i class='mdi mdi-facebook-box'></i></a></li>
       <li><a href='javascript:void(0);' @click='$refs.login.display=true'>
-        <transition name='bouncein'>
-          <i v-if='user.id' class='avatar' key='avatar' :style="{backgroundImage:avatar}"></i>
-          <i v-else class='mdi mdi-account-circle' key='icon'></i>
-        </transition>
+        <i v-if='user.id' class='avatar' key='avatar' :style="{backgroundImage:avatar}"></i>
+        <i v-else class='mdi mdi-account-circle' key='icon'></i>
       </a></li>
     </ul></div>
     <Login ref='login'/>

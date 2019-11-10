@@ -1,6 +1,8 @@
 <template>
   <div id='notesmenubar'>
-    <transition name='fadein'>
+    <transition name='custom-classes-transition'
+        enter-active-class='animated fadeIn'
+        leave-active-class='animated fadeOut'>
       <editor-menu-bar :editor='editor' v-slot='{commands, getMarkAttrs, isActive}' v-if='editing'>
         <div class='menubar'>
           <!-- Format Menu Dropdown -->
@@ -38,7 +40,7 @@
           <button class='icon' :class='{"active":isActive.link()}' @click='toggleLinkMenu(getMarkAttrs("link"))'><i class='mdi mdi-link'/></button>
           <button class='icon' :class='{"active":isActive.blockquote()}' @click='commands.blockquote'><i class='mdi mdi-format-quote-close'/></button>
           <button class='icon' :class='{"active":isActive.code()}' @click='commands.code'><i class='mdi mdi-code-tags'/></button>
-          <button @click.prevent='save()' style='float:right;'><span>Save</span></button>
+          <button @click.prevent='save' style='float:right;'><span>Save</span></button>
           <!-- Link Form -->
           <div class='link-form' v-if='showLinkMenu'>
             <input type='text' name='url' v-model='linkUrl' ref='linkInput' placeholder='https://' spellcheck='false' autocomplete='off'
@@ -75,7 +77,6 @@
     computed: {
       editing: pathify.sync('notes/editing'),
       editor: pathify.sync('notes/editor'),
-      message: pathify.sync('notes/message'),
       note: pathify.sync('notes/note'),
       userid: pathify.get('global/user@id'),
     },
@@ -147,9 +148,9 @@
               body: this.editor.getHTML()
             });
             this.editing = false;
-            this.message = 'Success';
+            this.$root.$emit('notify', 'Note saved!', 'mdi-check');
           } catch(err) {
-            this.message = 'Error';
+            this.$root.$emit('notify', 'Error saving note.', 'mdi-alert-circle-outline');
           }
         }
       },
@@ -215,6 +216,7 @@
 <style lang='scss'>
   #notesmenubar {
     .menubar {
+      animation-duration: .3s;
       background-color: $darkbg-color;
       border-radius: 8px;
       box-shadow: 0 2px 3px rgba(0, 0, 0, .3);
