@@ -38,25 +38,26 @@
     },
     computed: {
       accounts: pathify.sync('budget/accounts'),
+      categories: pathify.sync('budget/categories'),
       demo: pathify.sync('budget/demo'),
       transactions: pathify.sync('budget/transactions'),
       view: pathify.sync('budget/view'),
     },
-    
-    mounted: function() {
+
+    // Mounted
+    // Setup navigation, demo, accounts
+    mounted: async function() {
       this.$store.set('global/layout', 'topnav');
       this.demo = Boolean(this.$route.query.demo);
-      this.updateAccounts();
+      var apromise = api.Budget.getAccounts();
+      var cpromise = api.Budget.getCategories();
+      var {data:adata} = await apromise;
+      var {data:cdata} = await cpromise;
+      this.accounts = _.fromPairs(adata.results.map(x => [x.id, x]));
+      this.categories = _.fromPairs(cdata.results.map(x => [x.id, x]));
     },
-
+    
     methods: {
-      // Update Accounts
-      // Update the list of accounts to display.
-      updateAccounts: async function() {
-        var {data} = await api.Budget.getAccounts();
-        this.accounts = _.fromPairs(data.results.map(a => [a.id, a]));
-      },
-
       // Upload
       // Upload dropped files
       upload: async function(formdata) {
