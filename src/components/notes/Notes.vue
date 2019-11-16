@@ -129,6 +129,8 @@
     margin-left: 300px;
     margin-top: 60px;
     background-color: darken($lightbg-color, 10%);
+    font-family: Roboto, Arial, Helvetica, sans-serif;
+    font-weight: 300;
     
     // General Scaffolding
     .notebg {

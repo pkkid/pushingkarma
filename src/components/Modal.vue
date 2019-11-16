@@ -34,13 +34,11 @@
 
     /** Start listening to keyup events. */
     mounted: function() {
-      document.body.classList.add('modalOpen');
       if (this.escClose) { document.addEventListener('keyup', this.keyClose); }
     },
 
     /** Stop listening to keyup events. */
     beforeDestroy: function() {
-      document.body.classList.remove('modalOpen');
       if (this.escClose) { document.removeEventListener('keyup', this.keyClose); }
     },
   };
@@ -59,6 +57,7 @@
     top: 0;
     transition: opacity .3s ease;
     width: 100%;
+    backdrop-filter: blur(3px) grayscale(1);
   }
   .modal-overlay {
     background-color: rgba(0, 0, 0, .2);

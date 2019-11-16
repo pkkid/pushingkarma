@@ -84,9 +84,6 @@
     margin-top: -1px;
     transition: filter .3s ease;
   }
-  body.modalOpen #content {
-    filter: blur(2px);
-  }
 
   .topnav #logo {
     border-bottom-width: 0px;
