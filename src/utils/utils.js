@@ -59,6 +59,21 @@ export function keepInView(container, item, margin, behavior) {
   }
 }
 
+// Recursive Get
+// Recursilvely get a value from a nested collection of objects.
+export function rget(obj, property, delim) {
+  delim = delim === undefined ? '.' : delim;
+  var parts = property.split(delim);
+  var key = parts.shift();
+  if ((obj[key] !== undefined) && (obj[key] !== null)) {
+    if (parts.length >= 1)
+      return rget(obj[key], parts.join(delim), delim);
+    return obj[key];
+  }
+  return undefined;
+}
+
+
 // String Format
 // Format the specified template with the key/value object mapping.
 //   str - String to format with vars specified by brackets {var}.

@@ -1,34 +1,43 @@
 <template>
   <td :class='[cls,{editing}]'>
-    <input v-if='editing' type='text' :value='value' @blur='save' ref='input'/>
+    <input v-if='editing' type='text' ref='input' v-model='value' 
+      @focus.prevent='oldvalue=$event.target.value'
+      @blur='changed'/>
     <div v-else @dblclick.prevent='edit'>{{value}}</div>
   </td>
 </template>
 
 <script>
+  import * as utils from '@/utils/utils';
   import Vue from 'vue';
-
+  
   export default {
     name: 'BudgetTableCell',
     props: {
-      cls: {default: ''},
-      editable: {default: false},
-      init: {default: null},
-      selectall: {default: false},
-      type: {default: 'string'},
+      item: {default: {}},
+      name: {default: ''},
+      flags: {default: ''},
     },
     data: () => ({
-      value: null,
+      cls: null,
       editing: false,
+      oldvalue: null,
+      value: null,
     }),
     created: function() {
-      this.value = this.init;
+      this.value = utils.rget(this.item, this.name);
+
+      this.cls = this.name.replace(/\./g, '_');
+      this.editable = this.flags.includes('editable');
+      this.selectall = this.flags.includes('selectall');
+      this.bool = this.flags.includes('bool');
+      this.usd = this.flags.includes('usd');
     },
     methods: {
       // Edit
       // Enable editing the selected cell.
       edit: async function() {
-        console.log('edit');
+        console.log(this.item);
         if (this.editable) {
           this.editing = this.editable;
           await Vue.nextTick();
@@ -37,10 +46,13 @@
         }
       },
 
-      // Save
-      // Stop editing and save the specified value.
-      save: function() {
-        // this.editing = false;
+      // Changed
+      // Emit an event if the specified value changed
+      changed: function() {
+        this.editing = false;
+        if (this.value != this.oldvalue) {
+          this.$emit('changed', {id:this.item.id, name:this.name, value:this.value});
+        }
       },
     }
   };

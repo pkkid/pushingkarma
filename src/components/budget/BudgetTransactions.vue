@@ -13,13 +13,13 @@
       </tr></thead>
       <tbody>
         <tr v-for='trx in transactions' :key='trx.id'>
-          <BudgetTableCell :cls='"account"' :init='trx.account.name' />
-          <BudgetTableCell :cls='"date"' :init='trx.date' :editable='true' />
-          <BudgetTableCell :cls='"payee"' :init='trx.payee' :editable='true' :selectall='true'/>
-          <BudgetTableCell :cls='"category"' :init='trx.category ? trx.category.name : ""' :editable='true' :selectall='true' :type='"select"'/>
-          <BudgetTableCell :cls='"amount blur"' :init='trx.amount' :editable='true' :type='"float"'/>
-          <BudgetTableCell :cls='"approved"' :init='trx.approved' :editable='true' :type='"bool"' :selectall='true'/>
-          <BudgetTableCell :cls='"comment"' :init='trx.comment' :editable='true' />
+          <BudgetTableCell :item='trx' :name='"account.name"'/>
+          <BudgetTableCell :item='trx' :name='"date"' :flags='"editable"' @changed='saveTransaction'/>
+          <BudgetTableCell :item='trx' :name='"payee"' :flags='"editable selectall"' @changed='saveTransaction'/>
+          <BudgetTableCell :item='trx' :name='"category.name"' :flags='"editable selectall"' @changed='saveTransaction'/>
+          <BudgetTableCell :item='trx' :name='"amount"' :flags='"usd"'/>
+          <BudgetTableCell :item='trx' :name='"approved"' :flags='"bool editable selectall"' @changed='saveTransaction'/>
+          <BudgetTableCell :item='trx' :name='"comment"' :flags='"editable"' @changed='saveTransaction'/>
         </tr>
       </tbody>
     </table>
@@ -33,9 +33,7 @@
 
   export default {
     name: 'BudgetTransactions',
-    components: {
-      BudgetTableCell,
-    },
+    components: {BudgetTableCell},
     data: () => ({
       cancelSearch: null,  // Cancel search token
     }),
@@ -61,6 +59,31 @@
         },
       }
     },
+    methods: {
+      saveTransaction: function(event) {
+        console.log(event);
+
+        // await api.Budget.saveTransaction(this.item.id, {
+        //   title: this.note.title,
+        //   tags: this.note.tags,
+        //   body: this.editor.getHTML()
+        // });
+
+        // data[name] = input.val();
+        // data = self.clean_data(data);
+        // var url = row.data('url');
+        // var xhr = self.request(item, url, method, data, {
+        //   done: function(data, textStatus, jqXHR) {
+        //     if (display) { self.item_display(item, data[name]); }
+        //     if (callback) { callback(); }
+        //   },
+        //   fail: function(jqXHR, textStatus, errorThrown) {
+        //     if (display) { self.item_display(item, data[name]); }
+        //   }
+        // });
+
+      },
+    },
   };
 </script>
 
@@ -75,7 +98,7 @@
       cursor: default;
       font-family: arial;
       font-size: 1.3rem;
-      padding: 1px;
+      padding: 1px 5px;
       text-align: left;
       div,input {
         border-radius: 2px;
@@ -86,10 +109,18 @@
         padding: 5px 5px;
         transition: background-color 0.2s ease;
         white-space: nowrap;
+        width: 100%;
       }
       input {
-        background-color: rgba(255,255,255,0.3);
+        background-color: rgba(0,0,0,0.1);
       }
+      &.account_name { width:8%; }
+      &.date { width:10%; }
+      &.payee { width:28%; }
+      &.category_name { width:22%; }
+      &.amount { width:10%; text-align:right; }
+      &.approved { width:2%; text-align:center; }
+      &.comment { width:22%; }
     }
   }
 </style>

@@ -24,6 +24,7 @@ export const Budget = {
   getCategories() { return axios.get('/api/categories'); },
   getTransactions(params, cancelToken) { return axios.get('/api/transactions', {params, cancelToken}); },
   getKeyVals() { axios.get('/api/keyval'); },
+  saveTransaction(id, data) { return axios.put(`/api/transactions/${id}`, data); },
   upload(data) { return axios.put('/api/transactions/upload', {data}); },
 };
 

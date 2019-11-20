@@ -31,7 +31,6 @@
   },
   "scripts": {
     "run-server": "addkeys.sh; npm-run-all -p vue-watch django-serve",
-    "open-chrome": "google-chrome http://localhost:8000",
     "django-serve": "~/.virtualenvs/pk/bin/python pk/manage.py runserver",
     "vue-build": "vue-cli-service build",
     "vue-lint": "vue-cli-service lint",
