@@ -27,8 +27,9 @@
 </template>
 
 <script>
-  import * as pathify from 'vuex-pathify';
+  import * as _ from 'lodash';
   import * as api from '@/api';
+  import * as pathify from 'vuex-pathify';
   import BudgetTableCell from './BudgetTableCell';
 
   export default {
@@ -60,28 +61,13 @@
       }
     },
     methods: {
-      saveTransaction: function(event) {
-        console.log(event);
-
-        // await api.Budget.saveTransaction(this.item.id, {
-        //   title: this.note.title,
-        //   tags: this.note.tags,
-        //   body: this.editor.getHTML()
-        // });
-
-        // data[name] = input.val();
-        // data = self.clean_data(data);
-        // var url = row.data('url');
-        // var xhr = self.request(item, url, method, data, {
-        //   done: function(data, textStatus, jqXHR) {
-        //     if (display) { self.item_display(item, data[name]); }
-        //     if (callback) { callback(); }
-        //   },
-        //   fail: function(jqXHR, textStatus, errorThrown) {
-        //     if (display) { self.item_display(item, data[name]); }
-        //   }
-        // });
-
+      // Save Transaction
+      // Update the specified 
+      saveTransaction: async function(id, change, callback) {
+        var {data:trx} = await api.Budget.patchTransaction(id, change);
+        var i = _.findIndex(this.transactions, {id:trx.id});
+        this.transactions[i] = trx;
+        if (callback) { callback(trx); }
       },
     },
   };

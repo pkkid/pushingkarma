@@ -26,7 +26,6 @@
     }),
     created: function() {
       this.value = utils.rget(this.item, this.name);
-
       this.cls = this.name.replace(/\./g, '_');
       this.editable = this.flags.includes('editable');
       this.selectall = this.flags.includes('selectall');
@@ -51,7 +50,10 @@
       changed: function() {
         this.editing = false;
         if (this.value != this.oldvalue) {
-          this.$emit('changed', {id:this.item.id, name:this.name, value:this.value});
+          var change = {[this.name]: this.value};
+          this.$emit('changed', this.item.id, change, function() {
+            console.log('callback!');
+          });
         }
       },
     }
