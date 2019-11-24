@@ -1,6 +1,6 @@
 <template>
   <td :class='[cls,{editing}]'>
-    <input v-if='editing' type='text' ref='input' v-model='value' 
+    <input v-if='editing' type='text' ref='input' :value='value' 
       @focus.prevent='oldvalue=$event.target.value'
       @blur='changed'/>
     <div v-else @dblclick.prevent='edit'>{{value}}</div>
@@ -36,7 +36,6 @@
       // Edit
       // Enable editing the selected cell.
       edit: async function() {
-        console.log(this.item);
         if (this.editable) {
           this.editing = this.editable;
           await Vue.nextTick();
@@ -47,13 +46,16 @@
 
       // Changed
       // Emit an event if the specified value changed
-      changed: function() {
-        this.editing = false;
-        if (this.value != this.oldvalue) {
-          var change = {[this.name]: this.value};
-          this.$emit('changed', this.item.id, change, function() {
-            console.log('callback!');
-          });
+      changed: async function(event) {
+        var self = this;
+        var newvalue = event.target.value;
+        if (newvalue != this.oldvalue) {
+          var data = {id:this.item.id, change:{[this.name]: newvalue}};
+          this.$emit('changed', {...data, callback:function(success) {
+            self.editing = false;
+            console.log(success);
+            if (success) { self.value = newvalue; }
+          }});
         }
       },
     }

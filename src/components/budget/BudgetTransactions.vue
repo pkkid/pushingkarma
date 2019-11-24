@@ -30,6 +30,7 @@
   import * as _ from 'lodash';
   import * as api from '@/api';
   import * as pathify from 'vuex-pathify';
+  import Vue from 'vue';
   import BudgetTableCell from './BudgetTableCell';
 
   export default {
@@ -63,11 +64,16 @@
     methods: {
       // Save Transaction
       // Update the specified 
-      saveTransaction: async function(id, change, callback) {
-        var {data:trx} = await api.Budget.patchTransaction(id, change);
-        var i = _.findIndex(this.transactions, {id:trx.id});
-        this.transactions[i] = trx;
-        if (callback) { callback(trx); }
+      saveTransaction: async function(event) {
+        try {
+          var promise = api.Budget.patchTransaction(event.id, event.change);
+          var {data:trx} = await promise;
+          var i = _.findIndex(this.transactions, {id:trx.id});
+          Vue.set(this.transactions, i, trx);
+          if (event.callback) { event.callback(true); }
+        } catch(err) {
+          if (event.callback) { event.callback(false); }
+        }
       },
     },
   };
