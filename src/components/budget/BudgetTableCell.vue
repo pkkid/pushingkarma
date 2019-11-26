@@ -1,5 +1,5 @@
 <template>
-  <td :class='[cls,{editing}]'>
+  <td :class='[cls,status,{editing}]'>
     <input v-if='editing' type='text' ref='input' :value='value' 
       @focus.prevent='oldvalue=$event.target.value'
       @blur='changed'/>
@@ -19,10 +19,11 @@
       flags: {default: ''},
     },
     data: () => ({
-      cls: null,
-      editing: false,
-      oldvalue: null,
-      value: null,
+      cls: null,        // static class to apply to this cell
+      editing: false,   // true when editing the cell
+      oldvalue: null,   // cached value to determine if changes made
+      status: null,     // success or error status when saving
+      value: null,      // current value of this cell
     }),
     created: function() {
       this.value = utils.rget(this.item, this.name);
@@ -32,6 +33,11 @@
       this.bool = this.flags.includes('bool');
       this.usd = this.flags.includes('usd');
     },
+    // watch: {
+    //   status: function() {
+    //     setTimeout(() => this.status = null, 500);
+    //   },
+    // },
     methods: {
       // Edit
       // Enable editing the selected cell.
@@ -51,11 +57,16 @@
         var newvalue = event.target.value;
         if (newvalue != this.oldvalue) {
           var data = {id:this.item.id, change:{[this.name]: newvalue}};
-          this.$emit('changed', {...data, callback:function(success) {
+          this.status = 'saving';
+          this.$emit('changed', data, function(success) {
             self.editing = false;
-            console.log(success);
-            if (success) { self.value = newvalue; }
-          }});
+            if (success) {
+              self.value = newvalue;
+              setTimeout(() => self.status = null, 500);
+            } else {
+              self.status = 'error';
+            }
+          });
         }
       },
     }
@@ -63,5 +74,12 @@
 </script>
 
 <style lang='scss'>
-
+  #budgettransactions {
+    td.saving div {
+      background-color: rgba(0,0,255,0.1);
+    }
+    td.error div {
+      background-color:rgba(150,0,0,0.1);
+    }
+  }
 </style>

@@ -64,15 +64,15 @@
     methods: {
       // Save Transaction
       // Update the specified 
-      saveTransaction: async function(event) {
+      saveTransaction: async function(event, callback) {
         try {
           var promise = api.Budget.patchTransaction(event.id, event.change);
           var {data:trx} = await promise;
           var i = _.findIndex(this.transactions, {id:trx.id});
           Vue.set(this.transactions, i, trx);
-          if (event.callback) { event.callback(true); }
+          if (callback) { callback(true); }
         } catch(err) {
-          if (event.callback) { event.callback(false); }
+          if (callback) { callback(false); }
         }
       },
     },
@@ -99,7 +99,7 @@
         margin: 0px;
         overflow-x: hidden;
         padding: 5px 5px;
-        transition: background-color 0.2s ease;
+        transition: background-color 1s ease;
         white-space: nowrap;
         width: 100%;
       }
