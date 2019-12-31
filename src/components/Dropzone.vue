@@ -37,9 +37,11 @@
       dragEnter: function(event) {
         event.preventDefault();
         event.stopPropagation();
-        if (this.first) { this.second = true; }
-        else { this.first = true; }
-        this.showOverlay = true;
+        if (event.dataTransfer.types.indexOf('Files') != -1) {
+          if (this.first) { this.second = true; }
+          else { this.first = true; }
+          this.showOverlay = true;
+        }
       },
       dragLeave: function(event) {
         event.preventDefault();

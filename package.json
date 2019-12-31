@@ -30,7 +30,7 @@
     "vue-template-compiler": "^2.5.21"
   },
   "scripts": {
-    "server": "addkeys.sh; npm-run-all -p vue-watch django-serve",
+    "server": "addkeys.sh; npm-run-all -p watch django",
     "django": "~/.virtualenvs/pk/bin/python pk/manage.py runserver",
     "build": "vue-cli-service build",
     "lint": "vue-cli-service lint",
