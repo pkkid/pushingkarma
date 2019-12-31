@@ -1,28 +1,30 @@
 <template>
   <div id='budgettransactions'>
     <h3>Budget Transactions {{account ? account.name : 'ALL'}}</h3>
-    <table cellpadding='0' cellspacing='0'>
-      <thead><tr>
-        <th class='account'><div>Bank</div></th>
-        <th class='date'><div>Date</div></th>
-        <th class='payee'><div>Payee</div></th>
-        <th class='category'><div>Category</div></th>
-        <th class='amount'><div>Amount</div></th>
-        <th class='approved'><div>X</div></th>
-        <th class='comment'><div>Comment</div></th>
-      </tr></thead>
-      <tbody>
-        <tr v-for='trx in transactions' :key='trx.id'>
-          <BudgetTableCell :item='trx' :name='"account.name"'/>
-          <BudgetTableCell :item='trx' :name='"date"' :flags='"editable"' @changed='saveTransaction'/>
-          <BudgetTableCell :item='trx' :name='"payee"' :flags='"editable selectall"' @changed='saveTransaction'/>
-          <BudgetTableCell :item='trx' :name='"category.name"' :flags='"editable selectall"' @changed='saveTransaction'/>
-          <BudgetTableCell :item='trx' :name='"amount"' :flags='"usd"'/>
-          <BudgetTableCell :item='trx' :name='"approved"' :flags='"bool editable selectall"' @changed='saveTransaction'/>
-          <BudgetTableCell :item='trx' :name='"comment"' :flags='"editable"' @changed='saveTransaction'/>
-        </tr>
-      </tbody>
-    </table>
+    <div class='tablewrap'>
+      <table cellpadding='0' cellspacing='0'>
+        <thead><tr>
+          <th class='account'><div>Bank</div></th>
+          <th class='date'><div>Date</div></th>
+          <th class='payee'><div>Payee</div></th>
+          <th class='category'><div>Category</div></th>
+          <th class='amount'><div>Amount</div></th>
+          <th class='approved'><div>X</div></th>
+          <th class='comment'><div>Comment</div></th>
+        </tr></thead>
+        <tbody>
+          <tr v-for='trx in transactions' :key='trx.id'>
+            <BudgetTableCell :item='trx' :name='"account.name"'/>
+            <BudgetTableCell :item='trx' :name='"date"' :flags='"editable"' @changed='saveTransaction'/>
+            <BudgetTableCell :item='trx' :name='"payee"' :flags='"editable selectall"' @changed='saveTransaction'/>
+            <BudgetTableCell :item='trx' :name='"category.name"' :flags='"editable selectall"' @changed='saveTransaction'/>
+            <BudgetTableCell :item='trx' :name='"amount"' :flags='"usd"'/>
+            <BudgetTableCell :item='trx' :name='"approved"' :flags='"bool editable selectall"' @changed='saveTransaction'/>
+            <BudgetTableCell :item='trx' :name='"comment"' :flags='"editable"' @changed='saveTransaction'/>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </template>
 
@@ -81,9 +83,27 @@
 
 <style lang='scss'>
   #budgettransactions {
+    padding: 10px 20px;
+
+    .tablewrap {
+      background-color: white;
+      border: 1px solid darken($lightbg-color, 20%);
+      border-radius: 2px;
+      box-shadow: 0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15);
+      padding: 20px 10px;
+      min-width: 1000px;
+    }
     table {
       width: 100%;
-      background-color: white;
+      color: #666;
+      th {
+        background-color: rgba(0,0,0,0.05);
+        border-top-left-radius: 2px;
+        border-top-right-radius: 2px;
+        font-size: 0.7em;
+        color: #222;
+        font-weight: 600;
+      }
     }
     th, td {
       border-bottom: 1px solid rgba(0,0,0,0.05);
@@ -114,5 +134,6 @@
       &.approved { width:2%; text-align:center; }
       &.comment { width:22%; }
     }
+
   }
 </style>
