@@ -19,6 +19,7 @@
   import * as _ from 'lodash';
   import * as api from '@/api';
   import * as pathify from 'vuex-pathify';
+  import * as utils from '@/utils/utils';
   import BudgetAccounts from './BudgetAccounts';
   import BudgetMonth from './BudgetMonth';
   import BudgetTransactions from './BudgetTransactions';
@@ -37,11 +38,21 @@
       Navigation
     },
     computed: {
+      account: pathify.sync('budget/account'),
       accounts: pathify.sync('budget/accounts'),
       categories: pathify.sync('budget/categories'),
       demo: pathify.sync('budget/demo'),
       transactions: pathify.sync('budget/transactions'),
       view: pathify.sync('budget/view'),
+    },
+    watch: {
+      view: function(view) {
+        utils.updateHistory(this.$router, {view});
+      },
+      account: function(account) {
+        var accountid = account ? account.id : null;
+        utils.updateHistory(this.$router, {account:accountid});
+      },
     },
 
     // Mounted
@@ -49,12 +60,17 @@
     mounted: async function() {
       this.$store.set('global/layout', 'topnav');
       this.demo = Boolean(this.$route.query.demo);
+      this.view = this.$route.query.view;
+      // Fetch accounts and categories
       var apromise = api.Budget.getAccounts();
       var cpromise = api.Budget.getCategories();
       var {data:adata} = await apromise;
       var {data:cdata} = await cpromise;
       this.accounts = _.fromPairs(adata.results.map(x => [x.id, x]));
       this.categories = _.fromPairs(cdata.results.map(x => [x.id, x]));
+      // Navigate to the account subtab
+      var accountid = this.$route.query.account;
+      if (accountid) { this.account = this.accounts[accountid]; }
     },
     
     methods: {

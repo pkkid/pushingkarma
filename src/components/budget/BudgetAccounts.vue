@@ -39,7 +39,7 @@
       accounts: function() {
         var balances = _.map(this.accounts, a => parseFloat(a.balance));
         this.balance = _.sum(balances).toFixed(2);
-      }
+      },
     }
   };
 </script>

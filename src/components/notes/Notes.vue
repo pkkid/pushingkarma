@@ -59,6 +59,7 @@
       note: pathify.sync('notes/note'),
       title: pathify.sync('notes/note@title'),
       userid: pathify.get('global/user@id'),
+      // key bindings
       keymap: function() { return {
         'f1': (event) => this.$refs.search.focus(event),
         'e': (event) => this.$refs.menubar.startEditing(event),
