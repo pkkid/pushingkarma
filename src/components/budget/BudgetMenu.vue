@@ -1,11 +1,20 @@
 <template>
   <div id='sidebar'>
-    <div class='menuitem' @click='view="budget"' :class='{highlighted:view=="budget"}'>
+    <!-- Budget -->
+    <div class='menuitem' @click='view="month"; account=null' :class='{highlighted:view=="month"}'>
       <i class='mdi mdi-email-outline'/>Budget
     </div>
+    <div class='submenu'>
+      <div class='submenuitem' :class='{highlighted:view=="year"}' @click='view="year"; account=null'>
+        <div class='name'>Past Year</div>
+        <div class='balance blur'>$00.00</div>
+        <div class='subtext'>00 transactions</div>
+      </div>
+    </div>
+    <!-- Accounts -->
     <div class='menuitem' @click='view="transactions"; account=null'
       :class='{highlighted:view=="transactions" && !account}'>
-      <i class='mdi mdi-bank-outline'/>All Accounts
+      <i class='mdi mdi-bank-outline'/>Transactions
     </div>
     <div class='submenu'>
       <div class='submenuitem account' v-for='acct in accounts' :key='acct.id'
@@ -26,7 +35,7 @@
   import * as pathify from 'vuex-pathify';
   
   export default {
-    name: 'BudgetAccounts',
+    name: 'BudgetMenu',
     data: () => ({
       balance: 0,
     }),
@@ -53,7 +62,7 @@
         float: left;
         padding-left: 32px;
       }
-      .updated {
+      .subtext {
         //font-size: 1.0rem; 
         clear: both;
         padding-left: 32px;

@@ -5,5 +5,5 @@ export default {
   categories: {},      // List of categories grouped by month
   demo: false,         // Set true to hide sensative values
   transactions: {},    // List transactions grouped by month
-  view: 'transactions',      // One of {budget, transactions}
+  view: 'month',       // One of {budget, transactions}
 };

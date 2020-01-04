@@ -1,12 +1,13 @@
 <template>
   <div id='budget' :class={demo}>
     <Navigation :cls="'topnav'" />
-    <BudgetAccounts/>
+    <BudgetMenu/>
     <div class='content'>
       <div class='budgetbg'>
         <Dropzone @filesDropped='upload'/>
         <transition name='fadein'>
-          <BudgetMonth v-if='view=="budget"' />
+          <BudgetMonth v-if='view=="month"' />
+          <BudgetYear v-else-if='view=="year"' />
           <BudgetTransactions v-else />
         </transition>
       </div>
@@ -20,8 +21,9 @@
   import * as api from '@/api';
   import * as pathify from 'vuex-pathify';
   import * as utils from '@/utils/utils';
-  import BudgetAccounts from './BudgetAccounts';
+  import BudgetMenu from './BudgetMenu';
   import BudgetMonth from './BudgetMonth';
+  import BudgetYear from './BudgetYear';
   import BudgetTransactions from './BudgetTransactions';
   import Dropzone from '@/components/Dropzone';
   import Footer from '@/components/site/Footer';
@@ -30,8 +32,9 @@
   export default {
     name: 'Budget',
     components: {
-      BudgetAccounts,
+      BudgetMenu,
       BudgetMonth,
+      BudgetYear,
       BudgetTransactions,
       Dropzone,
       Footer,
@@ -60,7 +63,7 @@
     mounted: async function() {
       this.$store.set('global/layout', 'topnav');
       this.demo = Boolean(this.$route.query.demo);
-      this.view = this.$route.query.view;
+      this.view = this.$route.query.view || 'month';
       // Fetch accounts and categories
       var apromise = api.Budget.getAccounts();
       var cpromise = api.Budget.getCategories();
