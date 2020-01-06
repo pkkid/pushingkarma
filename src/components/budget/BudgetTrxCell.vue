@@ -40,7 +40,7 @@
     },
     created: function() {
       this.value = utils.rget(this.item, this.name);
-      if (this.display == 'bool') { this.value = this.value ? 'x' : ''; }
+      if (this.display == 'bool') { this.value = this.value ? 'x' : '-'; }
       this.cls = this.name.replace(/\./g, '_');
     },
     methods: {
@@ -82,11 +82,7 @@
 
 <style lang='scss'>
   #budgettransactions {
-    td.saving div {
-      background-color: rgba(0,0,255,0.1);
-    }
-    td.error div {
-      background-color:rgba(150,0,0,0.1);
-    }
+    td.saving div { background-color: rgba(0,0,255,0.1); }
+    td.error div { background-color:rgba(150,0,0,0.1); }
   }
 </style>

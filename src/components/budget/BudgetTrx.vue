@@ -8,8 +8,8 @@
           <th class='date'><div>Date</div></th>
           <th class='payee'><div>Payee</div></th>
           <th class='category'><div>Category</div></th>
-          <th class='amount'><div>Amount</div></th>
-          <th class='approved'><div>X</div></th>
+          <th class='amount usdint'><div>Amount</div></th>
+          <th class='approved bool'><div>X</div></th>
           <th class='comment'><div>Comment</div></th>
         </tr></thead>
         <tbody>
@@ -95,7 +95,7 @@
       font-size: 1.3rem;
       padding: 1px 5px;
       text-align: left;
-      div,input {
+      div, input {
         border-radius: 2px;
         border-width: 0px;
         line-height: 1.3em;
@@ -109,12 +109,16 @@
       input {
         background-color: rgba(0,0,0,0.1);
       }
+      // Column types
+      &.bool, &.bool input { text-align: center; }
+      &.usdint, &.usdint input { text-align: right; }
+      // Specific column widths
       &.account_name { width:8%; }
       &.date { width:10%; }
       &.payee { width:28%; }
       &.category_name { width:22%; }
-      &.amount { width:10%; text-align:right; }
-      &.approved { width:2%; text-align:center; }
+      &.amount { width:10%; }
+      &.approved { width:2%; }
       &.comment { width:22%; }
     }
 
