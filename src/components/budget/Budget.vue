@@ -8,7 +8,7 @@
         <transition name='fadein'>
           <BudgetMonth v-if='view=="month"' />
           <BudgetYear v-else-if='view=="year"' />
-          <BudgetTransactions v-else />
+          <BudgetTrx v-else />
         </transition>
       </div>
       <Footer/>
@@ -24,7 +24,7 @@
   import BudgetMenu from './BudgetMenu';
   import BudgetMonth from './BudgetMonth';
   import BudgetYear from './BudgetYear';
-  import BudgetTransactions from './BudgetTransactions';
+  import BudgetTrx from './BudgetTrx';
   import Dropzone from '@/components/Dropzone';
   import Footer from '@/components/site/Footer';
   import Navigation from '@/components/site/Navigation';
@@ -35,7 +35,7 @@
       BudgetMenu,
       BudgetMonth,
       BudgetYear,
-      BudgetTransactions,
+      BudgetTrx,
       Dropzone,
       Footer,
       Navigation

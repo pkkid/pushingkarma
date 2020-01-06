@@ -14,13 +14,13 @@
         </tr></thead>
         <tbody>
           <tr v-for='trx in transactions' :key='trx.id'>
-            <BudgetTableCell :item='trx' :name='"account.name"'/>
-            <BudgetTableCell :item='trx' :name='"date"' :flags='"editable"' @changed='saveTransaction'/>
-            <BudgetTableCell :item='trx' :name='"payee"' :flags='"editable selectall"' @changed='saveTransaction'/>
-            <BudgetTableCell :item='trx' :name='"category.name"' :flags='"editable selectall"' @changed='saveTransaction'/>
-            <BudgetTableCell :item='trx' :name='"amount"' :flags='"usd"'/>
-            <BudgetTableCell :item='trx' :name='"approved"' :flags='"bool editable selectall"' @changed='saveTransaction'/>
-            <BudgetTableCell :item='trx' :name='"comment"' :flags='"editable"' @changed='saveTransaction'/>
+            <BudgetTrxCell :item='trx' :name='"account.name"'/>
+            <BudgetTrxCell :item='trx' :name='"date"' :flags='"editable"' @changed='saveTransaction'/>
+            <BudgetTrxCell :item='trx' :name='"payee"' :flags='"editable selectall"' @changed='saveTransaction'/>
+            <BudgetTrxCell :item='trx' :name='"category.name"' :flags='"editable selectall"' @changed='saveTransaction'/>
+            <BudgetTrxCell :item='trx' :name='"amount"' :flags='"usd"'/>
+            <BudgetTrxCell :item='trx' :name='"approved"' :flags='"bool editable selectall"' @changed='saveTransaction'/>
+            <BudgetTrxCell :item='trx' :name='"comment"' :flags='"editable"' @changed='saveTransaction'/>
           </tr>
         </tbody>
       </table>
@@ -33,11 +33,11 @@
   import * as api from '@/api';
   import * as pathify from 'vuex-pathify';
   import Vue from 'vue';
-  import BudgetTableCell from './BudgetTableCell';
+  import BudgetTrxCell from './BudgetTrxCell';
 
   export default {
     name: 'BudgetTransactions',
-    components: {BudgetTableCell},
+    components: {BudgetTrxCell},
     data: () => ({
       cancelSearch: null,  // Cancel search token
     }),
