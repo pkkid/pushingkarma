@@ -33,10 +33,10 @@
       let self = this;
       let globals = JSON.parse(document.getElementById('globals').textContent);
       gapi.load('auth2', function() {
-        self.gauth = gapi.auth2.init({
-          client_id: globals.GOOGLE_CLIENTID,
-          scope: globals.GOOGLE_SCOPES
-        });
+       self.gauth = gapi.auth2.init({
+         client_id: globals.GOOGLE_CLIENTID,
+         scope: globals.GOOGLE_SCOPES
+       });
       });
     }
   };

@@ -15,12 +15,12 @@
         <tbody>
           <tr v-for='trx in transactions' :key='trx.id'>
             <BudgetTrxCell :item='trx' :name='"account.name"'/>
-            <BudgetTrxCell :item='trx' :name='"date"' :flags='"editable"' @changed='saveTransaction'/>
-            <BudgetTrxCell :item='trx' :name='"payee"' :flags='"editable selectall"' @changed='saveTransaction'/>
-            <BudgetTrxCell :item='trx' :name='"category.name"' :flags='"editable selectall"' @changed='saveTransaction'/>
-            <BudgetTrxCell :item='trx' :name='"amount"' :flags='"usd"'/>
-            <BudgetTrxCell :item='trx' :name='"approved"' :flags='"bool editable selectall"' @changed='saveTransaction'/>
-            <BudgetTrxCell :item='trx' :name='"comment"' :flags='"editable"' @changed='saveTransaction'/>
+            <BudgetTrxCell :item='trx' :name='"date"' editable/>
+            <BudgetTrxCell :item='trx' :name='"payee"' editable/>
+            <BudgetTrxCell :item='trx' :name='"category.name"' editable selectall/>
+            <BudgetTrxCell :item='trx' :name='"amount"' :display='"usdint"'/>
+            <BudgetTrxCell :item='trx' :name='"approved"' :display='"bool"' editable selectall />
+            <BudgetTrxCell :item='trx' :name='"comment"' editable/>
           </tr>
         </tbody>
       </table>
@@ -29,10 +29,8 @@
 </template>
 
 <script>
-  import * as _ from 'lodash';
   import * as api from '@/api';
   import * as pathify from 'vuex-pathify';
-  import Vue from 'vue';
   import BudgetTrxCell from './BudgetTrxCell';
 
   export default {
@@ -62,21 +60,6 @@
           }
         },
       }
-    },
-    methods: {
-      // Save Transaction
-      // Update the specified 
-      saveTransaction: async function(event, callback) {
-        try {
-          var promise = api.Budget.patchTransaction(event.id, event.change);
-          var {data:trx} = await promise;
-          var i = _.findIndex(this.transactions, {id:trx.id});
-          Vue.set(this.transactions, i, trx);
-          if (callback) { callback(true); }
-        } catch(err) {
-          if (callback) { callback(false); }
-        }
-      },
     },
   };
 </script>

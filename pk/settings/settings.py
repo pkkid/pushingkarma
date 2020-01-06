@@ -114,7 +114,9 @@ REST_FRAMEWORK = {
 
 # Django Redis Sessions
 SESSION_ENGINE = 'redis_sessions.session'
-SESSION_COOKIE_AGE = 7776000  # 90 days
+SESSION_COOKIE_AGE = 7776000            # 90 days
+SESSION_COOKIE_SAMESITE = 'Strict'      # Prevents sending to cross-site domains
+CSRF_COOKIE_SAMESITE = 'Strict'         # Prevents sending to cross-site domains
 
 # Django Websockets Redis
 WEBSOCKET_URL = '/ws/'
