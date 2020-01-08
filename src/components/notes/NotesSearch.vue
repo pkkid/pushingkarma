@@ -83,7 +83,7 @@
 
     // Created
     // Initialize noteid and search from URL
-    created: function() {
+    mounted: function() {
       var noteid = this.$route.query.noteid;
       if (noteid) { this.$emit('newSelection', noteid); }
       this.search = _.trim(this.search || this.$route.query.search || '');

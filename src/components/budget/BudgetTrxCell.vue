@@ -38,7 +38,7 @@
     computed: {
       transactions: pathify.sync('budget/transactions'),
     },
-    created: function() {
+    mounted: function() {
       this.value = utils.rget(this.item, this.name);
       if (this.display == 'bool') { this.value = this.value ? 'x' : '-'; }
       this.cls = this.name.replace(/\./g, '_');

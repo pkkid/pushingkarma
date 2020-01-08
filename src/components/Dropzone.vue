@@ -19,7 +19,7 @@
 
     // Created / Destroyed
     // Bind and unbind the drag events when component active
-    created: function() {
+    mounted: function() {
       document.addEventListener('dragover', this.dragEnter);
       document.addEventListener('dragleave', this.dragLeave);
       document.addEventListener('drop', this.dropFile);

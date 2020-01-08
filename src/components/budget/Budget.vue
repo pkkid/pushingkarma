@@ -45,7 +45,6 @@
       accounts: pathify.sync('budget/accounts'),
       categories: pathify.sync('budget/categories'),
       demo: pathify.sync('budget/demo'),
-      transactions: pathify.sync('budget/transactions'),
       view: pathify.sync('budget/view'),
     },
     watch: {
