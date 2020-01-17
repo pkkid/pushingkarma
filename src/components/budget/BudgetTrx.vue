@@ -7,20 +7,20 @@
           <th class='account'><div>Bank</div></th>
           <th class='date'><div>Date</div></th>
           <th class='payee'><div>Payee</div></th>
-          <th class='category'><div>Category</div></th>
+          <th class='category_name'><div>Category</div></th>
           <th class='amount usdint'><div>Amount</div></th>
           <th class='approved bool'><div>X</div></th>
           <th class='comment'><div>Comment</div></th>
         </tr></thead>
         <tbody>
           <tr v-for='trx in transactions' :key='trx.id'>
-            <BudgetTrxCell :item='trx' :name='"account.name"'/>
-            <BudgetTrxCell :item='trx' :name='"date"' editable/>
-            <BudgetTrxCell :item='trx' :name='"payee"' editable/>
-            <BudgetTrxCell :item='trx' :name='"category.name"' editable selectall/>
-            <BudgetTrxCell :item='trx' :name='"amount"' :display='"usdint"'/>
-            <BudgetTrxCell :item='trx' :name='"approved"' :display='"bool"' editable selectall />
-            <BudgetTrxCell :item='trx' :name='"comment"' editable/>
+            <BudgetTrxCell :item='trx' @updated='updatetrx' :name='"account.name"'/>
+            <BudgetTrxCell :item='trx' @updated='updatetrx' :name='"date"' editable/>
+            <BudgetTrxCell :item='trx' @updated='updatetrx' :name='"payee"' editable/>
+            <BudgetTrxCell :item='trx' @updated='updatetrx' :name='"category.name"' :choices='catnames' editable selectall/>
+            <BudgetTrxCell :item='trx' @updated='updatetrx' :name='"amount"' :display='"usdint"'/>
+            <BudgetTrxCell :item='trx' @updated='updatetrx' :name='"approved"' :display='"bool"' editable selectall />
+            <BudgetTrxCell :item='trx' @updated='updatetrx' :name='"comment"' editable/>
           </tr>
         </tbody>
       </table>
@@ -29,38 +29,60 @@
 </template>
 
 <script>
+  import * as _ from 'lodash';
   import * as api from '@/api';
   import * as pathify from 'vuex-pathify';
   import BudgetTrxCell from './BudgetTrxCell';
+  import Vue from 'vue';
 
   export default {
     name: 'BudgetTransactions',
     components: {BudgetTrxCell},
     data: () => ({
-      cancelSearch: null,  // Cancel search token
+      cancelSearch: null,   // Cancel search token
+      transactions: {},     // Displayed transactions
+      catnames: [],         // List of category names
     }),
     computed: {
-      account: pathify.sync('budget/account'),
-      transactions: pathify.sync('budget/transactions'),
+      account: pathify.get('budget/account'),
+      categories: pathify.get('budget/categories'),
     },
+
     watch: {
       // Watch Account
-      // update transactions
       account: {
         immediate: true,
-        handler: async function(account) {
-          this.cancelSearch = api.cancel(this.cancelSearch);
-          var token = this.cancelSearch.token;
-          try {
-            var params = account ? {search:`bank:"${account.name}"`} : null;
-            var {data} = await api.Budget.getTransactions(params, token);
-            this.transactions = data.results;
-          } catch(err) {
-            if (!api.isCancel(err)) { throw(err); }
-          }
-        },
-      }
+        handler: function() { this.update_transactions(); },
+      },
+      // Watch Categories
+      categories: function() {
+        this.catnames = _.map(this.categories, 'name');
+      },
     },
+    
+    methods: {
+      // Update Transactions
+      // Search for and update the list of displayed transactions
+      update_transactions: async function() {
+        this.cancelSearch = api.cancel(this.cancelSearch);
+        var token = this.cancelSearch.token;
+        try {
+          var params = this.account ? {search:`bank:"${this.account.name}"`} : null;
+          var {data} = await api.Budget.getTransactions(params, token);
+          this.transactions = data.results;
+        } catch(err) {
+          if (!api.isCancel(err)) { throw(err); }
+        }
+      },
+      
+      // Update Transaction
+      // Callback called when a single transaction has been updated
+      updatetrx: function(trx) {
+        var i = _.findIndex(this.transactions, {id:trx.id});
+        Vue.set(this.transactions, i, trx);
+      },
+    },
+
   };
 </script>
 
@@ -99,6 +121,7 @@
         border-radius: 2px;
         border-width: 0px;
         line-height: 1.3em;
+        min-height: 26px;
         margin: 0px;
         overflow-x: hidden;
         padding: 5px 5px;
@@ -109,9 +132,11 @@
       input {
         background-color: rgba(0,0,0,0.1);
       }
+      
       // Column types
       &.bool, &.bool input { text-align: center; }
       &.usdint, &.usdint input { text-align: right; }
+      
       // Specific column widths
       &.account_name { width:8%; }
       &.date { width:10%; }
@@ -120,6 +145,10 @@
       &.amount { width:10%; }
       &.approved { width:2%; }
       &.comment { width:22%; }
+      
+      // Saving and Errors
+      &.saving div { background-color: rgba(0,0,255,0.1); }
+      &.error div { background-color:rgba(150,0,0,0.1); }
     }
 
   }

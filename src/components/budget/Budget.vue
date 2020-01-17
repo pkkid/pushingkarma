@@ -31,15 +31,8 @@
   
   export default {
     name: 'Budget',
-    components: {
-      BudgetMenu,
-      BudgetMonth,
-      BudgetYear,
-      BudgetTrx,
-      Dropzone,
-      Footer,
-      Navigation
-    },
+    components: {BudgetMenu, BudgetMonth, BudgetYear,
+      BudgetTrx, Dropzone, Footer, Navigation},
     computed: {
       account: pathify.sync('budget/account'),
       accounts: pathify.sync('budget/accounts'),
@@ -59,7 +52,7 @@
 
     // Mounted
     // Setup navigation, demo, accounts
-    mounted: async function() {
+    created: async function() {
       this.$store.set('global/layout', 'topnav');
       this.demo = Boolean(this.$route.query.demo);
       this.view = this.$route.query.view || 'month';
