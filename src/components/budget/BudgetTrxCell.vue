@@ -2,12 +2,12 @@
   <td :class='[display,status]' class='trxcell'>
     <!-- Display input or div -->
     <input v-if='status == EDITING' type='text' ref='input' v-model='value'
-      @focus.prevent='oldvalue=$event.target.value' @blur='save'/>
+      @focus.prevent='oldvalue=$event.target.value' v-click-outside='save'/>
     <div v-else-if='display == "usdint"' @dblclick.prevent='edit'>{{value | usdint}}</div>
     <div v-else @dblclick.prevent='edit'>{{value}}</div>
     <!-- Display choices if applicable -->
     <ul v-if='fchoices.length && status == EDITING' class='choices'>
-      <li v-for='choice in fchoices' :key='choice'>{{choice}}</li>
+      <li v-for='choice in fchoices' :key='choice' class='choice'>{{choice}}</li>
     </ul>
   </td>
 </template>
@@ -60,7 +60,7 @@
         if ((this.choices) && (this.status == this.EDITING)) {
           if (this.value == '') {
             this.fchoices = this.choices;
-          } else if (this.lchoices.indexOf(value) >= 0) {
+          } else if (this.lchoices.indexOf(value.toLowerCase()) >= 0) {
             this.fchoices = [];
           } else {
             var result = fuzzysort.go(value, this.ichoices, {key:'name'});
@@ -84,8 +84,11 @@
 
       // Changed
       // Emit an event if the specified value changed
-      save: async function() {
-        if (this.value != this.oldvalue) {
+      save: async function(event) {
+        console.log(event);
+        if (event.target.className == 'choice') {
+          this.value = event.target.textContent;
+        } else if (this.value != this.oldvalue) {
           try {
             var change = {[this.name]: this.value};
             var {data} = await api.Budget.patchTransaction(this.item.id, change);
