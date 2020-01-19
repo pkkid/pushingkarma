@@ -17,7 +17,6 @@
 </template>
 
 <script>
-  import * as _ from 'lodash';
   import * as api from '@/api';
   import * as pathify from 'vuex-pathify';
   import * as utils from '@/utils/utils';
@@ -61,8 +60,8 @@
       var cpromise = api.Budget.getCategories();
       var {data:adata} = await apromise;
       var {data:cdata} = await cpromise;
-      this.accounts = _.fromPairs(adata.results.map(x => [x.id, x]));
-      this.categories = _.fromPairs(cdata.results.map(x => [x.id, x]));
+      this.accounts = adata.results;
+      this.categories = cdata.results;
       // Navigate to the account subtab
       var accountid = this.$route.query.account;
       if (accountid) { this.account = this.accounts[accountid]; }

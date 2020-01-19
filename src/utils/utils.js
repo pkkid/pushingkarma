@@ -73,6 +73,22 @@ export function rget(obj, property, delim) {
   return undefined;
 }
 
+// Recursive Set
+// Recursilvely set a value from a delimited string
+export function rset(object, property, value) {
+  var parts = property.split('.');
+  var current = parts.shift();
+  var pointer = object;
+  while (parts.length > 0) {
+    if (pointer[current] === undefined)
+      pointer[current] = {};
+    pointer = pointer[current];
+    current = parts.shift();
+  }
+  pointer[current] = value;
+  return object;
+}
+
 
 // String Format
 // Format the specified template with the key/value object mapping.

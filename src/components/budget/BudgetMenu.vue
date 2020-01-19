@@ -36,20 +36,12 @@
   
   export default {
     name: 'BudgetMenu',
-    data: () => ({
-      balance: 0,
-    }),
     computed: {
       view: pathify.sync('budget/view'),
       account: pathify.sync('budget/account'),
       accounts: pathify.sync('budget/accounts'),
+      balance: function() { return _.sumBy(this.accounts, a => parseFloat(a.balance)).toFixed(2); },
     },
-    watch: {
-      accounts: function() {
-        var balances = _.map(this.accounts, a => parseFloat(a.balance));
-        this.balance = _.sum(balances).toFixed(2);
-      },
-    }
   };
 </script>
 

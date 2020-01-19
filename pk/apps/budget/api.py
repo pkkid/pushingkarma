@@ -150,10 +150,10 @@ class TransactionSerializer(DynamicFieldsSerializer):
     def update(self, instance, validated_data):
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
-        if 'category' in self.context['request'].POST:
-            category_name = self.context['request'].POST['category']
+        category_name = self.context['request'].data.get('category_name')
+        if category_name:
             category = utils.get_object_or_none(Category, name=category_name)
-            if category_name and not category:
+            if not category:
                 raise ValidationError("Unknown category '%s'." % category_name)
             instance.category = category
         instance.save()
@@ -191,28 +191,6 @@ class TransactionsViewSet(viewsets.ModelViewSet):
         for fileobj in request.FILES.values():
             trxmanager.import_qfx(fileobj.name, fileobj.file)
         return Response(trxmanager.get_status())
-
-
-class TransactionSerializer(DynamicFieldsSerializer):
-    account = PartialFieldsSerializer(AccountSerializer, ('url','name'))
-    category = PartialFieldsSerializer(CategorySerializer, ('url','name','budget'))
-
-    class Meta:
-        model = Transaction
-        fields = ('id','url','trxid','date','payee','amount','approved',
-            'memo','comment','account','category')
-
-    def update(self, instance, validated_data):
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-        if 'category' in self.context['request'].POST:
-            category_name = self.context['request'].POST['category']
-            category = utils.get_object_or_none(Category, name=category_name)
-            if category_name and not category:
-                raise ValidationError("Unknown category '%s'." % category_name)
-            instance.category = category
-        instance.save()
-        return instance
 
 
 class KeyValueSerializer(DynamicFieldsSerializer):
