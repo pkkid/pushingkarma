@@ -101,6 +101,14 @@ export function sfmt(str, vars) {
   return str;
 }
 
+
+// String to Bool
+// Convert string to a boolean
+export function strToBool(value) {
+  return ['yes','y','true','t','x'].indexOf(value) >= 0;
+}
+
+
 // Update History
 // Update the address bar history.
 export function updateHistory(router, changes) {

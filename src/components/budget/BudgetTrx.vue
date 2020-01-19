@@ -14,13 +14,13 @@
         </tr></thead>
         <tbody>
           <tr v-for='trx in transactions' :key='trx.id'>
-            <BudgetTrxCell :item='trx' @updated='updatetrx' :name='"account.name"'/>
-            <BudgetTrxCell :item='trx' @updated='updatetrx' :name='"date"' editable/>
-            <BudgetTrxCell :item='trx' @updated='updatetrx' :name='"payee"' editable/>
-            <BudgetTrxCell :item='trx' @updated='updatetrx' :name='"category.name"' :choices='categories' editable selectall/>
-            <BudgetTrxCell :item='trx' @updated='updatetrx' :name='"amount"' :display='"usdint"'/>
-            <BudgetTrxCell :item='trx' @updated='updatetrx' :name='"approved"' :display='"bool"' editable selectall />
-            <BudgetTrxCell :item='trx' @updated='updatetrx' :name='"comment"' editable/>
+            <BudgetTrxCell :item='trx' :name='"account.name"'/>
+            <BudgetTrxCell @updated='updatetrx' :item='trx' :name='"date"' editable/>
+            <BudgetTrxCell @updated='updatetrx' :item='trx' :name='"payee"' editable/>
+            <BudgetTrxCell @updated='updatetrx' :item='trx' :name='"category.name"' :choices='categories' editable selectall/>
+            <BudgetTrxCell :item='trx' :name='"amount"' :display='"usdint"'/>
+            <BudgetTrxCell @updated='updatetrx' :item='trx' :name='"approved"' :display='"bool"' editable selectall />
+            <BudgetTrxCell @updated='updatetrx' :item='trx' :name='"comment"' editable/>
           </tr>
         </tbody>
       </table>
@@ -51,6 +51,11 @@
     },
     
     methods: {
+      
+      click_cell: function() {
+        return null;
+      },
+
       // Update Transactions
       // Search for and update the list of displayed transactions
       update_transactions: async function() {

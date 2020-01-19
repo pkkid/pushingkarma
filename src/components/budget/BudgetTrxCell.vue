@@ -49,9 +49,10 @@
       highlighted: 0,                 // Current highlighted choice
     }),
     computed: {
+      bool: function() { return this.display == 'bool'; },
       editing: function() { return this.status == EDITING; },
-      showchoices: function() { return this.editing && this.fchoices.length; },
       lowerchoices: function() { return this.choices.map(c => c.name.toLowerCase()); },
+      showchoices: function() { return this.editing && this.fchoices.length; },
       fchoices: function() {
         if (!this.editing) { return []; }
         if (this.value == '') { return this.choices; }
@@ -59,10 +60,13 @@
         var result = fuzzysort.go(this.value, this.choices, {key:'name'});
         return result.map(x => x.obj);
       },
+      sendvalue: function() {
+        if (this.bool) { return utils.strToBool(this.value) ? true : false; }
+        return this.value;
+      },
     },
     mounted: function() {
-      this.value = utils.rget(this.item, this.name);
-      if (this.display == 'bool') { this.value = this.value ? 'x' : '-'; }
+      this.setValue(this.item);
       this.cls = this.name.replace(/\./g, '_');
     },
 
@@ -95,11 +99,11 @@
           this.value = _.trim(this.fchoices[this.highlighted].name);
         } else if (this.value != this.oldvalue) {
           try {
-            var change = utils.rset({}, this.name.replace('.','_'), this.value);
+            var change = utils.rset({}, this.name.replace('.','_'), this.sendvalue);
             var {data} = await api.Budget.patchTransaction(this.item.id, change);
             this.status = SAVING;
             this.$emit('updated', data);
-            this.value = this.value;
+            this.setValue(data);
             setTimeout(() => this.status = this.DEFAULT, 500);
           } catch(err) {
             this.status = ERROR;
@@ -116,6 +120,13 @@
         newvalue = Math.max(newvalue, 0);
         newvalue = Math.min(newvalue, this.fchoices.length - 1);
         this.highlighted = newvalue;
+      },
+
+      // Set Value
+      // Set the value from the data and passed in name
+      setValue: function(data) {
+        this.value = utils.rget(data, this.name);
+        if (this.bool) { this.value = this.value ? 'x' : '-'; }
       },
 
     }
