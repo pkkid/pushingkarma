@@ -1,5 +1,5 @@
 <template>
-  <div id='budgettransactions'>
+  <div id='budgettransactions' v-hotkey='keymap'>
     <h3>Budget Transactions {{account ? account.name : 'ALL'}}</h3>
     <div class='tablewrap'>
       <table cellpadding='0' cellspacing='0'>
@@ -13,14 +13,14 @@
           <th class='comment'><div>Comment</div></th>
         </tr></thead>
         <tbody>
-          <tr v-for='trx in transactions' :key='trx.id'>
+          <tr v-for='(trx,i) in transactions' :key='trx.id'>
             <BudgetTrxCell :item='trx' :name='"account.name"'/>
-            <BudgetTrxCell @updated='updatetrx' :item='trx' :name='"date"' editable/>
-            <BudgetTrxCell @updated='updatetrx' :item='trx' :name='"payee"' editable/>
-            <BudgetTrxCell @updated='updatetrx' :item='trx' :name='"category.name"' :choices='categories' editable selectall/>
+            <BudgetTrxCell @updated='updatetrx' :item='trx' :cell='cell(i,1)' :name='"date"' editable/>
+            <BudgetTrxCell @updated='updatetrx' :item='trx' :cell='cell(i,2)' :name='"payee"' editable/>
+            <BudgetTrxCell @updated='updatetrx' :item='trx' :cell='cell(i,3)' :name='"category.name"' :choices='categories' editable selectall/>
             <BudgetTrxCell :item='trx' :name='"amount"' :display='"usdint"'/>
-            <BudgetTrxCell @updated='updatetrx' :item='trx' :name='"approved"' :display='"bool"' editable selectall />
-            <BudgetTrxCell @updated='updatetrx' :item='trx' :name='"comment"' editable/>
+            <BudgetTrxCell @updated='updatetrx' :item='trx' :cell='cell(i,4)' :name='"approved"' :display='"bool"' editable selectall />
+            <BudgetTrxCell @updated='updatetrx' :item='trx' :cell='cell(i,5)' :name='"comment"' editable/>
           </tr>
         </tbody>
       </table>
@@ -34,6 +34,7 @@
   import * as pathify from 'vuex-pathify';
   import BudgetTrxCell from './BudgetTrxCell';
   import Vue from 'vue';
+  var EDITCOLUMNS = 5;
 
   export default {
     name: 'BudgetTransactions',
@@ -43,17 +44,35 @@
       transactions: {},     // Displayed transactions
     }),
     computed: {
+      hover: pathify.sync('budget/hover'),
+      selected: pathify.sync('budget/selected'),
       account: pathify.get('budget/account'),
       categories: pathify.get('budget/categories'),
+      // key bindings
+      keymap: function() { return {
+        'tab': (event) => this.moveHover(event, 1),
+        'shift+tab': (event) => this.moveHover(event, -1),
+        'enter': (event) => this.moveHover(event, EDITCOLUMNS),
+        'up': (event) => this.moveHover(event, -EDITCOLUMNS),
+        'left': (event) => this.moveHover(event, -1),
+        'down': (event) => this.moveHover(event, EDITCOLUMNS),
+        'right': (event) => this.moveHover(event, 1),
+      };},
     },
     watch: {
       account: {immediate:true, handler:function() { this.update_transactions(); }},
     },
     
-    methods: {
-      
+    methods: {      
+      cell: function(r, c) { return (r * EDITCOLUMNS) + c; },
+
       click_cell: function() {
         return null;
+      },
+
+      moveHover: function(event, inc) {
+        event.preventDefault();
+        this.hover += inc;
       },
 
       // Update Transactions
@@ -110,22 +129,30 @@
       cursor: default;
       font-family: arial;
       font-size: 1.3rem;
-      padding: 1px 5px;
+      padding: 0px 5px;
       text-align: left;
       div, input {
         border-radius: 2px;
-        border-width: 0px;
+        border: 2px solid transparent;
         line-height: 1.3em;
         min-height: 26px;
         margin: 0px;
         overflow-x: hidden;
-        padding: 5px 5px;
-        transition: background-color 1s ease;
+        padding: 4px 3px;
+        //transition: background-color 1s ease;
         white-space: nowrap;
         width: 100%;
+        &.hover {
+          border-radius: 5px;
+          border: 2px solid rgba(#458588, 0.2);
+          background-color: rgba(#458588, 0.1);
+        }
       }
       input {
-        background-color: rgba(0,0,0,0.1);
+        //background-color: rgba(0,0,0,0.05);
+        border: 2px solid rgba(#458588, 0.5) !important;
+        border-radius: 5px;
+        box-shadow: 0 2px 6px 2px rgba(60,64,67,.15);
       }
       
       // Column types

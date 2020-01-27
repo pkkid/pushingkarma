@@ -1,14 +1,15 @@
 <template>
   <td :class='[display,status]' class='trxcell'>
     <!-- Display input or div -->
-    <input v-if='editing' type='text' ref='input' v-model='value'
-      @focus.prevent='oldvalue=$event.target.value' v-click-outside='save' 
+    <input v-if='editing' type='text' ref='input' v-model='value' :class='{hover:hover==cell}'
+      @focus.prevent='oldvalue=$event.target.value'
       @keyup.enter.prevent='save'
       @keyup.esc.prevent='cancel'
       @keyup.up.prevent='setHighlighted(-1)'
-      @keyup.down.prevent='setHighlighted(+1)'/>
-    <div v-else-if='display == "usdint"' @dblclick.prevent='edit'>{{value | usdint}}</div>
-    <div v-else @dblclick.prevent='edit'>{{value}}</div>
+      @keyup.down.prevent='setHighlighted(+1)'
+      v-click-outside='save' />
+    <div v-else-if='display == "usdint"' @click='click' @dblclick.prevent='edit' :class='{hover:hover==cell}'>{{value | usdint}}</div>
+    <div v-else @click='click' @dblclick.prevent='edit' :class='{hover:hover==cell}'>{{value}}</div>
     <!-- Display choices if applicable -->
     <ul v-if='showchoices' class='choices'>
       <li v-for='(c, i) in fchoices' :key='c.id' class='choice'
@@ -23,6 +24,7 @@
   import * as _ from 'lodash';
   import * as api from '@/api';
   import * as utils from '@/utils/utils';
+  import * as pathify from 'vuex-pathify';
   import fuzzysort from 'fuzzysort';
   import Vue from 'vue';
 
@@ -41,6 +43,7 @@
       display: {default: ''},         // Display type: usdint, bool
       editable: {type: Boolean},      // Cell id editable
       selectall: {type: Boolean},     // Selectall text when editing
+      cell: {default: 'x'},           // Cell ID
     },
     data: () => ({
       status: 'default',              // See constants above
@@ -49,6 +52,8 @@
       highlighted: 0,                 // Current highlighted choice
     }),
     computed: {
+      hover: pathify.sync('budget/hover'),
+      selected: pathify.sync('budget/selected'),
       bool: function() { return this.display == 'bool'; },
       editing: function() { return this.status == EDITING; },
       lowerchoices: function() { return this.choices.map(c => c.name.toLowerCase()); },
@@ -71,6 +76,16 @@
     },
 
     methods: {
+      // Click
+      // Click a non-editing cell
+      click: function() {
+        var cell = this.cell;
+        if (this.cell != 'x') {
+          this.hover = cell;
+          this.selected.push(cell);
+        }
+      },
+      
       // Edit
       // Enable editing the selected cell.
       edit: async function() {
@@ -136,6 +151,7 @@
 <style lang='scss'>
   .trxcell {
     position: relative;
+
     ul.choices {
       background-color: #eee;
       border-radius: 2px;
