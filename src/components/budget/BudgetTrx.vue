@@ -15,12 +15,12 @@
         <tbody>
           <tr v-for='(trx,i) in transactions' :key='trx.id'>
             <BudgetTrxCell :item='trx' :name='"account.name"'/>
-            <BudgetTrxCell @updated='updatetrx' :item='trx' :cell='cell(i,1)' :name='"date"' editable/>
-            <BudgetTrxCell @updated='updatetrx' :item='trx' :cell='cell(i,2)' :name='"payee"' editable/>
-            <BudgetTrxCell @updated='updatetrx' :item='trx' :cell='cell(i,3)' :name='"category.name"' :choices='categories' editable selectall/>
+            <BudgetTrxCell @updated='updatetrx' :item='trx' :cell='cell(i,1)' :ref='cell(i,1)' :name='"date"' editable/>
+            <BudgetTrxCell @updated='updatetrx' :item='trx' :cell='cell(i,2)' :ref='cell(i,2)' :name='"payee"' editable/>
+            <BudgetTrxCell @updated='updatetrx' :item='trx' :cell='cell(i,3)' :ref='cell(i,3)' :name='"category.name"' :choices='categories' editable selectall/>
             <BudgetTrxCell :item='trx' :name='"amount"' :display='"usdint"'/>
-            <BudgetTrxCell @updated='updatetrx' :item='trx' :cell='cell(i,4)' :name='"approved"' :display='"bool"' editable selectall />
-            <BudgetTrxCell @updated='updatetrx' :item='trx' :cell='cell(i,5)' :name='"comment"' editable/>
+            <BudgetTrxCell @updated='updatetrx' :item='trx' :cell='cell(i,4)' :ref='cell(i,4)' :name='"approved"' :display='"bool"' editable selectall />
+            <BudgetTrxCell @updated='updatetrx' :item='trx' :cell='cell(i,5)' :ref='cell(i,5)' :name='"comment"' editable/>
           </tr>
         </tbody>
       </table>
@@ -50,9 +50,10 @@
       categories: pathify.get('budget/categories'),
       // key bindings
       keymap: function() { return {
+        'esc': (event) => this.removeHover(event),
         'tab': (event) => this.moveHover(event, 1),
         'shift+tab': (event) => this.moveHover(event, -1),
-        'enter': (event) => this.moveHover(event, EDITCOLUMNS),
+        'enter': (event) => this.moveHover(event, 0, true),
         'up': (event) => this.moveHover(event, -EDITCOLUMNS),
         'left': (event) => this.moveHover(event, -1),
         'down': (event) => this.moveHover(event, EDITCOLUMNS),
@@ -63,16 +64,22 @@
       account: {immediate:true, handler:function() { this.update_transactions(); }},
     },
     
-    methods: {      
+    methods: {
+      // Cell
+      // Helper function to calculate cell number
       cell: function(r, c) { return (r * EDITCOLUMNS) + c; },
 
-      click_cell: function() {
-        return null;
-      },
-
-      moveHover: function(event, inc) {
+      // Move Hover
+      // Move the hover cell in the specified direction
+      moveHover: function(event, inc=0, edit=false) {
         event.preventDefault();
+        if (inc != 0) {
+          this.$refs[this.hover][0].save();
+        }
         this.hover += inc;
+        if (edit) {
+          this.$refs[this.hover][0].edit();
+        }
       },
 
       // Update Transactions
@@ -129,29 +136,26 @@
       cursor: default;
       font-family: arial;
       font-size: 1.3rem;
-      padding: 0px 5px;
+      padding: 1px 5px;
       text-align: left;
       div, input {
         border-radius: 2px;
-        border: 2px solid transparent;
+        border: 1px solid transparent;
         line-height: 1.3em;
         min-height: 26px;
         margin: 0px;
         overflow-x: hidden;
-        padding: 4px 3px;
+        padding: 5px 5px;
         //transition: background-color 1s ease;
         white-space: nowrap;
         width: 100%;
         &.hover {
-          border-radius: 5px;
-          border: 2px solid rgba(#458588, 0.2);
-          background-color: rgba(#458588, 0.1);
+          border-radius: 3px;
+          background-color: #eee;
         }
       }
       input {
-        //background-color: rgba(0,0,0,0.05);
-        border: 2px solid rgba(#458588, 0.5) !important;
-        border-radius: 5px;
+        border-radius: 3px;
         box-shadow: 0 2px 6px 2px rgba(60,64,67,.15);
       }
       

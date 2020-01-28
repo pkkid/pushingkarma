@@ -3,7 +3,7 @@
     <!-- Display input or div -->
     <input v-if='editing' type='text' ref='input' v-model='value' :class='{hover:hover==cell}'
       @focus.prevent='oldvalue=$event.target.value'
-      @keyup.enter.prevent='save'
+      @keydown.enter.prevent='save'
       @keyup.esc.prevent='cancel'
       @keyup.up.prevent='setHighlighted(-1)'
       @keyup.down.prevent='setHighlighted(+1)'
