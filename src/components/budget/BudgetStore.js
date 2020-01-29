@@ -6,6 +6,7 @@ export default {
   demo: false,          // Set true to hide sensative values
   view: 'month',        // One of {budget, transactions}
   // Cell Selection
-  hover: null,          // Current cell hovered on
+  cursor: null,         // Current cell hovered on
   selected: [],         // Currently selected cells
+  editing: false,       // Set True when editing
 };

@@ -44,47 +44,55 @@
       transactions: {},     // Displayed transactions
     }),
     computed: {
-      hover: pathify.sync('budget/hover'),
+      cursor: pathify.sync('budget/cursor'),
       selected: pathify.sync('budget/selected'),
+      editing: pathify.sync('budget/editing'),
       account: pathify.get('budget/account'),
       categories: pathify.get('budget/categories'),
       // key bindings
       keymap: function() { return {
-        'esc': (event) => this.removeHover(event),
-        'tab': (event) => this.moveHover(event, 1),
-        'shift+tab': (event) => this.moveHover(event, -1),
-        'enter': (event) => this.moveHover(event, 0, true),
-        'up': (event) => this.moveHover(event, -EDITCOLUMNS),
-        'left': (event) => this.moveHover(event, -1),
-        'down': (event) => this.moveHover(event, EDITCOLUMNS),
-        'right': (event) => this.moveHover(event, 1),
+        'esc': (event) => this.removeCursor(event),
+        'tab': (event) => this.moveCursor(event, 1),
+        'shift+tab': (event) => this.moveCursor(event, -1),
+        'up': (event) => this.moveCursor(event, -EDITCOLUMNS),
+        'left': (event) => this.moveCursor(event, -1),
+        'down': (event) => this.moveCursor(event, EDITCOLUMNS),
+        'right': (event) => this.moveCursor(event, 1),
+        //'enter': (event) => this.moveCursor(event, 0),
       };},
     },
     watch: {
-      account: {immediate:true, handler:function() { this.update_transactions(); }},
+      account: {immediate:true, handler:function() { this.updateTransactions(); }},
     },
     
     methods: {
-      // Cell
-      // Helper function to calculate cell number
+      // Cell: Helper function to calculate cell number
       cell: function(r, c) { return (r * EDITCOLUMNS) + c; },
 
-      // Move Hover
-      // Move the hover cell in the specified direction
-      moveHover: function(event, inc=0, edit=false) {
-        event.preventDefault();
-        if (inc != 0) {
-          this.$refs[this.hover][0].save();
+      // Move Cursor
+      // Move the cursor cell in the specified direction
+      moveCursor: function(event, amount=0) {
+        if (this.cursor != null) {
+          event.preventDefault();
+          var cursor = this.cursor + amount;
+          if ((cursor > 0) && (cursor <= this.transactions.length * EDITCOLUMNS)) {
+            this.cursor = cursor;
+          }
         }
-        this.hover += inc;
-        if (edit) {
-          this.$refs[this.hover][0].edit();
+      },
+
+      // Remove Cursor
+      // Remove the cursor from the screen (unselect)
+      removeCursor: function(event) {
+        if (this.cursor != null) {
+          event.preventDefault();
+          this.cursor = null;
         }
       },
 
       // Update Transactions
       // Search for and update the list of displayed transactions
-      update_transactions: async function() {
+      updateTransactions: async function() {
         this.cancelSearch = api.cancel(this.cancelSearch);
         var token = this.cancelSearch.token;
         try {
@@ -146,13 +154,13 @@
         margin: 0px;
         overflow-x: hidden;
         padding: 5px 5px;
-        //transition: background-color 1s ease;
         white-space: nowrap;
         width: 100%;
-        &.hover {
-          border-radius: 3px;
-          background-color: #eee;
-        }
+      }
+      &.cursor div,
+      &.cursor input {
+        border-radius: 3px;
+        background-color: #eee;
       }
       input {
         border-radius: 3px;

@@ -1,21 +1,10 @@
 <template>
-  <td :class='[display,status]' class='trxcell'>
-    <!-- Display input or div -->
-    <input v-if='editing' type='text' ref='input' v-model='value' :class='{hover:hover==cell}'
-      @focus.prevent='oldvalue=$event.target.value'
-      @keydown.enter.prevent='save'
-      @keyup.esc.prevent='cancel'
-      @keyup.up.prevent='setHighlighted(-1)'
-      @keyup.down.prevent='setHighlighted(+1)'
-      v-click-outside='save' />
-    <div v-else-if='display == "usdint"' @click='click' @dblclick.prevent='edit' :class='{hover:hover==cell}'>{{value | usdint}}</div>
-    <div v-else @click='click' @dblclick.prevent='edit' :class='{hover:hover==cell}'>{{value}}</div>
-    <!-- Display choices if applicable -->
+  <td :class='[display,status,{cursor:cursor==cell}]' class='trxcell' @click='click'>
+    <input v-if='editing' type='text' ref='input' v-model='value'/>
+    <div v-else-if='display == "usdint"'>{{value | usdint}}</div>
+    <div v-else>{{value}}</div>
     <ul v-if='showchoices' class='choices'>
-      <li v-for='(c, i) in fchoices' :key='c.id' class='choice'
-        :class='{highlighted:i==highlighted}'>
-        {{c.name}}
-      </li>
+      <li v-for='(c, i) in fchoices' :key='c.id' class='choice' :class='{highlighted:i==highlighted}'>{{c.name}}</li>
     </ul>
   </td>
 </template>
@@ -30,7 +19,6 @@
 
   // Status names
   var DEFAULT = 'default';            // Default display
-  var EDITING = 'editing';            // Displays input for editing
   var SAVING = 'saving';              // Blue background when saving
   var ERROR = 'error';                // Red background on error
   
@@ -52,10 +40,12 @@
       highlighted: 0,                 // Current highlighted choice
     }),
     computed: {
-      hover: pathify.sync('budget/hover'),
+      cursor: pathify.sync('budget/cursor'),
       selected: pathify.sync('budget/selected'),
+      editing: pathify.sync('budget/editing'),
+
       bool: function() { return this.display == 'bool'; },
-      editing: function() { return this.status == EDITING; },
+      //editing: function() { return this.status == EDITING; },
       lowerchoices: function() { return this.choices.map(c => c.name.toLowerCase()); },
       showchoices: function() { return this.editing && this.fchoices.length; },
       fchoices: function() {
@@ -80,8 +70,8 @@
       // Click a non-editing cell
       click: function() {
         var cell = this.cell;
-        if (this.cell != 'x') {
-          this.hover = cell;
+        if (this.editable) {
+          this.cursor = cell;
           this.selected.push(cell);
         }
       },
@@ -89,8 +79,8 @@
       // Edit
       // Enable editing the selected cell.
       edit: async function() {
-        if (this.editable) {
-          this.status = this.editable ? EDITING : DEFAULT;
+        if ((this.editable) && (this.cursor == this.cell)) {
+          this.editing = this.editable;
           await Vue.nextTick();
           if (this.selectall) { this.$refs.input.select(); }
           else { this.$refs.input.focus(); }
@@ -117,6 +107,7 @@
             var change = utils.rset({}, this.name.replace('.','_'), this.sendvalue);
             var {data} = await api.Budget.patchTransaction(this.item.id, change);
             this.status = SAVING;
+            this.editing = false;
             this.$emit('updated', data);
             this.setValue(data);
             setTimeout(() => this.status = this.DEFAULT, 500);
