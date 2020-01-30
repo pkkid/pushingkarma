@@ -94,12 +94,12 @@
   // Demo Mode
   #budget.demo .blur {
     color: transparent !important;
-    text-shadow: 0 0 10px rgba($lightbg-text, 1) !important;
+    text-shadow: 0 0 10px rgba($lightbg-text, 0.5) !important;
     user-select: none;
   }
   #budget.demo #sidebar .blur {
     color: transparent !important;
-    text-shadow: 0 0 10px rgba($darkbg-text, 1) !important;
+    text-shadow: 0 0 10px rgba($darkbg-text, 0.5) !important;
     user-select: none;
   }
 </style>

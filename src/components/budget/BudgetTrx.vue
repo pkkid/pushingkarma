@@ -52,13 +52,13 @@
       // key bindings
       keymap: function() { return {
         'esc': (event) => this.removeCursor(event),
-        'tab': (event) => this.moveCursor(event, 1),
-        'shift+tab': (event) => this.moveCursor(event, -1),
+        'tab': (event) => this.moveCursor(event, 1, true),
+        'shift+tab': (event) => this.moveCursor(event, -1, true),
         'up': (event) => this.moveCursor(event, -EDITCOLUMNS),
         'left': (event) => this.moveCursor(event, -1),
         'down': (event) => this.moveCursor(event, EDITCOLUMNS),
         'right': (event) => this.moveCursor(event, 1),
-        //'enter': (event) => this.moveCursor(event, 0),
+        'enter': (event) => this.toggleEdit(event),
       };},
     },
     watch: {
@@ -71,23 +71,33 @@
 
       // Move Cursor
       // Move the cursor cell in the specified direction
-      moveCursor: function(event, amount=0) {
-        if (this.cursor != null) {
-          event.preventDefault();
-          var cursor = this.cursor + amount;
-          if ((cursor > 0) && (cursor <= this.transactions.length * EDITCOLUMNS)) {
-            this.cursor = cursor;
-          }
+      moveCursor: function(event, amount=0, save=false) {
+        if (this.cursor == null) { return null; }
+        if ((this.editing) && (save == false)) { return null; }
+        event.preventDefault();
+        this.editing = false;
+        var cursor = this.cursor + amount;
+        if ((cursor > 0) && (cursor <= this.transactions.length * EDITCOLUMNS)) {
+          this.cursor = cursor;
         }
       },
 
       // Remove Cursor
       // Remove the cursor from the screen (unselect)
       removeCursor: function(event) {
-        if (this.cursor != null) {
-          event.preventDefault();
-          this.cursor = null;
-        }
+        if (this.cursor == null) { return null; }
+        event.preventDefault();
+        if (this.editing) { this.editing = false; }
+        else { this.cursor = null; }
+      },
+
+      // Toggle Edit
+      // Edit or save the value at the current cursor position
+      toggleEdit: function(event) {
+        if (this.cursor == null) { return null; }
+        event.preventDefault();
+        if (this.editing) { this.$refs[this.cursor][0].save(); }
+        else { this.$refs[this.cursor][0].edit(); }
       },
 
       // Update Transactions

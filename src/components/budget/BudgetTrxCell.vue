@@ -1,7 +1,9 @@
 <template>
   <td :class='[display,status,{cursor:cursor==cell}]' class='trxcell' @click='click'>
-    <input v-if='editing' type='text' ref='input' v-model='value'/>
-    <div v-else-if='display == "usdint"'>{{value | usdint}}</div>
+    <input v-if='showinput' type='text' ref='input' v-model='value'
+      @keyup.up.prevent='setHighlighted(-1)'	
+      @keyup.down.prevent='setHighlighted(+1)'/>
+    <div v-else-if='display == "usdint"' class='blur'>{{value | usdint}}</div>
     <div v-else>{{value}}</div>
     <ul v-if='showchoices' class='choices'>
       <li v-for='(c, i) in fchoices' :key='c.id' class='choice' :class='{highlighted:i==highlighted}'>{{c.name}}</li>
@@ -43,14 +45,14 @@
       cursor: pathify.sync('budget/cursor'),
       selected: pathify.sync('budget/selected'),
       editing: pathify.sync('budget/editing'),
-
       bool: function() { return this.display == 'bool'; },
-      //editing: function() { return this.status == EDITING; },
+      showinput: function() { return this.editing == true && this.cursor == this.cell; },
       lowerchoices: function() { return this.choices.map(c => c.name.toLowerCase()); },
       showchoices: function() { return this.editing && this.fchoices.length; },
       fchoices: function() {
         if (!this.editing) { return []; }
-        if (this.value == '') { return this.choices; }
+        if (this.cursor != this.cell) { return []; }
+        if ((this.value == '') || !this.value) { return this.choices; }
         if (this.lowerchoices.indexOf(this.value.toLowerCase()) >= 0) { return []; }
         var result = fuzzysort.go(this.value, this.choices, {key:'name'});
         return result.map(x => x.obj);
@@ -80,7 +82,7 @@
       // Enable editing the selected cell.
       edit: async function() {
         if ((this.editable) && (this.cursor == this.cell)) {
-          this.editing = this.editable;
+          this.editing = true;
           await Vue.nextTick();
           if (this.selectall) { this.$refs.input.select(); }
           else { this.$refs.input.focus(); }
@@ -89,11 +91,11 @@
 
       // Cancel
       // Cancel the current edits
-      cancel: async function() {
-        this.value = this.oldvalue;
-        await Vue.nextTick();
-        this.status = this.DEFAULT;
-      },
+      // cancel: async function() {
+      //   this.value = this.oldvalue;
+      //   await Vue.nextTick();
+      //   this.status = this.DEFAULT;
+      // },
 
       // Save
       // Emit an event if the specified value changed
