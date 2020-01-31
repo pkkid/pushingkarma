@@ -85,13 +85,17 @@
   
   // Form Elements
   // Input, Label, Button
+  form {
+    font-size: 1.3rem;
+  }
   input {
     width: 100%;
     border-radius: 6px;
     border: 2px solid #dddddd;
     background-color: #f8f8f8;
-    padding: 10px;
+    padding: 7px 10px;
     color: $lightbg-input;
+    line-height: 1.5em;
   }
   label {
     display: block;
