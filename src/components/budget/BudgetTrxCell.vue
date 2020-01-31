@@ -2,11 +2,13 @@
   <td :class='[display,status,{cursor:cursor==cell}]' class='trxcell' @click='click'>
     <input v-if='showinput' type='text' ref='input' v-model='value'
       @keyup.up.prevent='setHighlighted(-1)'	
-      @keyup.down.prevent='setHighlighted(+1)'/>
+      @keyup.down.prevent='setHighlighted(+1)'
+      @keydown.enter='pickChoice'/>
     <div v-else-if='display == "usdint"' class='blur'>{{value | usdint}}</div>
     <div v-else>{{value}}</div>
     <ul v-if='showchoices' class='choices'>
-      <li v-for='(c, i) in fchoices' :key='c.id' class='choice' :class='{highlighted:i==highlighted}'>{{c.name}}</li>
+      <li v-for='(c, i) in fchoices' :key='c.id' class='choice'
+        :class='{highlighted:i==highlighted}' @click='pickChoice'>{{c.name}}</li>
     </ul>
   </td>
 </template>
@@ -77,6 +79,15 @@
         }
       },
       
+      pickChoice: async function(event) {
+        if (this.fchoices.length) {
+          event.preventDefault();
+          event.stopPropagation();
+          if (event.target.className == 'choice') { this.value = _.trim(event.target.textContent); }
+          else { this.value = _.trim(this.fchoices[this.highlighted].name); }
+        }
+      },
+
       // Edit: Enable editing the selected cell.
       edit: async function() {
         if ((this.editable) && (this.cursor == this.cell)) {
@@ -109,26 +120,6 @@
             this.status = ERROR;
           }
         }
-
-        // if (event.target.className == 'choice') {
-        //   this.value = _.trim(event.target.textContent);
-        // } else if (this.fchoices.length) {
-        //   this.value = _.trim(this.fchoices[this.highlighted].name);
-        // } else if (this.value != this.oldvalue) {
-        //   try {
-        //     var change = utils.rset({}, this.name.replace('.','_'), this.sendvalue);
-        //     var {data} = await api.Budget.patchTransaction(this.item.id, change);
-        //     this.status = SAVING;
-        //     this.editing = false;
-        //     this.$emit('updated', data);
-        //     this.setValue(data);
-        //     setTimeout(() => this.status = this.DEFAULT, 500);
-        //   } catch(err) {
-        //     this.status = ERROR;
-        //   }
-        // } else {
-        //   this.status = DEFAULT;
-        // }
       },
 
       // Set Highlighted
