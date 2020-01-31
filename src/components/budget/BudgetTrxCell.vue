@@ -68,8 +68,7 @@
     },
 
     methods: {
-      // Click
-      // Click a non-editing cell
+      // Click: Click a non-editing cell
       click: function() {
         var cell = this.cell;
         if (this.editable) {
@@ -78,10 +77,10 @@
         }
       },
       
-      // Edit
-      // Enable editing the selected cell.
+      // Edit: Enable editing the selected cell.
       edit: async function() {
         if ((this.editable) && (this.cursor == this.cell)) {
+          this.oldvalue = this.value;
           this.editing = true;
           await Vue.nextTick();
           if (this.selectall) { this.$refs.input.select(); }
@@ -89,36 +88,47 @@
         }
       },
 
-      // Cancel
-      // Cancel the current edits
-      // cancel: async function() {
-      //   this.value = this.oldvalue;
-      //   await Vue.nextTick();
-      //   this.status = this.DEFAULT;
-      // },
+      // Cancel: Cancel the current edits
+      cancel: function() {
+        this.editing = false;
+        this.status = DEFAULT;
+        this.setValue(this.oldvalue);
+      },
 
-      // Save
-      // Emit an event if the specified value changed
-      save: async function(event) {
-        if (event.target.className == 'choice') {
-          this.value = _.trim(event.target.textContent);
-        } else if (this.fchoices.length) {
-          this.value = _.trim(this.fchoices[this.highlighted].name);
-        } else if (this.value != this.oldvalue) {
+      // Save: Emit an event if the specified value changed
+      save: async function() {
+        if (this.value != this.oldvalue) {
           try {
             var change = utils.rset({}, this.name.replace('.','_'), this.sendvalue);
             var {data} = await api.Budget.patchTransaction(this.item.id, change);
-            this.status = SAVING;
             this.editing = false;
-            this.$emit('updated', data);
+            this.status = SAVING;
             this.setValue(data);
             setTimeout(() => this.status = this.DEFAULT, 500);
           } catch(err) {
             this.status = ERROR;
           }
-        } else {
-          this.status = DEFAULT;
         }
+
+        // if (event.target.className == 'choice') {
+        //   this.value = _.trim(event.target.textContent);
+        // } else if (this.fchoices.length) {
+        //   this.value = _.trim(this.fchoices[this.highlighted].name);
+        // } else if (this.value != this.oldvalue) {
+        //   try {
+        //     var change = utils.rset({}, this.name.replace('.','_'), this.sendvalue);
+        //     var {data} = await api.Budget.patchTransaction(this.item.id, change);
+        //     this.status = SAVING;
+        //     this.editing = false;
+        //     this.$emit('updated', data);
+        //     this.setValue(data);
+        //     setTimeout(() => this.status = this.DEFAULT, 500);
+        //   } catch(err) {
+        //     this.status = ERROR;
+        //   }
+        // } else {
+        //   this.status = DEFAULT;
+        // }
       },
 
       // Set Highlighted

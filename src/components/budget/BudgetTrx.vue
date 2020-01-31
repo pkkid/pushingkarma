@@ -87,7 +87,7 @@
       removeCursor: function(event) {
         if (this.cursor == null) { return null; }
         event.preventDefault();
-        if (this.editing) { this.editing = false; }
+        if (this.editing) { this.$refs[this.cursor][0].cancel(); }
         else { this.cursor = null; }
       },
 
