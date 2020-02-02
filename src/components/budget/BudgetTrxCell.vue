@@ -73,7 +73,10 @@
       // Click: Click a non-editing cell
       click: function() {
         var cell = this.cell;
-        if (this.editable) {
+        if (this.cursor == this.cell) {
+          this.edit();
+        } else if (this.editable) {
+          this.editing = false;
           this.cursor = cell;
           this.selected.push(cell);
         }
@@ -92,6 +95,7 @@
       edit: async function() {
         if ((this.editable) && (this.cursor == this.cell)) {
           this.oldvalue = this.value;
+          this.cursor = this.cell;
           this.editing = true;
           await Vue.nextTick();
           if (this.selectall) { this.$refs.input.select(); }
@@ -103,7 +107,8 @@
       cancel: function() {
         this.editing = false;
         this.status = DEFAULT;
-        this.setValue(this.oldvalue);
+        console.log(this.oldvalue);
+        this.setValue(this.item);
       },
 
       // Save: Emit an event if the specified value changed
