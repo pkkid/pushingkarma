@@ -82,6 +82,9 @@
         }
       },
       
+      // Pick Choice
+      // If there are dropdown choices shown, this picks the currently
+      // selected choice, populating the input field with the correct text.
       pickChoice: async function(event) {
         if (this.fchoices.length) {
           event.preventDefault();
@@ -124,6 +127,8 @@
           } catch(err) {
             this.status = ERROR;
           }
+        } else {
+          this.cancel();
         }
       },
 

@@ -73,7 +73,10 @@
       // Move the cursor cell in the specified direction
       moveCursor: function(event, amount=0, save=false) {
         if (this.cursor == null) { return null; }
-        if ((this.editing) && (save == false)) { return null; }
+        if (this.editing) {
+          if (save == false) { return null; }
+          else { this.$refs[this.cursor][0].save(); }
+        }
         event.preventDefault();
         this.editing = false;
         var cursor = this.cursor + amount;
@@ -87,11 +90,8 @@
       removeCursor: function(event) {
         if (this.cursor == null) { return null; }
         event.preventDefault();
-        if (this.editing) {
-          this.$refs[this.cursor][0].cancel();
-        } else {
-          this.cursor = null;
-        }
+        if (this.editing) { this.$refs[this.cursor][0].cancel(); }
+        else { this.cursor = null; }
       },
 
       // Toggle Edit
@@ -99,7 +99,7 @@
       toggleEdit: function(event) {
         if (this.cursor == null) { return null; }
         event.preventDefault();
-        if (this.editing) { this.$refs[this.cursor][0].save(); }
+        if (this.editing) { this.moveCursor(event, EDITCOLUMNS, true); }
         else { this.$refs[this.cursor][0].edit(); }
       },
 
