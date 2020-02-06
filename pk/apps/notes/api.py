@@ -1,8 +1,8 @@
 # encoding: utf-8
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from pk.utils.api import DynamicFieldsSerializer
 from pk.utils.search import FIELDTYPES, SearchField, Search
-from pk.utils.serializers import DynamicFieldsSerializer
 from .models import Note
 
 NOTESEARCHFIELDS = {

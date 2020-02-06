@@ -4,7 +4,7 @@ from django.core.management import call_command
 from django.db import models
 from django.dispatch import receiver
 from django_extensions.db.models import TimeStampedModel
-from pk.utils.serializers import DynamicFieldsSerializer
+from pk.utils.api import DynamicFieldsSerializer
 from pk import log
 
 FUNCTION = 'Weekly Adjusted Time Series'

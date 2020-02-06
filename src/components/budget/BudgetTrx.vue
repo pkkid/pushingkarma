@@ -62,7 +62,9 @@
       };},
     },
     watch: {
-      account: {immediate:true, handler:function() { this.updateTransactions(); }},
+      account: {immediate:true, handler:function() {
+        this.updateTransactions();
+      }},
     },
     
     methods: {

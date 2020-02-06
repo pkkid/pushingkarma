@@ -6,9 +6,9 @@ from django.conf import settings
 from django.db import connection
 from django.db.models import Min, Max
 from pk import utils
+from pk.utils.api import DynamicFieldsSerializer, PartialFieldsSerializer
 from pk.utils.context import Bunch
 from pk.utils.search import FIELDTYPES, SearchField, Search
-from pk.utils.serializers import DynamicFieldsSerializer, PartialFieldsSerializer
 from rest_framework import viewsets
 from rest_framework.decorators import detail_route, list_route
 from rest_framework.parsers import FormParser, MultiPartParser
