@@ -19,7 +19,7 @@
             <td class='trend'><div>--</div></td>
             <td class='budget'><div>{{cat.budget}}</div></td>
             <td class='month' v-for='(trxs,monthstr) in groups[cat.name]' :key='cat.name+monthstr'>
-              <div>{{monthstr}}</div>
+              <BudgetYearCell :groups='groups' :cat='cat' :monthstr='monthstr'/>
             </td>
             <td class='average'><div>--</div></td>
             <td class='total'><div>--</div></td>
@@ -35,9 +35,11 @@
   import * as api from '@/api';
   import * as moment from 'moment';
   import * as pathify from 'vuex-pathify';
+  import BudgetYearCell from './BudgetYearCell';
 
   export default {
     name: 'BudgetYear',
+    components: {BudgetYearCell},
     data: () => ({
       transactions: {},                   // Displayed transactions
       groups: {},                         // Grouped Transactions

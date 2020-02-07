@@ -19,13 +19,15 @@ Vue.filter('usd', function(value) {
   return '$'+ insertCommas(value);
 });
 
-Vue.filter('usdint', function(value) {
+Vue.filter('usdint', function(value, places=2) {
   var result;
   var negative = value < 0;
-  value = Math.abs(value);
+  value = Math.abs(value).toFixed(places);
   if (negative) { result = '-$'+ insertCommas(value); }
   else { result = '$'+ insertCommas(value); }
-  if (result.match(/\.\d{1}$/)) { return result +'0'; }
-  if (!result.match(/\./)) { return result +'.00'; }
+  if (places == 2) {
+    if (result.match(/\.\d{1}$/)) { return result +'0'; }
+    if (!result.match(/\./)) { return result +'.00'; }
+  }
   return result;
 });
