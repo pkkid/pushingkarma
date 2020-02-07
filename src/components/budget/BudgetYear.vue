@@ -1,28 +1,24 @@
 <template>
-  <div id='budgetmonth'>
+  <div id='budgetyear'>
     <h3>Past Year Budget</h3>
     <div class='tablewrap'>
       <table cellpadding='0' cellspacing='0'>
         <thead><tr>
           <th class='category'><div>Category</div></th>
-          <th class='trend'><div>Trend</div></th>
-          <th class='budget'><div>Budget</div></th>
-          <th class='month' v-for='month in months' :key='month.format("YYYY-MM")'>
+          <th class='month usdint' v-for='month in months' :key='month.format("YYYY-MM")'>
             <div>{{month.format("MMM")}}</div>
           </th>
-          <th class='average'><div>Average</div></th>
-          <th class='total'><div>Total</div></th>
+          <th class='average usdint'><div>Average</div></th>
+          <th class='total usdint'><div>Total</div></th>
         </tr></thead>
         <tbody>
           <tr v-for='cat in this.categories' :key='"cat-"+cat.id'>
             <td class='category'><div>{{cat.name}}</div></td>
-            <td class='trend'><div>--</div></td>
-            <td class='budget'><div>{{cat.budget}}</div></td>
-            <td class='month' v-for='(trxs,monthstr) in groups[cat.name]' :key='cat.name+monthstr'>
+            <td class='month usdint' v-for='(trxs,monthstr) in groups[cat.name]' :key='cat.name+monthstr'>
               <BudgetYearCell :groups='groups' :cat='cat' :monthstr='monthstr'/>
             </td>
-            <td class='average'><div>--</div></td>
-            <td class='total'><div>--</div></td>
+            <td class='average usdint'><div>--</div></td>
+            <td class='total usdint'><div>--</div></td>
           </tr>
         </tbody>
       </table>
@@ -108,17 +104,16 @@
 </script>
 
 <style lang='scss'>
-  #budgetmonth {
+  #budgetyear {
     padding: 10px 20px;
-
-    .tablewrap {
-      background-color: white;
-      border: 1px solid darken($lightbg-color, 20%);
-      border-radius: 2px;
-      box-shadow: 0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15);
-      padding: 20px 10px;
-      min-width: 1000px;
+    th, td {
+      // Specific column widths
+      &.category { width:14%; }
+      &.trend { width:6%; }
+      &.budget { width:9%; }
+      &.month { width:5%; }  // 12 of these
+      &.average { width:6%; }
+      &.total { width:6%; }
     }
-
   }
 </style>

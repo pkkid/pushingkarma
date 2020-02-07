@@ -133,59 +133,7 @@
 <style lang='scss'>
   #budgettransactions {
     padding: 10px 20px;
-
-    .tablewrap {
-      background-color: white;
-      border: 1px solid darken($lightbg-color, 20%);
-      border-radius: 2px;
-      box-shadow: 0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15);
-      padding: 20px 10px;
-      min-width: 1000px;
-    }
-    table {
-      width: 100%;
-      color: #666;
-      th {
-        background-color: rgba(0,0,0,0.05);
-        border-top-left-radius: 2px;
-        border-top-right-radius: 2px;
-        font-size: 0.7em;
-        color: #222;
-        font-weight: 600;
-      }
-    }
     th, td {
-      border-bottom: 1px solid rgba(0,0,0,0.05);
-      cursor: default;
-      font-family: arial;
-      font-size: 1.3rem;
-      padding: 1px 5px;
-      text-align: left;
-      div, input {
-        border-radius: 2px;
-        border: 1px solid transparent;
-        line-height: 1.3em;
-        min-height: 26px;
-        margin: 0px;
-        overflow-x: hidden;
-        padding: 5px 5px;
-        white-space: nowrap;
-        width: 100%;
-      }
-      &.cursor div,
-      &.cursor input {
-        border-radius: 3px;
-        background-color: #eee;
-      }
-      input {
-        border-radius: 3px;
-        box-shadow: 0 2px 6px 2px rgba(60,64,67,.15);
-      }
-      
-      // Column types
-      &.bool, &.bool input { text-align: center; }
-      &.usdint, &.usdint input { text-align: right; }
-      
       // Specific column widths
       &.account_name { width:8%; }
       &.date { width:10%; }
@@ -193,12 +141,10 @@
       &.category_name { width:22%; }
       &.amount { width:10%; }
       &.approved { width:2%; }
-      &.comment { width:22%; }
-      
+      &.comment { width:22%; } 
       // Saving and Errors
       &.saving div { background-color: rgba(0,0,255,0.1); }
       &.error div { background-color:rgba(150,0,0,0.1); }
     }
-
   }
 </style>
