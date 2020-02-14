@@ -12,10 +12,20 @@
           <th class='total usdint'><div>Total</div></th>
         </tr></thead>
         <tbody>
+          <!-- Category Rows -->
           <tr v-for='cat in this.categories' :key='"cat-"+cat.id'>
             <td class='category'><div>{{cat.name}}</div></td>
             <td class='month usdint' v-for='(trxs,monthstr) in groups[cat.name]' :key='cat.name+monthstr'>
               <BudgetYearCell :groups='groups' :cat='cat' :monthstr='monthstr'/>
+            </td>
+            <td class='average usdint'><div>--</div></td>
+            <td class='total usdint'><div>--</div></td>
+          </tr>
+          <!-- Totals -->
+          <tr>
+            <td class='category'><div>Savings</div></td>
+            <td class='month usdint' v-for='(trxs,monthstr) in groups["Uncategorized"]' :key='"total"+monthstr'>
+              <div>{{sumMonthSpending(monthstr) | usdint(0) }}</div>
             </td>
             <td class='average usdint'><div>--</div></td>
             <td class='total usdint'><div>--</div></td>
@@ -38,7 +48,7 @@
     components: {BudgetYearCell},
     data: () => ({
       transactions: {},                   // Displayed transactions
-      groups: {},                         // Grouped Transactions
+      groups: {},                         // Grouped Transactions {catname -> month -> [trxs]}
       start: moment().startOf('month'),   // Starting month
       uncategorized: 'Uncategorized',     // Uncategorized label
     }),
@@ -77,7 +87,6 @@
       initGroups: function() {
         var groups = {};
         var catnames = _.map(this.categories, 'name');
-        catnames.push(this.uncategorized);
         for (var catname of catnames) {
           groups[catname] = {};
           for (var month of this.months) {
@@ -92,12 +101,24 @@
       groupTransactions: function() {
         var groups = this.initGroups();
         for (var trx of this.transactions) {
-          var catname = trx.category ? trx.category.name : this.uncategorized;
           var month = moment(trx.date).startOf('month');
           var monthstr = month.format('YYYY-MM');
-          groups[catname][monthstr].push(trx);
+          groups[trx.category.name][monthstr].push(trx);
         }
         this.groups = groups;
+      },
+
+      // Sum Month Spending
+      // Sum the spending for the specified month
+      sumMonthSpending: function(monthstr) {
+        var total = 0;
+        for (var catname in this.groups) {
+          if (catname == 'Ignored') { continue; }
+          for (var trx of this.groups[catname][monthstr]) {
+            total += parseFloat(trx.amount);
+          }
+        }
+        return total;
       },
     }
   };
