@@ -11,20 +11,20 @@
           <th class='average usdint'><div>Average</div></th>
           <th class='total usdint'><div>Total</div></th>
         </tr></thead>
-        <tbody>
+        <tbody v-if='groups'>
           <!-- Category Rows -->
           <tr v-for='cat in this.categories' :key='"cat-"+cat.id'>
             <td class='category'><div>{{cat.name}}</div></td>
-            <td class='month usdint' v-for='(trxs,monthstr) in groups[cat.name]' :key='cat.name+monthstr'>
+            <td class='month usdint' v-for='monthstr in monthstrs' :key='cat.name+monthstr'>
               <BudgetYearCell :groups='groups' :cat='cat' :monthstr='monthstr'/>
             </td>
-            <td class='average usdint'><div>--</div></td>
-            <td class='total usdint'><div>--</div></td>
+            <td class='average usdint'><div>{{ avgCategory(cat.name) | usdint(0) }}</div></td>
+            <td class='total usdint'><div>{{ groups[cat.name].total | usdint(0) }}</div></td>
           </tr>
           <!-- Totals -->
           <tr>
             <td class='category'><div>Savings</div></td>
-            <td class='month usdint' v-for='(trxs,monthstr) in groups["Uncategorized"]' :key='"total"+monthstr'>
+            <td class='month usdint' v-for='monthstr in monthstrs' :key='"total"+monthstr'>
               <div>{{sumMonthSpending(monthstr) | usdint(0) }}</div>
             </td>
             <td class='average usdint'><div>--</div></td>
@@ -48,7 +48,7 @@
     components: {BudgetYearCell},
     data: () => ({
       transactions: {},                   // Displayed transactions
-      groups: {},                         // Grouped Transactions {catname -> month -> [trxs]}
+      groups: null,                       // Grouped Transactions {catname -> month -> [trxs]}
       start: moment().startOf('month'),   // Starting month
       uncategorized: 'Uncategorized',     // Uncategorized label
     }),
@@ -59,6 +59,7 @@
     },
     computed: {
       categories: pathify.sync('budget/categories'),
+      monthstrs: function() { return _.map(this.months, month => month.format('YYYY-MM')); },
       months: function() {
         var months = [];
         var month = this.start.clone();
@@ -89,6 +90,8 @@
         var catnames = _.map(this.categories, 'name');
         for (var catname of catnames) {
           groups[catname] = {};
+          groups[catname].total = 0;
+          groups[catname].count = 0;
           for (var month of this.months) {
             groups[catname][month.format('YYYY-MM')] = [];
           }
@@ -104,11 +107,21 @@
           var month = moment(trx.date).startOf('month');
           var monthstr = month.format('YYYY-MM');
           groups[trx.category.name][monthstr].push(trx);
+          groups[trx.category.name].total += parseFloat(trx.amount);
+          groups[trx.category.name].count += 1;
         }
         this.groups = groups;
+        console.log(this.groups);
       },
 
-      // Sum Month Spending
+      // Avg Category (horizontal)
+      // Average spending for all months in the specified category
+      avgCategory: function(catname) {
+        if (!this.groups[catname].count) { return 0; }
+        return this.groups[catname].total / this.groups[catname].count;
+      },
+
+      // Sum Month Spending (vertical)
       // Sum the spending for the specified month
       sumMonthSpending: function(monthstr) {
         var total = 0;
@@ -120,6 +133,7 @@
         }
         return total;
       },
+
     }
   };
 </script>
