@@ -115,6 +115,6 @@ class TransactionManager:
         lookup = {payee.lower().rstrip(TRXJUNK):catid for payee,catid in items}
         for trx in transactions:
             payee = trx.payee.lower().rstrip(TRXJUNK)
-            if not trx.category and payee in lookup:
+            if not trx.category_id and payee in lookup:
                 trx.category_id = lookup[payee]
                 self.categorized += 1
