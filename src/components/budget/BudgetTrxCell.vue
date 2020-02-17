@@ -110,7 +110,6 @@
       cancel: function() {
         this.editing = false;
         this.status = DEFAULT;
-        console.log(this.oldvalue);
         this.setValue(this.item);
       },
 
@@ -120,7 +119,7 @@
           try {
             var change = utils.rset({}, this.name.replace('.','_'), this.sendvalue);
             var {data} = await api.Budget.patchTransaction(this.item.id, change);
-            this.editing = false;
+            //this.editing = false;
             this.status = SAVING;
             this.setValue(data);
             setTimeout(() => this.status = this.DEFAULT, 500);
@@ -128,7 +127,8 @@
             this.status = ERROR;
           }
         } else {
-          this.cancel();
+          this.status = DEFAULT;
+          this.setValue(this.item);
         }
       },
 

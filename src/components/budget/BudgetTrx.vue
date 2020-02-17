@@ -80,10 +80,13 @@
           else { this.$refs[this.cursor][0].save(); }
         }
         event.preventDefault();
-        this.editing = false;
+        // Move the cursor to the next position
         var cursor = this.cursor + amount;
         if ((cursor > 0) && (cursor <= this.transactions.length * EDITCOLUMNS)) {
           this.cursor = cursor;
+          if (this.editing) {
+            this.$refs[this.cursor][0].edit();
+          }
         }
       },
 
