@@ -13,7 +13,7 @@
         </tr></thead>
         <tbody v-if='groups'>
           <!-- Category Rows -->
-          <tr v-for='cat in this.categories' :key='"cat-"+cat.id'>
+          <tr v-for='cat in this.categories' :key='"cat-"+cat.id' class='category'>
             <td class='category'><div>{{cat.name}}</div></td>
             <td class='month usdint' v-for='monthstr in monthstrs' :key='cat.name+monthstr'>
               <BudgetYearCell :groups='groups' :cat='cat' :monthstr='monthstr'/>
@@ -22,7 +22,7 @@
             <td class='total usdint'><div>{{ groups[cat.name].total | usdint(0) }}</div></td>
           </tr>
           <!-- Totals -->
-          <tr>
+          <tr class='savings'>
             <td class='category'><div>Savings</div></td>
             <td class='month usdint' v-for='monthstr in monthstrs' :key='"total"+monthstr'>
               <div>{{sumMonthSpending(monthstr) | usdint(0) }}</div>
@@ -118,7 +118,7 @@
       // Average spending for all months in the specified category
       avgCategory: function(catname) {
         if (!this.groups[catname].count) { return 0; }
-        return this.groups[catname].total / this.groups[catname].count;
+        return this.groups[catname].total / 12.0;
       },
 
       // Sum Month Spending (vertical)

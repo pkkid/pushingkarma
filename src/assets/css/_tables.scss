@@ -8,7 +8,7 @@
   padding: 20px 10px;
   min-width: 1000px;
 }
-table {
+.content table {
   width: 100%;
   color: #666;
   th {
@@ -25,11 +25,6 @@ table {
     padding: 1px 5px;
     text-align: left;
 
-    &.cursor div,
-    &.cursor input { border-radius:3px; background-color:#eee; }
-    &.bool, &.bool input { text-align: center; }
-    &.usdint, &.usdint input { text-align: right; }
-
     div, input {
       border-radius: 3px;
       border: 1px solid transparent;
@@ -41,9 +36,17 @@ table {
       white-space: nowrap;
       width: 100%;
     }
-    input {
-      box-shadow: 0 2px 6px 2px rgba(60,64,67,.15);
+
+    &.cursor div,
+    &.cursor input { border-radius:3px; background-color:#eee; }
+    &.bool, &.bool input { text-align: center; }
+    &.usdint, &.usdint input { text-align: right; }
+    &.cursor input {
+      border-color:#ddd;
+      box-shadow: 0 2px 6px 2px rgba(60,64,67,.05);
+      color: #111;
     }
+
     div.subtext {
       font-size: 0.7em;
       padding: 0px 5px;
