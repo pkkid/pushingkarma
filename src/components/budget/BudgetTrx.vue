@@ -67,8 +67,14 @@
     },
     watch: {
       account: {immediate:true, handler:function() {
+        this.resetPage();
         this.updateTransactions();
+        
       }},
+
+    },
+    mounted: function() {
+      this.resetPage();
     },
     
     methods: {
@@ -101,6 +107,14 @@
         event.preventDefault();
         if (this.editing) { this.$refs[this.cursor][0].cancel(); }
         else { this.cursor = null; }
+      },
+
+      // Reset Page
+      // Reset editing variable when page loads
+      resetPage: function() {
+        this.cursor = null;
+        this.editing = false;
+        this.search = '';
       },
 
       // Toggle Edit
