@@ -111,7 +111,6 @@
           groups[trx.category.name].count += 1;
         }
         this.groups = groups;
-        console.log(this.groups);
       },
 
       // Avg Category (horizontal)
