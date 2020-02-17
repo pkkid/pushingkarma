@@ -79,7 +79,7 @@ class Transaction(TimeStampedModel):
     def save(self, *args, **kwargs):
         if self.category is None:
             self.category = get_uncategorized()
-        super(Category, self).save(*args, **kwargs)
+        super(Transaction, self).save(*args, **kwargs)
 
 
 class KeyValue(TimeStampedModel):

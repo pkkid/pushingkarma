@@ -152,7 +152,7 @@ class TransactionSerializer(DynamicFieldsSerializer):
             setattr(instance, attr, value)
         category_name = self.context['request'].data.get('category_name')
         if category_name:
-            category = utils.get_object_or_none(Category, name=category_name)
+            category = utils.get_object_or_none(Category, name__iexact=category_name)
             if not category:
                 raise ValidationError("Unknown category '%s'." % category_name)
             instance.category = category

@@ -22,7 +22,7 @@ def include_verbatim(path):
 
 def get_object_or_none(cls, *args, **kwargs):
     try:
-        return cls._default_manager.get(*args, **kwargs)  # noqa; pylint:disable=protected-access
+        return cls._default_manager.get(*args, **kwargs)
     except cls.DoesNotExist:
         return None
 
