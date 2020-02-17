@@ -1,5 +1,8 @@
 <template>
   <div id='budgettransactions' v-hotkey='keymap'>
+    <div id='searchwrap'>
+      <input id='search' type='text' v-model='search' @keyup.enter.prevent='updateTransactions'/>
+    </div>
     <h3>Budget Transactions {{account ? account.name : 'ALL'}}</h3>
     <div class='tablewrap'>
       <table cellpadding='0' cellspacing='0'>
@@ -41,6 +44,7 @@
     components: {BudgetTrxCell},
     data: () => ({
       cancelSearch: null,   // Cancel search token
+      search: '',           // Current search string
       transactions: {},     // Displayed transactions
     }),
     computed: {
@@ -114,7 +118,8 @@
         this.cancelSearch = api.cancel(this.cancelSearch);
         var token = this.cancelSearch.token;
         try {
-          var params = this.account ? {search:`bank:"${this.account.name}"`} : null;
+          var params = {search: this.search};
+          if (this.account) { params.search += ` bank:"${this.account.name}"`; }
           var {data} = await api.Budget.getTransactions(params, token);
           this.transactions = data.results;
         } catch(err) {
@@ -148,6 +153,21 @@
       // Saving and Errors
       &.saving div { background-color: rgba(0,0,255,0.1); }
       &.error div { background-color:rgba(150,0,0,0.1); }
+    }
+    #searchwrap {
+      float: right;
+      width: 500px;
+      margin-top: 10px;
+      input {
+        background-color: #eee;
+        border-radius: 20px;
+        border-color: #ccc;
+        font-size: 1.4rem;
+        font-weight: 500;
+        height: 34px;
+        line-height: 34px;
+        padding: 0px 40px 0px 15px;
+      }
     }
   }
 </style>
