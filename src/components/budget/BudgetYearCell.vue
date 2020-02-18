@@ -1,5 +1,5 @@
 <template>
-  <div>{{spent | usdint(0)}}</div>
+  <div :class='{blur:cat.name == "Income"}'>{{spent | usdint(0)}}</div>
 </template>
 
 <script>

@@ -18,13 +18,13 @@
             <td class='month usdint' v-for='monthstr in monthstrs' :key='cat.name+monthstr'>
               <BudgetYearCell :groups='groups' :cat='cat' :monthstr='monthstr'/>
             </td>
-            <td class='average usdint'><div>{{ avgCategory(cat.name) | usdint(0) }}</div></td>
-            <td class='total usdint'><div>{{ groups[cat.name].total | usdint(0) }}</div></td>
+            <td class='average usdint blur'><div>{{ avgCategory(cat.name) | usdint(0) }}</div></td>
+            <td class='total usdint blur'><div>{{ groups[cat.name].total | usdint(0) }}</div></td>
           </tr>
           <!-- Totals -->
           <tr class='savings'>
             <td class='category'><div>Savings</div></td>
-            <td class='month usdint' v-for='monthstr in monthstrs' :key='"total"+monthstr'>
+            <td class='month usdint blur' v-for='monthstr in monthstrs' :key='"total"+monthstr'>
               <div>{{sumMonthSpending(monthstr) | usdint(0) }}</div>
             </td>
             <td class='average usdint'><div>--</div></td>
