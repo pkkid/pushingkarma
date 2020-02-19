@@ -46,19 +46,25 @@
     padding: 7px 15px 7px 12px;
   }
 
-  .scrollwrap {
-    position: relative;
-    .scrollbox {
-      overflow-x: hidden;
-      overflow-y: scroll;
-      height: calc(100vh - 100px);
-      scrollbar-color: rgba(255,255,255,0.2) transparent;
-      scrollbar-width: thin;
-      &::-webkit-scrollbar-thumb {
-        background: lighten($darkbg-color, 40%);
-        border-radius: 5px;
-        border: 2px solid $darkbg-color;
-      }
-    }
+  // Custom Scrollbars
+  // <div class='scrollbox'>
+  //   <div class='scrollbox-content'>[CONTENT]</div>
+  // </div>
+  .scrollbox {
+    overflow-x: hidden;
+    visibility: hidden;
+    height: calc(100vh - 100px);
+    transition: visibility 0s 0.3s;
   }
+  .scrollbox-content,
+  .scrollbox:hover {
+    visibility: visible;
+  }
+  ::-webkit-scrollbar { width: 10px; }
+  ::-webkit-scrollbar-thumb {
+    background: lighten($darkbg-color, 25%);
+    border-radius: 5px;
+    border: 2px solid $darkbg-color;
+  }
+
 }

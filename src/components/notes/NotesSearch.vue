@@ -11,17 +11,17 @@
         @keydown.esc.stop='$refs.search.blur()'/>
       <!-- Search Results -->
       <div id='search-results'>
-        <div class='scrollwrap'>
         <div class='scrollbox'>
-          <div class='submenuitem' v-for='note in notes' :key='note.id' :noteid='note.id'
-            :class='{highlighted:note.id == highlighted}' @click='$emit("newSelection", note.id)'>
-            {{note.title}}
-            <div class='subtext'>
-              {{note.tags}} <span v-if='note.tags'>-</span>
-              {{note.created | formatDate('MMM DD, YYYY')}}
+          <div class='scrollbox-content'>
+            <div class='submenuitem' v-for='note in notes' :key='note.id' :noteid='note.id'
+              :class='{highlighted:note.id == highlighted}' @click='$emit("newSelection", note.id)'>
+              {{note.title}}
+              <div class='subtext'>
+                {{note.tags}} <span v-if='note.tags'>-</span>
+                {{note.created | formatDate('MMM DD, YYYY')}}
+              </div>
             </div>
           </div>
-        </div>
         </div>
       </div>
     </div>
