@@ -2,6 +2,7 @@
 
 .content {
   color: $lightbg-text;
+  font-size: 1.6rem;
 
   // Links
   a {
@@ -15,7 +16,7 @@
   // H1, H2, H3
   h1 {
     text-transform: uppercase;
-    font-size: 4.0rem;
+    font-size: 3.0em;
     font-weight: 600;
     border-left: 6px solid $lightbg-accent;
     padding-left: 25px;
@@ -23,8 +24,12 @@
   h2 {
     margin-top: 40px;
     margin-bottom: 20px;
-    font-size: 2.2rem;
+    font-size: 1.3em;
     font-weight: 500;
+  }
+  h3 {
+    font-size: 1.0em;
+    font-weight: 300;
   }
   h1, h2, h3 {
     .subtext {
@@ -73,6 +78,7 @@
     }
   }
   ul, ol {
+    //font-size: 2em; 
     ul, ol {
       margin-top: 0px !important;
       margin-bottom: 3px !important;
