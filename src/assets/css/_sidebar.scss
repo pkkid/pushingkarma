@@ -22,7 +22,6 @@
     text-overflow: ellipsis;
     user-select: none;
     white-space: nowrap;
-    width: 290px;
     .subtext {
       font-size: 0.7em;
       font-weight: 400;
@@ -55,6 +54,7 @@
     visibility: hidden;
     height: calc(100vh - 100px);
     transition: visibility 0s 0.3s;
+    width: 300px;
   }
   .scrollbox-content,
   .scrollbox:hover {
