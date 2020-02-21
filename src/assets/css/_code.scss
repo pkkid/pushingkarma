@@ -4,10 +4,13 @@ pre,
 .content pre {
   background-color: #3c3836;
   color: #eee;
-  padding: 10px 20px;
+  padding: 10px 15px;
   border-radius: 5px;
-  width: calc(100% + 40px);
-  margin-left: -20px;
+  width: 100%;
+  // width: calc(100% + 40px);
+  // margin-left: -20px;
+  overflow-x: auto; 
+  white-space: pre;
 
   &::before {
     content: attr(data-language);
@@ -20,6 +23,8 @@ pre,
   code {
     background-color: transparent;
     padding: 0px;
+    font-size: 1.2rem;
+    line-height: 1.6;
 
     .hljs-comment,
     .hljs-quote {
@@ -62,8 +67,8 @@ pre,
     .hljs-emphasis {
       font-style: italic;
     }
-    .hljs-strong {
-      font-weight: 700;
-    }
+    // .hljs-strong {
+    //   font-weight: 700;
+    // }
   }
 }
