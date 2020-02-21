@@ -20,11 +20,11 @@
           <Dropdown :width='"55px"'>
             <div slot='text'>{{getMarkAttrs("fontSize").fontSize || "18px"}}</div>
             <div slot='menu'>
-              <button :class='{"active":getMarkAttrs("fontSize").fontSize === "12px"}' @click='commands.fontSize({fontSize:"12px"})'>12px</button>
-              <button :class='{"active":getMarkAttrs("fontSize").fontSize === "15px"}' @click='commands.fontSize({fontSize:"15px"})'>15px</button>
-              <button :class='{"active":!("fontSize" in getMarkAttrs("fontSize"))}' @click='commands.fontSize({fontSize:null})'>18px</button>
-              <button :class='{"active":getMarkAttrs("fontSize").fontSize === "22px"}' @click='commands.fontSize({fontSize:"22px"})'>22px</button>
-              <button :class='{"active":getMarkAttrs("fontSize").fontSize === "26px"}' @click='commands.fontSize({fontSize:"26px"})'>26px</button>
+              <button :class='{"active":getMarkAttrs("fontSize").fontSize === "0.6em"}' @click='commands.fontSize({fontSize:"0.6em"})'>0.6em</button>
+              <button :class='{"active":getMarkAttrs("fontSize").fontSize === "0.8em"}' @click='commands.fontSize({fontSize:"0.8em"})'>0.8em</button>
+              <button :class='{"active":!("fontSize" in getMarkAttrs("fontSize"))}' @click='commands.fontSize({fontSize:null})'>1.0em</button>
+              <button :class='{"active":getMarkAttrs("fontSize").fontSize === "1.2em"}' @click='commands.fontSize({fontSize:"1.2em"})'>1.2em</button>
+              <button :class='{"active":getMarkAttrs("fontSize").fontSize === "1.4em"}' @click='commands.fontSize({fontSize:"1.4em"})'>1.4em</button>
             </div>
           </Dropdown>
           <!-- Regular Header Buttons -->
