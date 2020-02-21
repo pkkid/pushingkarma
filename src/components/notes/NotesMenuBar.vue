@@ -72,6 +72,7 @@
   import python from 'highlight.js/lib/languages/python';
   import sql from 'highlight.js/lib/languages/sql';
   import xml from 'highlight.js/lib/languages/xml';
+  var LANGUAGES = {bash,css,javascript,python,sql,xml};
 
   export default {
     name: 'Notes',
@@ -111,7 +112,7 @@
           new Bold(),
           new BulletList(),
           new Code(),
-          new CodeBlockHighlight({languages:{bash,css,javascript,python,sql,xml}}),
+          new CodeBlockHighlight({languages:LANGUAGES}),
           new FontSize(),
           new HardBreak(),
           new Heading({levels:[1,2,3]}),
