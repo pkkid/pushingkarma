@@ -19,6 +19,7 @@
               <div class='subtext'>
                 {{note.tags}} <span v-if='note.tags'>-</span>
                 {{note.created | formatDate('MMM DD, YYYY')}}
+                <span v-if='isPrivateNote(note)'><i class='mdi mdi-lock'/></span>
               </div>
             </div>
           </div>
@@ -33,10 +34,12 @@
   import * as api from '@/api';
   import * as pathify from 'vuex-pathify';
   import * as utils from '@/utils/utils';
+  import NotesMixin from './NotesMixin';
   import Vue from 'vue';
 
   export default {
     name: 'NotesSearch',
+    mixins: [NotesMixin],
     data: () => ({
       cancelSearch: null,  // Cancel search token
       highlighted: null,   // Highlighed note id
@@ -147,5 +150,6 @@
       position: fixed;
       top: 100px;
     }
+    .mdi-lock { top:0px !important; }
   }
 </style>
