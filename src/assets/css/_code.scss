@@ -7,8 +7,6 @@ pre,
   padding: 10px 15px;
   border-radius: 5px;
   width: 100%;
-  // width: calc(100% + 40px);
-  // margin-left: -20px;
   overflow-x: auto; 
   white-space: pre;
 
@@ -28,7 +26,7 @@ pre,
 
     .hljs-comment,
     .hljs-quote {
-      color: #999999;
+      color: #99cc99;
     }
     .hljs-variable,
     .hljs-template-variable,
@@ -67,8 +65,12 @@ pre,
     .hljs-emphasis {
       font-style: italic;
     }
-    // .hljs-strong {
-    //   font-weight: 700;
-    // }
   }
 }
+
+pre::-webkit-scrollbar { width:10px; height:10px; }
+pre::-webkit-scrollbar-thumb {
+    background: lighten($darkbg-color, 25%);
+    border-radius: 5px;
+    border: 2px solid #3c3836;
+  }
