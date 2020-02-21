@@ -190,6 +190,7 @@
     h1 {
       font-size: 3.0rem;
       span { font-weight: 500; }
+      .subtext { font-size: 0.45em; }
     }
     input {
       background-color: transparent;
@@ -197,10 +198,12 @@
       border-radius: 0px;
       &[name=title] {
         line-height: 1em;
-        font-weight: 600;
-        margin: 5px 0px 5px -2px;
+        font-weight: 300;
+        font-size: 1.5em;
+        margin-left: -2px;
+        //margin: 5px 0px 0px -2px;
         padding: 0px;
-        text-transform: uppercase;
+        //text-transform: uppercase;
         white-space: normal;
       }
       &[name=tags] {
