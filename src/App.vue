@@ -92,4 +92,6 @@
     img { height:40px; top:10px; left:20px; }
     .title { top:20px; left:100px; }
   }
+  .nonav #logo { display:none; }
+
 </style>

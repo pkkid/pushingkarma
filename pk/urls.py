@@ -4,7 +4,6 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from pk import api as pk_api, utils
 from pk.apps.budget import api as budget_api
 from pk.apps.calendar import views as calendar_views
-from pk.apps.focus import views as focus_views
 from pk.apps.notes import api as note_api
 from pk.apps.stocks import views as stock_views
 from rest_framework import routers
@@ -25,7 +24,5 @@ def index(request, tmpl='index.html'):
 urlpatterns = [
     url(r'^api/', include(api.urls)),
     url(r'^calendar/$', calendar_views.calendar, name='calendar'),
-    url(r'^focus/$', focus_views.focus, name='focus'),
-    url(r'^raspi/$', focus_views.raspi, name='raspi'),
     url(r'', index, name='index'),
 ]

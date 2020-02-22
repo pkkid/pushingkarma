@@ -80,7 +80,7 @@ def _data(config):
     now = datetime.now()
     lastweek = now - timedelta(days=7)
     nextmonth = now + timedelta(days=30)
-    #import pprint; pprint.pprint(config)
+    # import pprint; pprint.pprint(config)
     return '{"__type":"FindItemJsonRequest:#Exchange",' \
         '"Header":{"__type":"JsonRequestHeaders:#Exchange",' \
         '  "RequestServerVersion":"Exchange2013",' \

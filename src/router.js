@@ -5,6 +5,7 @@ import VueRouter from 'vue-router';
 import Home from '@/components/home/Home';
 import Notes from '@/components/notes/Notes';
 import Budget from '@/components/budget/Budget';
+import NewTab from '@/components/newtab/NewTab';
 import NotFound from '@/components/site/NotFound';
 Vue.use(VueRouter);
 
@@ -14,6 +15,7 @@ export default new VueRouter({
     {path:'/', component:Home},
     {path:'/notes', component:Notes},
     {path:'/budget', component:Budget},
+    {path:'/newtab', component:NewTab},
     {path: '*', component:NotFound}
   ]
 });
