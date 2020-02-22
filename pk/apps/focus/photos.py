@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-import json, re, requests
+import re, requests
 from django.conf import settings
 from flickrapi import FlickrAPI
 from pk import log
