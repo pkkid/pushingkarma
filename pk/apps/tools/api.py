@@ -13,44 +13,35 @@ from rest_framework.response import Response
 from .photos import get_album, PhotosFrom500px
 
 REDDIT_ATTRS = ['title','author.name','score','permalink','domain','created_utc']
-REDDIT_BADDOMAINS = ['i.redd.it', 'imgur.com', '^self\.']
+REDDIT_BADDOMAINS = ['i.redd.it', 'imgur.com', r'^self\.']
 LUCKY_URL = 'http://google.com/search?btnI=I%27m+Feeling+Lucky&sourceid=navclient&q={domain}%20{title}'
 
 
 @api_view()
 @permission_classes([IsAuthenticated])
 # @softcache(timeout=15*MINS, key='calendar')
-def calendar(request):
-    """ Get calendar information from Office365. """
-    try:
-        events = get_events(settings.OFFICE365_HTMLCAL)
-        log.info(events)
-        return Response(events)
-    except Exception as err:
-        log.exception(err)
-        return Response({"error": err})
+def events(request):
+    """ Get calendar events from Office365. """
+    events = get_events(settings.OFFICE365_HTMLCAL)
+    log.info(events)
+    return Response(events)
 
 
 @api_view()
 # @softcache(timeout=30*MINS, key='news')
 def news(request):
     """ Get news from various Reddit subreddits using PRAW.
+        Returns results in flat random order.
         https://praw.readthedocs.io/en/latest/code_overview/reddit_instance.html
     """
-    try:
-        reddit = praw.Reddit(**settings.REDDIT)
-        stories = threaded(
-            news=[_get_subreddit_items, reddit, 'news', 15],
-            technology=[_get_subreddit_items, reddit, 'technology', 15],
-            worldnews=[_get_subreddit_items, reddit, 'worldnews', 15],
-            boston=[_get_subreddit_items, reddit, 'boston', 10],
-        )
-        # return a flat shuffled list
-        stories = [item for sublist in stories.values() for item in sublist]
-        return Response(stories)
-    except Exception as err:
-        log.exception(err)
-        return Response({"error": err})
+    reddit = praw.Reddit(**settings.REDDIT)
+    stories = threaded(
+        news=[_get_subreddit_items, reddit, 'news', 15],
+        technology=[_get_subreddit_items, reddit, 'technology', 15],
+        worldnews=[_get_subreddit_items, reddit, 'worldnews', 15],
+        boston=[_get_subreddit_items, reddit, 'boston', 10],
+    )
+    return Response([item for sublist in stories.values() for item in sublist])
 
 
 @api_view()
@@ -58,12 +49,8 @@ def news(request):
 # @softcache(timeout=18*HOURS, expires=30*DAYS, key='photo')
 def photo(request):
     """ Get background photo information from the interwebs. """
-    try:
-        photos = get_album(request, cls=PhotosFrom500px)
-        return Response(random.choice(photos))
-    except Exception as err:
-        log.exception(err)
-        return Response({"error": err})
+    photos = get_album(request, cls=PhotosFrom500px)
+    return Response(random.choice(photos))
 
 
 @api_view()
@@ -73,31 +60,22 @@ def tasks(request):
     """ Get open tasks from Google Tasks.
         https://developers.google.com/tasks/v1/reference/
     """
-    try:
-        service = auth.get_gauth_service(settings.EMAIL, 'tasks')
-        tasklists = service.tasklists().list().execute()
-        tasklists = {tlist['title']:tlist for tlist in tasklists['items']}
-        tasklist = tasklists['My Tasks']
-        tasks = service.tasks().list(tasklist=tasklist['id']).execute()
-        tasks = sorted(tasks.get('items',[]), key=lambda x:x['position'])
-        return Response(tasks)
-    except Exception as err:
-        log.exception(err)
-        return Response({"error": err})
+    service = auth.get_gauth_service(settings.EMAIL, 'tasks')
+    tasklists = service.tasklists().list().execute()
+    tasklists = {tlist['title']:tlist for tlist in tasklists['items']}
+    tasklist = tasklists['My Tasks']
+    tasks = service.tasks().list(tasklist=tasklist['id']).execute()
+    return Response(sorted(tasks.get('items',[]), key=lambda x:x['position']))
 
 
 @api_view()
+@permission_classes([IsAuthenticated])
 # @softcache(timeout=30*MINS, key='weather')
 def weather(request):
     """ Get weather information from Weather Underground.
         https://www.wunderground.com/weather/api/d/docs
     """
-    try:
-        response = requests.get(settings.DARKSKY_URL)
-        return Response(response.json())
-    except Exception as err:
-        log.exception(err)
-        return Response({"error": err})
+    return Response(requests.get(settings.DARKSKY_URL).json())
 
 
 def _get_subreddit_items(reddit, subreddit, count):
@@ -115,8 +93,7 @@ def _get_subreddit_items(reddit, subreddit, count):
         if 'reddit' not in story['domain'].replace('.',''):
             story['url'] = LUCKY_URL.format(**story)
         substories.append(story)
-    substories = sorted(substories, key=lambda x:x['score'], reverse=True)[:count]
-    return substories
+    return sorted(substories, key=lambda x:x['score'], reverse=True)[:count]
 
 
 # @xframe_options_exempt

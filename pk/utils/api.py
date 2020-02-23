@@ -2,7 +2,10 @@
 # Pulled from django-rest-framework documentation:
 # http://www.django-rest-framework.org/api-guide/serializers/#dynamically-modifying-fields
 from rest_framework import pagination, routers, serializers
+from rest_framework.response import Response
 from rest_framework.reverse import reverse
+from rest_framework.views import exception_handler
+from pk import log
 
 
 class CustomPageNumberPagination(pagination.PageNumberPagination):
@@ -25,18 +28,6 @@ class DynamicFieldsSerializer(serializers.HyperlinkedModelSerializer):
                 self.fields.pop(field_name)
 
 
-def PartialFieldsSerializer(cls, fields=None, **kwargs):
-    """ Serializer allows only showing some of the fields on a model. """
-    _fields = fields or cls.Meta.fields
-
-    class _PartialFieldsSerializer(cls):
-        class Meta:
-            model = cls.Meta.model
-            fields = _fields
-    
-    return _PartialFieldsSerializer(**kwargs)
-
-
 class HybridRouter(routers.DefaultRouter):
     """ Hybriid router allowed both APIViews and class-based views.
         https://stackoverflow.com/a/37388298
@@ -57,6 +48,7 @@ class HybridRouter(routers.DefaultRouter):
             resp = original_view(request, *args, **kwargs)
             namespace = request.resolver_match.namespace
             for view_url in self.view_urls:
+                print(view_url.name)
                 url_name = view_url.name
                 if namespace:
                     url_name = namespace + ':' + url_name
@@ -64,3 +56,26 @@ class HybridRouter(routers.DefaultRouter):
                     request=request, format=kwargs.get('format', None))
             return resp
         return view
+
+
+def custom_exception_handler(exc, context):
+    """ Custom exception handler for Django Rest Framework.
+        https://www.django-rest-framework.org/api-guide/exceptions/
+    """
+    log.exception(exc)
+    return Response({'detail':str(exc)})
+
+
+def PartialFieldsSerializer(cls, fields=None, **kwargs):
+    """ Serializer allows only showing some of the fields on a model. """
+    _fields = fields or cls.Meta.fields
+
+    class _PartialFieldsSerializer(cls):
+        class Meta:
+            model = cls.Meta.model
+            fields = _fields
+    
+    return _PartialFieldsSerializer(**kwargs)
+
+
+

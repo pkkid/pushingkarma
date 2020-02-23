@@ -108,6 +108,7 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PERMISSION_CLASSES': ['rest_framework.permissions.IsAuthenticatedOrReadOnly'],
     'DEFAULT_PAGINATION_CLASS': 'pk.utils.api.CustomPageNumberPagination',
+    'EXCEPTION_HANDLER': 'pk.utils.api.custom_exception_handler',
 }
 
 # Django Redis Sessions
