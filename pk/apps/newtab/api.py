@@ -7,11 +7,18 @@ from pk.apps.calendar.views import get_events
 from pk.utils import auth, context, threaded
 from pk.utils.decorators import MINS, HOURS, DAYS
 from pk.utils.decorators import softcache, login_or_apikey_required
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 from .photos import get_album, PhotosFrom500px
 
 REDDIT_ATTRS = ['title','author.name','score','permalink','domain','created_utc']
 REDDIT_BADDOMAINS = ['i.redd.it', 'imgur.com', '^self\.']
 LUCKY_URL = 'http://google.com/search?btnI=I%27m+Feeling+Lucky&sourceid=navclient&q={domain}%20{title}'
+
+
+@api_view()
+def hello_world(request):
+    return Response({"message": "Hello, world!"})
 
 
 @xframe_options_exempt

@@ -37,13 +37,12 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.sessions',
     'django.contrib.staticfiles',
-    'pk.apps.budget',
-    'pk.apps.focus',
-    'pk.apps.notes',
-    'pk.apps.stocks',
-    'pk',
     'rest_framework.authtoken',
     'rest_framework',
+    'pk',
+    'pk.apps.budget',
+    'pk.apps.notes',
+    'pk.apps.stocks',
 )
 MIDDLEWARE = (
     'django.contrib.sessions.middleware.SessionMiddleware',
