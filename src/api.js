@@ -20,12 +20,12 @@ export const Notes = {
 };
 
 export const Budget = {
-  getAccounts() { return axios.get('/api/accounts'); },
-  getCategories() { return axios.get('/api/categories'); },
-  getTransactions(params, cancelToken) { return axios.get('/api/transactions', {params, cancelToken}); },
+  getAccounts() { return axios.get('/api/budget/accounts'); },
+  getCategories() { return axios.get('/api/budget/categories'); },
+  getTransactions(params, cancelToken) { return axios.get('/api/budget/transactions', {params, cancelToken}); },
   getKeyVals() { axios.get('/api/keyval'); },
-  patchTransaction(id, data) { return axios.patch(`/api/transactions/${id}`, data); },
-  upload(formdata) { return axios.put('/api/transactions/upload', formdata); },
+  patchTransaction(id, data) { return axios.patch(`/api/budget/transactions/${id}`, data); },
+  upload(formdata) { return axios.put('/api/budget/transactions/upload', formdata); },
 };
 
 

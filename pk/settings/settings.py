@@ -56,7 +56,7 @@ MIDDLEWARE = (
 )
 TEMPLATES = [{
     'BACKEND': 'django.template.backends.django.DjangoTemplates',
-    'DIRS': [join(BASE_DIR, 'dist')],
+    'DIRS': [join(BASE_DIR, 'pk/templates'), join(BASE_DIR, 'dist')],
     'APP_DIRS': True,
     'OPTIONS': {'context_processors': [
         'django.template.context_processors.debug',

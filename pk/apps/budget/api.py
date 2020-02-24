@@ -10,7 +10,7 @@ from pk.utils.api import DynamicFieldsSerializer, PartialFieldsSerializer
 from pk.utils.context import Bunch
 from pk.utils.search import FIELDTYPES, SearchField, Search
 from rest_framework import viewsets
-from rest_framework.decorators import detail_route, list_route
+from rest_framework.decorators import api_view, detail_route, list_route
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -34,6 +34,16 @@ TRANSACTIONSEARCHFIELDS = {
     'comment': SearchField(FIELDTYPES.STR, 'comment'),
     'memo': SearchField(FIELDTYPES.STR, 'memo'),
 }
+
+
+@api_view(['get'])
+def budget(request):
+    root = reverse('api-root', request=request)
+    return Response({
+        'budget/accounts': f'{root}budget/accounts',
+        'budget/categories': f'{root}budget/categories',
+        'budget/transactions': f'{root}budget/transactions',
+    })
 
 
 class AccountSerializer(DynamicFieldsSerializer):
