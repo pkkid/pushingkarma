@@ -69,7 +69,6 @@ class TransactionManager:
                 raise Exception('Not tracking account fid: %s' % fid)
             account = self._accounts[fid]
             # Update transactions
-            trx_maxdate = None
             for trx in qfx.account.statement.transactions:
                 trx = trx.__dict__
                 trx['trxid'] = trx['id']

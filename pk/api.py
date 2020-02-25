@@ -24,9 +24,6 @@ class AccountSerializer(ModelSerializer):
         return token.key if token else None
 
 
-
-
-
 @api_view(['get'])
 @permission_classes([AllowAny])
 def user(request, *args, **kwargs):

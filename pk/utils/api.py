@@ -79,6 +79,3 @@ def PartialFieldsSerializer(cls, fields=None, **kwargs):
             fields = _fields
     
     return _PartialFieldsSerializer(**kwargs)
-
-
-

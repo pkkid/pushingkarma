@@ -332,7 +332,7 @@ def is_month(value):
 
 
 def is_year(value):
-    return re.match('^20\d\d$', value.lower())
+    return re.match(r'^20\d\d$', value.lower())
 
 
 def modifier_bool(value):
@@ -344,9 +344,9 @@ def modifier_bool(value):
 
 
 def modifier_numeric(value):
-    if re.match('^\-*\d+$', value):
+    if re.match(r'^\-*\d+$', value):
         return int(value)
-    elif re.match('^\-*\d+.\d+$', value):
+    elif re.match(r'^\-*\d+.\d+$', value):
         return float(value)
     raise SearchError('Invalid int value: %s' % value)
 
@@ -358,5 +358,5 @@ def modifier_date(value):
             return datetime.datetime(int(value), 1, 1)
         dt = timelib.strtodatetime(value.encode('utf8'))
         return datetime.datetime(dt.year, dt.month, dt.day)
-    except:
+    except Exception:
         raise SearchError("Invalid date format: '%s'" % value)

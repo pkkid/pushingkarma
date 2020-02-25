@@ -21,9 +21,9 @@ class CleanHTMLMiddleware(object):
                 continue
             if not script:
                 newindent = indent
-                newindent += len(re.findall('\<\w+', stripped))
-                newindent -= len(re.findall('\</\w+', stripped))
-                newindent -= len(re.findall('/\>', stripped))
+                newindent += len(re.findall(r'\<\w+', stripped))
+                newindent -= len(re.findall(r'\</\w+', stripped))
+                newindent -= len(re.findall(r'/\>', stripped))
                 indent = min(indent, newindent)
             newhtml.append('%s%s' % (' '*(indent*2), stripped))
             if 'text/javascript' in stripped: script = True

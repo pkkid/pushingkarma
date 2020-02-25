@@ -66,7 +66,7 @@ class Markdown(object):
     def _replace_raw_includes(self, text):
         # TODO: This regex does not support kwargs yet..
         # No need to track included items in self.meta here.
-        for match in re.findall("(<include\s+href=[\'\"](.+?)[\'\"]\s*/>)", text):
+        for match in re.findall(r"(<include\s+href=[\'\"](.+?)[\'\"]\s*/>)", text):
             slug = match[1].replace(self.prefix,'').strip('/')
             subitem = utils.get_object_or_none(self.cls, slug=slug)
             if subitem:
