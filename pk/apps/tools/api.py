@@ -1,15 +1,15 @@
 # encoding: utf-8
 import praw, random, re, requests
 from django.conf import settings
-# from django.views.decorators.clickjacking import xframe_options_exempt
+from django.http import HttpResponse
+from ics import Calendar, Event
 from pk import log, utils
-from pk.apps.calendar.views import get_events
 from pk.utils import auth, threaded
-# from pk.utils.decorators import MINS, HOURS, DAYS
-# from pk.utils.decorators import softcache, login_or_apikey_required
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.reverse import reverse
+from .calendar import get_events
 from .photos import get_album, PhotosFrom500px
 
 REDDIT_ATTRS = ['title','author.name','score','permalink','domain','created_utc']
@@ -17,7 +17,20 @@ REDDIT_BADDOMAINS = ['i.redd.it', 'imgur.com', r'^self\.']
 LUCKY_URL = 'http://google.com/search?btnI=I%27m+Feeling+Lucky&sourceid=navclient&q={domain}%20{title}'
 
 
-@api_view()
+@api_view(['get'])
+def tools(request):
+    root = reverse('api-root', request=request)
+    return Response({
+        'tools/events': f'{root}tools/events',
+        'tools/ical': f'{root}tools/ical',
+        'tools/news': f'{root}tools/news',
+        'tools/photo': f'{root}tools/photo',
+        'tools/tasks': f'{root}tools/tasks',
+        'tools/weather': f'{root}tools/weather',
+    })
+
+
+@api_view(['get'])
 @permission_classes([IsAuthenticated])
 # @softcache(timeout=15*MINS, key='calendar')
 def events(request):
@@ -27,7 +40,25 @@ def events(request):
     return Response(events)
 
 
-@api_view()
+@api_view(['get'])
+@permission_classes([IsAuthenticated])
+# @softcache(timeout=15*MINS, key='calendar')
+def ical(request, status=200):
+    """ Returns Office365 calendar events as ics because MS does it wrong. """
+    url = request.GET.get('url', settings.OFFICE365_HTMLCAL)
+    ics = Calendar()
+    for event in get_events(url):
+        ics.events.append(Event(
+            name=event['Subject'],
+            uid=event['ItemId']['Id'],
+            location=event['Location']['DisplayName'],
+            begin=event['Start'],
+            end=event['End'],
+        ))
+    return HttpResponse(str(ics), content_type='text/calendar', status=status)
+
+
+@api_view(['get'])
 # @softcache(timeout=30*MINS, key='news')
 def news(request):
     """ Get news from various Reddit subreddits using PRAW.
@@ -44,7 +75,7 @@ def news(request):
     return Response([item for sublist in stories.values() for item in sublist])
 
 
-@api_view()
+@api_view(['get'])
 @permission_classes([IsAuthenticated])
 # @softcache(timeout=18*HOURS, expires=30*DAYS, key='photo')
 def photo(request):
@@ -53,7 +84,7 @@ def photo(request):
     return Response(random.choice(photos))
 
 
-@api_view()
+@api_view(['get'])
 @permission_classes([IsAuthenticated])
 # @softcache(timeout=15*MINS, key='tasks')
 def tasks(request):
@@ -68,7 +99,7 @@ def tasks(request):
     return Response(sorted(tasks.get('items',[]), key=lambda x:x['position']))
 
 
-@api_view()
+@api_view(['get'])
 @permission_classes([IsAuthenticated])
 # @softcache(timeout=30*MINS, key='weather')
 def weather(request):

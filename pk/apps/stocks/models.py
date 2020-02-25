@@ -4,7 +4,6 @@ from django.core.management import call_command
 from django.db import models
 from django.dispatch import receiver
 from django_extensions.db.models import TimeStampedModel
-from pk.utils.api import DynamicFieldsSerializer
 from pk import log
 
 FUNCTION = 'Weekly Adjusted Time Series'
@@ -67,13 +66,6 @@ class Stock(TimeStampedModel):
         key = key or CLOSE
         date = date or self.maxdate
         return self.history.get(date, {}).get(key)
-
-
-class StockSerializer(DynamicFieldsSerializer):
-    class Meta:
-        model = Stock
-        fields = ('id','url','ticker','description','close',
-            'mindate','maxdate','modified','tags','history')
 
 
 @receiver(models.signals.post_save, sender=Stock)

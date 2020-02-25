@@ -1,29 +1,8 @@
 # encoding: utf-8
 import json, requests
 from datetime import datetime, timedelta
-from django.http import HttpResponse
-from ics import Calendar, Event
-from pk import log
 
 DATEFORMAT = '%Y-%m-%dT00:00:00.000'
-
-
-def calendar(request, status=200):
-    """ Convert o365 calendar events to ics because MS does it wrong. """
-    try:
-        url = request.GET.get('url')
-        ics = Calendar()
-        for event in get_events(url):
-            ics.events.append(Event(
-                name=event['Subject'],
-                uid=event['ItemId']['Id'],
-                location=event['Location']['DisplayName'],
-                begin=event['Start'],
-                end=event['End'],
-            ))
-        return HttpResponse(str(ics), content_type='text/calendar', status=status)
-    except Exception as err:
-        log.exception(err)
 
 
 def get_events(url):

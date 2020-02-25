@@ -5,7 +5,7 @@ from pk import api as pk_api, utils
 from pk.apps.budget import api as budget_api
 from pk.apps.tools import api as tools_api
 from pk.apps.notes import api as note_api
-from pk.apps.stocks import views as stock_views
+from pk.apps.stocks import api as stock_api
 from pk.utils.api import HybridRouter
 
 # Create Router & User APIs
@@ -19,15 +19,22 @@ api.add_url('^budget$', budget_api.budget, name='budget')
 api.register('budget/accounts', budget_api.AccountsViewSet)
 api.register('budget/categories', budget_api.CategoriesViewSet)
 api.register('budget/transactions', budget_api.TransactionsViewSet)
+api.register('budget/keyval', budget_api.KeyValueViewSet)
+api.add_url('^budget/upload$', budget_api.upload, name='budget/upload')
+# Stocks API
+api.add_url('^stocks$', stock_api.stocks, name='stocks')
+api.register('stocks/list', stock_api.StocksViewSet)
+api.add_url('^stocks/csv$', stock_api.csv, name='stocks/csv')
+# Tools API
+api.add_url('^tools$', tools_api.tools, name='tools')
+api.add_url('^tools/events$', tools_api.events, name='tools/events')
+api.add_url('^tools/ical$', tools_api.ical, name='tools/ical')
+api.add_url('^tools/news$', tools_api.news, name='tools/news')
+api.add_url('^tools/photo$', tools_api.photo, name='tools/photo')
+api.add_url('^tools/tasks$', tools_api.tasks, name='tools/tasks')
+api.add_url('^tools/weather$', tools_api.weather, name='tools/weather')
 # Misc APIs
 api.register('notes', note_api.NotesViewSet)
-api.register('stocks', stock_views.StocksViewSet)
-api.register('keyval', budget_api.KeyValueViewSet)
-api.add_url('^events$', tools_api.events, name='events')
-api.add_url('^news$', tools_api.news, name='news')
-api.add_url('^photo$', tools_api.photo, name='photo')
-api.add_url('^tasks$', tools_api.tasks, name='tasks')
-api.add_url('^weather$', tools_api.weather, name='weather')
 
 
 @ensure_csrf_cookie
@@ -36,7 +43,5 @@ def index(request, tmpl='index.html'):
 
 urlpatterns = [
     url(r'^api/', include(api.urls), name='api'),
-    # from pk.apps.calendar import views as calendar_views
-    # url(r'^calendar/$', calendar_views.calendar, name='calendar'),
     url(r'', index, name='index'),
 ]

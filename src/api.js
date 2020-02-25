@@ -23,9 +23,9 @@ export const Budget = {
   getAccounts() { return axios.get('/api/budget/accounts'); },
   getCategories() { return axios.get('/api/budget/categories'); },
   getTransactions(params, cancelToken) { return axios.get('/api/budget/transactions', {params, cancelToken}); },
-  getKeyVals() { axios.get('/api/keyval'); },
+  getKeyVals() { axios.get('/api/budget/keyval'); },
   patchTransaction(id, data) { return axios.patch(`/api/budget/transactions/${id}`, data); },
-  upload(formdata) { return axios.put('/api/budget/transactions/upload', formdata); },
+  upload(formdata) { return axios.put('/api/budget/upload', formdata); },
 };
 
 

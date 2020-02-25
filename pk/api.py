@@ -24,6 +24,9 @@ class AccountSerializer(ModelSerializer):
         return token.key if token else None
 
 
+
+
+
 @api_view(['get'])
 @permission_classes([AllowAny])
 def user(request, *args, **kwargs):
@@ -35,12 +38,8 @@ def user(request, *args, **kwargs):
 @api_view(['post'])
 @permission_classes([AllowAny])
 def login(request, *args, **kwargs):
-    """ Allows logging in with user/password pair or by using the Google Authentication
-        Service. You must call this resource using a POST request.
-        
-        * `email` -  Email address for email/pass login.
-        * `password` - Password for email/pass login.
-        * `code` - Google auth code for gauth login.
+    """ Allows logging in with `user` & `password` or by passing a `code` to authenticate
+        using the Google Auth Service. You must call this resource using a POST request.
     """
     try:
         email = request.data.get('email')
