@@ -30,7 +30,6 @@ TRANSACTIONSEARCHFIELDS = {
 
 
 class AccountSerializer(DynamicFieldsSerializer):
-    
     class Meta:
         model = Account
         fields = ('id','url','name','fid','type','payee','balance','balancedt')
@@ -52,15 +51,9 @@ class AccountsViewSet(viewsets.ModelViewSet):
 
 
 class CategorySerializer(DynamicFieldsSerializer):
-    details = SerializerMethodField()
-
     class Meta:
         model = Category
-        fields = ('id','name','sortindex','budget','comment','url','details')
-
-    def get_details(self, obj):
-        request = self.context['request']
-        return reverse('category-details', kwargs={'pk':obj.pk}, request=request)
+        fields = ('id','name','sortindex','budget','comment','url')
 
 
 class CategoriesViewSet(viewsets.ModelViewSet):
@@ -74,7 +67,6 @@ class CategoriesViewSet(viewsets.ModelViewSet):
         page = self.paginate_queryset(categories)
         serializer = CategorySerializer(page, context={'request':request}, many=True, fields=self.list_fields)
         response = self.get_paginated_response(serializer.data)
-        response.data['summary'] = reverse('category-summary', request=request)
         utils.move_to_end(response.data, 'results')
         return response
 

@@ -27,5 +27,3 @@ export const Budget = {
   patchTransaction(id, data) { return axios.patch(`/api/budget/transactions/${id}`, data); },
   upload(formdata) { return axios.put('/api/budget/upload', formdata); },
 };
-
-
