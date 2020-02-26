@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 import re, requests
+from cache_memoize import cache_memoize
 from django.conf import settings
 from flickrapi import FlickrAPI
 from pk import log
 from pk.utils import rget, threaded
-from pk.utils.decorators import DAYS, softcache
+
 
 USERAGENT = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36'  # noqa
 
@@ -115,7 +116,7 @@ def _photo(photo, urlkey, userkey, titlekey, desckey):
     }
 
 
-@softcache(timeout=30*DAYS, expires=60*DAYS, key='album')
+@cache_memoize(60*60*30)  # 30 days
 def get_album(request, cls):
     try:
         return cls().get_photos()

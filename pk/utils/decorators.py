@@ -1,14 +1,9 @@
 # encoding: utf-8
-import functools, json, os, time
+import functools, os, time
 from django.conf import settings
-from django.core.cache import cache
 from django.db import connection
-from django.http import HttpRequest
 from pk import log
 
-MINS = 60
-HOURS = 60 * MINS
-DAYS = 24 * HOURS
 COLORS = {'blue':34, 'cyan':36, 'green':32, 'grey':30, 'magenta':35, 'red':31, 'white':37, 'yellow':33}
 RESET = '\033[0m'
 
@@ -20,36 +15,6 @@ class ContextDecorator(object):
             with self:
                 return f(*args, **kwds)
         return decorated
-
-
-def softcache(timeout=15*MINS, expires=1*DAYS, key=None):
-    def wrapper1(func):
-        def wrapper2(*args, **kwargs):
-            # Check we want to force this value
-            force = False
-            if args and isinstance(args[0], HttpRequest):
-                if args[0].GET.get('force%s' % key.lower()) or args[0].GET.get('forceall'):
-                    force = True
-            # Get the current value from cache, check it's age
-            now = int(time.time())
-            value = json.loads(cache.get(key, '{}'))
-            age = now - value.get('lastupdate', 0)
-            if value and age <= timeout and value.get('data') is not None and not force:
-                log.info('Returning cached value for: %s', key)
-                return value['data']
-            # Value is old; Lets update it
-            try:
-                log.info('Fetching new value for: %s', key)
-                result = func(*args, **kwargs)
-                if result is None:
-                    raise Exception('No result')
-                cache.set(key, json.dumps({'lastupdate':now, 'data':result}), expires)
-                return result
-            except Exception as err:
-                log.warning('Error fetching new value: %s', err)
-                return value.get('data')
-        return wrapper2
-    return wrapper1
 
 
 def color(text, color=None):

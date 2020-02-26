@@ -2,6 +2,7 @@
 import praw, random, re, requests
 from django.conf import settings
 from django.http import HttpResponse
+from django.views.decorators.cache import cache_page
 from ics import Calendar, Event
 from pk import log, utils
 from pk.utils import auth, threaded
@@ -30,9 +31,8 @@ def tools(request):
     })
 
 
-@api_view(['get'])
 @permission_classes([IsAuthenticated])
-# @softcache(timeout=15*MINS, key='calendar')
+@cache_page(60*15)  # 15 minutes
 def events(request):
     """ Get calendar events from Office365. """
     events = get_events(settings.OFFICE365_HTMLCAL)
@@ -42,7 +42,7 @@ def events(request):
 
 @api_view(['get'])
 @permission_classes([IsAuthenticated])
-# @softcache(timeout=15*MINS, key='calendar')
+@cache_page(60*15)  # 15 minutes
 def ical(request, status=200):
     """ Returns Office365 calendar events as ics because MS does it wrong. """
     url = request.GET.get('url', settings.OFFICE365_HTMLCAL)
@@ -59,7 +59,7 @@ def ical(request, status=200):
 
 
 @api_view(['get'])
-# @softcache(timeout=30*MINS, key='news')
+@cache_page(60*30)  # 30 minutes
 def news(request):
     """ Get news from various Reddit subreddits using PRAW.
         Returns results in flat random order.
@@ -77,7 +77,7 @@ def news(request):
 
 @api_view(['get'])
 @permission_classes([IsAuthenticated])
-# @softcache(timeout=18*HOURS, expires=30*DAYS, key='photo')
+@cache_page(60*60*18)  # 18 hours
 def photo(request):
     """ Get background photo information from the interwebs. """
     photos = get_album(request, cls=PhotosFrom500px)
@@ -86,7 +86,7 @@ def photo(request):
 
 @api_view(['get'])
 @permission_classes([IsAuthenticated])
-# @softcache(timeout=15*MINS, key='tasks')
+@cache_page(60*15)  # 15 minutes
 def tasks(request):
     """ Get open tasks from Google Tasks.
         https://developers.google.com/tasks/v1/reference/
@@ -101,7 +101,7 @@ def tasks(request):
 
 @api_view(['get'])
 @permission_classes([IsAuthenticated])
-# @softcache(timeout=30*MINS, key='weather')
+@cache_page(60*30)  # 30 minutes
 def weather(request):
     """ Get weather information from Weather Underground.
         https://www.wunderground.com/weather/api/d/docs
