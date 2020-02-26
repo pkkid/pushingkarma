@@ -1,12 +1,12 @@
 <template>
-  <div v-if='tasks' id='tasks'>
-    <div class='title'>My Tasks</div>
-    <div class='task' v-for='task in tasks.slice(0,4)' :key='task.id'>
-      {{task.title}}
+  <div id='tasks' v-if='loaded'>
+    <div v-if='tasks'>
+      <div class='title'>My Tasks</div>
+      <div class='task' v-for='task in tasks.slice(0,4)' :key='task.id'>
+        {{task.title}}
+      </div>
     </div>
-  </div>
-  <div v-else id='tasks'>
-    <div class='notasks'>No tasks</div>
+    <div v-else class='notasks'>No tasks</div>
   </div>
 </template>
 
@@ -16,12 +16,13 @@
   export default {
     name: 'NewTabTasks',
     data: () => ({
+      loaded: false,
       tasks: null,
     }),
     mounted: async function() {
       var {data} = await api.Tools.getTasks();
       this.tasks = data;
-      console.log(this.tasks);
+      this.loaded = true;
     },
   };
 </script>
