@@ -1,4 +1,6 @@
 # encoding: utf-8
+import copy
+from django.conf import settings
 from django.conf.urls import include, url
 from django.views.decorators.csrf import ensure_csrf_cookie
 from pk import api as pk_api, utils
@@ -39,7 +41,10 @@ api.register('notes', note_api.NotesViewSet)
 
 @ensure_csrf_cookie
 def index(request, tmpl='index.html'):
-    return utils.response(request, tmpl, {})
+    globals = copy.copy(settings.GLOBALS)
+    globals['IPADDR'] = request.META.get('REMOTE_ADDR')
+    return utils.response(request, tmpl, {'GLOBALS':globals})
+
 
 urlpatterns = [
     url(r'^api/', include(api.urls), name='api'),
