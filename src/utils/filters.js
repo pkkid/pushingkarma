@@ -6,6 +6,10 @@ Vue.filter('formatDate', function(value, format) {
   return moment(value).format(format);
 });
 
+Vue.filter('int', function(value) {
+  return parseInt(value, 10);
+});
+
 Vue.filter('timeAgo', function(value) {
   var now = moment(new Date());
   var then = moment(value);

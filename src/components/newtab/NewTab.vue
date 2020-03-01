@@ -3,9 +3,9 @@
     <Clock/>
     <Tasks/>
     <IPAddr/>
+    <Weather/>
     <div id='photo' class='hidedetails'></div>
     <div id='calendar'></div>
-    <div id='weather' class='hidedetails'></div>
     <div id='news'></div>
   </div>
 </template>
@@ -14,10 +14,11 @@
   import Clock from './NewTabClock';
   import Tasks from './NewTabTasks';
   import IPAddr from './NewTabIPAddr';
+  import Weather from './NewTabWeather';
 
   export default {
     name: 'NewTab',
-    components: {Clock, Tasks, IPAddr},
+    components: {Clock, IPAddr, Tasks, Weather},
     mounted: function() {
       this.$store.set('global/layout', 'nonav');
     },

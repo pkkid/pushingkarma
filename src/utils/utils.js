@@ -19,6 +19,37 @@ export function contains(selector, regex) {
   return results.length ? results[0] : null;
 }
 
+// ds2wuIcon
+// DarkSky to WeatherUndereground icon translation
+export function ds2wuIcon(dsicon) {
+  var wuicon;
+  dsicon = dsicon.replace('-day', '');
+  dsicon = dsicon.replace('-night', '');
+  switch(dsicon) {
+    //case '': wuicon = 'chanceflurries'; break;
+    //case '': wuicon = 'chancerain'; break;
+    //case '': wuicon = 'chancesleet'; break;
+    //case '': wuicon = 'chancesnow'; break;
+    //case '': wuicon = 'chancetstorms'; break;
+    case 'clear': wuicon = 'clear'; break;
+    case 'cloudy': wuicon = 'cloudy'; break;
+    //case '': wuicon = 'flurries'; break;
+    case 'fog': wuicon = 'fog'; break;
+    //case '': wuicon = 'hazy'; break;
+    //case '': wuicon = 'mostlycloudy'; break;
+    //case '': wuicon = 'mostlysunny'; break;
+    case 'partly-cloudy': wuicon = 'partlycloudy'; break;
+    //case '': wuicon = 'partlysunny'; break;
+    case 'rain': wuicon = 'rain'; break;
+    case 'sleet': wuicon = 'sleet'; break;
+    case 'snow': wuicon = 'snow'; break;
+    //case '': wuicon = 'sunny'; break;
+    //case '': wuicon = 'tstorms'; break;
+    default: wuicon = 'unknown'; break;
+  }
+  return wuicon;
+}
+
 // Find Index
 // Find item in list of objects with the specified key/value.
 export function findIndex(objs, key, value) {
