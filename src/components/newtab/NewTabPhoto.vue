@@ -1,5 +1,5 @@
 <template>
-  <transition name='custom-classes-transition' enter-active-class='fadeIn'>
+  <transition name='custom-classes-transition' enter-active-class='-animated fadeIn'>
     <div id='photowrap' v-if='loaded' :style='{backgroundImage: bgimg}'>
       <div id='photodetails' v-if='showdetails'>
         <div class='title'><span v-if='photo.title'>{{photo.title}} |</span> {{photo.user}}</div>
