@@ -23,8 +23,7 @@
     text-align: center;
     top: 20px;
     width: 300px;
-    //opacity: 0;
-    //transition: $newtab_transition_slow;
+    transition: $newtab_transition_slow;
     //cursor: pointer;
     .date {
       color: $newtab_dim;

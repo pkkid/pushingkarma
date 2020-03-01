@@ -1,12 +1,12 @@
 <template>
-  <div id='newtab'>
+  <div id='newtab' :style='{backgroundImage: ""}'>
     <Clock/>
     <Events/>
     <IPAddr/>
+    <News/>
     <Tasks/>
     <Weather/>
-    <div id='photo' class='hidedetails'></div>
-    <div id='news'></div>
+    <Photo ref='photo'/>
   </div>
 </template>
 
@@ -14,12 +14,14 @@
   import Clock from './NewTabClock';
   import Events from './NewTabEvents';
   import IPAddr from './NewTabIPAddr';
+  import News from './NewTabNews';
+  import Photo from './NewTabPhoto';
   import Tasks from './NewTabTasks';
   import Weather from './NewTabWeather';
 
   export default {
     name: 'NewTab',
-    components: {Clock, Events, IPAddr, Tasks, Weather},
+    components: {Clock, Events, IPAddr, News, Photo, Tasks, Weather},
     mounted: function() {
       this.$store.set('global/layout', 'nonav');
     },
