@@ -7,7 +7,7 @@
           <div class='weather-feelslike'>Feels: {{weather.currently.apparentTemperature | int}}°</div>
         </div>
         <div class='weather-today-icon'>
-          <!-- <i class='diw-{{weather.currently.icon | ds2wuIcon}}'></i> -->
+          <i :class='[iconcls(weather.currently.icon)]'/>
         </div>
         <div class='weather-today-summary'>
           <div class='weather-location'>Watertown</div>
@@ -17,7 +17,7 @@
       <div class='forecast' style='clear:both'>
         <div class='forecast-day' v-for='day in weather.daily.data.slice(0,5)' :key='day.time'>
           <div class='forecast-weekday'>{{day.time | formatDate('ddd')}}</div>
-          <!-- <i class='diw-{{day.icon | ds2wuIcon}}'></i> -->
+          <i :class='[iconcls(day.icon)]'/>
           <div class='forecast-temp'>{{day.temperatureMax| int }}°</div>
         </div>
       </div>
@@ -27,6 +27,8 @@
 
 <script>
   import * as api from '@/api';
+  import * as utils from '@/utils/utils';
+  require('@/assets/font/dripicons/dripicons-weather.css');
 
   export default {
     name: 'NewTabWeather',
@@ -38,6 +40,11 @@
       var {data} = await api.Tools.getWeather();
       this.weather = data;
       this.loaded = true;
+    },
+    methods: {
+      iconcls: function(icon) {
+        return `diw-${utils.ds2wuIcon(icon)}`;
+      }
     },
   };
 </script>

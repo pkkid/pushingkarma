@@ -37,7 +37,6 @@
     },
     methods: {
       refreshPhoto: async function() {
-        console.log('getPhoto');
         var {data} = await api.Tools.getPhoto();
         this.photo = data;
       },
