@@ -1,7 +1,5 @@
 <template>
-  <transition name='custom-classes-transition'
-      enter-active-class='animated fadeIn'
-      leave-active-class='animated fadeOut'>
+  <transition name='custom-classes-transition' enter-active-class='animated fadeIn'>
     <div id='weather' v-if='loaded'>
       <div class='weather-today'>
         <div class='weather-today-details'>

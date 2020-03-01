@@ -1,9 +1,13 @@
 <template>
-  <div id='photo' v-if='loaded'>
-    <div class='title'><span v-if='photo.title'>{{photo.title}} |</span> {{photo.user}}</div>
-    <span class='mdi mdi-autorenew'></span>
-    <div class='description'>{{photo.description}}</div>
-  </div>
+  <transition name='custom-classes-transition' enter-active-class='fadeIn'>
+    <div id='photowrap' v-if='loaded' :style='{backgroundImage: bgimg}'>
+      <div id='photodetails' v-if='showdetails'>
+        <div class='title'><span v-if='photo.title'>{{photo.title}} |</span> {{photo.user}}</div>
+        <span class='mdi mdi-autorenew'></span>
+        <div class='description'>{{photo.description}}</div>
+      </div>
+    </div>
+  </transition>
 </template>
 
 <script>
@@ -14,7 +18,14 @@
     data: () => ({
       loaded: false,
       photo: null,
+      showdetails: false,
     }),
+    computed: {
+      bgimg: function() {
+        if (this.photo) { return 'url("'+ this.photo.url +'")'; }
+        return "";
+      }
+    },
     mounted: async function() {
       var {data} = await api.Tools.getPhoto();
       this.photo = data;
@@ -24,7 +35,13 @@
 </script>
 
 <style lang='scss'>
-  #photo {
+  #photowrap {
+    height: 100vh;
+    background-position: center center;
+    background-size: cover;
+    z-index: -1;
+  }
+  #photodetails {
     background-color: $newtab_highlight;
     color: $newtab_dim;
     display: table;

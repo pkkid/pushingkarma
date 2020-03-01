@@ -1,7 +1,5 @@
 <template>
-  <transition name='custom-classes-transition'
-      enter-active-class='animated fadeIn'
-      leave-active-class='animated fadeOut'>
+  <transition name='custom-classes-transition' enter-active-class='animated fadeIn'>
     <div id='events' v-if='loaded'>
       <div v-if='events'>
         <div class='title'>Upcoming Events</div>

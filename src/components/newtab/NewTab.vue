@@ -31,7 +31,7 @@
 <style lang='scss'>
   
   #newtab {
-    background-color: black;
+    background-color: #444;
     height: 100vh;
     font-size: 1.6rem;
     color: $newtab_color;

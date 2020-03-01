@@ -1,16 +1,22 @@
 <template>
-  <div id='clock'>
-    <div v-if='now' class='date'>{{now | formatDate('dddd, MMM DD, YYYY') }}</div>
-    <div v-if='now' class='time'>{{now | formatDate('h:mma') }}</div>
-  </div>
+  <transition name='custom-classes-transition' enter-active-class='animated fadeIn'>
+    <div id='clock' v-if='loaded'>
+      <div v-if='now' class='date'>{{now | formatDate('dddd, MMM DD, YYYY') }}</div>
+      <div v-if='now' class='time'>{{now | formatDate('h:mma') }}</div>
+    </div>
+  </transition>
 </template>
 
 <script>
   export default {
     name: 'NewTabClock',
-    data: () => ({now: new Date()}),
+    data: () => ({
+      loaded: false,
+      now: new Date()
+    }),
     mounted: function() {
       setInterval(() => this.now = new Date(), 10000);
+      setTimeout(() => this.loaded = true, 300);
     },
   };
 </script>

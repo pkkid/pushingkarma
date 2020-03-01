@@ -1,7 +1,7 @@
 <template>
   <transition name='custom-classes-transition'
       enter-active-class='animated fadeIn'
-      leave-active-class='animated fadeOut'>
+      leae-active-class='animated fadeOut'>
     <div id='news' v-if='loaded'>
       <div class='title'><p style='-webkit-box-orient:vertical'>
         <a target='_blank' :href='article.url'>{{article.title}}</a>
