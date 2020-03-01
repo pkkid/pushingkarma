@@ -22,6 +22,7 @@ export const Notes = {
 };
 
 export const Tools = {
+  getEvents() { return axios.get(`/api/tools/events`); },
   getTasks() { return axios.get(`/api/tools/tasks`); },
   getWeather() { return axios.get(`/api/tools/weather`); },
 };

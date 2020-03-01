@@ -31,12 +31,12 @@ def tools(request):
     })
 
 
+@api_view(['get'])
 @permission_classes([IsAuthenticated])
 @cache_page(60*15)  # 15 minutes
 def events(request):
     """ Get calendar events from Office365. """
     events = get_events(settings.OFFICE365_HTMLCAL)
-    log.info(events)
     return Response(events)
 
 

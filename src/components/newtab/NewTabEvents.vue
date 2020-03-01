@@ -1,0 +1,70 @@
+<template>
+  <div id='events' v-if='loaded'>
+    <div v-if='events'>
+      <div class='title'>Upcoming Events</div>
+      <div class='event' v-for='event in events.slice(0,3)' :key='event.id'>
+        <div class='subject'>{{event.Subject}}</div>
+        <div class='details'>
+          {{ event.Start | formatDate('h:mm') }} - {{ event.End |formatDate('h:mm') }}
+          <span v-if='event.Location.DisplayName'>| {{event.Location.DisplayName}}</span>
+        </div>
+      </div>
+    </div>
+    <div v-else class='notasks'>No events</div>
+  </div>
+</template>
+
+<script>
+  import * as api from '@/api';
+
+  export default {
+    name: 'NewTabEvents',
+    data: () => ({
+      loaded: false,
+      events: null,
+    }),
+    mounted: async function() {
+      var {data} = await api.Tools.getEvents();
+      this.events = data;
+      this.loaded = true;
+    },
+  };
+</script>
+
+<style lang='scss'>
+  #events {
+    background-color: $newtab_highlight;
+    left: 20px;
+    position: absolute;
+    top: 20px;
+    transition: $newtab_transition_slow;
+    width: 400px;
+    .title {
+      border-bottom: 1px solid rgba(255,255,255,0.3);
+      color: $newtab_dim;
+      font-size: 16px;
+    }
+    .event {
+      margin-top:3px;
+    }
+    .subject {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .details {
+      color: $newtab_dim;
+      font-size: 12px;
+      overflow: hidden;
+      position: relative;
+      text-overflow: ellipsis;
+      top: -5px;
+      white-space: nowrap;
+    }
+    .noevents {
+      color: rgba(255,255,255,0.3);
+      font-size: 20px;
+      text-shadow: none;
+    }
+  }
+</style>

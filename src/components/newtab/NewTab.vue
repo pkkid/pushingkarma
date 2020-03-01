@@ -1,24 +1,25 @@
 <template>
   <div id='newtab'>
     <Clock/>
-    <Tasks/>
+    <Events/>
     <IPAddr/>
+    <Tasks/>
     <Weather/>
     <div id='photo' class='hidedetails'></div>
-    <div id='calendar'></div>
     <div id='news'></div>
   </div>
 </template>
 
 <script>
   import Clock from './NewTabClock';
-  import Tasks from './NewTabTasks';
+  import Events from './NewTabEvents';
   import IPAddr from './NewTabIPAddr';
+  import Tasks from './NewTabTasks';
   import Weather from './NewTabWeather';
 
   export default {
     name: 'NewTab',
-    components: {Clock, IPAddr, Tasks, Weather},
+    components: {Clock, Events, IPAddr, Tasks, Weather},
     mounted: function() {
       this.$store.set('global/layout', 'nonav');
     },
