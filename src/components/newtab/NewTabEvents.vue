@@ -1,21 +1,26 @@
 <template>
-  <div id='events' v-if='loaded'>
-    <div v-if='events'>
-      <div class='title'>Upcoming Events</div>
-      <div class='event' v-for='event in events.slice(0,3)' :key='event.id'>
-        <div class='subject'>{{event.Subject}}</div>
-        <div class='details'>
-          {{ event.Start | formatDate('h:mm') }} - {{ event.End |formatDate('h:mm') }}
-          <span v-if='event.Location.DisplayName'>| {{event.Location.DisplayName}}</span>
+  <transition name='custom-classes-transition'
+      enter-active-class='animated fadeIn'
+      leave-active-class='animated fadeOut'>
+    <div id='events' v-if='loaded'>
+      <div v-if='events'>
+        <div class='title'>Upcoming Events</div>
+        <div class='event' v-for='event in events.slice(0,3)' :key='event.id'>
+          <div class='subject'>{{event.Subject}}</div>
+          <div class='details'>
+            {{ event.Start | formatDate('h:mm') }} - {{ event.End |formatDate('h:mm') }}
+            <span v-if='event.Location.DisplayName'>| {{event.Location.DisplayName}}</span>
+          </div>
         </div>
       </div>
+      <div v-else class='notasks'>No events</div>
     </div>
-    <div v-else class='notasks'>No events</div>
-  </div>
+  </transition>
 </template>
 
 <script>
   import * as api from '@/api';
+  
 
   export default {
     name: 'NewTabEvents',
@@ -37,7 +42,6 @@
     left: 20px;
     position: absolute;
     top: 20px;
-    transition: $newtab_transition_slow;
     width: 400px;
     .title {
       border-bottom: 1px solid rgba(255,255,255,0.3);

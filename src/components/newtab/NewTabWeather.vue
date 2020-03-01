@@ -1,26 +1,30 @@
 <template>
-  <div id='weather' v-if='loaded'>
-    <div class='weather-today'>
-      <div class='weather-today-details'>
-        <div class='weather-temp'>{{weather.currently.temperature | int}}°F</div>
-        <div class='weather-feelslike'>Feels: {{weather.currently.apparentTemperature | int}}°</div>
+  <transition name='custom-classes-transition'
+      enter-active-class='animated fadeIn'
+      leave-active-class='animated fadeOut'>
+    <div id='weather' v-if='loaded'>
+      <div class='weather-today'>
+        <div class='weather-today-details'>
+          <div class='weather-temp'>{{weather.currently.temperature | int}}°F</div>
+          <div class='weather-feelslike'>Feels: {{weather.currently.apparentTemperature | int}}°</div>
+        </div>
+        <div class='weather-today-icon'>
+          <!-- <i class='diw-{{weather.currently.icon | ds2wuIcon}}'></i> -->
+        </div>
+        <div class='weather-today-summary'>
+          <div class='weather-location'>Watertown</div>
+          <div class='weather-description'>{{weather.currently.summary}}</div>
+        </div>
       </div>
-      <div class='weather-today-icon'>
-        <!-- <i class='diw-{{weather.currently.icon | ds2wuIcon}}'></i> -->
-      </div>
-      <div class='weather-today-summary'>
-        <div class='weather-location'>Watertown</div>
-        <div class='weather-description'>{{weather.currently.summary}}</div>
+      <div class='forecast' style='clear:both'>
+        <div class='forecast-day' v-for='day in weather.daily.data.slice(0,5)' :key='day.time'>
+          <div class='forecast-weekday'>{{day.time | formatDate('ddd')}}</div>
+          <!-- <i class='diw-{{day.icon | ds2wuIcon}}'></i> -->
+          <div class='forecast-temp'>{{day.temperatureMax| int }}°</div>
+        </div>
       </div>
     </div>
-    <div class='forecast' style='clear:both'>
-      <div class='forecast-day' v-for='day in weather.daily.data.slice(0,5)' :key='day.time'>
-        <div class='forecast-weekday'>{{day.time | formatDate('ddd')}}</div>
-        <!-- <i class='diw-{{day.icon | ds2wuIcon}}'></i> -->
-        <div class='forecast-temp'>{{day.temperatureMax| int }}°</div>
-      </div>
-    </div>
-  </div>
+  </transition>
 </template>
 
 <script>

@@ -18,7 +18,6 @@
     mounted: async function() {
       var {data} = await api.Tools.getPhoto();
       this.photo = data;
-      console.log(this.photo);
       this.loaded = true;
     },
   };

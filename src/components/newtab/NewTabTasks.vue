@@ -1,13 +1,17 @@
 <template>
-  <div id='tasks' v-if='loaded'>
-    <div v-if='tasks'>
-      <div class='title'>My Tasks</div>
-      <div class='task' v-for='task in tasks.slice(0,4)' :key='task.id'>
-        {{task.title}}
+  <transition name='custom-classes-transition'
+      enter-active-class='animated fadeIn'
+      leave-active-class='animated fadeOut'>
+    <div id='tasks' v-if='loaded'>
+      <div v-if='tasks'>
+        <div class='title'>My Tasks</div>
+        <div class='task' v-for='task in tasks.slice(0,4)' :key='task.id'>
+          {{task.title}}
+        </div>
       </div>
+      <div v-else class='notasks'>No tasks</div>
     </div>
-    <div v-else class='notasks'>No tasks</div>
-  </div>
+  </transition>
 </template>
 
 <script>

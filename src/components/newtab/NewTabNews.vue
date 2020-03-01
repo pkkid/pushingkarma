@@ -1,14 +1,18 @@
 <template>
-  <div id='news' v-if='loaded'>
-    <div class='title'><p style='-webkit-box-orient:vertical'>
-      <a target='_blank' :href='article.url'>{{article.title}}</a>
-    </p></div>
-    <div class='subtext'>
-      {{ article.created_utc | timeAgo }} |
-      <a target='_blank' :href='article.redditurl'>{{article.subreddit}}</a> |
-      <a target='_blank' :href='"https://"+ article.domain'>{{article.domain}}</a>
+  <transition name='custom-classes-transition'
+      enter-active-class='animated fadeIn'
+      leave-active-class='animated fadeOut'>
+    <div id='news' v-if='loaded'>
+      <div class='title'><p style='-webkit-box-orient:vertical'>
+        <a target='_blank' :href='article.url'>{{article.title}}</a>
+      </p></div>
+      <div class='subtext'>
+        {{ article.created_utc | timeAgo }} |
+        <a target='_blank' :href='article.redditurl'>{{article.subreddit}}</a> |
+        <a target='_blank' :href='"https://"+ article.domain'>{{article.domain}}</a>
+      </div>
     </div>
-  </div>
+  </transition>
 </template>
 
 <script>
