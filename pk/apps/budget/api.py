@@ -143,7 +143,7 @@ def budget(request):
     })
 
 
-@api_view(['post'])
+@api_view(['put'])
 @permission_classes([IsAuthenticated])
 def upload(request, format=None):
     """ Upload new transactions to the budget app. """
