@@ -5,20 +5,18 @@ means let me know. :)
 
 ### Setup Dev Environment
 ```bash
-# Create a virtualenv environment
+# Create Python virtualenv environment
 sudo apt install virtualenvwrapper redis-server
-mkvirtualenv --python=/usr/bin/python3
+mkvirtualenv --python=/usr/bin/python3 pk
 pip install -r pk/requirements.pip
+pk/manage.py migrate
+pk/manage.py runserver 0.0.0.0:8000
 
-# Setup npm, gulp and bower
-sudo apt install ruby ruby-dev nodejs npm
-sudo su -c 'gem install sass'
-npm install -g gulp-cli
-./npminstall.sh
-gulp build
-
-# Run the development server
-./manage.py runserver 0.0.0.0:8000
+# Setup NPM and Vue
+sudo apt install ruby ruby-dev nodejs
+npm install
+npm run build
+npm run start
 ```
 
 ### Setup Production Environment
