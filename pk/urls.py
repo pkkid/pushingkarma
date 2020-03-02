@@ -1,7 +1,7 @@
 # encoding: utf-8
-import copy
 from django.conf import settings
 from django.conf.urls import include, url
+from django.views.decorators.clickjacking import xframe_options_exempt
 from django.views.decorators.csrf import ensure_csrf_cookie
 from pk import api as pk_api, utils
 from pk.apps.budget import api as budget_api
@@ -39,11 +39,15 @@ api.add_url('^tools/weather$', tools_api.weather, name='tools/weather')
 api.register('notes', note_api.NotesViewSet)
 
 
+@xframe_options_exempt
 @ensure_csrf_cookie
 def index(request, tmpl='index.html'):
-    globals = copy.copy(settings.GLOBALS)
-    globals['IPADDR'] = request.META.get('REMOTE_ADDR')
-    return utils.response(request, tmpl, {'GLOBALS':globals})
+    return utils.response(request, tmpl, {'GLOBALS':{
+        'DEBUG': settings.DEBUG,
+        'GOOGLE_CLIENTID': settings.GOOGLE_CLIENTID,
+        'GOOGLE_SCOPES': ' '.join(settings.GOOGLE_SCOPES),
+        'IPADDR': request.META.get('REMOTE_ADDR'),
+    }})
 
 
 urlpatterns = [

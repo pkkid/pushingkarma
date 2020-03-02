@@ -12,7 +12,7 @@
               <dt>Joined</dt><dd>{{user.date_joined | formatDate('MMM DD, YYYY')}}</dd>
               <dt>Login</dt><dd>{{user.last_login | formatDate('MMM DD, YYYY h:mm a')}}</dd>
               <dt>Email</dt><dd>{{user.email}}</dd>
-              <dt>Token</dt><dd>
+              <dt>Apikey</dt><dd>
                 <input type='text' class='auth_token' :value='user.auth_token || "None"' readonly/>
                 <IconButton :icon='"mdi-refresh"' :click='generateToken'/>
               </dd>

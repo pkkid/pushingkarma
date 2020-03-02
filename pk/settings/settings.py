@@ -132,10 +132,3 @@ REDSOCKS_SUBSCRIBERS = {
 # Django-cors-headers - Cross-Origin Resource Sharing
 CORS_ORIGIN_WHITELIST = ['bugs.nasuni.net']
 CORS_ALLOW_METHODS = ['GET']
-
-# Global variables passed to JavaScript
-GLOBALS = {
-    'DEBUG': DEBUG,
-    'GOOGLE_CLIENTID': GOOGLE_CLIENTID,  # noqa
-    'GOOGLE_SCOPES': ' '.join(GOOGLE_SCOPES),  # noqa
-}

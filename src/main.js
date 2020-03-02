@@ -1,3 +1,4 @@
+/*jshint browser: true */
 import Vue from 'vue';
 import store from './store';
 import router from './router';
@@ -13,12 +14,16 @@ require('@/assets/css/index.scss');
 // Axios Configuiration - Tell Axios we want to include the csrf token and
 // where to get the value. The intercepter is a convenience function to
 // globally catch and respond to errors.
+var urlparams = new URLSearchParams(window.location.search);
+console.log(`Token ${urlparams.get('apikey')}`);
 axios.defaults.withCredentials = true;
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 axios.defaults.xsrfCookieName = 'csrftoken';
+axios.defaults.headers.common.Authorization = `Token ${urlparams.get('apikey')}`;
 axios.interceptors.response.use(function(response) {
   if (response.headers['content-type'] != 'application/json') { return Promise.reject(response); }
   if (response.data && response.data.errors && response.data.errors.length > 0) { return Promise.reject(response); }
+  if (response.data && response.data.detail && response.data.detail.length > 0) { return Promise.reject(response); }
   return response;
 });
 
