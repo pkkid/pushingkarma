@@ -126,7 +126,7 @@
 <style lang='scss'>
   #login {
     .bgimg {
-      background-image: url('../../assets/img/louiscoyle.png');
+      background-image: url('../../assets/img/louiscoyle.jpg');
       background-size: 550px;
       float: right;
       width: 450px;
