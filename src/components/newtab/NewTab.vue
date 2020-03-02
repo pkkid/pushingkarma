@@ -1,6 +1,6 @@
 <template>
   <div id='newtab'>
-    <Photo ref='photo'/>
+    <Photo ref='photo' v-if='width > 800'/>
     <Clock @click.native='$refs.photo.toggleDetails'/>
     <Events/>
     <IPAddr/>
@@ -22,6 +22,12 @@
   export default {
     name: 'NewTab',
     components: {Clock, Events, IPAddr, News, Photo, Tasks, Weather},
+    data: () => ({
+      width: window.innerWidth,
+    }),
+    mounted: function() {
+      this.$store.set('global/layout', 'nonav');
+    },
   };
 </script>
 
@@ -37,5 +43,13 @@
     text-shadow: 0px 1px 3px rgba(0,0,0,0.8);
     z-index: 10;
     a,a:hover,a:visited { color:$newtab_color; text-decoration:none; }
+  }
+  @media screen and (max-width: 800px) {
+    #newtab {
+      color: $raspi_color;
+      box-shadow: 0px 2px 10px rgba(0,0,0,0.5);
+      text-shadow: none;
+      a,a:hover,a:visited { color:$raspi_color }
+    }
   }
 </style>

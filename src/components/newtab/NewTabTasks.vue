@@ -52,7 +52,7 @@
         border-radius: 3px;
         width: 10px;
         height: 10px;
-        top: 7px;
+        top: 6px;
         left: 3px;
       }
     }
@@ -61,6 +61,15 @@
       font-size: 20px;
       text-shadow: none;
       text-align: right;
+    }
+  }
+  @media screen and (max-width: 1100px) {
+    #tasks { right:20px; left:auto; top:190px; width:275px; }
+  }
+  @media screen and (max-width: 800px) {
+    #tasks {
+      .title { color: $raspi_dim; }
+      .task:before { border: 2px solid $raspi_dim; }
     }
   }
 </style>

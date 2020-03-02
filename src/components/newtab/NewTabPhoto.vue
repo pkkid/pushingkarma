@@ -26,7 +26,6 @@
       showdetails: false,
     }),
     mounted: async function() {
-      this.$store.set('global/layout', 'nonav');
       var {data} = await api.Tools.getPhoto();
       this.photo = data;
       await utils.preloadImage(this.photo.url);
@@ -80,5 +79,8 @@
     &.showdetails .details {
       opacity: 1;
     }
+  }
+  @media screen and (max-width: 800px) {
+    #photo { opacity: 0; }
   }
 </style>

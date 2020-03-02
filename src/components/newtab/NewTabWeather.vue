@@ -93,4 +93,13 @@
       .forecast { opacity: 1; }
     }
   }
+  @media screen and (max-width: 1100px) {
+    #weather { right:20px; top:20px; width:350px;
+      .weather-today-summary { opacity:1; }
+      .forecast { opacity:1; }
+    }
+  }
+  @media screen and (max-width: 800px) {
+    #weather .forecast { color: $raspi_dim; }
+  }
 </style>
