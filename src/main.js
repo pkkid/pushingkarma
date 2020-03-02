@@ -1,4 +1,3 @@
-/*jshint browser: true */
 import Vue from 'vue';
 import store from './store';
 import router from './router';
@@ -15,7 +14,6 @@ require('@/assets/css/index.scss');
 // where to get the value. The intercepter is a convenience function to
 // globally catch and respond to errors.
 var urlparams = new URLSearchParams(window.location.search);
-console.log(`Token ${urlparams.get('apikey')}`);
 axios.defaults.withCredentials = true;
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 axios.defaults.xsrfCookieName = 'csrftoken';

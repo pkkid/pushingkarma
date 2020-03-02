@@ -1,5 +1,6 @@
 module.exports = {
   lintOnSave: true,
+  mode: 'production',
   publicPath: '/static/',
   runtimeCompiler: true,
   css: {loaderOptions: {sass: {data: `

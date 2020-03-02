@@ -49,7 +49,6 @@
   import IconButton from '@/components/IconButton';
   import Modal from '@/components/Modal';
   import {DEFAULT_USER} from '@/store.js';
-  
 
   export default {
     name: 'Navigation',

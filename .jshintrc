@@ -1,18 +1,12 @@
 {
-    "browser": false,
+    "browser": true,
     "jquery": true,
     "moz": true,
+    "node": true,
     "proto": true,
     "strict": "implied",
     "esversion": 9,
     "predef": [
-        "console",
-        "document",
-        "imports",
-        "module",
-        "process",
-        "require",
-        "Vue",
-        "window"
+        "URLSearchParams"
     ]
 }
