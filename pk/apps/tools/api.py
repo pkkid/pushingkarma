@@ -3,8 +3,9 @@ import praw, random, re, requests
 from django.conf import settings
 from django.http import HttpResponse
 from django.views.decorators.cache import cache_page
+from pk.utils.decorators import cache_api_data
 from ics import Calendar, Event
-from pk import log, utils
+from pk import utils
 from pk.utils import auth, threaded
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
@@ -33,7 +34,7 @@ def tools(request):
 
 @api_view(['get'])
 @permission_classes([IsAuthenticated])
-@cache_page(60*15)  # 15 minutes
+@cache_api_data(60*15)  # 15 minutes
 def events(request):
     """ Get calendar events from Office365. """
     events = get_events(settings.OFFICE365_HTMLCAL)
@@ -59,7 +60,7 @@ def ical(request, status=200):
 
 
 @api_view(['get'])
-@cache_page(60*30)  # 30 minutes
+@cache_api_data(60*30)  # 30 minutes
 def news(request):
     """ Get news from various Reddit subreddits using PRAW.
         Returns results in flat random order.
@@ -77,7 +78,7 @@ def news(request):
 
 @api_view(['get'])
 @permission_classes([IsAuthenticated])
-@cache_page(60*60*18)  # 18 hours
+@cache_api_data(60*60*18)  # 18 hours
 def photo(request):
     """ Get background photo information from the interwebs. """
     photos = get_album(request, cls=PhotosFrom500px)
@@ -86,7 +87,7 @@ def photo(request):
 
 @api_view(['get'])
 @permission_classes([IsAuthenticated])
-@cache_page(60*15)  # 15 minutes
+@cache_api_data(60*15)  # 15 minutes
 def tasks(request):
     """ Get open tasks from Google Tasks.
         https://developers.google.com/tasks/v1/reference/
@@ -101,7 +102,7 @@ def tasks(request):
 
 @api_view(['get'])
 @permission_classes([IsAuthenticated])
-@cache_page(60*30)  # 30 minutes
+@cache_api_data(60*30)  # 30 minutes
 def weather(request):
     """ Get weather information from Weather Underground.
         https://www.wunderground.com/weather/api/d/docs

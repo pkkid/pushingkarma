@@ -1,6 +1,6 @@
 <template>
   <div id='newtab' @dblclick='refreshPhoto'>
-    <div id='bg' :style='{backgroundImage:bgImage, opacity:bgOpacity}'/>
+    <div id='bg' :style='{backgroundImage:bgImage, opacity:photoOpacity}'/>
     <Clock/>
     <Events/>
     <IPAddr/>
@@ -12,6 +12,7 @@
 
 <script>
   import * as api from '@/api';
+  import * as utils from '@/utils/utils';
   import Clock from './NewTabClock';
   import Events from './NewTabEvents';
   import IPAddr from './NewTabIPAddr';
@@ -24,21 +25,28 @@
     components: {Clock, Events, IPAddr, News, Tasks, Weather},
     computed: {
       bgImage: function() { return this.photo ? 'url("'+ this.photo.url +'")' : ''; },
-      bgOpacity: function() { return this.photo ? 1 : 0; },
     },
     data: () => ({
       loaded: false,
       photo: null,
+      photoOpacity: 0,
       details: false,
     }),
     mounted: async function() {
       this.$store.set('global/layout', 'nonav');
-      this.refreshPhoto();      
+      var {data} = await api.Tools.getPhoto();
+      this.photo = data;
+      await utils.preloadImage(this.photo.url);
+      this.photoOpacity = 1;
     },
     methods: {
       refreshPhoto: async function() {
-        var {data} = await api.Tools.getPhoto();
+        this.photoOpacity = 0;
+        await utils.sleep(500);
+        var {data} = await api.Tools.refreshPhoto();
         this.photo = data;
+        await utils.preloadImage(this.photo.url);
+        this.photoOpacity = 1;
       },
     },
   };

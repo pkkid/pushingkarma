@@ -1,3 +1,4 @@
+/*jshint browser: true */
 import * as _ from 'lodash';
 import axios from 'axios';
 export {axios};
@@ -21,30 +22,21 @@ export function contains(selector, regex) {
 
 // ds2wuIcon
 // DarkSky to WeatherUndereground icon translation
+// Unused WU icons: chanceflurries, chancerain, chancesleet,
+// chancesnow, chancetstorms, flurries, hazy, mostlycloudy,
+// mostlysunny, partlysunny, sunny, tstorms
 export function ds2wuIcon(dsicon) {
   var wuicon;
   dsicon = dsicon.replace('-day', '');
   dsicon = dsicon.replace('-night', '');
   switch(dsicon) {
-    //case '': wuicon = 'chanceflurries'; break;
-    //case '': wuicon = 'chancerain'; break;
-    //case '': wuicon = 'chancesleet'; break;
-    //case '': wuicon = 'chancesnow'; break;
-    //case '': wuicon = 'chancetstorms'; break;
     case 'clear': wuicon = 'clear'; break;
     case 'cloudy': wuicon = 'cloudy'; break;
-    //case '': wuicon = 'flurries'; break;
     case 'fog': wuicon = 'fog'; break;
-    //case '': wuicon = 'hazy'; break;
-    //case '': wuicon = 'mostlycloudy'; break;
-    //case '': wuicon = 'mostlysunny'; break;
     case 'partly-cloudy': wuicon = 'partlycloudy'; break;
-    //case '': wuicon = 'partlysunny'; break;
     case 'rain': wuicon = 'rain'; break;
     case 'sleet': wuicon = 'sleet'; break;
     case 'snow': wuicon = 'snow'; break;
-    //case '': wuicon = 'sunny'; break;
-    //case '': wuicon = 'tstorms'; break;
     default: wuicon = 'unknown'; break;
   }
   return wuicon;
@@ -90,6 +82,18 @@ export function keepInView(container, item, margin, behavior) {
   }
 }
 
+// Preload Image
+// Promise returns when the specifid image is preloaded
+// https://stackoverflow.com/a/60280239/84463
+export function preloadImage(src) {
+  return new Promise(r => {
+    const image = new Image();
+    image.onload = r;
+    image.onerror = r;
+    image.src = src;
+  });
+}
+
 // Recursive Get
 // Recursilvely get a value from a nested collection of objects.
 export function rget(obj, property, delim) {
@@ -132,6 +136,12 @@ export function sfmt(str, vars) {
   return str;
 }
 
+// Sleep
+// JavaScript sleep function for use in async functions
+// https://stackoverflow.com/a/39914235/84463
+export function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 // String to Bool
 // Convert string to a boolean

@@ -1,7 +1,9 @@
 # encoding: utf-8
-import functools, os, time
+import functools, json, os, time
 from django.conf import settings
+from django.core.cache import cache
 from django.db import connection
+from rest_framework.response import Response
 from pk import log
 
 COLORS = {'blue':34, 'cyan':36, 'green':32, 'grey':30, 'magenta':35, 'red':31, 'white':37, 'yellow':33}
@@ -15,6 +17,21 @@ class ContextDecorator(object):
             with self:
                 return f(*args, **kwds)
         return decorated
+
+
+def cache_api_data(timeout, key=None):
+    def wrapper1(func):
+        def wrapper2(request, *args, **kwargs):
+            cachekey = key or f'{func.__module__}.{func.__name__}'
+            refresh = request.GET.get('refresh') == '1'
+            data = json.loads(cache.get(cachekey, '{}'))
+            if not data or refresh:
+                response = func(request, *args, **kwargs)
+                data = response.data
+                cache.set(cachekey, json.dumps(data), timeout)
+            return Response(data)
+        return wrapper2
+    return wrapper1
 
 
 def color(text, color=None):

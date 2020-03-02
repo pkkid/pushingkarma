@@ -27,6 +27,7 @@ export const Tools = {
   getPhoto() { return axios.get(`/api/tools/photo`); },
   getTasks() { return axios.get(`/api/tools/tasks`); },
   getWeather() { return axios.get(`/api/tools/weather`); },
+  refreshPhoto() { return axios.get(`/api/tools/photo?refresh=1`); },
 };
 
 export const Users =  {
