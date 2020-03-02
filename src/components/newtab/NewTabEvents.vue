@@ -36,7 +36,6 @@
 
 <style lang='scss'>
   #events {
-    background-color: $newtab_highlight;
     left: 20px;
     position: absolute;
     top: 20px;

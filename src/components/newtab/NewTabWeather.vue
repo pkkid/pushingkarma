@@ -1,12 +1,12 @@
 <template>
   <transition name='custom-classes-transition' enter-active-class='animated fadeIn'>
-    <div id='weather' v-if='loaded'>
+    <div id='weather' :class='{showdetails}' v-if='loaded'>
       <div class='weather-today'>
-        <div class='weather-today-details'>
+        <div class='weather-today-details' @click.prevent='toggleDetails'>
           <div class='weather-temp'>{{weather.currently.temperature | int}}°F</div>
           <div class='weather-feelslike'>Feels: {{weather.currently.apparentTemperature | int}}°</div>
         </div>
-        <div class='weather-today-icon'>
+        <div class='weather-today-icon' @click.prevent='toggleDetails'>
           <i :class='[iconcls(weather.currently.icon)]'/>
         </div>
         <div class='weather-today-summary'>
@@ -35,6 +35,7 @@
     data: () => ({
       loaded: false,
       weather: null,
+      showdetails: false,
     }),
     mounted: async function() {
       var {data} = await api.Tools.getWeather();
@@ -44,14 +45,16 @@
     methods: {
       iconcls: function(icon) {
         return `diw-${utils.ds2wuIcon(icon)}`;
-      }
+      },
+      toggleDetails: function() {
+        this.showdetails = !this.showdetails;
+      },
     },
   };
 </script>
 
 <style lang='scss'>
   #weather {
-    background-color: $newtab_highlight;
     position: absolute;
     right: 20px;
     top: 20px;
@@ -67,6 +70,10 @@
       .weather-temp { font-size:35px; line-height:36px; }
       .weather-today-details { cursor:pointer; }
     }
+    .weather-today-summary {
+      opacity: 0;
+      transition: $newtab_transition_fast;
+    }
     .forecast {
       color: $newtab_dim;
       float: right;
@@ -74,13 +81,16 @@
       line-height: 16px;
       padding-top: 20px;
       width: 275px;
+      opacity: 0;
       transition: $newtab_transition_fast;
       .forecast-day { width:30px; margin-left:25px; text-align:center; float:left; }
       .forecast-weekday { padding-bottom:2px; }
       [class^='diw-']:before { font-size:20px; }
       .forecast-temp { padding-top:6px; }
     }
-    .weather-today-summary { transition: $newtab_transition_fast; }
-    &.hidedetails { .weather-today-summary,.forecast { opacity:0; }}
+    &.showdetails {
+      .weather-today-summary { opacity: 1; }
+      .forecast { opacity: 1; }
+    }
   }
 </style>

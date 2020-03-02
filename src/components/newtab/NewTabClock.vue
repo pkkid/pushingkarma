@@ -23,14 +23,13 @@
 
 <style lang='scss'>
  #clock {
-    background-color: $newtab_highlight;
     left: calc(50% - 150px);
     position: absolute;
     text-align: center;
     top: 20px;
     width: 300px;
     transition: $newtab_transition_slow;
-    //cursor: pointer;
+    cursor: pointer;
     .date {
       color: $newtab_dim;
       font-size: 23px;

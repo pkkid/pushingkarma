@@ -15,7 +15,6 @@
 
 <style lang='scss'>
   #ipaddr {
-    background-color: $newtab_highlight;
     bottom: 2px;
     color: rgba(255,255,244,0.2);
     font-size: 12px;

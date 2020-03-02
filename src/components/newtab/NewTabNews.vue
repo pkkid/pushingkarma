@@ -36,7 +36,6 @@
 
 <style lang='scss'>
   #news {
-    background-color: $newtab_highlight;
     bottom: 20px;
     left: 20px;
     max-height: 65px;

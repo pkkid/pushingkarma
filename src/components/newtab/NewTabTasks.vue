@@ -31,7 +31,6 @@
 
 <style lang='scss'>
   #tasks {
-    background-color: $newtab_highlight;
     bottom: 20px;
     position: absolute;
     right: 20px;
