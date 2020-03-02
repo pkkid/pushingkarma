@@ -1,7 +1,11 @@
 <template>
   <div id='newtab' @dblclick='refreshPhoto'>
-    <div id='bg' :style='{backgroundImage:bgImage, opacity:photoOpacity}'/>
-    <Clock/>
+    <div id='photobg' :style='{backgroundImage:bgImage, opacity:photoOpacity}'/>
+    <div id='photodetails' v-if='photo && showdetails'>
+      <div class='title'><span v-if='photo.title'>{{photo.title}} |</span> {{photo.user}}</div>
+      <div class='description'>{{photo.description}}</div>
+    </div>
+    <Clock @click.native='toggleDetails'/>
     <Events/>
     <IPAddr/>
     <News/>
@@ -27,10 +31,11 @@
       bgImage: function() { return this.photo ? 'url("'+ this.photo.url +'")' : ''; },
     },
     data: () => ({
+      details: false,
       loaded: false,
       photo: null,
       photoOpacity: 0,
-      details: false,
+      showdetails: true,
     }),
     mounted: async function() {
       this.$store.set('global/layout', 'nonav');
@@ -47,6 +52,10 @@
         this.photo = data;
         await utils.preloadImage(this.photo.url);
         this.photoOpacity = 1;
+      },
+      toggleDetails: function() {
+        console.log('toggleDetails');
+        this.showdetails = !this.showdetails;
       },
     },
   };
@@ -66,7 +75,7 @@
     z-index: 10;
     a,a:hover,a:visited { color:$newtab_color; text-decoration:none; }
 
-    #bg {
+    #photobg {
       width: 100%;
       height: 100vh;
       opacity: 0;
@@ -74,6 +83,27 @@
       background-size: cover;
       transition: opacity 1s ease;
       z-index: 0;
+    }
+
+    #photodetails {
+      background-color: $newtab_highlight;
+      left: 50%;
+      transform: translateX(-50%);
+      position: absolute;
+      top: 200px;
+      max-width: 600px;
+      color: $newtab_dim;
+      display: table;
+      margin: 0 auto;
+      font-size: 12px;
+      opacity: 1;
+      top: 130px;
+      transition: $newtab_transition_fast;
+      background-color: rgba(0,0,0,0.6);
+      border-radius: 4px;
+      padding: 10px;
+      .title { font-size:14px; float:left; padding-right:5px; }
+      .description { clear:left; }
     }
   }
 </style>
