@@ -45,7 +45,6 @@
   import MenuBar from './NotesMenuBar';
   import Search from './NotesSearch';
   import {Editor, EditorContent} from 'tiptap';
-  
 
   export default {
     name: 'Notes',
