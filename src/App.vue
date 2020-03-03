@@ -30,14 +30,16 @@
       gauth: pathify.sync('global/gauth'),
     },
     created: function() {
-      let self = this;
-      let globals = JSON.parse(document.getElementById('globals').textContent);
-      gapi.load('auth2', function() {
-       self.gauth = gapi.auth2.init({
-         client_id: globals.GOOGLE_CLIENTID,
-         scope: globals.GOOGLE_SCOPES
-       });
-      });
+      var self = this;
+      var globals = JSON.parse(document.getElementById('globals').textContent);
+      if (globals.GAUTH_ENABLED) {
+        gapi.load('auth2', function() {
+          self.gauth = gapi.auth2.init({
+            client_id: globals.GOOGLE_CLIENTID,
+            scope: globals.GOOGLE_SCOPES
+          });
+        });
+      }
     }
   };
 </script>

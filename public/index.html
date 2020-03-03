@@ -17,6 +17,8 @@
     <noscript>This site requires JavaScript ¯\_(ツ)_/¯</noscript>
     <div id='app'></div>
     {{GLOBALS|json_script:'globals'}}
-    <script src='https://apis.google.com/js/client:platform.js?onload=gauth_init'></script>
+    {% if settings.GAUTH_ENABLED %}
+      <script src='https://apis.google.com/js/client:platform.js?onload=gauth_init'></script>
+    {% endif %}
   </body>
 </html>

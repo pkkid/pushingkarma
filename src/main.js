@@ -17,7 +17,9 @@ var urlparams = new URLSearchParams(window.location.search);
 axios.defaults.withCredentials = true;
 axios.defaults.xsrfHeaderName = 'X-CSRFToken';
 axios.defaults.xsrfCookieName = 'csrftoken';
-axios.defaults.headers.common.Authorization = `Token ${urlparams.get('apikey')}`;
+if (urlparams.get('apikey')) {
+  axios.defaults.headers.common.Authorization = `Token ${urlparams.get('apikey')}`;
+}
 axios.interceptors.response.use(function(response) {
   if (response.headers['content-type'] != 'application/json') { return Promise.reject(response); }
   if (response.data && response.data.errors && response.data.errors.length > 0) { return Promise.reject(response); }

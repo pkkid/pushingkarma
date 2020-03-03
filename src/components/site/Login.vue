@@ -22,7 +22,8 @@
           <!-- Login form -->
           <div v-else class='loginform' key='loginform'>
             <h3>Login to PushingKarma <span>Amazing things await you</span></h3>
-            <img class='google' src='@/assets/img/google_signin.png' @click='gauth_login'/>
+            <img v-if='gauth !== null' class='google' src='@/assets/img/google_signin.png' @click='gauth_login'/>
+            <i v-else class='fake-avatar mdi mdi-account-circle-outline'/>
             <form @submit.prevent="login()">
               <label for='email'>Email Address</label>
               <input type='text' id='email' name='email' v-model='loginform.email' spellcheck='false' autocomplete='off' autofocus='true'/>
@@ -148,7 +149,7 @@
         padding-left: 0px;
         border-left-width: 0px;
         text-transform: none;
-        span { font-size:1.0rem; font-weight:500; display:block; }
+        span { font-size:1.1rem; font-weight:500; display:block; margin-top:3px; }
       }
       .avatar {
         background-size: 80px;
@@ -160,6 +161,12 @@
         height: 80px;
         margin: 10px auto 30px auto;
         width: 80px;
+      }
+      .fake-avatar {
+        font-size: 4rem;
+        display: block;
+        color: #aaa;
+        text-align: center;
       }
       .google {
         display: block;

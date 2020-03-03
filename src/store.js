@@ -25,7 +25,7 @@ export const DEFAULT_USER = {
   lastLogin: null,
 };
 
-const global = {
+const globals = {
   layout: 'topnav',
   user: DEFAULT_USER,
   avatar: '',
@@ -35,7 +35,7 @@ const global = {
 export default new Vuex.Store({
   plugins: [pathify.plugin],
   modules: {
-    global: makeModule(global),
+    global: makeModule(globals),
     notes: makeModule(notes),
     budget: makeModule(budget),
   },

@@ -46,6 +46,7 @@ def index(request, tmpl='index.html'):
         'DEBUG': settings.DEBUG,
         'GOOGLE_CLIENTID': settings.GOOGLE_CLIENTID,
         'GOOGLE_SCOPES': ' '.join(settings.GOOGLE_SCOPES),
+        'GAUTH_ENABLED': settings.GAUTH_ENABLED,
         'IPADDR': request.META.get('REMOTE_ADDR'),
     }})
 
