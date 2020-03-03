@@ -7,5 +7,11 @@ module.exports = {
   `}}},
   chainWebpack: config => {
     config.plugins.delete("hmr");
+  },
+  configureWebpack: {
+    performance: {
+      maxEntrypointSize: 1024000,
+      maxAssetSize: 1024000
+    }
   }
 };
