@@ -1,6 +1,6 @@
 <template>
   <transition name='custom-classes-transition' enter-active-class='animated fadeIn'>
-    <div id='weather' :class='{showdetails}' v-if='loaded'>
+    <div id='weather' :class='{showdetails}' v-if='weather'>
       <div class='weather-today'>
         <div class='weather-today-details' @click.prevent='toggleDetails'>
           <div class='weather-temp'>{{weather.currently.temperature | int}}°F</div>
@@ -33,14 +33,12 @@
   export default {
     name: 'NewTabWeather',
     data: () => ({
-      loaded: false,
       weather: null,
       showdetails: false,
     }),
     mounted: async function() {
-      var {data} = await api.Tools.getWeather();
-      this.weather = data;
-      this.loaded = true;
+      this.update();
+      setInterval(this.update, 1000*60*5);
     },
     methods: {
       iconcls: function(icon) {
@@ -49,6 +47,10 @@
       toggleDetails: function() {
         this.showdetails = !this.showdetails;
       },
+      update: async function() {
+        var {data} = await api.Tools.getWeather();
+        this.weather = data;
+      }
     },
   };
 </script>

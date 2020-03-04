@@ -1,6 +1,6 @@
 <template>
   <transition name='custom-classes-transition' enter-active-class='animated fadeIn'>
-    <div id='tasks' v-if='loaded'>
+    <div id='tasks' v-if='tasks'>
       <div v-if='tasks'>
         <div class='title'>My Tasks</div>
         <div class='task' v-for='task in tasks.slice(0,4)' :key='task.id'>
@@ -18,14 +18,18 @@
   export default {
     name: 'NewTabTasks',
     data: () => ({
-      loaded: false,
       tasks: null,
     }),
     mounted: async function() {
-      var {data} = await api.Tools.getTasks();
-      this.tasks = data;
-      this.loaded = true;
+      this.update();
+      setInterval(this.update, 1000*60*5);
     },
+    methods: {
+      update: async function() {
+        var {data} = await api.Tools.getTasks();
+        this.tasks = data;
+      }
+    }
   };
 </script>
 

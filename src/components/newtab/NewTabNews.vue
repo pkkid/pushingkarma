@@ -1,15 +1,15 @@
 <template>
   <transition name='custom-classes-transition'
       enter-active-class='animated fadeIn'
-      leae-active-class='animated fadeOut'>
-    <div id='news' v-if='loaded'>
+      leave-active-class='animated fadeOut'>
+    <div id='news' v-if='articles' :class='{showing}'>
       <div class='title'><p style='-webkit-box-orient:vertical'>
-        <a target='_blank' :href='article.url'>{{article.title}}</a>
+        <a target='_blank' :href='articles[index].url'>{{articles[index].title}}</a>
       </p></div>
       <div class='subtext'>
-        {{ article.created_utc | timeAgo }} |
-        <a target='_blank' :href='article.redditurl'>{{article.subreddit}}</a> |
-        <a target='_blank' :href='"https://"+ article.domain'>{{article.domain}}</a>
+        {{ articles[index].created_utc | timeAgo }} |
+        <a target='_blank' :href='articles[index].redditurl'>{{articles[index].subreddit}}</a> |
+        <a target='_blank' :href='"https://"+ articles[index].domain'>{{articles[index].domain}}</a>
       </div>
     </div>
   </transition>
@@ -17,20 +17,36 @@
 
 <script>
   import * as api from '@/api';
+  import * as utils from '@/utils/utils';
 
   export default {
     name: 'NewTabNews',
     data: () => ({
-      loaded: false,
       articles: null,
-      article: null,
+      showing: true,
+      index: 0,
     }),
     mounted: async function() {
-      var {data} = await api.Tools.getNews();
-      this.articles = data;
-      this.article = this.articles[0];
-      this.loaded = true;
+      this.update();
+      setInterval(this.update, 1000*60*5);
+      setInterval(this.next, 1000*20);
     },
+    methods: {
+      update: async function() {
+        var {data} = await api.Tools.getNews();
+        this.articles = data;
+        this.index = Math.floor(Math.random() * this.articles.length);
+      },
+      next: async function() {
+        if (this.articles) {
+          this.showing = false;
+          await utils.sleep(500);
+          this.index = (this.index + 1) % this.articles.length;
+          await utils.sleep(200);
+          this.showing = true;
+        }
+      },
+    }
   };
 </script>
 
@@ -41,6 +57,9 @@
     max-height: 65px;
     position: absolute;
     width: 700px;
+    opacity: 0;
+    transition: opacity 0.5s linear;
+    &.showing { opacity: 1; }
     .title p {
       display: -webkit-box;
       font-size: 20px;

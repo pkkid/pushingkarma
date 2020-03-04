@@ -1,6 +1,6 @@
 <template>
   <transition name='custom-classes-transition' enter-active-class='animated fadeIn'>
-    <div id='events' v-if='loaded'>
+    <div id='events' v-if='events'>
       <div v-if='events'>
         <div class='title'>Upcoming Events</div>
         <div class='event' v-for='event in events.slice(0,3)' :key='event.id'>
@@ -23,14 +23,18 @@
   export default {
     name: 'NewTabEvents',
     data: () => ({
-      loaded: false,
       events: null,
     }),
-    mounted: async function() {
-      var {data} = await api.Tools.getEvents();
-      this.events = data;
-      this.loaded = true;
+    mounted: function() {
+      this.update();
+      setInterval(this.update, 1000*60*5);
     },
+    methods: {
+      update: async function() {
+        var {data} = await api.Tools.getEvents();
+        this.events = data;
+      }
+    }
   };
 </script>
 
