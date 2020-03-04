@@ -11,6 +11,7 @@ Vue.filter('int', function(value) {
 });
 
 Vue.filter('timeAgo', function(value) {
+  if (Number.isInteger(value) && value < 99999999999) { value *= 1000; }
   var now = moment(new Date());
   var then = moment(value);
   return moment.duration(now.diff(then)).humanize();

@@ -7,7 +7,7 @@
         <a target='_blank' :href='articles[index].url'>{{articles[index].title}}</a>
       </p></div>
       <div class='subtext'>
-        {{ articles[index].created_utc | timeAgo }} |
+        {{ articles[index].created_utc | timeAgo }} ago |
         <a target='_blank' :href='articles[index].redditurl'>{{articles[index].subreddit}}</a> |
         <a target='_blank' :href='"https://"+ articles[index].domain'>{{articles[index].domain}}</a>
       </div>
