@@ -1,6 +1,5 @@
 # encoding: utf-8
 import functools, json, os, time
-from django.conf import settings
 from django.core.cache import cache
 from django.db import connection
 from rest_framework.response import Response
