@@ -2,12 +2,13 @@
 import praw, random, re, requests
 from django.conf import settings
 from django.http import HttpResponse
-from django.views.decorators.cache import cache_page
 from pk.utils.decorators import cache_api_data
 from ics import Calendar, Event
 from pk import utils
 from pk.utils import auth, threaded
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.authentication import SessionAuthentication, TokenAuthentication
+from rest_framework.decorators import api_view
+from rest_framework.decorators import permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
@@ -17,6 +18,22 @@ from .photos import get_album, PhotosFrom500px
 REDDIT_ATTRS = ['title','author.name','score','permalink','domain','created_utc']
 REDDIT_BADDOMAINS = ['i.redd.it', 'imgur.com', r'^self\.']
 LUCKY_URL = 'http://google.com/search?btnI=I%27m+Feeling+Lucky&sourceid=navclient&q={domain}%20{title}'
+
+
+def cached_api_view(methods, timeout, key=None):
+    """ Convenience decorator to rule them all. """
+    def wrapper1(func):
+        auth = [SessionAuthentication, TokenAuthentication]
+        perm = [IsAuthenticated]
+        cachekey = key or f'{func.__module__}.{func.__name__}'
+        @api_view(methods)
+        @authentication_classes(auth)
+        @permission_classes(perm)
+        @cache_api_data(timeout, cachekey)
+        def wrapper2(*args, **kwargs):
+            return func(*args, **kwargs)
+        return wrapper2
+    return wrapper1
 
 
 @api_view(['get'])
@@ -32,18 +49,14 @@ def tools(request):
     })
 
 
-@api_view(['get'])
-@permission_classes([IsAuthenticated])
-@cache_api_data(60*15)  # 15 minutes
+@cached_api_view(['get'], 60*15)  # 15 minutes
 def events(request):
     """ Get calendar events from Office365. """
     events = get_events(settings.OFFICE365_HTMLCAL)
     return Response(events)
 
 
-@api_view(['get'])
-@permission_classes([IsAuthenticated])
-@cache_page(60*15)  # 15 minutes
+@cached_api_view(['get'], 60*15)  # 15 minutes
 def ical(request, status=200):
     """ Returns Office365 calendar events as ics because MS does it wrong. """
     url = request.GET.get('url', settings.OFFICE365_HTMLCAL)
@@ -59,8 +72,7 @@ def ical(request, status=200):
     return HttpResponse(str(ics), content_type='text/calendar', status=status)
 
 
-@api_view(['get'])
-@cache_api_data(60*30)  # 30 minutes
+@cached_api_view(['get'], 60*30)  # 30 minutes
 def news(request):
     """ Get news from various Reddit subreddits using PRAW.
         Returns results in flat random order.
@@ -76,18 +88,14 @@ def news(request):
     return Response([item for sublist in stories.values() for item in sublist])
 
 
-@api_view(['get'])
-@permission_classes([IsAuthenticated])
-@cache_api_data(60*60*18)  # 18 hours
+@cached_api_view(['get'], 60*60*18)  # 18 hours
 def photo(request):
     """ Get background photo information from the interwebs. """
     photos = get_album(request, cls=PhotosFrom500px)
     return Response(random.choice(photos))
 
 
-@api_view(['get'])
-@permission_classes([IsAuthenticated])
-@cache_api_data(60*15)  # 15 minutes
+@cached_api_view(['get'], 60*15)  # 15 minutes
 def tasks(request):
     """ Get open tasks from Google Tasks.
         https://developers.google.com/tasks/v1/reference/
@@ -100,9 +108,7 @@ def tasks(request):
     return Response(sorted(tasks.get('items',[]), key=lambda x:x['position']))
 
 
-@api_view(['get'])
-@permission_classes([IsAuthenticated])
-@cache_api_data(60*30)  # 30 minutes
+@cached_api_view(['get'], 60*30)  # 30 minutes
 def weather(request):
     """ Get weather information from Weather Underground.
         https://www.wunderground.com/weather/api/d/docs

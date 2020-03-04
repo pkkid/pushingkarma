@@ -57,16 +57,6 @@ def lazyproperty(func):
     return wrapper
 
 
-def login_or_apikey_required(func):
-    apikey = getattr(settings, 'APIKEY', None)
-    def wrapper(request, *args, **kwargs):  # noqa
-        if request.user.is_authenticated or (apikey and request.GET.get('apikey') == apikey):
-            return func(request, *args, **kwargs)
-        from django.shortcuts import redirect
-        return redirect(settings.LOGIN_URL)
-    return wrapper
-
-
 class logqueries(ContextDecorator):
     def __init__(self, label=None, filter=None, show_queries=True):
         self.label = label
