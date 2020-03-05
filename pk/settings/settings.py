@@ -114,18 +114,6 @@ SESSION_COOKIE_AGE = 7776000            # 90 days
 SESSION_COOKIE_SAMESITE = 'Strict'      # Prevents sending to cross-site domains
 CSRF_COOKIE_SAMESITE = 'Strict'         # Prevents sending to cross-site domains
 
-# Django Websockets Redis
-WEBSOCKET_URL = '/ws/'
-WSGI_APPLICATION = 'redsocks.runserver.server.application'
-REDSOCKS_ALLOWED_CHANNELS = 'pk.websocket.subscriber.allowed_channels'
-REDSOCKS_CONNECTION = {'host':REDIS_HOST}
-REDSOCKS_EXPIRE = 3600
-REDSOCKS_HEARTBEAT = 'heartbeat'
-REDSOCKS_PREFIX = 'ws'
-REDSOCKS_SUBSCRIBERS = {
-    'magnets': 'pk.apps.magnets.websock.MagnetsSubscriber',
-}
-
 # Django-cors-headers - Cross-Origin Resource Sharing
-CORS_ORIGIN_WHITELIST = ['bugs.nasuni.net']
+CORS_ORIGIN_WHITELIST = []
 CORS_ALLOW_METHODS = ['GET']

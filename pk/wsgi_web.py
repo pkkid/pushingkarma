@@ -1,8 +1,6 @@
 # encoding: utf-8
 import os
-import gevent.socket
-import redis.connection
-redis.connection.socket = gevent.socket
-os.environ.update(DJANGO_SETTINGS_MODULE='pk.settings.settings')
-from redsocks.server import uWSGIWebsocketServer  # noqa
-application = uWSGIWebsocketServer()
+from django.core.wsgi import get_wsgi_application
+
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'pk.settings.settings')
+application = get_wsgi_application()
