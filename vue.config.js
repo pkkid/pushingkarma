@@ -1,5 +1,7 @@
 module.exports = {
   lintOnSave: true,
+  outputDir: 'dist',
+  assetsDir: 'pushingkarma',
   publicPath: '/static/',
   runtimeCompiler: true,
   css: {loaderOptions: {sass: {data: `

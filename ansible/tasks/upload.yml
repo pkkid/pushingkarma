@@ -2,28 +2,49 @@
 ---
 - name: Create Project Directory
   file:
-    path='{{root_dir}}'
-    state=directory
+    path: '{{project_dir}}'
+    state: directory
 
 - name: Create Project Symlink
   file:
-    src={{project_dir}}
-    dest=~/pk
-    state=link
+    src: '{{project_dir}}'
+    dest: ~/pk
+    state: link
 
-- name: Sync Project Files
+- name: Sync Backend Python Files
   tags: ['deploy']
   synchronize:
     src: ../pk/
     dest: '{{project_dir}}'
+    delete: yes
     copy_links: yes
     checksum: yes
     rsync_opts:
-      - "--usermap=*:www-data"
-      - "--groupmap=*:www-data"
+      - '--usermap=*:www-data'
+      - '--groupmap=*:www-data'
       - '--exclude=*.db'
       - '--exclude=*.sock'
       - '--exclude=*.sqlite3'
+      - '--exclude=*.log'
       - '--exclude=__pycache__'
-      - '--exclude=log'
   notify: Restart Services
+
+- name: Sync Frontend Vue Files
+  tags: ['deploy']
+  synchronize:
+    src: ../dist/
+    dest: '{{project_dir}}/_dist'
+    delete: yes
+    checksum: yes
+    rsync_opts:
+      - '--usermap=*:www-data'
+      - '--groupmap=*:www-data'
+  notify: Restart Services
+
+- name: Copy Database If Not Present
+  copy:
+    src: ../pk/db.sqlite3
+    dest: '{{project_dir}}'
+    owner: www-data
+    group: www-data
+    force: no

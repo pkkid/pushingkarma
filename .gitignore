@@ -6,8 +6,8 @@
 *.sass-cache*
 *.sqlite3
 *.sublime-workspace
-**/.data/
-**/collectstatic/
+**/_logs/
+**/_static/
 **/dist/
 **/node_modules/
 **/package-lock.json

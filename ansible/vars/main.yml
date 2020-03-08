@@ -4,6 +4,8 @@ project_name: pushingkarma
 root_dir: /var/www
 project_dir: '{{root_dir}}/pk'
 virtualenv: '{{root_dir}}/venvs/pk'
+logs_dir: '{{project_dir}}/_logs'
+static_dir: '{{project_dir}}/_static'
 requirements: '{{project_dir}}/requirements.pip'
 settings: 'pk.settings.settings'
 logs: '{{project_dir}}/log'

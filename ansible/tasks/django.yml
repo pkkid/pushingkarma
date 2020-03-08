@@ -4,17 +4,17 @@
   tags: ['deploy']
   file:
     state: absent
-    path: '{{project_dir}}/collectstatic'
+    path: '{{static_dir}}'
 
 - name: Initialize Django
   tags: ['deploy']
   become: yes
   become_user: www-data
   django_manage:
-    command={{item}}
-    app_path={{project_dir}}
-    virtualenv={{virtualenv}}
-    settings={{settings}}
+    command: '{{item}}'
+    app_path: '{{project_dir}}'
+    virtualenv: '{{virtualenv}}'
+    settings: '{{settings}}'
   with_items:
     - makemigrations
     - migrate
@@ -25,5 +25,5 @@
   cron:
     name: update-stocks
     job: '/var/www/venvs/pk/bin/python /root/pk/manage.py update_stocks >> /root/pk/log/update_stocks.log 2>&1'
-    minute: 0
-    hour: 2
+    minute: '0'
+    hour: '2'

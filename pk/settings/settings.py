@@ -12,13 +12,13 @@ HOSTNAME = platform.node()
 SITE_NAME = 'PushingKarma'
 ALLOWED_HOSTS = ['.pushingkarma.com', 'localhost', '127.0.0.1']
 BASE_DIR = dirname(dirname(dirname(abspath(__file__))))
-LOG_DIR = join(BASE_DIR, 'pk/.data')
+LOG_DIR = join(BASE_DIR, 'pk/_logs')
 DEBUG = HOSTNAME in ['pkkid-work', 'pkkid-home']
 ROOT_URLCONF = 'pk.urls'
 LOGIN_URL = 'index'
 STATIC_URL = '/static/'
-STATIC_ROOT = join(BASE_DIR, 'pk/collectstatic/')
-STATICFILES_DIRS = [join(BASE_DIR, 'dist/')]
+STATIC_ROOT = join(BASE_DIR, 'pk/_static/')
+STATICFILES_DIRS = [join(BASE_DIR, 'pk/_dist')]  # only works on remote
 INTERNAL_IPS = ['127.0.0.1']
 DOMAIN = 'http://localhost:8000' if DEBUG else 'https://pushingkarma.com'
 
@@ -67,7 +67,7 @@ TEMPLATES = [{
 }]
 DATABASES = {'default': {
     'ENGINE': 'django.db.backends.sqlite3',
-    'NAME': join(BASE_DIR, 'pk/.data/db.sqlite3'),
+    'NAME': join(BASE_DIR, 'pk/db.sqlite3'),
 }}
 
 # Django Cache
