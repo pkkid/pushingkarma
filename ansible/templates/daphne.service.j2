@@ -1,14 +1,15 @@
-# Systemd Script for Daphne.
+# Systemd Script for uWSGI.
 # location: /etc/systemd/system/
 [Unit]
-Description=Daphne
+Description=Daphne Server for PushingKarma
+After=network.target
 
 [Service]
-ExecStart=/usr/local/bin/uwsgi --master --emperor /etc/uwsgi/sites --die-on-term --uid www-data --gid www-data --logto {{logs}}/uwsgi.log
-ExecReload=/bin/kill -HUP $MAINPID
-ExecStop=/bin/kill -INT $MAINPID
-Restart=on-failure
+User=www-data
+Group=www-data
+WorkingDirectory={{project_dir}}
+ExecStart={{virtualenv}}/bin/daphne -u {{project_dir}}/web.sock pk.asgi:application
+Restart=always
 
 [Install]
 WantedBy=multi-user.target
-Alias=daphne.service

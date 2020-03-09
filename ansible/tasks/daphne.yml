@@ -1,4 +1,4 @@
-# Install and configure uWSGI
+# Install and configure Daphne
 ---
 - name: Install Daphne
   pip: name=daphne

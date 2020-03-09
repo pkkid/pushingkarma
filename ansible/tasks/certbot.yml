@@ -1,18 +1,18 @@
 # Install and configure certbot for letsencrypt.
 ---
 - name: Install Certbot
-  apt: name={{item}}
-  with_items:
+  apt:
+    name:
     - certbot
     - python-certbot-nginx
 
 - name: Check SSL Certificates
   stat:
-    path: /etc/letsencrypt/live/{{project_name}}.com/cert.pem
+    path: '/etc/letsencrypt/live/{{project_name}}.com/cert.pem'
   register: cert
 
 - name: Fetch Email From Secrets
-  command: "python {{project_dir}}/settings/secrets.py EMAIL"
+  command: 'python {{project_dir}}/settings/secrets.py EMAIL'
   register: email
   when: not cert.stat.exists
 
@@ -24,5 +24,5 @@
   cron:
     name: certbot-renew
     job: 'certbot renew --quiet --no-self-upgrade >> /root/pk/log/certbot.log 2>&1'
-    minute: 0
-    hour: 1
+    minute: '0'
+    hour: '1'

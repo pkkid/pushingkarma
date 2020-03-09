@@ -11,7 +11,7 @@
     dest: ~/pk
     state: link
 
-- name: Sync Backend Python Files
+- name: Sync Project Files
   tags: ['deploy']
   synchronize:
     src: ../pk/
@@ -27,18 +27,6 @@
       - '--exclude=*.sqlite3'
       - '--exclude=*.log'
       - '--exclude=__pycache__'
-  notify: Restart Services
-
-- name: Sync Frontend Vue Files
-  tags: ['deploy']
-  synchronize:
-    src: ../dist/
-    dest: '{{project_dir}}/_dist'
-    delete: yes
-    checksum: yes
-    rsync_opts:
-      - '--usermap=*:www-data'
-      - '--groupmap=*:www-data'
   notify: Restart Services
 
 - name: Copy Database If Not Present

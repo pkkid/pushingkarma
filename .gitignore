@@ -6,9 +6,9 @@
 *.sass-cache*
 *.sqlite3
 *.sublime-workspace
+**/_dist/
 **/_logs/
 **/_static/
-**/_vue/
 **/node_modules/
 **/package-lock.json
 /.env
