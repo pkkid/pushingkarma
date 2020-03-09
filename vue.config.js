@@ -1,15 +1,12 @@
 module.exports = {
   lintOnSave: true,
-  outputDir: 'dist',
+  outputDir: 'pk/_vue',
   assetsDir: 'pushingkarma',
   publicPath: '/static/',
   runtimeCompiler: true,
-  css: {loaderOptions: {sass: {data: `
-    @import "@/assets/css/__variables.scss";
-  `}}},
-  chainWebpack: config => {
-    config.plugins.delete("hmr");
-  },
+  pluginOptions: {sourceDir: 'vue'},
+  css: {loaderOptions: {sass: {data: `@import "@/assets/css/__variables.scss";`}}},
+  chainWebpack: config => { config.plugins.delete("hmr"); },
   configureWebpack: {
     performance: {
       maxEntrypointSize: 1024000,

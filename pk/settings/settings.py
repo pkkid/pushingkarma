@@ -1,7 +1,7 @@
 # encoding: utf-8
 import platform
 from os import makedirs
-from os.path import abspath, dirname, join
+from os.path import abspath, dirname
 try:
     from .secrets import *  # noqa
 except ImportError:
@@ -12,13 +12,13 @@ HOSTNAME = platform.node()
 SITE_NAME = 'PushingKarma'
 ALLOWED_HOSTS = ['.pushingkarma.com', 'localhost', '127.0.0.1']
 BASE_DIR = dirname(dirname(dirname(abspath(__file__))))
-LOG_DIR = join(BASE_DIR, 'pk/_logs')
+LOG_DIR = f'{BASE_DIR}/pk/_logs'
 DEBUG = HOSTNAME in ['pkkid-work', 'pkkid-home']
 ROOT_URLCONF = 'pk.urls'
 LOGIN_URL = 'index'
 STATIC_URL = '/static/'
-STATIC_ROOT = join(BASE_DIR, 'pk/_static/')
-STATICFILES_DIRS = [join(BASE_DIR, 'pk/_dist')]  # only works on remote
+STATIC_ROOT = f'{BASE_DIR}/pk/_static/'
+STATICFILES_DIRS = [f'{BASE_DIR}/pk/_vue']
 INTERNAL_IPS = ['127.0.0.1']
 DOMAIN = 'http://localhost:8000' if DEBUG else 'https://pushingkarma.com'
 
@@ -56,7 +56,7 @@ MIDDLEWARE = (
 )
 TEMPLATES = [{
     'BACKEND': 'django.template.backends.django.DjangoTemplates',
-    'DIRS': [join(BASE_DIR, 'pk/templates'), join(BASE_DIR, 'dist')],
+    'DIRS': [f'{BASE_DIR}/pk/templates', f'{BASE_DIR}/pk/_vue'],
     'APP_DIRS': True,
     'OPTIONS': {'context_processors': [
         'django.template.context_processors.debug',
@@ -67,7 +67,7 @@ TEMPLATES = [{
 }]
 DATABASES = {'default': {
     'ENGINE': 'django.db.backends.sqlite3',
-    'NAME': join(BASE_DIR, 'pk/db.sqlite3'),
+    'NAME': f'{BASE_DIR}/pk/db.sqlite3',
 }}
 
 # Django Cache
@@ -88,7 +88,7 @@ LOGGING = {
     'handlers': {
         'console': {'level':LOGLEVEL, 'class':'logging.StreamHandler', 'formatter':'standard'},
         'file': {'level': LOGLEVEL, 'class':'logging.handlers.RotatingFileHandler',
-            'filename':join(LOG_DIR, 'django.log'), 'maxBytes':1000000, 'backupCount':3,
+            'filename': f'{LOG_DIR}/django.log', 'maxBytes':1000000, 'backupCount':3,
             'formatter': 'standard'},
     },
     'loggers': {

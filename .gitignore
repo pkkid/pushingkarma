@@ -8,7 +8,7 @@
 *.sublime-workspace
 **/_logs/
 **/_static/
-**/dist/
+**/_vue/
 **/node_modules/
 **/package-lock.json
 /.env
