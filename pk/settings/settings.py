@@ -18,7 +18,7 @@ ROOT_URLCONF = 'pk.urls'
 LOGIN_URL = 'index'
 STATIC_URL = '/static/'
 STATIC_ROOT = f'{BASE_DIR}/pk/_static/'
-STATICFILES_DIRS = [f'{BASE_DIR}/pk/_vue']
+STATICFILES_DIRS = [f'{BASE_DIR}/pk/_dist']
 INTERNAL_IPS = ['127.0.0.1']
 DOMAIN = 'http://localhost:8000' if DEBUG else 'https://pushingkarma.com'
 
@@ -56,7 +56,7 @@ MIDDLEWARE = (
 )
 TEMPLATES = [{
     'BACKEND': 'django.template.backends.django.DjangoTemplates',
-    'DIRS': [f'{BASE_DIR}/pk/templates', f'{BASE_DIR}/pk/_vue'],
+    'DIRS': [f'{BASE_DIR}/pk/templates', f'{BASE_DIR}/pk/_dist'],
     'APP_DIRS': True,
     'OPTIONS': {'context_processors': [
         'django.template.context_processors.debug',
