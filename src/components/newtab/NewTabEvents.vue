@@ -3,7 +3,7 @@
     <div id='events' v-if='events'>
       <div v-if='events'>
         <div class='title'>Upcoming Events</div>
-        <div class='event' v-for='event in events.slice(0,3)' :key='event.id'>
+        <div class='event' v-for='event in events.slice(0,3)' :key='event.id' :class={soon:event.soon}>
           <div class='subject'>{{event.Subject}}</div>
           <div class='details'>
             {{ event.Start | formatDate('h:mm') }} - {{ event.End |formatDate('h:mm') }}
@@ -18,7 +18,7 @@
 
 <script>
   import * as api from '@/api';
-  
+  import * as moment from 'moment';
 
   export default {
     name: 'NewTabEvents',
@@ -27,12 +27,23 @@
     }),
     mounted: function() {
       this.update();
-      setInterval(this.update, 1000*60*5);
+      setInterval(this.update, 1000*60);
     },
     methods: {
       update: async function() {
+        this.events = [];
         var {data} = await api.Tools.getEvents();
-        this.events = data;
+        var now = moment();
+        var soon = moment().add(5, 'minutes');
+        var max = moment().add(12, 'hours');
+        for (var i=0; i < data.length; i++) {
+          var start = moment(data[i].Start);
+          var end = moment(data[i].End);
+          if ((end > now) && (start < max)) {
+            if (soon > start) { data[i].soon = true; }
+            this.events.push(data[i]);
+          }
+        }
       }
     }
   };
@@ -40,7 +51,7 @@
 
 <style lang='scss'>
   #events {
-    left: 20px;
+    left: 15px;
     position: absolute;
     top: 20px;
     width: 400px;
@@ -48,9 +59,18 @@
       border-bottom: 1px solid rgba(255,255,255,0.3);
       color: $newtab_dim;
       font-size: 16px;
+      margin-left: 5px;
     }
     .event {
-      margin-top:3px;
+      padding:2px 5px 0px 5px;
+      margin-top: 2px;
+      border-radius: 3px;
+      &.soon {
+        background-color: #222;
+        animation-name: color;
+        animation-duration: 2s;
+        animation-iteration-count: infinite;
+      }
     }
     .subject {
       overflow: hidden;
@@ -71,6 +91,11 @@
       font-size: 20px;
       text-shadow: none;
     }
+  }
+  @keyframes color {
+    0% { background-color: transparent; }
+    50% { background-color: rgba(255,0,0,0.3) }
+    100% { background-color: transparent; }
   }
   @media screen and (max-width: 1100px) {
     #events { left:20px; top:140px; width:400px; }
