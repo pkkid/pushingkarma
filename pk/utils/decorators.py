@@ -21,17 +21,14 @@ class ContextDecorator(object):
 
 def _response_to_data(response):
     """ Convert a response object to data dict. """
-    if isinstance(response, Response):
-        return {'type':'Response', 'kwargs':{
-            'data': response.data,
-            'status': response.status_code,
-            'content_type': response['Content-Type'],
-        }}
-    elif isinstance(response, HttpResponse):
+    if response.__class__.__name__ == 'HttpResponse':
         return {'type':'HttpResponse', 'kwargs':{
             'content': str(response.content),
-            'status': response.status_code,
             'content_type': response['Content-Type'],
+        }}
+    elif response.__class__.__name__ == 'Response':
+        return {'type':'Response', 'kwargs':{
+            'data': response.data,
         }}
 
 
