@@ -18,7 +18,8 @@ server {
   server_name www.{{project_name}}.com;
   add_header Strict-Transport-Security "max-age=31536000";
   ssl_prefer_server_ciphers on;
-  ssl_stapling on; ssl_stapling_verify on;
+  ssl_stapling on;
+  ssl_stapling_verify on;
   ssl_certificate /etc/letsencrypt/live/{{project_name}}.com/fullchain.pem;
   ssl_certificate_key /etc/letsencrypt/live/{{project_name}}.com/privkey.pem;
   ssl_trusted_certificate /etc/letsencrypt/live/{{project_name}}.com/fullchain.pem;
@@ -43,14 +44,6 @@ server {
   location /static/ {
     alias {{project_dir}}/_static/;
   }
-  # location /ws/ {
-  #   proxy_pass http://unix:{{project_dir}}/web.sock;
-  #   proxy_http_version 1.1;
-  #   proxy_set_header Upgrade $http_upgrade;
-  #   proxy_set_header Connection "upgrade";
-  #   proxy_buffers 8 32k;
-  #   proxy_buffer_size 64k;
-  # }
   location / {
     proxy_pass http://unix:{{project_dir}}/daphne.sock;
     proxy_http_version 1.1;
