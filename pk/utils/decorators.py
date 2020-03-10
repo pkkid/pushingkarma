@@ -22,9 +22,9 @@ def cache_api_data(timeout, key=None):
     def wrapper1(func):
         def wrapper2(request, *args, **kwargs):
             cachekey = key or f'{func.__module__}.{func.__name__}'
-            refresh = request.GET.get('refresh') == '1'
+            force = request.GET.get('force') == '1'
             data = json.loads(cache.get(cachekey, '{}'))
-            if not data or refresh:
+            if not data or force:
                 response = func(request, *args, **kwargs)
                 data = response.data
                 cache.set(cachekey, json.dumps(data), timeout)
