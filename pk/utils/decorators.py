@@ -37,10 +37,13 @@ def _response_to_data(response):
 
 def _data_to_response(data):
     """ Convert a data dict to a response object. """
-    if data.get('type') == 'Response':
-        return Response(**data['kwargs'])
-    elif data.get('type') == 'HttpResponse':
-        return HttpResponse(**data['kwargs'])
+    try:
+        if data.get('type') == 'Response':
+            return Response(**data['kwargs'])
+        elif data.get('type') == 'HttpResponse':
+            return HttpResponse(**data['kwargs'])
+    except Exception:
+        log.warning('Unable to read cached content')
     return None
 
 
