@@ -46,8 +46,9 @@
   }
   @media screen and (max-width: 800px) {
     #newtab {
-      color: $raspi_color;
       box-shadow: 0px 2px 10px rgba(0,0,0,0.5);
+      color: $raspi_color;
+      cursor: none;
       text-shadow: none;
       a,a:hover,a:visited { color:$raspi_color }
     }
