@@ -66,7 +66,7 @@
       font-size: 12px;
       left: 50%;
       margin: 0 auto;
-      max-width: 600px;
+      max-width: 400px;
       opacity: 0;
       padding: 10px;
       position: absolute;
@@ -79,6 +79,9 @@
     &.showdetails .details {
       opacity: 1;
     }
+  }
+  @media screen and (max-width: 1100px) {
+    #photo .details { opacity: 0 !important; }
   }
   @media screen and (max-width: 800px) {
     #photo { opacity: 0; }
