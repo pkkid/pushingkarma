@@ -62,7 +62,7 @@ def ical(request, status=200):
     url = request.GET.get('url', settings.OFFICE365_HTMLCAL)
     ics = Calendar()
     for event in get_events(url):
-        ics.events.append(Event(
+        ics.events.add(Event(
             name=event['Subject'],
             uid=event['ItemId']['Id'],
             location=event['Location']['DisplayName'],
