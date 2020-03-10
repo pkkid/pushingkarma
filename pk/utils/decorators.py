@@ -35,15 +35,16 @@ def _response_to_data(response):
         }}
 
 
-def _data_to_response(data):
+def _get_response(cachekey):
     """ Convert a data dict to a response object. """
     try:
+        data = json.loads(cache.get(cachekey, '{}'))
         if data.get('type') == 'Response':
             return Response(**data['kwargs'])
         elif data.get('type') == 'HttpResponse':
             return HttpResponse(**data['kwargs'])
-    except Exception:
-        log.warning('Unable to read cached content')
+    except Exception as err:
+        log.warning(f'Unable to read cached content for {cachekey}; {err}')
     return None
 
 
@@ -52,8 +53,7 @@ def cache_api_data(timeout, key=None):
         def wrapper2(request, *args, **kwargs):
             cachekey = key or f'{func.__module__}.{func.__name__}'
             force = request.GET.get('force') == '1'
-            data = json.loads(cache.get(cachekey, '{}'))
-            response = _data_to_response(data)
+            response = _get_response(cachekey)
             if not response or force:
                 response = func(request, *args, **kwargs)
                 data = _response_to_data(response)
