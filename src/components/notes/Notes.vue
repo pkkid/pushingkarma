@@ -26,7 +26,7 @@
             <div class='controls' if='userid !== null'>
               <!-- Edit buttons -->
               <div v-if='editing'><i class='mdi mdi-cancel'/> <a @click='editing=false'>Cancel Changes</a></div>
-              <div v-else><i class='mdi mdi-pencil-outline'/> <a @click='editing=true'>Edit Note</a></div>
+              <div v-else-if='userid'><i class='mdi mdi-pencil-outline'/> <a @click='editing=true'>Edit Note</a></div>
             </div>
           </div>
           <div style='clear:both;'></div>

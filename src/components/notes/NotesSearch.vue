@@ -113,6 +113,12 @@
 
 <style lang='scss'>
   #notes {
+    #sidebar {
+      opacity: 0.4;
+      transition: opacity 0.5s ease;
+      &:hover, &:focus,
+      &:focus-within { opacity: 1; }
+    }
     #sidebar .submenuitem {
       padding-top: 15px;
       padding-bottom: 15px;
@@ -149,6 +155,7 @@
     #search-results {
       position: fixed;
       top: 100px;
+      transition: opacity 0.3s ease;
     }
     .mdi-lock { top:0px !important; }
   }
