@@ -18,17 +18,17 @@ from .photos import get_album, PhotosFrom500px
 REDDIT_ATTRS = ['title','author.name','score','permalink','domain','created_utc']
 REDDIT_BADDOMAINS = ['i.redd.it', 'imgur.com', r'^self\.']
 LUCKY_URL = 'http://google.com/search?btnI=I%27m+Feeling+Lucky&sourceid=navclient&q={domain}%20{title}'
+AUTH_CLASSES = [SessionAuthentication, TokenAuthentication]
+PERM_CLASSES = [IsAuthenticated]
 
 
 def cached_api_view(methods, timeout, key=None):
     """ Convenience decorator to rule them all. """
     def wrapper1(func):
-        auth = [SessionAuthentication, TokenAuthentication]
-        perm = [IsAuthenticated]
         cachekey = key or f'{func.__module__}.{func.__name__}'
-        @api_view(methods)
-        @authentication_classes(auth)
-        @permission_classes(perm)
+        @api_view(methods)  # noqa
+        @authentication_classes(AUTH_CLASSES)
+        @permission_classes(PERM_CLASSES)
         @cache_api_data(timeout, cachekey)
         def wrapper2(*args, **kwargs):
             return func(*args, **kwargs)

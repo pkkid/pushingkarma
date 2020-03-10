@@ -2,6 +2,7 @@
 import functools, json, os, time
 from django.core.cache import cache
 from django.db import connection
+from django.http import HttpResponse
 from rest_framework.response import Response
 from pk import log
 
@@ -18,17 +19,43 @@ class ContextDecorator(object):
         return decorated
 
 
+def _response_to_data(response):
+    """ Convert a response object to data dict. """
+    if isinstance(response, Response):
+        return {'type':'Response', 'kwargs':{
+            'data': response.data,
+            'status': response.status_code,
+            'content_type': response['Content-Type'],
+        }}
+    elif isinstance(response, HttpResponse):
+        return {'type':'HttpResponse', 'kwargs':{
+            'content': str(response.content),
+            'status': response.status_code,
+            'content_type': response['Content-Type'],
+        }}
+
+
+def _data_to_response(data):
+    """ Convert a data dict to a response object. """
+    if data.get('type') == 'Response':
+        return Response(**data['kwargs'])
+    elif data.get('type') == 'HttpResponse':
+        return HttpResponse(**data['kwargs'])
+    return None
+
+
 def cache_api_data(timeout, key=None):
     def wrapper1(func):
         def wrapper2(request, *args, **kwargs):
             cachekey = key or f'{func.__module__}.{func.__name__}'
             force = request.GET.get('force') == '1'
             data = json.loads(cache.get(cachekey, '{}'))
-            if not data or force:
+            response = _data_to_response(data)
+            if not response or force:
                 response = func(request, *args, **kwargs)
-                data = response.data
+                data = _response_to_data(response)
                 cache.set(cachekey, json.dumps(data), timeout)
-            return Response(data)
+            return response
         return wrapper2
     return wrapper1
 
