@@ -40,7 +40,10 @@
           var start = moment(data[i].Start);
           var end = moment(data[i].End);
           if ((end > now) && (start < max)) {
-            if (soon > start) { data[i].soon = true; }
+            if (soon > start) { data[i].soon = true; }  // Pulse upcoming events
+            data[i].Location.DisplayName = data[i].Location.DisplayName.replace(/ Conference Room/g, '');
+            data[i].Location.DisplayName = data[i].Location.DisplayName.replace(/BOSHQ-8-/g, '');
+            data[i].Location.DisplayName = data[i].Location.DisplayName.replace(/MARMA-8-/g, '');
             this.events.push(data[i]);
           }
         }
