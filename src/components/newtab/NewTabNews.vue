@@ -58,7 +58,7 @@
     position: absolute;
     width: 700px;
     opacity: 0;
-    transition: opacity 0.5s linear;
+    transition: $newtab_transition_fast;
     &.showing { opacity: 1; }
     .title p {
       display: -webkit-box;

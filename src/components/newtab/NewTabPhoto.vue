@@ -55,7 +55,7 @@
       opacity: 0;
       background-position: center center;
       background-size: cover;
-      transition: opacity 1s ease;
+      transition: $newtab_transition_fast;
       z-index: 0;
     }
     .details {

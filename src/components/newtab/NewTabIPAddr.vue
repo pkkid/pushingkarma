@@ -22,7 +22,7 @@
     position: absolute;
     right: 5px;
     text-align: right;
-    transition: $newtab_transition_slow;
+    transition: $newtab_transition_fast;
     width: 150px;
   }
 </style>

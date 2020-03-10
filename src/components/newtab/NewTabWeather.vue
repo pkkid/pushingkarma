@@ -60,7 +60,7 @@
     position: absolute;
     right: 20px;
     top: 20px;
-    transition: $newtab_transition_slow;
+    transition: $newtab_transition_fast;
     width: 350px;
     .weather-today {
       font-size: 16px;

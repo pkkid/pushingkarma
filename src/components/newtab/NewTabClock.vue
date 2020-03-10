@@ -16,7 +16,7 @@
     }),
     mounted: function() {
       setInterval(() => this.now = new Date(), 10000);
-      setTimeout(() => this.loaded = true, 300);
+      setTimeout(() => this.loaded = true, 20);
     },
   };
 </script>
@@ -28,7 +28,7 @@
     text-align: center;
     top: 20px;
     width: 300px;
-    transition: $newtab_transition_slow;
+    transition: $newtab_transition_fast;
     cursor: pointer;
     .date {
       color: $newtab_dim;

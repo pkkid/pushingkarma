@@ -10,7 +10,6 @@ from django.db.models import Q
 from django.views.decorators.http import require_POST
 from django.http import HttpResponseRedirect
 from oauth2client import client
-
 from pk import log, utils
 
 GAUTH_KEY = 'gauth:{email}'
