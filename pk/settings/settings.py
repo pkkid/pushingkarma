@@ -43,6 +43,7 @@ INSTALLED_APPS = (
     'pk.apps.budget',
     'pk.apps.notes',
     'pk.apps.stocks',
+    'pk.apps.tools',
 )
 MIDDLEWARE = (
     'django.contrib.sessions.middleware.SessionMiddleware',
