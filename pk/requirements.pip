@@ -1,5 +1,6 @@
 # pip requirements file
 # pip install -r requirements.pip
+ipython
 pytz
 
 ansible==2.9.5
