@@ -31,7 +31,6 @@
     },
     methods: {
       update: async function() {
-        this.events = [];
         var events = [];
         var {data} = await api.Tools.getEvents();
         var now = moment();
