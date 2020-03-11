@@ -1,7 +1,7 @@
 <template>
   <transition name='custom-classes-transition' enter-active-class='animated fadeIn'>
-    <div id='events' v-if='events'>
-      <div v-if='events'>
+    <div id='events'>
+      <div v-if='events.length'>
         <div class='title'>Upcoming Events</div>
         <div class='event' v-for='event in events.slice(0,3)' :key='event.id' :class={soon:event.soon}>
           <div class='subject'>{{event.Subject}}</div>
@@ -11,7 +11,7 @@
           </div>
         </div>
       </div>
-      <div v-else class='notasks'>No events</div>
+      <div v-else class='noevents'>No events</div>
     </div>
   </transition>
 </template>
