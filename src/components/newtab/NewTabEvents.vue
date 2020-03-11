@@ -32,21 +32,20 @@
     methods: {
       update: async function() {
         this.events = [];
+        var events = [];
         var {data} = await api.Tools.getEvents();
         var now = moment();
         var soon = moment().add(5, 'minutes');
         var max = moment().add(12, 'hours');
-        for (var i=0; i < data.length; i++) {
-          var start = moment(data[i].Start);
-          var end = moment(data[i].End);
+        for (var event of data) {
+          var start = moment(event.Start);
+          var end = moment(event.End);
           if ((end > now) && (start < max)) {
-            if (soon > start) { data[i].soon = true; }  // Pulse upcoming events
-            data[i].Location.DisplayName = data[i].Location.DisplayName.replace(/ Conference Room/g, '');
-            data[i].Location.DisplayName = data[i].Location.DisplayName.replace(/BOSHQ-8-/g, '');
-            data[i].Location.DisplayName = data[i].Location.DisplayName.replace(/MARMA-8-/g, '');
-            this.events.push(data[i]);
+            if (soon > start) { event.soon = true; }
+            events.push(event);
           }
         }
+        this.events = events;
       }
     }
   };
