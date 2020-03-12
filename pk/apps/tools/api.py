@@ -51,12 +51,6 @@ def tools(request):
 def events(request):
     """ Get calendar events from Office365. """
     events = get_o365_events(settings.OFFICE365_HTMLCAL)
-    for i in range(len(events)):
-        location = utils.rget(events[i], 'Location.DisplayName', '')
-        location = location.replace(' Conference Room', '')
-        location = re.sub(r'BOSHQ-\d+-', '', location)
-        location = re.sub(r'MARMA-\d+-', '', location)
-        events[i]['Location']['DisplayName'] = location
     return Response(events)
 
 
