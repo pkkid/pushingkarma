@@ -5,7 +5,7 @@
 import hashlib
 from django.conf import settings
 from django.core.management.base import BaseCommand
-from ...calendar import get_events
+from ...o365 import get_o365_events
 from pk import log
 from pk.utils import auth
 
@@ -42,7 +42,7 @@ class Command(BaseCommand):
     def get_o365_events(self, calendar):
         """ Returns a dict of o365 Events {eventids: event} for the specified calendar. """
         _eventid = lambda event: hashlib.md5(event['ItemId']['Id'].encode()).hexdigest()
-        return {_eventid(event):event for event in get_events(calendar)}
+        return {_eventid(event):event for event in get_o365_events(calendar)}
 
     def get_gcal(self, service, name):
         """ Returns a dict object representing the specified Google Calendar. """

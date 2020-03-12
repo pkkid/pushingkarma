@@ -6,7 +6,7 @@ from pk import utils
 DATEFORMAT = '%Y-%m-%dT00:00:00.000'
 
 
-def get_events(url):
+def get_o365_events(url):
     session = requests.Session()
     config, folders = _load_calendar(session, url)
     events = _load_events(session, url, config)
@@ -15,6 +15,7 @@ def get_events(url):
         location = location.replace(' Conference Room', '')
         location = re.sub(r'BOSHQ-\d+-', '', location)
         location = re.sub(r'MARMA-\d+-', '', location)
+        location = re.sub(r'https*://\w*\.zoom\.us/j/\d+', 'Zoom', location)
         events[i]['Location']['DisplayName'] = location
     return events
 

@@ -30,7 +30,6 @@ api.add_url('^stocks/csv$', stock_api.csv, name='stocks/csv')
 # Tools API
 api.add_url('^tools$', tools_api.tools, name='tools')
 api.add_url('^tools/events$', tools_api.events, name='tools/events')
-api.add_url('^tools/ical$', tools_api.ical, name='tools/ical')
 api.add_url('^tools/news$', tools_api.news, name='tools/news')
 api.add_url('^tools/photo$', tools_api.photo, name='tools/photo')
 api.add_url('^tools/tasks$', tools_api.tasks, name='tools/tasks')
