@@ -1,7 +1,7 @@
 <template>
   <transition name='custom-classes-transition' enter-active-class='animated fadeIn'>
     <div id='events'>
-      <div v-if='events.length'>
+      <div v-if='events && events.length'>
         <div class='title'>Upcoming Events</div>
         <div class='event' v-for='event in events.slice(0,3)' :key='event.id' :class={soon:event.soon}>
           <div class='subject'>{{event.Subject}}</div>
@@ -38,7 +38,7 @@
         var max = moment().add(12, 'hours');
         for (var event of data) {
           var start = moment(event.Start);
-          var end = moment(event.End);
+          var end = moment(event.End).subtract(10, 'minutes');
           if ((end > now) && (start < max)) {
             if (soon > start) { event.soon = true; }
             events.push(event);
