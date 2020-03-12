@@ -88,13 +88,13 @@ LOGGING = {
     'disable_existing_loggers': True,
     'handlers': {
         'console': {'level':LOGLEVEL, 'class':'logging.StreamHandler', 'formatter':'standard'},
-        'file': {'level': LOGLEVEL, 'class':'logging.handlers.RotatingFileHandler',
+        'file': {'level':LOGLEVEL, 'class':'logging.handlers.RotatingFileHandler',
             'filename': f'{LOG_DIR}/django.log', 'maxBytes':1000000, 'backupCount':3,
             'formatter': 'standard'},
+        'email': {'level':'ERROR', 'class':'django.utils.log.AdminEmailHandler'},
     },
     'loggers': {
-        'pk': {'handlers':['file', 'console'], 'level':LOGLEVEL, 'propagate':True},
-        'redsocks': {'handlers':['file', 'console'], 'level':LOGLEVEL, 'propagate':False},
+        'pk': {'handlers':['console','file','email'], 'level':LOGLEVEL, 'propagate':True},
     },
     'formatters':{
         'standard':{'format':'%(asctime)-.19s %(module)12s:%(lineno)-3s %(levelname)-7s %(message)s'}

@@ -1,9 +1,7 @@
 # encoding: utf-8
 import praw, random, re, requests
 from django.conf import settings
-from django.http import HttpResponse
 from pk.utils.decorators import cache_api_data
-from ics import Calendar, Event
 from pk import utils
 from pk.utils import auth, threaded
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
@@ -12,7 +10,7 @@ from rest_framework.decorators import permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
-from .calendar import get_events
+from .o365 import get_o365_events
 from .photos import get_album, PhotosFrom500px
 
 REDDIT_ATTRS = ['title','author.name','score','permalink','domain','created_utc']
@@ -52,30 +50,8 @@ def tools(request):
 @cached_api_view(['get'], 60*15)  # 15 minutes
 def events(request):
     """ Get calendar events from Office365. """
-    events = get_events(settings.OFFICE365_HTMLCAL)
-    for i in range(len(events)):
-        location = utils.rget(events[i], 'Location.DisplayName', '')
-        location = location.replace(' Conference Room', '')
-        location = re.sub(r'BOSHQ-\d+-', '', location)
-        location = re.sub(r'MARMA-\d+-', '', location)
-        events[i]['Location']['DisplayName'] = location
+    events = get_o365_events(settings.OFFICE365_HTMLCAL)
     return Response(events)
-
-
-@cached_api_view(['get'], 60*15)  # 15 minutes
-def ical(request, status=200):
-    """ Returns Office365 calendar events as ics because MS does it wrong. """
-    url = request.GET.get('url', settings.OFFICE365_HTMLCAL)
-    ics = Calendar()
-    for event in get_events(url):
-        ics.events.append(Event(
-            name=event['Subject'],
-            uid=event['ItemId']['Id'],
-            location=event['Location']['DisplayName'],
-            begin=event['Start'],
-            end=event['End'],
-        ))
-    return HttpResponse(str(ics), content_type='text/calendar', status=status)
 
 
 @cached_api_view(['get'], 60*30)  # 30 minutes
@@ -138,3 +114,9 @@ def _get_subreddit_items(reddit, subreddit, count):
             story['url'] = LUCKY_URL.format(**story)
         substories.append(story)
     return sorted(substories, key=lambda x:x['score'], reverse=True)[:count]
+
+
+@api_view(['get'])
+@permission_classes(PERM_CLASSES)
+def error(request):
+    raise Exception('Test Exception')

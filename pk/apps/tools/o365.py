@@ -1,14 +1,23 @@
 # encoding: utf-8
-import json, requests
+import json, re, requests
 from datetime import datetime, timedelta
+from pk import utils
 
 DATEFORMAT = '%Y-%m-%dT00:00:00.000'
 
 
-def get_events(url):
+def get_o365_events(url):
     session = requests.Session()
     config, folders = _load_calendar(session, url)
-    return _load_events(session, url, config)
+    events = _load_events(session, url, config)
+    for i in range(len(events)):
+        location = utils.rget(events[i], 'Location.DisplayName', '')
+        location = location.replace(' Conference Room', '')
+        location = re.sub(r'BOSHQ-\d+-', '', location)
+        location = re.sub(r'MARMA-\d+-', '', location)
+        location = re.sub(r'https*://\w*\.zoom\.us/j/\d+', 'Zoom', location)
+        events[i]['Location']['DisplayName'] = location
+    return events
 
 
 def _load_calendar(session, url):
