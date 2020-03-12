@@ -117,5 +117,6 @@ def _get_subreddit_items(reddit, subreddit, count):
 
 
 @api_view(['get'])
+@permission_classes(PERM_CLASSES)
 def error(request):
     raise Exception('Test Exception')
