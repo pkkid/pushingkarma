@@ -24,6 +24,12 @@
 - name: Add Update Stocks Cronjob
   cron:
     name: update-stocks
-    job: '/var/www/venvs/pk/bin/python /root/pk/manage.py update_stocks >> /root/pk/log/update_stocks.log 2>&1'
+    job: '/var/www/venvs/pk/bin/python /root/pk/manage.py update_stocks >> {{logs_dir}}/update_stocks.log 2>&1'
     minute: '0'
     hour: '2'
+
+- name: Add Update Calendar Cronjob
+  cron:
+    name: update-gcal
+    job: '/var/www/venvs/pk/bin/python /root/pk/manage.py update_gcal >> {{logs_dir}}/update_gcal.log 2>&1'
+    minute: '*/5'
