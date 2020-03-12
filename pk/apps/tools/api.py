@@ -114,3 +114,8 @@ def _get_subreddit_items(reddit, subreddit, count):
             story['url'] = LUCKY_URL.format(**story)
         substories.append(story)
     return sorted(substories, key=lambda x:x['score'], reverse=True)[:count]
+
+
+@api_view(['get'])
+def error(request):
+    raise Exception('Test Exception')

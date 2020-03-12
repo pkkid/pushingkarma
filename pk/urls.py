@@ -34,6 +34,7 @@ api.add_url('^tools/news$', tools_api.news, name='tools/news')
 api.add_url('^tools/photo$', tools_api.photo, name='tools/photo')
 api.add_url('^tools/tasks$', tools_api.tasks, name='tools/tasks')
 api.add_url('^tools/weather$', tools_api.weather, name='tools/weather')
+api.add_url('^tools/error$', tools_api.error, name='tools/error')
 # Misc APIs
 api.register('notes', note_api.NotesViewSet)
 
