@@ -81,26 +81,29 @@ CACHES = {'default': {
 }}
 
 # Logging
-makedirs(LOG_DIR, exist_ok=True)
-LOGLEVEL = 'INFO'
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
     'handlers': {
-        'console': {'level':LOGLEVEL, 'class':'logging.StreamHandler', 'formatter':'standard'},
-        'file': {'level':LOGLEVEL, 'class':'logging.handlers.RotatingFileHandler',
-            'filename': f'{LOG_DIR}/django.log', 'maxBytes':1000000, 'backupCount':3,
-            'formatter': 'standard'},
+        'console': {'level':'INFO', 'class':'logging.StreamHandler', 'formatter':'standard'},
+        'file': {'level':'INFO', 'class':'logging.handlers.RotatingFileHandler', 'formatter':'standard',
+            'filename': f'{LOG_DIR}/django.log', 'maxBytes':1000000, 'backupCount':3},
         'email': {'level':'ERROR', 'class':'django.utils.log.AdminEmailHandler'},
     },
     'loggers': {
-        'cmd': {'handlers':['console','email'], 'level':LOGLEVEL, 'propagate':True},
-        'pk': {'handlers':['console','file','email'], 'level':LOGLEVEL, 'propagate':True},
+        'cmd': {'handlers':['console','email'], 'level':'INFO', 'propagate':True},
+        'pk': {'handlers':['console','file','email'], 'level':'INFO', 'propagate':True},
     },
     'formatters':{
         'standard':{'format':'%(asctime)-.19s %(module)12s:%(lineno)-3s %(levelname)-7s %(message)s'}
     },
 }
+# Create directories
+# Dont send emails if DEBUG = True
+makedirs(LOG_DIR, exist_ok=True)
+if DEBUG is True:
+    for _, logger in LOGGING['loggers'].items():
+        logger['handlers'] = filter(lambda x: x != 'email', logger['handlers'])
 
 # Django Rest Framework
 REST_FRAMEWORK = {
