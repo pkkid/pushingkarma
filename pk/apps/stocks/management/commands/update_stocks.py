@@ -1,13 +1,13 @@
 # encoding: utf-8
 # Update strock values from AlphaVantage
-import json, pytz, requests, time
+import json, logging, pytz, requests, time
 from datetime import datetime, timedelta
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.utils.timezone import make_aware
 from ...models import FUNCTION_KEY, Stock
 from pk.utils.decorators import log_exception
-from pk import log
+log = logging.getLogger('cmd')
 
 URL = 'https://www.alphavantage.co/query?symbol={ticker}&function={function}&apikey={apikey}'
 APIKEY = settings.ALPHAVANTAGE_APIKEY
@@ -19,7 +19,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('--ticker', required=False, help='Only update the specified ticker.')
 
-    @log_exception()
+    @log_exception(log)
     def handle(self, *args, **options):
         lastupdate = None
         tz = pytz.timezone(settings.TIME_ZONE)

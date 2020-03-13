@@ -83,13 +83,14 @@ def lazyproperty(func):
     return wrapper
 
 
-def log_exception():
-    def wrapper1(func):
+def log_exception(logger=None):
+    logger = logger or log
+    def wrapper1(func):  # noqa
         def wrapper2(*args, **kwargs):
             try:
                 return func(*args, **kwargs)
             except Exception as err:
-                log.exception(err)
+                logger.exception(err)
         return wrapper2
     return wrapper1
 

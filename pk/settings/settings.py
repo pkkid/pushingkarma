@@ -94,6 +94,7 @@ LOGGING = {
         'email': {'level':'ERROR', 'class':'django.utils.log.AdminEmailHandler'},
     },
     'loggers': {
+        'cmd': {'handlers':['console','email'], 'level':LOGLEVEL, 'propagate':True},
         'pk': {'handlers':['console','file','email'], 'level':LOGLEVEL, 'propagate':True},
     },
     'formatters':{

@@ -2,19 +2,19 @@
 # encoding: utf-8
 # https://developers.google.com/calendar/v3/reference/events/update
 # http://googleapis.github.io/google-api-python-client/docs/dyn/calendar_v3.events.html
-import hashlib
+import hashlib, logging
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from ...o365 import get_o365_events
 from pk.utils import auth
 from pk.utils.decorators import log_exception
-from pk import log
+log = logging.getLogger('cmd')
 
 
 class Command(BaseCommand):
     help = 'Update Nasuni Google Calendar'
 
-    @log_exception()
+    @log_exception(log)
     def handle(self, *args, **kwargs):
         """ Update Nasuni Google Calendar """
         log.info('---')
