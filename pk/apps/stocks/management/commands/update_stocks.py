@@ -6,6 +6,7 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.utils.timezone import make_aware
 from ...models import FUNCTION_KEY, Stock
+from pk.utils.decorators import log_exception
 from pk import log
 
 URL = 'https://www.alphavantage.co/query?symbol={ticker}&function={function}&apikey={apikey}'
@@ -18,6 +19,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument('--ticker', required=False, help='Only update the specified ticker.')
 
+    @log_exception()
     def handle(self, *args, **options):
         lastupdate = None
         tz = pytz.timezone(settings.TIME_ZONE)

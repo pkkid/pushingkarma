@@ -83,7 +83,18 @@ def lazyproperty(func):
     return wrapper
 
 
-class logqueries(ContextDecorator):
+def log_exception():
+    def wrapper1(func):
+        def wrapper2(*args, **kwargs):
+            try:
+                return func(*args, **kwargs)
+            except Exception as err:
+                log.exception(err)
+        return wrapper2
+    return wrapper1
+
+
+class log_queries(ContextDecorator):
     def __init__(self, label=None, filter=None, show_queries=True):
         self.label = label
         self.filter = filter

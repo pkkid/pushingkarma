@@ -6,13 +6,15 @@ import hashlib
 from django.conf import settings
 from django.core.management.base import BaseCommand
 from ...o365 import get_o365_events
-from pk import log
 from pk.utils import auth
+from pk.utils.decorators import log_exception
+from pk import log
 
 
 class Command(BaseCommand):
     help = 'Update Nasuni Google Calendar'
 
+    @log_exception()
     def handle(self, *args, **kwargs):
         """ Update Nasuni Google Calendar """
         log.info('---')
