@@ -1,4 +1,5 @@
 # encoding: utf-8
+from django.conf import settings
 from django.db import models, transaction
 from django_extensions.db.models import TimeStampedModel
 from pk import log
@@ -11,6 +12,7 @@ def get_uncategorized():
 
 
 class Account(TimeStampedModel):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     name = models.CharField(max_length=255, db_index=True)
     fid = models.IntegerField(unique=True, db_index=True)
     type = models.CharField(max_length=255, choices=ACCOUNT_CHOICES)
@@ -20,6 +22,7 @@ class Account(TimeStampedModel):
 
 
 class Category(TimeStampedModel):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     name = models.CharField(max_length=255, unique=True, db_index=True)
     budget = models.DecimalField(max_digits=8, decimal_places=2)
     comment = models.TextField(blank=True, default='')
@@ -59,6 +62,7 @@ class Category(TimeStampedModel):
 
 
 class Transaction(TimeStampedModel):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     account = models.ForeignKey(Account, on_delete=models.CASCADE)
     trxid = models.CharField(max_length=255, db_index=True)
     date = models.DateField(db_index=True)
@@ -83,5 +87,6 @@ class Transaction(TimeStampedModel):
 
 
 class KeyValue(TimeStampedModel):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     key = models.SlugField(primary_key=True, max_length=255, unique=True, null=False)
     value = models.TextField()

@@ -42,7 +42,7 @@ class AccountsViewSet(viewsets.ModelViewSet):
     list_fields = AccountSerializer.Meta.fields
 
     def list(self, request, *args, **kwargs):
-        accounts = Account.objects.order_by('name')
+        accounts = Account.objects.filter(user=request.user).order_by('name')
         page = self.paginate_queryset(accounts)
         serializer = AccountSerializer(page, context={'request':request}, many=True, fields=self.list_fields)
         response = self.get_paginated_response(serializer.data)
@@ -63,7 +63,7 @@ class CategoriesViewSet(viewsets.ModelViewSet):
     list_fields = CategorySerializer.Meta.fields
 
     def list(self, request, *args, **kwargs):
-        categories = Category.objects.order_by('sortindex')
+        categories = Category.objects.filter(user=request.user).order_by('sortindex')
         page = self.paginate_queryset(categories)
         serializer = CategorySerializer(page, context={'request':request}, many=True, fields=self.list_fields)
         response = self.get_paginated_response(serializer.data)
@@ -83,9 +83,10 @@ class TransactionSerializer(DynamicFieldsSerializer):
     def update(self, instance, validated_data):
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
+        user = self.context['request'].user
         category_name = self.context['request'].data.get('category_name')
         if category_name:
-            category = utils.get_object_or_none(Category, name__iexact=category_name)
+            category = utils.get_object_or_none(Category, user=user, name__iexact=category_name)
             if not category:
                 raise ValidationError("Unknown category '%s'." % category_name)
             instance.category = category
@@ -102,7 +103,7 @@ class TransactionsViewSet(viewsets.ModelViewSet):
     def list(self, request, *args, **kwargs):
         searchdata = {}
         searchstr = request.GET.get('search')
-        transactions = Transaction.objects.order_by('-date', 'payee', 'id')
+        transactions = Transaction.objects.filter(user=request.user).order_by('-date', 'payee', 'id')
         if searchstr:
             search = Search(transactions, TRANSACTIONSEARCHFIELDS, searchstr)
             transactions = search.queryset()
