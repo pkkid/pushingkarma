@@ -51,6 +51,8 @@
     overflow-y: hidden;
   }
   #logo {
+    $bounce: cubic-bezier(.47,1.64,.41,.8);
+    
     border-bottom: 1px solid lighten($darkbg-color, 7%);
     height: 220px;
     left: 0px;
