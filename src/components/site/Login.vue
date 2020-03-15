@@ -160,7 +160,7 @@
       margin: 10px 0px;
     }
     button {
-      margin-top: 10px;
+      margin-top: 15px;
       padding-left: 20px;
       padding-right: 20px;
     }

@@ -12,8 +12,8 @@
       <div><a href='https://www.linkedin.com/in/shepanski'><b-icon icon='linkedin-box'/></a></div>
       <div><a href='https://www.facebook.com/mshepanski'><b-icon icon='facebook-box'/></a></div>
       <div @click='$refs.login.display = true' style='cursor:pointer;'>
-        <i v-if='user.id' class='avatar' key='avatar' :style="{backgroundImage:avatar}"></i>
-        <i v-else class='mdi mdi-account-circle' key='icon'></i>
+        <i v-if='user.id' class='avatar' key='avatar' :style="{backgroundImage:avatar}"/>
+        <a v-else><b-icon icon='account-circle'/></a>
       </div>
     </div>
     <Login ref='login'/>
