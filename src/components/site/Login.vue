@@ -182,10 +182,8 @@
     }
     .actions {
       margin-left: 80px;
-      position: relative;
-      top: -3px;
       line-height: 0.9em;
-      a { color:#777; font-size: 0.6em; padding-right:10px; }
+      a { color:#777; font-size: 0.8em; padding-right:10px; }
       a:hover { color:#333; }
     }
     .footnote {

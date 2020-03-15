@@ -7,15 +7,15 @@
       <li><router-link to='/notes'>Notes</router-link></li>
       <li v-if='user.id'><router-link to='/budget'>Budget</router-link></li>
     </ul></div>
-    <div class='links'><ul>
-      <li><a href='https://github.com/pkkid'><b-icon icon='github-box'/></a></li>
-      <li><a href='https://www.linkedin.com/in/shepanski'><b-icon icon='linkedin-box'/></a></li>
-      <li><a href='https://www.facebook.com/mshepanski'><b-icon icon='facebook-box'/></a></li>
-      <li><a href='#' @click='$refs.login.display = true'>
+    <div class='links'>
+      <div><a href='https://github.com/pkkid'><b-icon icon='github-box'/></a></div>
+      <div><a href='https://www.linkedin.com/in/shepanski'><b-icon icon='linkedin-box'/></a></div>
+      <div><a href='https://www.facebook.com/mshepanski'><b-icon icon='facebook-box'/></a></div>
+      <div @click='$refs.login.display = true' style='cursor:pointer;'>
         <i v-if='user.id' class='avatar' key='avatar' :style="{backgroundImage:avatar}"></i>
         <i v-else class='mdi mdi-account-circle' key='icon'></i>
-      </a></li>
-    </ul></div>
+      </div>
+    </div>
     <Login ref='login'/>
   </div>
 </template>
@@ -87,31 +87,26 @@
       a:hover:before { width: 35px; }
     }
     .links {
-      bottom: 38px;
-      font-size: 1.4em;
-      left: -2px;
-      margin-bottom: 10px;
-      padding: 0px 20px 0px 60px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
       position: absolute;
-      text-align: left;
-      width: 100%;
-      color: $darkbg-link;
-      li {
-        margin: 0px 15px 0px 0px;
-        display: inline-block;
-      }
-      .avatar {
-        background-size: 20px;
-        border-radius: 3px;
-        display: block;
-        height: 20px;
-        margin-left: 3px;
-        position: relative;
-        top: 2px;
-        transition: box-shadow 0.2s ease;
-        width: 20px;
-        &:hover { box-shadow: 0px 0px 8px rgba($darkbg-link, 0.4); }
-      }
+      bottom: 40px;
+      left: 58px;
+      width: 130px;
+      height: 60px;
+    }
+    .avatar {
+      background-size: 20px;
+      border-radius: 3px;
+      display: block;
+      height: 20px;
+      left: 3px;
+      position: relative;
+      top: -2px;
+      transition: box-shadow 0.2s ease;
+      width: 20px;
+      &:hover { box-shadow: 0px 0px 8px rgba($darkbg-link, 0.4); }
     }
   }
 
@@ -129,10 +124,8 @@
     }
     .links {
       left: auto;
-      line-height: 60px;
-      right: 0px;
-      top: 0px;
-      width: 250px;
+      bottom: auto;
+      right: 60px;
     }
   }
 </style>
