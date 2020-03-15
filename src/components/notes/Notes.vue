@@ -1,9 +1,7 @@
 <template>
   <div id='notes' v-hotkey='keymap'>
     <Navigation :cls="'topnav'" />
-    <div id='sidebar'>
-      <Search ref='search' @newSelection='updateNote'/>
-    </div>
+    <Search ref='search' @newSelection='updateNote'/>
     <div class='content'>
       <div class='notebg' :class='{editable:editing}'>
         <div class='notewrap'>

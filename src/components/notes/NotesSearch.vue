@@ -1,27 +1,28 @@
 <template>
-  <div id='search'>
+  <div id='search' class='darkbg'>
     <div class='searchwrap'>
       <!-- Search Input -->
-      <span id='search-icon' class='mdi mdi-magnify'></span>
-      <input id='search-input' type='text' v-model='search' autofocus='true'
+      <b-icon class='searchicon' icon='magnify'/>
+      <input class='searchinput' type='text' v-model='search' autofocus='true'
         spellcheck='false' autocomplete='off' ref='search'
         @keydown.up.prevent='setHighlighted(-1)'
         @keydown.down.prevent='setHighlighted(+1)'
         @keyup.enter.prevent='$emit("newSelection", highlighted)'
         @keydown.esc.stop='$refs.search.blur()'/>
       <!-- Search Results -->
-      <div id='search-results'>
+      <div class='results'>
         <div class='scrollbox'>
           <div class='scrollbox-content'>
-            <div class='submenuitem' v-for='note in notes' :key='note.id' :noteid='note.id'
+            <div class='result' v-for='note in notes' :key='note.id' :noteid='note.id'
               :class='{highlighted:note.id == highlighted}' @click='$emit("newSelection", note.id)'>
               {{note.title}}
               <div class='subtext'>
                 {{note.tags}} <span v-if='note.tags'>-</span>
                 {{note.created | formatDate('MMM DD, YYYY')}}
-                <span v-if='isPrivateNote(note)'><i class='mdi mdi-lock'/></span>
+                <i v-if='isPrivateNote(note)' class='mdi mdi-key lock'/>
               </div>
             </div>
+            <div v-if='!notes.length' class='empty'>No items to display.</div>
           </div>
         </div>
       </div>
@@ -112,32 +113,24 @@
 </script>
 
 <style lang='scss'>
-  #notes {
-    #sidebar {
-      opacity: 0.4;
-      transition: opacity 0.5s ease;
-      &:hover, &:focus,
-      &:focus-within { opacity: 1; }
-    }
-    #sidebar .submenuitem {
-      padding-top: 15px;
-      padding-bottom: 15px;
-    }
-    #search {
-      position: fixed;
-      top: 60px;
-      .searchwrap { position: relative; }
-    }
-    #search-input {
+  #notes #search {
+    opacity: 0.6;
+    transition: opacity 1s ease;
+    position: fixed;
+    top: 60px;
+    &:hover, &:focus,
+    &:focus-within { opacity: 1; }
+
+    .searchinput {
       background-color: darken($darkbg-color, 5%);
       border-bottom: 1px solid rgba(0, 0, 0, 0.2);
       border-width: 0px;
       color: $darkbg-input;
-      font-size: 1.4rem;
+      font-size: 0.9rem;
       font-weight: 500;
       height: 40px;
       line-height: 40px;
-      padding: 0px 10px 0px 40px;
+      padding: 0px 10px 0px 45px;
       position: relative;
       width: 300px;
       &:focus {
@@ -145,18 +138,49 @@
         outline: none;
       }
     }
-    #search-icon {
-      font-size: 1.9rem;
+    .searchicon {
       left: 10px;
-      line-height: 40px;
+      opacity: 0.7;
       position: absolute;
+      top: 8px;
       z-index: 1;
     }
-    #search-results {
-      position: fixed;
-      top: 100px;
-      transition: opacity 0.3s ease;
+    .result {
+      border-bottom-right-radius: 8px;
+      border-left: 3px solid transparent;
+      border-top-right-radius: 8px;
+      cursor: pointer;
+      font-size: 0.8rem;
+      font-weight: 500;
+      overflow: hidden;
+      padding: 13px 15px 13px 12px;
+      text-overflow: ellipsis;
+      user-select: none;
+      white-space: nowrap;
+      opacity: 0.8;
+      &.highlighted,
+      &:hover {
+        border-left: 3px solid $darkbg-accent;
+        background-color: lighten($darkbg-color, 5%);
+      }
+      .subtext {
+        font-size: 0.8em;
+        font-weight: 400;
+        color: $darkbg-text-dim;
+        padding-top: 2px;
+      }
+      .lock {
+        font-size: 1.2em !important;
+        margin-left: 3px;
+        margin-top: 1px;
+      }
     }
-    .mdi-lock { top:0px !important; }
+    .empty {
+      font-size: 0.8rem;
+      font-weight: 500;
+      margin: 30px auto;
+      opacity: 0.8;
+      text-align: center;
+    }
   }
 </style>
