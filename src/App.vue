@@ -8,11 +8,10 @@
         </router-link>
       </div>
       <transition name='fadein'>
-        <router-view></router-view>
+        <router-view/>
       </transition>
     </div>
-    <portal-target name='modal-container'>
-    </portal-target>
+    <portal-target name='modal-container'/>
     <Notification />
   </div>
 </template>
@@ -52,15 +51,14 @@
   }
   #logo {
     $bounce: cubic-bezier(.47,1.64,.41,.8);
-    
     border-bottom: 1px solid lighten($darkbg-color, 7%);
+    color: $darkbg-text;
     height: 220px;
     left: 0px;
     position: fixed;
     top: 0px;
     width: 300px;
-    z-index: 98;
-    color: $darkbg-text;
+    z-index: 30;
 
     img {
       height: 85px;

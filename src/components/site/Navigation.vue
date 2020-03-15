@@ -40,7 +40,8 @@
 
 <style lang='scss'>
   #navigation {
-    font-size: 1.6rem;
+    font-family: $font-serif;
+    font-size: 16px;
     height: 100vh;
     left: 0px;
     min-height: 600px;
@@ -48,9 +49,6 @@
     position: fixed;
     top: 0px;
     width: 300px;
-    z-index: 97;
-    font-family: $font-serif;
-    font-size: 1.6rem;
     
     a,a:visited {
       img, .title { position: absolute; }
@@ -64,7 +62,6 @@
     .menu {
       padding: 50px 20px 0px 60px;
       width: 100%;
-      font-size: 1.6rem;
       a {
         display: inline-block;
         font-weight: 500;

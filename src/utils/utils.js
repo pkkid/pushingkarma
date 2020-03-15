@@ -19,6 +19,19 @@ export function contains(selector, regex) {
   return results.length ? results[0] : null;
 }
 
+// Copy To Clipboard
+// https://techoverflow.net/2018/03/30/copying-strings-to-the-clipboard-using-pure-javascript/
+export function copyToClipboard(str) {
+  var elem = document.createElement('textarea');
+  elem.value = str;
+  elem.setAttribute('readonly', '');
+  elem.style = {position: 'absolute', left: '-9999px'};
+  document.body.appendChild(elem);
+  elem.select();
+  document.execCommand('copy');
+  document.body.removeChild(elem);
+}
+
 // ds2wuIcon
 // DarkSky to WeatherUndereground icon translation
 // Unused WU icons: chanceflurries, chancerain, chancesleet,

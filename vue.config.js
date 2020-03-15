@@ -4,7 +4,7 @@ module.exports = {
   assetsDir: 'pushingkarma',    // Put frontend assets into a pushingkarma dir
   publicPath: '/static/',       // Assets will be served at /static/
   runtimeCompiler: true,        // Enable using templates in javascript files
-  css: {loaderOptions: {sass: {data: `@import "@/assets/css/__variables.scss";`}}},   // All components get variables by default
+  css: {loaderOptions: {sass: {data: `@import "@/assets/css/_variables.scss";`}}},    // All components get variables by default
   //chainWebpack: config => { config.plugins.delete("hmr"); },                        // Disable hot-reload plugin
   configureWebpack: {performance: {maxEntrypointSize:1024000, maxAssetSize:1024000}}  // Remove warnings for large js files large
 };

@@ -1,21 +1,50 @@
 <template>
-  <b-modal :active.sync='display' :width="640" :can-cancel='["escape", "x"]' has-modal-card trap-focus>
-    <div id='login' class='card'>
-      <div class='card-content'>
-        <div class='content'>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-          Phasellus nec iaculis mauris. <a>@bulmaio</a>.
-          <a>#css</a> <a>#responsive</a>
-          <br>
-          <small>11:09 PM - 1 Jan 2016</small>
+  <portal to='modal-container'>
+    <b-modal :active.sync='display' :width='800' :can-cancel='["escape", "x"]' has-modal-card trap-focus>
+      <div id='login' class='card'>
+        <div class='bgimg'></div>
+        <div class='card-content'>
+          <!-- Logged in user info -->
+          <div v-if='user.id' class='welcome' key='welcome'>
+            <div class='avatar' :style="{backgroundImage:avatar}"></div>
+            <h2 style='margin-top:20px;'>Welcome {{user.firstName || "Back"}}! <div class='subtext'>It's great to see you</div></h2>
+            <dl>
+              <dt>Joined</dt><dd>{{user.date_joined | formatDate('MMM DD, YYYY')}}</dd>
+              <dt>Login</dt><dd>{{user.last_login | formatDate('MMM DD, YYYY h:mm a')}}</dd>
+              <dt>Email</dt><dd>{{user.email}}</dd>
+              <dt>Apikey</dt><dd class='apikey' ref='apikey'>{{user.auth_token || "None"}}</dd>
+              <div class='actions'>
+                <a href='#' @click='generateToken'>Regenerate</a>
+                <a href='#' @click='copyToken'>Copy</a>
+              </div>
+            </dl>
+            <b-button type='is-light' @click='logout'>Log Out</b-button>
+          </div>
+          <!-- Login form -->
+          <div v-else class='loginform' key='loginform'>
+            <h2>Login to PushingKarma <div class='subtext'>Amazing things await you</div></h2>
+            <img v-if='gauth !== null' class='google' src='@/assets/img/google_signin.png' @click='gauth_login'/>
+            <i v-else class='fake-avatar mdi mdi-account-circle-outline'/>
+            <form @submit.prevent="login()">
+              <b-field label='Email'><b-input v-model='loginform.email' autocomplete='new-password' spellcheck='false' autofocus='true'/></b-field>
+              <b-field label='Password'><b-input v-model='loginform.password' type='password'/></b-field>
+              <b-button type='is-primary' native-type='submit'>Login</b-button>
+            </form>
+          </div>
+          <!-- Footnote -->
+          <div class='footnote'>
+            © 2019 PushingKarma. All Rights Reserved.<br/>
+            Sunrise graphic by <a href='https://dribbble.com/shots/3200530-Sunrise-wallpaper'>Louis Coyle</a>.
+          </div>
         </div>
       </div>
-    </div>
-   </b-modal>
+    </b-modal>
+  </portal>
 </template>
 
 <script>
   import * as api from '@/api';
+  import * as utils from '@/utils/utils';
   import * as pathify from 'vuex-pathify';
   import md5 from 'js-md5';
   //import IconButton from '@/components/IconButton';
@@ -83,6 +112,12 @@
         if (data.id) { this.user = data; }
       },
 
+      // Generate Token
+      // Generate a new API token
+      copyToken: function() {
+        utils.copyToClipboard(this.$refs.apikey.innerText);
+      },
+
       // Logout
       // Logout of the site
       logout: async function() {
@@ -97,24 +132,74 @@
 
 <style lang='scss'>
   #login {
-    
-    
-    // border: 1px solid red;
-    // width: 800px;
+    background-color: #f8f8f8;
+    border-radius: 5px;
+    height: 500px;
+    position: relative;
+    width: 800px;
 
-    // .bgimg {
-    //   background-image: url('../../assets/img/louiscoyle.jpg');
-    //   background-size: 550px;
-    //   float: right;
-    //   width: 450px;
-    //   height: 500px;
-    //   background-position: 0px -28px;
-    //   border-top-right-radius: 8px;
-    //   border-bottom-right-radius: 8px;
-    //   box-shadow: inset 0 0 100px rgba($darkbg-color, 0.5);
-    //   position: relative;
-    //   left: 2px;
-    // }
+    .bgimg {
+      background-image: url('../../assets/img/louiscoyle.jpg');
+      background-position: 0px -28px;
+      background-size: 550px;
+      border-bottom-right-radius: 5px;
+      border-top-right-radius: 5px;
+      box-shadow: inset 0 0 100px rgba($darkbg-color, 0.5);
+      height: 500px;
+      position: absolute;
+      right: -2px;
+      width: 450px;
+    }
+    .card-content {
+      width: 350px;
+    }
+    .google {
+      cursor: pointer;
+      position: relative;
+      right: 2px;
+      margin: 10px 0px;
+    }
+    button {
+      margin-top: 10px;
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+    .avatar {
+      background-position: center center;
+      background-size: 80px;
+      border-bottom: 1px solid #fff;
+      border-radius: 10px;
+      box-sizing: content-box;
+      display: block;
+      height: 80px;
+      margin: 10px auto 20px auto;
+      width: 80px;
+    }
+    .apikey {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      width: 220px;
+    }
+    .actions {
+      margin-left: 80px;
+      position: relative;
+      top: -3px;
+      line-height: 0.9em;
+      a { color:#777; font-size: 0.6em; padding-right:10px; }
+      a:hover { color:#333; }
+    }
+    .footnote {
+      bottom: 20px;
+      color: $lightbg-text-dim;
+      font-size: 0.7em;
+      line-height: 1.5;
+      position: absolute;
+      text-align: center;
+      width: 290px;
+    }
+    
+
+
     // .content {
     //   padding: 20px 30px;
     //   height: 500px;
