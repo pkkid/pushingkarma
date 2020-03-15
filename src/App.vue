@@ -60,6 +60,8 @@
     top: 0px;
     width: 300px;
     z-index: 98;
+    color: $darkbg-text;
+
     img {
       height: 85px;
       left: 80px;
@@ -68,6 +70,7 @@
       transition: all 0.5s $bounce;
     }
     .title {
+      color: $darkbg-text;
       font-family: arial;
       font-size: 15px;
       font-weight: bold;

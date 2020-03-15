@@ -1,59 +1,30 @@
 <template>
-  <Modal v-if='display' @close='display=false' :width='"800px"' :padding='"0px"' :escClose=true :bgClose=true>
-    <div slot='body'>
-      <div id='login'>
-        <div class='bgimg'></div>
+  <b-modal :active.sync='display' :width="640" :can-cancel='["escape", "x"]' has-modal-card trap-focus>
+    <div id='login' class='card'>
+      <div class='card-content'>
         <div class='content'>
-          <!-- Logged in user info -->
-          <div v-if='user.id' class='welcome' key='welcome'>
-            <div class='avatar' :style="{backgroundImage:avatar}"></div>
-            <h3>Welcome {{user.firstName || "You"}}! <span>Great to see you</span></h3>
-            <dl>
-              <dt>Joined</dt><dd>{{user.date_joined | formatDate('MMM DD, YYYY')}}</dd>
-              <dt>Login</dt><dd>{{user.last_login | formatDate('MMM DD, YYYY h:mm a')}}</dd>
-              <dt>Email</dt><dd>{{user.email}}</dd>
-              <dt>Apikey</dt><dd>
-                <input type='text' class='auth_token' :value='user.auth_token || "None"' readonly/>
-                <IconButton :icon='"mdi-refresh"' :click='generateToken'/>
-              </dd>
-            </dl>
-            <button @click='logout'>Log Out</button>
-          </div>
-          <!-- Login form -->
-          <div v-else class='loginform' key='loginform'>
-            <h3>Login to PushingKarma <span>Amazing things await you</span></h3>
-            <img v-if='gauth !== null' class='google' src='@/assets/img/google_signin.png' @click='gauth_login'/>
-            <i v-else class='fake-avatar mdi mdi-account-circle-outline'/>
-            <form @submit.prevent="login()">
-              <label for='email'>Email Address</label>
-              <input type='text' id='email' name='email' v-model='loginform.email' spellcheck='false' autocomplete='off' autofocus='true'/>
-              <label for='password'>Password</label>
-              <input type='password' id='password' name='password' v-model='loginform.password' autocomplete='off'/>
-              <button type='submit' class='primary'>Login</button>
-            </form>
-          </div>
-          <!-- Footnote -->
-          <div class='footnote'>
-            © 2019 PushingKarma. All Rights Reserved.<br/>
-            Sunrise graphic by <a href='https://dribbble.com/shots/3200530-Sunrise-wallpaper'>Louis Coyle</a>.
-          </div>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+          Phasellus nec iaculis mauris. <a>@bulmaio</a>.
+          <a>#css</a> <a>#responsive</a>
+          <br>
+          <small>11:09 PM - 1 Jan 2016</small>
         </div>
       </div>
     </div>
-  </Modal>
+   </b-modal>
 </template>
 
 <script>
   import * as api from '@/api';
   import * as pathify from 'vuex-pathify';
   import md5 from 'js-md5';
-  import IconButton from '@/components/IconButton';
-  import Modal from '@/components/Modal';
+  //import IconButton from '@/components/IconButton';
+  //import Modal from '@/components/Modal';
   import {DEFAULT_USER} from '@/store.js';
 
   export default {
     name: 'Navigation',
-    components: {IconButton, Modal},
+    components: {},
     data: () => ({
       display: false,
       loginform: {
@@ -126,71 +97,76 @@
 
 <style lang='scss'>
   #login {
-    .bgimg {
-      background-image: url('../../assets/img/louiscoyle.jpg');
-      background-size: 550px;
-      float: right;
-      width: 450px;
-      height: 500px;
-      background-position: 0px -28px;
-      border-top-right-radius: 8px;
-      border-bottom-right-radius: 8px;
-      box-shadow: inset 0 0 100px rgba($darkbg-color, 0.5);
-      position: relative;
-      left: 2px;
-    }
-    .content {
-      padding: 20px 30px;
-      height: 500px;
-      width: 350px;
-      color: $lightbg-text;
-      h3 {
-        font-size: 1.9rem;
-        padding-left: 0px;
-        border-left-width: 0px;
-        text-transform: none;
-        span { font-size:1.1rem; font-weight:500; display:block; margin-top:3px; }
-      }
-      .avatar {
-        background-size: 80px;
-        background-position: center center;
-        border-radius: 10px;
-        border-bottom: 1px solid #fff;
-        box-sizing: content-box;
-        display: block;
-        height: 80px;
-        margin: 10px auto 30px auto;
-        width: 80px;
-      }
-      .fake-avatar {
-        font-size: 4rem;
-        display: block;
-        color: #aaa;
-        text-align: center;
-      }
-      .google {
-        display: block;
-        cursor: pointer;
-        position: relative;
-        right: 2px;
-        margin: 20px 0px;
-      }
-      button {
-        width: 100%;
-        padding: 10px 20px;
-        margin-top: 30px;
-      }
-      .auth_token {
-        padding: 0px;
-        width: 190px;
-        border: 0px;
-        background-color: transparent;
-        border-radius: 0px;
-        margin-right: 10px;
-      }
-      .mdi-refresh {
-        cursor: pointer;
-      }
-    }
+    
+    
+    // border: 1px solid red;
+    // width: 800px;
+
+    // .bgimg {
+    //   background-image: url('../../assets/img/louiscoyle.jpg');
+    //   background-size: 550px;
+    //   float: right;
+    //   width: 450px;
+    //   height: 500px;
+    //   background-position: 0px -28px;
+    //   border-top-right-radius: 8px;
+    //   border-bottom-right-radius: 8px;
+    //   box-shadow: inset 0 0 100px rgba($darkbg-color, 0.5);
+    //   position: relative;
+    //   left: 2px;
+    // }
+    // .content {
+    //   padding: 20px 30px;
+    //   height: 500px;
+    //   width: 350px;
+    //   color: $lightbg-text;
+    //   h3 {
+    //     font-size: 1.9rem;
+    //     padding-left: 0px;
+    //     border-left-width: 0px;
+    //     text-transform: none;
+    //     span { font-size:1.1rem; font-weight:500; display:block; margin-top:3px; }
+    //   }
+    //   .avatar {
+    //     background-size: 80px;
+    //     background-position: center center;
+    //     border-radius: 10px;
+    //     border-bottom: 1px solid #fff;
+    //     box-sizing: content-box;
+    //     display: block;
+    //     height: 80px;
+    //     margin: 10px auto 30px auto;
+    //     width: 80px;
+    //   }
+    //   .fake-avatar {
+    //     font-size: 4rem;
+    //     display: block;
+    //     color: #aaa;
+    //     text-align: center;
+    //   }
+    //   .google {
+    //     display: block;
+    //     cursor: pointer;
+    //     position: relative;
+    //     right: 2px;
+    //     margin: 20px 0px;
+    //   }
+    //   button {
+    //     width: 100%;
+    //     padding: 10px 20px;
+    //     margin-top: 30px;
+    //   }
+    //   .auth_token {
+    //     padding: 0px;
+    //     width: 190px;
+    //     border: 0px;
+    //     background-color: transparent;
+    //     border-radius: 0px;
+    //     margin-right: 10px;
+    //   }
+    //   .mdi-refresh {
+    //     cursor: pointer;
+    //   }
+    // }
   }
 </style>

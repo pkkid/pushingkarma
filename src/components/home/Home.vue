@@ -1,7 +1,7 @@
 <template>
   <div id='home'>
     <Navigation/>
-    <div class='content parallax-wrapper'>
+    <div class='homecontent parallax-wrapper'>
       <div id='splash' class='header parallax-bg'>
         <div class='photo'><img src='@/assets/img/photo.jpg'/></div>
         <div class='name'>Michael <span>Shepanski</span></div>
@@ -32,12 +32,13 @@
 </script>
 
 <style lang='scss'>
-  #home .content {
+  #home .homecontent {
     margin-left: 300px;
     padding: 0px;
+    font-size: 1.6rem;
     p { font-size: 1.7rem };
   }
-  #home .content > .header {
+  #home .homecontent > .header {
     align-items: center;
     background-color: rgba(#1d2021, 0.5);
     display: flex;

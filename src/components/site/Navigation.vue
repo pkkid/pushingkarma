@@ -8,10 +8,10 @@
       <li v-if='user.id'><router-link to='/budget'>Budget</router-link></li>
     </ul></div>
     <div class='links'><ul>
-      <li><a href='https://github.com/pkkid'><i class='mdi mdi-github-box'></i></a></li>
-      <li><a href='https://www.linkedin.com/in/shepanski'><i class='mdi mdi-linkedin-box'></i></a></li>
-      <li><a href='https://www.facebook.com/mshepanski'><i class='mdi mdi-facebook-box'></i></a></li>
-      <li><a href='javascript:void(0);' @click='$refs.login.display=true'>
+      <li><a href='https://github.com/pkkid'><b-icon icon='github-box'/></a></li>
+      <li><a href='https://www.linkedin.com/in/shepanski'><b-icon icon='linkedin-box'/></a></li>
+      <li><a href='https://www.facebook.com/mshepanski'><b-icon icon='facebook-box'/></a></li>
+      <li><a href='#' @click='$refs.login.display = true'>
         <i v-if='user.id' class='avatar' key='avatar' :style="{backgroundImage:avatar}"></i>
         <i v-else class='mdi mdi-account-circle' key='icon'></i>
       </a></li>
@@ -30,7 +30,7 @@
     props: ['cls'],
     computed: {
       avatar: pathify.sync('global/avatar'),
-      user: pathify.get('global.user'),
+      user: pathify.sync('global/user'),
     },
     mounted: function() {
       this.$refs.login.updateCurrentUser();
@@ -49,6 +49,8 @@
     top: 0px;
     width: 300px;
     z-index: 97;
+    font-family: $font-serif;
+    font-size: 1.6rem;
     
     a,a:visited {
       img, .title { position: absolute; }
@@ -62,6 +64,7 @@
     .menu {
       padding: 50px 20px 0px 60px;
       width: 100%;
+      font-size: 1.6rem;
       a {
         display: inline-block;
         font-weight: 500;

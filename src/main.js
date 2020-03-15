@@ -10,6 +10,8 @@ import App from './App.vue';
 import '@/utils/filters';
 require('@/assets/css/index.scss');
 
+import Buefy from 'buefy';
+
 // Axios Configuiration - Tell Axios we want to include the csrf token and
 // where to get the value. The intercepter is a convenience function to
 // globally catch and respond to errors.
@@ -28,6 +30,7 @@ axios.interceptors.response.use(function(response) {
 });
 
 // Setup Vue plugins and configuration
+Vue.use(Buefy);
 Vue.use(vPortal);
 Vue.use(vHotkey);
 Vue.use(vClickOutside);
