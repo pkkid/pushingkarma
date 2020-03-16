@@ -6,41 +6,31 @@
       <editor-menu-bar :editor='editor' v-slot='{commands, getMarkAttrs, isActive}' v-if='editing'>
         <div class='menubar'>
           <!-- Format Menu Dropdown -->
-          <Dropdown :width='"105px"'>
-            <div slot='text'>{{currentFormat(isActive)}}</div>
-            <div slot='menu'>
-              <button :class='{"active":isActive.paragraph()}' @click='commands.paragraph'>Paragraph</button>
-              <button :class='{"active":isActive.heading({level:1})}' @click='commands.heading({level:1})'>Heading 1</button>
-              <button :class='{"active":isActive.heading({level:2})}' @click='commands.heading({level:2})'>Heading 2</button>
-              <button :class='{"active":isActive.heading({level:3})}' @click='commands.heading({level:3})'>Heading 3</button>
-              <button :class='{"active":isActive.code_block()}' @click='commands.code_block'>Code Block</button>
-            </div>
-          </Dropdown>
-          <!-- Font Size -->
-          <Dropdown :width='"55px"'>
-            <div slot='text'>{{getMarkAttrs("fontSize").fontSize || "18px"}}</div>
-            <div slot='menu'>
-              <button :class='{"active":getMarkAttrs("fontSize").fontSize === "0.6em"}' @click='commands.fontSize({fontSize:"0.6em"})'>0.6em</button>
-              <button :class='{"active":getMarkAttrs("fontSize").fontSize === "0.8em"}' @click='commands.fontSize({fontSize:"0.8em"})'>0.8em</button>
-              <button :class='{"active":!("fontSize" in getMarkAttrs("fontSize"))}' @click='commands.fontSize({fontSize:null})'>1.0em</button>
-              <button :class='{"active":getMarkAttrs("fontSize").fontSize === "1.2em"}' @click='commands.fontSize({fontSize:"1.2em"})'>1.2em</button>
-              <button :class='{"active":getMarkAttrs("fontSize").fontSize === "1.4em"}' @click='commands.fontSize({fontSize:"1.4em"})'>1.4em</button>
-            </div>
-          </Dropdown>
+          <b-dropdown>
+            <button class='button is-text is-small texttype' slot='trigger' slot-scope='{active}'>
+              <span>{{currentFormat(isActive)}}</span>
+              <b-icon :icon="active ? 'menu-up' : 'menu-down'"></b-icon>
+            </button>
+            <b-dropdown-item :class='{"active":isActive.paragraph()}' @click='commands.paragraph'>Paragraph</b-dropdown-item>
+            <b-dropdown-item :class='{"active":isActive.heading({level:1})}' @click='commands.heading({level:1})'>Heading 1</b-dropdown-item>
+            <b-dropdown-item :class='{"active":isActive.heading({level:2})}' @click='commands.heading({level:2})'>Heading 2</b-dropdown-item>
+            <b-dropdown-item :class='{"active":isActive.heading({level:3})}' @click='commands.heading({level:3})'>Heading 3</b-dropdown-item>
+            <b-dropdown-item :class='{"active":isActive.code_block()}' @click='commands.code_block'>Code Block</b-dropdown-item>
+          </b-dropdown>
           <!-- Regular Header Buttons -->
-          <div class='sep'></div>
-          <button class='icon' :class='{"active":isActive.bold()}' @click='commands.bold'><i class='mdi mdi-format-bold'/></button>
-          <button class='icon' :class='{"active":isActive.italic()}' @click='commands.italic'><i class='mdi mdi-format-italic'/></button>
-          <button class='icon' :class='{"active":isActive.underline()}' @click='commands.underline'><i class='mdi mdi-format-underline'/></button>
-          <div class='sep'></div>
-          <button class='icon' :class='{"active":isActive.bullet_list()}' @click='commands.bullet_list'><i class='mdi mdi-format-list-bulleted'/></button>
-          <button class='icon' :class='{"active":isActive.ordered_list()}' @click='commands.ordered_list'><i class='mdi mdi-format-list-numbered'/></button>
-          <button class='icon' :class='{"active":isActive.todo_list()}' @click="commands.todo_list"><i class='mdi mdi-format-list-checkbox'/></button>
-          <div class='sep'></div>
-          <button class='icon' :class='{"active":isActive.link()}' @click='toggleLinkMenu(getMarkAttrs("link"))'><i class='mdi mdi-link'/></button>
-          <button class='icon' :class='{"active":isActive.blockquote()}' @click='commands.blockquote'><i class='mdi mdi-format-quote-close'/></button>
-          <button class='icon' :class='{"active":isActive.code()}' @click='commands.code'><i class='mdi mdi-code-tags'/></button>
-          <button @click.prevent='save' style='float:right;'><span>Save</span></button>
+          <div class='sep'/>
+          <b-button type='is-text is-small' :class='{"active":isActive.bold()}' @click='commands.bold'><b-icon size='is-small' icon='format-bold'/></b-button>
+          <b-button type='is-text is-small' :class='{"active":isActive.italic()}' @click='commands.italic'><b-icon size='is-small' icon='format-italic'/></b-button>
+          <b-button type='is-text is-small' :class='{"active":isActive.underline()}' @click='commands.underline'><b-icon size='is-small' icon='format-underline'/></b-button>
+          <div class='sep'/>
+          <b-button type='is-text is-small' :class='{"active":isActive.bullet_list()}' @click='commands.bullet_list'><b-icon size='is-small' icon='format-list-bulleted'/></b-button>
+          <b-button type='is-text is-small' :class='{"active":isActive.ordered_list()}' @click='commands.ordered_list'><b-icon size='is-small' icon='format-list-numbered'/></b-button>
+          <b-button type='is-text is-small' :class='{"active":isActive.todo_list()}' @click="commands.todo_list"><b-icon size='is-small' icon='format-list-checkbox'/></b-button>
+          <div class='sep'/>
+          <b-button type='is-text is-small' :class='{"active":isActive.link()}' @click='toggleLinkMenu(getMarkAttrs("link"))'><b-icon size='is-small' icon='link'/></b-button>
+          <b-button type='is-text is-small' :class='{"active":isActive.blockquote()}' @click='commands.blockquote'><b-icon size='is-small' icon='format-quote-close'/></b-button>
+          <b-button type='is-text is-small' :class='{"active":isActive.code()}' @click='commands.code'><b-icon size='is-small' icon='code-tags'/></b-button>
+          <b-button type='is-text is-small' @click.prevent='save' style='float:right;'><span>Save</span></b-button>
           <!-- Link Form -->
           <div class='link-form' v-if='showLinkMenu'>
             <input type='text' name='url' v-model='linkUrl' ref='linkInput' placeholder='https://' spellcheck='false' autocomplete='off'
@@ -58,14 +48,12 @@
 <script>
   import * as api from '@/api';
   import * as pathify from 'vuex-pathify';
-  import Dropdown from '@/components/Dropdown';
   import {EditorMenuBar} from 'tiptap';
 
   // TipTap Extensions
   import {Blockquote, BulletList, CodeBlockHighlight, HardBreak, Heading,
     Link, ListItem, OrderedList, Bold, Code, Italic, Strike, TodoItem,
     TodoList, Underline, History} from 'tiptap-extensions';
-  import {FontSize} from '@/utils/tiptap';
   import bash from 'highlight.js/lib/languages/bash';
   import css from 'highlight.js/lib/languages/css';
   import javascript from 'highlight.js/lib/languages/javascript';
@@ -76,7 +64,7 @@
 
   export default {
     name: 'Notes',
-    components: {EditorMenuBar, Dropdown},
+    components: {EditorMenuBar},
     computed: {
       editing: pathify.sync('notes/editing'),
       editor: pathify.sync('notes/editor'),
@@ -113,7 +101,6 @@
           new BulletList(),
           new Code(),
           new CodeBlockHighlight({languages:LANGUAGES}),
-          new FontSize(),
           new HardBreak(),
           new Heading({levels:[1,2,3]}),
           new History(),
@@ -217,71 +204,39 @@
 </script>
 
 <style lang='scss'>
-  #notesmenubar {
-    .menubar {
-      animation-duration: .3s;
-      background-color: $darkbg-color;
-      border-radius: 8px;
-      box-shadow: 0 2px 3px rgba(0, 0, 0, .3);
+  #notesmenubar .menubar {
+    animation-duration: .3s;
+    background-color: $darkbg-color;
+    border-radius: 8px;
+    box-shadow: 0 2px 3px rgba(0, 0, 0, .3);
+    color: $darkbg-text;
+    padding: 5px 10px;
+    position: fixed;
+    top: 70px;
+    width: 900px;
+    margin-left: -51px;
+    z-index: 50;
+    line-height: 1.6em;
+    .sep {
+      margin: 0px 10px 0px 5px;
+      display: inline;
+      border-left: 1px solid #665c54;
+    }
+    .button {
+      background-color: transparent;
       color: $darkbg-text;
-      padding: 5px 10px;
-      position: fixed;
-      top: 70px;
-      width: 900px;
-      margin-left: -51px;
-      z-index: 50;
-      line-height: 1.6em;
-      .sep {
-        margin: 0px 10px 0px 5px;
-        background-color: red;
-        display: inline;
-        border-left: 1px solid #665c54;
+      text-decoration: none;
+      margin-right: 5px;
+      &:hover { background-color: lighten($darkbg-color, 8%); }
+      &.active { background-color: lighten($darkbg-color, 16%); }
+      &.is-text {
+        font-size: 0.9em;
+        padding-top: 2px;
+        padding-bottom: 2px;
+        height: 25px;
       }
-      button {
-        background-color: transparent;
-        background-image: none;
-        color: $darkbg-text;
-        margin-right: 5px;
-        line-height: 1.6em;
-        i.mdi { font-size:2.0rem; position:relative; top:1px; }
-        &:hover { background-color: lighten($darkbg-color, 8%); }
-        &.active { background-color: lighten($darkbg-color, 16%); }
-        &.icon { padding: 2px 5px; }
-      }
-      input {
-        background-color: rgba(255,255,255,0.1);
-        border-radius: 4px;
-        border-width: 0px;
-        color: $darkbg-input;
-        font-size: 1.3rem;
-        font-weight: 500;
-        line-height: 1.6em;
-        margin-top: 5px;
-        padding: 2px 8px;
-        width: 700px;
-      }
-      .dropdown {
-        position: relative;
-        white-space: nowrap;
-        padding: 2px 5px;
-        font-size: 1.4rem;
-        top: -2px;
-        i.mdi { position:absolute; right:5px; top:2px; }
-      }
-      .dropdown-menu {
-        background-color: $darkbg-color;
-        border-bottom-left-radius: 8px;
-        border-bottom-right-radius: 8px;
-        left: -10px;
-        line-height: 30px;
-        padding: 5px 10px;
-        position: absolute;
-        top: 27px;
-        white-space: normal;
-        z-index: 51;
-        button { width:100%; margin:0px; }
-      }
+      &.texttype { width: 120px; }
+      .mdi { font-size: 20px; }
     }
   }
-
 </style>
