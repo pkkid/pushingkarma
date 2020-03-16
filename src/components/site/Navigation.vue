@@ -49,6 +49,7 @@
     position: fixed;
     top: 0px;
     width: 300px;
+    z-index: 29;
     
     a,a:visited {
       img, .title { position: absolute; }

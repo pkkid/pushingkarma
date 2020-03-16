@@ -2,19 +2,19 @@
   <div id='notes' v-hotkey='keymap'>
     <Navigation :cls="'topnav'" />
     <Search ref='search' @newSelection='updateNote'/>
-    <div class='content'>
+    <div class='contentarea'>
       <div class='notebg' :class='{editable:editing}'>
         <div class='notewrap'>
-          <div class='note'>
+          <article class='note'>
             <MenuBar ref='menubar' />
             <h1><input name='title' autocomplete='off' placeholder='Enter a Title' v-model='note.title' :readonly=!editing />
               <div class='subtext'>
-                {{note.created | formatDate('MMM DD, YYYY')}}
+                {{note.created | formatDate('MMM DD, YYYY')}} - 
                 <input name='tags' placeholder='tags' autocomplete='off' v-model='note.tags' :readonly=!editing />
               </div>
             </h1>
             <editor-content id='editor' :editor='editor' />
-          </div>
+          </article>
           <div id='rightpanel'>
             <div class='toc'>
               <div v-for='item in toc' v-bind:key='item.text' :class='item.type'>
@@ -109,7 +109,6 @@
         this.toc = toc;
       },
     },
-
   };
 </script>
 
@@ -121,7 +120,7 @@
     overflow: hidden;
   }
 
-  #notes .content {
+  #notes .contentarea {
     box-sizing: border-box;
     color: $lightbg-text;
     margin-left: 300px;
@@ -129,6 +128,7 @@
     background-color: darken($lightbg-color, 10%);
     font-family: Roboto, Arial, Helvetica, sans-serif;
     font-weight: 300;
+    z-index: 28;
     
     // General Scaffolding
     .notebg {
@@ -141,11 +141,44 @@
       width: 1150px;
       margin: 0px auto;
     }
-  
+
+    // General Note Display
+    .note {
+      float: left;
+      width: 900px;
+      position: relative;
+      min-height: calc(100vh - 70px);
+      transition: padding 0.2s ease;
+      border: 1px solid darken($lightbg-color, 20%);
+      border-radius: 2px;
+      box-shadow: 0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15);
+      padding: 40px 50px;
+      background-color: $lightbg-color;
+      z-index: 20;
+    }
+    h1 {
+      input {
+        background-color: transparent;
+        border-width: 0px;
+        border-radius: 0px;
+        font-size: 2.5rem;
+        padding: 0px 3px;
+        margin-left: -3px;
+        width: 780px;
+        color: $lightbg-text;
+      }
+      .subtext {
+        font-size: 0.8rem;
+        margin-top: -5px;
+        input { font-size:0.8rem; width:250px; }
+      }
+      
+    }
+
     // Table of Contents
     #rightpanel {
       float: left;
-      font-size: 1.3rem;
+      font-size: 0.8rem;
       font-weight: 500;
       margin-left: 920px;
       margin-top: 3px;
@@ -157,7 +190,7 @@
         padding-left: 10px;
         .h1 { font-weight:bold; color:darken($lightbg-text, 30%); }
         .h2 { padding-left:0px; }
-        .h3 { padding-left:20px; }
+        .h3 { padding-left:15px; }
         a {
           color: $lightbg-text;
           &:hover { color:$lightbg-link; text-decoration:none; }
@@ -167,47 +200,6 @@
         margin-top: 20px;
         color: $lightbg-link;
         .mdi { margin-right: 5px; }
-      }
-    }
-
-    // General Note Display
-    .note {
-      float: left;
-      width: 900px;
-      margin: 0px auto;
-      position: relative;
-      min-height: calc(100vh - 70px);
-      transition: padding 0.2s ease;
-      border: 1px solid darken($lightbg-color, 20%);
-      border-radius: 2px;
-      box-shadow: 0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15);
-      padding: 25px 50px;
-      background-color: $lightbg-color;
-    }
-    h1 {
-      font-size: 3.0rem;
-      span { font-weight: 500; }
-      .subtext { font-size: 0.45em; }
-    }
-    input {
-      background-color: transparent;
-      border-width: 0px;
-      border-radius: 0px;
-      &[name=title] {
-        line-height: 1em;
-        font-weight: 300;
-        font-size: 1.5em;
-        margin-left: -2px;
-        //margin: 5px 0px 0px -2px;
-        padding: 0px;
-        //text-transform: uppercase;
-        white-space: normal;
-      }
-      &[name=tags] {
-        line-height: 1em;
-        font-weight: 500;
-        width: 600px;
-        padding: 0px 0px 3px 10px;
       }
     }
   }

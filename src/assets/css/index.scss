@@ -1,4 +1,5 @@
 // Encoding: UTF-8
+
 // Buefy & Bulma Styles
 @import '~bulma/sass/utilities/_all';
 @import 'variables';
@@ -6,22 +7,8 @@
 @import '~buefy/src/scss/buefy';
 
 // PushingKarma Styles
-html, body {
-  background-color: $darkbg-color;
-  color: $darkbg-text;
-  font-family: $font-serif;
-  font-weight: 400;
-  margin: 0px;
-  overflow-y: auto;
-  padding: 0px;
-}
-*, *:before, *:after {
-  box-sizing: inherit;
-}
-@import 'buefy';
+@import 'buefymods';
+@import 'layout';
+@import 'article';
 @import 'code';
-@import 'content';
 @import 'parallax';
-// @import 'sidebar';
-// @import 'tables';
-// @import 'transitions';

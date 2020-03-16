@@ -1,0 +1,132 @@
+// Encoding: UTF-8
+// Article Styles
+article {
+
+  // Remove Focus
+  :focus {
+    // outline: -webkit-focus-ring-color auto 1px;
+    // outline-color: -webkit-focus-ring-color;
+    // outline-style: auto;
+    outline-width: 0px;
+  }
+
+  // Header Elements (h1, h2, h3)
+  h1 {
+    border-left: 5px solid $lightbg-accent;
+    font-size: 2.5rem;
+    font-weight: 400;
+    margin-bottom: 40px;
+    padding-left: 25px;
+  }
+  h2 {
+    font-size: 1.5em;
+    font-weight: 400;
+    margin-bottom: 20px;
+    margin-top: 30px;
+  }
+  h3 {
+    font-size: 1.2em;
+    font-weight: 300;
+    margin-bottom: 10px;
+    margin-top: 20px;
+  }
+  h1, h2, h3 {
+    &:first-child {
+      margin-top: 0px;
+    }
+    .subtext {
+      font-size: 0.6em;
+      font-weight: 400;
+      padding: 0px;
+      text-transform: none;
+    }
+    .accent {
+      color: $lightbg-accent;
+    }
+  }
+
+  // Markup Elements
+  // Paragraph, Blockquote, Code, Lists
+  p {
+    font-size: 1rem;
+    line-height: 1.8;
+    margin-block-end: 16px;
+    margin-block-start: 16px;
+    margin-inline-end: 0px;
+    margin-inline-start: 0px;
+  }
+  blockquote {
+    border-left: 6px solid #ebdbb2;
+    padding-left: 25px;
+    margin-left: 0px;
+    margin-right: 0px;
+    padding: 1px 25px;
+    font-style: italic;
+    color: $lightbg-text-dim;
+    background-color: darken($lightbg-color, 1%);
+  }
+  code {
+    background-color: #d8d8d8;
+    padding: 1px 4px;
+    margin: 0px 1px;
+    border-radius: 3px;
+    font-family: 'Roboto Mono',monospace;
+    font-size: 1.0em;
+    font-weight: 400;
+  }
+
+  // Description List, 
+  dl {
+    margin: 10px 0px;
+    line-height: 1.7;
+    font-size: 0.8em;
+    dt {
+      width: 70px;
+      float: left;
+      margin-right: 10px;
+      color: $lightbg-text-dim;
+      text-transform: uppercase;
+    }
+  }
+
+  // Ordered & Unordered Lists
+  ul, ol {
+    padding-left: 30px;
+    li p, ul p { margin: 0px; }
+    ul, ol {
+      margin-top: 0px !important;
+      margin-bottom: 3px !important;
+      padding-left: 20px !important;
+    }
+  }
+  ul li { list-style-type: disc; }
+  ol li { list-style-type: decimal; }
+
+  // Todo Lists
+  ul[data-type='todo_list'] {
+    padding-left: 0;
+    li[data-type='todo_item'] { display:flex; flex-direction:row; }
+    .todo-checkbox {
+      background-color: transparent;
+      border-radius: 0.2em;
+      border: 2px solid lighten($lightbg-text, 20%);
+      box-sizing: border-box;
+      cursor: pointer;
+      height: 1em;
+      margin-right: 10px;
+      margin-top: 5px;
+      transition: 0.4s background;
+      user-select: none;
+      width: 1em;
+    }
+    li[data-done='true'] {
+      > .todo-content { > p { text-decoration:line-through; }}
+      > .todo-checkbox {
+        background: lighten($lightbg-text, 20%) url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg'\
+          viewBox='0 0 1 1'%3E%3Cpath d='M.04.627L.146.52.43.804.323.91zm.177.177L.854.167.96.273.323.91z'\
+          fill='%23fff'/%3E%3C/svg%3E") no-repeat 50%;
+      }
+    }
+  }
+
+}

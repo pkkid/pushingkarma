@@ -7,12 +7,10 @@
           <span class='title'>PushingKarma</span>
         </router-link>
       </div>
-      <transition name='fadein'>
-        <router-view/>
-      </transition>
+      <transition name='fadein'><router-view/></transition>
     </div>
     <portal-target name='modal-container'/>
-    <Notification />
+    <Notification/>
   </div>
 </template>
 

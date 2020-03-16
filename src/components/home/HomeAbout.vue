@@ -1,5 +1,5 @@
 <template>
-  <div id='about' class='parallax-static'>
+  <article id='about' class='parallax-static'>
     <h1>About Me <div class='subtext'>My background and motivation</div></h1>
     <div class='photo'><img src='@/assets/img/family.jpg'/></div>
     <div class='aboutme'>
@@ -13,7 +13,7 @@
       </p>
     </div>
     <div style='clear:both;'></div>
-  </div>
+  </article>
 </template>
 
 <style lang='scss'>
