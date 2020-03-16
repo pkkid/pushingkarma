@@ -32,12 +32,12 @@
           <b-button type='is-text is-small' :class='{"active":isActive.code()}' @click='commands.code'><b-icon size='is-small' icon='code-tags'/></b-button>
           <b-button type='is-text is-small' @click.prevent='save' style='float:right;'><span>Save</span></b-button>
           <!-- Link Form -->
-          <div class='link-form' v-if='showLinkMenu'>
-            <input type='text' name='url' v-model='linkUrl' ref='linkInput' placeholder='https://' spellcheck='false' autocomplete='off'
+          <div v-if='showLinkMenu' class='expandform'>
+            <input type='text' name='url' class='input' v-model='linkUrl' ref='linkInput' placeholder='https://' spellcheck='false' autocomplete='off'
               @keydown.enter.prevent='setLinkUrl(commands.link, linkUrl)'
               @keydown.esc.stop='hideLinkMenu'
               @click='$refs.linkInput.focus()'/>
-            <button @click='setLinkUrl(commands.link, "")' style='margin-left:5px;'>Clear</button>
+            <b-button type='is-text is-small' @click='setLinkUrl(commands.link, "")'>❌</b-button>
           </div>
         </div>
       </editor-menu-bar>
@@ -217,6 +217,7 @@
     margin-left: -51px;
     z-index: 50;
     line-height: 1.6em;
+    :focus { box-shadow: none; }
     .sep {
       margin: 0px 10px 0px 5px;
       display: inline;
@@ -238,5 +239,22 @@
       &.texttype { width: 120px; }
       .mdi { font-size: 20px; }
     }
+    .expandform {
+      margin-top: 5px;
+      .input {
+        background-color: #444;
+        border-width: 0px;
+        color: $darkbg-input;
+        font-size: 12px;
+        height: 25px;
+        font-weight: 500;
+        width: calc(100% - 100px);
+        float: left;
+      }
+      .button {
+        margin-left: 5px;
+      }
+    }
+    
   }
 </style>
