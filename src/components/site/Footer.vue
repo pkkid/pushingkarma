@@ -5,9 +5,8 @@
         <h4>PushingKarma</h4>
         Site created using <a href='https://www.djangoproject.com/'>Django</a>,
         <a href='https://www.django-rest-framework.org/'>Django Rest Framework</a>,
-        <a href='https://vuejs.org/'>Vue</a>, and is hosted on <a href='https://www.digitalocean.com/'>Digital Ocean</a>.
-        Original <a href='https://themeforest.net/item/arlo-personal-portfolio-template/23175475'>Arlo design</a> heavily
-        modified by me.<br/>
+        <a href='https://vuejs.org/'>Vue</a>, <a href='https://buefy.org/'>Beufy</a>,
+        and is hosted on <a href='https://www.digitalocean.com/'>Digital Ocean</a>.
         <div style='margin-top:5px;'>
           <i class='mdi mdi-email'></i> {{email}}<span style='display:none;'>+site</span>@gmail.com
         </div>
@@ -24,7 +23,7 @@
     <div class='footer-section' style='width:350px'>
       <div class='attribution'>
         <h4>Legal</h4>
-        Copyright (c) 2019 PushingKarma. All rights reserved.
+        Copyright (c) 2020 PushingKarma. All rights reserved.
         <a href='#'>Privacy Policy & Terms of Service</a>.
       </div>
     </div>
@@ -43,7 +42,7 @@
 <style lang='scss'>
   #footer {
     text-align: left;
-    font-size: 1.4rem;
+    font-size: 0.9rem;
     line-height: 1.5;
     width: 1000px;
     margin: 0px auto;
@@ -59,6 +58,7 @@
 
       h4 {
         position: relative;
+        margin-bottom: 15px;
         &::before {
           content: ' ';
           display: block;

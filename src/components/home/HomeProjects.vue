@@ -1,44 +1,44 @@
 <template>
   <article id='projects' class='parallax-static'>
     <h1>Projects <div class='subtext'>Whats been keeping me busy</div></h1>
-    <ul class='projectlist'>
-      <li><a href='https://github.com/mjs7231/python-plexapi'>
+    <div class='projectlist'>
+      <div><a href='https://github.com/mjs7231/python-plexapi'>
         <i class='mdi mdi-code-braces'></i>
         <div class='title'>Python PlexAPI</div>
         <p>Python bindings for the Plex Server API. Navigate and manage your local or remote shared libraries.</p>
-      </a></li>
-      <li><a href='https://github.com/mjs7231/pygrid'>
+      </a></div>
+      <div><a href='https://github.com/mjs7231/pygrid'>
         <i class='mdi mdi-view-grid'></i>
         <div class='title'>PyGrid</div>
         <p>Easily organize open windows by tiling and positioning them to make the best use of your desktop.</p>
-      </a></li>
-      <li><a href='https://github.com/django-dbbackup/django-dbbackup'>
+      </a></div>
+      <div><a href='https://github.com/django-dbbackup/django-dbbackup'>
         <i class='mdi mdi-database'></i>
         <div class='title'>Django DBBackup</div>
         <p>Management commands to backup and restore project database to AmazonS3, Dropbox or Local Disk.</p>
-      </a></li>
-      <li><a href='https://github.com/pkkid/link-manager'>
+      </a></div>
+      <div><a href='https://github.com/pkkid/link-manager'>
         <i class='mdi mdi-link'></i>
         <div class='title'>Link Manager</div>
         <p>Collection of scripts to help easily sync specific configuration files across all your Linux computers.</p>
-      </a></li>
-      <li><a href='https://github.com/pkkid/pkmeter-conky'>
+      </a></div>
+      <div><a href='https://github.com/pkkid/pkmeter-conky'>
         <i class='mdi mdi-speedometer'></i>
         <div class='title'>PKMeter-Conky</div>
         <p>Collection of scripts and a Conky configuration. Makes fetching data easy and results stored as json.</p>
-      </a></li>
-      <li><a href='https://github.com/pkkid/pushingkarma'>
+      </a></div>
+      <div><a href='https://github.com/pkkid/pushingkarma'>
         <i class='mdi mdi-earth'></i>
         <div class='title'>PushingKarma</div>
         <p>This websites Python, Django, and Vue source code freely available in the rare case someone finds it useful.</p>
-      </a></li>
+      </a></div>
       <!-- <li><a href='https://bitbucket.org/mjs7231/pks-movie-database/src'>
         <i class='mdi mdi-movie'></i>
         <div class='title'>PKs Movie Database</div>
         <p>PHP app to publish and browse an Ant Movie Database. This gained popularity a few years back.</p>
       </a></li> -->
       <div style='clear:both;'></div>
-    </ul>
+    </div>
   </article>
 </template>
 
@@ -64,12 +64,12 @@
       width: 30%;
 
       .mdi {
-        font-size: 4.8rem;
+        font-size: 3rem;
         position: relative;
         left: -6px;
       }
       .title {
-        font-size: 2.1rem;
+        font-size: 1.4rem;
         font-weight: 600;
         left: -1px;
         line-height: 1;
@@ -77,7 +77,7 @@
         position: relative;
       }
       p {
-        font-size: 1.3rem;
+        font-size: 0.9rem;
         font-weight: 400;
         height: 75px;
         letter-spacing: 0.5px;
