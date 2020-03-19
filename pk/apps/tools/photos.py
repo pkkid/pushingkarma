@@ -52,9 +52,11 @@ class PhotosFrom500px:
     RPP = 100           # Results per page
     HOME = 'https://500px.com/popular'  # 500px homepage (to grab csrf-token)
     FEED = 'https://api.500px.com/v1/photos?feature=user&stream=photos&user_id={userid}&include_states=true&image_size%5B%5D=1600&page={page}&rpp={rpp}'  # noqa
-    USERIDS = [         # Vetted 500px userids
-        14026643,       # Tobias Hägg (airpixels); 500 landscapes, no watermark
-        72777941,       # Simon W Xu; Landscapes
+    USERIDS = [
+        14026643,  # Tobias Hägg
+        471807,    # Daniel Metz
+        6554902,   # Simon W Xu
+        13420505,  # Elena Kazemirchuk
     ]
 
     def __init__(self):
@@ -76,7 +78,6 @@ class PhotosFrom500px:
             url = self.FEED.format(userid=userid, page=1, rpp=rpp)
             response = self.session.get(url)
             pages = response.json()['total_pages']
-            # kwargs = {str(p):[self._get_page,userid,p] for p in range(1, 2)}
             kwargs = {str(p):[self._get_page,userid,p] for p in range(1, pages+1)}
             results = threaded(numthreads=10, **kwargs)
             for page, result in results.items():
@@ -117,9 +118,9 @@ def _photo(photo, urlkey, userkey, titlekey, desckey):
 
 
 @cache_memoize(60*60*30)  # 30 days
-def get_album(request, cls):
+def get_album():
     try:
-        return cls().get_photos()
+        return PhotosFrom500px().get_photos()
     except Exception as err:
         log.exception(err)
 

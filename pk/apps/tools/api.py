@@ -73,8 +73,7 @@ def news(request):
 @cached_api_view(['get'], 60*60*18)  # 18 hours
 def photo(request):
     """ Get background photo information from the interwebs. """
-    photos = get_album(request, cls=PhotosFrom500px)
-    return Response(random.choice(photos))
+    return Response(random.choice(get_album()))
 
 
 @cached_api_view(['get'], 60*15)  # 15 minutes

@@ -92,7 +92,7 @@ LOGGING = {
     },
     'loggers': {
         'cmd': {'handlers':['console','email'], 'level':'INFO', 'propagate':True},
-        'pk': {'handlers':['console','file','email'], 'level':'INFO', 'propagate':True},
+        'pk': {'handlers':['console','file'], 'level':'INFO', 'propagate':True},
     },
     'formatters':{
         'standard':{'format':'%(asctime)-.19s %(module)12s:%(lineno)-3s %(levelname)-7s %(message)s'}
@@ -101,9 +101,9 @@ LOGGING = {
 # Create directories
 # Dont send emails if DEBUG = True
 makedirs(LOG_DIR, exist_ok=True)
-if DEBUG is True:
-    for _, logger in LOGGING['loggers'].items():
-        logger['handlers'] = filter(lambda x: x != 'email', logger['handlers'])
+# if DEBUG is True:
+#     for _, logger in LOGGING['loggers'].items():
+#         logger['handlers'] = filter(lambda k,v: k != 'email', logger['handlers'].items())
 
 # Django Rest Framework
 REST_FRAMEWORK = {
