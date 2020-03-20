@@ -73,7 +73,14 @@
       top: 130px;
       transform: translateX(-50%);
       transition: $newtab_transition_fast;
-      .title { font-size:14px; float:left; padding-right:5px; }
+      .title {
+        font-size:14px;
+        float: left;
+        padding-right: 5px;
+        margin-bottom: 0px;
+        color: $newtab_color;
+        font-weight: 400;
+      }
       .description { clear:left; }
     }
     &.showdetails .details {

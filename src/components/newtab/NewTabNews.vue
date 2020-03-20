@@ -60,6 +60,10 @@
     opacity: 0;
     transition: $newtab_transition_fast;
     &.showing { opacity: 1; }
+    .title {
+      margin-bottom: 0px;
+      font-weight: 400;
+    }
     .title p {
       display: -webkit-box;
       font-size: 20px;

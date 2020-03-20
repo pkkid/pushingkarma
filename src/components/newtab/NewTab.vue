@@ -35,7 +35,7 @@
   #newtab {
     background-color: #000;
     height: 100vh;
-    font-size: 1.6rem;
+    font-size: 1rem;
     color: $newtab_color;
     font-family: 'Josefin Sans';
     position: relative;

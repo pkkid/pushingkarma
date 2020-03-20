@@ -60,6 +60,8 @@
       border-bottom: 1px solid rgba(255,255,255,0.3);
       color: $newtab_dim;
       font-size: 16px;
+      font-weight: 400;
+      margin-bottom: 0px;
       margin-left: 5px;
     }
     .event {

@@ -45,6 +45,8 @@
       color: $newtab_dim;
       font-size: 16px;
       margin-bottom: 3px;
+      font-weight: 400;
+      line-height: 1.5;
     }
     .task {
       position: relative;
