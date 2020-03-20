@@ -39,8 +39,9 @@ def _load_calendar(session, url):
 def _load_events(session, url, config):
     service = url.replace('calendar.html', 'service.svc')
     response = session.post(service, data=_data(config), headers=_headers(url))
-    events = json.loads(response.content.decode('utf8'))['Body']['ResponseMessages']['Items'][0]['RootFolder']['Items']
-    return events
+    if response:
+        return json.loads(response.content.decode('utf8'))['Body']['ResponseMessages']['Items'][0]['RootFolder']['Items']
+    return []
 
 
 def _headers(url):
@@ -68,7 +69,10 @@ def _data(config):
     now = datetime.now()
     lastweek = now - timedelta(days=7)
     nextmonth = now + timedelta(days=30)
-    # import pprint; pprint.pprint(config)
+    parentFolderId = utils.rget(config, 'SessionSettings.DefaultFolderIds.0.Id')
+    parentFolderChangeKey = utils.rget(config, 'SessionSettings.DefaultFolderIds.0.ChangeKey')
+    if parentFolderId is None or parentFolderChangeKey is None:
+        return None
     return '{"__type":"FindItemJsonRequest:#Exchange",' \
         '"Header":{"__type":"JsonRequestHeaders:#Exchange",' \
         '  "RequestServerVersion":"Exchange2013",' \
@@ -113,8 +117,8 @@ def _data(config):
         '    "StartDate":"%(lastweek)s",' \
         '    "EndDate":"%(nextmonth)s"}' \
         '}}' % {
-            'parentFolderId': config['SessionSettings']['DefaultFolderIds'][0]['Id'],
-            'parentFolderChangeKey': config['SessionSettings']['DefaultFolderIds'][0]['ChangeKey'],
+            'parentFolderId': parentFolderId,
+            'parentFolderChangeKey': parentFolderChangeKey,
             'lastweek': lastweek.strftime(DATEFORMAT),
             'nextmonth': nextmonth.strftime(DATEFORMAT),
         }
