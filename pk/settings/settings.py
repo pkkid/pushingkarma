@@ -44,7 +44,9 @@ INSTALLED_APPS = (
     'pk.apps.notes',
     'pk.apps.stocks',
     'pk.apps.tools',
+    'pk.apps.user',
 )
+AUTH_USER_MODEL = 'user.User'
 MIDDLEWARE = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -81,6 +83,9 @@ CACHES = {'default': {
 }}
 
 # Logging
+makedirs(LOG_DIR, exist_ok=True)
+CMD_HANDLERS = ['console'] if DEBUG else ['email','console']
+PK_HANDLERS = ['file','console'] if DEBUG else ['file','email','console']
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
@@ -91,19 +96,13 @@ LOGGING = {
         'email': {'level':'ERROR', 'class':'django.utils.log.AdminEmailHandler'},
     },
     'loggers': {
-        'cmd': {'handlers':['console','email'], 'level':'INFO', 'propagate':True},
-        'pk': {'handlers':['console','file'], 'level':'INFO', 'propagate':True},
+        'cmd': {'handlers':CMD_HANDLERS, 'level':'INFO', 'propagate':True},
+        'pk': {'handlers':PK_HANDLERS, 'level':'INFO', 'propagate':True},
     },
     'formatters':{
         'standard':{'format':'%(asctime)-.19s %(module)12s:%(lineno)-3s %(levelname)-7s %(message)s'}
     },
 }
-# Create directories
-# Dont send emails if DEBUG = True
-makedirs(LOG_DIR, exist_ok=True)
-# if DEBUG is True:
-#     for _, logger in LOGGING['loggers'].items():
-#         logger['handlers'] = filter(lambda k,v: k != 'email', logger['handlers'].items())
 
 # Django Rest Framework
 REST_FRAMEWORK = {

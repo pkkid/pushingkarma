@@ -4,13 +4,13 @@ from apiclient import discovery
 from django.conf import settings
 from django.core.cache import cache
 from django.contrib.auth import authenticate, login, logout
-from django.contrib.auth.models import User
 from django.contrib.auth.forms import PasswordChangeForm
 from django.db.models import Q
 from django.views.decorators.http import require_POST
 from django.http import HttpResponseRedirect
 from oauth2client import client
 from pk import log, utils
+from pk.apps.user.models import User
 
 GAUTH_KEY = 'gauth:{email}'
 

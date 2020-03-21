@@ -1,7 +1,7 @@
 # encoding: utf-8
 from django.contrib.auth import logout as django_logout
-from django.contrib.auth.models import User
 from pk import log, utils
+from pk.apps.user.models import User
 from pk.utils import auth
 from rest_framework import status
 from rest_framework.authtoken.models import Token
