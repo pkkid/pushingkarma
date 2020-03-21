@@ -10,8 +10,7 @@ from rest_framework.decorators import permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
-from .o365 import get_o365_events
-from .photos import get_album
+from . import o365, photos
 
 REDDIT_ATTRS = ['title','author.name','score','permalink','domain','created_utc']
 REDDIT_BADDOMAINS = ['i.redd.it', 'imgur.com', r'^self\.']
@@ -50,7 +49,7 @@ def tools(request):
 @cached_api_view(['get'], 60*15)  # 15 minutes
 def events(request):
     """ Get calendar events from Office365. """
-    events = get_o365_events(settings.OFFICE365_HTMLCAL)
+    events = o365.get_events(settings.OFFICE365_HTMLCAL)
     return Response(events)
 
 
@@ -73,7 +72,7 @@ def news(request):
 @cached_api_view(['get'], 60*60*18)  # 18 hours
 def photo(request):
     """ Get background photo information from the interwebs. """
-    return Response(random.choice(get_album()))
+    return Response(random.choice(photos.get_album()))
 
 
 @cached_api_view(['get'], 60*15)  # 15 minutes
