@@ -5,25 +5,36 @@
         <div class='bgimg'></div>
         <div class='card-content'>
           <!-- Logged in user info -->
-          <div v-if='user.id' class='welcome' key='welcome'>
+          <article v-if='user.id' class='welcome' key='welcome'>
             <div class='avatar' :style="{backgroundImage:avatar}"></div>
-            <h2 style='margin-top:20px;'>Welcome {{user.firstName || "Back"}}! <div class='subtext'>It's great to see you</div></h2>
+            <h2 style='margin-top:20px;'>Welcome {{user.name || "Back"}}! <div class='subtext'>It's great to see you</div></h2>
             <dl>
+              <!-- Basic Account Info -->
               <dt>Joined</dt><dd>{{user.date_joined | formatDate('MMM DD, YYYY')}}</dd>
               <dt>Login</dt><dd>{{user.last_login | formatDate('MMM DD, YYYY h:mm a')}}</dd>
               <dt>Email</dt><dd>{{user.email}}</dd>
-              <dt>Apikey</dt><dd class='apikey' ref='apikey'>{{user.auth_token || "None"}}</dd>
-              <div class='actions'>
-                <a href='#' @click='generateToken'>Regenerate</a>
-                <a href='#' @click='copyToken'>Copy</a>
-              </div>
+              <!-- Google API -->
+              <dt>Google</dt>
+              <dd v-if='user.google_email'>{{user.google_email}}
+                <div class='actions'><a href='#' @click='disconnect("google")'>Disconnect</a></div>
+              </dd>
+              <dd v-else><a @click='google_login'>Not Connected</a></dd>
+              <!-- Django APIKey -->
+              <dt>Apikey</dt>
+              <dd ref='apikey'>
+                {{user.auth_token || "None"}}
+                <div class='actions'>
+                  <a href='#' @click='generateToken'>Regenerate</a>
+                  <a href='#' @click='copyToken'>Copy</a>
+                </div>
+              </dd>
             </dl>
             <b-button type='is-light' @click='logout'>Log Out</b-button>
-          </div>
+          </article>
           <!-- Login form -->
           <div v-else class='loginform' key='loginform'>
             <h2>Login to PushingKarma <div class='subtext'>Amazing things await you</div></h2>
-            <img v-if='gauth !== null' class='google' src='@/assets/img/google_signin.png' @click='gauth_login'/>
+            <img v-if='gauth !== null' class='google' src='@/assets/img/google_signin.png' @click='google_login'/>
             <i v-else class='fake-avatar mdi mdi-account-circle-outline'/>
             <form @submit.prevent="login()">
               <b-field label='Email'><b-input v-model='loginform.email' autocomplete='new-password' spellcheck='false' autofocus='true'/></b-field>
@@ -82,12 +93,12 @@
         console.log(`Logged in as ${this.user.email || 'Guest'}`);
       },
 
-      // GAuth Login
+      // Google Login
       // Login via Google popup box
-      gauth_login: function() {
+      google_login: function() {
         let self = this;
         this.gauth.grantOfflineAccess().then(function(data) {
-          if (data.code) { self.login(data); }
+          if (data.code) { self.login({google_code:data.code}); }
         });
       },
 
@@ -97,7 +108,7 @@
         payload = payload || {email:this.loginform.email, password:this.loginform.password};
         var {data} = await api.Users.login(payload);
         if (data.id) {
-          this.display = false;
+          //this.display = false;
           this.user = data || DEFAULT_USER;
           this.loginform.email = '';
           this.loginform.password = '';
@@ -116,6 +127,13 @@
       // Generate a new API token
       copyToken: function() {
         utils.copyToClipboard(this.$refs.apikey.innerText);
+      },
+
+      // Google Disconnect
+      // Disconnect the Google account
+      disconnect: async function(provider) {
+        var {data} = await api.Users.disconnect(provider);
+        if (data.id) { this.user = data; }
       },
 
       // Logout
@@ -175,15 +193,15 @@
       margin: 10px auto 20px auto;
       width: 80px;
     }
-    .apikey {
+    dd {
       overflow: hidden;
       text-overflow: ellipsis;
       width: 220px;
     }
     .actions {
-      margin-left: 80px;
       line-height: 0.9em;
-      a { color:#777; font-size: 0.8em; padding-right:10px; }
+      margin-bottom: 5px;
+      a { color:#777; font-size: 0.8em; margin-right:15px; }
       a:hover { color:#333; }
     }
     .footnote {
@@ -195,61 +213,5 @@
       text-align: center;
       width: 290px;
     }
-    
-
-
-    // .content {
-    //   padding: 20px 30px;
-    //   height: 500px;
-    //   width: 350px;
-    //   color: $lightbg-text;
-    //   h3 {
-    //     font-size: 1.9rem;
-    //     padding-left: 0px;
-    //     border-left-width: 0px;
-    //     text-transform: none;
-    //     span { font-size:1.1rem; font-weight:500; display:block; margin-top:3px; }
-    //   }
-    //   .avatar {
-    //     background-size: 80px;
-    //     background-position: center center;
-    //     border-radius: 10px;
-    //     border-bottom: 1px solid #fff;
-    //     box-sizing: content-box;
-    //     display: block;
-    //     height: 80px;
-    //     margin: 10px auto 30px auto;
-    //     width: 80px;
-    //   }
-    //   .fake-avatar {
-    //     font-size: 4rem;
-    //     display: block;
-    //     color: #aaa;
-    //     text-align: center;
-    //   }
-    //   .google {
-    //     display: block;
-    //     cursor: pointer;
-    //     position: relative;
-    //     right: 2px;
-    //     margin: 20px 0px;
-    //   }
-    //   button {
-    //     width: 100%;
-    //     padding: 10px 20px;
-    //     margin-top: 30px;
-    //   }
-    //   .auth_token {
-    //     padding: 0px;
-    //     width: 190px;
-    //     border: 0px;
-    //     background-color: transparent;
-    //     border-radius: 0px;
-    //     margin-right: 10px;
-    //   }
-    //   .mdi-refresh {
-    //     cursor: pointer;
-    //   }
-    // }
   }
 </style>

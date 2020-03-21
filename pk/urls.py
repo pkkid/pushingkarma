@@ -3,19 +3,21 @@ from django.conf import settings
 from django.conf.urls import include, url
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.views.decorators.csrf import ensure_csrf_cookie
-from pk import api as pk_api, utils
+from pk.apps.user import api as user_api
 from pk.apps.budget import api as budget_api
 from pk.apps.tools import api as tools_api
 from pk.apps.notes import api as note_api
 from pk.apps.stocks import api as stock_api
 from pk.utils.api import HybridRouter
+from pk import utils
 
 # Create Router & User APIs
 api = HybridRouter(sort_urls=True, trailing_slash=False)
-api.add_url('^user$', pk_api.user, name='user')
-api.add_url('^user/login$', pk_api.login, name='user/login')
-api.add_url('^user/gentoken$', pk_api.gen_token, name='user/gentoken')
-api.add_url('^user/logout$', pk_api.logout, name='user/logout')
+api.add_url('^user$', user_api.user, name='user')
+api.add_url('^user/login$', user_api.login, name='user/login')
+api.add_url('^user/gentoken$', user_api.generate_token, name='user/gentoken')
+api.add_url('^user/disconnect$', user_api.disconnect, name='user/disconnect')
+api.add_url('^user/logout$', user_api.logout, name='user/logout')
 # Budget API
 api.add_url('^budget$', budget_api.budget, name='budget')
 api.register('budget/accounts', budget_api.AccountsViewSet)

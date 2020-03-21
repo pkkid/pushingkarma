@@ -33,6 +33,7 @@ export const Tools = {
 export const Users =  {
   getCurrentUser() { return axios.get('/api/user'); },
   login(data) { return axios.post('/api/user/login', data); },
-  logout() { return axios.post('/api/user/logout'); },
   generateToken() { return axios.post('/api/user/gentoken'); },
+  disconnect(provider) { return axios.post('/api/user/disconnect', {provider}); },
+  logout() { return axios.post('/api/user/logout'); },
 };

@@ -3,7 +3,7 @@ import praw, random, re, requests
 from django.conf import settings
 from pk.utils.decorators import cache_api_data
 from pk import utils
-from pk.utils import auth, threaded
+from pk.utils import threaded
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.decorators import api_view
 from rest_framework.decorators import permission_classes, authentication_classes
@@ -11,7 +11,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from .o365 import get_o365_events
-from .photos import get_album, PhotosFrom500px
+from .photos import get_album
 
 REDDIT_ATTRS = ['title','author.name','score','permalink','domain','created_utc']
 REDDIT_BADDOMAINS = ['i.redd.it', 'imgur.com', r'^self\.']
@@ -81,7 +81,7 @@ def tasks(request):
     """ Get open tasks from Google Tasks.
         https://developers.google.com/tasks/v1/reference/
     """
-    service = auth.get_gauth_service(settings.EMAIL, 'tasks')
+    service = request.user.google_service(settings.EMAIL, 'tasks')
     tasklists = service.tasklists().list().execute()
     tasklists = {tlist['title']:tlist for tlist in tasklists['items']}
     tasklist = tasklists['My Tasks']
