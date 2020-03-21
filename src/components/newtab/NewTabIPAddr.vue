@@ -1,14 +1,14 @@
 <template>
-  <div id='ipaddr'>{{ipaddr}}</div>
+  <div id='ipaddr'>{{globals.IPADDR}}</div>
 </template>
 
 <script>
+  import * as pathify from 'vuex-pathify';
+
   export default {
     name: 'NewTabIP',
-    data: () => ({ipaddr: null}),
-    mounted: function() {
-      var globals = JSON.parse(document.getElementById('globals').textContent);
-      this.ipaddr = globals.IPADDR;
+    computed: {
+      globals: pathify.get('global/globals'),
     },
   };
 </script>

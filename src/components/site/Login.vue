@@ -18,7 +18,7 @@
               <dd v-if='user.google_email'>{{user.google_email}}
                 <div class='actions'><a href='#' @click='disconnect("google")'>Disconnect</a></div>
               </dd>
-              <dd v-else><a @click='google_login'>Not Connected</a></dd>
+              <dd v-else><a @click='googleLogin'>Not Connected</a></dd>
               <!-- Django APIKey -->
               <dt>Apikey</dt>
               <dd ref='apikey'>
@@ -34,7 +34,7 @@
           <!-- Login form -->
           <div v-else class='loginform' key='loginform'>
             <h2>Login to PushingKarma <div class='subtext'>Amazing things await you</div></h2>
-            <img v-if='gauth !== null' class='google' src='@/assets/img/google_signin.png' @click='google_login'/>
+            <img v-if='gauth !== null' class='google' src='@/assets/img/google_signin.png' @click='googleLogin'/>
             <i v-else class='fake-avatar mdi mdi-account-circle-outline'/>
             <form @submit.prevent="login()">
               <b-field label='Email'><b-input v-model='loginform.email' autocomplete='new-password' spellcheck='false' autofocus='true'/></b-field>
@@ -67,12 +67,10 @@
     components: {},
     data: () => ({
       display: false,
-      loginform: {
-        email: '',
-        password: '',
-      },
+      loginform: {email:'',  password:''},
     }),
     computed: {
+      globals: pathify.get('global/globals'),
       avatar: pathify.sync('global/avatar'),
       gauth: pathify.sync('global/gauth'),
       user: pathify.sync('global/user'),
@@ -95,7 +93,7 @@
 
       // Google Login
       // Login via Google popup box
-      google_login: function() {
+      googleLogin: function() {
         let self = this;
         this.gauth.grantOfflineAccess().then(function(data) {
           if (data.code) { self.login({google_code:data.code}); }

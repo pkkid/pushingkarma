@@ -24,16 +24,17 @@
     components: {Notification},
     computed: {
       layout: pathify.sync('global/layout'),
+      globals: pathify.sync('global/globals'),
       gauth: pathify.sync('global/gauth'),
     },
     created: function() {
       var self = this;
-      var globals = JSON.parse(document.getElementById('globals').textContent);
-      if (globals.GAUTH_ENABLED) {
+      this.globals = JSON.parse(document.getElementById('globals').textContent);
+      if (this.globals.GOOGLE_ENABLED) {
         gapi.load('auth2', function() {
           self.gauth = gapi.auth2.init({
-            client_id: globals.GOOGLE_CLIENTID,
-            scope: globals.GOOGLE_SCOPES
+            client_id: self.globals.GOOGLE_CLIENTID,
+            scope: self.globals.GOOGLE_SCOPES
           });
         });
       }
