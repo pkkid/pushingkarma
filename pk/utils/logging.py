@@ -9,7 +9,7 @@ class CustomEmailHandler(AdminEmailHandler):
     def __init__(self, *args, **kwargs):
         super(CustomEmailHandler, self).__init__(*args, **kwargs)
         self.timeout = 600      # Timeout before sending second email
-        self.maxcount = 50      # Max hits before sending second email
+        self.maxcount = 100      # Max hits before sending second email
         self.ignore = []        # Exception classes to ignore
     
     def emit(self, record):
@@ -27,7 +27,7 @@ class CustomEmailHandler(AdminEmailHandler):
         newcount = count + 1
         if count == 0 or newcount >= self.maxcount or now >= timeout:
             record.getMessage = lambda: f'[{newcount}x] {record.message}'
-            self._set_cached(hashkey, 0, now + self.timeout)
+            self._set_cached(hashkey, 1, now + self.timeout)
             return True
         self._set_cached(hashkey, newcount, timeout)
         return False
