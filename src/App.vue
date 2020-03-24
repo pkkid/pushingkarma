@@ -6,6 +6,11 @@
           <img src='./assets/img/pk.svg'/><br/>
           <span class='title'>PushingKarma</span>
         </router-link>
+        <span v-if='user.id' class='subtext'>
+          <a v-if='globals.DEBUG == false' href='http://localhost:8000'>To Development</a>
+          <a v-if='globals.DEBUG == true' href='http://pushingkarma.com'>To Production</a>
+          - <a href='/api/'>API</a>
+        </span>
       </div>
       <transition name='fadein'><router-view/></transition>
     </div>
@@ -18,7 +23,7 @@
   /* global gapi */
   import * as pathify from 'vuex-pathify';
   import Notification from '@/components/Notification';
-  
+
   export default {
     name: 'App',
     components: {Notification},
@@ -26,19 +31,25 @@
       layout: pathify.sync('global/layout'),
       globals: pathify.sync('global/globals'),
       gauth: pathify.sync('global/gauth'),
+      user: pathify.sync('global/user'),
     },
     created: function() {
-      var self = this;
       this.globals = JSON.parse(document.getElementById('globals').textContent);
-      if (this.globals.GOOGLE_ENABLED) {
-        gapi.load('auth2', function() {
-          self.gauth = gapi.auth2.init({
-            client_id: self.globals.GOOGLE_CLIENTID,
-            scope: self.globals.GOOGLE_SCOPES
-          });
-        });
-      }
-    }
+      this.init_gauth();
+    },
+    methods: {
+      // Initialize Google Authenticatin service
+      // Allows login via Google
+      init_gauth: function() {
+        var self = this;
+        if (this.globals.GOOGLE_ENABLED) {
+          gapi.load('auth2', function() {
+            self.gauth = gapi.auth2.init({
+              client_id: self.globals.GOOGLE_CLIENTID,
+              scope: self.globals.GOOGLE_SCOPES
+        });});}
+      },
+    },
   };
 </script>
 
@@ -78,6 +89,17 @@
       top: 150px;
       transition: all 0.5s $bounce;
     }
+    .subtext {
+      color: darken($darkbg-text, 50%);
+      position: absolute;
+      font-size: 10px;
+      font-weight: 500;
+      top: 165px;
+      left: 65px;
+      transition: all 0.5s $bounce;
+      a, a:visited { color: $darkbg-text; opacity:0.6; }
+      a:hover { opacity:0.8; }
+    }
     a, a:visited { color: $darkbg-text; }
   }
 
@@ -95,6 +117,7 @@
     height: 61px;
     img { height:40px; top:10px; left:20px; }
     .title { top:20px; left:100px; }
+    .subtext { top: 35px; left:100px; }
   }
   .nonav #logo { display:none; }
 

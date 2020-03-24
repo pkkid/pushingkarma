@@ -1,5 +1,16 @@
 {% extends "rest_framework/base.html" %}
 
+{% block title %}
+  PushingKarma API
+{% endblock %}
+
+{% block branding %}
+  <span style='float:left; font-size:1.3em; margin-top:5px;'>PushingKarma API
+    <div style='font-size:11px; margin-top:-3px;'><a href='/' style='color:#aaa;'>View Website</a></div>
+  </span>
+
+{% endblock %}
+
 {% block breadcrumbs %}
   <ul class="breadcrumb">
     <li><a href="/api/">Root</a></li>
