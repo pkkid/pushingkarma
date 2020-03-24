@@ -1,5 +1,5 @@
 <template>
-  <div id='sidebar'>
+  <div id='budgetmenu'>
     <!-- Budget -->
     <div class='menuitem' @click='view="month"; account=null' :class='{highlighted:view=="month"}'>
       <i class='mdi mdi-email-outline'/>Budget
@@ -46,32 +46,78 @@
 </script>
 
 <style lang='scss'>
-  #budget {
-    font-size: 1.6rem;
-    
-    #sidebar {
-      .name {
-        float: left;
-        padding-left: 32px;
-      }
+  #budget #budgetmenu {
+    font-size: 1rem;
+    width: 300px;
+    height: calc(100vh - 60px);
+    overflow: hidden;
+    position: fixed;
+    top: 60px;
+    padding: 30px 0px;
+    overflow-y: hidden;
+
+    // Menu Items
+    .menuitem,
+    .submenuitem {
+      border-bottom-right-radius: 8px;
+      border-left: 3px solid transparent;
+      border-top-right-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 500;
+      overflow: hidden;
+      padding: 15px 15px 15px 12px;
+      text-overflow: ellipsis;
+      user-select: none;
+      white-space: nowrap;
       .subtext {
-        //font-size: 1.0rem; 
-        clear: both;
-        padding-left: 32px;
-      }
-      .balance {
-        float: right;
-      }
-      .total {
+        font-size: 0.7em;
+        font-weight: 400;
         color: $darkbg-text-dim;
-        float: right;
-        font-size: 1.1rem;
-        font-weight: 600;
-        margin-right: 20px;
-        margin-top: 1px;
-        padding: 3px 5px;
-        border-top: 1px solid rgba($darkbg-text-dim, .2);
+        padding-top: 2px;
       }
+      &.highlighted,
+      &:hover {
+        border-left: 3px solid $darkbg-accent;
+        background-color: lighten($darkbg-color, 5%);
+      }
+      .mdi {
+        margin-right: 12px;
+        font-size: 1.3em;
+        position: relative;
+        top: 2px;
+      }
+    }
+    .submenuitem {
+      font-size: 0.9em;
+      padding: 7px 15px 7px 12px;
+    }
+
+    // More shit..
+    .name {
+      float: left;
+      padding-left: 32px;
+    }
+    .subtext {
+      clear: both;
+      padding-left: 32px;
+      font-size: .7em;
+      font-weight: 400;
+      color: #bdae93;
+      padding-top: 2px;
+    }
+    .balance {
+      float: right;
+    }
+    .total {
+      color: $darkbg-text-dim;
+      float: right;
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-right: 20px;
+      margin-top: 1px;
+      padding: 3px 5px;
+      border-top: 1px solid rgba($darkbg-text-dim, .2);
     }
   }
 </style>

@@ -2,7 +2,7 @@
   <div id='budget' :class={demo}>
     <Navigation :cls="'topnav'" />
     <BudgetMenu/>
-    <div class='content'>
+    <div class='contentarea'>
       <div class='budgetbg'>
         <Dropzone @filesDropped='upload'/>
         <transition name='fadein'>
@@ -79,12 +79,22 @@
 </script>
 
 <style lang='scss'>
-  #budget .content {
+  #budget .contentarea {
+    // box-sizing: border-box;
+    // color: $lightbg-text;
+    // margin-left: 300px;
+    // margin-top: 60px;
+    // background-color: darken($lightbg-color, 10%);
+
     box-sizing: border-box;
     color: $lightbg-text;
     margin-left: 300px;
     margin-top: 60px;
     background-color: darken($lightbg-color, 10%);
+    font-family: Roboto, Arial, Helvetica, sans-serif;
+    font-weight: 300;
+    z-index: 28;
+
     .budgetbg {
       position: relative;
       min-height: calc(100vh - 60px);

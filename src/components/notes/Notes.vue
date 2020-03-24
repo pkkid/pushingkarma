@@ -113,12 +113,6 @@
 </script>
 
 <style lang='scss'>
-  #sidebar {
-    float: left;
-    width: 300px;
-    height: calc(100vh - 60px);
-    overflow: hidden;
-  }
 
   #notes .contentarea {
     box-sizing: border-box;
