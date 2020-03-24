@@ -2,15 +2,18 @@
 import hashlib, time, traceback
 from django.core.cache import cache
 from django.utils.log import AdminEmailHandler
+from rest_framework.exceptions import AuthenticationFailed
 
 
 class CustomEmailHandler(AdminEmailHandler):
 
     def __init__(self, *args, **kwargs):
         super(CustomEmailHandler, self).__init__(*args, **kwargs)
-        self.timeout = 600      # Timeout before sending second email
-        self.maxcount = 100      # Max hits before sending second email
-        self.ignore = []        # Exception classes to ignore
+        self.timeout = 600          # Timeout before sending second email
+        self.maxcount = 100         # Max hits before sending second email
+        self.ignore = [             # Exception classes to ignore
+            AuthenticationFailed,   # Rest Framework AuthenticationFailed
+        ]
     
     def emit(self, record):
         if self._check_send_email(record):
@@ -22,6 +25,8 @@ class CustomEmailHandler(AdminEmailHandler):
         """
         now = time.time()
         etype, evalue, tb = record.exc_info
+        if etype in self.ignore:
+            return False
         hashkey = f'exc_{self._get_ehash(tb)}'
         count, timeout = self._get_cached(hashkey)
         newcount = count + 1
