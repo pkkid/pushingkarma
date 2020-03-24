@@ -93,7 +93,7 @@ LOGGING = {
         'console': {'level':'INFO', 'class':'logging.StreamHandler', 'formatter':'standard'},
         'file': {'level':'INFO', 'class':'logging.handlers.RotatingFileHandler', 'formatter':'standard',
             'filename': f'{LOG_DIR}/django.log', 'maxBytes':1000000, 'backupCount':3},
-        'email': {'level':'ERROR', 'class':'django.utils.log.AdminEmailHandler'},
+        'email': {'level':'ERROR', 'class':'pk.utils.logging.CustomEmailHandler'},
     },
     'loggers': {
         'cmd': {'handlers':CMD_HANDLERS, 'level':'INFO', 'propagate':True},
