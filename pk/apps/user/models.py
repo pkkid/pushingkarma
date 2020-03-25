@@ -55,7 +55,7 @@ class User(AbstractUser):
             https://developers.google.com/identity/sign-in/web/server-side-flow
             https://developers.google.com/gmail/api/auth/web-server
         """
-        creds = client.credentials_from_clientsecrets_and_code(
+        creds = client.credentials_from_code(settings.GOOGLE_CLIENTID,
             settings.GOOGLE_SECRET, settings.GOOGLE_SCOPES, google_code)
         creds.authorize(httplib2.Http())
         google_email = creds.id_token['email']
