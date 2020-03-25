@@ -7,6 +7,8 @@ if [ "$1" = "getdb" ]; then
   scp pushingkarma.com:~/pk/db.sqlite3 $ROOT/pk/
 elif [ "$1" = "full" ]; then
   ( npm run build && cd $ANS && ansible-playbook -i inventory.ini playbook.yml )
-else
+elif [ "$1" = "build" ]; then
   ( npm run build && cd $ANS && ansible-playbook -i inventory.ini playbook.yml --tags=deploy )
+else
+  ( cd $ANS && ansible-playbook -i inventory.ini playbook.yml --tags=deploy )
 fi
