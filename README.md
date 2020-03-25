@@ -15,14 +15,14 @@ pk/manage.py runserver 0.0.0.0:8000
 # Setup NPM and Vue
 sudo apt install ruby ruby-dev nodejs
 npm install
-npm run build
+npm run vue-build
 npm run start
 ```
 
 ### Setup Production Environment
 1. Create a new Ubuntu instance
 2. Update `ansible/inventory.ini` with the IP address of the new instance
-3. Run: `./deploy setup`
+3. Run: `npm run deploy-full`
 
 ### License
 Create Commons Attribution-ShareAlike 2.5 Generic (CC BY-SA 2.5) - 

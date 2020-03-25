@@ -42,10 +42,14 @@
     "fsevents": "^2.1.2"
   },
   "scripts": {
-    "start": "addkeys.sh; npm-run-all -p watch django",
-    "django": "~/.virtualenvs/pk/bin/python pk/manage.py runserver",
-    "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint",
-    "watch": "vue-cli-service build --watch"
+    "start": "addkeys.sh; npm-run-all -p django-runserver vue-watch",
+    "django-runserver": "~/.virtualenvs/pk/bin/python pk/manage.py runserver",
+    "get-database": "scp pushingkarma.com:~/pk/db.sqlite3 pk/",
+    "vue-build": "vue-cli-service build",
+    "vue-lint": "vue-cli-service lint",
+    "vue-watch": "vue-cli-service build --watch",
+    "deploy": "npm run vue-build && cd ansible && ansible-playbook -i inventory.ini playbook.yml --tags=deploy",
+    "deploy-quick": "cd ansible && ansible-playbook -i inventory.ini playbook.yml --tags=deploy",
+    "deploy-full": "npm run vue-build && cd ansible && ansible-playbook -i inventory.ini playbook.yml"
   }
 }
