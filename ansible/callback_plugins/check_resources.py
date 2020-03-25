@@ -1,8 +1,9 @@
-# Checks the Secrets file is mounted
+#!/usr/bin/env python3
 from os.path import dirname, isfile, join
 from ansible.plugins.callback import CallbackBase
 
 PROJECT_DIR = dirname(dirname(dirname(__file__)))
+
 
 class CallbackModule(CallbackBase):
     def __init__(self, *args, **kwargs):
