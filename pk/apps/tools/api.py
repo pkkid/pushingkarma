@@ -80,7 +80,7 @@ def tasks(request):
     """ Get open tasks from Google Tasks.
         https://developers.google.com/tasks/v1/reference/
     """
-    service = request.user.google_service(settings.EMAIL, 'tasks')
+    service = request.user.google_service('tasks')
     tasklists = service.tasklists().list().execute()
     tasklists = {tlist['title']:tlist for tlist in tasklists['items']}
     tasklist = tasklists['My Tasks']
