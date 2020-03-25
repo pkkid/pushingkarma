@@ -28,7 +28,7 @@ def _getAnonymousCalendarSessionData(session, url):
     headers = {
         'action': 'GetAnonymousCalendarSessionData',
         'x-owa-urlpostdata': '%7B%22__type%22%3A%22GetAnonymousCalendarSessionDataJsonRequest%3A%23'
-          'Exchange%22%2C%22Header%22%3A%7B%22__type%22%3A%22JsonRequestHeaders%3A%23Exchange%22%2C%22'
+          'Exchange%22%2C%22Header%22%3A%7B%22__type%22%3A%22JsonRequestHeaders%3A%23Exchange%22%2C%22'  # noqa
           'RequestServerVersion%22%3A%22Exchange2015%22%2C%22TimeZoneContext%22%3A%7B%22__type%22%3A%22'
           'TimeZoneContext%3A%23Exchange%22%2C%22TimeZoneDefinition%22%3A%7B%22__type%22%3A%22TimeZoneDefinitionType%3A%23'
           'Exchange%22%2C%22Id%22%3A%22Pacific%20Standard%20Time%22%7D%7D%7D%7D',
@@ -47,7 +47,7 @@ def _findItem(session, url, caldata):
     headers = {
         'action': 'FindItem',
         'x-owa-urlpostdata': '%7B%22__type%22%3A%22FindItemJsonRequest%3A%23Exchange%22%2C%22Header%22%3A%7B%22__type%22%3A%22'
-          'JsonRequestHeaders%3A%23Exchange%22%2C%22RequestServerVersion%22%3A%22Exchange2015%22%2C%22TimeZoneContext%22%3A%7B%22'
+          'JsonRequestHeaders%3A%23Exchange%22%2C%22RequestServerVersion%22%3A%22Exchange2015%22%2C%22TimeZoneContext%22%3A%7B%22'  # noqa
           '__type%22%3A%22TimeZoneContext%3A%23Exchange%22%2C%22TimeZoneDefinition%22%3A%7B%22__type%22%3A%22'
           'TimeZoneDefinitionType%3A%23Exchange%22%2C%22Id%22%3A%22Pacific%20Standard%20Time%22%7D%7D%7D%2C%22Body%22%3A%7B%22'
           '__type%22%3A%22FindItemRequest%3A%23Exchange%22%2C%22ParentFolderIds%22%3A%5B%7B%22__type%22%3A%22FolderId%3A%23'
