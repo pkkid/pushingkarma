@@ -18,7 +18,7 @@ def get_events(public_calendar_url):
         location = location.replace(' Conference Room', '')
         location = re.sub(r'BOSHQ-\d+-', '', location)
         location = re.sub(r'MARMA-\d+-', '', location)
-        location = re.sub(r'https*://\w*\.zoom\.us/j/\d+', 'Zoom', location)
+        # location = re.sub(r'https*://\w*\.zoom\.us/j/\d+', 'Zoom', location)
         events[i]['Location']['DisplayName'] = location
     return events
 

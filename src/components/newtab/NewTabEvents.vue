@@ -6,8 +6,8 @@
         <div class='event' v-for='event in events.slice(0,3)' :key='event.id' :class={soon:event.soon}>
           <div class='subject'>{{event.Subject}}</div>
           <div class='details'>
-            {{ event.Start | formatDate('h:mm') }} - {{ event.End |formatDate('h:mm') }}
-            <span v-if='event.Location.DisplayName'>| {{event.Location.DisplayName}}</span>
+            {{ event.Start | formatDate('h:mm') }} - {{ event.End | formatDate('h:mm') }}
+            <span v-if='event.Location.DisplayName'>| <span v-html='linkZoom(event.Location.DisplayName)'/></span>
           </div>
         </div>
       </div>
@@ -45,7 +45,12 @@
           }
         }
         this.events = events;
-      }
+      },
+
+      // Replace zoom urls with links
+      linkZoom: function(location) {
+        return location.replace(/(https*:\/\/\w*\.zoom\.us\/j\/\d+)/g, '<a href="$1">Zoom</a>');
+      },
     }
   };
 </script>
@@ -88,6 +93,16 @@
       text-overflow: ellipsis;
       top: -5px;
       white-space: nowrap;
+      a,a:visited {
+        background-color: rgba(255,255,255,0);
+        color: $newtab_dim;
+        padding: 1px 2px 0px 2px;
+        border-radius: 3px;
+      }
+      a:hover {
+        color:#fff;
+        background-color: rgba(255,255,255,0.3);
+      }
     }
     .noevents {
       color: rgba(255,255,255,0.3);
