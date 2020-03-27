@@ -1,6 +1,6 @@
 <template>
   <transition name='custom-classes-transition' enter-active-class='animated fadeIn'>
-    <div id='events'>
+    <div id='events' v-if='events'>
       <div v-if='events && events.length'>
         <div class='title'>Upcoming Events</div>
         <div class='event' v-for='event in events.slice(0,3)' :key='event.id' :class={soon:event.soon}>
