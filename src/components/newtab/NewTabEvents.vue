@@ -18,7 +18,7 @@
 
 <script>
   import * as api from '@/api';
-  import * as moment from 'moment';
+  import * as dayjs from 'dayjs';
 
   export default {
     name: 'NewTabEvents',
@@ -33,12 +33,12 @@
       update: async function() {
         var events = [];
         var {data} = await api.Tools.getEvents();
-        var now = moment();
-        var soon = moment().add(5, 'minutes');
-        var max = moment().add(12, 'hours');
+        var now = dayjs();
+        var soon = dayjs().add(5, 'minutes');
+        var max = dayjs().add(12, 'hours');
         for (var event of data) {
-          var start = moment(event.Start);
-          var end = moment(event.End).subtract(10, 'minutes');
+          var start = dayjs(event.Start);
+          var end = dayjs(event.End).subtract(10, 'minutes');
           if ((end > now) && (start < max)) {
             if (soon > start) { event.soon = true; }
             events.push(event);

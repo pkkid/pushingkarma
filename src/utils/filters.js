@@ -1,9 +1,13 @@
 import Vue from 'vue';
-import * as moment from 'moment';
+import * as dayjs from 'dayjs';
 import {insertCommas} from '@/utils/utils.js';
 
+var RelativeTime = require('dayjs/plugin/relativeTime');
+dayjs.extend(RelativeTime);
+
+
 Vue.filter('formatDate', function(value, format) {
-  return moment(value).format(format);
+  return dayjs(value).format(format);
 });
 
 Vue.filter('int', function(value) {
@@ -12,9 +16,7 @@ Vue.filter('int', function(value) {
 
 Vue.filter('timeAgo', function(value) {
   if (Number.isInteger(value) && value < 99999999999) { value *= 1000; }
-  var now = moment(new Date());
-  var then = moment(value);
-  return moment.duration(now.diff(then)).humanize();
+  return dayjs(value).fromNow();
 });
 
 Vue.filter('usd', function(value) {

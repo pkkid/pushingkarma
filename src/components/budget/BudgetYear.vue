@@ -38,7 +38,7 @@
 
 <script>
   import * as api from '@/api';
-  import * as moment from 'moment';
+  import * as dayjs from 'dayjs';
   import * as pathify from 'vuex-pathify';
   import BudgetYearCell from './BudgetYearCell';
   import map from 'lodash/map';
@@ -49,7 +49,7 @@
     data: () => ({
       transactions: {},                   // Displayed transactions
       groups: null,                       // Grouped Transactions {catname -> month -> [trxs]}
-      start: moment().startOf('month'),   // Starting month
+      start: dayjs().startOf('month'),    // Starting month
       uncategorized: 'Uncategorized',     // Uncategorized label
     }),
     watch: {
@@ -64,8 +64,9 @@
         var months = [];
         var month = this.start.clone();
         for (var i=0; i<=12; i++) {
+          console.log(month);
           months.push(month.clone());
-          month.subtract(1, 'months');
+          month = month.subtract(1, 'month');
         }
         return months;
       },
@@ -104,7 +105,7 @@
       groupTransactions: function() {
         var groups = this.initGroups();
         for (var trx of this.transactions) {
-          var month = moment(trx.date).startOf('month');
+          var month = dayjs(trx.date).startOf('month');
           var monthstr = month.format('YYYY-MM');
           groups[trx.category.name][monthstr].push(trx);
           groups[trx.category.name].total += parseFloat(trx.amount);

@@ -22,7 +22,7 @@
         @click='view="transactions"; account=acct'>
           <div class='name'>{{acct.name}}</div>
           <div class='balance blur'>{{acct.balance | usdint}}</div>
-          <div class='subtext updated'>{{acct.balancedt | timeAgo}} ago</div>
+          <div class='subtext updated'>{{acct.balancedt | timeAgo}}</div>
       </div>
       <div class='total blur'>{{balance | usdint}}</div>
       <div style='clear:both;'/>
