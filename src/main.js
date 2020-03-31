@@ -7,10 +7,9 @@ import vHotkey from 'v-hotkey';
 import vClickOutside from 'v-click-outside';
 import {fixScroll} from '@/utils/plugins';
 import App from './App.vue';
+import Buefy from 'buefy';
 import '@/utils/filters';
 require('@/assets/css/index.scss');
-
-import Buefy from 'buefy';
 
 // Axios Configuiration - Tell Axios we want to include the csrf token and
 // where to get the value. The intercepter is a convenience function to

@@ -32,10 +32,10 @@
 </template>
 
 <script>
-  import * as _ from 'lodash';
   import * as api from '@/api';
   import * as pathify from 'vuex-pathify';
   import BudgetTrxCell from './BudgetTrxCell';
+  import findIndex from 'lodash/findIndex';
   import Vue from 'vue';
   var EDITCOLUMNS = 5;
 
@@ -144,7 +144,7 @@
       // Update Transaction
       // Callback called when a single transaction has been updated
       updatetrx: function(trx) {
-        var i = _.findIndex(this.transactions, {id:trx.id});
+        var i = findIndex(this.transactions, {id:trx.id});
         Vue.set(this.transactions, i, trx);
       },
     },

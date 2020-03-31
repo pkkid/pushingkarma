@@ -31,11 +31,11 @@
 </template>
 
 <script>
-  import * as _ from 'lodash';
   import * as api from '@/api';
   import * as pathify from 'vuex-pathify';
   import * as utils from '@/utils/utils';
   import NotesMixin from './NotesMixin';
+  import trim from 'lodash/trim';
   import Vue from 'vue';
 
   export default {
@@ -90,7 +90,7 @@
     mounted: function() {
       var noteid = this.$route.query.noteid;
       if (noteid) { this.$emit('newSelection', noteid); }
-      this.search = _.trim(this.search || this.$route.query.search || '');
+      this.search = trim(this.search || this.$route.query.search || '');
     },
 
     methods: {

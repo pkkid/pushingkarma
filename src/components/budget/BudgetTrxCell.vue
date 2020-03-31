@@ -14,11 +14,11 @@
 </template>
 
 <script>
-  import * as _ from 'lodash';
   import * as api from '@/api';
   import * as utils from '@/utils/utils';
   import * as pathify from 'vuex-pathify';
   import fuzzysort from 'fuzzysort';
+  import trim from 'lodash/trim';
   import Vue from 'vue';
 
   // Status names
@@ -89,8 +89,8 @@
         if (this.fchoices.length) {
           event.preventDefault();
           event.stopPropagation();
-          if (event.target.className == 'choice') { this.value = _.trim(event.target.textContent); }
-          else { this.value = _.trim(this.fchoices[this.highlighted].name); }
+          if (event.target.className == 'choice') { this.value = trim(event.target.textContent); }
+          else { this.value = trim(this.fchoices[this.highlighted].name); }
         }
       },
 

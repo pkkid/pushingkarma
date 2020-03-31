@@ -31,8 +31,8 @@
 </template>
 
 <script>
-  import * as _ from 'lodash';
   import * as pathify from 'vuex-pathify';
+  import sumBy from 'lodash/sumBy';
   
   export default {
     name: 'BudgetMenu',
@@ -40,7 +40,7 @@
       view: pathify.sync('budget/view'),
       account: pathify.sync('budget/account'),
       accounts: pathify.sync('budget/accounts'),
-      balance: function() { return _.sumBy(this.accounts, a => parseFloat(a.balance)).toFixed(2); },
+      balance: function() { return sumBy(this.accounts, a => parseFloat(a.balance)).toFixed(2); },
     },
   };
 </script>

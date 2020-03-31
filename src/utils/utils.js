@@ -1,5 +1,6 @@
-import * as _ from 'lodash';
 import axios from 'axios';
+import forOwn from 'lodash/forOwn';
+import isEqual from 'lodash/isEqual';
 export {axios};
 
 // Cancel
@@ -166,10 +167,10 @@ export function strToBool(value) {
 export function updateHistory(router, changes) {
   var query = {};
   var fullquery = Object.assign({}, router.history.current.query, changes);
-  _.forOwn(fullquery, function(value, key) {
+  forOwn(fullquery, function(value, key) {
       if (value) { query[key] = value.toString(); }
   });
-  if (!_.isEqual(query, router.history.current.query)) {
+  if (!isEqual(query, router.history.current.query)) {
     router.push({query});
   }
   //query = _.pickBy(query, _.identity);  // remove falsey values

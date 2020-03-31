@@ -37,11 +37,11 @@
 </template>
 
 <script>
-  import * as _ from 'lodash';
   import * as api from '@/api';
   import * as moment from 'moment';
   import * as pathify from 'vuex-pathify';
   import BudgetYearCell from './BudgetYearCell';
+  import map from 'lodash/map';
 
   export default {
     name: 'BudgetYear',
@@ -59,7 +59,7 @@
     },
     computed: {
       categories: pathify.sync('budget/categories'),
-      monthstrs: function() { return _.map(this.months, month => month.format('YYYY-MM')); },
+      monthstrs: function() { return map(this.months, month => month.format('YYYY-MM')); },
       months: function() {
         var months = [];
         var month = this.start.clone();
@@ -87,7 +87,7 @@
       // Initialize an empty group collection
       initGroups: function() {
         var groups = {};
-        var catnames = _.map(this.categories, 'name');
+        var catnames = map(this.categories, 'name');
         for (var catname of catnames) {
           groups[catname] = {};
           groups[catname].total = 0;
