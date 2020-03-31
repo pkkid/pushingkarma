@@ -161,7 +161,6 @@ export function strToBool(value) {
   return ['yes','y','true','t','x'].indexOf(value) >= 0;
 }
 
-
 // Update History
 // Update the address bar history.
 export function updateHistory(router, changes) {

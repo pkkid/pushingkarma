@@ -6,6 +6,7 @@
   "license": "CC-BY-SA-2.5",
   "dependencies": {
     "axios": "^0.19.2",
+    "buefy": "^0.8.13",
     "core-js": "^3.6.4",
     "fuzzysort": "^1.1.4",
     "highlight.js": "^9.18.1",
@@ -36,7 +37,8 @@
     "prosemirror-tables": "^1.0.0",
     "sass-loader": "^7.3.1",
     "vue-cli-plugin-source-dir": "~0.1.0",
-    "vue-template-compiler": "^2.6.11"
+    "vue-template-compiler": "^2.6.11",
+    "webpack-bundle-analyzer": "^3.6.1"
   },
   "optionalDependencies": {
     "fsevents": "^2.1.2"
