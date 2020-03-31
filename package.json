@@ -49,6 +49,7 @@
     "get-database": "scp pushingkarma.com:~/pk/db.sqlite3 pk/",
     "vue-build": "vue-cli-service build",
     "vue-lint": "vue-cli-service lint",
+    "vue-report": "google-chrome pk/_dist/report.html",
     "vue-watch": "vue-cli-service build --watch",
     "deploy": "npm run vue-build && cd ansible && ansible-playbook -i inventory.ini playbook.yml --tags=deploy",
     "deploy-quick": "cd ansible && ansible-playbook -i inventory.ini playbook.yml --tags=deploy",
