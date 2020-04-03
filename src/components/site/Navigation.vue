@@ -23,7 +23,7 @@
 <script>
   import * as pathify from 'vuex-pathify';
   import Login from '@/components/site/Login';
-
+  
   export default {
     name: 'Navigation',
     components: {Login},

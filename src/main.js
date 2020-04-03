@@ -2,14 +2,23 @@ import Vue from 'vue';
 import store from './store';
 import router from './router';
 import axios from 'axios';
-import vPortal from 'portal-vue';
-import vHotkey from 'v-hotkey';
-import vClickOutside from 'v-click-outside';
 import {fixScroll} from '@/utils/plugins';
 import App from './App.vue';
-import Buefy from 'buefy';
 import '@/utils/filters';
 require('@/assets/css/index.scss');
+
+// Initialize General Vue Components
+import vPortal from 'portal-vue'; Vue.use(vPortal);
+import vHotkey from 'v-hotkey'; Vue.use(vHotkey);
+import vClickOutside from 'v-click-outside'; Vue.use(vClickOutside);
+
+// Initialize Buefy Components
+import bButton from 'buefy/dist/components/button'; Vue.use(bButton);
+import bDropdown from 'buefy/dist/components/dropdown'; Vue.use(bDropdown);
+import bField from 'buefy/dist/components/field'; Vue.use(bField);
+import bIcon from 'buefy/dist/components/icon'; Vue.use(bIcon);
+import bInput from 'buefy/dist/components/input'; Vue.use(bInput);
+import bModal from 'buefy/dist/components/modal'; Vue.use(bModal);
 
 // Axios Configuiration - Tell Axios we want to include the csrf token and
 // where to get the value. The intercepter is a convenience function to
@@ -28,13 +37,9 @@ axios.interceptors.response.use(function(response) {
   return response;
 });
 
-// Setup Vue plugins and configuration
-Vue.use(Buefy);
-Vue.use(vPortal);
-Vue.use(vHotkey);
-Vue.use(vClickOutside);
+// Setup Vue
 Vue.config.productionTip = false;
-
+//Vue.config.silent = true;
 new Vue({
   mixins: [fixScroll],
   render: h => h(App),
