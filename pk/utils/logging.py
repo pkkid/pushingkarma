@@ -36,7 +36,7 @@ class CustomEmailHandler(AdminEmailHandler):
         if count == 0 or newcount >= self.maxcount or now >= timeout:
             ename = etype.__name__
             estr = str(evalue) or '--'
-            record.getMessage = lambda: f'[{count}x] {ename}: {estr}'
+            record.getMessage = lambda: f'[{newcount}x] {ename}: {estr}'
             self._set_cached(hashkey, 1, now + self.timeout)
             if settings.DEBUG:
                 log.info('Not sending excpetion email; DEBUG=True')
