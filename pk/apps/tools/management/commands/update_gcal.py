@@ -9,10 +9,10 @@ from django.core.management.base import BaseCommand
 from pk.apps.user.models import User
 from pk.utils.decorators import log_exception
 from ... import o365
-log = logging.getLogger('cmd')
+log = logging.getLogger('cmd')      # Python logger
 
-IDPREFIX = 'pk3'  # Change this to avoid "identifier already exists" errors.
-DATEFORMAT = '%Y-%d-%mT%H:%M:%S%Z'  # Dateformat for comparisons
+DATEFORMAT = '%Y-%d-%mT%H:%M:%S%Z'  # Date format comparisons
+DRYRUN = False                      # Dont commit anything
 
 
 class Command(BaseCommand):
@@ -31,28 +31,31 @@ class Command(BaseCommand):
         # Add New events from Office 365 to Google Calendar
         for o365_id, o365_event in o365_events.items():
             if o365_id not in gcal_events:
-                log.info(f'Creating Event: {o365_event["Subject"]} - {o365_event["Start"][:10]} ({o365_id})')
+                log.info(f'Creating Event: {o365_event["Start"][:10]} {o365_event["Subject"]} ({o365_id})')
                 gcal_event = self.create_gcal_event(o365_event, id=o365_id)
-                service.events().insert(calendarId=calendar['id'], body=gcal_event).execute()
+                if not DRYRUN:
+                    service.events().insert(calendarId=calendar['id'], body=gcal_event).execute()
         # Remove existing events in Google Calendar
-        for gcal_id, gcal_event in gcal_events.items():
-            o365_event = o365_events.get(gcal_id)
+        for o365_id, gcal_event in gcal_events.items():
+            o365_event = o365_events.get(o365_id)
             if not o365_event:
-                log.info(f'Removing Event: {gcal_event["summary"]} - {gcal_event["start"]["dateTime"][:10]} ({gcal_id})')
-                service.events().delete(calendarId=calendar['id'], eventId=gcal_id).execute()
+                log.info(f'Removing Event: {gcal_event["start"]["dateTime"][:10]} {gcal_event["summary"]} ({o365_id})')
+                if not DRYRUN:
+                    service.events().delete(calendarId=calendar['id'], eventId=gcal_event['id']).execute()
                 continue
         # Update existing events in Google Calendar
-        for gcal_id, gcal_event in gcal_events.items():
-            o365_event = o365_events.get(gcal_id)
+        for o365_id, gcal_event in gcal_events.items():
+            o365_event = o365_events.get(o365_id)
             if o365_event:
                 updates = self.check_update_event(gcal_event, o365_event)
                 if updates:
-                    log.info(f'Updating Event: {gcal_event["summary"]} - {gcal_event["start"]["dateTime"][:10]} ({gcal_id})')
-                    service.events().update(calendarId=calendar['id'], eventId=gcal_id, body=updates).execute()
+                    log.info(f'Updating Event: {gcal_event["start"]["dateTime"][:10]} {gcal_event["summary"]} ({o365_id})')
+                    if not DRYRUN:
+                        service.events().update(calendarId=calendar['id'], eventId=gcal_event['id'], body=updates).execute()
 
     def get_o365_events(self, calendar):
         """ Returns a dict of o365 Events {eventids: event} for the specified calendar. """
-        _eventid = lambda event: f'{IDPREFIX}{hashlib.md5(event["ItemId"]["Id"].encode()).hexdigest()}'
+        _eventid = lambda event: f'{hashlib.md5(event["ItemId"]["Id"].encode()).hexdigest()}'
         return {_eventid(event):event for event in o365.get_events(calendar)}
 
     def get_gcal(self, service, name):
@@ -65,14 +68,29 @@ class Command(BaseCommand):
 
     def get_gcal_events(self, service, calendar):
         """ Returns a dict of Google Calendar {eventids: event} for the specified calendar. """
-        result = service.events().list(maxResults=9999, calendarId=calendar['id'], showDeleted=False).execute()
-        gcal_events = {event['id']:event for event in result['items']}
+        gcal_events = {}
+        kwargs = {'calendarId':calendar['id'], 'showDeleted':False, 'maxResults':500, 'pageToken':None}
+        while kwargs['pageToken'] != 'END':
+            log.info(f'Fetching gcal events (page={str(kwargs["pageToken"])[:10]})')
+            result = service.events().list(**kwargs).execute()
+            for gcal_event in result['items']:
+                o365_id = self.get_o365_id(gcal_event)
+                gcal_events[o365_id] = gcal_event
+            kwargs['pageToken'] = result.get('nextPageToken', 'END')
         return gcal_events
+
+    def get_o365_id(self, gcal_event):
+        """ Return the o365 event id for syncing. """
+        for line in gcal_event.get('description', '').split('\n'):
+            if line.startswith('o365: '):
+                return line.split(': ')[1]
+        return gcal_event['id']
 
     def create_gcal_event(self, o365_event, id=None):
         """ Return the dict required to create a Google Calendar event. """
-        gcal_event = {'id':id} if id else {}
+        gcal_event = {}
         gcal_event['summary'] = o365_event['Subject']
+        gcal_event['description'] = f'o365: {id}'
         gcal_event['location'] = o365_event['Location']['DisplayName']
         gcal_event['start'] = {'dateTime': o365_event['Start']}
         gcal_event['end'] = {'dateTime': o365_event['End']}
