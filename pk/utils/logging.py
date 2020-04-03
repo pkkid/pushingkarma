@@ -1,8 +1,10 @@
 # encoding: utf-8
 import hashlib, time, traceback
+from django.conf import settings
 from django.core.cache import cache
 from django.utils.log import AdminEmailHandler
 from rest_framework.exceptions import AuthenticationFailed
+from pk import log
 
 
 class CustomEmailHandler(AdminEmailHandler):
@@ -26,14 +28,22 @@ class CustomEmailHandler(AdminEmailHandler):
         now = time.time()
         etype, evalue, tb = record.exc_info
         if etype in self.ignore:
+            log.info(f'Not sending excpetion email; ignored')
             return False
         hashkey = f'exc_{self._get_ehash(tb)}'
         count, timeout = self._get_cached(hashkey)
         newcount = count + 1
         if count == 0 or newcount >= self.maxcount or now >= timeout:
-            record.getMessage = lambda: f'[{newcount}x] {record.message}'
+            ename = etype.__name__
+            estr = str(evalue) or '--'
+            record.getMessage = lambda: f'[{count}x] {ename}: {estr}'
             self._set_cached(hashkey, 1, now + self.timeout)
+            if settings.DEBUG:
+                log.info('Not sending excpetion email; DEBUG=True')
+                return False
             return True
+        else:
+            log.info(f'Not sending excpetion email; count={newcount}')
         self._set_cached(hashkey, newcount, timeout)
         return False
 

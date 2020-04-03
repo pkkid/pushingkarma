@@ -84,8 +84,6 @@ CACHES = {'default': {
 
 # Logging
 makedirs(LOG_DIR, exist_ok=True)
-CMD_HANDLERS = ['console'] if DEBUG else ['email','console']
-PK_HANDLERS = ['file','console'] if DEBUG else ['file','email','console']
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
@@ -96,8 +94,8 @@ LOGGING = {
         'email': {'level':'ERROR', 'class':'pk.utils.logging.CustomEmailHandler'},
     },
     'loggers': {
-        'cmd': {'handlers':CMD_HANDLERS, 'level':'INFO', 'propagate':True},
-        'pk': {'handlers':PK_HANDLERS, 'level':'INFO', 'propagate':True},
+        'cmd': {'handlers':['email','console'], 'level':'INFO', 'propagate':True},
+        'pk': {'handlers':['file','email','console'], 'level':'INFO', 'propagate':True},
     },
     'formatters':{
         'standard':{'format':'%(asctime)-.19s %(module)12s:%(lineno)-3s %(levelname)-7s %(message)s'}
