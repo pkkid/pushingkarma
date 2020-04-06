@@ -13,8 +13,9 @@ pk/manage.py migrate
 pk/manage.py runserver 0.0.0.0:8000
 
 # Setup NPM and Vue
-sudo apt install ruby ruby-dev nodejs
+sudo apt install npm
 npm install
+npm install 
 npm run vue-build
 npm run start
 ```

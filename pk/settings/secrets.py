@@ -1,1 +1,1 @@
-/home/mjs7231/Private/pushingkarma/secrets.py
+/home/mjs7231/Private/Secrets/pushingkarma/secrets.py
