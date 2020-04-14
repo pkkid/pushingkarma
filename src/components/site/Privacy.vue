@@ -106,8 +106,9 @@
           <p>We shall not be hold responsible for any content that appears on your Website. You agree to protect and
             defend us against all claims that is rising on your Website. No link(s) should appear on any Website that
             may be interpreted as libelous, obscene or criminal, or which infringes, otherwise violates, or advocates
-            the infringement o
-       <router-link to='/terms'></router-link>ights</h3>
+            the infringement or other violation of, any third party rights.</p>
+
+          <h3>Reservation of Rights</h3>
           <p>We reserve the right to request that you remove all links or any particular link to our Website. You
             approve to immediately remove all links to our Website upon request. We also reserve the right to amen
             these terms and conditions and it’s linking policy at any time. By continuously linking to our Website,
