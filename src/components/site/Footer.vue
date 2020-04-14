@@ -24,7 +24,7 @@
       <div class='attribution'>
         <h4>Legal</h4>
         Copyright (c) 2020 PushingKarma. All rights reserved.
-        <a href='#'>Privacy Policy & Terms of Service</a>.
+        <router-link to='/privacy'>Terms of Service & Privacy Policy</router-link>.
       </div>
     </div>
   </div>
@@ -43,6 +43,8 @@
   #footer {
     text-align: left;
     font-size: 0.9rem;
+    font-family: Roboto;
+    color: $darkbg-text;
     line-height: 1.5;
     width: 1000px;
     margin: 0px auto;
@@ -59,6 +61,10 @@
       h4 {
         position: relative;
         margin-bottom: 15px;
+        font-family: Roboto;
+        font-size: 15px;
+        font-weight: 400;
+        color: #ebdbb2;
         &::before {
           content: ' ';
           display: block;

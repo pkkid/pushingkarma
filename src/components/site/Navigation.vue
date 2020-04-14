@@ -34,6 +34,7 @@
     },
     mounted: function() {
       this.$refs.login.updateCurrentUser();
+      this.$store.set('global/layout', this.cls);
     },
   };
 </script>

@@ -44,7 +44,7 @@
     "fsevents": "^2.1.2"
   },
   "scripts": {
-    "start": "addkeys.sh; npm-run-all -p django-runserver vue-watch",
+    "start": "mount-private.py; npm-run-all -p django-runserver vue-watch",
     "django-runserver": "~/.virtualenvs/pk/bin/python pk/manage.py runserver",
     "get-database": "scp pushingkarma.com:~/pk/db.sqlite3 pk/",
     "vue-build": "vue-cli-service build",

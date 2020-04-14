@@ -52,7 +52,6 @@
     // Mounted
     // Setup navigation, demo, accounts
     created: async function() {
-      this.$store.set('global/layout', 'topnav');
       this.demo = Boolean(this.$route.query.demo);
       this.view = this.$route.query.view || 'month';
       // Fetch accounts and categories

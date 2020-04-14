@@ -75,7 +75,6 @@
     mounted: function() {
       // Tiptap Examples: https://github.com/scrumpy/tiptap
       // Tiptap Documentation: https://tiptap.scrumpy.io/docs
-      this.$store.set('global/layout', 'topnav');
       this.editor = new Editor({
         editable: false,
         onUpdate: this.updateToc,

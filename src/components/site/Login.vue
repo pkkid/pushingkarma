@@ -32,7 +32,7 @@
             <b-button type='is-light' @click='logout'>Log Out</b-button>
           </article>
           <!-- Login form -->
-          <div v-else class='loginform' key='loginform'>
+          <article v-else class='loginform' key='loginform'>
             <h2>Login to PushingKarma <div class='subtext'>Amazing things await you</div></h2>
             <img v-if='gauth !== null' class='google' src='@/assets/img/google_signin.png' @click='googleLogin'/>
             <i v-else class='fake-avatar mdi mdi-account-circle-outline'/>
@@ -41,7 +41,7 @@
               <b-field label='Password'><b-input v-model='loginform.password' type='password'/></b-field>
               <b-button type='is-primary' native-type='submit'>Login</b-button>
             </form>
-          </div>
+          </article>
           <!-- Footnote -->
           <div class='footnote'>
             © 2019 PushingKarma. All Rights Reserved.<br/>
