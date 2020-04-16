@@ -27,6 +27,10 @@
       <div class='total blur'>{{balance | usdint}}</div>
       <div style='clear:both;'/>
     </div>
+    <!-- Settings -->
+    <div class='menuitem' @click='view="settings"; account=null' :class='{highlighted:view=="settings"}'>
+      <i class='mdi mdi-cogs'/>Settings
+    </div>
   </div>
 </template>
 

@@ -8,6 +8,7 @@
         <transition name='fadein'>
           <BudgetMonth v-if='view=="month"' />
           <BudgetYear v-else-if='view=="year"' />
+          <BudgetSettings v-else-if='view=="settings"' />
           <BudgetTrx v-else />
         </transition>
       </div>
@@ -22,6 +23,7 @@
   import * as utils from '@/utils/utils';
   import BudgetMenu from './BudgetMenu';
   import BudgetMonth from './BudgetMonth';
+  import BudgetSettings from './BudgetSettings';
   import BudgetYear from './BudgetYear';
   import BudgetTrx from './BudgetTrx';
   import Dropzone from '@/components/Dropzone';
@@ -30,7 +32,7 @@
   
   export default {
     name: 'Budget',
-    components: {BudgetMenu, BudgetMonth, BudgetYear,
+    components: {BudgetMenu, BudgetMonth, BudgetYear, BudgetSettings,
       BudgetTrx, Dropzone, Footer, Navigation},
     computed: {
       account: pathify.sync('budget/account'),
@@ -79,20 +81,25 @@
 
 <style lang='scss'>
   #budget .contentarea {
-    // box-sizing: border-box;
-    // color: $lightbg-text;
-    // margin-left: 300px;
-    // margin-top: 60px;
-    // background-color: darken($lightbg-color, 10%);
-
     box-sizing: border-box;
     color: $lightbg-text;
     margin-left: 300px;
     margin-top: 60px;
-    background-color: darken($lightbg-color, 10%);
+    background-color: darken($lightbg-color, 3%);
     font-family: Roboto, Arial, Helvetica, sans-serif;
     font-weight: 300;
     z-index: 28;
+
+    h2 {
+      font-size: 1.5em;
+      margin-bottom: 10px;
+      margin-top: 10px;
+    }
+    h3 {
+      font-size: 1.2em;
+      margin-bottom: 10px;
+      margin-top: 10px;
+    }
 
     .budgetbg {
       position: relative;

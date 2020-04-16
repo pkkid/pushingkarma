@@ -6,7 +6,7 @@ means let me know. :)
 ### Setup Dev Environment
 ```bash
 # Create Python virtualenv environment
-sudo apt install virtualenvwrapper redis-server
+sudo apt install ansible redis-server virtualenvwrapper
 mkvirtualenv --python=/usr/bin/python3 pk
 pip install -r pk/requirements.pip
 pk/manage.py migrate

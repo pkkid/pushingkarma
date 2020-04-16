@@ -19,6 +19,7 @@ import bField from 'buefy/dist/components/field'; Vue.use(bField);
 import bIcon from 'buefy/dist/components/icon'; Vue.use(bIcon);
 import bInput from 'buefy/dist/components/input'; Vue.use(bInput);
 import bModal from 'buefy/dist/components/modal'; Vue.use(bModal);
+import bTable from 'buefy/dist/components/table'; Vue.use(bTable);
 
 // Axios Configuiration - Tell Axios we want to include the csrf token and
 // where to get the value. The intercepter is a convenience function to
