@@ -28,7 +28,7 @@
     text-align: center;
     top: 20px;
     width: 300px;
-    transition: $newtab_transition_fast;
+    transition: $newtab_transition;
     cursor: pointer;
     .date {
       color: $newtab_dim;

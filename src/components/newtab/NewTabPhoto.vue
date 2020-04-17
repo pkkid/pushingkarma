@@ -55,7 +55,6 @@
       opacity: 0;
       background-position: center center;
       background-size: cover;
-      //transition: $newtab_transition_fast;
       z-index: 0;
     }
     .details {
@@ -72,7 +71,7 @@
       position: absolute;
       top: 130px;
       transform: translateX(-50%);
-      transition: $newtab_transition_fast;
+      transition: $newtab_transition;
       .title {
         font-size:14px;
         float: left;

@@ -58,7 +58,7 @@
     position: absolute;
     width: 700px;
     opacity: 0;
-    transition: $newtab_transition_fast;
+    transition: $newtab_transition;
     &.showing { opacity: 1; }
     .title {
       margin-bottom: 0px;

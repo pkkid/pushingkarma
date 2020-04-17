@@ -38,7 +38,7 @@
     bottom: 20px;
     position: absolute;
     right: 20px;
-    transition: $newtab_transition_fast;
+    transition: $newtab_transition;
     width: 275px;
     .title {
       border-bottom: 1px solid rgba(255,255,255,0.3);

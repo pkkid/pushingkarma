@@ -60,7 +60,7 @@
     position: absolute;
     right: 20px;
     top: 20px;
-    transition: $newtab_transition_fast;
+    transition: $newtab_transition;
     width: 350px;
     .weather-today {
       font-size: 16px;
@@ -74,7 +74,7 @@
     }
     .weather-today-summary {
       opacity: 0;
-      transition: $newtab_transition_fast;
+      transition: $newtab_transition;
     }
     .forecast {
       color: $newtab_dim;
@@ -84,7 +84,7 @@
       padding-top: 20px;
       width: 275px;
       opacity: 0;
-      transition: $newtab_transition_fast;
+      transition: $newtab_transition;
       .forecast-day { width:30px; margin-left:25px; text-align:center; float:left; }
       .forecast-weekday { padding-bottom:2px; }
       [class^='diw-']:before { font-size:20px; }

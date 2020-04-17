@@ -41,7 +41,7 @@
 
 <style lang='scss'>
   #navigation {
-    font-family: $font-serif;
+    font-family: $fontfamily-title;
     font-size: 16px;
     height: 100vh;
     left: 0px;
