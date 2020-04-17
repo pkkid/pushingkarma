@@ -1,7 +1,7 @@
 <template>
   <div id='app' :class='layout'>
     <div id='content'>
-      <div id='logo'>
+      <div id='logo' class='darkbg'>
         <router-link to='/#splash'>
           <img src='./assets/img/pk.svg'/><br/>
           <span class='title'>PushingKarma</span>
@@ -9,7 +9,8 @@
         <span v-if='user.id' class='subtext'>
           <a v-if='globals.DEBUG == false' href='http://localhost:8000'>To Development</a>
           <a v-if='globals.DEBUG == true' href='http://pushingkarma.com'>To Production</a>
-          - <a href='/api/'>API</a>
+          <span> - </span>
+          <a href='/api/'>API</a>
         </span>
       </div>
       <transition name='fadein'><router-view/></transition>
@@ -61,8 +62,8 @@
   }
   #logo {
     $bounce: cubic-bezier(.47,1.64,.41,.8);
-    border-bottom: 1px solid lighten($darkbg-color, 7%);
-    color: $darkbg-text;
+    color: $darkbg-fg0;
+    font-family: $fontfamily-title;
     height: 220px;
     left: 0px;
     position: fixed;
@@ -78,37 +79,31 @@
       transition: all 0.5s $bounce;
     }
     .title {
-      color: $darkbg-text;
-      font-family: arial;
+      color: $darkbg-fg0;
       font-size: 15px;
       font-weight: bold;
-      left: 65px;
-      letter-spacing: 4px;
+      left: 62px;
+      letter-spacing: 3px;
       position: absolute;
       text-transform: uppercase;
       top: 150px;
       transition: all 0.5s $bounce;
     }
     .subtext {
-      color: darken($darkbg-text, 50%);
+      color: darken($darkbg-fg0, 50%);
       position: absolute;
       font-size: 10px;
       font-weight: 500;
       top: 165px;
-      left: 65px;
+      left: 63px;
       transition: all 0.5s $bounce;
-      a, a:visited { color: $darkbg-text; opacity:0.6; }
-      a:hover { opacity:0.8; }
+      a,a:visited,span {
+        color: $darkbg-fg0;
+        opacity: 0.3;
+        transition: all .3s ease;
+      }
+      a:hover { opacity:0.9; }
     }
-    a, a:visited { color: $darkbg-text; }
-  }
-
-  #content {
-    // Border and margin fix margin collapsing
-    // when a modal window is open.
-    border-top: 1px solid $darkbg-color;
-    margin-top: -1px;
-    transition: filter .3s ease;
   }
 
   .topnav #logo {
@@ -116,8 +111,8 @@
     padding: 10px 20px;
     height: 61px;
     img { height:40px; top:10px; left:20px; }
-    .title { top:20px; left:100px; }
-    .subtext { top: 35px; left:100px; }
+    .title { top:21px; left:100px; }
+    .subtext { top:36px; left:100px; }
   }
   .nonav #logo { display:none; }
 

@@ -67,23 +67,6 @@ $darkbg-aqua1: #8ec07c;
 $darkbg-purple0: #b16286;
 $darkbg-purple1: #d3869b;
 
-
-// DEPRECATED
-$lightbg-color:      #eeeeee;   // 12
-$lightbg-text:       #3c3836;   // 12 
-$lightbg-text-dim:   #7c6f64;   // 4
-$lightbg-link:       #076678;   // 4
-$lightbg-link-hover: #076678;   // 1
-$lightbg-accent:     #d65d0e;   // 3
-$lightbg-input:      #3c3836;   // 1
-$darkbg-color:       #282828;   // 12
-$darkbg-text:        #ebdbb2;   // 12
-$darkbg-text-dim:    #bdae93;   // 5
-$darkbg-link:        #fbf1c7;   // 6
-$darkbg-link-hover:  #fe8019;   // 3
-$darkbg-accent:      #fe8019;   // 4
-$darkbg-input:       #d79921;   // 3
-
 // Buefy & Bulma Styles
 // https://buefy.org/documentation/customization
 $primary: #076678;
@@ -110,3 +93,19 @@ $newtab_dim: #eee;
 $raspi_color: #e5d9c0;
 $raspi_dim: darken($raspi_color, 15%);
 $newtab_transition: opacity 0.2s ease-in;
+
+// DEPRECATED
+$lightbg-color:      #eeeeee;   // 12
+$lightbg-text:       #3c3836;   // 12 
+$lightbg-text-dim:   #7c6f64;   // 4
+$lightbg-link:       #076678;   // 4
+$lightbg-link-hover: #076678;   // 1
+$lightbg-accent:     #d65d0e;   // 3
+$lightbg-input:      #3c3836;   // 1
+$darkbg-color:       #282828;   // 12
+$darkbg-text:        #ebdbb2;   // 12
+$darkbg-text-dim:    #bdae93;   // 5
+$darkbg-link:        #fbf1c7;   // 6
+$darkbg-link-hover:  #fe8019;   // 3
+$darkbg-accent:      #fe8019;   // 4
+$darkbg-input:       #d79921;   // 3

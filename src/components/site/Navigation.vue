@@ -1,12 +1,12 @@
 <template>
-  <div id='navigation' class='darkbg' :class='{topnav:cls=="topnav"}'>
-    <div class='menu'><ul>
-      <li><router-link to='/#splash'>Home</router-link></li>
-      <li><router-link to='/#about'>About</router-link></li>
-      <li><router-link to='/#projects'>Projects</router-link></li>
-      <li><router-link to='/notes'>Notes</router-link></li>
-      <li v-if='user.id'><router-link to='/budget'>Budget</router-link></li>
-    </ul></div>
+  <div id='navigation' class='darkbg'>
+    <div class='menu'>
+      <div><router-link to='/#splash'>Home</router-link></div>
+      <div><router-link to='/#about'>About</router-link></div>
+      <div><router-link to='/#projects'>Projects</router-link></div>
+      <div><router-link to='/notes'>Notes</router-link></div>
+      <div v-if='user.id'><router-link to='/budget'>Budget</router-link></div>
+    </div>
     <div class='links'>
       <div><a href='https://github.com/pkkid'><b-icon icon='github-box'/></a></div>
       <div><a href='https://www.linkedin.com/in/shepanski'><b-icon icon='linkedin-box'/></a></div>
@@ -42,25 +42,18 @@
 <style lang='scss'>
   #navigation {
     font-family: $fontfamily-title;
+    font-weight: 400;
     font-size: 16px;
+    position: fixed;
+    width: 300px;
     height: 100vh;
+    top: 0px;
     left: 0px;
     min-height: 600px;
     padding-top: 220px;
-    position: fixed;
-    top: 0px;
-    width: 300px;
     z-index: 29;
-    
-    a,a:visited {
-      img, .title { position: absolute; }
-    }
-    ul {
-      margin: 0px;
-      padding: 0px;
-      list-style-type: none;
-      li { margin: 0px; }
-    }
+
+    // Main Menu
     .menu {
       padding: 50px 20px 0px 60px;
       width: 100%;
@@ -75,7 +68,7 @@
         user-select: none;
       }
       a:before {
-        background-color: $darkbg-link-hover;
+        background-color: $darkbg-bg0;
         content: "";
         height: 2px;
         left: 100%;
@@ -86,8 +79,13 @@
         transition: all .3s ease;
         width: 0px;
       }
-      a:hover:before { width: 35px; }
+      a:hover:before {
+        width: 35px;
+        background-color: $darkbg-link-hover;
+      }
     }
+
+    // Social links and Avatar
     .links {
       display: flex;
       justify-content: space-between;
@@ -112,7 +110,8 @@
     }
   }
 
-  #navigation.topnav {
+  // Top navigation
+  .topnav #navigation {
     box-shadow: 0px 1px 2px rgba(0,0,0,0.3);
     height: 60px;
     min-height: 60px;
@@ -122,7 +121,7 @@
     .menu {
       line-height: 60px;
       padding: 0px;
-      li { float:left; margin-right:80px; }
+      div { float:left; margin-right:80px; }
     }
     .links {
       left: auto;
