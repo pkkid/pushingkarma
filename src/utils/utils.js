@@ -1,3 +1,4 @@
+import * as dayjs from 'dayjs';
 import axios from 'axios';
 import forOwn from 'lodash/forOwn';
 import isEqual from 'lodash/isEqual';
@@ -63,12 +64,25 @@ export function findIndex(objs, key, value) {
   });
 }
 
+// Format Date
+// Wrapper around dayjs.format
+// https://day.js.org/docs/en/display/format
+export function formatDate(value, format) {
+  return dayjs(value).format(format);
+}
+
 // Insert Commas
 // Add commas to the specified number.
 export function insertCommas(value) {
   var parts = value.toString().split('.');
   parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   return parts.join('.');
+}
+
+// Int
+// Wrapper around parseInt
+export function int(value) {
+  return parseInt(value, 10);
 }
 
 // Keep In Range
@@ -162,6 +176,15 @@ export function strToBool(value) {
   return ['yes','y','true','t','x'].indexOf(value) >= 0;
 }
 
+// Time Ago
+// Convert seconds or milliseconds to a human readable time ago string.
+// https://day.js.org/docs/en/plugin/relative-time
+export function timeAgo(value) {
+  if (Number.isInteger(value) && value < 99999999999) { value *= 1000; }
+  return dayjs(value).fromNow();
+}
+
+
 // Update History
 // Update the address bar history.
 export function updateHistory(router, changes) {
@@ -174,4 +197,25 @@ export function updateHistory(router, changes) {
     router.push({query});
   }
   //query = _.pickBy(query, _.identity);  // remove falsey values
+}
+
+// USD
+// Format number to USD display -$99.99 without cents.
+export function usd(value, places=2) {
+  var result;
+  var negative = value < 0;
+  value = Math.abs(value).toFixed(places);
+  if (negative) { result = '-$'+ insertCommas(value); }
+  else { result = '$'+ insertCommas(value); }
+  if (places == 2) {
+    if (result.match(/\.\d{1}$/)) { return result +'0'; }
+    if (!result.match(/\./)) { return result +'.00'; }
+  }
+  return result;
+}
+
+// USD Int
+// Format number to USD display without cents -$99
+export function usdint(value) {
+  return usd(value, 0);
 }

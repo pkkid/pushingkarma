@@ -4,7 +4,7 @@
       @keyup.up.prevent='setHighlighted(-1)'	
       @keyup.down.prevent='setHighlighted(+1)'
       @keydown.enter='pickChoice'/>
-    <div v-else-if='display == "usdint"' class='blur'>{{value | usdint}}</div>
+    <div v-else-if='display == "usd"' class='blur'>{{value | usd}}</div>
     <div v-else>{{value}}</div>
     <ul v-if='showchoices' class='choices'>
       <li v-for='(c, i) in fchoices' :key='c.id' class='choice'

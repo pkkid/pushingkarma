@@ -21,7 +21,7 @@
             <BudgetTrxCell @updated='updatetrx' :item='trx' :cell='cell(i,1)' :ref='cell(i,1)' :name='"date"' editable/>
             <BudgetTrxCell @updated='updatetrx' :item='trx' :cell='cell(i,2)' :ref='cell(i,2)' :name='"payee"' editable/>
             <BudgetTrxCell @updated='updatetrx' :item='trx' :cell='cell(i,3)' :ref='cell(i,3)' :name='"category.name"' :choices='categories' editable selectall/>
-            <BudgetTrxCell :item='trx' :name='"amount"' :display='"usdint"'/>
+            <BudgetTrxCell :item='trx' :name='"amount"' :display='"usd"'/>
             <BudgetTrxCell @updated='updatetrx' :item='trx' :cell='cell(i,4)' :ref='cell(i,4)' :name='"approved"' :display='"bool"' editable selectall />
             <BudgetTrxCell @updated='updatetrx' :item='trx' :cell='cell(i,5)' :ref='cell(i,5)' :name='"comment"' editable/>
           </tr>

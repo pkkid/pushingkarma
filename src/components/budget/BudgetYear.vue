@@ -18,8 +18,8 @@
             <td class='month usdint' v-for='monthstr in monthstrs' :key='cat.name+monthstr'>
               <BudgetYearCell :groups='groups' :cat='cat' :monthstr='monthstr'/>
             </td>
-            <td class='average usdint blur'><div>{{ avgCategory(cat.name) | usdint(0) }}</div></td>
-            <td class='total usdint blur'><div>{{ groups[cat.name].total | usdint(0) }}</div></td>
+            <td class='average usdint blur'><div>{{ avgCategory(cat.name) | usdint }}</div></td>
+            <td class='total usdint blur'><div>{{ groups[cat.name].total | usdint }}</div></td>
           </tr>
           <!-- Totals -->
           <tr class='savings'>
@@ -64,7 +64,6 @@
         var months = [];
         var month = this.start.clone();
         for (var i=0; i<=12; i++) {
-          console.log(month);
           months.push(month.clone());
           month = month.subtract(1, 'month');
         }
