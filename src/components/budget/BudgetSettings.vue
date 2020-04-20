@@ -3,10 +3,10 @@
     <h2>Budget Settings</h2>
     <div class='contentwrap'>
       <h3>Accounts</h3>
-      <b-table :data='tabledata' :narrowed='true' :hoverable='true'>
+      <b-table :data='tabledata' :narrowed='true' :hoverable='true' v-click-outside='cancelAll'>
         <template slot-scope='props'>
           <b-table-column v-for='data in props.row' :key='props.index+data.field' :label='data.name'>
-            <TableCell v-bind='{data, focus}' @click.native='focusOn($event, data.gid)'/>
+            <TableCell v-bind='{data, focus, editing}' @click.native='clickSetFocus($event, data.gid)'/>
           </b-table-column>
         </template>
         <template slot='empty'>No items to display.</template>
@@ -19,30 +19,21 @@
   import * as pathify from 'vuex-pathify';
   import * as utils from '@/utils/utils';
   import TableMixin from '@/components/TableMixin';
-  import TableCell from '@/components/TableCell';
 
   export default {
     name: 'BudgetSettings',
     mixins: [TableMixin],
-    components: {TableCell},
     data: () => ({
       columns: [
         {name:'Name', field:'name', id:1},
-        {name:'FID', field:'fid', id:2},
+        {name:'FID', field:'fid', id:2, select:true},
         {name:'Balance', field:'balance', display:utils.usd},
         {name:'Last Transaction', field:'none'},
       ],
     }),
     computed: {
       items: pathify.sync('budget/accounts'),
-      keymap: function() { return {
-        'up': (event) => this.navigate(event, -this.editcolumns),
-        'down': (event) => this.navigate(event, this.editcolumns),
-        'left': (event) => this.navigate(event, -1),
-        'right': (event) => this.navigate(event, 1),
-        'tab': (event) => this.navigate(event, 1),
-        'shift+tab': (event) => this.navigate(event, -1),
-      };},
+      keymap: function() { return this.tablemixin_keymap(); },
     },
   };
 </script>
