@@ -1,4 +1,37 @@
-import map from 'lodash/map';
+// TableMixin.js
+// Vue Mixin that works with a Buefy table to provide keyboard navigation and
+// editing ability. Instructions for using this are outlined below:
+//
+// 1. Import TableMixin object and add it to the mixins: [TableMixin]
+//
+// 2. Create columns data variable containins a list of dicts for each column:
+//    Column options include the following:
+//      * name: Required column name used in the header.
+//      * field: Required column field to lookup the value.
+//      * editable: Optionally set true if this column is editable.
+//      * select: Optionally set true to select all text when beginning edit.
+//      * display: Optionally pass function to modify display string.
+//    data: () => ({
+//      columns: [
+//        {name:'Name', field:'name', editable:true},
+//        {name:'FID', field:'fid', editable:true, select:true},
+//        {name:'Balance', field:'balance', display:utils.usd},
+//    ]}),
+//
+// 3. Create an 'items' variable in the component containins a list of dicts for each row.
+//    Create 'keymap' entry in computed variable with at least thee following..
+//    keymap: function() { return this.tablemixin_keymap(); },
+//
+// 4. Create the table object in the componet:
+//    <b-table :data='tabledata' :narrowed='true' :hoverable='true' v-click-outside='cancelAll'>
+//      <template slot-scope='props'>
+//        <b-table-column v-for='data in props.row' :key='props.index+data.field' :label='data.name'>
+//          <TableCell v-bind='{data, focus, editing}' @click.native='clickSetFocus($event, data.gid)'/>
+//        </b-table-column>
+//      </template>
+//      <template slot='empty'>No items to display.</template>
+//    </b-table>
+//
 import TableCell from '@/components/TableCell';
 
 export default {
@@ -9,7 +42,7 @@ export default {
   }),
   computed: {
     items: function() { return []; },
-    editcolumns: function() { return Math.max(...map(this.columns, (column) => column.id || 0)); }, 
+    editcolumns: function() { return this.columns.filter(c => c.editable).length; }, 
     maxfocus: function() { return this.items ? this.items.length * this.editcolumns : 0; },
     
     // Table cells
@@ -18,10 +51,12 @@ export default {
       var rows = [];
       for (var i in this.items) {
         var row = [];
+        var cid = 0;
         for (var column of this.columns) {
-          var data = Object.assign({}, column); 
+          var data = Object.assign({}, column);
+          cid += data.editable ? 1 : 0;
           data.value = this.items[i][data.field];
-          data.gid = data.id ? (i*this.editcolumns)+data.id : null;
+          data.gid = data.editable ? (i*this.editcolumns)+cid : null;
           row.push(data);
         }
         rows.push(row);

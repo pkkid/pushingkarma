@@ -25,8 +25,8 @@
     mixins: [TableMixin],
     data: () => ({
       columns: [
-        {name:'Name', field:'name', id:1},
-        {name:'FID', field:'fid', id:2, select:true},
+        {name:'Name', field:'name', editable:true},
+        {name:'FID', field:'fid', editable:true, select:true},
         {name:'Balance', field:'balance', display:utils.usd},
         {name:'Last Transaction', field:'none'},
       ],
