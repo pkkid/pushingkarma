@@ -8,38 +8,3 @@
 //
 // #home::after { background-image:url('../assets/image.jpg'); }
 // .parallax-static { background:white; }
-
-.parallax-wrapper {
-  height: 100vh;
-  overflow-x: hidden;
-  overflow-y: auto;
-  perspective: 2px;
-  scroll-behavior: smooth;
-
-  .parallax-bg,
-  .parallax-static {
-    position: relative;
-  }
-  .parallax-bg {
-    height: 100vh;
-  }
-  .parallax-static {
-    background-color: $lightbg-bg1;
-    color: #282828;
-    padding: 40px 40px 100px 40px;
-    text-align: left;
-  }
-  .parallax-bg::after {
-      content: " ";
-      position: absolute;
-      top: 0;
-      right: 0;
-      bottom: 0;
-      left: -3px;
-      transform: translateZ(-2px) scale(2.01);
-      background-size: cover;
-      background-position-x: 50%;
-      background-position-y: 50%;
-      z-index: -1;
-  }
-}
