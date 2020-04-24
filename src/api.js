@@ -11,6 +11,8 @@ export const Budget = {
   getCategories() { return axios.get('/api/budget/categories'); },
   getTransactions(params, cancelToken) { return axios.get('/api/budget/transactions', {params, cancelToken}); },
   getKeyVals() { axios.get('/api/budget/keyval'); },
+  patchAccount(id, data) { return axios.patch(`/api/budget/accounts/${id}`, data); },
+  patchCategory(id, data) { return axios.patch(`/api/budget/categories/${id}`, data); },
   patchTransaction(id, data) { return axios.patch(`/api/budget/transactions/${id}`, data); },
   upload(formdata) { return axios.put('/api/budget/upload', formdata); },
 };

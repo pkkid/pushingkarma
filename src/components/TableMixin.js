@@ -3,34 +3,32 @@
 // editing ability. Instructions for using this are outlined below:
 //
 // 1. Import TableMixin object and add it to the mixins: [TableMixin]
-//
 // 2. Create columns data variable containins a list of dicts for each column:
-//    Column options include the following:
-//      * name: Required column name used in the header.
-//      * field: Required column field to lookup the value.
-//      * editable: Optionally set true if this column is editable.
-//      * select: Optionally set true to select all text when beginning edit.
-//      * display: Optionally pass function to modify display string.
-//    data: () => ({
-//      columns: [
-//        {name:'Name', field:'name', editable:true},
-//        {name:'FID', field:'fid', editable:true, select:true},
-//        {name:'Balance', field:'balance', display:utils.usd},
-//    ]}),
-//
+//      Column options include the following:
+//       * name: Required column name used in the header.
+//       * field: Required column field to lookup the value.
+//       * editable: Optionally set true if this column is editable.
+//       * select: Optionally set true to select all text when beginning edit.
+//       * display: Optionally pass function to modify display string.
+//      data: () => ({
+//        columns: [
+//          {name:'Name', field:'name', editable:true},
+//          {name:'FID', field:'fid', editable:true, select:true},
+//          {name:'Balance', field:'balance', display:utils.usd},
+//      ]}),
 // 3. Create an 'items' variable in the component containins a list of dicts for each row.
-//    Create 'keymap' entry in computed variable with at least thee following..
-//    keymap: function() { return this.tablemixin_keymap(); },
-//
-// 4. Create the table object in the componet:
-//    <b-table :data='tabledata' :narrowed='true' :hoverable='true' v-click-outside='cancelAll'>
-//      <template slot-scope='props'>
-//        <b-table-column v-for='data in props.row' :key='props.index+data.field' :label='data.name'>
-//          <TableCell v-bind='{data, focus, editing}' @click.native='clickSetFocus($event, data.gid)'/>
-//        </b-table-column>
-//      </template>
-//      <template slot='empty'>No items to display.</template>
-//    </b-table>
+// 4. Create 'keymap' entry in computed variable with at least thee following..
+//      keymap: function() { return this.tablemixin_keymap(); },
+// 5. Create save() method that will be called when a cell needs to be saved.
+// 6. Create the table object in the componet:
+//      <b-table :data='tabledata' :narrowed='true' :hoverable='true' v-click-outside='cancelAll'>
+//        <template slot-scope='props'>
+//          <b-table-column v-for='data in props.row' :key='props.index+data.field' :label='data.name'>
+//            <TableCell v-bind='{data, focus, editing}' @click.native='clickSetFocus($event, data.tabindex)'/>
+//          </b-table-column>
+//        </template>
+//        <template slot='empty'>No items to display.</template>
+//      </b-table>
 //
 import TableCell from '@/components/TableCell';
 
@@ -51,12 +49,14 @@ export default {
       var rows = [];
       for (var i in this.items) {
         var row = [];
-        var cid = 0;
+        var roweditcount = 0;
         for (var column of this.columns) {
           var data = Object.assign({}, column);
-          cid += data.editable ? 1 : 0;
+          roweditcount += data.editable ? 1 : 0;
+          data.row = i;
+          data.id = this.items[i].id;
           data.value = this.items[i][data.field];
-          data.gid = data.editable ? (i*this.editcolumns)+cid : null;
+          data.tabindex = data.editable ? (i*this.editcolumns)+roweditcount : null;
           row.push(data);
         }
         rows.push(row);
@@ -83,15 +83,15 @@ export default {
 
     // Click: Set Focus
     // Called when user clicks on an editable cell
-    clickSetFocus: function(event, gid) {
-      if (gid != null) {
+    clickSetFocus: function(event, tabindex) {
+      if (tabindex != null) {
         event.preventDefault();
-        if (gid != this.focus) {
-          console.log(`Set new focus: ${gid}`);
-          this.focus = gid;
+        if (tabindex != this.focus) {
+          // Set new focus
+          this.focus = tabindex;
           this.editing = false;
         } else if (!this.editing) {
-          console.log(`Start editing ${this.focus}`);
+          // Start editing
           this.editing = true;
         }
       }
@@ -103,11 +103,12 @@ export default {
       if (this.focus) {
         event.preventDefault();
         if (!this.editing) {
-          console.log(`Start editing ${this.focus}`);
+          // Start editing
           this.editing = true;
         } else {
-          console.log(`Save value..`);
-          this.navigate(event, this.editcolumns);
+          // Save and goto next item
+          this.save(event, this.focus);
+          this.navigate(event, this.editcolumns, true);
         }
       }
     },
@@ -116,12 +117,12 @@ export default {
     // Called when user hits esc
     cancelEdit: function(event) {
       if (this.editing) {
+        // Cancel editing
         event.preventDefault();
-        console.log(`Cancel editing ${this.focus}`);
         this.editing = false;
       } else if (this.focus) {
+        // Clear focus
         event.preventDefault();
-        console.log(`Clear focus`);
         this.focus = null;
       }
     },
@@ -130,7 +131,7 @@ export default {
     // Called when user clicks off the table
     cancelAll: function() {
       if (this.focus || this.editing) {
-        console.log(`Cancel all`);
+        // Cancel all
         this.editing = false;
         this.focus = null;
       }
@@ -138,14 +139,18 @@ export default {
 
     // Navigate
     // Move the focused cell by the amount specified
-    navigate: function(event, amount) {
+    navigate: function(event, amount, allowEditing=false) {
       if (!this.focus) { return; }
-      if (this.editing) { return; }
+      if (!allowEditing && this.editing) { return; }
       event.preventDefault();
       var newfocus = this.focus + amount;
       if ((newfocus > 0) && (newfocus <= this.maxfocus)) {
-        console.log(`Navigate to ${newfocus}`);
+        // Navigate to new item
         this.focus = newfocus;
+      } else {
+        // Remove focus
+        this.editing = false;
+        this.focus = null;
       }
     },
 

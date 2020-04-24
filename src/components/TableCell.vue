@@ -12,17 +12,19 @@
     name: 'TableCell',
     props: {
       data: Object,       // Data {name, field, value, etc}
-      focus: Number,      // Global GID of focused cell
+      focus: Number,      // Global tabindex of focused cell
       editing: Boolean,   // Globally True when editing a value
     },
     computed: {
-      name: function() { return this.data.name || null; },          // Column Name
-      field: function() { return this.data.field || null; },        // Field Name
-      value: function() { return this.data.value || null; },        // Cell value
-      display: function() { return this.data.display || null; },    // Display callback
-      select: function() { return this.data.select || null; },      // Select text when editing
-      gid: function() { return this.data.gid || null; },            // Global ID (for editable cells)
-      focused: function() { return (this.gid && (this.gid === this.focus)); },
+      row: function() { return this.data.row; },                      // Item row index
+      id: function() { return this.data.id; },                        // Column Name
+      field: function() { return this.data.field; },                  // Field Name
+      value: function() { return this.data.value; },                  // Cell value
+      name: function() { return this.data.name || null; },            // Column Name
+      display: function() { return this.data.display || null; },      // Display callback
+      select: function() { return this.data.select || null; },        // Select text when editing
+      tabindex: function() { return this.data.tabindex || null; },    // Global ID (for editable cells)
+      focused: function() { return (this.tabindex && (this.tabindex === this.focus)); },
       showinput: function() { return this.focused && this.editing; },
       displayValue: function() { return this.display ? this.display(this.value) : this.value; },
     },
