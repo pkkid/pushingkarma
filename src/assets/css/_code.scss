@@ -25,42 +25,25 @@ article {
       font-size: 0.8rem;
       line-height: 1.5;
 
-      .hljs-comment,
-      .hljs-quote {
+      .hljs-comment, .hljs-quote {
         color: #99cc99;
       }
-      .hljs-variable,
-      .hljs-template-variable,
-      .hljs-attribute,
-      .hljs-tag,
-      .hljs-name,
-      .hljs-regexp,
-      .hljs-link,
-      .hljs-name,
-      .hljs-selector-id,
+      .hljs-variable, .hljs-template-variable, .hljs-attribute, .hljs-tag,
+      .hljs-name, .hljs-regexp, .hljs-link, .hljs-name, .hljs-selector-id,
       .hljs-selector-class {
         color: #f2777a;
       }
-      .hljs-number,
-      .hljs-meta,
-      .hljs-built_in,
-      .hljs-builtin-name,
-      .hljs-literal,
-      .hljs-type,
-      .hljs-params {
+      .hljs-number, .hljs-meta, .hljs-built_in, .hljs-builtin-name,
+      .hljs-literal, .hljs-type, .hljs-params {
         color: #f99157;
       }
-      .hljs-string,
-      .hljs-symbol,
-      .hljs-bullet {
+      .hljs-string, .hljs-symbol, .hljs-bullet {
         color: #99cc99;
       }
-      .hljs-title,
-      .hljs-section {
+      .hljs-title, .hljs-section {
         color: #ffcc66;
       }
-      .hljs-keyword,
-      .hljs-selector-tag {
+      .hljs-keyword, .hljs-selector-tag {
         color: #6699cc;
       }
       .hljs-emphasis {

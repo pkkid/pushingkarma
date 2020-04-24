@@ -1,8 +1,8 @@
 <!--
 Parallax Wrapper - Provides the SCSS to add parallax to a layout. You'll want
 to use one of the two layout wrappers below:
-  .parallax-bg -- A moving background image.
-  .parallax-static -- Static content (not moving).
+  .parallax-bg - A moving background image.
+  .parallax-static - Static content (not moving).
 
 Example Template:
   <Parallax>
