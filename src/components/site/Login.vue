@@ -148,7 +148,7 @@
 
 <style lang='scss'>
   #login {
-    background-color: #f8f8f8;
+    background-color: $lightbg-bg1;
     border-radius: 5px;
     height: 500px;
     position: relative;

@@ -12,10 +12,10 @@ $fontfamily-code: 'Roboto Mono', monospace;
 $lightbg-bgh: #f9f5d7;
 $lightbg-bgs: #f2e5bc;
 $lightbg-gray: #928374;
-$lightbg-bg0: #fbf1c7;
-$lightbg-bg1: #ebdbb2;
-$lightbg-bg2: #d5c4a1;
-$lightbg-bg3: #bdae93;
+$lightbg-bg0: #f8f8f8;  // original #fbf1c7;
+$lightbg-bg1: #eeeeee;  // original #ebdbb2;
+$lightbg-bg2: #e1e1e1;  // original #d5c4a1; 
+$lightbg-bg3: #d5d5d5;  // original #bdae93;
 $lightbg-bg4: #a89984;
 $lightbg-fg0: #282828;
 $lightbg-fg1: #3c3836;
@@ -95,7 +95,6 @@ $raspi_dim: darken($raspi_color, 15%);
 $newtab_transition: opacity 0.2s ease-in;
 
 // DEPRECATED
-$lightbg-color:      #eeeeee;   // 12
 $lightbg-text:       #3c3836;   // 12 
 $lightbg-text-dim:   #7c6f64;   // 4
 $lightbg-link:       #076678;   // 4

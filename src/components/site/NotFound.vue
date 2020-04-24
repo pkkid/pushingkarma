@@ -26,7 +26,8 @@
     box-sizing: border-box;
     color: $lightbg-text;
     margin-top: 60px;
-    background-color: darken($lightbg-color, 10%);
+    font-family: $fontfamily-artsy;
+    background-color: $lightbg-bg2;
     
     .contentbg {
       font-size: 2rem;
@@ -39,7 +40,8 @@
     }
     .x404 {
       font-size: 13rem;
-      font-weight: bold;
+      font-weight: 400;
+      line-height: 200px;
     }
   }
 </style>

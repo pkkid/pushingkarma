@@ -67,7 +67,7 @@
     vertical-align: middle;
   }
   .modal-container {
-    background-color: $lightbg-color;
+    background-color: $lightbg-bg0;
     border-radius: 8px;
     box-shadow: 0 2px 20px rgba(0, 0, 0, .8);
     color: #282828;
@@ -77,7 +77,7 @@
     width: 400px;
   }
   .modal-close {
-    color: $lightbg-color;
+    color: $lightbg-fg0;
     cursor: pointer;
     font-size: 4.5rem;
     opacity: 0.5;

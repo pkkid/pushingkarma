@@ -24,7 +24,6 @@
       <div class='attribution'>
         <h4>Legal</h4>
         Copyright (c) 2020 PushingKarma. All rights reserved.
-        <router-link to='/privacy'>Terms of Service & Privacy Policy</router-link>.
       </div>
     </div>
   </div>

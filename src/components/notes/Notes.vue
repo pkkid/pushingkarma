@@ -118,8 +118,7 @@
     color: $lightbg-text;
     margin-left: 300px;
     margin-top: 60px;
-    background-color: darken($lightbg-color, 10%);
-    font-family: Roboto, Arial, Helvetica, sans-serif;
+    background-color: $lightbg-bg3;
     font-weight: 300;
     z-index: 28;
     
@@ -142,11 +141,11 @@
       position: relative;
       min-height: calc(100vh - 70px);
       transition: padding 0.2s ease;
-      border: 1px solid darken($lightbg-color, 20%);
+      border: 1px solid darken($lightbg-bg3, 10%);
       border-radius: 2px;
       box-shadow: 0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15);
       padding: 40px 50px;
-      background-color: $lightbg-color;
+      background-color: $lightbg-bg1;
       z-index: 20;
     }
     h1 {

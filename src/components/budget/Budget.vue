@@ -85,8 +85,7 @@
     color: $lightbg-text;
     margin-left: 300px;
     margin-top: 60px;
-    background-color: darken($lightbg-color, 3%);
-    font-family: Roboto, Arial, Helvetica, sans-serif;
+    background-color: $lightbg-bg3;
     font-weight: 300;
     z-index: 28;
 
