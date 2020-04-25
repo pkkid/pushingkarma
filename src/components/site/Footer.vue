@@ -1,7 +1,7 @@
 <template>
-  <div id='footer' class='darkbg'>
-    <div class='footer-section' style='width:400px'>
-      <div class='site'>
+  <div id='footer'>
+    <div class='footerwrap'>
+      <div class='footercolumn' style='width:400px'>
         <h4>PushingKarma</h4>
         Site created using <a href='https://www.djangoproject.com/'>Django</a>,
         <a href='https://www.django-rest-framework.org/'>Django Rest Framework</a>,
@@ -11,20 +11,17 @@
           <i class='mdi mdi-email'></i> {{email}}<span style='display:none;'>+site</span>@gmail.com
         </div>
       </div>
-    </div>
-    <div class='footer-section' style='width:250px'>
-      <div class='social'>
+      <div class='footercolumn' style='width:250px'>
         <h4>Social Media</h4>
-        <li><i class='mdi mdi-github-box'/> <a href='https://github.com/pkkid'>Github</a></li>
-        <li><i class='mdi mdi-linkedin-box'/> <a href='https://www.linkedin.com/in/shepanski'>Linked In</a></li>
-        <li><i class='mdi mdi-facebook-box'/> <a href='https://www.facebook.com/mshepanski'>Facebook</a></li>
+        <div><i class='mdi mdi-github-box'/> <a href='https://github.com/pkkid'>Github</a></div>
+        <div><i class='mdi mdi-linkedin-box'/> <a href='https://www.linkedin.com/in/shepanski'>Linked In</a></div>
+        <div><i class='mdi mdi-facebook-box'/> <a href='https://www.facebook.com/mshepanski'>Facebook</a></div>
       </div>
-    </div>
-    <div class='footer-section' style='width:350px'>
-      <div class='attribution'>
+      <div class='footercolumn' style='width:350px'>
         <h4>Legal</h4>
         Copyright (c) 2020 PushingKarma. All rights reserved.
       </div>
+      <div style='clear:left;'/>
     </div>
   </div>
 </template>
@@ -40,43 +37,44 @@
 
 <style lang='scss'>
   #footer {
-    text-align: left;
-    font-size: 0.9rem;
-    font-family: Roboto;
-    color: $darkbg-text;
+    background-color: $darkbg-bg0;
+    color: $darkbg-fg0;
+    font-family: $fontfamily-article;
+    font-size: 0.8rem;
     line-height: 1.5;
-    width: 1000px;
-    margin: 0px auto;
+    text-align: left;
 
-    .footer-section {
-      float:left;
-      height: 250px;
-      margin-bottom: 40px;
-      padding: 50px 0px 100px 0px;
-      position: relative;
-      & > div { padding:0px 50px; border-right:1px solid lighten($darkbg-color, 7%); }
-      &:last-child > div { border-right: 0px; }
-
-      h4 {
-        position: relative;
-        margin-bottom: 15px;
-        font-family: Roboto;
-        font-size: 15px;
-        font-weight: 400;
-        color: #ebdbb2;
-        &::before {
-          content: ' ';
-          display: block;
-          position: absolute;
-          width: 30px;
-          height: 1px; 
-          background-color: $darkbg-accent;
-          bottom: -3px;
-        }
-      }
+    a,a:visited {
+      color: $darkbg-fg0;
+      text-decoration: none;
+      transition: color 0.2s ease;
+      &:hover { color: $darkbg-orange1; }
     }
-    li {
-      list-style-type: none;
+    .footerwrap {
+      margin: 0px auto;
+      width: 1005px;
+    }
+    .footercolumn {
+      float:left;
+      padding: 50px;
+      position: relative;
+    }
+    h4 {
+      color: $darkbg-fg0;
+      font-family: $fontfamily-artsy;
+      font-size: 1rem;
+      font-weight: 400;
+      margin-bottom: 15px;
+      position: relative;
+      &::before {
+        background-color: $darkbg-accent;
+        bottom: -3px;
+        content: ' ';
+        display: block;
+        height: 1px; 
+        position: absolute;
+        width: 30px;
+      }
     }
     .mdi {
       font-size: 1.4em;

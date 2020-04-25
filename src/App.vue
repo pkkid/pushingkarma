@@ -109,7 +109,7 @@
   .topnav #logo {
     border-bottom-width: 0px;
     padding: 10px 20px;
-    height: 61px;
+    height: 60px;
     img { height:40px; top:10px; left:20px; }
     .title { top:21px; left:100px; }
     .subtext { top:36px; left:100px; }

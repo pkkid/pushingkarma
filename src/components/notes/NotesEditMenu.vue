@@ -63,7 +63,7 @@
   var LANGUAGES = {bash,css,javascript,python,sql,xml};
 
   export default {
-    name: 'Notes',
+    name: 'NotesEditMenu',
     components: {EditorMenuBar},
     computed: {
       editing: pathify.sync('notes/editing'),
