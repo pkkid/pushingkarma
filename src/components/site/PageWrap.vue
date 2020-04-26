@@ -22,5 +22,6 @@ Simple Layout that looks like a page (or a peice of paper).
     min-height: calc(70vh);
     min-width: 900px;
     padding: 40px 50px;
+    ::selection { color:black; background:#ccc; }
   }
 </style>

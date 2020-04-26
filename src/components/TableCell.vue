@@ -66,6 +66,7 @@
       background-color: $lightbg-bg2;
       border: 2px solid $lightbg-blue0;
       box-shadow: 0px 0px 8px rgba(0,0,0,0.2);
+      color: darken($lightbg-blue0, 50%);
     }
   }
 </style>
