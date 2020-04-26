@@ -10,16 +10,6 @@ Simple Layout that looks like a page (or a peice of paper).
   </div>
 </template>
 
-<script>
-  export default {
-    name: 'PageWrap',
-    props: {
-      width: {type:String, default:'900px'},
-      padding: {type:String, default:'40px 50px'},
-    },
-  };
-</script>
-
 <style lang='scss'>
   #page {
     background-color: $lightbg-bg1;
@@ -28,8 +18,9 @@ Simple Layout that looks like a page (or a peice of paper).
     box-shadow: 0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15);
     color: $lightbg-text;
     font-family: $fontfamily-article;
+    max-width: 900px;
     min-height: calc(70vh);
-    width: 900px;
+    min-width: 900px;
     padding: 40px 50px;
   }
 </style>

@@ -85,10 +85,15 @@
 
 <style lang='scss'>
   #budget {
+    // Tweak page style and article styles
     #pagewrap { padding:30px 30px 60px 30px; }
-    #page { margin:0px auto; padding:25px 30px; width:1000px; }
+    #page { margin:0px auto; padding:25px 30px; max-width:1200px; min-width:800px; }
+    h1 { font-size:2rem; }
+    h1 .subtext { font-size:0.5em; padding-left:2px; }
+    h2 { font-size:1.3em; margin-bottom:10px; }
+    p { font-size:0.8em; margin-top:0px; }
 
-    // Demo Mode
+    // Demo mode blurs all financial values
     .demo .blur,
     .demo #sidepanel .blur {
       color: transparent !important;
@@ -98,7 +103,5 @@
     .demo #sidepanel .blur {
       text-shadow: 0 0 10px rgba($darkbg-fg0, 0.6) !important;
     }
-
   }
-  
 </style>

@@ -57,6 +57,7 @@ export default {
           data.id = this.items[i].id;
           data.value = this.items[i][data.field];
           data.tabindex = data.editable ? (i*this.editcolumns)+roweditcount : null;
+          data.width = column.width || null;
           row.push(data);
         }
         rows.push(row);
@@ -119,6 +120,7 @@ export default {
       if (this.editing) {
         // Cancel editing
         event.preventDefault();
+        document.getSelection().removeAllRanges();
         this.editing = false;
       } else if (this.focus) {
         // Clear focus
@@ -147,10 +149,6 @@ export default {
       if ((newfocus > 0) && (newfocus <= this.maxfocus)) {
         // Navigate to new item
         this.focus = newfocus;
-      } else {
-        // Remove focus
-        this.editing = false;
-        this.focus = null;
       }
     },
 

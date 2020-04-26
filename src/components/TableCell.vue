@@ -1,7 +1,6 @@
 <template>
-  <div :class='[{focused}]'>
-    <input v-if='showinput' type='text' ref='input' :value='value'/>
-    <div v-else>{{displayValue}}</div>
+  <div class='tablecell' :class='[{focused,editing}]'>
+    <div :contenteditable='editable' ref='div' spellcheck='false'>{{displayValue}}</div>
   </div>
 </template>
 
@@ -24,16 +23,20 @@
       display: function() { return this.data.display || null; },      // Display callback
       select: function() { return this.data.select || null; },        // Select text when editing
       tabindex: function() { return this.data.tabindex || null; },    // Global ID (for editable cells)
+      editable: function() { return this.focused && this.editing; },
       focused: function() { return (this.tabindex && (this.tabindex === this.focus)); },
-      showinput: function() { return this.focused && this.editing; },
       displayValue: function() { return this.display ? this.display(this.value) : this.value; },
     },
     watch: {
       editing: async function(newvalue, oldvalue) {
         if (this.focused && newvalue && !oldvalue) {
           await Vue.nextTick();
-          if (this.select) { this.$refs.input.select(); }
-          else { this.$refs.input.focus(); }
+          var range = document.createRange();
+          range.selectNodeContents(this.$refs.div);
+          var selection = window.getSelection();
+          if (!this.select) { range.collapse(false); }
+          selection.removeAllRanges();
+          selection.addRange(range);
         }
       },
     }
@@ -41,7 +44,28 @@
 </script>
 
 <style lang='scss'>
-  .focused {
-    background-color: red;
+  .tablecell {
+    div, input {
+      background-color: transparent;
+      border-radius: 4px;
+      border: 0px;
+      border: 2px solid transparent;
+      box-sizing: border-box;
+      color: $lightbg-fg1;
+      font-size: 0.9em;
+      line-height: 24px;
+      margin: 0px;
+      padding: 1px 3px;
+      width: 100%;
+    }
+    &.focused div {
+      background-color: $lightbg-bg2;
+      border: 2px solid darken($lightbg-bg2, 3%);
+    }
+    &.focused.editing div {
+      background-color: $lightbg-bg2;
+      border: 2px solid $lightbg-blue0;
+      box-shadow: 0px 0px 8px rgba(0,0,0,0.2);
+    }
   }
 </style>

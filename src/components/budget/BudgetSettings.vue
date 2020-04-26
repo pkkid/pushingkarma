@@ -1,17 +1,20 @@
 <template>
-  <div id='budgetmonth' v-hotkey='keymap'>
-    <h2>Budget Settings</h2>
-    <div class='contentwrap'>
-      <h3>Accounts</h3>
-      <b-table :data='tabledata' :narrowed='true' :hoverable='true' v-click-outside='cancelAll'>
-        <template slot-scope='props'>
-          <b-table-column v-for='data in props.row' :key='props.index+data.field' :label='data.name'>
-            <TableCell v-bind='{data, focus, editing}' :ref='`c${data.tabindex}`' @click.native='clickSetFocus($event, data.tabindex)'/>
-          </b-table-column>
-        </template>
-        <template slot='empty'>No items to display.</template>
-      </b-table>
-    </div>
+  <div id='budgetsettings' v-hotkey='keymap'>
+    <h1>Budget Settings <div class='subtext'>Edit budget accounts and categories</div></h1>
+    <h2>Bank Accounts</h2>
+    <p>Add all accounts that you plan to upload .qfx files for. Each bank should
+      provide a unique FID that you can see by opening the file. This is used to
+      determine the bank the data originated when uploading transactions.</p>
+    <b-table :data='tabledata' :narrowed='true' v-click-outside='cancelAll'>
+      <template slot-scope='props'>
+        <b-table-column v-for='c in props.row' :key='props.index+c.field' :label='c.name' :width='c.width'
+          :numeric='c.numeric' :cell-class='c.class'>
+          <TableCell v-bind='{data:c, focus, editing}' :ref='`c${c.tabindex}`'
+             @click.native='clickSetFocus($event, c.tabindex)'/>
+        </b-table-column>
+      </template>
+      <template slot='empty'>No items to display.</template>
+    </b-table>
   </div>
 </template>
 
@@ -27,10 +30,10 @@
     mixins: [TableMixin],
     data: () => ({
       columns: [
-        {name:'Name', field:'name', editable:true},
-        {name:'FID', field:'fid', editable:true, select:true},
-        {name:'Balance', field:'balance', display:utils.usd},
-        {name:'Last Transaction', field:'none'},
+        {name:'Name', field:'name', editable:true, width:'30%'},
+        {name:'FID', field:'fid', editable:true, select:true, width:'30%'},
+        {name:'Last Transaction', field:'last_transaction', width:'20%' },
+        {name:'Balance', field:'balance', display:utils.usd, numeric:true, width:'20%', class:'blur'},
       ],
     }),
     computed: {
@@ -55,16 +58,10 @@
 </script>
 
 <style lang='scss'>
-  #budgetmonth {
-    padding: 10px 20px;
-
-    .contentwrap {
-      background-color: white;
-      border: 1px solid darken($lightbg-bg3, 10%);
-      border-radius: 2px;
-      box-shadow: 0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15);
-      padding: 20px 40px;
+  #budgetsettings {
+    td.blur {
+      font-family: $fontfamily-code;
+      font-size: 0.9em;
     }
-
   }
 </style>
