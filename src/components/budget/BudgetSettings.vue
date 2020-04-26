@@ -1,67 +1,18 @@
 <template>
-  <div id='budgetsettings' v-hotkey='keymap'>
-    <h1>Budget Settings <div class='subtext'>Edit budget accounts and categories</div></h1>
-    <h2>Bank Accounts</h2>
-    <p>Add all accounts that you plan to upload .qfx files for. Each bank should
-      provide a unique FID that you can see by opening the file. This is used to
-      determine the bank the data originated when uploading transactions.</p>
-    <b-table :data='tabledata' :narrowed='true' v-click-outside='cancelAll'>
-      <template slot-scope='props'>
-        <b-table-column v-for='c in props.row' :key='props.index+c.field' :label='c.name' :width='c.width'
-          :numeric='c.numeric' :cell-class='c.class'>
-          <TableCell v-bind='{data:c, focus, editing}' :ref='`c${c.tabindex}`'
-             @click.native='clickSetFocus($event, c.tabindex)'/>
-        </b-table-column>
-      </template>
-      <template slot='empty'>No items to display.</template>
-    </b-table>
+  <div id='budgetsettings'>
+    <h1>
+      Budget Settings
+      <div class='subtext'>Edit budget accounts and categories</div>
+    </h1>
+    <BudgetSettingsAccounts/>
   </div>
 </template>
 
 <script>
-  import * as api from '@/api';
-  import * as pathify from 'vuex-pathify';
-  import * as utils from '@/utils/utils';
-  import TableMixin from '@/components/TableMixin';
-  import Vue from 'vue';
+  import BudgetSettingsAccounts from './BudgetSettingsAccounts';
 
   export default {
     name: 'BudgetSettings',
-    mixins: [TableMixin],
-    data: () => ({
-      columns: [
-        {name:'Name', field:'name', editable:true, width:'30%'},
-        {name:'FID', field:'fid', editable:true, select:true, width:'30%'},
-        {name:'Last Transaction', field:'last_transaction', width:'20%' },
-        {name:'Balance', field:'balance', display:utils.usd, numeric:true, width:'20%', class:'blur'},
-      ],
-    }),
-    computed: {
-      items: pathify.sync('budget/accounts'),
-      keymap: function() { return this.tablemixin_keymap(); },
-    },
-    methods: {
-      save: async function(event, tabindex) {
-        var cell = this.$refs[`c${tabindex}`][0];
-        var newvalue = event.srcElement.value;
-        if (newvalue != cell.value) {
-          var change = utils.rset({}, cell.field, newvalue);
-          console.log(`Updating account ${cell.id}`, change); 
-          var {data} = await api.Budget.patchAccount(cell.id, change);
-          // console.log(data);
-          console.log(cell.row, data);
-          Vue.set(this.items, cell.row, data);
-        }
-      },
-    }
+    components: {BudgetSettingsAccounts},
   };
 </script>
-
-<style lang='scss'>
-  #budgetsettings {
-    td.blur {
-      font-family: $fontfamily-code;
-      font-size: 0.9em;
-    }
-  }
-</style>

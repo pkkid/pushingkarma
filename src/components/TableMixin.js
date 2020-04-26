@@ -40,43 +40,43 @@ export default {
   }),
   computed: {
     items: function() { return []; },
-    editcolumns: function() { return this.columns.filter(c => c.editable).length; }, 
-    maxfocus: function() { return this.items ? this.items.length * this.editcolumns : 0; },
+    editcols: function() { return this.columns.filter(c => c.editable).length; }, 
+    maxfocus: function() { return this.items ? this.items.length * this.editcols : 0; },
     
     // Table cells
     // Mold the data rows into a list of lists of cells
     tabledata: function() {
       var rows = [];
       for (var i in this.items) {
-        var row = [];
-        var roweditcount = 0;
-        for (var column of this.columns) {
-          var data = Object.assign({}, column);
-          roweditcount += data.editable ? 1 : 0;
-          data.row = i;
-          data.id = this.items[i].id;
-          data.value = this.items[i][data.field];
-          data.tabindex = data.editable ? (i*this.editcolumns)+roweditcount : null;
-          data.width = column.width || null;
-          row.push(data);
+        var row=[], editcount=0;
+        for (var col of this.columns) {
+          editcount += col.editable ? 1 : 0;
+          var tabindex = col.editable ? (i * this.editcols) + editcount : null;
+          var cell = Object.assign({}, col, {
+            row: i,                             // Item row index
+            id: this.items[i].id,               // Item ID (from the db)
+            value: this.items[i][col.field],    // Cell value items[row][field]
+            tabindex: tabindex,                 // Cell tabindex for keyboard nav
+            width: col.width || null,           // Cell width
+          });
+          row.push(cell);
         }
         rows.push(row);
       }
       return rows;
     },
-
   },
   methods: {
     // TableMixin Keymap
     // Keymaps used with this mixin.
     tablemixin_keymap: function() {
       return {
-        'up': (event) => this.navigate(event, -this.editcolumns),
-        'down': (event) => this.navigate(event, this.editcolumns),
+        'up': (event) => this.navigate(event, -this.editcols),
+        'down': (event) => this.navigate(event, this.editcols),
         'left': (event) => this.navigate(event, -1),
         'right': (event) => this.navigate(event, 1),
-        'tab': (event) => this.navigate(event, 1),
-        'shift+tab': (event) => this.navigate(event, -1),
+        'tab': (event) => this.navigate(event, 1, true),
+        'shift+tab': (event) => this.navigate(event, -1, true),
         'enter': (event) => this.enterEditOrSave(event),
         'esc': (event) => this.cancelEdit(event),
       };
@@ -109,7 +109,7 @@ export default {
         } else {
           // Save and goto next item
           this.save(event, this.focus);
-          this.navigate(event, this.editcolumns, true);
+          this.navigate(event, this.editcols, true);
         }
       }
     },
@@ -149,8 +149,23 @@ export default {
       if ((newfocus > 0) && (newfocus <= this.maxfocus)) {
         // Navigate to new item
         this.focus = newfocus;
+      } else {
+        // Reached the end of the table, just stop editing.
+        this.editing = false;
       }
     },
+
+    // Set Focus Last
+    // Set focus to the first cell in the last row
+    setFocusLast: async function() {
+      console.log('SET FOCUS LAST');
+      await this.$nextTick();
+      var newfocus = (this.items.length - 1) * this.editcols + 1;
+      console.log(newfocus);
+      console.log(this.items[this.items.length-1]);
+      this.focus = newfocus;
+      //this.editing = true;
+    }
 
   },
 };

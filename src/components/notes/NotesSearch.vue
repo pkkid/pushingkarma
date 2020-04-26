@@ -11,20 +11,18 @@
         @keydown.esc.stop='$refs.search.blur()'/>
       <!-- Search Results -->
       <div class='results'>
-        <div class='scrollbox'>
-          <div class='scrollbox-content'>
-            <div class='result' v-for='note in notes' :key='note.id' :noteid='note.id'
-              :class='{highlighted:note.id == highlighted}' @click='$emit("newSelection", note.id)'>
-              {{note.title}}
-              <div class='subtext'>
-                {{note.tags}} <span v-if='note.tags'>-</span>
-                {{note.created | formatDate('MMM DD, YYYY')}}
-                <i v-if='isPrivateNote(note)' class='mdi mdi-key lock'/>
-              </div>
+        <ScrollBox>
+          <div class='result' v-for='note in notes' :key='note.id' :noteid='note.id'
+            :class='{highlighted:note.id == highlighted}' @click='$emit("newSelection", note.id)'>
+            {{note.title}}
+            <div class='subtext'>
+              {{note.tags}} <span v-if='note.tags'>-</span>
+              {{note.created | formatDate('MMM DD, YYYY')}}
+              <i v-if='isPrivateNote(note)' class='mdi mdi-key lock'/>
             </div>
-            <div v-if='!notes.length' class='empty'>No items to display.</div>
           </div>
-        </div>
+          <div v-if='!notes.length' class='empty'>No items to display.</div>
+        </ScrollBox>
       </div>
     </div>
   </div>
@@ -35,12 +33,14 @@
   import * as pathify from 'vuex-pathify';
   import * as utils from '@/utils/utils';
   import NotesMixin from './NotesMixin';
+  import ScrollBox from '@/components/ScrollBox';
   import trim from 'lodash/trim';
   import Vue from 'vue';
 
   export default {
     name: 'NotesSearch',
     mixins: [NotesMixin],
+    components: {ScrollBox},
     data: () => ({
       cancelSearch: null,  // Cancel search token
       highlighted: null,   // Highlighed note id

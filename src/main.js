@@ -13,14 +13,18 @@ import vHotkey from 'v-hotkey'; Vue.use(vHotkey);
 import vClickOutside from 'v-click-outside'; Vue.use(vClickOutside);
 
 // Initialize Buefy Components
-import bButton from 'buefy/dist/components/button'; Vue.use(bButton);
-import bDropdown from 'buefy/dist/components/dropdown'; Vue.use(bDropdown);
-import bField from 'buefy/dist/components/field'; Vue.use(bField);
-import bIcon from 'buefy/dist/components/icon'; Vue.use(bIcon);
-import bInput from 'buefy/dist/components/input'; Vue.use(bInput);
-import bModal from 'buefy/dist/components/modal'; Vue.use(bModal);
-import bSwitch from 'buefy/dist/components/switch'; Vue.use(bSwitch);
-import bTable from 'buefy/dist/components/table'; Vue.use(bTable);
+// import bButton from 'buefy/dist/components/button'; Vue.use(bButton);
+// import bDropdown from 'buefy/dist/components/dropdown'; Vue.use(bDropdown);
+// import bField from 'buefy/dist/components/field'; Vue.use(bField);
+// import bIcon from 'buefy/dist/components/icon'; Vue.use(bIcon);
+// import bInput from 'buefy/dist/components/input'; Vue.use(bInput);
+// import bModal from 'buefy/dist/components/modal'; Vue.use(bModal);
+// import bSnackbar from 'buefy/dist/components/snackbar'; Vue.use(bSnackbar);
+// import bSwitch from 'buefy/dist/components/switch'; Vue.use(bSwitch);
+// import bTable from 'buefy/dist/components/table'; Vue.use(bTable);
+
+import Buefy from 'buefy';
+Vue.use(Buefy);
 
 // Axios Configuiration - Tell Axios we want to include the csrf token and
 // where to get the value. The intercepter is a convenience function to

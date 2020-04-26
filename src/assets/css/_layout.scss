@@ -26,28 +26,6 @@ html, body {
   }
 }
 
-// Custom Scrollbars
-// <div class='scrollbox'>
-//   <div class='scrollbox-content'>[CONTENT]</div>
-// </div>
-.scrollbox {
-  overflow-x: hidden;
-  visibility: hidden;
-  height: calc(100vh - 100px);
-  transition: visibility 0s 0.2s;
-  width: 300px;
-  &::-webkit-scrollbar { width: 10px; }
-  &::-webkit-scrollbar-thumb {
-    background: rgba($darkbg-bg4, 0.8);
-    border-radius: 5px;
-    border: 2px solid $darkbg-color;
-  }
-}
-.scrollbox:hover,
-.scrollbox-content {
-  visibility: visible;
-}
-
 // Transition FadeIn
 // Fade in only, snap to display:none on fade out.
 .fadein-enter-active { transition: opacity .3s ease; }

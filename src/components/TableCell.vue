@@ -1,19 +1,22 @@
 <template>
-  <div class='tablecell' :class='[{focused,editing}]'>
+  <div class='tablecell' :class='[{focused,editing}, status]'>
     <div :contenteditable='editable' ref='div' spellcheck='false'>{{displayValue}}</div>
   </div>
 </template>
 
 <script>
-  import Vue from 'vue';
+  import * as utils from '@/utils/utils';
 
   export default {
     name: 'TableCell',
     props: {
-      data: Object,       // Data {name, field, value, etc}
-      focus: Number,      // Global tabindex of focused cell
-      editing: Boolean,   // Globally True when editing a value
+      data: Object,         // Data {name, field, value, etc}
+      focus: Number,        // Global tabindex of focused cell
+      editing: Boolean,     // Globally True when editing a value
     },
+    data: () => ({
+      status: 'default',    // Sets bgcolor to status {success or error}
+    }),
     computed: {
       row: function() { return this.data.row; },                      // Item row index
       id: function() { return this.data.id; },                        // Column Name
@@ -28,9 +31,11 @@
       displayValue: function() { return this.display ? this.display(this.value) : this.value; },
     },
     watch: {
-      editing: async function(newvalue, oldvalue) {
-        if (this.focused && newvalue && !oldvalue) {
-          await Vue.nextTick();
+      // Watch Editable - Set the cursor at the end of the input
+      // or select all text if the option select is true.
+      editable: async function() {
+        if (this.editable) {
+          await this.$nextTick();
           var range = document.createRange();
           range.selectNodeContents(this.$refs.div);
           var selection = window.getSelection();
@@ -39,13 +44,29 @@
           selection.addRange(range);
         }
       },
-    }
+    },
+    methods: {
+      // Show Success
+      // Sets visual indicator that saving value was successful.
+      showSuccess: async function() {
+        this.status = 'success';
+        await utils.sleep(1000);
+        this.status = 'default';
+      },
+
+      // Show Error
+      // Set visual indicator what saving value falied.
+      showError: function() {
+        this.status = 'error';
+        utils.snackbar(`Error saving ${this.name}.`, {type:'is-danger'});
+      },
+    },
   };
 </script>
 
 <style lang='scss'>
   .tablecell {
-    div, input {
+    > div {
       background-color: transparent;
       border-radius: 4px;
       border: 0px;
@@ -57,6 +78,8 @@
       margin: 0px;
       padding: 1px 3px;
       width: 100%;
+      height: 29px;
+      transition: all .3s ease;
     }
     &.focused div {
       background-color: $lightbg-bg2;
@@ -67,6 +90,13 @@
       border: 2px solid $lightbg-blue0;
       box-shadow: 0px 0px 8px rgba(0,0,0,0.2);
       color: darken($lightbg-blue0, 50%);
+    }
+    &.success div {
+      background-color: desaturate(lighten($darkbg-blue0, 40%), 10%);
+    }
+    &.error div {
+      background-color: desaturate(lighten($darkbg-red0, 40%), 10%);
+      border-color: $darkbg-red0;
     }
   }
 </style>

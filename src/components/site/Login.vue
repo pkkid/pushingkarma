@@ -29,7 +29,7 @@
                 </div>
               </dd>
             </dl>
-            <b-button type='is-light' @click='logout'>Log Out</b-button>
+            <b-button type='is-light is-small' @click='logout'>Log Out</b-button>
           </article>
           <!-- Login form -->
           <article v-else class='loginform' key='loginform'>
@@ -39,7 +39,7 @@
             <form @submit.prevent="login()">
               <b-field label='Email'><b-input v-model='loginform.email' autocomplete='new-password' spellcheck='false' autofocus='true'/></b-field>
               <b-field label='Password'><b-input v-model='loginform.password' type='password'/></b-field>
-              <b-button type='is-primary' native-type='submit'>Login</b-button>
+              <b-button type='is-primary is-small' native-type='submit'>Login</b-button>
             </form>
           </article>
           <!-- Footnote -->

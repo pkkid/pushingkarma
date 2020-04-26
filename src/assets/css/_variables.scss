@@ -72,15 +72,15 @@ $darkbg-purple1: #d3869b;
 $primary: #076678;
 $primary-invert: findColorInvert($primary);
 $colors: (
+  'black': ($darkbg-bg1, $darkbg-fg1),
+  'danger': ($darkbg-red0, $darkbg-fg1),
   'primary': ($primary, $primary-invert),
-  'white': (#eeeeee, #282828),
-  'black': (#282828, #eeeeee),
-  // 'light': ($light, $light-invert),
-  // 'dark': ($dark, $dark-invert),
-  // 'info': ($info, $info-invert),
-  // 'success': ($success, $success-invert),
-  // 'warning': ($warning, $warning-invert),
-  // 'danger': ($danger, $danger-invert),
+  'success': ($darkbg-green1, $darkbg-fg1),
+  'warning': ($darkbg-yellow1, $lightbg-fg1),
+  'white': ($lightbg-bg1, $lightbg-fg1),
+  'light': ($lightbg-bg1, $lightbg-fg1),
+  'dark': ($darkbg-bg1, $darkbg-fg1),
+  'info': ($darkbg-bg1, $darkbg-fg1),
 );
 $link: $primary;
 $link-invert: $primary-invert;

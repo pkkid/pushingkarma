@@ -1,13 +1,37 @@
 // Encoding: UTF-8
 // Buefy Overrides
+
+
+// Buttons
+// https://buefy.org/documentation/button
+.button {
+  border-width: 2px;
+  border-radius: 5px;
+  color: $lightbg-fg2;
+  &:active {
+    //background-color: $lightbg-bg1;
+    color: $lightbg-fg1;
+  }
+}
+
+// Form Controls
+// Labels - https://buefy.org/documentation/field
 .label {
   font-weight: 400;
   margin-bottom: 0px !important;
   font-size: 0.8em;
 }
 
+// Notices
+// https://buefy.org/documentation/snackbar/
+.notices {
+  font-size: 0.9rem;
+  padding: 70px 20px 20px 20px;
+}
+
 // Tables
-// Its a love hate relationship
+// Kitchen sink of usefulness; Is this a love hate relationship?
+// https://buefy.org/documentation/table
 .table-wrapper {
   background-color: lighten($lightbg-bg1, 2%);
   border: 1px solid $lightbg-bg3;
@@ -15,13 +39,9 @@
 }
 .table {
   background-color: transparent;
-  &.is-narrow th {
-    background-color: $lightbg-bg2;
-    font-size: 0.8em;
-    padding: 1px 10px;
+  td.blur { font-family:$fontfamily-code; font-size:0.9em; }
+  &.is-narrow {
+    th { background-color:$lightbg-bg2; font-size:0.8em; padding:1px 10px; }
+    td { padding:1px 5px; }
   }
-  &.is-narrow td {
-    padding: 1px 5px;
-  }
-
 }

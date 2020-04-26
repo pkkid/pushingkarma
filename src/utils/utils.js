@@ -3,6 +3,7 @@ import axios from 'axios';
 import forOwn from 'lodash/forOwn';
 import isEqual from 'lodash/isEqual';
 export {axios};
+import {SnackbarProgrammatic as Snackbar} from 'buefy';
 
 // Cancel
 // Cancel the specified request
@@ -107,6 +108,22 @@ export function keepInView(container, item, margin, behavior) {
     scrollto = item.offsetTop - container.clientHeight + margin + item.clientHeight;
     container.scroll({top:scrollto, behavior:behavior});
   }
+}
+
+// Snackbar
+// Create a new Buefy Snackbar notification with custom defaults
+// https://buefy.org/documentation/snackbar
+export function snackbar(message, opts) {
+  opts = Object.assign({
+    message: message,
+    position: 'is-top-right',
+    type: 'is-dark',
+    duration: 300000,
+  }, opts);
+  console.log(opts);
+  var log = opts.type == 'is-danger' ? console.error : console.log;
+  log(message);
+  Snackbar.open(opts);
 }
 
 // Preload Image
