@@ -72,9 +72,8 @@
     &::after { background-image: url('../../assets/img/sichuan.jpg'); }
   }
 
-  #home .homecontent {
-    margin-left: 300px;
-  }
+  #home .homecontent { margin-left: 300px; }
+  #home #footer .footerwrap { margin-left: 300px; }
   
   @keyframes bounce {
     0%, 20%, 50%, 80%, 100% { transform: translateY(0); }	

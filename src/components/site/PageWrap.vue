@@ -4,7 +4,7 @@ Simple Layout that looks like a page (or a peice of paper).
 -->
 <template>
   <div id='pagewrap'>
-    <div id='page' :style='{width,padding}'>
+    <div id='page'>
       <article><slot>#page article</slot></article>
     </div>
   </div>
@@ -29,5 +29,7 @@ Simple Layout that looks like a page (or a peice of paper).
     color: $lightbg-text;
     font-family: $fontfamily-article;
     min-height: calc(70vh);
+    width: 900px;
+    padding: 40px 50px;
   }
 </style>

@@ -1,6 +1,6 @@
 <template>
   <div id='budgetyear'>
-    <h3>Past Year Budget</h3>
+    <h1>Past Year Budget</h1>
     <div class='tablewrap'>
       <table cellpadding='0' cellspacing='0'>
         <thead><tr>

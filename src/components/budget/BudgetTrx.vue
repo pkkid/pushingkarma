@@ -3,7 +3,7 @@
     <div id='searchwrap'>
       <input id='search' type='text' v-model='search' @keyup.enter.prevent='updateTransactions'/>
     </div>
-    <h3>Budget Transactions {{account ? account.name : 'ALL'}}</h3>
+    <h1>Budget Transactions {{account ? account.name : 'ALL'}}</h1>
     <div class='tablewrap'>
       <table cellpadding='0' cellspacing='0'>
         <thead><tr>
@@ -69,9 +69,7 @@
       account: {immediate:true, handler:function() {
         this.resetPage();
         this.updateTransactions();
-        
       }},
-
     },
     mounted: function() {
       this.resetPage();

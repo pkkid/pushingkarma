@@ -1,19 +1,22 @@
 <template>
   <div id='budget' :class={demo}>
-    <Navigation :cls="'topnav'" />
-    <BudgetMenu/>
-    <div class='contentarea'>
-      <div class='budgetbg'>
+    <Navigation :cls="'topnav'"/>
+    <SidePanel>
+      <template v-slot:sidepanel>
+        <BudgetMenu/>
+      </template>
+      <template v-slot:contentarea>
         <Dropzone @filesDropped='upload'/>
-        <transition name='fadein'>
-          <BudgetMonth v-if='view=="month"' />
-          <BudgetYear v-else-if='view=="year"' />
-          <BudgetSettings v-else-if='view=="settings"' />
-          <BudgetTrx v-else />
-        </transition>
-      </div>
-      <Footer/>
-    </div>
+        <PageWrap>
+          <transition name='fadein'>
+            <BudgetMonth v-if='view=="month"' />
+            <BudgetYear v-else-if='view=="year"' />
+            <BudgetSettings v-else-if='view=="settings"' />
+            <BudgetTrx v-else />
+          </transition>
+        </PageWrap>
+      </template>
+    </SidePanel>
   </div>
 </template>
 
@@ -26,14 +29,15 @@
   import BudgetSettings from './BudgetSettings';
   import BudgetYear from './BudgetYear';
   import BudgetTrx from './BudgetTrx';
+  import SidePanel from '@/components/site/SidePanel';
+  import PageWrap from '@/components/site/PageWrap';
   import Dropzone from '@/components/Dropzone';
-  import Footer from '@/components/site/Footer';
   import Navigation from '@/components/site/Navigation';
   
   export default {
     name: 'Budget',
     components: {BudgetMenu, BudgetMonth, BudgetYear, BudgetSettings,
-      BudgetTrx, Dropzone, Footer, Navigation},
+      BudgetTrx, Dropzone, Navigation, SidePanel, PageWrap},
     computed: {
       account: pathify.sync('budget/account'),
       accounts: pathify.sync('budget/accounts'),
@@ -80,41 +84,21 @@
 </script>
 
 <style lang='scss'>
-  #budget .contentarea {
-    box-sizing: border-box;
-    color: $lightbg-text;
-    margin-left: 300px;
-    margin-top: 60px;
-    background-color: $lightbg-bg3;
-    font-weight: 300;
-    z-index: 28;
+  #budget {
+    #pagewrap { padding:30px 30px 60px 30px; }
+    #page { margin:0px auto; padding:25px 30px; width:1000px; }
 
-    h2 {
-      font-size: 1.5em;
-      margin-bottom: 10px;
-      margin-top: 10px;
+    // Demo Mode
+    .demo .blur,
+    .demo #sidepanel .blur {
+      color: transparent !important;
+      text-shadow: 0 0 10px rgba($lightbg-fg0, 0.6) !important;
+      user-select: none;
     }
-    h3 {
-      font-size: 1.2em;
-      margin-bottom: 10px;
-      margin-top: 10px;
+    .demo #sidepanel .blur {
+      text-shadow: 0 0 10px rgba($darkbg-fg0, 0.6) !important;
     }
 
-    .budgetbg {
-      position: relative;
-      min-height: calc(100vh - 60px);
-    }
   }
-
-  // Demo Mode
-  #budget.demo .blur {
-    color: transparent !important;
-    text-shadow: 0 0 10px rgba($lightbg-text, 0.5) !important;
-    user-select: none;
-  }
-  #budget.demo #sidebar .blur {
-    color: transparent !important;
-    text-shadow: 0 0 10px rgba($darkbg-text, 0.5) !important;
-    user-select: none;
-  }
+  
 </style>

@@ -1,9 +1,7 @@
 <template>
   <div id='budgetmonth'>
-    <h3>January Budget</h3>
-    <div class='tablewrap'>
-      Hi Mom!
-    </div>
+    <h1>January Budget</h1>
+    Hi Mom!
   </div>
 </template>
 
