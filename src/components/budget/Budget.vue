@@ -88,10 +88,11 @@
     // Tweak page style and article styles
     #pagewrap { padding:30px 30px 60px 30px; }
     #page { margin:0px auto; padding:25px 30px; max-width:1000px; min-width:800px; }
-    h1 { font-size:2rem; }
-    h1 .subtext { font-size:0.5em; padding-left:2px; }
-    h2 { font-size:1.3em; margin-bottom:10px; }
-    p { font-size:0.8em; margin-top:0px; }
+    // h1 { font-size:2rem; }
+    // h1 .subtext { font-size:0.45em; padding-left:2px; }
+    // h2 { font-size:1.3em; margin-bottom:10px; }
+    p { margin-top:0px; width:85%; }
+    
 
     // Demo mode blurs all financial values
     .demo .blur,

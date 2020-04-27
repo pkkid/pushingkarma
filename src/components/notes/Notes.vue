@@ -86,30 +86,31 @@
 <style lang='scss'>
   #notes {
     #notewrap {
-      width: 1150px;
+      width: 1170px;
       margin: 0px auto;
-      padding: 30px 30px 60px 30px;
       position: relative;
+      padding: 30px 30px 60px 30px;
     }
+    #pagewrap { padding: 0px; }
     #page { float:left; }
     article {
       h1 input {
         background-color: transparent;
         border-width: 0px;
         border-radius: 0px;
-        font-size: 2.5rem;
         font-family: $fontfamily-title;
+        font-size: 2rem;
         padding: 0px 3px;
         margin-left: -3px;
         width: 780px;
         color: $lightbg-text;
       }
-      h1 .subtext {
-        font-size: 0.8rem;
-        margin-top: -5px;
-        padding-left: 4px;
-        input { font-size:0.8rem; width:250px; }
+      h1 .subtext,
+      h1 .subtext input {
+        font-size: 1rem;
+        font-family: $fontfamily-article;
       }
+      h1 .subtext input { width:250px; }
     }
     #rightmenu {
       float: left;

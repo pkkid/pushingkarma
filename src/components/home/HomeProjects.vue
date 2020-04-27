@@ -70,18 +70,18 @@
       }
       .title {
         font-size: 1.4rem;
-        font-weight: 600;
+        font-weight: 400;
         left: -1px;
         line-height: 1;
         margin: 15px 0px 18px 0px;
         position: relative;
       }
       p {
-        font-size: 0.9rem;
+        font-size: 1rem;
         font-weight: 400;
         height: 75px;
         letter-spacing: 0.5px;
-        line-height: 1.8;
+        line-height: 1.7;
         word-wrap: break-word;
       }
       &:hover {

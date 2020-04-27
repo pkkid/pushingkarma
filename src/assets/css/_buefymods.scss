@@ -10,6 +10,9 @@
   font-size: 0.9rem;
   &:active { color: $lightbg-fg1; }
 }
+.button.is-small {
+  font-size: 0.8rem;
+}
 .button.is-danger {
   border-color: darken($darkbg-red0, 5%);
   &:hover, &:focus {
@@ -62,6 +65,7 @@
 }
 .table {
   background-color: transparent;
+  font-size: 16px;
   td.blur { font-family:$fontfamily-code; font-size:0.9em; }
   &.is-narrow {
     th { background-color:$lightbg-bg2; font-size:0.8em; padding:1px 10px; }

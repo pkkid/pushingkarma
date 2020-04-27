@@ -40,8 +40,8 @@
     background-color: $darkbg-bg0;
     color: $darkbg-fg0;
     font-family: $fontfamily-article;
-    font-size: 0.8rem;
-    line-height: 1.5;
+    font-size: 0.9rem;
+    line-height: 1.7;
     text-align: left;
 
     a,a:visited {

@@ -56,6 +56,7 @@
     // Main Menu
     .menu {
       padding: 50px 20px 0px 60px;
+      font-size: 16px;
       width: 100%;
       a {
         display: inline-block;
