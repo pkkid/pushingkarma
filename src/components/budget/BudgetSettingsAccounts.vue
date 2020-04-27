@@ -60,12 +60,12 @@
       // the account data.
       save: async function(event, tabindex) {
         var cell = this.getCell(tabindex);
-        if (cell.id == null && cell.field == 'name' && cell.newvalue != '') { return this.create(cell.newvalue); }
-        if (cell.id == null && cell.field == 'name' && cell.newvalue == '') { return this.refresh(); }
-        console.log(cell.newvalue, cell.value);
-        if (cell.newvalue != cell.value) {
+        var newvalue = cell.getNewValue();
+        if (cell.id == null && cell.field == 'name' && newvalue != '') { return this.create(newvalue); }
+        if (cell.id == null && cell.field == 'name' && newvalue == '') { return this.refresh(); }
+        if (newvalue != cell.value) {
           try {
-            var change = utils.rset({}, cell.field, cell.newvalue);
+            var change = utils.rset({}, cell.field, newvalue);
             var {data} = await api.Budget.patchAccount(cell.id, change);
             Vue.set(this.items, cell.row, data);
             cell.setStatus('success', 1000);

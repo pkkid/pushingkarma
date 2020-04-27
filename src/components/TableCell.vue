@@ -29,8 +29,6 @@
       select: function() { return this.data.select || null; },                    // Select text when editing
       tabindex: function() { return this.data.tabindex || null; },                // Global ID (for editable cells)
       // Useful computed properties
-      change: function() { return utils.rset({}, this.field, this.newvalue); },   // Changed data (for updates)
-      newvalue: function() { return this.$refs.div.textContent || ''; },          // Return current new value
       editable: function() { return this.focused && this.editing; },              // True if currently editable
       focused: function() { return (this.tabindex && (this.tabindex === this.focus)); },
       displayValue: function() { return this.display ? this.display(this.value) : this.value; },
@@ -54,13 +52,19 @@
         }
       },
     },
-    methods: {
+    methods: {      
+      // Get New Value
+      // Return current new value
+      getNewValue: function() {
+        return this.$refs.div.textContent || '';
+      },
+
       // Set Status
       // Sets visual indicator that saving value was success or error
       setStatus: async function(status, duration=null) {
         this.status = status;
         if (duration !== null) {
-         await utils.sleep(duration);
+          await utils.sleep(duration);
           this.status = 'default';
         }
       },
