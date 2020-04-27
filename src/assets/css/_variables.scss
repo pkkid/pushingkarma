@@ -73,7 +73,7 @@ $primary: #076678;
 $primary-invert: findColorInvert($primary);
 $colors: (
   'black': ($darkbg-bg1, $darkbg-fg1),
-  'danger': ($darkbg-red0, $darkbg-fg1),
+  'danger': ($darkbg-red0, #eeeeee),
   'primary': ($primary, $primary-invert),
   'success': ($darkbg-green1, $darkbg-fg1),
   'warning': ($darkbg-yellow1, $lightbg-fg1),

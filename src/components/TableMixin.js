@@ -35,11 +35,12 @@ import TableCell from '@/components/TableCell';
 export default {
   components: {TableCell},
   data: () => ({
-    focus: null,      // Current focused cell number
-    editing: false,   // True if editing
+    focus: null,                        // Current focused cell number
+    editing: false,                     // True if editing
   }),
   computed: {
-    items: function() { return []; },
+    items: function() { return []; },   // Required to be populated by parent Compoennt
+    cell: function() { return this.getCell(this.focus); },
     editcols: function() { return this.columns.filter(c => c.editable).length; }, 
     maxfocus: function() { return this.items ? this.items.length * this.editcols : 0; },
     
@@ -54,7 +55,7 @@ export default {
           var tabindex = col.editable ? (i * this.editcols) + editcount : null;
           var cell = Object.assign({}, col, {
             row: i,                             // Item row index
-            id: this.items[i].id,               // Item ID (from the db)
+            id: this.items[i].id || null,       // Item ID (from the db)
             value: this.items[i][col.field],    // Cell value items[row][field]
             tabindex: tabindex,                 // Cell tabindex for keyboard nav
             width: col.width || null,           // Cell width
@@ -75,11 +76,59 @@ export default {
         'down': (event) => this.navigate(event, this.editcols),
         'left': (event) => this.navigate(event, -1),
         'right': (event) => this.navigate(event, 1),
-        'tab': (event) => this.navigate(event, 1, true),
-        'shift+tab': (event) => this.navigate(event, -1, true),
+        'tab': (event) => this.navigate(event, 1, true, true),
+        'shift+tab': (event) => this.navigate(event, -1, true, true),
         'enter': (event) => this.enterEditOrSave(event),
         'esc': (event) => this.cancelEdit(event),
       };
+    },
+
+    // Cancel All
+    // Called when user clicks off the table
+    cancelAll: function() {
+      if (this.focus || this.editing) {
+        this.editing = false;
+        this.focus = null;
+      }
+    },
+
+    // Cancel Edit
+    // Called when user hits esc
+    cancelEdit: function(event) {
+      if (!this.inContainer()) { return; }
+      if (this.cell.id == null && this.cell.newvalue == '') {
+        // Cancel editing & refresh
+        event.preventDefault();
+        document.getSelection().removeAllRanges();
+        this.editing = false;
+        this.focus = null;
+        this.refresh();
+      } else if (this.editing) {
+        // Cancel editing
+        event.preventDefault();
+        document.getSelection().removeAllRanges();
+        this.editing = false;
+      } else if (this.focus) {
+        // Clear focus
+        event.preventDefault();
+        this.focus = null;
+      }
+    },
+
+    // Enter: Edit or Save
+    // Called when user hits enter on the page
+    enterEditOrSave: function(event) {
+      if (!this.inContainer()) { return; }
+      if (this.focus) {
+        event.preventDefault();
+        if (!this.editing) {
+          // Start editing
+          this.editing = true;
+        } else {
+          // Save and goto next item
+          this.navigate(event, this.editcols, true, true);
+        }
+      }if (this.$el.contains(document.activeElement));
     },
 
     // Click: Set Focus
@@ -98,74 +147,46 @@ export default {
       }
     },
 
-    // Enter: Edit or Save
-    // Called when user hits enter on the page
-    enterEditOrSave: function(event) {
-      if (this.focus) {
-        event.preventDefault();
-        if (!this.editing) {
-          // Start editing
-          this.editing = true;
-        } else {
-          // Save and goto next item
-          this.save(event, this.focus);
-          this.navigate(event, this.editcols, true);
-        }
+    // Get Cell
+    // Return cell coresponding to specified tabindex
+    getCell: function(tabindex) {
+      return this.$refs[`c${tabindex}`][0];
+    },
+
+    // Get Row Values
+    // Return the full row dataset for the specified cell
+    getRowData: function(cell) {
+      for (var rowdata of this.items) {
+        if (cell.id == rowdata.id) { return rowdata; }
       }
     },
 
-    // Cancel Edit
-    // Called when user hits esc
-    cancelEdit: function(event) {
-      if (this.editing) {
-        // Cancel editing
-        event.preventDefault();
-        document.getSelection().removeAllRanges();
-        this.editing = false;
-      } else if (this.focus) {
-        // Clear focus
-        event.preventDefault();
-        this.focus = null;
-      }
-    },
-
-    // Cancel All
-    // Called when user clicks off the table
-    cancelAll: function() {
-      if (this.focus || this.editing) {
-        // Cancel all
-        this.editing = false;
-        this.focus = null;
-      }
+    // In Container
+    // Check the document.activeElement is within this container
+    inContainer: function() {
+      return this.$el.contains(document.activeElement);
     },
 
     // Navigate
     // Move the focused cell by the amount specified
-    navigate: function(event, amount, allowEditing=false) {
-      if (!this.focus) { return; }
-      if (!allowEditing && this.editing) { return; }
+    navigate: function(event, amount, saveFirst=false, allowEditing=false) {
+      if (!this.inContainer()) { return; }              // Skip if not in container
+      if (!this.focus) { return; }                      // Skip if nothing selected
+      if (!allowEditing && this.editing) { return; }    // Skip if editing
       event.preventDefault();
       var newfocus = this.focus + amount;
-      if ((newfocus > 0) && (newfocus <= this.maxfocus)) {
-        // Navigate to new item
-        this.focus = newfocus;
-      } else {
-        // Reached the end of the table, just stop editing.
-        this.editing = false;
-      }
+      if (this.editing && saveFirst) { this.save(event, this.focus); }  // Save value first
+      if ((newfocus > 0) && (newfocus <= this.maxfocus)) { this.focus = newfocus; }   // Navigate to new item
+      else { this.editing = false; }  // Reached the end of the table, just stop editing.
     },
 
     // Set Focus Last
     // Set focus to the first cell in the last row
     setFocusLast: async function() {
-      console.log('SET FOCUS LAST');
       await this.$nextTick();
-      var newfocus = (this.items.length - 1) * this.editcols + 1;
-      console.log(newfocus);
-      console.log(this.items[this.items.length-1]);
-      this.focus = newfocus;
-      //this.editing = true;
-    }
+      this.focus = (this.items.length - 1) * this.editcols + 1;
+      this.editing = true;
+    },
 
   },
 };

@@ -1,18 +1,23 @@
 // Encoding: UTF-8
 // Buefy Overrides
 
-
 // Buttons
 // https://buefy.org/documentation/button
 .button {
   border-width: 2px;
   border-radius: 5px;
   color: $lightbg-fg2;
-  &:active {
-    //background-color: $lightbg-bg1;
-    color: $lightbg-fg1;
+  font-size: 0.9rem;
+  &:active { color: $lightbg-fg1; }
+}
+.button.is-danger {
+  border-color: darken($darkbg-red0, 5%);
+  &:hover, &:focus {
+    border-color: darken($darkbg-red0, 15%);
+    box-shadow: none !important;
   }
 }
+.b-table + button { margin-top: 10px; }
 
 // Form Controls
 // Labels - https://buefy.org/documentation/field
@@ -20,6 +25,24 @@
   font-weight: 400;
   margin-bottom: 0px !important;
   font-size: 0.8em;
+}
+
+// Modal Card
+// https://buefy.org/documentation/dialog
+.dialog .modal-card {
+  // background-color: $lightbg-bg1;
+  .modal-card-head,
+  .modal-card-body,
+  .modal-card-foot {
+    background-color: $lightbg-bg1;
+    border-width: 0px;
+    color: $lightbg-fg1;
+    font-weight: 400;
+    .button { font-weight:400; }
+  }
+  .modal-card-head {
+    padding-bottom: 0px;
+  }
 }
 
 // Notices

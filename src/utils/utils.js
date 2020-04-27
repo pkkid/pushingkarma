@@ -110,22 +110,6 @@ export function keepInView(container, item, margin, behavior) {
   }
 }
 
-// Snackbar
-// Create a new Buefy Snackbar notification with custom defaults
-// https://buefy.org/documentation/snackbar
-export function snackbar(message, opts) {
-  opts = Object.assign({
-    message: message,
-    position: 'is-top-right',
-    type: 'is-dark',
-    duration: 300000,
-  }, opts);
-  console.log(opts);
-  var log = opts.type == 'is-danger' ? console.error : console.log;
-  log(message);
-  Snackbar.open(opts);
-}
-
 // Preload Image
 // Promise returns when the specifid image is preloaded
 // https://stackoverflow.com/a/60280239/84463
@@ -187,16 +171,31 @@ export function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+// Snackbar
+// Create a new Buefy Snackbar notification with custom defaults
+// https://buefy.org/documentation/snackbar
+export function snackbar(message, opts) {
+  var type = message.toLowerCase().includes('error') ? 'is-danger' : 'is-success';
+  Snackbar.open(Object.assign({
+    duration: 300000,
+    message: message,
+    position: 'is-top-right',
+    type: type,
+  }, opts));
+}
+
 // String to Bool
 // Convert string to a boolean
 export function strToBool(value) {
   return ['yes','y','true','t','x'].indexOf(value) >= 0;
 }
 
+
 // Time Ago
 // Convert seconds or milliseconds to a human readable time ago string.
 // https://day.js.org/docs/en/plugin/relative-time
 export function timeAgo(value) {
+  if (value === null || value === undefined) { return '--'; }
   if (Number.isInteger(value) && value < 99999999999) { value *= 1000; }
   return dayjs(value).fromNow();
 }

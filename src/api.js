@@ -7,19 +7,21 @@ export function cancel(source) {
 }
 
 export const Budget = {
-  getAccounts() { return axios.get('/api/budget/accounts'); },
-  getCategories() { return axios.get('/api/budget/categories'); },
-  getTransactions(params, cancelToken) { return axios.get('/api/budget/transactions', {params, cancelToken}); },
-  getKeyVals() { axios.get('/api/budget/keyval'); },
+  createAccount(data) { return axios.post(`/api/budget/accounts`, data); },
+  deleteAccount(id) { return axios.delete(`/api/budget/accounts/${id}`); },
+  getAccounts() { return axios.get(`/api/budget/accounts`); },
+  getCategories() { return axios.get(`/api/budget/categories`); },
+  getTransactions(params, cancelToken) { return axios.get(`/api/budget/transactions`, {params, cancelToken}); },
+  getKeyVals() { axios.get(`/api/budget/keyval`); },
   patchAccount(id, data) { return axios.patch(`/api/budget/accounts/${id}`, data); },
   patchCategory(id, data) { return axios.patch(`/api/budget/categories/${id}`, data); },
   patchTransaction(id, data) { return axios.patch(`/api/budget/transactions/${id}`, data); },
-  upload(formdata) { return axios.put('/api/budget/upload', formdata); },
+  upload(formdata) { return axios.put(`/api/budget/upload`, formdata); },
 };
 
 export const Notes = {
   getNote(id) { return axios.get(`/api/notes/${id}`); },
-  getNotes(params, cancelToken) { return axios.get('/api/notes', {params, cancelToken}); },
+  getNotes(params, cancelToken) { return axios.get(`/api/notes`, {params, cancelToken}); },
   saveNote(id, data) { return axios.put(`/api/notes/${id}`, data); },
 };
 
@@ -33,9 +35,9 @@ export const Tools = {
 };
 
 export const Users =  {
-  getCurrentUser() { return axios.get('/api/user'); },
-  login(data) { return axios.post('/api/user/login', data); },
-  generateToken() { return axios.post('/api/user/gentoken'); },
-  disconnect(provider) { return axios.post('/api/user/disconnect', {provider}); },
-  logout() { return axios.post('/api/user/logout'); },
+  getCurrentUser() { return axios.get(`/api/user`); },
+  login(data) { return axios.post(`/api/user/login`, data); },
+  generateToken() { return axios.post(`/api/user/gentoken`); },
+  disconnect(provider) { return axios.post(`/api/user/disconnect`, {provider}); },
+  logout() { return axios.post(`/api/user/logout`); },
 };

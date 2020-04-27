@@ -34,6 +34,12 @@ class AccountSerializer(DynamicFieldsSerializer):
         model = Account
         fields = ('id','url','name','fid','type','payee','balance','balancedt')
 
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        account = Account(**validated_data)
+        account.save()
+        return account
+
 
 class AccountsViewSet(viewsets.ModelViewSet):
     queryset = Account.objects.order_by('name')

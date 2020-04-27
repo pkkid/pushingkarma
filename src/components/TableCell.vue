@@ -1,6 +1,7 @@
 <template>
   <div class='tablecell' :class='[{focused,editing}, status]'>
-    <div :contenteditable='editable' ref='div' spellcheck='false'>{{displayValue}}</div>
+    <div :value='data.value' v-html='displayValue' :contenteditable='editable' ref='div' 
+      spellcheck='false' @input="$emit('input', $event.target.textContent)"></div>
   </div>
 </template>
 
@@ -18,17 +19,25 @@
       status: 'default',    // Sets bgcolor to status {success or error}
     }),
     computed: {
-      row: function() { return this.data.row; },                      // Item row index
-      id: function() { return this.data.id; },                        // Column Name
-      field: function() { return this.data.field; },                  // Field Name
-      value: function() { return this.data.value; },                  // Cell value
-      name: function() { return this.data.name || null; },            // Column Name
-      display: function() { return this.data.display || null; },      // Display callback
-      select: function() { return this.data.select || null; },        // Select text when editing
-      tabindex: function() { return this.data.tabindex || null; },    // Global ID (for editable cells)
-      editable: function() { return this.focused && this.editing; },
+      // Passed in data properties
+      row: function() { return this.data.row; },                                  // Item row index
+      id: function() { return this.data.id; },                                    // Column Name
+      field: function() { return this.data.field; },                              // Field Name
+      value: function() { return this.data.value; },                              // Cell value
+      name: function() { return this.data.name || null; },                        // Column Name
+      display: function() { return this.data.display || null; },                  // Display callback
+      select: function() { return this.data.select || null; },                    // Select text when editing
+      tabindex: function() { return this.data.tabindex || null; },                // Global ID (for editable cells)
+      // Useful computed properties
+      change: function() { return utils.rset({}, this.field, this.newvalue); },   // Changed data (for updates)
+      newvalue: function() { return this.$refs.div.textContent || ''; },          // Return current new value
+      editable: function() { return this.focused && this.editing; },              // True if currently editable
       focused: function() { return (this.tabindex && (this.tabindex === this.focus)); },
       displayValue: function() { return this.display ? this.display(this.value) : this.value; },
+    },
+    mounted: function() {
+      // Fixes Chrome knowing if we are focused within the table
+      if (this.tabindex) { this.$refs.div.tabIndex = -1; }
     },
     watch: {
       // Watch Editable - Set the cursor at the end of the input
@@ -46,19 +55,14 @@
       },
     },
     methods: {
-      // Show Success
-      // Sets visual indicator that saving value was successful.
-      showSuccess: async function() {
-        this.status = 'success';
-        await utils.sleep(1000);
-        this.status = 'default';
-      },
-
-      // Show Error
-      // Set visual indicator what saving value falied.
-      showError: function() {
-        this.status = 'error';
-        utils.snackbar(`Error saving ${this.name}.`, {type:'is-danger'});
+      // Set Status
+      // Sets visual indicator that saving value was success or error
+      setStatus: async function(status, duration=null) {
+        this.status = status;
+        if (duration !== null) {
+         await utils.sleep(duration);
+          this.status = 'default';
+        }
       },
     },
   };

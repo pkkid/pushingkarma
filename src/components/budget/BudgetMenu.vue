@@ -17,7 +17,7 @@
       <i class='mdi mdi-bank-outline'/>Transactions
     </div>
     <div class='submenu'>
-      <div class='subitem account' v-for='acct in accounts' :key='acct.id'
+      <div class='subitem account' v-for='acct in displayAccounts' :key='acct.id'
         :class='{highlighted:view=="transactions" && acct==account}'
         @click='view="transactions"; account=acct'>
           <div class='name'>{{acct.name}}</div>
@@ -44,7 +44,8 @@
       view: pathify.sync('budget/view'),
       account: pathify.sync('budget/account'),
       accounts: pathify.sync('budget/accounts'),
-      balance: function() { return sumBy(this.accounts, a => parseFloat(a.balance)).toFixed(2); },
+      displayAccounts: function() { return this.accounts.filter(a => a.id); },
+      balance: function() { return sumBy(this.accounts, a => parseFloat(a.balance) || 0).toFixed(2); },
     },
   };
 </script>
