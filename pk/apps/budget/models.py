@@ -14,11 +14,14 @@ def get_uncategorized():
 class Account(TimeStampedModel):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     name = models.CharField(max_length=255, db_index=True)
-    fid = models.IntegerField(unique=True, db_index=True)
+    fid = models.IntegerField(null=True, db_index=True)
     type = models.CharField(max_length=255, choices=ACCOUNT_CHOICES)
     payee = models.CharField(max_length=255, blank=True, default='')
     balance = models.DecimalField(max_digits=9, decimal_places=2, null=True, default=None)
     balancedt = models.DateTimeField(null=True, default=None)
+
+    class Meta:
+        unique_together = [['user', 'fid']]
 
 
 class Category(TimeStampedModel):

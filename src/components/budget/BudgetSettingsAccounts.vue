@@ -81,7 +81,7 @@
       // Create a new account in the database
       create: async function(name) {
         try {
-          var params = {name:name, fid:0, type:'bank'};
+          var params = {name:name, type:'bank'};
           var {data} = await api.Budget.createAccount(params);
           Vue.set(this.items, this.items.length-1, data);
           console.log(data);
