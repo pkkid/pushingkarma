@@ -71,7 +71,7 @@
     }
   }
   #budgetmenu .item {
-    font-size: 1rem;
+    font-size: 16px;
     margin-top: 10px;
     padding: 15px 15px 15px 45px;
     .mdi {

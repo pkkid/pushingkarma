@@ -29,7 +29,7 @@
                 </div>
               </dd>
             </dl>
-            <b-button type='is-light is-small' @click='logout'>Log Out</b-button>
+            <b-button type='is-small' @click='logout'>Log Out</b-button>
           </article>
           <!-- Login form -->
           <article v-else class='loginform' key='loginform'>
