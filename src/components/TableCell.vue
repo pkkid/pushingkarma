@@ -33,10 +33,6 @@
       focused: function() { return (this.tabindex && (this.tabindex === this.focus)); },
       displayValue: function() { return this.display ? this.display(this.value) : this.value; },
     },
-    mounted: function() {
-      // Fixes Chrome knowing if we are focused within the table
-      if (this.tabindex) { this.$refs.div.tabIndex = -1; }
-    },
     watch: {
       // Watch Editable - Set the cursor at the end of the input
       // or select all text if the option select is true.

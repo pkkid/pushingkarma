@@ -67,6 +67,10 @@ export default {
       return rows;
     },
   },
+  mounted: function() {
+    // Allows inContainer() to know if we are focused in the table
+    this.$el.tabIndex = -1;
+  },
   methods: {
     // TableMixin Keymap
     // Keymaps used with this mixin.

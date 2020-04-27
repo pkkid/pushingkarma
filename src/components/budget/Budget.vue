@@ -9,9 +9,9 @@
         <Dropzone @filesDropped='upload'/>
         <PageWrap>
           <transition name='fadein'>
-            <BudgetMonth v-if='view=="month"' />
-            <BudgetYear v-else-if='view=="year"' />
-            <BudgetSettings v-else-if='view=="settings"' />
+            <BudgetMonth v-if='view=="month"'/>
+            <BudgetYear v-else-if='view=="year"'/>
+            <BudgetSettings v-else-if='view=="settings"'/>
             <BudgetTrx v-else />
           </transition>
         </PageWrap>
