@@ -1,4 +1,5 @@
 # encoding: utf-8
+from decimal import Decimal
 from django.conf import settings
 from pk import utils
 from pk.utils.api import DynamicFieldsSerializer, PartialFieldsSerializer
@@ -60,6 +61,12 @@ class CategorySerializer(DynamicFieldsSerializer):
     class Meta:
         model = Category
         fields = ('id','name','sortindex','budget','comment','url')
+    
+    def to_internal_value(self, data):
+        budget = data.get('budget')
+        if budget and '$' in budget:
+            data['budget'] = Decimal(budget.replace('$', ''))
+        return super(CategorySerializer, self).to_internal_value(data)
 
 
 class CategoriesViewSet(viewsets.ModelViewSet):

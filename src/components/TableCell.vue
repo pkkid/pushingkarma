@@ -76,7 +76,6 @@
       border: 0px;
       border: 2px solid transparent;
       box-sizing: border-box;
-      color: $lightbg-fg1;
       font-size: 0.9em;
       line-height: 24px;
       margin: 0px;

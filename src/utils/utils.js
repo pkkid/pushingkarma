@@ -35,6 +35,17 @@ export function copyToClipboard(str) {
   document.body.removeChild(elem);
 }
 
+// Drag Type
+// Returns 'file' or <tagname> of element being dragged.
+export function dragType(event) {
+  if (!event.dataTransfer) { return; }
+  var dt = event.dataTransfer;
+  if (dt.types && (dt.types.indexOf ? dt.types.indexOf('Files') != -1 : dt.types.contains('Files'))) {
+    return 'file';
+  }
+  return 'element';
+}
+
 // ds2wuIcon
 // DarkSky to WeatherUndereground icon translation
 // Unused WU icons: chanceflurries, chancerain, chancesleet,

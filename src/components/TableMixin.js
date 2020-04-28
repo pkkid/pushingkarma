@@ -31,15 +31,18 @@
 //      </b-table>
 //
 import TableCell from '@/components/TableCell';
+import * as utils from '@/utils/utils';
 
 export default {
   components: {TableCell},
   data: () => ({
-    focus: null,                        // Current focused cell number
-    editing: false,                     // True if editing
+    focus: null,                // Current focused cell number
+    editing: false,             // True if editing
+    draggingRow: null,          // Dragging row
+    draggingRowIndex: null,     // Dragging row index
   }),
   computed: {
-    items: function() { return []; },   // Required to be populated by parent Compoennt
+    items: function() { return []; },  // Required to be populated by parent Compoennt
     cell: function() { return this.getCell(this.focus); },
     editcols: function() { return this.columns.filter(c => c.editable).length; }, 
     maxfocus: function() { return this.items ? this.items.length * this.editcols : 0; },
@@ -180,13 +183,21 @@ export default {
     // Navigate
     // Move the focused cell by the amount specified
     navigate: function(event, amount, saveFirst=false, allowEditing=false) {
-      if (!this.inContainer()) { return; }              // Skip if not in container
-      if (!this.focus) { return; }                      // Skip if nothing selected
-      if (!allowEditing && this.editing) { return; }    // Skip if editing
+      if (!this.inContainer()) { return; }  // Skip if not in container
+      if (!this.focus) { return; }  // Skip if nothing selected
+      if (!allowEditing && this.editing) { return; }  // Skip if editing
       event.preventDefault();
+      // Save the new value
+      if (this.editing && saveFirst) {
+        var cell = this.getCell();
+        var newvalue = cell.getNewValue();
+        if (cell.value != newvalue) {
+          this.save(cell, cell.id, cell.row, cell.field, newvalue);
+        }
+      }
+      // Set the new focus
       var newfocus = this.focus + amount;
-      if (this.editing && saveFirst) { this.save(event, this.focus); }  // Save value first
-      if ((newfocus > 0) && (newfocus <= this.maxfocus)) { this.focus = newfocus; }   // Navigate to new item
+      if ((newfocus > 0) && (newfocus <= this.maxfocus)) { this.focus = newfocus; }  // Navigate to new item
       else { this.editing = false; }  // Reached the end of the table, just stop editing.
     },
 
@@ -196,6 +207,33 @@ export default {
       await this.$nextTick();
       this.focus = (this.items.length - 1) * this.editcols + 1;
       this.editing = true;
+    },
+
+    // Drag Functions
+    // Update data while dragging rows. Copied verbatim from buefy.com
+    // https://buefy.org/documentation/table/#draggable-rows
+    dragstart: function(payload) {
+      if (utils.dragType(payload.event) != 'element') { return; }
+      this.draggingRow = payload.row;
+      this.draggingRowIndex = payload.index;
+      payload.event.dataTransfer.effectAllowed = 'copy';
+    },
+    dragover: function(payload) {
+      if (utils.dragType(payload.event) != 'element') { return; }
+      payload.event.preventDefault();
+      payload.event.dataTransfer.dropEffect = 'copy';
+      payload.event.target.closest('tr').classList.add('is-selected');
+    },
+    dragleave: function(payload) {
+      if (utils.dragType(payload.event) != 'element') { return; }
+      payload.event.preventDefault();
+      payload.event.target.closest('tr').classList.remove('is-selected');
+    },
+    drop: function(payload) {
+      if (utils.dragType(payload.event) != 'element') { return; }
+      payload.event.target.closest('tr').classList.remove('is-selected');
+      var id = this.draggingRow[0].id;
+      this.save(null, id, this.draggingRowIndex, 'sortindex', payload.index, true);
     },
 
   },

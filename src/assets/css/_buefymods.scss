@@ -67,6 +67,9 @@
 .table {
   background-color: transparent;
   font-size: 16px;
+  color: $lightbg-fg1;
+  tr { position:relative; }
+  tr.is-selected { background-color:$lightbg-bg2; }
   td.blur { font-family:$fontfamily-code; font-size:0.9em; }
   &.is-narrow {
     th { background-color:$lightbg-bg2; font-size:0.8em; padding:1px 10px; }

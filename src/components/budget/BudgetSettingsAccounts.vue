@@ -52,22 +52,19 @@
       // that this function is called anytime a cell value changed, but depending
       // on the state of cell.id or cell.name we may be creating or deleting the
       // the account data.
-      save: async function(event, tabindex) {
-        var cell = this.getCell(tabindex);
-        var newvalue = cell.getNewValue();
-        if (cell.id == null && cell.field == 'name' && newvalue != '') { return this.create(newvalue); }
-        if (cell.id == null && cell.field == 'name' && newvalue == '') { return this.refresh(); }
-        if (newvalue != cell.value) {
-          try {
-            var change = utils.rset({}, cell.field, newvalue);
-            var {data} = await api.Budget.patchAccount(cell.id, change);
-            Vue.set(this.items, cell.row, data);
-            cell.setStatus('success', 1000);
-          } catch(err) {
-            cell.setStatus('error');
-            utils.snackbar(`Error saving ${this.name}.`);
-            console.log(err);
-          }
+      save: async function(cell, id, row, field, newvalue, refresh=false) {
+        if (id == null && field == 'name' && newvalue != '') { return this.create(newvalue); }
+        if (id == null && field == 'name' && newvalue == '') { return this.refresh(); }
+        try {
+          var change = utils.rset({}, field, newvalue);
+          var {data} = await api.Budget.patchAccount(id, change);
+          Vue.set(this.items, row, data);
+          if (cell) { cell.setStatus('success', 1000); }
+          if (refresh) { this.refresh(); }
+        } catch(err) {
+          if (cell) { cell.setStatus('error'); }
+          utils.snackbar(`Error saving account.`);
+          console.log(err);
         }
       },
 

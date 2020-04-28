@@ -4,7 +4,8 @@
     <p>Create and configure categories to bucket all transactions into. The budget
       value is used to help target an estimated amount per month to spend.</p>
     <div v-click-outside='cancelAll'>
-      <b-table :data='tabledata' :narrowed='true'>
+      <b-table :data='tabledata' narrowed draggable
+        @dragstart='dragstart' @dragover='dragover' @dragleave='dragleave' @drop='drop'>
         <template slot-scope='props'>
           <b-table-column v-for='c in props.row' :key='c.name' :label='c.name' :width='c.width'
             :numeric='c.numeric' :cell-class='c.class'>
@@ -36,7 +37,7 @@
     data: () => ({
       columns: [
         {name:'Name', field:'name', editable:true},
-        {name:'Budget', field:'budget', display:utils.usd, numeric:true, editable:true, width:'150px', class:'blur'},
+        {name:'Budget', field:'budget', display:utils.usd, select:true, numeric:true, editable:true, width:'150px', class:'blur'},
       ],
     }),
     computed: {
@@ -49,23 +50,19 @@
       // that this function is called anytime a cell value changed, but depending
       // on the state of cell.id or cell.name we may be creating or deleting the
       // the category data.
-      save: async function(event, tabindex) {
-        var cell = this.getCell(tabindex);
-        var newvalue = cell.getNewValue();
-        if (cell.id == null && cell.field == 'name' && newvalue != '') { return this.create(newvalue); }
-        if (cell.id == null && cell.field == 'name' && newvalue == '') { return this.refresh(); }
-        if (newvalue != cell.value) {
-          try {
-            console.log(cell.data);
-            var change = utils.rset({}, cell.field, newvalue);
-            var {data} = await api.Budget.patchCategory(cell.id, change);
-            Vue.set(this.items, cell.row, data);
-            cell.setStatus('success', 1000);
-          } catch(err) {
-            cell.setStatus('error');
-            utils.snackbar(`Error saving ${this.name}.`);
-            console.log(err);
-          }
+      save: async function(cell, id, row, field, newvalue, refresh=false) {
+        if (id == null && field == 'name' && newvalue != '') { return this.create(newvalue); }
+        if (id == null && field == 'name' && newvalue == '') { return this.refresh(); }
+        try {
+          var change = utils.rset({}, field, newvalue);
+          var {data} = await api.Budget.patchCategory(id, change);
+          Vue.set(this.items, row, data);
+          if (cell) { cell.setStatus('success', 1000); }
+          if (refresh) { this.refresh(); }
+        } catch(err) {
+          if (cell) { cell.setStatus('error'); }
+          utils.snackbar(`Error saving category.`);
+          console.log(err);
         }
       },
 
