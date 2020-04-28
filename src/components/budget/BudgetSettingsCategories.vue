@@ -2,10 +2,10 @@
   <div id='budgetsettingscategories' v-hotkey='keymap' tabindex='-1'>
     <!-- <h2>Categories</h2> -->
     <p>Create and configure categories to bucket all transactions into. The budget
-      value is used to help target an estimated amount per month to spend.</p>
+      value is used to help target an estimated amount per month to spend. Use
+      shift+up and shift+down to sort items.</p>
     <div v-click-outside='cancelAll'>
-      <b-table :data='tabledata' narrowed draggable
-        @dragstart='dragstart' @dragover='dragover' @dragleave='dragleave' @drop='drop'>
+      <b-table :data='tabledata' narrowed>
         <template slot-scope='props'>
           <b-table-column v-for='c in props.row' :key='c.name' :label='c.name' :width='c.width'
             :numeric='c.numeric' :cell-class='c.class'>
@@ -39,6 +39,7 @@
         {name:'Name', field:'name', editable:true},
         {name:'Budget', field:'budget', display:utils.usd, select:true, numeric:true, editable:true, width:'150px', class:'blur'},
       ],
+      sortfield: 'sortindex',
     }),
     computed: {
       items: pathify.sync('budget/categories'),
@@ -58,7 +59,8 @@
           var {data} = await api.Budget.patchCategory(id, change);
           Vue.set(this.items, row, data);
           if (cell) { cell.setStatus('success', 1000); }
-          if (refresh) { this.refresh(); }
+          if (refresh) { await this.refresh(); }
+          return data;
         } catch(err) {
           if (cell) { cell.setStatus('error'); }
           utils.snackbar(`Error saving category.`);

@@ -44,7 +44,7 @@ class Category(TimeStampedModel):
         # Dont allow creating or modifying UNCATEGORIZED category
         if self.pk and Category.objects.get(pk=self.pk).name == UNCATEGORIZED:
             raise Exception('Cannot modify category %s' % UNCATEGORIZED)
-        # reorder the categories if needed
+        # Reorder the categories if needed
         if self.sortindex is None:
             categories = Category.objects.order_by('-sortindex')
             self.sortindex = categories[0].sortindex + 1 if categories.exists() else 0
@@ -52,6 +52,8 @@ class Category(TimeStampedModel):
             index = 0
             log.info('Moving category %s to index %s', self.name, self.sortindex)
             categories = Category.objects.exclude(id=self.id).order_by('sortindex')
+            self.sortindex = max(0, self.sortindex)
+            self.sortindex = min(self.sortindex, len(categories))
             for catid in categories.values_list('id', flat=True):
                 index += 1 if index == self.sortindex else 0
                 Category.objects.filter(id=catid).update(sortindex=index)

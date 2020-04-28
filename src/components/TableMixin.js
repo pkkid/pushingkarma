@@ -31,15 +31,13 @@
 //      </b-table>
 //
 import TableCell from '@/components/TableCell';
-import * as utils from '@/utils/utils';
 
 export default {
   components: {TableCell},
   data: () => ({
     focus: null,                // Current focused cell number
     editing: false,             // True if editing
-    draggingRow: null,          // Dragging row
-    draggingRowIndex: null,     // Dragging row index
+    sortfield: null,            // Specify sortfield to allow reordering
   }),
   computed: {
     items: function() { return []; },  // Required to be populated by parent Compoennt
@@ -81,6 +79,8 @@ export default {
         'right': (event) => this.navigate(event, 1),
         'tab': (event) => this.navigate(event, 1, true, true),
         'shift+tab': (event) => this.navigate(event, -1, true, true),
+        'shift+up': (event) => this.reorder(event, -1),
+        'shift+down': (event) => this.reorder(event, 1),
         'enter': (event) => this.enterEditOrSave(event),
         'esc': (event) => this.cancelEdit(event),
       };
@@ -201,6 +201,20 @@ export default {
       else { this.editing = false; }  // Reached the end of the table, just stop editing.
     },
 
+    // Reorder
+    // Move a table row up or down by the specified amount
+    reorder: async function(event, amount) {
+      if (!this.sortfield) { return; }  // Skip if sortfield is not specified
+      if (!this.inContainer()) { return; }  // Skip if not in container
+      if (!this.focus) { return; }  // Skip if nothing selected
+      if (this.editing) { return; }  // Skip if editing
+      event.preventDefault();
+      var cell = this.getCell();
+      var newrow = parseInt(cell.row) + amount;
+      var data = await this.save(null, cell.id, cell.row, this.sortfield, newrow, true);
+      this.focus = (data.sortindex * this.editcols) + 1;
+    },
+
     // Set Focus Last
     // Set focus to the first cell in the last row
     setFocusLast: async function() {
@@ -208,33 +222,5 @@ export default {
       this.focus = (this.items.length - 1) * this.editcols + 1;
       this.editing = true;
     },
-
-    // Drag Functions
-    // Update data while dragging rows. Copied verbatim from buefy.com
-    // https://buefy.org/documentation/table/#draggable-rows
-    dragstart: function(payload) {
-      if (utils.dragType(payload.event) != 'element') { return; }
-      this.draggingRow = payload.row;
-      this.draggingRowIndex = payload.index;
-      payload.event.dataTransfer.effectAllowed = 'copy';
-    },
-    dragover: function(payload) {
-      if (utils.dragType(payload.event) != 'element') { return; }
-      payload.event.preventDefault();
-      payload.event.dataTransfer.dropEffect = 'copy';
-      payload.event.target.closest('tr').classList.add('is-selected');
-    },
-    dragleave: function(payload) {
-      if (utils.dragType(payload.event) != 'element') { return; }
-      payload.event.preventDefault();
-      payload.event.target.closest('tr').classList.remove('is-selected');
-    },
-    drop: function(payload) {
-      if (utils.dragType(payload.event) != 'element') { return; }
-      payload.event.target.closest('tr').classList.remove('is-selected');
-      var id = this.draggingRow[0].id;
-      this.save(null, id, this.draggingRowIndex, 'sortindex', payload.index, true);
-    },
-
   },
 };
