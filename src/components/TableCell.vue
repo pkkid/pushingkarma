@@ -1,5 +1,5 @@
 <template>
-  <div class='tablecell' :class='[{focused,editing}, status]'>
+  <div class='tablecell' :class='[{focused,editing}, status]' tabindex='-1'>
     <div :value='data.value' v-html='displayValue' :contenteditable='editable' ref='div' 
       spellcheck='false' @input="$emit('input', $event.target.textContent)"></div>
   </div>

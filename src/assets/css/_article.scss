@@ -87,6 +87,12 @@ article {
     font-size: 1.0em;
     font-weight: 400;
   }
+  hr {
+    background-color: $lightbg-bg3;
+    height: 1px;
+    width: 40%;
+    margin: 50px auto;
+  }
 
   // Description List, 
   dl {

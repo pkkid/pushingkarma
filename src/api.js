@@ -8,7 +8,9 @@ export function cancel(source) {
 
 export const Budget = {
   createAccount(data) { return axios.post(`/api/budget/accounts`, data); },
+  createCategory(data) { return axios.post(`/api/budget/categories`, data); },
   deleteAccount(id) { return axios.delete(`/api/budget/accounts/${id}`); },
+  deleteCategory(id) { return axios.delete(`/api/budget/categories/${id}`); },
   getAccounts() { return axios.get(`/api/budget/accounts`); },
   getCategories() { return axios.get(`/api/budget/categories`); },
   getTransactions(params, cancelToken) { return axios.get(`/api/budget/transactions`, {params, cancelToken}); },

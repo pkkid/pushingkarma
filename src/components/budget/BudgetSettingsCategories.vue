@@ -1,9 +1,8 @@
 <template>
-  <div id='budgetsettingsaccounts' v-hotkey='keymap' tabindex='-1'>
-    <!-- <h2>Bank Accounts</h2> -->
-    <p>Add all accounts that you plan to upload .qfx files for. Each bank should
-      provide a unique FID that you can see by opening the file. This is used to
-      determine the bank the data originated when uploading transactions.</p>
+  <div id='budgetsettingscategories' v-hotkey='keymap' tabindex='-1'>
+    <!-- <h2>Categories</h2> -->
+    <p>Create and configure categories to bucket all transactions into. The budget
+      value is used to help target an estimated amount per month to spend.</p>
     <div v-click-outside='cancelAll'>
       <b-table :data='tabledata' :narrowed='true'>
         <template slot-scope='props'>
@@ -17,8 +16,8 @@
       </b-table>
       <div style='margin-top:10px;'>
         <b-button size='is-small' type='is-danger' class='is-pulled-right' @click.prevent='confirmDelete'
-          :disabled='!focus'>Delete Account</b-button>
-        <b-button size='is-small' class='add' @click.prevent='add'>Add New Account</b-button>
+          :disabled='!focus'>Delete Category</b-button>
+        <b-button size='is-small' class='add' @click.prevent='add'>Add New Category</b-button>
       </div>
     </div>
   </div>
@@ -32,18 +31,16 @@
   import Vue from 'vue';
 
   export default {
-    name: 'BudgetSettingsAccounts',
+    name: 'BudgetSettingsCategories',
     mixins: [TableMixin],
     data: () => ({
       columns: [
-        {name:'Name', field:'name', editable:true, width:'30%'},
-        {name:'FID', field:'fid', editable:true, select:true, width:'30%'},
-        {name:'Last Updated', field:'balancedt', width:'20%', display:utils.timeAgo},
-        {name:'Balance', field:'balance', display:utils.usd, numeric:true, width:'20%', class:'blur'},
+        {name:'Name', field:'name', editable:true},
+        {name:'Budget', field:'budget', display:utils.usd, numeric:true, editable:true, width:'150px', class:'blur'},
       ],
     }),
     computed: {
-      items: pathify.sync('budget/accounts'),
+      items: pathify.sync('budget/categories'),
       keymap: function() { return this.tablemixin_keymap(); },
     },
     methods: {
@@ -51,7 +48,7 @@
       // Save the current cell value - There is a slight bit of wonkyness here in
       // that this function is called anytime a cell value changed, but depending
       // on the state of cell.id or cell.name we may be creating or deleting the
-      // the account data.
+      // the category data.
       save: async function(event, tabindex) {
         var cell = this.getCell(tabindex);
         var newvalue = cell.getNewValue();
@@ -59,8 +56,9 @@
         if (cell.id == null && cell.field == 'name' && newvalue == '') { return this.refresh(); }
         if (newvalue != cell.value) {
           try {
+            console.log(cell.data);
             var change = utils.rset({}, cell.field, newvalue);
-            var {data} = await api.Budget.patchAccount(cell.id, change);
+            var {data} = await api.Budget.patchCategory(cell.id, change);
             Vue.set(this.items, cell.row, data);
             cell.setStatus('success', 1000);
           } catch(err) {
@@ -72,43 +70,43 @@
       },
 
       // Create
-      // Create a new account in the database
+      // Create a new category in the database
       create: async function(name) {
         try {
-          var params = {name:name, type:'bank'};
-          var {data} = await api.Budget.createAccount(params);
+          var params = {name:name, budget:0};
+          var {data} = await api.Budget.createCategory(params);
           Vue.set(this.items, this.items.length-1, data);
           console.log(data);
         } catch(err) {
-          utils.snackbar(`Error creating account ${name}.`);
+          utils.snackbar(`Error creating category ${name}.`);
           console.error(err);
         }
       },
 
       // Confirm Delete
-      // Confirm and delete an existing account in the database
+      // Confirm and delete an existing category in the database
       confirmDelete: async function() {
         var self = this;
         var cell = this.cell;
-        var account = this.getRowData(cell);
+        var category = this.getRowData(cell);
         this.$buefy.dialog.confirm({
-            title: 'Delete Account',
-            message: `Are you sure you want to delete the account <b>${account.name}</b>?`,
-            confirmText: 'Delete Account',
+            title: 'Delete Category',
+            message: `Are you sure you want to delete the category <b>${category.name}</b>?`,
+            confirmText: 'Delete Category',
             focusOn: 'cancel',
             type: 'is-danger',
             onConfirm: async function() {
-              await api.Budget.deleteAccount(account.id);
-              utils.snackbar(`Successfully deleted account ${account.name}.`);
+              await api.Budget.deleteCategory(category.id);
+              utils.snackbar(`Successfully deleted category ${category.name}.`);
               self.refresh();
             },
         });
       },
 
       // Refresh
-      // Refresh the list of accounts displayed
+      // Refresh the list of categories displayed
       refresh: async function() {
-        var {data} = await api.Budget.getAccounts();
+        var {data} = await api.Budget.getCategories();
         this.items = data.results;
       },
     }

@@ -67,10 +67,6 @@ export default {
       return rows;
     },
   },
-  mounted: function() {
-    // Allows inContainer() to know if we are focused in the table
-    this.$el.tabIndex = -1;
-  },
   methods: {
     // TableMixin Keymap
     // Keymaps used with this mixin.
@@ -85,6 +81,14 @@ export default {
         'enter': (event) => this.enterEditOrSave(event),
         'esc': (event) => this.cancelEdit(event),
       };
+    },
+
+    // Add
+    // Add new row to populate, not yet saved to the db.
+    // Generic helper function to add a new row.
+    add: function() {
+      this.items.push({});
+      this.setFocusLast();
     },
 
     // Cancel All
@@ -111,6 +115,7 @@ export default {
         // Cancel editing
         event.preventDefault();
         document.getSelection().removeAllRanges();
+        this.getCell().$el.focus();
         this.editing = false;
       } else if (this.focus) {
         // Clear focus
@@ -154,6 +159,7 @@ export default {
     // Get Cell
     // Return cell coresponding to specified tabindex
     getCell: function(tabindex) {
+      tabindex = tabindex || this.focus;
       return this.$refs[`c${tabindex}`][0];
     },
 
