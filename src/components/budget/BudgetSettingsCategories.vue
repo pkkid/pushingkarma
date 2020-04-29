@@ -34,18 +34,28 @@
   export default {
     name: 'BudgetSettingsCategories',
     mixins: [TableMixin],
-    data: () => ({
-      columns: [
-        {name:'Name', field:'name', editable:true},
-        {name:'Budget', field:'budget', display:utils.usd, select:true, numeric:true, editable:true, width:'150px', class:'blur'},
-      ],
-      sortfield: 'sortindex',
-    }),
+    data: function() {
+      return {
+        columns: [
+          {name:'Name', field:'name', editable:true},
+          {name:'Budget', field:'budget', display:utils.usd, select:true, numeric:true, editable:true, width:'150px', class:'blur'},
+          {name:'Exclude From Budget', field:'exclude_budget', display:'switch', width:'200px'},
+          {name:'Exclude From Totals', field:'exclude_totals', display:'switch', width:'200px'},
+        ],
+        sortfield: 'sortindex',
+      };
+    },
     computed: {
       items: pathify.sync('budget/categories'),
       keymap: function() { return this.tablemixin_keymap(); },
     },
     methods: {
+
+      display_toggle: function(value) {
+        console.log('Hi Mom!');
+        return 'Hi Mom!';
+      },
+
       // Save
       // Save the current cell value - There is a slight bit of wonkyness here in
       // that this function is called anytime a cell value changed, but depending

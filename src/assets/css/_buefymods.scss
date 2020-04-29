@@ -84,6 +84,6 @@
 
 // Tabs
 // https://buefy.org/documentation/tabs/
-.b-tabs .tab-content {
-  padding: 20px 0px;
-}
+.tabs ul { padding-left: 0px; border-bottom-width:2px; }
+.tabs a { border-bottom-width:2px; margin-bottom: -2px; }
+.b-tabs .tab-content { padding: 20px 0px; }

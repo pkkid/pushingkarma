@@ -1,15 +1,15 @@
 # encoding: utf-8
 from decimal import Decimal
 from django.conf import settings
-from pk import utils
+from django.db.models import Count, Min, Max
+from pk import log, utils
 from pk.utils.api import DynamicFieldsSerializer, PartialFieldsSerializer
 from pk.utils.search import FIELDTYPES, SearchField, Search
-from rest_framework import viewsets
+from rest_framework import serializers, viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
-from rest_framework.serializers import ValidationError
 from .manager import TransactionManager
 from .models import Account, Category, Transaction, KeyValue, UNCATEGORIZED
 
@@ -31,9 +31,14 @@ TRANSACTIONSEARCHFIELDS = {
 
 
 class AccountSerializer(DynamicFieldsSerializer):
+    first_transaction = serializers.DateField()
+    last_transaction = serializers.DateField()
+    num_transactions = serializers.IntegerField()
+
     class Meta:
         model = Account
-        fields = ('id','url','name','fid','type','payee','balance','balancedt')
+        fields = ('id', 'url', 'name', 'fid', 'type', 'payee', 'balance', 'balancedt',
+            'first_transaction', 'last_transaction', 'num_transactions')
 
     def create(self, validated_data):
         validated_data['user'] = self.context['request'].user
@@ -50,6 +55,11 @@ class AccountsViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         accounts = Account.objects.filter(user=request.user).order_by('name')
+        accounts = accounts.annotate(
+            first_transaction=Min('transaction__date'),
+            last_transaction=Max('transaction__date'),
+            num_transactions=Count('transaction'))
+        log.info(accounts.values())
         page = self.paginate_queryset(accounts)
         serializer = AccountSerializer(page, context={'request':request}, many=True, fields=self.list_fields)
         response = self.get_paginated_response(serializer.data)
@@ -67,6 +77,12 @@ class CategorySerializer(DynamicFieldsSerializer):
         if budget and '$' in budget:
             data['budget'] = Decimal(budget.replace('$', ''))
         return super(CategorySerializer, self).to_internal_value(data)
+    
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        account = Category(**validated_data)
+        account.save()
+        return account
 
 
 class CategoriesViewSet(viewsets.ModelViewSet):
@@ -101,7 +117,7 @@ class TransactionSerializer(DynamicFieldsSerializer):
         if category_name:
             category = utils.get_object_or_none(Category, user=user, name__iexact=category_name)
             if not category:
-                raise ValidationError("Unknown category '%s'." % category_name)
+                raise serializers.ValidationError("Unknown category '%s'." % category_name)
             instance.category = category
         instance.save()
         return instance

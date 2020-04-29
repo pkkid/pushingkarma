@@ -34,14 +34,17 @@
   export default {
     name: 'BudgetSettingsAccounts',
     mixins: [TableMixin],
-    data: () => ({
-      columns: [
-        {name:'Name', field:'name', editable:true, width:'30%'},
-        {name:'FID', field:'fid', editable:true, select:true, width:'30%'},
-        {name:'Last Updated', field:'balancedt', width:'20%', display:utils.timeAgo},
-        {name:'Balance', field:'balance', display:utils.usd, numeric:true, width:'20%', class:'blur'},
-      ],
-    }),
+    data: function() {
+      return {
+        columns: [
+          {name:'Name', field:'name', editable:true, width:'25%'},
+          {name:'FID', field:'fid', editable:true, select:true, width:'25%'},
+          {name:'Last Updated', field:'balancedt', width:'15%', display:utils.timeAgo},
+          {name:'Transactions', field:'num_transactions', width:'15%', numeric:true, display:utils.insertCommas},
+          {name:'Balance', field:'balance', width:'20%', class:'blur', numeric:true, display:utils.usd},
+        ],
+      };
+    },
     computed: {
       items: pathify.sync('budget/accounts'),
       keymap: function() { return this.tablemixin_keymap(); },
