@@ -74,8 +74,10 @@ class CategorySerializer(DynamicFieldsSerializer):
     
     def to_internal_value(self, data):
         budget = data.get('budget')
-        if budget and '$' in budget:
-            data['budget'] = Decimal(budget.replace('$', ''))
+        if budget:
+            budget = budget.replace('$', '')
+            budget = budget.replace(',', '')
+            data['budget'] = Decimal(budget)
         return super(CategorySerializer, self).to_internal_value(data)
     
     def create(self, validated_data):

@@ -1,6 +1,6 @@
 <template>
   <div class='tablecell' :class='[status,{focused,editing}]' tabindex='-1'>
-    <div v-if='cls=="check"' @mousedown='preventDoubleClick'><i v-if='value' class='mdi mdi-check'/></div>
+    <div v-if='cls=="check"' @mousedown='preventDoubleClick' ref='div'><i v-if='value' class='mdi mdi-check'/></div>
     <div v-else :value='data.value' v-html='displayValue' :contenteditable='contenteditable' ref='div' 
       spellcheck='false' @input="$emit('input', $event.target.textContent)"/>
   </div>
@@ -48,7 +48,7 @@
           if (!this.select) { range.collapse(false); }
           selection.removeAllRanges();
           selection.addRange(range);
-          this.$el.focus();
+          this.$refs.div.focus();
         }
       },
     },
@@ -79,9 +79,7 @@
       // Toggle Boolean Value
       // Toggles a boolean value (check)
       toggleValue: function() {
-        console.log(`Toggle value ${this.data.value}`);
         this.$set(this.data, 'value', !this.data.value);
-        console.log(`New value ${this.data.value}`);
       },
     },
   };
