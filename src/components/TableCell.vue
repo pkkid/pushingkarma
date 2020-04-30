@@ -1,13 +1,14 @@
 <template>
-  <div class='tablecell' :class='[{focused,editing}, status]' tabindex='-1'>
-    <b-switch v-if='display == "switch"' size='is-small'/>
-    <div v-else :value='data.value' v-html='displayValue' :contenteditable='editable' ref='div' 
-      spellcheck='false' @input="$emit('input', $event.target.textContent)"></div>
+  <div class='tablecell' :class='[status,{focused,editing}]' tabindex='-1'>
+    <div v-if='cls=="check"' @mousedown='preventDoubleClick'><i v-if='value' class='mdi mdi-check'/></div>
+    <div v-else :value='data.value' v-html='displayValue' :contenteditable='contenteditable' ref='div' 
+      spellcheck='false' @input="$emit('input', $event.target.textContent)"/>
   </div>
 </template>
 
 <script>
   import * as utils from '@/utils/utils';
+  var CLASSES_NOT_EDITABLE = ['check'];
 
   export default {
     name: 'TableCell',
@@ -26,19 +27,20 @@
       field: function() { return this.data.field; },                              // Field Name
       value: function() { return this.data.value; },                              // Cell value
       name: function() { return this.data.name || null; },                        // Column Name
+      cls: function() { return this.data.cls; },                                  // Class applied to cell
       display: function() { return this.data.display || null; },                  // Display callback
       select: function() { return this.data.select || null; },                    // Select text when editing
       tabindex: function() { return this.data.tabindex || null; },                // Global ID (for editable cells)
-      // Useful computed properties
-      editable: function() { return this.focused && this.editing; },              // True if currently editable
+      contenteditable: function() { return this.focused && this.editing; },       // True if currently editable
+      editable: function() { return this.data.editable && !CLASSES_NOT_EDITABLE.includes(this.cls); },
       focused: function() { return (this.tabindex && (this.tabindex === this.focus)); },
       displayValue: function() { return this.display ? this.display(this.value) : this.value; },
     },
     watch: {
       // Watch Editable - Set the cursor at the end of the input
       // or select all text if the option select is true.
-      editable: async function() {
-        if (this.editable) {
+      contenteditable: async function() {
+        if (this.contenteditable) {
           await this.$nextTick();
           var range = document.createRange();
           range.selectNodeContents(this.$refs.div);
@@ -46,10 +48,11 @@
           if (!this.select) { range.collapse(false); }
           selection.removeAllRanges();
           selection.addRange(range);
+          this.$el.focus();
         }
       },
     },
-    methods: {      
+    methods: {
       // Get New Value
       // Return current new value
       getNewValue: function() {
@@ -64,6 +67,21 @@
           await utils.sleep(duration);
           this.status = 'default';
         }
+      },
+
+      // Prevent Double Click
+      // Checkmark cells need this to quickly toggle the value but
+      // it often also selects a word of text which is annoying.
+      preventDoubleClick: function(event) {
+        if (event.detail > 1) { event.preventDefault(); }
+      },
+
+      // Toggle Boolean Value
+      // Toggles a boolean value (check)
+      toggleValue: function() {
+        console.log(`Toggle value ${this.data.value}`);
+        this.$set(this.data, 'value', !this.data.value);
+        console.log(`New value ${this.data.value}`);
       },
     },
   };

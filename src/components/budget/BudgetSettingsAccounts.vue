@@ -5,10 +5,10 @@
       provide a unique FID that you can see by opening the file. This is used to
       determine the bank the data originated when uploading transactions.</p>
     <div v-click-outside='cancelAll'>
-      <b-table :data='tabledata' :narrowed='true'>
+      <b-table :data='tabledata' narrowed>
         <template slot-scope='props'>
           <b-table-column v-for='c in props.row' :key='c.name' :label='c.name' :width='c.width'
-            :numeric='c.numeric' :cell-class='c.class'>
+            :numeric='c.numeric' :header-class='c.cls' :cell-class='c.cls'>
             <TableCell v-bind='{data:c, focus, editing}' :ref='`c${c.tabindex}`'
               @click.native='clickSetFocus($event, c.tabindex)'/>
           </b-table-column>
@@ -41,7 +41,7 @@
           {name:'FID', field:'fid', editable:true, select:true, width:'25%'},
           {name:'Last Updated', field:'balancedt', width:'15%', display:utils.timeAgo},
           {name:'Transactions', field:'num_transactions', width:'15%', numeric:true, display:utils.insertCommas},
-          {name:'Balance', field:'balance', width:'20%', class:'blur', numeric:true, display:utils.usd},
+          {name:'Balance', field:'balance', width:'20%', cls:'blur', numeric:true, display:utils.usd},
         ],
       };
     },

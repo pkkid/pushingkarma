@@ -81,6 +81,7 @@ export default {
         'shift+tab': (event) => this.navigate(event, -1, true, true),
         'shift+up': (event) => this.reorder(event, -1),
         'shift+down': (event) => this.reorder(event, 1),
+        'space': (event) => this.toggleValue(event),
         'enter': (event) => this.enterEditOrSave(event),
         'esc': (event) => this.cancelEdit(event),
       };
@@ -133,7 +134,8 @@ export default {
       if (!this.inContainer()) { return; }
       if (this.focus) {
         event.preventDefault();
-        if (!this.editing) {
+        var cell = this.getCell();
+        if (!this.editing && cell.editable) {
           // Start editing
           this.editing = true;
         } else {
@@ -148,10 +150,14 @@ export default {
     clickSetFocus: function(event, tabindex) {
       if (tabindex != null) {
         event.preventDefault();
+        var cell = this.getCell();
         if (tabindex != this.focus) {
           // Set new focus
           this.focus = tabindex;
           this.editing = false;
+        } else if (!cell.editable) {
+          // Toggle boolean value
+          cell.toggleValue();
         } else if (!this.editing) {
           // Start editing
           this.editing = true;
@@ -163,7 +169,8 @@ export default {
     // Return cell coresponding to specified tabindex
     getCell: function(tabindex) {
       tabindex = tabindex || this.focus;
-      return this.$refs[`c${tabindex}`][0];
+      var ref = this.$refs[`c${tabindex}`];
+      return ref ? ref[0] : null;
     },
 
     // Get Row Values
@@ -188,17 +195,25 @@ export default {
       if (!allowEditing && this.editing) { return; }  // Skip if editing
       event.preventDefault();
       // Save the new value
+      var cell = this.getCell();
       if (this.editing && saveFirst) {
-        var cell = this.getCell();
         var newvalue = cell.getNewValue();
-        if (cell.value != newvalue) {
+        if (cell.displayValue != newvalue) {
           this.save(cell, cell.id, cell.row, cell.field, newvalue);
         }
       }
       // Set the new focus
       var newfocus = this.focus + amount;
-      if ((newfocus > 0) && (newfocus <= this.maxfocus)) { this.focus = newfocus; }  // Navigate to new item
-      else { this.editing = false; }  // Reached the end of the table, just stop editing.
+      if ((newfocus > 0) && (newfocus <= this.maxfocus)) {
+        // Navigate to new item
+        var newcell = this.getCell(newfocus);
+        document.getSelection().removeAllRanges();
+        this.editing = newcell.editable ? this.editing : false;
+        this.focus = newfocus;
+      } else {
+        // Reached the end of the table, just stop editing.
+        this.editing = false;
+      }
     },
 
     // Reorder
@@ -222,5 +237,19 @@ export default {
       this.focus = (this.items.length - 1) * this.editcols + 1;
       this.editing = true;
     },
+
+    // Toggle Value
+    // Only for non-editable cells, till toggle current value
+    toggleValue: function(event) {
+      if (!this.inContainer()) { return; }  // Skip if not in container
+      if (!this.focus) { return; }  // Skip if nothing selected
+      if (this.editing) { return; }  // Skip if editing
+      event.preventDefault();
+      var cell = this.getCell();
+      if (!cell.editable) {
+        cell.toggleValue();
+      }
+    },
+
   },
 };

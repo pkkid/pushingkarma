@@ -8,7 +8,7 @@
       <b-table :data='tabledata' narrowed>
         <template slot-scope='props'>
           <b-table-column v-for='c in props.row' :key='c.name' :label='c.name' :width='c.width'
-            :numeric='c.numeric' :cell-class='c.class'>
+            :numeric='c.numeric' :header-class='c.cls' :cell-class='c.cls'>
             <TableCell v-bind='{data:c, focus, editing}' :ref='`c${c.tabindex}`'
               @click.native='clickSetFocus($event, c.tabindex)'/>
           </b-table-column>
@@ -39,8 +39,8 @@
         columns: [
           {name:'Name', field:'name', editable:true},
           {name:'Budget', field:'budget', display:utils.usd, select:true, numeric:true, editable:true, width:'150px', class:'blur'},
-          {name:'Exclude From Budget', field:'exclude_budget', display:'switch', width:'200px'},
-          {name:'Exclude From Totals', field:'exclude_totals', display:'switch', width:'200px'},
+          {name:'Exclude From Budget', field:'exclude_budget', cls:'check', editable:true, width:'200px'},
+          {name:'Exclude From Totals', field:'exclude_totals', cls:'check', editable:true, width:'200px'},
         ],
         sortfield: 'sortindex',
       };
@@ -50,12 +50,6 @@
       keymap: function() { return this.tablemixin_keymap(); },
     },
     methods: {
-
-      display_toggle: function(value) {
-        console.log('Hi Mom!');
-        return 'Hi Mom!';
-      },
-
       // Save
       // Save the current cell value - There is a slight bit of wonkyness here in
       // that this function is called anytime a cell value changed, but depending

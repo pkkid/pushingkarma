@@ -69,16 +69,16 @@
   font-size: 16px;
   color: $lightbg-fg1;
   tr { position:relative; }
-  
   td.blur { font-family:$fontfamily-code; font-size:0.9em; }
   &.is-narrow {
     th { background-color:$lightbg-bg2; font-size:0.8em; padding:1px 10px; }
     td { padding:1px 5px; }
   }
-
-  // Drag n' drop
-  tr.dragging { display: none; }
-  tr.dragover td { padding-bottom: 30px; }
+  th.check div { text-align:center; justify-content:center; }
+  td.check div {
+    text-align:center;
+    justify-content:center;
+  }
   
 }
 
