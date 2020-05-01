@@ -142,7 +142,7 @@ export default {
           // Save and goto next item
           this.navigate(event, this.editcols, true, true);
         }
-      }if (this.$el.contains(document.activeElement));
+      }
     },
 
     // Click: Set Focus
@@ -157,7 +157,8 @@ export default {
           this.editing = false;
         } else if (!cell.editable) {
           // Toggle boolean value
-          cell.toggleValue();
+          var newvalue = !cell.data.value;
+          this.save(cell, cell.id, cell.row, cell.field, newvalue);
         } else if (!this.editing) {
           // Start editing
           this.editing = true;
@@ -247,7 +248,8 @@ export default {
       event.preventDefault();
       var cell = this.getCell();
       if (!cell.editable) {
-        cell.toggleValue();
+        var newvalue = !cell.data.value;
+        this.save(cell, cell.id, cell.row, cell.field, newvalue);
       }
     },
 

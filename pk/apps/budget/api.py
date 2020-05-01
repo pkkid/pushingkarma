@@ -59,7 +59,6 @@ class AccountsViewSet(viewsets.ModelViewSet):
             first_transaction=Min('transaction__date'),
             last_transaction=Max('transaction__date'),
             num_transactions=Count('transaction'))
-        log.info(accounts.values())
         page = self.paginate_queryset(accounts)
         serializer = AccountSerializer(page, context={'request':request}, many=True, fields=self.list_fields)
         response = self.get_paginated_response(serializer.data)
@@ -70,7 +69,8 @@ class AccountsViewSet(viewsets.ModelViewSet):
 class CategorySerializer(DynamicFieldsSerializer):
     class Meta:
         model = Category
-        fields = ('id','name','sortindex','budget','comment','url')
+        fields = ('id', 'url', 'name', 'sortindex', 'budget', 'comment',
+            'exclude_budget', 'exclude_totals')
     
     def to_internal_value(self, data):
         budget = data.get('budget')

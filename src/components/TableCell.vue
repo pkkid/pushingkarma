@@ -1,8 +1,9 @@
 <template>
-  <div class='tablecell' :class='[status,{focused,editing}]' tabindex='-1'>
-    <div v-if='cls=="check"' @mousedown='preventDoubleClick' ref='div'><i v-if='value' class='mdi mdi-check'/></div>
+  <div class='tablecell' :class='[status,{focused,editing}]'>
+    <div v-if='cls=="check"' @mousedown='preventDoubleClick' ref='div' tabindex='-1'>
+      <i v-if='value' class='mdi mdi-check'/></div>
     <div v-else :value='data.value' v-html='displayValue' :contenteditable='contenteditable' ref='div' 
-      spellcheck='false' @input="$emit('input', $event.target.textContent)"/>
+      spellcheck='false' @input="$emit('input', $event.target.textContent)" tabindex='-1'/>
   </div>
 </template>
 
@@ -22,16 +23,16 @@
     }),
     computed: {
       // Passed in data properties
-      row: function() { return this.data.row; },                                  // Item row index
-      id: function() { return this.data.id; },                                    // Column Name
-      field: function() { return this.data.field; },                              // Field Name
-      value: function() { return this.data.value; },                              // Cell value
-      name: function() { return this.data.name || null; },                        // Column Name
-      cls: function() { return this.data.cls; },                                  // Class applied to cell
-      display: function() { return this.data.display || null; },                  // Display callback
-      select: function() { return this.data.select || null; },                    // Select text when editing
-      tabindex: function() { return this.data.tabindex || null; },                // Global ID (for editable cells)
-      contenteditable: function() { return this.focused && this.editing; },       // True if currently editable
+      row: function() { return this.data.row; },                              // Item row index
+      id: function() { return this.data.id; },                                // Column Name
+      field: function() { return this.data.field; },                          // Field Name
+      value: function() { return this.data.value; },                          // Cell value
+      name: function() { return this.data.name || null; },                    // Column Name
+      cls: function() { return this.data.cls; },                              // Class applied to cell
+      display: function() { return this.data.display || null; },              // Display callback
+      select: function() { return this.data.select || null; },                // Select text when editing
+      tabindex: function() { return this.data.tabindex || null; },            // Global ID (for editable cells)
+      contenteditable: function() { return this.focused && this.editing; },   // True if currently editable
       editable: function() { return this.data.editable && !CLASSES_NOT_EDITABLE.includes(this.cls); },
       focused: function() { return (this.tabindex && (this.tabindex === this.focus)); },
       displayValue: function() { return this.display ? this.display(this.value) : this.value; },
@@ -74,12 +75,6 @@
       // it often also selects a word of text which is annoying.
       preventDoubleClick: function(event) {
         if (event.detail > 1) { event.preventDefault(); }
-      },
-
-      // Toggle Boolean Value
-      // Toggles a boolean value (check)
-      toggleValue: function() {
-        this.$set(this.data, 'value', !this.data.value);
       },
     },
   };
