@@ -36,13 +36,13 @@
     mixins: [TableMixin],
     data: function() {
       return {
+        sortfield: 'sortindex',
         columns: [
           {name:'Name', field:'name', editable:true},
           {name:'Budget', field:'budget', display:utils.usd, select:true, numeric:true, editable:true, width:'150px', class:'blur'},
           {name:'Exclude From Budget', field:'exclude_budget', cls:'check', editable:true, width:'200px'},
           {name:'Exclude From Totals', field:'exclude_totals', cls:'check', editable:true, width:'200px'},
         ],
-        sortfield: 'sortindex',
       };
     },
     computed: {

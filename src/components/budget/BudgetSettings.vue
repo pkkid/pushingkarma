@@ -6,10 +6,10 @@
     </h1>
     <b-tabs v-model='activetab' :animated='false'>
       <b-tab-item label='Bank Accounts'>
-        <BudgetSettingsAccounts ref='0' class='fadein'/>
+        <BudgetAccounts ref='0' class='fadein'/>
       </b-tab-item>
       <b-tab-item label='Categories'>
-        <BudgetSettingsCategories ref='1' class='fadein'/>
+        <BudgetCategories ref='1' class='fadein'/>
       </b-tab-item>
     </b-tabs>
   </div>
@@ -17,12 +17,12 @@
 
 <script>
   import * as utils from '@/utils/utils';
-  import BudgetSettingsAccounts from './BudgetSettingsAccounts';
-  import BudgetSettingsCategories from './BudgetSettingsCategories';
+  import BudgetAccounts from './BudgetAccounts';
+  import BudgetCategories from './BudgetCategories';
 
   export default {
     name: 'BudgetSettings',
-    components: {BudgetSettingsAccounts, BudgetSettingsCategories},
+    components: {BudgetAccounts, BudgetCategories},
     data: () => ({
       activetab: 0,
     }),

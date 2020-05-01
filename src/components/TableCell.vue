@@ -94,7 +94,7 @@
       padding: 1px 3px;
       width: 100%;
       height: 29px;
-      transition: all .3s ease;
+      //transition: all .1s ease;
     }
     &.focused div {
       background-color: $lightbg-bg2;

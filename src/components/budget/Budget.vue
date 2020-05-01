@@ -12,7 +12,7 @@
               <BudgetMonth v-if='view=="month"'/>
               <BudgetYear v-else-if='view=="year"'/>
               <BudgetSettings v-else-if='view=="settings"'/>
-              <BudgetTrx v-else />
+              <BudgetTransactions v-else/>
             </transition>
           </PageWrap>
         </Dropzone>
@@ -29,7 +29,7 @@
   import BudgetMonth from './BudgetMonth';
   import BudgetSettings from './BudgetSettings';
   import BudgetYear from './BudgetYear';
-  import BudgetTrx from './BudgetTrx';
+  import BudgetTransactions from './BudgetTransactions';
   import SidePanel from '@/components/site/SidePanel';
   import PageWrap from '@/components/site/PageWrap';
   import Dropzone from '@/components/Dropzone';
@@ -38,7 +38,7 @@
   export default {
     name: 'Budget',
     components: {BudgetMenu, BudgetMonth, BudgetYear, BudgetSettings,
-      BudgetTrx, Dropzone, Navigation, SidePanel, PageWrap},
+      BudgetTransactions, Dropzone, Navigation, SidePanel, PageWrap},
     computed: {
       account: pathify.sync('budget/account'),
       accounts: pathify.sync('budget/accounts'),

@@ -31,6 +31,7 @@
 //      </b-table>
 //
 import TableCell from '@/components/TableCell';
+import * as utils from '@/utils/utils';
 
 export default {
   components: {TableCell},
@@ -57,7 +58,7 @@ export default {
           var cell = Object.assign({}, col, {
             row: i,                             // Item row index
             id: this.items[i].id || null,       // Item ID (from the db)
-            value: this.items[i][col.field],    // Cell value items[row][field]
+            value: utils.rget(this.items[i], col.field),    // Cell value items[row][field]
             tabindex: tabindex,                 // Cell tabindex for keyboard nav
             width: col.width || null,           // Cell width
           });
@@ -196,8 +197,8 @@ export default {
       if (!allowEditing && this.editing) { return; }  // Skip if editing
       event.preventDefault();
       // Save the new value
-      var cell = this.getCell();
       if (this.editing && saveFirst) {
+        var cell = this.getCell();
         var newvalue = cell.getNewValue();
         if (cell.displayValue != newvalue) {
           this.save(cell, cell.id, cell.row, cell.field, newvalue);
