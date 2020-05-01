@@ -66,13 +66,13 @@
 }
 .table {
   background-color: transparent;
-  font-size: 16px;
-  color: $lightbg-fg1;
+  font-size: 15px;
+  color: $lightbg-fg2;
   tr { position:relative; }
-  td.blur { font-family:$fontfamily-code; font-size:0.9em; }
+  td.blur { font-family:$fontfamily-code; font-size:13px; }
   &.is-narrow {
     th { background-color:$lightbg-bg2; font-size:0.8em; padding:1px 10px; }
-    td { padding:1px 5px; }
+    td { padding:1px 5px; border-color:$lightbg-bg2; }
   }
   th.check div { text-align:center; justify-content:center; }
   td.check div {

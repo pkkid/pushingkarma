@@ -14,12 +14,12 @@
   export default {
     name: 'TableCell',
     props: {
-      data: Object,         // Data {name, field, value, etc}
-      focus: Number,        // Global tabindex of focused cell
-      editing: Boolean,     // Globally True when editing a value
+      data: {type:Object, required:true}, // Data {name, field, value, etc}
     },
     data: () => ({
       status: 'default',    // Sets bgcolor to status {success or error}
+      focused: false,       // True if this cell is focused
+      editing: false,       // True if editing this cell
     }),
     computed: {
       // Passed in data properties
@@ -34,7 +34,6 @@
       tabindex: function() { return this.data.tabindex || null; },            // Global ID (for editable cells)
       contenteditable: function() { return this.focused && this.editing; },   // True if currently editable
       editable: function() { return this.data.editable && !CLASSES_NOT_EDITABLE.includes(this.cls); },
-      focused: function() { return (this.tabindex && (this.tabindex === this.focus)); },
       displayValue: function() { return this.display ? this.display(this.value) : this.value; },
     },
     watch: {
@@ -89,11 +88,11 @@
       border: 2px solid transparent;
       box-sizing: border-box;
       font-size: 0.9em;
-      line-height: 24px;
+      line-height: 20px;
       margin: 0px;
       padding: 1px 3px;
       width: 100%;
-      height: 29px;
+      height: 26px;
       //transition: all .1s ease;
     }
     &.focused div {

@@ -10,8 +10,7 @@
         <template slot-scope='props'>
           <b-table-column v-for='c in props.row' :key='c.name' :label='c.name' :width='c.width'
             :numeric='c.numeric' :header-class='c.cls' :cell-class='c.cls'>
-            <TableCell v-bind='{data:c, focus, editing}' :ref='`c${c.tabindex}`'
-              @click.native='clickSetFocus($event, c.tabindex)'/>
+            <TableCell :data='c' :ref='`c${c.tabindex}`' @click.native='clickSetFocus($event, c.tabindex)'/>
           </b-table-column>
         </template>
         <template slot='empty'>No items to display.</template>
@@ -25,6 +24,7 @@
   import * as pathify from 'vuex-pathify';
   import * as utils from '@/utils/utils';
   import TableMixin from '@/components/TableMixin';
+  import Vue from 'vue';
 
   export default {
     name: 'BudgetTransactions',
@@ -37,11 +37,11 @@
         columns: [
           {name:'Name', field:'account.name'},
           {name:'Date', field:'date', width:'100px', editable:true},
+          {name:'Category', field:'category.name', width:'160px', editable:true},
           {name:'Payee', field:'payee', editable:true},
-          {name:'Category', field:'category.name', width:'200px', editable:true},
-          {name:'Amount', field:'amount', display:utils.usd, select:true, numeric:true, editable:true, width:'150px', class:'blur'},
-          {name:'X', field:'approved', cls:'check', editable:true},
-          {name:'Comment', field:'comment', editable:true},
+          {name:'Amount', field:'amount', display:utils.usd, select:true, numeric:true, editable:true, width:'100px', cls:'blur'},
+          {name:'X', field:'approved', cls:'check', width:'26px', editable:true},
+          {name:'Comment', field:'comment', width:'200px', editable:true},
         ],
       };
     },
@@ -51,32 +51,25 @@
       items: function() { return this.transactions; },
       keymap: function() { return this.tablemixin_keymap(); },
     },
-    watch: {
-      // account: {immediate:true, handler:function() {
-      //   this.resetPage();
-      //   this.updateTransactions();
-      // }},
-    },
-    mounted: function() {
-      this.refresh();
-    },
+    watch: {account: {immediate:true, handler:function() { this.reset(); }}},
+    mounted: function() { this.reset(); },
     methods: {
       // Save
       // Save the current cell value
-      // save: async function(cell, id, row, field, newvalue, refresh=false) {
-      //   try {
-      //     var change = utils.rset({}, field, newvalue);
-      //     var {data} = await api.Budget.patchTransaction(id, change);
-      //     Vue.set(this.items, row, data);
-      //     if (cell) { cell.setStatus('success', 1000); }
-      //     if (refresh) { await this.refresh(); }
-      //     return data;
-      //   } catch(err) {
-      //     if (cell) { cell.setStatus('error'); }
-      //     utils.snackbar(`Error saving transaction.`);
-      //     console.log(err);
-      //   }
-      // },
+      save: async function(cell, id, row, field, newvalue, refresh=false) {
+        try {
+          var change = utils.rset({}, field.replace('.','_'), newvalue);
+          var {data} = await api.Budget.patchTransaction(id, change);
+          Vue.set(this.items, row, data);
+          if (cell) { cell.setStatus('success', 1000); }
+          if (refresh) { await this.refresh(); }
+          return data;
+        } catch(err) {
+          if (cell) { cell.setStatus('error'); }
+          utils.snackbar(`Error saving transaction.`);
+          console.log(err);
+        }
+      },
 
       // Refresh
       // Refresh the list of categories displayed
@@ -92,6 +85,16 @@
           if (!api.isCancel(err)) { throw(err); }
         }
       },
+
+      // Reset
+      // Reset the page view when switching tabs
+      reset: function() {
+        this.search = '';
+        this.editing = false;
+        this.focus = null;
+        this.refresh();
+      },
+
     }
   };
 </script>

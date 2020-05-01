@@ -9,8 +9,7 @@
         <template slot-scope='props'>
           <b-table-column v-for='c in props.row' :key='c.name' :label='c.name' :width='c.width'
             :numeric='c.numeric' :header-class='c.cls' :cell-class='c.cls'>
-            <TableCell v-bind='{data:c, focus, editing}' :ref='`c${c.tabindex}`'
-              @click.native='clickSetFocus($event, c.tabindex)'/>
+            <TableCell :data='c' :ref='`c${c.tabindex}`' @click.native='clickSetFocus($event, c.tabindex)'/>
           </b-table-column>
         </template>
         <template slot='empty'>No items to display.</template>
@@ -39,7 +38,7 @@
         sortfield: 'sortindex',
         columns: [
           {name:'Name', field:'name', editable:true},
-          {name:'Budget', field:'budget', display:utils.usd, select:true, numeric:true, editable:true, width:'150px', class:'blur'},
+          {name:'Budget', field:'budget', display:utils.usdint, select:true, numeric:true, editable:true, width:'150px', cls:'blur'},
           {name:'Exclude From Budget', field:'exclude_budget', cls:'check', editable:true, width:'200px'},
           {name:'Exclude From Totals', field:'exclude_totals', cls:'check', editable:true, width:'200px'},
         ],

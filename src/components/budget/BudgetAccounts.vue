@@ -9,8 +9,7 @@
         <template slot-scope='props'>
           <b-table-column v-for='c in props.row' :key='c.name' :label='c.name' :width='c.width'
             :numeric='c.numeric' :header-class='c.cls' :cell-class='c.cls'>
-            <TableCell v-bind='{data:c, focus, editing}' :ref='`c${c.tabindex}`'
-              @click.native='clickSetFocus($event, c.tabindex)'/>
+            <TableCell :data='c' :ref='`c${c.tabindex}`' @click.native='clickSetFocus($event, c.tabindex)'/>
           </b-table-column>
         </template>
         <template slot='empty'>No items to display.</template>

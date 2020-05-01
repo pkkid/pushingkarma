@@ -69,6 +69,28 @@ export default {
       return rows;
     },
   },
+  watch: {
+    // Watch Focus
+    // Update the required TableCells with the new value
+    focus: function(newvalue, oldvalue) {
+      if (oldvalue) {
+        var oldcell = this.getCell(oldvalue);
+        oldcell.focused = false;
+        oldcell.editing = false;
+      }
+      if (newvalue) {
+        var newcell = this.getCell(newvalue);
+        newcell.focused = true;
+        newcell.editing = this.editing;
+      }
+    },
+    // Watch Editing
+    // Update the required TableCells with the new value
+    editing: function(newvalue) {
+      var cell = this.getCell();
+      cell.editing = newvalue;
+    }
+  },
   methods: {
     // TableMixin Keymap
     // Keymaps used with this mixin.
