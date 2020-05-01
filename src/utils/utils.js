@@ -231,6 +231,7 @@ export function updateHistory(router, changes) {
 export function usd(value, places=2) {
   var result;
   var negative = value < 0;
+  value = value || 0;
   value = Math.abs(value).toFixed(places);
   if (negative) { result = '-$'+ insertCommas(value); }
   else { result = '$'+ insertCommas(value); }

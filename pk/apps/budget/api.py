@@ -2,7 +2,7 @@
 from decimal import Decimal
 from django.conf import settings
 from django.db.models import Count, Min, Max
-from pk import log, utils
+from pk import utils
 from pk.utils.api import DynamicFieldsSerializer, PartialFieldsSerializer
 from pk.utils.search import FIELDTYPES, SearchField, Search
 from rest_framework import serializers, viewsets

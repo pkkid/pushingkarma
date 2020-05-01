@@ -82,11 +82,11 @@
     }
   }
   #budgetmenu .subitem {
-    font-size: 0.8em;
+    font-size: 13px;
     padding: 5px 15px 5px 45px;
     .name { float:left; }
     .balance { float:right; font-family:$fontfamily-code; }
-    .subtext { clear:both; color:$darkbg-fg4; font-size:.7em; font-weight:400; }
+    .subtext { clear:both; color:$darkbg-fg4; font-size:9px; font-weight:400; }
   }
   #budgetmenu .total {
     float: right;
