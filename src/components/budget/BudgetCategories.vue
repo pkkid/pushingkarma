@@ -1,11 +1,11 @@
 <template>
-  <div id='budgetsettingscategories' v-hotkey='keymap' tabindex='-1'>
+  <div id='budgetsettingscategories' v-hotkey='keymap'>
     <!-- <h2>Categories</h2> -->
     <p>Create and configure categories to bucket all transactions into. The budget
       value is used to help target an estimated amount per month to spend. Use
       shift+up and shift+down to sort items.</p>
     <div v-click-outside='cancelAll'>
-      <b-table :data='tabledata' narrowed>
+      <b-table :data='tabledata' narrowed ref='table' tabindex='-1'>
         <template slot-scope='props'>
           <b-table-column v-for='c in props.row' :key='c.name' :label='c.name' :width='c.width'
             :numeric='c.numeric' :header-class='c.cls' :cell-class='c.cls'>

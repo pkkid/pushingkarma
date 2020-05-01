@@ -154,7 +154,7 @@ export default {
     // Enter: Edit or Save
     // Called when user hits enter on the page
     enterEditOrSave: function(event) {
-      if (!this.inContainer()) { return; }
+      if (!this.inContainer()) { return false; }
       if (this.focus) {
         event.preventDefault();
         var cell = this.getCell();
@@ -208,7 +208,7 @@ export default {
     // In Container
     // Check the document.activeElement is within this container
     inContainer: function() {
-      return this.$el.contains(document.activeElement);
+      return this.$refs.table.$el.contains(document.activeElement);
     },
 
     // Navigate

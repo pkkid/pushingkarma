@@ -1,12 +1,14 @@
 <template>
-  <div id='budgettransactions' v-hotkey='keymap' tabindex='-1'>
+  <div id='budgettransactions' v-hotkey='keymap'>
     <h1>Budget Transactions
       <div class='subtext'>
         {{account ? account.name : 'All transactions'}}, Showing {{this.transactions.length}} of ??
       </div>
     </h1>
+    <input v-model.lazy='search' ref='search' class='input search' icon='magnify' placeholder='Search Transactions'
+      autocomplete='off' rounded/>
     <div v-click-outside='cancelAll'>
-      <b-table :data='tabledata' narrowed>
+      <b-table :data='tabledata' narrowed ref='table' tabindex='-1'>
         <template slot-scope='props'>
           <b-table-column v-for='c in props.row' :key='c.name' :label='c.name' :width='c.width'
             :numeric='c.numeric' :header-class='c.cls' :cell-class='c.cls'>
@@ -51,7 +53,10 @@
       items: function() { return this.transactions; },
       keymap: function() { return this.tablemixin_keymap(); },
     },
-    watch: {account: {immediate:true, handler:function() { this.reset(); }}},
+    watch: {
+      account: function() { this.reset(); },
+      search: function() { this.refresh(); },
+    },
     mounted: function() { this.reset(); },
     methods: {
       // Save
@@ -98,3 +103,20 @@
     }
   };
 </script>
+
+<style lang='scss'>
+  #budgettransactions {
+    position: relative;
+    h1 { margin-bottom:0px; }
+    .search {
+      width: 400px;
+      position: absolute;
+      font-weight: bold;
+      color: $lightbg-fg3;
+      right: 0px;
+      border-radius: 20px;
+      padding-left: 15px;
+    }
+    .table-wrapper { margin-top:45px; }
+  }
+</style>

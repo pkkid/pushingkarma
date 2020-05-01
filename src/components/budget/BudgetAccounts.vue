@@ -1,11 +1,11 @@
 <template>
-  <div id='budgetsettingsaccounts' v-hotkey='keymap' tabindex='-1'>
+  <div id='budgetsettingsaccounts' v-hotkey='keymap'>
     <!-- <h2>Bank Accounts</h2> -->
     <p>Add all accounts that you plan to upload .qfx files for. Each bank should
       provide a unique FID that you can see by opening the file. This is used to
       determine the bank the data originated when uploading transactions.</p>
     <div v-click-outside='cancelAll'>
-      <b-table :data='tabledata' narrowed>
+      <b-table :data='tabledata' narrowed ref='table' tabindex='-1'>
         <template slot-scope='props'>
           <b-table-column v-for='c in props.row' :key='c.name' :label='c.name' :width='c.width'
             :numeric='c.numeric' :header-class='c.cls' :cell-class='c.cls'>
