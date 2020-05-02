@@ -1,9 +1,10 @@
 # encoding: utf-8
 from decimal import Decimal
 from django.conf import settings
-from django.db.models import Count, Min, Max
-from pk import utils
+from django.db.models import Count, Min, Max, Sum, Q
+from pk import log, utils  # noqa
 from pk.utils.api import DynamicFieldsSerializer, PartialFieldsSerializer
+from pk.utils.api import append_summary_data
 from pk.utils.search import FIELDTYPES, SearchField, Search
 from rest_framework import serializers, viewsets
 from rest_framework.decorators import api_view, permission_classes
@@ -31,20 +32,24 @@ TRANSACTIONSEARCHFIELDS = {
 
 
 class AccountSerializer(DynamicFieldsSerializer):
-    first_transaction = serializers.DateField()
-    last_transaction = serializers.DateField()
-    num_transactions = serializers.IntegerField()
-
     class Meta:
         model = Account
-        fields = ('id', 'url', 'name', 'fid', 'type', 'payee', 'balance', 'balancedt',
-            'first_transaction', 'last_transaction', 'num_transactions')
+        fields = ('id','url','name','fid','type','payee','balance','balancedt')
+
+    def to_internal_value(self, data):
+        log.info(data)
+        return super(AccountSerializer, self).to_internal_value(data)
 
     def create(self, validated_data):
         validated_data['user'] = self.context['request'].user
         account = Account(**validated_data)
         account.save()
         return account
+    
+    def list(self, request, *args, **kwargs):
+        response = super().list(request, args, kwargs)
+        log.info(response.data)
+        return response
 
 
 class AccountsViewSet(viewsets.ModelViewSet):
@@ -55,13 +60,16 @@ class AccountsViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         accounts = Account.objects.filter(user=request.user).order_by('name')
-        accounts = accounts.annotate(
-            first_transaction=Min('transaction__date'),
-            last_transaction=Max('transaction__date'),
-            num_transactions=Count('transaction'))
         page = self.paginate_queryset(accounts)
         serializer = AccountSerializer(page, context={'request':request}, many=True, fields=self.list_fields)
         response = self.get_paginated_response(serializer.data)
+        response = append_summary_data(response, accounts,
+            first_transaction=Min('transaction__date'),
+            last_transaction=Max('transaction__date'),
+            num_transactions=Count('transaction'),
+            total_income=Sum('transaction__amount', filter=Q(transaction__amount__gt=0)),
+            total_spent=Sum('transaction__amount', filter=Q(transaction__amount__lt=0))
+        )
         utils.move_to_end(response.data, 'results')
         return response
 

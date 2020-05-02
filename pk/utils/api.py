@@ -2,6 +2,7 @@
 # Pulled from django-rest-framework documentation:
 # http://www.django-rest-framework.org/api-guide/serializers/#dynamically-modifying-fields
 from collections import OrderedDict
+from decimal import Decimal, getcontext
 from django.conf.urls import url
 from rest_framework import pagination, routers, serializers
 from rest_framework.exceptions import NotAuthenticated
@@ -60,6 +61,21 @@ class HybridRouter(routers.DefaultRouter):
                     response.data = OrderedDict(sorted(response.data.items(), key=lambda x: x[0]))
             return response
         return view
+
+
+def append_summary_data(response, queryset, **annotations):
+    """ Append data to a DRF list response. """
+    queryset = queryset.annotate(**annotations)
+    itemids = {x['id']:x for x in queryset.values()}
+    for item in response.data['results']:
+        itemdata = itemids[item['id']]
+        item['summary'] = {}
+        for key in annotations:
+            value = itemdata[key]
+            if isinstance(value, Decimal):
+                value = round(value, 2)
+            item['summary'][key] = value
+    return response
 
 
 def custom_exception_handler(err, context):

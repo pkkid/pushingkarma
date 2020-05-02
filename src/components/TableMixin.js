@@ -29,7 +29,6 @@
 //        </template>
 //        <template slot='empty'>No items to display.</template>
 //      </b-table>
-//
 import TableCell from '@/components/TableCell';
 import * as utils from '@/utils/utils';
 
