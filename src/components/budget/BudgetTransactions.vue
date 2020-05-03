@@ -1,14 +1,11 @@
 <template>
-  <transition name='custom-classes-transition' enter-active-class='animated fadeIn'>
-    <div id='budgettransactions' v-if='items' v-hotkey='keymap' >
+    <div id='budgettransactions' v-if='items' v-hotkey='keymap'>
       <h1>
         Budget Transactions
-        <div class='subtext'>
-          {{account ? account.name : 'All transactions'}}, Showing {{this.items.length}} of ??
-        </div>
+        <div class='subtext'>{{account ? account.name : 'All transactions'}}, Showing {{this.items.length}} of ??</div>
       </h1>
-      <input v-model.lazy='search' ref='search' class='input search' icon='magnify' placeholder='Search Transactions'
-        autocomplete='off' rounded/>
+      <input v-model.lazy='search' ref='search' class='input search' icon='magnify'
+        placeholder='Search Transactions' autocomplete='off' rounded/>
       <div v-click-outside='cancelAll'>
         <b-table :data='tabledata' narrowed ref='table' tabindex='-1'>
           <template slot-scope='props'>
@@ -21,8 +18,10 @@
         </b-table>
       </div>
     </div>
-    <b-loading v-else active :is-full-page='false'/>
-  </transition>
+    <div v-else id='#budgettransactions'>
+      <h1>Budget Transactions<div class='subtext'>Loading transactions..</div></h1>
+      <b-loading active :is-full-page='false'/>
+    </div>
 </template>
 
 <script>
@@ -110,8 +109,9 @@
 </script>
 
 <style lang='scss'>
-  #budgettransactions {
-    animation-duration: .3s;
+  #budgettransactions,
+  #budgettransactions-loading {
+    animation-duration: .6s;
     min-height: calc(70vh - 50px);
     position: relative;
     h1 { margin-bottom:0px; }

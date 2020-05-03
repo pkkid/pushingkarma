@@ -85,25 +85,25 @@
       background-color: transparent;
       border-radius: 4px;
       border: 0px;
-      border: 2px solid transparent;
+      border: 1px solid transparent;
       box-sizing: border-box;
       font-size: 0.9em;
       line-height: 20px;
-      margin: 0px;
-      padding: 1px 3px;
+      margin: 1px 0px;
+      padding: 2px 3px;
       width: 100%;
       height: 26px;
-      //transition: all .1s ease;
+      transition: all .1s ease;
     }
     &.focused div {
-      background-color: $lightbg-bg2;
-      border: 2px solid darken($lightbg-bg2, 3%);
+      background-color: darken($lightbg-bg1, 3%);
+      border: 1px solid darken($lightbg-bg2, 7%);
     }
     &.focused.editing div {
-      background-color: $lightbg-bg2;
-      border: 2px solid $lightbg-blue0;
+      border: 1px solid #076678;
       box-shadow: 0px 0px 8px rgba(0,0,0,0.2);
       color: darken($lightbg-blue0, 50%);
+      box-shadow: 0 0 0 0.125em rgba(7, 102, 120, 0.25);
     }
     &.success div {
       background-color: desaturate(lighten($darkbg-blue0, 40%), 10%);
