@@ -1,8 +1,8 @@
 <template>
-  <div class='tablecell' :class='[status,{focused,editing}]'>
-    <div v-if='cls=="check"' @mousedown='preventDoubleClick' ref='div' tabindex='-1'>
+  <div class='tablecell' :class='[status,{focused,editing}]' :style='{"max-width":data.width}'>
+    <div v-if='cls=="check"' @mousedown='preventDoubleClick' ref='div' tabindex='-1' :style='{"min-width":data.width}'>
       <i v-if='value' class='mdi mdi-check'/></div>
-    <div v-else :value='data.value' v-html='displayValue' :contenteditable='contenteditable' ref='div' 
+    <div v-else v-html='displayValue' :contenteditable='contenteditable' ref='div' :style='{"min-width":data.width}'
       spellcheck='false' @input="$emit('input', $event.target.textContent)" tabindex='-1'/>
   </div>
 </template>
@@ -83,27 +83,41 @@
   .tablecell {
     > div {
       background-color: transparent;
-      border-radius: 4px;
+      border-radius: 3px;
       border: 0px;
       border: 1px solid transparent;
       box-sizing: border-box;
       font-size: 0.9em;
       line-height: 20px;
       margin: 1px 0px;
-      padding: 2px 3px;
+      padding: 2px 5px;
       width: 100%;
       height: 26px;
       transition: all .1s ease;
+      white-space: nowrap;  // overflow editing
+      overflow: hidden;  // overflow editing
+      max-width: 300px;  // overflow editing
+      
+      br { display:none; }
+      * { display:inline; white-space:nowrap; }
     }
-    &.focused div {
-      background-color: darken($lightbg-bg1, 3%);
-      border: 1px solid darken($lightbg-bg2, 7%);
-    }
-    &.focused.editing div {
-      border: 1px solid #076678;
-      box-shadow: 0px 0px 8px rgba(0,0,0,0.2);
-      color: darken($lightbg-blue0, 50%);
-      box-shadow: 0 0 0 0.125em rgba(7, 102, 120, 0.25);
+
+    &.focused {
+      div {
+        background-color: darken($lightbg-bg1, 3%);
+        border: 1px solid darken($lightbg-bg2, 8%);
+        box-shadow:
+          0 0 0 2px lighten($lightbg-bg1, 2%),
+          inset 0 0 0px 1px lighten($lightbg-bg1, 1%);
+        position: absolute;  // overflow editing
+        max-width: fit-content;  // overflow editing
+      }
+      &.editing div {
+        border: 1px solid #076678;
+        box-shadow: 0px 0px 8px rgba(0,0,0,0.2);
+        color: darken($lightbg-blue0, 50%);
+        box-shadow: 0 0 0 2px rgba(7, 102, 120, 0.25);
+      }
     }
     &.success div {
       background-color: desaturate(lighten($darkbg-blue0, 40%), 10%);

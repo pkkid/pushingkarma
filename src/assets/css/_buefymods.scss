@@ -32,6 +32,7 @@
 }
 .input {
   background-color: $lightbg-bg0;
+  &:focus { box-shadow: 0 0 0 2px rgba(7, 102, 120, 0.25); }
 }
 
 // Loading Animation

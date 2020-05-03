@@ -90,7 +90,7 @@
   #budget {
     // Tweak page style and article styles
     #pagewrap { padding:30px 30px 60px 30px; }
-    #page { margin:0px auto; padding:25px 30px; max-width:1000px; min-width:800px; }
+    #page { max-width:1000px; min-width:1000px; }
     p { margin-top:0px; width:85%; }
   }
 

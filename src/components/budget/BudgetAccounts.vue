@@ -31,16 +31,17 @@
   import Vue from 'vue';
 
   export default {
-    name: 'BudgetSettingsAccounts',
+    name: 'BudgetAccounts',
     mixins: [TableMixin],
     data: function() {
       return {
         columns: [
-          {name:'Name', field:'name', editable:true, width:'25%'},
-          {name:'FID', field:'fid', editable:true, select:true, width:'25%'},
-          {name:'Last Updated', field:'balancedt', width:'15%', display:utils.timeAgo},
-          {name:'Transactions', field:'summary.num_transactions', width:'15%', numeric:true, display:utils.insertCommas},
-          {name:'Balance', field:'balance', width:'20%', cls:'blur', numeric:true, display:utils.usd},
+          // Columns should add up to 884px wide
+          {name:'Name', field:'name', editable:true, width:'200px'},
+          {name:'FID', field:'fid', editable:true, select:true, width:'200px'},
+          {name:'Last Updated', field:'balancedt', width:'150px', display:utils.timeAgo},
+          {name:'Transactions', field:'summary.num_transactions', width:'150px', numeric:true, display:utils.insertCommas},
+          {name:'Balance', field:'balance', width:'184px', cls:'blur', numeric:true, display:utils.usd},
         ],
       };
     },

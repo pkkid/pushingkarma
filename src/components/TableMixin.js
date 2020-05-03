@@ -162,6 +162,7 @@ export default {
           this.editing = true;
         } else {
           // Save and goto next item
+          if (!cell.editable) { this.toggleValue(event); }
           this.navigate(event, this.editcols, true, true);
         }
       }
