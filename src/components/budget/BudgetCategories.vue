@@ -31,7 +31,7 @@
   import Vue from 'vue';
 
   export default {
-    name: 'BudgetSettingsCategories',
+    name: 'BudgetCategories',
     mixins: [TableMixin],
     data: function() {
       return {

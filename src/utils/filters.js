@@ -7,6 +7,7 @@ dayjs.extend(RelativeTime);
 
 Vue.filter('formatDate', utils.formatDate);
 Vue.filter('int', utils.int);
+Vue.filter('commas', utils.insertCommas);
 Vue.filter('timeAgo', utils.timeAgo);
 Vue.filter('usd', utils.usd);
 Vue.filter('usdint', utils.usdint);

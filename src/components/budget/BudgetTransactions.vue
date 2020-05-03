@@ -2,7 +2,8 @@
     <div id='budgettransactions' v-if='items' v-hotkey='keymap'>
       <h1>
         Budget Transactions
-        <div class='subtext'>{{account ? account.name : 'All transactions'}}, Showing {{this.items.length}} of ??</div>
+        <div class='subtext'>Showing {{this.items.length | commas}} of {{this.total | commas}}
+          {{account ? account.name : ''}} transactions</div>
       </h1>
       <input v-model.lazy='search' ref='search' class='input search' icon='magnify'
         placeholder='Search Transactions' autocomplete='off' rounded/>
@@ -29,6 +30,7 @@
   import * as pathify from 'vuex-pathify';
   import * as utils from '@/utils/utils';
   import TableMixin from '@/components/TableMixin';
+  import trim from 'lodash/trim';
   import Vue from 'vue';
 
   export default {
@@ -38,7 +40,10 @@
       return {
         cancelsearch: null,   // Cancel search token
         search: '',           // Current search string
-        transactions: null,     // Displayed transactions
+        transactions: null,   // Displayed transactions
+        total: 0,             // Total transactions in current view
+        unapproved: 0,        // Total unapproved transactions in current view
+        uncategorized: 0,     // Total uncategorized transactions in current view
         columns: [
           {name:'Name', field:'account.name', width:'68px'},
           {name:'Date', field:'date', width:'100px', editable:true},
@@ -57,10 +62,17 @@
       keymap: function() { return this.tablemixin_keymap(); },
     },
     watch: {
-      account: function() { this.reset(); },
-      search: function() { this.refresh(); },
+      account: function() {
+        this.reset();
+      },
+      search: function() {
+        this.refresh();
+      },
     },
-    mounted: function() { this.reset(); },
+    mounted: function() {
+      var search = trim(this.search || this.$route.query.search || '');
+      this.reset(search);
+    },
     methods: {
       // Save
       // Save the current cell value
@@ -88,8 +100,11 @@
           var params = {search: this.search};
           if (this.account) { params.search += ` bank:"${this.account.name}"`; }
           var {data} = await api.Budget.getTransactions(params, token);
+          utils.updateHistory(this.$router, {search:this.search});
+          this.total = data.count;
+          this.unapproved = data.unapproved;
+          this.uncategorized = data.uncategorized;
           this.transactions = data.results;
-          //this.transactions = null;
         } catch(err) {
           if (!api.isCancel(err)) { throw(err); }
         }
@@ -97,8 +112,9 @@
 
       // Reset
       // Reset the page view when switching tabs
-      reset: function() {
-        this.search = '';
+      reset: function(search='') {
+        this.transactions = null;
+        this.search = search;
         this.editing = false;
         this.focus = null;
         this.refresh();
