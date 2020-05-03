@@ -65,6 +65,8 @@
         this.status = status;
         if (duration !== null) {
           await utils.sleep(duration);
+          this.status = 'fadestatus';
+          await utils.sleep(1000);
           this.status = 'default';
         }
       },
@@ -97,11 +99,10 @@
       white-space: nowrap;  // overflow editing
       overflow: hidden;  // overflow editing
       max-width: 300px;  // overflow editing
-      
       br { display:none; }
       * { display:inline; white-space:nowrap; }
     }
-
+    &.fadestatus div { transition: all 2s ease !important; }
     &.focused {
       div {
         background-color: darken($lightbg-bg1, 3%);
@@ -113,18 +114,25 @@
         max-width: fit-content;  // overflow editing
       }
       &.editing div {
-        border: 1px solid #076678;
+        border: 1px solid $lightbg-blue1;
         box-shadow: 0px 0px 8px rgba(0,0,0,0.2);
         color: darken($lightbg-blue0, 50%);
         box-shadow: 0 0 0 2px rgba(7, 102, 120, 0.25);
       }
     }
     &.success div {
-      background-color: desaturate(lighten($darkbg-blue0, 40%), 10%);
+      background-color: desaturate(lighten($darkbg-green1, 40%), 30%);
+      border: 1px solid $darkbg-green1;
+      box-shadow:
+        0 0 0 2px lighten($lightbg-bg1, 2%),
+        inset 0 0 0px 1px lighten($lightbg-bg1, 1%);
     }
     &.error div {
-      background-color: desaturate(lighten($darkbg-red0, 40%), 10%);
-      border-color: $darkbg-red0;
+      background-color: desaturate(lighten($darkbg-red0, 40%), 30%);
+      border-color: darken($darkbg-red0, 5%);
+      box-shadow:
+        0 0 0 2px lighten($lightbg-bg1, 2%),
+        inset 0 0 0px 1px lighten($lightbg-bg1, 1%);
     }
   }
 </style>
