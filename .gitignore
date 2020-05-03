@@ -5,6 +5,7 @@
 *.retry
 *.sass-cache*
 *.sqlite3
+*.sql
 *.sublime-workspace
 **/_dist/
 **/_logs/

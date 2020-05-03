@@ -12,10 +12,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from .manager import TransactionManager
-from .models import Account, Category, Transaction, KeyValue, UNCATEGORIZED
+from .models import Account, Category, Transaction, KeyValue
 
 ACCOUNTS = settings.BUDGET_ACCOUNTS
-CATEGORY_NULL = {'id':'null', 'name':UNCATEGORIZED, 'url':None, 'sortindex':999, 'budget':'0.00', 'comment':''}
 DATEFORMAT = '%Y-%m-%d'
 IGNORED = 'Ignored'
 REVERSE = True   # Set 'True' or 'False' for reversed month order.
@@ -36,20 +35,11 @@ class AccountSerializer(DynamicFieldsSerializer):
         model = Account
         fields = ('id','url','name','fid','type','payee','balance','balancedt')
 
-    def to_internal_value(self, data):
-        log.info(data)
-        return super(AccountSerializer, self).to_internal_value(data)
-
     def create(self, validated_data):
         validated_data['user'] = self.context['request'].user
         account = Account(**validated_data)
         account.save()
         return account
-    
-    def list(self, request, *args, **kwargs):
-        response = super().list(request, args, kwargs)
-        log.info(response.data)
-        return response
 
 
 class AccountsViewSet(viewsets.ModelViewSet):

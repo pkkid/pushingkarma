@@ -43,9 +43,6 @@ class Category(TimeStampedModel):
 
     @transaction.atomic
     def save(self, *args, **kwargs):
-        # Dont allow creating or modifying UNCATEGORIZED category
-        if self.pk and Category.objects.get(pk=self.pk).name == UNCATEGORIZED:
-            raise Exception('Cannot modify category %s' % UNCATEGORIZED)
         # Reorder the categories if needed
         if self.sortindex is None:
             categories = Category.objects.order_by('-sortindex')
@@ -61,11 +58,6 @@ class Category(TimeStampedModel):
                 Category.objects.filter(id=catid).update(sortindex=index)
                 index += 1
         super(Category, self).save(*args, **kwargs)
-    
-    def delete(self, *args, **kwargs):
-        if self.name == UNCATEGORIZED:
-            raise Exception('Cannot delete category %s' % UNCATEGORIZED)
-        super(Category, self).delete(*args, **kwargs)
 
 
 class Transaction(TimeStampedModel):
@@ -74,7 +66,7 @@ class Transaction(TimeStampedModel):
     trxid = models.CharField(max_length=255, db_index=True)
     date = models.DateField(db_index=True)
     payee = models.CharField(max_length=255, blank=True, db_index=True)
-    category = models.ForeignKey(Category, on_delete=models.SET(get_uncategorized), default=None)
+    category = models.ForeignKey(Category, null=True, default=None, on_delete=models.SET_NULL)
     amount = models.DecimalField(max_digits=8, decimal_places=2, db_index=True)
     approved = models.BooleanField(default=False, db_index=True)
     memo = models.CharField(max_length=255, blank=True, default='')
@@ -85,12 +77,6 @@ class Transaction(TimeStampedModel):
 
     def __str__(self):
         return '%s:%s:%s:%s' % (self.id, self.account, self.trxid, self.payee[:10])
-    
-    @transaction.atomic
-    def save(self, *args, **kwargs):
-        if self.category is None:
-            self.category = get_uncategorized()
-        super(Transaction, self).save(*args, **kwargs)
 
 
 class KeyValue(TimeStampedModel):
