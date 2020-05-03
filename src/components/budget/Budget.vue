@@ -49,10 +49,12 @@
     watch: {
       view: function(view) {
         utils.updateHistory(this.$router, {view});
+        window.scrollTo(0,0);
       },
       account: function(account) {
         var accountid = account ? account.id : null;
         utils.updateHistory(this.$router, {account:accountid});
+        window.scrollTo(0,0);
       },
     },
 

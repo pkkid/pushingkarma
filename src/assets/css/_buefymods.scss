@@ -31,6 +31,17 @@
   font-size: 0.8em;
 }
 
+// Loading Animation
+// https://buefy.org/documentation/loading
+.loading-overlay .loading-background {
+  background-color: transparent;
+}
+.loading-overlay .loading-icon:after {
+  animation-duration: 1s;
+  border: 2px solid lighten($lightbg-fg1, 65%);
+  border-top: 2px solid lighten($lightbg-fg1, 40%);
+}
+
 // Modal Card
 // https://buefy.org/documentation/dialog
 .dialog .modal-card {
@@ -69,6 +80,13 @@
   font-size: 15px;
   color: $lightbg-fg2;
   tr { position:relative; }
+  tr.is-empty td {
+    font-size: 1.3em;
+    text-align: center;
+    justify-content:center;
+    padding: 50px;
+    color: lighten($lightbg-fg2, 40%);
+  }
   td.blur { font-family:$fontfamily-code; font-size:13px; }
   &.is-narrow {
     th { background-color:$lightbg-bg2; font-size:0.8em; padding:1px 10px; }

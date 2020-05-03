@@ -39,7 +39,7 @@
           {name:'Name', field:'name', editable:true, width:'25%'},
           {name:'FID', field:'fid', editable:true, select:true, width:'25%'},
           {name:'Last Updated', field:'balancedt', width:'15%', display:utils.timeAgo},
-          {name:'Transactions', field:'num_transactions', width:'15%', numeric:true, display:utils.insertCommas},
+          {name:'Transactions', field:'summary.num_transactions', width:'15%', numeric:true, display:utils.insertCommas},
           {name:'Balance', field:'balance', width:'20%', cls:'blur', numeric:true, display:utils.usd},
         ],
       };

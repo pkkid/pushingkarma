@@ -1,24 +1,28 @@
 <template>
-  <div id='budgettransactions' v-hotkey='keymap'>
-    <h1>Budget Transactions
-      <div class='subtext'>
-        {{account ? account.name : 'All transactions'}}, Showing {{this.transactions.length}} of ??
+  <transition name='custom-classes-transition' enter-active-class='animated fadeIn'>
+    <div id='budgettransactions' v-if='items' v-hotkey='keymap' >
+      <h1>
+        Budget Transactions
+        <div class='subtext'>
+          {{account ? account.name : 'All transactions'}}, Showing {{this.items.length}} of ??
+        </div>
+      </h1>
+      <input v-model.lazy='search' ref='search' class='input search' icon='magnify' placeholder='Search Transactions'
+        autocomplete='off' rounded/>
+      <div v-click-outside='cancelAll'>
+        <b-table :data='tabledata' narrowed ref='table' tabindex='-1'>
+          <template slot-scope='props'>
+            <b-table-column v-for='c in props.row' :key='c.name' :label='c.name' :width='c.width'
+              :numeric='c.numeric' :header-class='c.cls' :cell-class='c.cls'>
+              <TableCell :data='c' :ref='`c${c.tabindex}`' @click.native='clickSetFocus($event, c.tabindex)'/>
+            </b-table-column>
+          </template>
+          <template slot='empty'>No items to display.</template>
+        </b-table>
       </div>
-    </h1>
-    <input v-model.lazy='search' ref='search' class='input search' icon='magnify' placeholder='Search Transactions'
-      autocomplete='off' rounded/>
-    <div v-click-outside='cancelAll'>
-      <b-table :data='tabledata' narrowed ref='table' tabindex='-1'>
-        <template slot-scope='props'>
-          <b-table-column v-for='c in props.row' :key='c.name' :label='c.name' :width='c.width'
-            :numeric='c.numeric' :header-class='c.cls' :cell-class='c.cls'>
-            <TableCell :data='c' :ref='`c${c.tabindex}`' @click.native='clickSetFocus($event, c.tabindex)'/>
-          </b-table-column>
-        </template>
-        <template slot='empty'>No items to display.</template>
-      </b-table>
     </div>
-  </div>
+    <b-loading v-else active :is-full-page='false'/>
+  </transition>
 </template>
 
 <script>
@@ -35,7 +39,7 @@
       return {
         cancelsearch: null,   // Cancel search token
         search: '',           // Current search string
-        transactions: {},     // Displayed transactions
+        transactions: null,     // Displayed transactions
         columns: [
           {name:'Name', field:'account.name'},
           {name:'Date', field:'date', width:'100px', editable:true},
@@ -86,6 +90,7 @@
           if (this.account) { params.search += ` bank:"${this.account.name}"`; }
           var {data} = await api.Budget.getTransactions(params, token);
           this.transactions = data.results;
+          //this.transactions = null;
         } catch(err) {
           if (!api.isCancel(err)) { throw(err); }
         }
@@ -106,6 +111,8 @@
 
 <style lang='scss'>
   #budgettransactions {
+    animation-duration: .3s;
+    min-height: calc(70vh - 50px);
     position: relative;
     h1 { margin-bottom:0px; }
     .search {
@@ -118,5 +125,6 @@
       padding-left: 15px;
     }
     .table-wrapper { margin-top:45px; }
+
   }
 </style>

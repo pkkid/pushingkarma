@@ -23,9 +23,10 @@ Simple Layout that looks like a page (or a peice of paper).
     font-family: $fontfamily-article;
     margin: 0px auto;
     max-width: 900px;
-    min-height: calc(70vh);
+    min-height: 70vh;
     min-width: 900px;
     padding: 25px 30px;
+    position: relative;
     ::selection { color:black; background:#ccc; }
   }
 </style>
