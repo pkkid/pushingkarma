@@ -5,9 +5,14 @@
         <div class='subtext'>Showing {{this.items.length | commas}} of {{this.total | commas}}
           {{account ? account.name : ''}} transactions</div>
       </h1>
-      <input v-model.lazy='search' ref='search' class='input search' icon='magnify'
-        placeholder='Search Transactions' autocomplete='off' spellcheck='false' rounded/>
-      <div v-click-outside='cancelAll'>
+      <div id='searchwrap'>
+        <b-loading class='is-small' :active='loading' :is-full-page='false'/>
+        <b-icon v-if='search' @click.native.prevent='search = ""' icon='close-circle-outline'/>
+        <input v-model.lazy='search' ref='search' class='input' icon='magnify'
+          placeholder='Search Transactions' autocomplete='off' spellcheck='false' rounded/>
+      </div>
+      <div style='clear:both'/>
+      <div class='clickout-detector' v-click-outside='cancelAll'>
         <b-table :data='tabledata' narrowed ref='table' tabindex='-1'>
           <template slot-scope='props'>
             <b-table-column v-for='c in props.row' :key='c.name' :label='c.name' :width='c.width'
@@ -40,6 +45,7 @@
       return {
         cancelsearch: null,   // Cancel search token
         search: '',           // Current search string
+        loading: false,
         transactions: null,   // Displayed transactions
         total: 0,             // Total transactions in current view
         unapproved: 0,        // Total unapproved transactions in current view
@@ -64,7 +70,7 @@
     },
     watch: {
       account: function() { this.reset(); },
-      search: function() { this.refresh(); },
+      search: function() { this.refresh(true); },
     },
     mounted: function() {
       var search = trim(this.search || this.$route.query.search || '');
@@ -90,7 +96,8 @@
 
       // Refresh
       // Refresh the list of categories displayed
-      refresh: async function() {
+      refresh: async function(showLoading=false) {
+        this.loading = showLoading;
         this.cancelsearch = api.cancel(this.cancelsearch);
         var token = this.cancelsearch.token;
         try {
@@ -104,6 +111,8 @@
           this.transactions = data.results;
         } catch(err) {
           if (!api.isCancel(err)) { throw(err); }
+        } finally {
+          setTimeout(() => this.loading = false, 300);
         }
       },
 
@@ -128,16 +137,32 @@
     min-height: calc(70vh - 50px);
     position: relative;
     h1 { margin-bottom:0px; }
-    .search {
-      width: 400px;
-      position: absolute;
-      font-weight: bold;
-      color: $lightbg-fg3;
-      right: 0px;
-      border-radius: 20px;
-      padding-left: 15px;
+    #searchwrap {
+      position: relative;
+      width: 450px;
+      float: right;
+      margin-bottom: 10px;
+      padding-left: 30px;
+      .input {
+        border-radius: 20px;
+        color: $lightbg-fg3;
+        font-weight: bold;
+        padding: 4px 35px 4px 15px;
+      }
+      .loading-overlay {
+        width: 20px;
+      }
+      .icon {
+        color: $lightbg-fg1;
+        position: absolute;
+        opacity: 0.3;
+        top: 6px;
+        right: 0px;
+        z-index: 10;
+        padding-right: 12px;
+        cursor: pointer;
+        &:hover { opacity:0.5; }
+      }
     }
-    .table-wrapper { margin-top:45px; }
-
   }
 </style>

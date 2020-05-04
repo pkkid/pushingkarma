@@ -37,14 +37,21 @@
 
 // Loading Animation
 // https://buefy.org/documentation/loading
-.loading-overlay .loading-background {
-  background-color: transparent;
+.loading-overlay {
+  .loading-background { background-color: transparent; }
+  .loading-icon:after {
+    animation-duration: 1s;
+    border: 2px solid lighten($lightbg-fg1, 65%);
+    border-top: 2px solid lighten($lightbg-fg1, 40%);
+  }
+  &.is-small .loading-icon:after {
+    width: 18px;
+    height: 18px;
+    top: calc(50% - 9px);
+    left: calc(50% - 9px);
+  }
 }
-.loading-overlay .loading-icon:after {
-  animation-duration: 1s;
-  border: 2px solid lighten($lightbg-fg1, 65%);
-  border-top: 2px solid lighten($lightbg-fg1, 40%);
-}
+.loading-overlay 
 
 // Modal Card
 // https://buefy.org/documentation/dialog

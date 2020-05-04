@@ -9,8 +9,8 @@
         <span v-if='user.id' class='subtext'>
           <a v-if='globals.DEBUG == false' href='http://localhost:8000'>To Development</a>
           <a v-if='globals.DEBUG == true' href='http://pushingkarma.com'>To Production</a>
-          <span> - </span>
-          <a href='/api/'>API</a>
+          <span> - </span><a href='/api/' target='api'>API</a>
+          <span> - </span><a href='http://pushingkarma.com/notes?noteid=19' target='todo'>Todo</a>
         </span>
       </div>
       <transition name='fadein'><router-view/></transition>
