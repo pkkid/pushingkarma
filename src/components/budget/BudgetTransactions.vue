@@ -63,12 +63,8 @@
       keymap: function() { return this.tablemixin_keymap(); },
     },
     watch: {
-      account: function() {
-        this.reset();
-      },
-      search: function() {
-        this.refresh();
-      },
+      account: function() { this.reset(); },
+      search: function() { this.refresh(); },
     },
     mounted: function() {
       var search = trim(this.search || this.$route.query.search || '');
