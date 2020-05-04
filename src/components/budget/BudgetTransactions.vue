@@ -6,7 +6,7 @@
           {{account ? account.name : ''}} transactions</div>
       </h1>
       <input v-model.lazy='search' ref='search' class='input search' icon='magnify'
-        placeholder='Search Transactions' autocomplete='off' rounded/>
+        placeholder='Search Transactions' autocomplete='off' spellcheck='false' rounded/>
       <div v-click-outside='cancelAll'>
         <b-table :data='tabledata' narrowed ref='table' tabindex='-1'>
           <template slot-scope='props'>
@@ -46,10 +46,11 @@
         uncategorized: 0,     // Total uncategorized transactions in current view
         columns: [
           {name:'Name', field:'account.name', width:'68px'},
-          {name:'Date', field:'date', width:'100px', editable:true},
+          {name:'Date', field:'date', width:'100px', editable:true, display:utils.formatDate},
           {name:'Category', field:'category.name', width:'150px', editable:true},
           {name:'Payee', field:'payee', editable:true, width:'250px'},
-          {name:'Amount', field:'amount', display:utils.usd, select:true, numeric:true, editable:true, width:'90px', cls:'blur'},
+          {name:'Amount', field:'amount', display:utils.usd, opts:{color:true}, select:true,
+            numeric:true, editable:true, width:'90px', cls:'blur'},
           {name:'X', field:'approved', cls:'check', width:'26px', editable:true},
           {name:'Comment', field:'comment', width:'180px', editable:true},
         ],

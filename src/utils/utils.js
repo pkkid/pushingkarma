@@ -79,7 +79,8 @@ export function findIndex(objs, key, value) {
 // Format Date
 // Wrapper around dayjs.format
 // https://day.js.org/docs/en/display/format
-export function formatDate(value, format) {
+export function formatDate(value, opts={}) {
+  var format = opts.format || 'MMM DD, YYYY';
   return dayjs(value).format(format);
 }
 
@@ -223,27 +224,34 @@ export function updateHistory(router, changes) {
   if (!isEqual(query, router.history.current.query)) {
     router.push({query});
   }
-  //query = _.pickBy(query, _.identity);  // remove falsey values
 }
 
 // USD
 // Format number to USD display -$99.99 without cents.
-export function usd(value, places=2) {
-  var result;
-  var negative = value < 0;
+export function usd(value, opts={}) {
   value = value || 0;
-  value = Math.abs(value).toFixed(places);
-  if (negative) { result = '-$'+ insertCommas(value); }
-  else { result = '$'+ insertCommas(value); }
+  var result;
+  var places = opts.places !== undefined ? opts.places : 2;
+  var valuestr = Math.abs(value).toFixed(places);
+  if (value < 0) { result = '-$'+ insertCommas(valuestr); }
+  else { result = '$'+ insertCommas(valuestr); }
   if (places == 2) {
     if (result.match(/\.\d{1}$/)) { return result +'0'; }
     if (!result.match(/\./)) { return result +'.00'; }
+  }
+  // Apply the color styles
+  if (opts.color) {
+    var cls = 'zero';
+    cls = value > 0 ? 'gtzero' : cls;
+    cls = value < 0 ? 'ltzero' : cls;
+    result = `<span class='${cls}'>${result}</span>`;
   }
   return result;
 }
 
 // USD Int
 // Format number to USD display without cents -$99
-export function usdint(value) {
-  return usd(value, 0);
+export function usdint(value, opts={}) {
+  opts = Object.assign({}, opts, {places:0});
+  return usd(value, opts);
 }

@@ -36,12 +36,11 @@
     data: function() {
       return {
         columns: [
-          // Columns should add up to 884px wide
           {name:'Name', field:'name', editable:true, width:'200px'},
           {name:'FID', field:'fid', editable:true, select:true, width:'200px'},
           {name:'Last Updated', field:'balancedt', width:'150px', display:utils.timeAgo},
           {name:'Transactions', field:'summary.num_transactions', width:'150px', numeric:true, display:utils.insertCommas},
-          {name:'Balance', field:'balance', width:'184px', cls:'blur', numeric:true, display:utils.usd},
+          {name:'Balance', field:'balance', width:'184px', cls:'blur', numeric:true, display:utils.usd, opts:{color:true}},
         ],
       };
     },

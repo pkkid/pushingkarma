@@ -38,7 +38,8 @@
         sortfield: 'sortindex',
         columns: [
           {name:'Name', field:'name', editable:true, width:'250px'},
-          {name:'Budget', field:'budget', display:utils.usdint, select:true, numeric:true, editable:true, width:'150px', cls:'blur'},
+          {name:'Budget', field:'budget', display:utils.usdint, opts:{color:true}, select:true,
+            numeric:true, editable:true, width:'150px', cls:'blur'},
           {name:'Exclude From Budget', field:'exclude_budget', cls:'check', editable:true, width:'247px'},
           {name:'Exclude From Totals', field:'exclude_totals', cls:'check', editable:true, width:'247px'},
         ],

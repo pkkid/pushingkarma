@@ -57,7 +57,7 @@ export default {
           var cell = Object.assign({}, col, {
             row: i,                             // Item row index
             id: this.items[i].id || null,       // Item ID (from the db)
-            value: utils.rget(this.items[i], col.field),    // Cell value items[row][field]
+            value: utils.rget(this.items[i], col.field),  // Cell value items[row][field]
             tabindex: tabindex,                 // Cell tabindex for keyboard nav
             width: col.width || null,           // Cell width
           });

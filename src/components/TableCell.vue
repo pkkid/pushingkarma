@@ -34,7 +34,10 @@
       tabindex: function() { return this.data.tabindex || null; },            // Global ID (for editable cells)
       contenteditable: function() { return this.focused && this.editing; },   // True if currently editable
       editable: function() { return this.data.editable && !CLASSES_NOT_EDITABLE.includes(this.cls); },
-      displayValue: function() { return this.display ? this.display(this.value) : this.value; },
+      displayValue: function() {
+        if (this.data.opts) { return this.display(this.value, this.data.opts); } 
+        return this.display ? this.display(this.value) : this.value;
+      },
     },
     watch: {
       // Watch Editable - Set the cursor at the end of the input
