@@ -15,9 +15,8 @@
       <div class='clickout-detector' v-click-outside='cancelAll'>
         <b-table :data='tabledata' narrowed ref='table' tabindex='-1'>
           <template slot-scope='props'>
-            <b-table-column v-for='c in props.row' :key='c.name' :label='c.name' :width='c.width'
-              :numeric='c.numeric' :header-class='c.cls' :cell-class='c.cls'>
-              <TableCell :data='c' :ref='`c${c.tabindex}`' @click.native='clickSetFocus($event, c.tabindex)'/>
+            <b-table-column v-for='cell in props.row' :key='cell.name' v-bind='cell.col'>
+              <TableCell v-bind='cell' :ref='`c${cell.tabindex}`' @click.native='clickSetFocus($event, cell.tabindex)'/>
             </b-table-column>
           </template>
           <template slot='empty'>No items to display.</template>
@@ -51,14 +50,14 @@
         unapproved: 0,        // Total unapproved transactions in current view
         uncategorized: 0,     // Total uncategorized transactions in current view
         columns: [
-          {name:'Name', field:'account.name', width:'68px'},
-          {name:'Date', field:'date', width:'100px', editable:true, display:utils.formatDate},
-          {name:'Category', field:'category.name', width:'150px', editable:true},
-          {name:'Payee', field:'payee', editable:true, width:'250px'},
-          {name:'Amount', field:'amount', display:utils.usd, opts:{color:true}, select:true,
+          {label:'Name', field:'account.name', width:'68px'},
+          {label:'Date', field:'date', width:'100px', editable:true, display:utils.formatDate},
+          {label:'Category', field:'category.name', width:'150px', editable:true},
+          {label:'Payee', field:'payee', editable:true, width:'250px'},
+          {label:'Amount', field:'amount', display:utils.usd, opts:{color:true}, select:true,
             numeric:true, editable:true, width:'90px', cls:'blur'},
-          {name:'X', field:'approved', cls:'check', width:'26px', editable:true},
-          {name:'Comment', field:'comment', width:'180px', editable:true},
+          {label:'X', field:'approved', cls:'check', width:'26px', editable:true},
+          {label:'Comment', field:'comment', width:'180px', editable:true},
         ],
       };
     },
@@ -79,11 +78,11 @@
     methods: {
       // Save
       // Save the current cell value
-      save: async function(cell, id, row, field, newvalue, refresh=false) {
+      save: async function(id, rowindex, field, newvalue, cell=null, refresh=false) {
         try {
           var change = utils.rset({}, field.replace('.','_'), newvalue);
           var {data} = await api.Budget.patchTransaction(id, change);
-          Vue.set(this.items, row, data);
+          Vue.set(this.items, rowindex, data);
           if (cell) { cell.setStatus('success', 1000); }
           if (refresh) { await this.refresh(); }
           return data;

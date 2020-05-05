@@ -7,9 +7,8 @@
     <div v-click-outside='cancelAll'>
       <b-table :data='tabledata' narrowed ref='table' tabindex='-1'>
         <template slot-scope='props'>
-          <b-table-column v-for='c in props.row' :key='c.name' :label='c.name' :width='c.width'
-            :numeric='c.numeric' :header-class='c.cls' :cell-class='c.cls'>
-            <TableCell :data='c' :ref='`c${c.tabindex}`' @click.native='clickSetFocus($event, c.tabindex)'/>
+          <b-table-column v-for='cell in props.row' :key='cell.col.name' v-bind='cell.col'>
+            <TableCell v-bind='cell' :ref='`c${cell.tabindex}`' @click.native='clickSetFocus($event, cell.tabindex)'/>
           </b-table-column>
         </template>
         <template slot='empty'>No items to display.</template>
@@ -37,11 +36,11 @@
       return {
         sortfield: 'sortindex',
         columns: [
-          {name:'Name', field:'name', editable:true, width:'250px'},
-          {name:'Budget', field:'budget', display:utils.usdint, opts:{color:true}, select:true,
+          {label:'Name', field:'name', editable:true, width:'250px'},
+          {label:'Budget', field:'budget', display:utils.usdint, opts:{color:true}, select:true,
             numeric:true, editable:true, width:'150px', cls:'blur'},
-          {name:'Exclude From Budget', field:'exclude_budget', cls:'check', editable:true, width:'247px'},
-          {name:'Exclude From Totals', field:'exclude_totals', cls:'check', editable:true, width:'247px'},
+          {label:'Exclude From Budget', field:'exclude_budget', cls:'check', editable:true, width:'247px'},
+          {label:'Exclude From Totals', field:'exclude_totals', cls:'check', editable:true, width:'247px'},
         ],
       };
     },
@@ -53,15 +52,15 @@
       // Save
       // Save the current cell value - There is a slight bit of wonkyness here in
       // that this function is called anytime a cell value changed, but depending
-      // on the state of cell.id or cell.name we may be creating or deleting the
+      // on the state of row.id or row.name we may be creating or deleting the
       // the category data.
-      save: async function(cell, id, row, field, newvalue, refresh=false) {
+      save: async function(id, rowindex, field, newvalue, cell=null, refresh=false) {
         if (id == null && field == 'name' && newvalue != '') { return this.create(newvalue); }
         if (id == null && field == 'name' && newvalue == '') { return this.refresh(); }
         try {
           var change = utils.rset({}, field, newvalue);
           var {data} = await api.Budget.patchCategory(id, change);
-          Vue.set(this.items, row, data);
+          Vue.set(this.items, rowindex, data);
           if (cell) { cell.setStatus('success', 1000); }
           if (refresh) { await this.refresh(); }
           return data;
@@ -79,7 +78,6 @@
           var params = {name:name, budget:0};
           var {data} = await api.Budget.createCategory(params);
           Vue.set(this.items, this.items.length-1, data);
-          console.log(data);
         } catch(err) {
           utils.snackbar(`Error creating category ${name}.`);
           console.error(err);
@@ -90,8 +88,7 @@
       // Confirm and delete an existing category in the database
       confirmDelete: async function() {
         var self = this;
-        var cell = this.cell;
-        var category = this.getRowData(cell);
+        var category = this.item;
         this.$buefy.dialog.confirm({
             title: 'Delete Category',
             message: `Are you sure you want to delete the category <b>${category.name}</b>?`,

@@ -1,20 +1,23 @@
 <template>
-  <div class='tablecell' :class='[status,{focused,editing}]' :style='{"max-width":data.width}'>
-    <div v-if='cls=="check"' @mousedown='preventDoubleClick' ref='div' tabindex='-1' :style='{"min-width":data.width}'>
+  <div class='tablecell' :class='[status,{focused,editing}]' :style='{"max-width":col.width}'>
+    <div v-if='col.cls=="check"' @mousedown='preventDoubleClick' ref='div' tabindex='-1' :style='{"min-width":col.width}'>
       <i v-if='value' class='mdi mdi-check'/></div>
-    <div v-else v-html='displayValue' :contenteditable='contenteditable' ref='div' :style='{"min-width":data.width}'
+    <div v-else v-html='html' :contenteditable='contenteditable' ref='div' :style='{"min-width":col.width}'
       spellcheck='false' @input="$emit('input', $event.target.textContent)" tabindex='-1'/>
   </div>
 </template>
 
 <script>
   import * as utils from '@/utils/utils';
-  var CLASSES_NOT_EDITABLE = ['check'];
+  var CANNOT_FREE_EDIT = ['check'];
 
   export default {
     name: 'TableCell',
     props: {
-      data: {type:Object, required:true}, // Data {name, field, value, etc}
+      col: {type:Object, required:true},
+      row: {type:Object, required:true},
+      rowindex: {type:Number, required:true},
+      tabindex: {required:true},
     },
     data: () => ({
       status: 'default',    // Sets bgcolor to status {success or error}
@@ -22,21 +25,14 @@
       editing: false,       // True if editing this cell
     }),
     computed: {
-      // Passed in data properties
-      row: function() { return this.data.row; },                              // Item row index
-      id: function() { return this.data.id; },                                // Column Name
-      field: function() { return this.data.field; },                          // Field Name
-      value: function() { return this.data.value; },                          // Cell value
-      name: function() { return this.data.name || null; },                    // Column Name
-      cls: function() { return this.data.cls; },                              // Class applied to cell
-      display: function() { return this.data.display || null; },              // Display callback
-      select: function() { return this.data.select || null; },                // Select text when editing
-      tabindex: function() { return this.data.tabindex || null; },            // Global ID (for editable cells)
-      contenteditable: function() { return this.focused && this.editing; },   // True if currently editable
-      editable: function() { return this.data.editable && !CLASSES_NOT_EDITABLE.includes(this.cls); },
-      displayValue: function() {
-        if (this.data.opts) { return this.display(this.value, this.data.opts); } 
-        return this.display ? this.display(this.value) : this.value;
+      contenteditable: function() { return this.focused && this.editing; },     // True if currently editable
+      item: function() { return this.row; },                                    // Alias for this.row
+      value: function() { return utils.rget(this.row, this.col.field); },       // Raw value for this cell
+      editable: function() { return this.col.editable && !CANNOT_FREE_EDIT.includes(this.col.cls); },
+      html: function() {
+        if (this.col.opts) { return this.col.display(this.value, this.col.opts); }
+        if (this.col.display) { return this.col.display(this.value); }
+        return this.value;
       },
     },
     watch: {
@@ -48,7 +44,7 @@
           var range = document.createRange();
           range.selectNodeContents(this.$refs.div);
           var selection = window.getSelection();
-          if (!this.select) { range.collapse(false); }
+          if (!this.col.select) { range.collapse(false); }
           selection.removeAllRanges();
           selection.addRange(range);
           this.$refs.div.focus();

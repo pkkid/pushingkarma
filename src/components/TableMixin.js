@@ -30,42 +30,43 @@
 //        <template slot='empty'>No items to display.</template>
 //      </b-table>
 import TableCell from '@/components/TableCell';
-import * as utils from '@/utils/utils';
 
 export default {
   components: {TableCell},
   data: () => ({
-    focus: null,                // Current focused cell number
-    editing: false,             // True if editing
-    sortfield: null,            // Specify sortfield to allow reordering
+    focus: null,          // Current focused cell number
+    editing: false,       // True if editing
+    sortfield: null,      // Specify sortfield to allow reordering
   }),
   computed: {
     items: function() { return []; },  // Required to be populated by parent Compoennt
-    cell: function() { return this.getCell(this.focus); },
-    editcols: function() { return this.columns.filter(c => c.editable).length; }, 
+    item: function() { return this.getCell(this.focus).row; },
+    editcols: function() { return this.columns.filter(c => c.editable).length; },
     maxfocus: function() { return this.items ? this.items.length * this.editcols : 0; },
     
     // Table cells
     // Mold the data rows into a list of lists of cells
     tabledata: function() {
-      var rows = [];
+      var data = [];
       for (var i in this.items) {
-        var row=[], editcount=0;
+        var row = [];               // List of cell objects
+        var editcount = 0;          // Current edit count
         for (var col of this.columns) {
+          if (col.cls && !col['cell-class']) { col['cell-class'] = col.cls; }
+          if (col.cls && !col['header-class']) { col['header-class'] = col.cls; }
           editcount += col.editable ? 1 : 0;
           var tabindex = col.editable ? (i * this.editcols) + editcount : null;
-          var cell = Object.assign({}, col, {
-            row: i,                             // Item row index
-            id: this.items[i].id || null,       // Item ID (from the db)
-            value: utils.rget(this.items[i], col.field),  // Cell value items[row][field]
-            tabindex: tabindex,                 // Cell tabindex for keyboard nav
-            width: col.width || null,           // Cell width
+          var cell = Object.assign({}, {
+            col: col,               // Column data for this cell
+            row: this.items[i],     // Row data for this cell
+            rowindex: parseInt(i),  // Current display row index
+            tabindex: tabindex,     // Cell tabindex for keyboard nav
           });
           row.push(cell);
         }
-        rows.push(row);
+        data.push(row);
       }
-      return rows;
+      return data;
     },
   },
   watch: {
@@ -130,7 +131,7 @@ export default {
     // Called when user hits esc
     cancelEdit: function(event) {
       if (!this.inContainer()) { return; }
-      if (this.cell.id == null && this.cell.newvalue == '') {
+      if (this.item.id == null) {
         // Cancel editing & refresh
         event.preventDefault();
         document.getSelection().removeAllRanges();
@@ -180,8 +181,8 @@ export default {
           this.editing = false;
         } else if (!cell.editable) {
           // Toggle boolean value
-          var newvalue = !cell.data.value;
-          this.save(cell, cell.id, cell.row, cell.field, newvalue);
+          var newvalue = !cell.value;
+          this.save(cell.item.id, cell.rowindex, cell.col.field, newvalue, cell);
         } else if (!this.editing) {
           // Start editing
           this.editing = true;
@@ -195,14 +196,6 @@ export default {
       tabindex = tabindex || this.focus;
       var ref = this.$refs[`c${tabindex}`];
       return ref ? ref[0] : null;
-    },
-
-    // Get Row Values
-    // Return the full row dataset for the specified cell
-    getRowData: function(cell) {
-      for (var rowdata of this.items) {
-        if (cell.id == rowdata.id) { return rowdata; }
-      }
     },
 
     // In Container
@@ -222,8 +215,8 @@ export default {
       if (this.editing && saveFirst) {
         var cell = this.getCell();
         var newvalue = cell.getNewValue();
-        if (cell.displayValue != newvalue) {
-          this.save(cell, cell.id, cell.row, cell.field, newvalue);
+        if (cell.html != newvalue) {
+          this.save(cell.item.id, cell.rowindex, cell.col.field, newvalue, cell);
         }
       }
       // Set the new focus
@@ -249,8 +242,8 @@ export default {
       if (this.editing) { return; }  // Skip if editing
       event.preventDefault();
       var cell = this.getCell();
-      var newrow = parseInt(cell.row) + amount;
-      var data = await this.save(null, cell.id, cell.row, this.sortfield, newrow, true);
+      var newrow = parseInt(cell.rowindex) + amount;
+      var data = await this.save(cell.item.id, cell.rowindex, this.sortfield, newrow, null, true);
       this.focus = (data.sortindex * this.editcols) + 1;
     },
 
@@ -271,8 +264,8 @@ export default {
       event.preventDefault();
       var cell = this.getCell();
       if (!cell.editable) {
-        var newvalue = !cell.data.value;
-        this.save(cell, cell.id, cell.row, cell.field, newvalue);
+        var newvalue = !cell.value;
+        this.save(cell.item.id, cell.rowindex, cell.col.field, newvalue, cell);
       }
     },
 
