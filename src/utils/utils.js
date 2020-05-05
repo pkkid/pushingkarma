@@ -87,7 +87,7 @@ export function formatDate(value, opts={}) {
 // Insert Commas
 // Add commas to the specified number.
 export function insertCommas(value) {
-  console.log(value);
+  if (!value) { return 0; }
   var parts = value.toString().split('.');
   parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
   return parts.join('.');
@@ -208,7 +208,7 @@ export function strToBool(value) {
 // Convert seconds or milliseconds to a human readable time ago string.
 // https://day.js.org/docs/en/plugin/relative-time
 export function timeAgo(value) {
-  if (value === null || value === undefined) { return '--'; }
+  if (value === null || value === undefined) { return 'Never'; }
   if (Number.isInteger(value) && value < 99999999999) { value *= 1000; }
   return dayjs(value).fromNow();
 }

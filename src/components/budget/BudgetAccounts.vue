@@ -38,7 +38,7 @@
           {label:'Name', field:'name', editable:true, width:'200px'},
           {label:'FID', field:'fid', editable:true, select:true, width:'200px'},
           {label:'Last Updated', field:'balancedt', width:'150px', display:utils.timeAgo},
-          {label:'Transactions', field:'summary.num_transactions', width:'150px', numeric:true, display:utils.insertCommas},
+          {label:'Transactions', field:'meta.num_transactions', width:'150px', numeric:true, display:utils.insertCommas},
           {label:'Balance', field:'balance', width:'184px', cls:'blur', numeric:true, display:utils.usd, opts:{color:true}},
         ],
       };

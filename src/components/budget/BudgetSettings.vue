@@ -4,7 +4,7 @@
       Budget Settings
       <div class='subtext'>Edit budget accounts and categories</div>
     </h1>
-    <b-tabs v-model='activetab' :animated='false'>
+    <b-tabs v-model='activetab' :animated='false' destroy-on-hide>
       <b-tab-item label='Bank Accounts'>
         <BudgetAccounts ref='0' class='fadein'/>
       </b-tab-item>
@@ -26,8 +26,9 @@
     data: () => ({
       activetab: 0,
     }),
-    mounted: function() {
+    mounted: async function() {
       this.activetab = parseInt(this.$route.query.tab) || 0;
+      await this.$nextTick();
       this.$refs[0].$el.classList.add('showing');
     },
     watch: {
