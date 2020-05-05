@@ -1,10 +1,10 @@
 # encoding: utf-8
 from decimal import Decimal
 from django.conf import settings
-from django.db.models import Count, Min, Max, Sum, Q
+from django.db.models import Count
 from pk import log, utils  # noqa
-from pk.utils.api import DynamicFieldsSerializer, PartialFieldsSerializer
-from pk.utils.api import append_summary_data
+from pk.utils.api.serializers import DynamicFieldsSerializer, PartialFieldsSerializer
+from pk.utils.api.viewsets import ModelViewSetWithAnnotations
 from pk.utils.search import FIELDTYPES, SearchField, Search
 from rest_framework import serializers, viewsets
 from rest_framework.decorators import api_view, permission_classes
@@ -42,26 +42,20 @@ class AccountSerializer(DynamicFieldsSerializer):
         return account
 
 
-class AccountsViewSet(viewsets.ModelViewSet):
+class AccountsViewSet(ModelViewSetWithAnnotations):
     queryset = Account.objects.order_by('name')
     serializer_class = AccountSerializer
     permission_classes = [IsAuthenticated]
     list_fields = AccountSerializer.Meta.fields
+    annotations = {'num_transactions': Count('transaction')}
 
     def list(self, request, *args, **kwargs):
         accounts = Account.objects.filter(user=request.user).order_by('name')
         page = self.paginate_queryset(accounts)
         serializer = AccountSerializer(page, context={'request':request}, many=True, fields=self.list_fields)
         response = self.get_paginated_response(serializer.data)
-        response = append_summary_data(response, accounts,
-            first_transaction=Min('transaction__date'),
-            last_transaction=Max('transaction__date'),
-            num_transactions=Count('transaction'),
-            total_income=Sum('transaction__amount', filter=Q(transaction__amount__gt=0)),
-            total_spent=Sum('transaction__amount', filter=Q(transaction__amount__lt=0))
-        )
         utils.move_to_end(response.data, 'results')
-        return response
+        return self.append_metadata(response, accounts)
 
 
 class CategorySerializer(DynamicFieldsSerializer):

@@ -2,7 +2,7 @@
 import csv as pycsv
 from datetime import datetime, timedelta
 from django.http import HttpResponse, HttpResponseBadRequest
-from pk.utils.api import DynamicFieldsSerializer
+from pk.utils.api.serializers import DynamicFieldsSerializer
 from rest_framework import viewsets
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes

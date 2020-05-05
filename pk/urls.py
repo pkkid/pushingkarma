@@ -8,7 +8,7 @@ from pk.apps.budget import api as budget_api
 from pk.apps.tools import api as tools_api
 from pk.apps.notes import api as note_api
 from pk.apps.stocks import api as stock_api
-from pk.utils.api import HybridRouter
+from pk.utils.api.routers import HybridRouter
 from pk import utils
 
 # Create Router & User APIs
