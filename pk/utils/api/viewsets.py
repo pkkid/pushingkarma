@@ -31,9 +31,6 @@ class ModelViewSetWithAnnotations(viewsets.ModelViewSet):
     
     def create(self, request, *args, **kwargs):
         response = super(ModelViewSetWithAnnotations, self).create(request, *args, **kwargs)
-        from pk import log
-        log.info('---')
-        log.info(response.__dict__)
         return self.append_metadata(response, self.queryset.filter(pk=response.data['id']))
     
     def retrieve(self, request, *args, **kwargs):
