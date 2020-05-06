@@ -40,32 +40,30 @@
   export default {
     name: 'BudgetTransactions',
     mixins: [TableMixin],
-    data: function() {
-      return {
-        cancelsearch: null,   // Cancel search token
-        search: '',           // Current search string
-        loading: false,
-        transactions: null,   // Displayed transactions
-        total: 0,             // Total transactions in current view
-        unapproved: 0,        // Total unapproved transactions in current view
-        uncategorized: 0,     // Total uncategorized transactions in current view
-        columns: [
-          {label:'Name', field:'account.name', width:'68px'},
-          {label:'Date', field:'date', width:'100px', editable:true, display:utils.formatDate},
-          {label:'Category', field:'category.name', width:'150px', editable:true},
-          {label:'Payee', field:'payee', editable:true, width:'250px'},
-          {label:'Amount', field:'amount', display:utils.usd, opts:{color:true}, select:true,
-            numeric:true, editable:true, width:'90px', cls:'blur'},
-          {label:'X', field:'approved', cls:'check', width:'26px', editable:true},
-          {label:'Comment', field:'comment', width:'180px', editable:true},
-        ],
-      };
-    },
+    data: () => ({
+      cancelsearch: null,   // Cancel search token
+      search: '',           // Current search string
+      loading: false,
+      transactions: null,   // Displayed transactions
+      total: 0,             // Total transactions in current view
+      unapproved: 0,        // Total unapproved transactions in current view
+      uncategorized: 0,     // Total uncategorized transactions in current view
+    }),
     computed: {
       account: pathify.get('budget/account'),
       categories: pathify.get('budget/categories'),
       items: function() { return this.transactions; },
       keymap: function() { return this.tablemixin_keymap(); },
+      columns: function() { return [
+        {label:'Name', field:'account.name', width:'68px'},
+        {label:'Date', field:'date', width:'100px', editable:true, display:utils.formatDate},
+        {label:'Category', field:'category.name', width:'150px', editable:true, choices:this.categories},
+        {label:'Payee', field:'payee', editable:true, width:'250px'},
+        {label:'Amount', field:'amount', display:utils.usd, opts:{color:true}, select:true,
+          numeric:true, editable:true, width:'90px', cls:'blur'},
+        {label:'X', field:'approved', cls:'check', width:'26px', editable:true},
+        {label:'Comment', field:'comment', width:'180px', editable:true},
+      ];},
     },
     watch: {
       account: function() { this.reset(); },

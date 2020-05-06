@@ -214,9 +214,8 @@ export default {
       // Save the new value
       if (this.editing && saveFirst) {
         var cell = this.getCell();
-        var newvalue = cell.getNewValue();
-        if (cell.html != newvalue) {
-          this.save(cell.item.id, cell.rowindex, cell.col.field, newvalue, cell);
+        if (cell.html != cell.text) {
+          this.save(cell.item.id, cell.rowindex, cell.col.field, cell.text, cell);
         }
       }
       // Set the new focus
