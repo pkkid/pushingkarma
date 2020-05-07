@@ -95,8 +95,8 @@
   }
 
   // Demo mode blurs all financial values
-  .demo .blur,
-  .demo #sidepanel .blur {
+  .demo .blur *,
+  .demo #sidepanel .blur * {
     color: transparent !important;
     text-shadow: 0 0 10px rgba($lightbg-fg0, 0.6) !important;
     user-select: none;
