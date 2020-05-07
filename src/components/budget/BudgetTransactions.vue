@@ -10,6 +10,10 @@
         <b-icon v-if='search' @click.native.prevent='search = ""' icon='close-circle-outline'/>
         <input v-model.lazy='search' ref='search' class='input' icon='magnify'
           placeholder='Search Transactions' autocomplete='off' spellcheck='false' rounded/>
+        <div class='quicklinks'>
+          <a v-if='uncategorized' @click='appendSearch("category:none")'>{{uncategorized | commas}} uncategorized</a>
+          <a v-if='unapproved' @click='appendSearch("approved=false")'>{{unapproved | commas}} unapproved</a>
+        </div>
       </div>
       <div style='clear:both'/>
       <div class='clickout-detector' v-click-outside='cancelAll'>
@@ -74,6 +78,13 @@
       this.reset(search);
     },
     methods: {
+      // Append Search
+      // Add the specified text to the search input
+      appendSearch: function(text) {
+        if (this.search.toLowerCase().includes(text.toLowerCase())) { return; }
+        this.search = trim(`${this.search} ${text}`);
+      },
+
       // Save
       // Save the current cell value
       save: async function(id, rowindex, field, newvalue, cell=null, refresh=false) {
@@ -160,6 +171,14 @@
         cursor: pointer;
         &:hover { opacity:0.5; }
       }
+    }
+    .quicklinks {
+      color:$lightbg-fg1;
+      font-size: 12px;
+      padding-right: 10px;
+      text-align: right;
+      a::after { content: ', '; color:$lightbg-fg1; }
+      a:last-child:after { content: ''; }
     }
   }
 </style>
