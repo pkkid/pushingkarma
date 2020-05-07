@@ -57,7 +57,7 @@
       columns: function() { return [
         {label:'Name', field:'account.name', width:'68px'},
         {label:'Date', field:'date', width:'100px', editable:true, display:utils.formatDate},
-        {label:'Category', field:'category.name', width:'150px', editable:true, choices:this.categories},
+        {label:'Category', field:'category.name', width:'150px', editable:true, select:true, choices:this.categories},
         {label:'Payee', field:'payee', editable:true, width:'250px'},
         {label:'Amount', field:'amount', display:utils.usd, opts:{color:true}, select:true,
           numeric:true, editable:true, width:'90px', cls:'blur'},

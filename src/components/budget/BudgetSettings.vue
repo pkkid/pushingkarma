@@ -24,12 +24,10 @@
     name: 'BudgetSettings',
     components: {BudgetAccounts, BudgetCategories},
     data: () => ({
-      activetab: 0,
+      activetab: null,
     }),
     mounted: async function() {
       this.activetab = parseInt(this.$route.query.tab) || 0;
-      await this.$nextTick();
-      this.$refs[0].$el.classList.add('showing');
     },
     watch: {
       // Watch Active Tab
@@ -37,7 +35,9 @@
       // effect. We also update the tab argument in the URL parameters.
       activetab: async function(newtab, oldtab) {
         utils.updateHistory(this.$router, {tab:this.activetab});
-        this.$refs[oldtab].$el.classList.remove('showing');
+        if (this.$refs[oldtab] !== undefined) {
+          this.$refs[oldtab].$el.classList.remove('showing');
+        }
         await utils.sleep(100);
         this.$refs[newtab].$el.classList.add('showing');
       },

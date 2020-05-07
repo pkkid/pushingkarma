@@ -5,9 +5,9 @@
     <div v-else v-html='html' :contenteditable='contenteditable' ref='div' :style='{"min-width":col.width}'
       spellcheck='false' @input="text=$event.target.textContent" tabindex='-1'
       @keyup.up.prevent='moveChoice(-1)' @keyup.down.prevent='moveChoice(+1)'
-      @keydown.enter='choose'/>
+      @keydown.enter='makeChoice'/>
     <ul v-if='contenteditable && (choices.length > 0)' class='choices' :style='{"min-width":col.width}'>
-      <li v-for='(c,i) in choices' :key='c.id' class='choice' :class='{highlighted:i==choice}' @click='choose'>{{c.name}}</li>
+      <li v-for='(c,i) in choices' :key='c.id' class='choice' :class='{highlighted:i==choice}' @click='makeChoice'>{{c.name}}</li>
     </ul>
   </div>
 </template>
@@ -49,9 +49,28 @@
       this.text = this.$refs.div.textContent;
     },
     watch: {
-      // Watch Editable - Set the cursor at the end of the input
-      // or select all text if the option select is true.
-      contenteditable: async function() {
+      contenteditable: async function() { this.focus(); },
+      text: function(text) {
+        this.choices = this.filterChoices(text);
+        this.choice = 0;
+      },
+    },
+    methods: {
+      // Filter Choices
+      // Filter available choices based on passed in text
+      filterChoices: function(text) {
+        if (!this.contenteditable) { return []; }
+        if (!this.col.choices) { return []; }
+        var lchoices = this.col.choices.map(c => c.name.toLowerCase());
+        if (!text || text == '') { return this.col.choices; }
+        if (lchoices.indexOf(text.toLowerCase()) >= 0) { return []; }
+        var result = fuzzysort.go(text, this.col.choices, {key:'name'});
+        return result.map(x => x.obj);
+      },
+
+      // Focus
+      // Focus on the input for this cell
+      focus: async function() {
         if (this.contenteditable) {
           await this.$nextTick();
           var range = document.createRange();
@@ -63,20 +82,10 @@
           this.$refs.div.focus();
         }
       },
-      text: function(value) {
-        if (!this.contenteditable) { return; }
-        if (!this.col.choices) { return; }
-        var lchoices = this.col.choices.map(c => c.name.toLowerCase());
-        if (!value || value == '') { return this.col.choices; }
-        if (lchoices.indexOf(value.toLowerCase()) >= 0) { return []; }
-        var result = fuzzysort.go(value, this.col.choices, {key:'name'});
-        this.choices = result.map(x => x.obj);
-      },
-    },
-    methods: {
-      // Choose
+
+      // Make Choice
       // Called when clicking a choice
-      choose: function(event) {
+      makeChoice: function(event) {
         if (this.choices.length) {
           event.preventDefault();
           event.stopPropagation();
@@ -86,6 +95,7 @@
           this.$refs.div.textContent = newtext;
           this.text = newtext;
           this.choices = [];
+          this.focus();
         }
       },
 
@@ -136,7 +146,7 @@
       padding: 2px 5px;
       width: 100%;
       height: 26px;
-      transition: all .1s ease;
+      transition: none;
       white-space: nowrap;  // overflow editing
       overflow: hidden;  // overflow editing
       max-width: 300px;  // overflow editing

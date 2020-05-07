@@ -88,7 +88,7 @@ export default {
     // Update the required TableCells with the new value
     editing: function(newvalue) {
       var cell = this.getCell();
-      cell.editing = newvalue;
+      if (cell !== null) { cell.editing = newvalue; }
     }
   },
   methods: {
