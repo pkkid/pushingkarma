@@ -94,6 +94,11 @@
           Vue.set(this.items, rowindex, data);
           if (cell) { cell.setStatus('success', 1000); }
           if (refresh) { await this.refresh(); }
+          // Specially track unapproved and uncategorized
+          if (field == 'approved' && cell.value && !newvalue) { this.unapproved += 1; }
+          if (field == 'approved' && !cell.value && newvalue) { this.unapproved -= 1; }
+          if (field == 'category.name' && cell.value && !newvalue) { this.uncategorized += 1; }
+          if (field == 'category.name' && !cell.value && newvalue) { this.uncategorized -= 1; }
           return data;
         } catch(err) {
           if (cell) { cell.setStatus('error'); }

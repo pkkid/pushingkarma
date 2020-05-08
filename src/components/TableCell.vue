@@ -191,10 +191,9 @@
 
     // Choices
     ul.choices {
-      background-color: $lightbg-bg2;
-      border-radius: 2px;
-      border: 1px solid darken($lightbg-bg1, 20%);
-      box-shadow: 0px 2px 6px rgba(0,0,0,0.1);
+      background-color: $lightbg-bg1;
+      border-radius: 5px;
+      box-shadow: 0 1px 3px 0 rgba(60,64,67,0.302), 0 4px 8px 3px rgba(60,64,67,0.149);
       color: lighten($lightbg-fg2, 20%);
       font-size: 13px;
       left: 0px;
