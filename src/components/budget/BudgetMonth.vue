@@ -1,13 +1,18 @@
 <template>
   <div id='budgetmonth'>
-    <h1>January Budget</h1>
-    Hi Mom!
+    <PageWrap>
+      <h1>January Budget</h1>
+      Hi Mom!
+    </PageWrap>
   </div>
 </template>
 
 <script>
+  import PageWrap from '@/components/site/PageWrap';
+
   export default {
     name: 'BudgetMonth',
+    components: {PageWrap},
   };
 </script>
 

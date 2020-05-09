@@ -1,17 +1,19 @@
 <template>
   <div id='budgetsettings'>
-    <h1>
-      Budget Settings
-      <div class='subtext'>Edit budget accounts and categories</div>
-    </h1>
-    <b-tabs v-model='activetab' :animated='false' destroy-on-hide>
-      <b-tab-item label='Bank Accounts'>
-        <BudgetAccounts ref='0' class='fadein'/>
-      </b-tab-item>
-      <b-tab-item label='Categories'>
-        <BudgetCategories ref='1' class='fadein'/>
-      </b-tab-item>
-    </b-tabs>
+    <PageWrap>
+      <h1>
+        Budget Settings
+        <div class='subtext'>Edit budget accounts and categories</div>
+      </h1>
+      <b-tabs v-model='activetab' :animated='false' destroy-on-hide>
+        <b-tab-item label='Bank Accounts'>
+          <BudgetAccounts ref='0' class='fadein'/>
+        </b-tab-item>
+        <b-tab-item label='Categories'>
+          <BudgetCategories ref='1' class='fadein'/>
+        </b-tab-item>
+      </b-tabs>
+    </PageWrap>
   </div>
 </template>
 
@@ -19,10 +21,11 @@
   import * as utils from '@/utils/utils';
   import BudgetAccounts from './BudgetAccounts';
   import BudgetCategories from './BudgetCategories';
+  import PageWrap from '@/components/site/PageWrap';
 
   export default {
     name: 'BudgetSettings',
-    components: {BudgetAccounts, BudgetCategories},
+    components: {PageWrap, BudgetAccounts, BudgetCategories},
     data: () => ({
       activetab: null,
     }),

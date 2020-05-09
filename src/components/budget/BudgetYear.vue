@@ -1,38 +1,33 @@
 <template>
   <div id='budgetyear'>
-    <h1>Past Year Budget</h1>
-    <div class='tablewrap'>
-      <table cellpadding='0' cellspacing='0'>
-        <thead><tr>
-          <th class='category'><div>Category</div></th>
-          <th class='month usdint' v-for='month in months' :key='month.format("YYYY-MM")'>
-            <div>{{month.format("MMM")}}</div>
-          </th>
-          <th class='average usdint'><div>Average</div></th>
-          <th class='total usdint'><div>Total</div></th>
-        </tr></thead>
-        <tbody v-if='groups'>
-          <!-- Category Rows -->
-          <tr v-for='cat in this.categories' :key='"cat-"+cat.id' class='category'>
-            <td class='category'><div>{{cat.name}}</div></td>
-            <td class='month usdint' v-for='monthstr in monthstrs' :key='cat.name+monthstr'>
-              <BudgetYearCell :groups='groups' :cat='cat' :monthstr='monthstr'/>
-            </td>
-            <td class='average usdint blur'><div>{{ avgCategory(cat.name) | usdint }}</div></td>
-            <td class='total usdint blur'><div>{{ groups[cat.name].total | usdint }}</div></td>
-          </tr>
-          <!-- Totals -->
-          <tr class='savings'>
-            <td class='category'><div>Savings</div></td>
-            <td class='month usdint blur' v-for='monthstr in monthstrs' :key='"total"+monthstr'>
-              <div>{{sumMonthSpending(monthstr) | usdint(0) }}</div>
-            </td>
-            <td class='average usdint'><div>--</div></td>
-            <td class='total usdint'><div>--</div></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+    <PageWrap>
+      <div v-if='items'>
+        <h1>Past Year Budget
+          <div class='subtext'>Global view of past years transactions.</div>
+        </h1>
+        <div id='searchwrap'>
+          <b-loading class='is-small' :active='loading' :is-full-page='false'/>
+          <b-icon v-if='search' @click.native.prevent='search = ""' icon='close-circle-outline'/>
+          <input v-model.lazy='search' ref='search' class='input' icon='magnify'
+            placeholder='Filter Transactions' autocomplete='off' spellcheck='false' rounded/>
+        </div>
+        <div style='clear:both'/>
+        <div class='clickout-detector' v-click-outside='cancelAll'>
+          <b-table :data='tabledata' narrowed ref='table' tabindex='-1'>
+            <template slot-scope='props'>
+              <b-table-column v-for='cell in props.row' :key='cell.name' v-bind='cell.col'>
+                <TableCell v-bind='cell' :ref='`c${cell.tabindex}`' @click.native='clickSetFocus($event, cell.tabindex)'/>
+              </b-table-column>
+            </template>
+            <template slot='empty'>No items to display.</template>
+          </b-table>
+        </div>
+      </div>
+      <div v-else id='#budgetyear'>
+        <h1>Budget Transactions<div class='subtext'>Loading transactions..</div></h1>
+        <b-loading active :is-full-page='false'/>
+      </div>
+    </PageWrap>
   </div>
 </template>
 
@@ -40,27 +35,90 @@
   import * as api from '@/api';
   import * as dayjs from 'dayjs';
   import * as pathify from 'vuex-pathify';
-  import BudgetYearCell from './BudgetYearCell';
-  import map from 'lodash/map';
+  import * as utils from '@/utils/utils';
+  import PageWrap from '@/components/site/PageWrap';
+  import TableMixin from '@/components/TableMixin';
+  var TOTAL = 'Total';
+  var UNCATEGORIZED = 'Uncategorized';
 
   export default {
     name: 'BudgetYear',
-    components: {BudgetYearCell},
+    mixins: [TableMixin],
+    components: {PageWrap},
     data: () => ({
-      transactions: {},                   // Displayed transactions
-      groups: null,                       // Grouped Transactions {catname -> month -> [trxs]}
-      start: dayjs().startOf('month'),    // Starting month
-      uncategorized: 'Uncategorized',     // Uncategorized label
+      cancelsearch: null,   // Cancel search token
+      tablerows: null,      // Row items to display
+      search: '',           // Current search string
+      loading: false,       // True to show loading indicator
+      start: null,          // Starting month
     }),
-    watch: {
-      account: { immediate:true, handler:function() {
-        this.updateTransactions();
-      }},
-    },
     computed: {
       categories: pathify.sync('budget/categories'),
-      monthstrs: function() { return map(this.months, month => month.format('YYYY-MM')); },
-      months: function() {
+      items: function() { return this.tablerows; },
+      months: function() { return this.initMonths(); },
+      columns: function() { return this.initColumns(); },
+    },
+    watch: {
+      search: function() { this.refresh(true); },
+    },
+    mounted: function() {
+      this.start = dayjs().startOf('month');
+      this.refresh();
+    },
+    methods: {
+      // Get Transactions
+      // Search for and update the list of displayed transactions
+      getTransactions: async function() {
+        this.cancelsearch = api.cancel(this.cancelsearch);
+        var mindatestr = this.start.clone().subtract(12, 'months').format('YYYY-MM-DD');
+        var token = this.cancelsearch.token;
+        var params = {search:`${this.search} date>=${mindatestr}`, limit:9999};
+        var {data} = await api.Budget.getTransactions(params, token);
+        return data.results;
+      },
+
+      // Init Columns
+      // Initialize table columns
+      initColumns: function() {
+        var columns = [];
+        columns.push({label:'Category', field:'name', width:'140px'});
+        columns.push({label:'Budget', field:'budget', numeric:true, display:utils.usdint, opts:{color:true}, cls:'blur'});
+        for (var i in this.months) {
+          var monthstr = this.months[i].format('YYYY-MM');
+          var label = i == 0 ? ` ${this.months[i].format('MMM')}` : this.months[i].format('MMM');
+          var cls = i == 0 ? 'current' : 'pastmonth';
+          columns.push({label:label, field:`${monthstr}.total`, numeric:true, display:utils.usdint, opts:{color:true}, width:'60px', cls:`${cls} blur`});
+        }
+        columns.push({label:'Average', field:'average', numeric:true, display:utils.usdint, opts:{color:true}, width:'60px', cls:'average blur'});
+        columns.push({label:'Total', field:'total', numeric:true, display:utils.usdint, opts:{color:true}, width:'70px', cls:'total blur'});
+        return columns;
+      },
+
+      // Init Items
+      // Initialize an empty group collection
+      initTablerows: function() {
+        var tablerows = {};
+        var categories = this.categories.slice();  // clone array
+        categories.push({name:UNCATEGORIZED, budget:0});
+        categories.push({name:TOTAL, budget:0});
+        for (var cat of categories) {
+          tablerows[cat.name] = {};
+          tablerows[cat.name].name = cat.name;
+          tablerows[cat.name].budget = cat.budget;
+          tablerows[cat.name].total = 0;
+          tablerows[cat.name].average = 0;
+          tablerows[cat.name].count = 0;
+          for (var month of this.months) {
+            var monthstr = month.format('YYYY-MM');
+            tablerows[cat.name][monthstr] = {};
+            tablerows[cat.name][monthstr].total = 0;
+            tablerows[cat.name][monthstr].items = [];
+          }
+        }
+        return tablerows;
+      },
+
+      initMonths: function() {
         var months = [];
         var month = this.start.clone();
         for (var i=0; i<=12; i++) {
@@ -69,85 +127,80 @@
         }
         return months;
       },
-    },
-    methods: {
-      // Update Transactions
-      // Search for and update the list of displayed transactions
-      updateTransactions: async function() {
-        this.cancelSearch = api.cancel(this.cancelSearch);
-        var mindatestr = this.start.clone().subtract(12, 'months').format('YYYY-MM-DD');
-        var token = this.cancelSearch.token;
-        var params = {search:`date>=${mindatestr}`, limit:9999};
-        var {data} = await api.Budget.getTransactions(params, token);
-        this.transactions = data.results;
-        this.groupTransactions();
-      },
 
-      // Init Groups
-      // Initialize an empty group collection
-      initGroups: function() {
-        var groups = {};
-        var catnames = map(this.categories, 'name');
-        for (var catname of catnames) {
-          groups[catname] = {};
-          groups[catname].total = 0;
-          groups[catname].count = 0;
-          for (var month of this.months) {
-            groups[catname][month.format('YYYY-MM')] = [];
+      // Update Items
+      // Update the items to be displayed in the table
+      refresh: async function(showLoading=false) {
+        this.loading = showLoading;
+        try {
+          var transactions = await this.getTransactions();
+          var tablerows = this.initTablerows();
+          for (var trx of transactions) {
+            var month = dayjs(trx.date).startOf('month');
+            var monthstr = month.format('YYYY-MM');
+            var amount = parseFloat(trx.amount);
+            tablerows[trx.category.name][monthstr].items.push(trx);
+            tablerows[trx.category.name][monthstr].total += amount;
+            tablerows[trx.category.name].total += amount;
+            tablerows[trx.category.name].count += 1;
+            tablerows[TOTAL][monthstr].total += amount;
+            tablerows[TOTAL].total += amount;
           }
-        }
-        return groups;
-      },
-
-      // Group Transactions
-      // Sort transactions by category and month
-      groupTransactions: function() {
-        var groups = this.initGroups();
-        for (var trx of this.transactions) {
-          var month = dayjs(trx.date).startOf('month');
-          var monthstr = month.format('YYYY-MM');
-          groups[trx.category.name][monthstr].push(trx);
-          groups[trx.category.name].total += parseFloat(trx.amount);
-          groups[trx.category.name].count += 1;
-        }
-        this.groups = groups;
-      },
-
-      // Avg Category (horizontal)
-      // Average spending for all months in the specified category
-      avgCategory: function(catname) {
-        if (!this.groups[catname].count) { return 0; }
-        return this.groups[catname].total / 12.0;
-      },
-
-      // Sum Month Spending (vertical)
-      // Sum the spending for the specified month
-      sumMonthSpending: function(monthstr) {
-        var total = 0;
-        for (var catname in this.groups) {
-          if (catname == 'Ignored') { continue; }
-          for (var trx of this.groups[catname][monthstr]) {
-            total += parseFloat(trx.amount);
+          for (var key of Object.keys(tablerows)) {
+            tablerows[key].average = tablerows[key].total / 12;
           }
+          this.tablerows = tablerows;
+        } catch(err) {
+          if (!api.isCancel(err)) { throw(err); }
+        } finally {
+          setTimeout(() => this.loading = false, 300);
         }
-        return total;
       },
-
     }
   };
 </script>
 
 <style lang='scss'>
   #budgetyear {
-    padding: 10px 20px;
-    th, td {
-      // Specific column widths
-      &.category { width:14%; }
-      &.trend { width:6%; }
-      &.budget { width:9%; }
-      &.month { width:5%; }  // 12 of these
-      &.average { width:6%; }
-      &.total { width:6%; }
+    animation-duration: .6s;
+    min-height: calc(70vh - 50px);
+    position: relative;
+    h1 { margin-bottom:0px; }
+
+    th.current { border-right:1px solid darken($lightbg-bg3, 5%); }
+    td.current { border-right:1px solid $lightbg-bg3; }
+    th.average { border-left:1px solid darken($lightbg-bg3, 5%); }
+    td.average { border-left:1px solid $lightbg-bg3; }
+
+    tbody tr:last-child td { font-weight:600; }
+
+    #page { max-width:1220px !important; min-width:1220px !important; }
+    #searchwrap {
+      position: relative;
+      width: 450px;
+      float: right;
+      margin-bottom: 10px;
+      padding-left: 30px;
+      .input {
+        border-radius: 20px;
+        color: $lightbg-fg3;
+        font-weight: bold;
+        padding: 4px 35px 4px 15px;
+      }
+      .loading-overlay {
+        width: 20px;
+      }
+      .icon {
+        color: $lightbg-fg1;
+        position: absolute;
+        opacity: 0.3;
+        top: 6px;
+        right: 0px;
+        z-index: 10;
+        padding-right: 12px;
+        cursor: pointer;
+        &:hover { opacity:0.5; }
+      }
     }
   }
 </style>

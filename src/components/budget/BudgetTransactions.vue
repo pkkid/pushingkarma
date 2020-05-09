@@ -1,42 +1,47 @@
 <template>
-    <div id='budgettransactions' v-if='items' v-hotkey='keymap'>
-      <h1>
-        Budget Transactions
-        <div class='subtext'>Showing {{this.items.length | commas}} of {{this.total | commas}}
-          {{account ? account.name : ''}} transactions</div>
-      </h1>
-      <div id='searchwrap'>
-        <b-loading class='is-small' :active='loading' :is-full-page='false'/>
-        <b-icon v-if='search' @click.native.prevent='search = ""' icon='close-circle-outline'/>
-        <input v-model.lazy='search' ref='search' class='input' icon='magnify'
-          placeholder='Search Transactions' autocomplete='off' spellcheck='false' rounded/>
-        <div class='quicklinks'>
-          <a v-if='uncategorized' @click='appendSearch("category:none")'>{{uncategorized | commas}} uncategorized</a>
-          <a v-if='unapproved' @click='appendSearch("approved=false")'>{{unapproved | commas}} unapproved</a>
+  <div id='budgettransactions'>
+    <PageWrap>
+      <div v-if='items' v-hotkey='keymap'>
+        <h1>
+          Budget Transactions
+          <div class='subtext'>Showing {{this.items.length | commas}} of {{this.total | commas}}
+            {{account ? account.name : ''}} transactions</div>
+        </h1>
+        <div id='searchwrap'>
+          <b-loading class='is-small' :active='loading' :is-full-page='false'/>
+          <b-icon v-if='search' @click.native.prevent='search = ""' icon='close-circle-outline'/>
+          <input v-model.lazy='search' ref='search' class='input' icon='magnify'
+            placeholder='Search Transactions' autocomplete='off' spellcheck='false' rounded/>
+          <div class='quicklinks'>
+            <a v-if='uncategorized' @click='appendSearch("category:none")'>{{uncategorized | commas}} uncategorized</a>
+            <a v-if='unapproved' @click='appendSearch("approved=false")'>{{unapproved | commas}} unapproved</a>
+          </div>
+        </div>
+        <div style='clear:both'/>
+        <div class='clickout-detector' v-click-outside='cancelAll'>
+          <b-table :data='tabledata' narrowed ref='table' tabindex='-1'>
+            <template slot-scope='props'>
+              <b-table-column v-for='cell in props.row' :key='cell.name' v-bind='cell.col'>
+                <TableCell v-bind='cell' :ref='`c${cell.tabindex}`' @click.native='clickSetFocus($event, cell.tabindex)'/>
+              </b-table-column>
+            </template>
+            <template slot='empty'>No items to display.</template>
+          </b-table>
         </div>
       </div>
-      <div style='clear:both'/>
-      <div class='clickout-detector' v-click-outside='cancelAll'>
-        <b-table :data='tabledata' narrowed ref='table' tabindex='-1'>
-          <template slot-scope='props'>
-            <b-table-column v-for='cell in props.row' :key='cell.name' v-bind='cell.col'>
-              <TableCell v-bind='cell' :ref='`c${cell.tabindex}`' @click.native='clickSetFocus($event, cell.tabindex)'/>
-            </b-table-column>
-          </template>
-          <template slot='empty'>No items to display.</template>
-        </b-table>
+      <div v-else id='budgettransactions'>
+        <h1>Budget Transactions<div class='subtext'>Loading transactions..</div></h1>
+        <b-loading active :is-full-page='false'/>
       </div>
-    </div>
-    <div v-else id='#budgettransactions'>
-      <h1>Budget Transactions<div class='subtext'>Loading transactions..</div></h1>
-      <b-loading active :is-full-page='false'/>
-    </div>
+    </PageWrap>
+  </div>
 </template>
 
 <script>
   import * as api from '@/api';
   import * as pathify from 'vuex-pathify';
   import * as utils from '@/utils/utils';
+  import PageWrap from '@/components/site/PageWrap';
   import TableMixin from '@/components/TableMixin';
   import trim from 'lodash/trim';
   import Vue from 'vue';
@@ -44,10 +49,11 @@
   export default {
     name: 'BudgetTransactions',
     mixins: [TableMixin],
+    components: {PageWrap},
     data: () => ({
       cancelsearch: null,   // Cancel search token
       search: '',           // Current search string
-      loading: false,
+      loading: false,       // True to show loading indicator
       transactions: null,   // Displayed transactions
       total: 0,             // Total transactions in current view
       unapproved: 0,        // Total unapproved transactions in current view
@@ -144,8 +150,7 @@
 </script>
 
 <style lang='scss'>
-  #budgettransactions,
-  #budgettransactions-loading {
+  #budgettransactions {
     animation-duration: .6s;
     min-height: calc(70vh - 50px);
     position: relative;

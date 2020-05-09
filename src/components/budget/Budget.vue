@@ -7,14 +7,12 @@
       </template>
       <template v-slot:contentarea>
         <Dropzone @filesDropped='upload'>
-          <PageWrap>
-            <transition name='fadein'>
-              <BudgetMonth v-if='view=="month"'/>
-              <BudgetYear v-else-if='view=="year"'/>
-              <BudgetSettings v-else-if='view=="settings"'/>
-              <BudgetTransactions v-else/>
-            </transition>
-          </PageWrap>
+          <transition name='fadein'>
+            <BudgetMonth v-if='view=="month"'/>
+            <BudgetYear v-else-if='view=="year"'/>
+            <BudgetSettings v-else-if='view=="settings"'/>
+            <BudgetTransactions v-else/>
+          </transition>
         </Dropzone>
       </template>
     </SidePanel>
@@ -31,14 +29,13 @@
   import BudgetYear from './BudgetYear';
   import BudgetTransactions from './BudgetTransactions';
   import SidePanel from '@/components/site/SidePanel';
-  import PageWrap from '@/components/site/PageWrap';
   import Dropzone from '@/components/Dropzone';
   import Navigation from '@/components/site/Navigation';
   
   export default {
     name: 'Budget',
     components: {BudgetMenu, BudgetMonth, BudgetYear, BudgetSettings,
-      BudgetTransactions, Dropzone, Navigation, SidePanel, PageWrap},
+      BudgetTransactions, Dropzone, Navigation, SidePanel},
     computed: {
       account: pathify.sync('budget/account'),
       accounts: pathify.sync('budget/accounts'),
