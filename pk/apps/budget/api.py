@@ -17,6 +17,8 @@ from .models import Account, Category, Transaction, KeyValue
 ACCOUNTS = settings.BUDGET_ACCOUNTS
 DATEFORMAT = '%Y-%m-%d'
 IGNORED = 'Ignored'
+RESET_DECIMAL = Decimal('-99999.99')
+RESET = ['_RESET', RESET_DECIMAL]
 REVERSE = True   # Set 'True' or 'False' for reversed month order.
 TRANSACTIONSEARCHFIELDS = {
     'bank': SearchField(FIELDTYPES.STR, 'account__name'),
@@ -101,7 +103,9 @@ class TransactionSerializer(DynamicFieldsSerializer):
             'comment','account','category')
     
     def to_internal_value(self, data):
-        if data.get('amount'):
+        if data.get('amount') in RESET:
+            data['amount'] = RESET_DECIMAL
+        elif data.get('amount'):
             data['amount'] = clean_amount(data['amount'])
         return super(TransactionSerializer, self).to_internal_value(data)
 
@@ -109,6 +113,7 @@ class TransactionSerializer(DynamicFieldsSerializer):
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
         user = self.context['request'].user
+        # Update category_name
         category_name = self.context['request'].data.get('category_name')
         if category_name is not None:
             if category_name == '':
@@ -117,6 +122,12 @@ class TransactionSerializer(DynamicFieldsSerializer):
                 instance.category = utils.get_object_or_none(Category, user=user, name__iexact=category_name)
                 if not instance.category:
                     raise serializers.ValidationError("Unknown category '%s'." % category_name)
+        # Some values can be reset
+        if self.context['request'].data.get('date') in RESET: instance.date = instance.original_date
+        if self.context['request'].data.get('payee') in RESET: instance.payee = instance.original_payee
+        log.info('--------')
+        log.info(self.context['request'].data.get('amount'))
+        if self.context['request'].data.get('amount') in RESET: instance.amount = instance.original_amount
         instance.save()
         return instance
 
@@ -177,7 +188,9 @@ def clean_amount(value):
         value = value.replace('$', '')
         value = value.replace(',', '')
         return Decimal(value)
-    return Decimal(value)
+    if isinstance(value, (int, float)):
+        return Decimal(value)
+    return value
 
 
 @api_view(['put'])

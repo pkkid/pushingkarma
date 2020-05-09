@@ -107,6 +107,7 @@ export default {
         'shift+down': (event) => this.reorder(event, 1),
         'space': (event) => this.toggleValue(event),
         'enter': (event) => this.enterEditOrSave(event),
+        'ctrl+z': (event) => this.resetValue(event),
         'esc': (event) => this.cancelEdit(event),
       };
     },
@@ -250,6 +251,18 @@ export default {
       var newrow = parseInt(cell.rowindex) + amount;
       var data = await this.save(cell.item.id, cell.rowindex, this.sortfield, newrow, null, true);
       this.focus = (data.sortindex * this.editcols) + 1;
+    },
+
+    // Enter: Edit or Save
+    // Called when user hits enter on the page
+    resetValue: function(event) {
+      if (!this.inContainer()) { return; }
+      if (this.focus) {
+        var cell = this.getCell();
+        if (!cell.col.reset) { return; }
+        event.preventDefault();
+        this.save(cell.item.id, cell.rowindex, cell.col.field, '_RESET', cell);
+      }
     },
 
     // Set Focus Last
