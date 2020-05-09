@@ -1,0 +1,9 @@
+{
+	"version": "2.0.0",
+	"tasks": [{
+		"type": "npm",
+		"script": "start",
+		"label": "start",
+		"detail": "mount-private.py; npm-run-all -p django-runserver vue-watch"
+	}]
+}

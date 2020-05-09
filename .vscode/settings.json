@@ -1,0 +1,7 @@
+{
+  "sqltools.connections": [{
+    "database": "pk/db.sqlite3",
+    "dialect": "SQLite",
+    "name": "PushingKarma"
+  }],
+}

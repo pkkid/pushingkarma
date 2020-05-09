@@ -2,7 +2,7 @@
   <div id='budgetyear'>
     <PageWrap>
       <div v-if='items'>
-        <h1>Past Year Budget
+        <h1>Past Year Spending
           <div class='subtext'>Global view of past years transactions.</div>
         </h1>
         <div id='searchwrap'>
@@ -24,7 +24,7 @@
         </div>
       </div>
       <div v-else id='#budgetyear'>
-        <h1>Budget Transactions<div class='subtext'>Loading transactions..</div></h1>
+        <h1>Past Year Spending<div class='subtext'>Loading transactions..</div></h1>
         <b-loading active :is-full-page='false'/>
       </div>
     </PageWrap>

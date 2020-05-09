@@ -3,9 +3,8 @@
     <PageWrap>
       <div v-if='items' v-hotkey='keymap'>
         <h1>
-          Budget Transactions
-          <div class='subtext'>Showing {{this.items.length | commas}} of {{this.total | commas}}
-            {{account ? account.name : ''}} transactions</div>
+          {{account ? account.name : 'All'}} Transactions
+          <div class='subtext'>Showing {{this.items.length | commas}} of {{this.total | commas}} transactions</div>
         </h1>
         <div id='searchwrap'>
           <b-loading class='is-small' :active='loading' :is-full-page='false'/>
@@ -30,7 +29,7 @@
         </div>
       </div>
       <div v-else id='budgettransactions'>
-        <h1>Budget Transactions<div class='subtext'>Loading transactions..</div></h1>
+        <h1>{{account ? account.name : 'All'}}  Transactions<div class='subtext'>Loading transactions..</div></h1>
         <b-loading active :is-full-page='false'/>
       </div>
     </PageWrap>
