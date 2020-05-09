@@ -29,6 +29,7 @@
 //        </template>
 //        <template slot='empty'>No items to display.</template>
 //      </b-table>
+import * as utils from '@/utils/utils';
 import TableCell from '@/components/TableCell';
 
 export default {
@@ -214,7 +215,7 @@ export default {
       // Save the new value
       if (this.editing && saveFirst) {
         var cell = this.getCell();
-        if (cell.html != cell.text) {
+        if (utils.textContent(cell.html) != cell.text) {
           this.save(cell.item.id, cell.rowindex, cell.col.field, cell.text, cell);
         }
       }

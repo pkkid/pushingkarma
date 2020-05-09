@@ -57,7 +57,7 @@ class TransactionManager:
             self._lazy__existing_ids.add((int(trx['accountfid']), trx['trxid']))
         return result
 
-    def import_qfx(self, filename, handle):
+    def import_qfx(self, user, filename, handle):
         """ Import transactions from a qfx file. """
         try:
             self.files += 1
@@ -75,6 +75,7 @@ class TransactionManager:
                 trx['accountfid'] = fid
                 if not self._transaction_exists(trx, addit=True):
                     transactions.append(Transaction(
+                        user=user,
                         account_id=account.id,
                         trxid=trx['id'],
                         payee=trx[account.payee or 'payee'],

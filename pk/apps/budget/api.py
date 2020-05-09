@@ -65,11 +65,8 @@ class CategorySerializer(DynamicFieldsSerializer):
             'exclude_budget', 'exclude_totals')
     
     def to_internal_value(self, data):
-        budget = data.get('budget')
-        if budget:
-            budget = budget.replace('$', '')
-            budget = budget.replace(',', '')
-            data['budget'] = Decimal(budget)
+        if data.get('budget'):
+            data['budget'] = clean_amount(data['budget'])
         return super(CategorySerializer, self).to_internal_value(data)
     
     def create(self, validated_data):
@@ -102,6 +99,11 @@ class TransactionSerializer(DynamicFieldsSerializer):
         model = Transaction
         fields = ('id','url','trxid','date','payee','amount','approved',
             'memo','comment','account','category')
+    
+    def to_internal_value(self, data):
+        if data.get('amount'):
+            data['amount'] = clean_amount(data['amount'])
+        return super(TransactionSerializer, self).to_internal_value(data)
 
     def update(self, instance, validated_data):
         for attr, value in validated_data.items():
@@ -167,11 +169,20 @@ def budget(request):
     })
 
 
+def clean_amount(value):
+    """ Clean a USD string such as -$99.99 to a Decimal value. """
+    if isinstance(value, str):
+        value = value.replace('$', '')
+        value = value.replace(',', '')
+        return Decimal(value)
+    return Decimal(value)
+
+
 @api_view(['put'])
 @permission_classes([IsAuthenticated])
 def upload(request, format=None):
     """ Upload new transactions to the budget app. """
     trxmanager = TransactionManager()
     for fileobj in request.FILES.values():
-        trxmanager.import_qfx(fileobj.name, fileobj.file)
+        trxmanager.import_qfx(request.user, fileobj.name, fileobj.file)
     return Response(trxmanager.get_status())

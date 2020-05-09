@@ -165,7 +165,6 @@ export function rset(object, property, value) {
   return object;
 }
 
-
 // String Format
 // Format the specified template with the key/value object mapping.
 //   str - String to format with vars specified by brackets {var}.
@@ -203,6 +202,13 @@ export function strToBool(value) {
   return ['yes','y','true','t','x'].indexOf(value) >= 0;
 }
 
+// Text Content
+// Extract the textContent from an html string
+export function textContent(htmlstr) {
+  var span = document.createElement('span');
+  span.innerHTML = htmlstr;
+  return span.textContent || span.innerText;
+}
 
 // Time Ago
 // Convert seconds or milliseconds to a human readable time ago string.
@@ -212,7 +218,6 @@ export function timeAgo(value) {
   if (Number.isInteger(value) && value < 99999999999) { value *= 1000; }
   return dayjs(value).fromNow();
 }
-
 
 // Update History
 // Update the address bar history.
