@@ -220,6 +220,8 @@ export default {
         if (oldvalue != newvalue) {
           console.log(`Saving ${cell.col.field}: '${oldvalue}' != '${newvalue}'`);
           this.save(cell.item.id, cell.rowindex, cell.col.field, newvalue, cell);
+        } else {
+          cell.setStatus('default');
         }
       }
       // Set the new focus
