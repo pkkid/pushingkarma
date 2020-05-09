@@ -14,7 +14,6 @@ from rest_framework.reverse import reverse
 from .manager import TransactionManager
 from .models import Account, Category, Transaction, KeyValue
 
-ACCOUNTS = settings.BUDGET_ACCOUNTS
 DATEFORMAT = '%Y-%m-%d'
 IGNORED = 'Ignored'
 RESET_DECIMAL = Decimal('-99999.99')

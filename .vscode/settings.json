@@ -4,4 +4,5 @@
     "dialect": "SQLite",
     "name": "PushingKarma"
   }],
+  "python.pythonPath": "/home/mjs7231/.virtualenvs/pk/bin/python",
 }
