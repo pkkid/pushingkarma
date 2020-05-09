@@ -91,6 +91,7 @@
   font-size: 15px;
   color: $lightbg-fg2;
 
+  
   tr { position:relative; }
   tr.is-empty td {
     font-size: 1.3em;
@@ -100,7 +101,8 @@
     color: lighten($lightbg-fg2, 40%);
   }
   
-  &.is-narrow th { background-color:$lightbg-bg2; font-size:0.8em; padding:1px 6px; }
+  &.is-narrow th { background-color:$lightbg-bg2; font-size:12px; padding:1px 6px; }
+  &.is-narrow th div { position:relative; top:1px; }
   &.is-narrow td { padding:1px; border-color:$lightbg-bg2; }
   td.blur { font-family:$fontfamily-code; font-size:13px; }
   td .gtzero { color:$lightbg-green2; font-weight:bold; }

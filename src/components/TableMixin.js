@@ -52,8 +52,8 @@ export default {
         var row = [];               // List of cell objects
         var editcount = 0;          // Current edit count
         for (var col of this.columns) {
-          if (col.cls && !col['cell-class']) { col['cell-class'] = col.cls; }
           if (col.cls && !col['header-class']) { col['header-class'] = col.cls; }
+          if (col.cls && !col['cell-class']) { col['cell-class'] = col.cls; }
           editcount += col.editable ? 1 : 0;
           var tabindex = col.editable ? (i * this.editcols) + editcount : null;
           var cell = Object.assign({}, {

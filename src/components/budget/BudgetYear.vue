@@ -90,7 +90,7 @@
           columns.push({label:label, field:`${monthstr}.total`, numeric:true, display:utils.usdint, opts:{color:true}, width:'60px', cls:`${cls} blur`});
         }
         columns.push({label:'Average', field:'average', numeric:true, display:utils.usdint, opts:{color:true}, width:'60px', cls:'average blur'});
-        columns.push({label:'Total', field:'total', numeric:true, display:utils.usdint, opts:{color:true}, width:'70px', cls:'total blur'});
+        columns.push({label:'Total', field:'total', numeric:true, display:utils.usdint, opts:{color:true}, width:'70px', cls:'totalcol blur'});
         return columns;
       },
 
@@ -135,6 +135,7 @@
         try {
           var transactions = await this.getTransactions();
           var tablerows = this.initTablerows();
+          // Pass 1: Add up all the transactions per category and month
           for (var trx of transactions) {
             var month = dayjs(trx.date).startOf('month');
             var monthstr = month.format('YYYY-MM');
@@ -146,8 +147,10 @@
             tablerows[TOTAL][monthstr].total += amount;
             tablerows[TOTAL].total += amount;
           }
+          // Pass 2: Remove empty rows or calculate the average
           for (var key of Object.keys(tablerows)) {
-            tablerows[key].average = tablerows[key].total / 12;
+            if (tablerows[key].total == 0) { delete tablerows[key]; }
+            else { tablerows[key].average = tablerows[key].total / 12; }
           }
           this.tablerows = tablerows;
         } catch(err) {
@@ -171,8 +174,8 @@
     td.current { border-right:1px solid $lightbg-bg3; }
     th.average { border-left:1px solid darken($lightbg-bg3, 5%); }
     td.average { border-left:1px solid $lightbg-bg3; }
-
-    tbody tr:last-child td { font-weight:600; }
+    td.totalrow { background-color: $lightbg-fg2; }
+    tbody tr:last-child td { font-weight:600; background-color:$lightbg-bg1; }
 
     #page { max-width:1220px !important; min-width:1220px !important; }
     #searchwrap {
