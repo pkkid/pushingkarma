@@ -215,8 +215,11 @@ export default {
       // Save the new value
       if (this.editing && saveFirst) {
         var cell = this.getCell();
-        if (utils.textContent(cell.html) != cell.text) {
-          this.save(cell.item.id, cell.rowindex, cell.col.field, cell.text, cell);
+        var oldvalue = utils.textContent(cell.html);
+        var newvalue = cell.text;
+        if (oldvalue != newvalue) {
+          console.log(`Saving ${cell.col.field}: '${oldvalue}' != '${newvalue}'`);
+          this.save(cell.item.id, cell.rowindex, cell.col.field, newvalue, cell);
         }
       }
       // Set the new focus

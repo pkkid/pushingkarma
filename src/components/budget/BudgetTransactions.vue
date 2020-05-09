@@ -21,7 +21,8 @@
           <b-table :data='tabledata' narrowed ref='table' tabindex='-1'>
             <template slot-scope='props'>
               <b-table-column v-for='cell in props.row' :key='cell.name' v-bind='cell.col'>
-                <TableCell v-bind='cell' :ref='`c${cell.tabindex}`' @click.native='clickSetFocus($event, cell.tabindex)'/>
+                <TableCell v-bind='cell' :ref='`c${cell.tabindex}`' :key='cell.row.id'
+                  @click.native='clickSetFocus($event, cell.tabindex)'/>
               </b-table-column>
             </template>
             <template slot='empty'>No items to display.</template>
@@ -168,6 +169,7 @@
       }
       .loading-overlay {
         width: 20px;
+        height: 35px;
       }
       .icon {
         color: $lightbg-fg1;

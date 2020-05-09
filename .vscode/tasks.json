@@ -5,5 +5,10 @@
 		"script": "start",
 		"label": "start",
 		"detail": "mount-private.py; npm-run-all -p django-runserver vue-watch"
+	},{
+		"type": "npm",
+		"script": "deploy",
+		"label": "deploy",
+		"detail": "npm run vue-build && cd ansible && ansible-playbook -i inventory.ini playbook.yml --tags=deploy"
 	}]
 }

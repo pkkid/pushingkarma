@@ -42,7 +42,7 @@
       html: function() {
         if (this.col.opts) { return this.col.display(this.value, this.col.opts); }
         if (this.col.display) { return this.col.display(this.value); }
-        return this.value;
+        return this.value || '';
       },
     },
     mounted: function() {
@@ -61,6 +61,7 @@
       filterChoices: function(text) {
         if (!this.contenteditable) { return []; }
         if (!this.col.choices) { return []; }
+        if (this.text == '') { return []; }
         var lchoices = this.col.choices.map(c => c.name.toLowerCase());
         if (!text || text == '') { return this.col.choices; }
         if (lchoices.indexOf(text.toLowerCase()) >= 0) { return []; }

@@ -207,7 +207,7 @@ export function strToBool(value) {
 export function textContent(htmlstr) {
   var span = document.createElement('span');
   span.innerHTML = htmlstr;
-  return span.textContent || span.innerText;
+  return span.textContent || span.innerText || '';
 }
 
 // Time Ago

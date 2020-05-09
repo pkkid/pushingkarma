@@ -192,6 +192,7 @@
       }
       .loading-overlay {
         width: 20px;
+        height: 35px;
       }
       .icon {
         color: $lightbg-fg1;
