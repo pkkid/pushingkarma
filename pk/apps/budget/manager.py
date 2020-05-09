@@ -81,6 +81,10 @@ class TransactionManager:
                         payee=trx[account.payee or 'payee'],
                         amount=trx['amount'],
                         date=trx['date'].date(),
+                        # original values
+                        original_date=trx['date'].date(),
+                        original_payee=trx[account.payee or 'payee'],
+                        original_amount=trx['amount'],
                     ))
             self.label_transactions(transactions)
             self.categorize_transactions(transactions)

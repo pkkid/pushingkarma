@@ -69,8 +69,11 @@ class Transaction(TimeStampedModel):
     category = models.ForeignKey(Category, null=True, default=None, on_delete=models.SET_NULL)
     amount = models.DecimalField(max_digits=8, decimal_places=2, db_index=True)
     approved = models.BooleanField(default=False, db_index=True)
-    memo = models.CharField(max_length=255, blank=True, default='')
     comment = models.TextField(blank=True, default='', db_index=True)
+    # Keep original values
+    original_date = models.DateField()
+    original_payee = models.CharField(max_length=255, blank=True)
+    original_amount = models.DecimalField(max_digits=8, decimal_places=2)
 
     class Meta:
         unique_together = ('account', 'trxid')

@@ -98,7 +98,7 @@ class TransactionSerializer(DynamicFieldsSerializer):
     class Meta:
         model = Transaction
         fields = ('id','url','trxid','date','payee','amount','approved',
-            'memo','comment','account','category')
+            'comment','account','category')
     
     def to_internal_value(self, data):
         if data.get('amount'):
