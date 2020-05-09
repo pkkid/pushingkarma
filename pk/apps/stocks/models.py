@@ -71,5 +71,5 @@ class Stock(TimeStampedModel):
 @receiver(models.signals.post_save, sender=Stock)
 def post_save(sender, instance, created, *args, **kwargs):
     if created:
-        log.info(f'Calling Django command: update_stocks --ticker={instance.ticker}')
-        call_command('update_stocks', ticker=instance.ticker)
+        log.info(f'Calling Django command: updatestocks --ticker={instance.ticker}')
+        call_command('updatestocks', ticker=instance.ticker)

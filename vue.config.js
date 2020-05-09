@@ -22,7 +22,7 @@ module.exports = {
     ],
     // Remove warnings for large js files large
     performance: {
-      maxEntrypointSize: 1024000,
-      maxAssetSize: 1024000
+      maxEntrypointSize: 5000000,
+      maxAssetSize: 5000000
     }}
 };

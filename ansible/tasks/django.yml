@@ -21,15 +21,23 @@
     - collectstatic --noinput
   notify: Restart Services
 
+- name: Add Database Backup Cronjob
+  cron:
+    name: backupdb
+    job: '/var/www/venvs/pk/bin/python /root/pk/manage.py backupdb >> {{logs_dir}}/backupdb.log 2>&1'
+    minute: '0'
+    hour: '0'
+    weekday: '0'
+
 - name: Add Update Stocks Cronjob
   cron:
-    name: update-stocks
-    job: '/var/www/venvs/pk/bin/python /root/pk/manage.py update_stocks >> {{logs_dir}}/update_stocks.log 2>&1'
+    name: updatestocks
+    job: '/var/www/venvs/pk/bin/python /root/pk/manage.py updatestocks >> {{logs_dir}}/updatestocks.log 2>&1'
     minute: '0'
     hour: '2'
 
 - name: Add Update Calendar Cronjob
   cron:
-    name: update-gcal
-    job: '/var/www/venvs/pk/bin/python /root/pk/manage.py update_gcal >> {{logs_dir}}/update_gcal.log 2>&1'
+    name: updategcal
+    job: '/var/www/venvs/pk/bin/python /root/pk/manage.py updategcal >> {{logs_dir}}/updategcal.log 2>&1'
     minute: '*/5'

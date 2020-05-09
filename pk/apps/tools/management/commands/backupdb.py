@@ -15,7 +15,7 @@ class Command(BaseCommand):
     @log_exception(log)
     def handle(self, *args, **kwargs):
         localpath = settings.DATABASES['default']['NAME']
-        dtstr = datetime.now().strftime(r'%Y-%d-%m')
+        dtstr = datetime.now().strftime(r'%Y-%m-%d')
         ext = os.path.basename(localpath).split('.')[-1]
         remotepath = settings.WEBDAV_BACKUP_DIR
         remotepath += f'/{settings.SITE_NAME}-{settings.HOSTNAME}-{dtstr}.{ext}'.lower()
