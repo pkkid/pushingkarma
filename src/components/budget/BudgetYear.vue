@@ -15,7 +15,7 @@
         <div class='clickout-detector' v-click-outside='cancelAll'>
           <b-table :data='tabledata' narrowed ref='table' tabindex='-1'>
             <template slot-scope='props'>
-              <b-table-column v-for='cell in props.row' :key='cell.name' v-bind='cell.col'>
+              <b-table-column v-for='cell in props.row' :key='cell.label' v-bind='cell.col'>
                 <TableCell v-bind='cell' :ref='`c${cell.tabindex}`' @click.native='clickSetFocus($event, cell.tabindex)'/>
               </b-table-column>
             </template>
@@ -38,8 +38,8 @@
   import * as utils from '@/utils/utils';
   import PageWrap from '@/components/site/PageWrap';
   import TableMixin from '@/components/TableMixin';
-  var TOTAL = 'Total';
-  var UNCATEGORIZED = 'Uncategorized';
+  var TOTAL = {name:'Total', budget:0};
+  var UNCATEGORIZED = {name:'Uncategorized', budget:0};
 
   export default {
     name: 'BudgetYear',
@@ -62,6 +62,7 @@
       search: function() { this.refresh(true); },
     },
     mounted: function() {
+      document.title = `PushingKarma - Past Year Spending`;
       this.start = dayjs().startOf('month');
       this.refresh();
     },
@@ -81,16 +82,17 @@
       // Initialize table columns
       initColumns: function() {
         var columns = [];
+        var opts = {color:true, symbol:'$'};
         columns.push({label:'Category', field:'name', width:'140px'});
-        columns.push({label:'Budget', field:'budget', numeric:true, display:utils.usdint, opts:{color:true}, cls:'blur'});
+        // columns.push({label:'Budget', field:'budget', width:'60px', numeric:true, display:utils.usdint, opts:opts, cls:'blur'});
         for (var i in this.months) {
           var monthstr = this.months[i].format('YYYY-MM');
           var label = i == 0 ? ` ${this.months[i].format('MMM')}` : this.months[i].format('MMM');
           var cls = i == 0 ? 'current' : 'pastmonth';
-          columns.push({label:label, field:`${monthstr}.total`, numeric:true, display:utils.usdint, opts:{color:true}, width:'60px', cls:`${cls} blur`});
+          columns.push({label:label, field:`${monthstr}.total`, numeric:true, display:utils.usdint, opts:opts, width:'60px', cls:`${cls} blur`});
         }
-        columns.push({label:'Average', field:'average', numeric:true, display:utils.usdint, opts:{color:true}, width:'60px', cls:'average blur'});
-        columns.push({label:'Total', field:'total', numeric:true, display:utils.usdint, opts:{color:true}, width:'70px', cls:'totalcol blur'});
+        columns.push({label:'Average', field:'average', numeric:true, display:utils.usdint, opts:opts, width:'60px', cls:'average blur'});
+        columns.push({label:'Total', field:'total', numeric:true, display:utils.usdint, opts:opts, width:'70px', cls:'totalcol blur'});
         return columns;
       },
 
@@ -99,8 +101,8 @@
       initTablerows: function() {
         var tablerows = {};
         var categories = this.categories.slice();  // clone array
-        categories.push({name:UNCATEGORIZED, budget:0});
-        categories.push({name:TOTAL, budget:0});
+        categories.push(UNCATEGORIZED);
+        categories.push(TOTAL);
         for (var cat of categories) {
           tablerows[cat.name] = {};
           tablerows[cat.name].name = cat.name;
@@ -140,12 +142,13 @@
             var month = dayjs(trx.date).startOf('month');
             var monthstr = month.format('YYYY-MM');
             var amount = parseFloat(trx.amount);
-            tablerows[trx.category.name][monthstr].items.push(trx);
-            tablerows[trx.category.name][monthstr].total += amount;
-            tablerows[trx.category.name].total += amount;
-            tablerows[trx.category.name].count += 1;
-            tablerows[TOTAL][monthstr].total += amount;
-            tablerows[TOTAL].total += amount;
+            var cat = trx.category || UNCATEGORIZED;
+            tablerows[cat.name][monthstr].items.push(trx);
+            tablerows[cat.name][monthstr].total += amount;
+            tablerows[cat.name].total += amount;
+            tablerows[cat.name].count += 1;
+            tablerows[TOTAL.name][monthstr].total += amount;
+            tablerows[TOTAL.name].total += amount;
           }
           // Pass 2: Remove empty rows or calculate the average
           for (var key of Object.keys(tablerows)) {

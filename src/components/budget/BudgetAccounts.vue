@@ -48,6 +48,9 @@
       items: pathify.sync('budget/accounts'),
       keymap: function() { return this.tablemixin_keymap(); },
     },
+    mounted: function() {
+      document.title = `PushingKarma - Budget Accounts`;
+    },
     methods: {
       // Save
       // Save the current cell value - There is a slight bit of wonkyness here in

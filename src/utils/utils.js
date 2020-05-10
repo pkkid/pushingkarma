@@ -239,8 +239,9 @@ export function usd(value, opts={}) {
   var result;
   var places = opts.places !== undefined ? opts.places : 2;
   var valuestr = Math.abs(value).toFixed(places);
-  if (value < 0) { result = '-$'+ insertCommas(valuestr); }
-  else { result = '$'+ insertCommas(valuestr); }
+  var symbol = opts.symbol === null ? '' : '$';
+  if (value < 0) { result = `-${symbol}${insertCommas(valuestr)}`; }
+  else { result = `${symbol}${insertCommas(valuestr)}`; }
   if (places == 2) {
     if (result.match(/\.\d{1}$/)) { return result +'0'; }
     if (!result.match(/\./)) { return result +'.00'; }

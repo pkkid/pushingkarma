@@ -49,6 +49,9 @@
       items: pathify.sync('budget/categories'),
       keymap: function() { return this.tablemixin_keymap(); },
     },
+    mounted: function() {
+      document.title = `PushingKarma - Budget Categories`;
+    },
     methods: {
       // Save
       // Save the current cell value - There is a slight bit of wonkyness here in

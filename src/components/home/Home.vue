@@ -28,6 +28,7 @@
     components: {Parallax, About, Projects, Footer, Navigation},
     beforeCreate: function() {
       this.$store.set('global/layout', 'sidenav');
+      document.title = `PushingKarma`;
     }
   };
 </script>

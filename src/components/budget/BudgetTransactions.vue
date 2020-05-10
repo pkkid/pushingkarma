@@ -20,7 +20,7 @@
         <div class='clickout-detector' v-click-outside='cancelAll'>
           <b-table :data='tabledata' narrowed ref='table' tabindex='-1'>
             <template slot-scope='props'>
-              <b-table-column v-for='cell in props.row' :key='cell.name' v-bind='cell.col'>
+              <b-table-column v-for='cell in props.row' :key='cell.label' v-bind='cell.col'>
                 <TableCell v-bind='cell' :ref='`c${cell.tabindex}`' :key='cell.row.id'
                   @click.native='clickSetFocus($event, cell.tabindex)'/>
               </b-table-column>
@@ -138,6 +138,8 @@
       // Reset
       // Reset the page view when switching tabs
       reset: function(search='') {
+        var accountname = this.account ? this.account.name : 'All';
+        document.title =`PushingKarma - ${accountname} Transactions`;
         this.transactions = null;
         this.search = search;
         this.editing = false;
