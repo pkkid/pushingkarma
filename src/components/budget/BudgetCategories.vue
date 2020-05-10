@@ -39,9 +39,11 @@
         columns: [
           {label:'Name', field:'name', editable:true, width:'250px'},
           {label:'Budget', field:'budget', display:utils.usdint, opts:{color:true}, select:true,
-            numeric:true, editable:true, width:'150px', cls:'blur'},
-          {label:'Exclude From Budget', field:'exclude_budget', cls:'check', editable:true, width:'247px'},
-          {label:'Exclude From Totals', field:'exclude_totals', cls:'check', editable:true, width:'247px'},
+            numeric:true, editable:true, width:'100px', cls:'blur'},
+          {label:'Exclude From Budget', field:'exclude_budget', cls:'check', editable:true, width:'180px'},
+          {label:'Year Transactions', field:'meta.year_transactions', width:'120px', numeric:true, display:utils.insertCommas},
+          {label:'Monthly Average', field:'meta.year_average', width:'135px', numeric:true, display:utils.usd, opts:{color:true}},
+          {label:'Year Total', field:'meta.year_total', width:'135px', numeric:true, display:utils.usd, opts:{color:true}},
         ],
       };
     },

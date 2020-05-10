@@ -31,7 +31,6 @@ class Category(TimeStampedModel):
     comment = models.TextField(blank=True, default='')
     sortindex = models.IntegerField(default=None)
     exclude_budget = models.BooleanField(default=False)
-    exclude_totals = models.BooleanField(default=False)
 
     def __init__(self, *args, **kwargs):
         super(Category, self).__init__(*args, **kwargs)

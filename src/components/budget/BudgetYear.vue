@@ -83,15 +83,14 @@
       initColumns: function() {
         var columns = [];
         var opts = {color:true, symbol:'$'};
-        columns.push({label:'Category', field:'name', width:'140px'});
-        // columns.push({label:'Budget', field:'budget', width:'60px', numeric:true, display:utils.usdint, opts:opts, cls:'blur'});
+        columns.push({label:'Category', field:'name', width:'148px'});
         for (var i in this.months) {
           var monthstr = this.months[i].format('YYYY-MM');
           var label = i == 0 ? ` ${this.months[i].format('MMM')}` : this.months[i].format('MMM');
           var cls = i == 0 ? 'current' : 'pastmonth';
-          columns.push({label:label, field:`${monthstr}.total`, numeric:true, display:utils.usdint, opts:opts, width:'60px', cls:`${cls} blur`});
+          columns.push({label:label, field:`${monthstr}.total`, numeric:true, display:utils.usdint, opts:opts, width:'64px', cls:`${cls} blur`});
         }
-        columns.push({label:'Average', field:'average', numeric:true, display:utils.usdint, opts:opts, width:'60px', cls:'average blur'});
+        columns.push({label:'Average', field:'average', numeric:true, display:utils.usdint, opts:opts, width:'70px', cls:'average blur'});
         columns.push({label:'Total', field:'total', numeric:true, display:utils.usdint, opts:opts, width:'70px', cls:'totalcol blur'});
         return columns;
       },
@@ -104,6 +103,7 @@
         categories.push(UNCATEGORIZED);
         categories.push(TOTAL);
         for (var cat of categories) {
+          if (cat.exclude_budget == true) { continue; }
           tablerows[cat.name] = {};
           tablerows[cat.name].name = cat.name;
           tablerows[cat.name].budget = cat.budget;
@@ -137,12 +137,14 @@
         try {
           var transactions = await this.getTransactions();
           var tablerows = this.initTablerows();
+          var categories = Object.keys(tablerows);
           // Pass 1: Add up all the transactions per category and month
           for (var trx of transactions) {
             var month = dayjs(trx.date).startOf('month');
             var monthstr = month.format('YYYY-MM');
             var amount = parseFloat(trx.amount);
             var cat = trx.category || UNCATEGORIZED;
+            if (categories.indexOf(cat.name) == -1) { continue; }
             tablerows[cat.name][monthstr].items.push(trx);
             tablerows[cat.name][monthstr].total += amount;
             tablerows[cat.name].total += amount;

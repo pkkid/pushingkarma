@@ -1,6 +1,9 @@
 # encoding: utf-8
+import datetime
+from dateutil.relativedelta import relativedelta
 from decimal import Decimal
-from django.db.models import Count
+from django.db.models import F, Q, Count, Sum, DecimalField
+from django.db.models.functions import Cast
 from pk import log, utils  # noqa
 from pk.utils.api.serializers import DynamicFieldsSerializer, PartialFieldsSerializer
 from pk.utils.api.viewsets import ModelViewSetWithAnnotations
@@ -46,7 +49,12 @@ class AccountsViewSet(ModelViewSetWithAnnotations):
     serializer_class = AccountSerializer
     permission_classes = [IsAuthenticated]
     list_fields = AccountSerializer.Meta.fields
-    annotations = {'num_transactions': Count('transaction')}
+
+    def annotations(self):
+        return {'num_transactions': Count('transaction')}
+
+    def get_queryset(self):
+        return Account.objects.filter(user=self.request.user).order_by('name')
 
     def list(self, request, *args, **kwargs):
         accounts = Account.objects.filter(user=request.user).order_by('name')
@@ -60,8 +68,7 @@ class AccountsViewSet(ModelViewSetWithAnnotations):
 class CategorySerializer(DynamicFieldsSerializer):
     class Meta:
         model = Category
-        fields = ('id', 'url', 'name', 'sortindex', 'budget', 'comment',
-            'exclude_budget', 'exclude_totals')
+        fields = ('id','url','name','sortindex','budget','comment','exclude_budget')
     
     def to_internal_value(self, data):
         if data.get('budget'):
@@ -75,19 +82,32 @@ class CategorySerializer(DynamicFieldsSerializer):
         return account
 
 
-class CategoriesViewSet(viewsets.ModelViewSet):
+class CategoriesViewSet(ModelViewSetWithAnnotations):
     queryset = Category.objects.order_by('-sortindex')
     serializer_class = CategorySerializer
     permission_classes = [IsAuthenticated]
     list_fields = CategorySerializer.Meta.fields
 
+    def annotations(self):
+        maxdate = datetime.date.today().replace(day=1)
+        mindate = maxdate - relativedelta(years=1)
+        return {
+            'num_transactions': Count('transaction'),
+            'year_transactions': Count('transaction', filter=Q(transaction__date__gte=mindate, transaction__date__lt=maxdate)),
+            'year_total': Sum('transaction__amount', filter=Q(transaction__date__gte=mindate, transaction__date__lt=maxdate)),
+            'year_average': Cast(F('year_total') / 12, DecimalField(max_digits=9, decimal_places=2))
+        }
+    
+    def get_queryset(self):
+        return Category.objects.filter(user=self.request.user).order_by('-sortindex')
+
     def list(self, request, *args, **kwargs):
-        categories = Category.objects.filter(user=request.user).order_by('sortindex')
+        categories = self.get_queryset().order_by('sortindex')
         page = self.paginate_queryset(categories)
         serializer = CategorySerializer(page, context={'request':request}, many=True, fields=self.list_fields)
         response = self.get_paginated_response(serializer.data)
         utils.move_to_end(response.data, 'results')
-        return response
+        return self.append_metadata(response, categories)
 
 
 class TransactionSerializer(DynamicFieldsSerializer):
@@ -113,17 +133,14 @@ class TransactionSerializer(DynamicFieldsSerializer):
         # Update category_name
         category_name = self.context['request'].data.get('category_name')
         if category_name is not None:
-            if category_name == '':
-                instance.category = None
-            else:
+            instance.category = None
+            if category_name != '':
                 instance.category = utils.get_object_or_none(Category, user=user, name__iexact=category_name)
                 if not instance.category:
                     raise serializers.ValidationError("Unknown category '%s'." % category_name)
         # Some values can be reset
         if self.context['request'].data.get('date') in RESET: instance.date = instance.original_date
         if self.context['request'].data.get('payee') in RESET: instance.payee = instance.original_payee
-        log.info('--------')
-        log.info(self.context['request'].data.get('amount'))
         if self.context['request'].data.get('amount') in RESET: instance.amount = instance.original_amount
         instance.save()
         return instance

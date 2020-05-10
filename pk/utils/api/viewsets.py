@@ -11,14 +11,15 @@ class ModelViewSetWithAnnotations(viewsets.ModelViewSet):
     
     def append_metadata(self, response, queryset):
         """ Append data to a DRF response. """
-        if not self.annotations: return response
-        queryset = queryset.annotate(**self.annotations)
+        annotations = self.annotations()
+        if not annotations: return response
+        queryset = queryset.annotate(**annotations)
         itemids = {x['id']:x for x in queryset.values()}
         items = response.data['results'] if 'results' in response.data else [response.data]
         for item in items:
             itemdata = itemids[item['id']]
             item[self.annotations_key] = {}
-            for key in self.annotations:
+            for key in annotations:
                 value = itemdata[key]
                 if isinstance(value, Decimal):
                     value = round(value, 2)
@@ -27,20 +28,20 @@ class ModelViewSetWithAnnotations(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         response = super(ModelViewSetWithAnnotations, self).create(request, *args, **kwargs)
-        return self.append_metadata(response, self.queryset)
+        return self.append_metadata(response, self.get_queryset())
     
     def create(self, request, *args, **kwargs):
         response = super(ModelViewSetWithAnnotations, self).create(request, *args, **kwargs)
-        return self.append_metadata(response, self.queryset.filter(pk=response.data['id']))
+        return self.append_metadata(response, self.get_queryset().filter(pk=response.data['id']))
     
     def retrieve(self, request, *args, **kwargs):
         response = super(ModelViewSetWithAnnotations, self).retrieve(request, *args, **kwargs)
-        return self.append_metadata(response, self.queryset.filter(pk=kwargs['pk']))
+        return self.append_metadata(response, self.get_queryset().filter(pk=kwargs['pk']))
     
     def update(self, request, *args, **kwargs):
         response = super(ModelViewSetWithAnnotations, self).update(request, *args, **kwargs)
-        return self.append_metadata(response, self.queryset.filter(pk=kwargs['pk']))
+        return self.append_metadata(response, self.get_queryset().filter(pk=kwargs['pk']))
 
     def partial_update(self, request, *args, **kwargs):
         response = super(ModelViewSetWithAnnotations, self).partial_update(request, *args, **kwargs)
-        return self.append_metadata(response, self.queryset.filter(pk=kwargs['pk']))
+        return self.append_metadata(response, self.get_queryset().filter(pk=kwargs['pk']))
