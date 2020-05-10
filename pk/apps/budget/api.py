@@ -1,6 +1,5 @@
 # encoding: utf-8
 from decimal import Decimal
-from django.conf import settings
 from django.db.models import Count
 from pk import log, utils  # noqa
 from pk.utils.api.serializers import DynamicFieldsSerializer, PartialFieldsSerializer
@@ -27,7 +26,6 @@ TRANSACTIONSEARCHFIELDS = {
     'amount': SearchField(FIELDTYPES.NUM, 'amount'),
     'approved': SearchField(FIELDTYPES.BOOL, 'approved'),
     'comment': SearchField(FIELDTYPES.STR, 'comment'),
-    'memo': SearchField(FIELDTYPES.STR, 'memo'),
 }
 
 
