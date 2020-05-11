@@ -3,7 +3,7 @@
     <PageWrap>
       <div v-if='items'>
         <h1>Past Year Spending
-          <div class='subtext'>Global view of past years {{count | intcomma}} transactions.</div>
+          <div class='subtext'>Global view of past years {{count | intcomma}} transactions</div>
         </h1>
         <div id='searchwrap'>
           <b-loading class='is-small' :active='loading' :is-full-page='false'/>
