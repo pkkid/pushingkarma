@@ -86,7 +86,7 @@ export function formatDate(value, opts={}) {
 
 // Insert Commas
 // Add commas to the specified number.
-export function insertCommas(value) {
+export function intComma(value) {
   if (!value) { return 0; }
   var parts = value.toString().split('.');
   parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ',');
@@ -240,8 +240,8 @@ export function usd(value, opts={}) {
   var places = opts.places !== undefined ? opts.places : 2;
   var valuestr = Math.abs(value).toFixed(places);
   var symbol = opts.symbol === null ? '' : '$';
-  if (value < 0) { result = `-${symbol}${insertCommas(valuestr)}`; }
-  else { result = `${symbol}${insertCommas(valuestr)}`; }
+  if (value < 0) { result = `-${symbol}${intComma(valuestr)}`; }
+  else { result = `${symbol}${intComma(valuestr)}`; }
   if (places == 2) {
     if (result.match(/\.\d{1}$/)) { return result +'0'; }
     if (!result.match(/\./)) { return result +'.00'; }

@@ -4,7 +4,7 @@
       <div v-if='items' v-hotkey='keymap'>
         <h1>
           {{account ? account.name : 'All'}} Transactions
-          <div class='subtext'>Showing {{this.items.length | commas}} of {{this.total | commas}} transactions</div>
+          <div class='subtext'>Showing {{this.items.length | intcomma}} of {{this.total | intcomma}} transactions</div>
         </h1>
         <div id='searchwrap'>
           <b-loading class='is-small' :active='loading' :is-full-page='false'/>
@@ -12,8 +12,9 @@
           <input v-model.lazy='search' ref='search' class='input' icon='magnify'
             placeholder='Search Transactions' autocomplete='off' spellcheck='false' rounded/>
           <div class='quicklinks'>
-            <a v-if='uncategorized' @click='appendSearch("category:none")'>{{uncategorized | commas}} uncategorized</a>
-            <a v-if='unapproved' @click='appendSearch("approved=false")'>{{unapproved | commas}} unapproved</a>
+            <a v-if='uncategorized' @click='appendSearch("category:none")'>{{uncategorized | intcomma}} uncategorized</a>
+            <a v-if='unapproved' @click='appendSearch("approved=false")'>{{unapproved | intcomma}} unapproved</a>
+            <div v-if='!uncategorized && !unapproved' class='uptodate'>✓ You're all caught up!</div>
           </div>
         </div>
         <div style='clear:both'/>
@@ -76,7 +77,7 @@
       ];},
     },
     watch: {
-      account: function() { this.reset(); },
+      account: function() { this.reset(this.search); },
       search: function() { this.refresh(true); },
     },
     mounted: function() {
@@ -186,9 +187,11 @@
       }
     }
     .quicklinks {
-      color:$lightbg-fg1;
+      color:$lightbg-fg4;
       font-size: 12px;
+      font-weight: 400;
       padding-right: 10px;
+      padding-top: 2px;
       text-align: right;
       a::after { content: ', '; color:$lightbg-fg1; }
       a:last-child:after { content: ''; }

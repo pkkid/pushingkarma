@@ -3,7 +3,7 @@
     <PageWrap>
       <div v-if='items'>
         <h1>Past Year Spending
-          <div class='subtext'>Global view of past years transactions.</div>
+          <div class='subtext'>Global view of past years {{count | intcomma}} transactions.</div>
         </h1>
         <div id='searchwrap'>
           <b-loading class='is-small' :active='loading' :is-full-page='false'/>
@@ -38,6 +38,7 @@
   import * as utils from '@/utils/utils';
   import PageWrap from '@/components/site/PageWrap';
   import TableMixin from '@/components/TableMixin';
+  import trim from 'lodash/trim';
   var TOTAL = {name:'Total', budget:0};
   var UNCATEGORIZED = {name:'Uncategorized', budget:0};
 
@@ -48,8 +49,9 @@
     data: () => ({
       cancelsearch: null,   // Cancel search token
       tablerows: null,      // Row items to display
-      search: '',           // Current search string
+      search: null,         // Current search string
       loading: false,       // True to show loading indicator
+      count: 0,             // Total transactions in view
       start: null,          // Starting month
     }),
     computed: {
@@ -59,12 +61,15 @@
       columns: function() { return this.initColumns(); },
     },
     watch: {
-      search: function() { this.refresh(true); },
+      search: function() {
+        this.refresh(true);
+      },
     },
     mounted: function() {
       document.title = `PushingKarma - Past Year Spending`;
       this.start = dayjs().startOf('month');
-      this.refresh();
+      this.search = trim(this.search || this.$route.query.search || '');
+      //this.refresh();
     },
     methods: {
       // Get Transactions
@@ -135,9 +140,11 @@
       refresh: async function(showLoading=false) {
         this.loading = showLoading;
         try {
+          var count = 0;
           var transactions = await this.getTransactions();
           var tablerows = this.initTablerows();
           var categories = Object.keys(tablerows);
+          var startstr = this.start.format('YYYY-MM');
           // Pass 1: Add up all the transactions per category and month
           for (var trx of transactions) {
             var month = dayjs(trx.date).startOf('month');
@@ -145,12 +152,16 @@
             var amount = parseFloat(trx.amount);
             var cat = trx.category || UNCATEGORIZED;
             if (categories.indexOf(cat.name) == -1) { continue; }
+            count += 1;
+            tablerows[cat.name].count += 1;
             tablerows[cat.name][monthstr].items.push(trx);
             tablerows[cat.name][monthstr].total += amount;
-            tablerows[cat.name].total += amount;
-            tablerows[cat.name].count += 1;
             tablerows[TOTAL.name][monthstr].total += amount;
-            tablerows[TOTAL.name].total += amount;
+            if (monthstr != startstr) {
+              tablerows[cat.name].total += amount;
+              tablerows[TOTAL.name].total += amount;
+              
+            }
           }
           // Pass 2: Remove empty rows or calculate the average
           for (var key of Object.keys(tablerows)) {
@@ -158,6 +169,8 @@
             else { tablerows[key].average = tablerows[key].total / 12; }
           }
           this.tablerows = tablerows;
+          this.count = count;
+          utils.updateHistory(this.$router, {search:this.search});
         } catch(err) {
           if (!api.isCancel(err)) { throw(err); }
         } finally {

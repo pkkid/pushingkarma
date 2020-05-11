@@ -24,6 +24,7 @@ api.register('budget/accounts', budget_api.AccountsViewSet)
 api.register('budget/categories', budget_api.CategoriesViewSet)
 api.register('budget/transactions', budget_api.TransactionsViewSet)
 api.register('budget/keyval', budget_api.KeyValueViewSet)
+api.add_url('^budget/summary', budget_api.summary, name='budget/summary')
 api.add_url('^budget/upload$', budget_api.upload, name='budget/upload')
 # Stocks API
 api.add_url('^stocks$', stock_api.stocks, name='stocks')

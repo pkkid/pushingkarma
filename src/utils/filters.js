@@ -9,7 +9,7 @@ Vue.filter('formatDate', function(value, format) {
   return utils.formatDate(value, {format});
 });
 Vue.filter('int', utils.int);
-Vue.filter('commas', utils.insertCommas);
+Vue.filter('intcomma', utils.intComma);
 Vue.filter('timeAgo', utils.timeAgo);
 Vue.filter('usd', utils.usd);
 Vue.filter('usdint', utils.usdint);

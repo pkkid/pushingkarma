@@ -7,8 +7,10 @@
     <div class='submenu'>
       <div class='subitem' :class='{highlighted:view=="year"}' @click='view="year"; account=null'>
         <div class='name'>Past Year</div>
-        <div class='balance blur'>$00.00</div>
-        <div class='subtext'>00 transactions</div>
+        <div v-if='summary' class='balance blur'>{{summary.pastyear.total | usdint}}</div>
+        <div v-if='summary' class='subtext' style='float:right'>saved</div>
+        <div v-if='summary' class='subtext' style='float:left; clear:left;'>{{summary.pastyear.transactions | intcomma}} transactions</div>
+        <div style='clear:both'/>
       </div>
     </div>
     <!-- Accounts -->
@@ -43,7 +45,8 @@
     computed: {
       view: pathify.sync('budget/view'),
       account: pathify.sync('budget/account'),
-      accounts: pathify.sync('budget/accounts'),
+      accounts: pathify.get('budget/accounts'),
+      summary: pathify.get('budget/summary'),
       displayAccounts: function() { return this.accounts.filter(a => a.id); },
       balance: function() { return sumBy(this.accounts, a => parseFloat(a.balance) || 0).toFixed(2); },
     },

@@ -40,6 +40,7 @@
       account: pathify.sync('budget/account'),
       accounts: pathify.sync('budget/accounts'),
       categories: pathify.sync('budget/categories'),
+      summary: pathify.sync('budget/summary'),
       demo: pathify.sync('budget/demo'),
       view: pathify.sync('budget/view'),
     },
@@ -63,10 +64,14 @@
       // Fetch accounts and categories
       var apromise = api.Budget.getAccounts();
       var cpromise = api.Budget.getCategories();
+      var spromise = api.Budget.getSummary();
       var {data:adata} = await apromise;
       var {data:cdata} = await cpromise;
+      var {data:sdata} = await spromise;
       this.accounts = adata.results;
       this.categories = cdata.results;
+      this.summary = sdata;
+      console.log(this.summary);
       // Navigate to the account subtab
       var accountid = this.$route.query.account;
       if (accountid) { this.account = this.accounts[accountid]; }

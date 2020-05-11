@@ -169,6 +169,9 @@ class TransactionsViewSet(viewsets.ModelViewSet):
         response.data['uncategorized'] = transactions.filter(category_id=None).count()
         utils.move_to_end(response.data, 'previous','next','upload','results')
         return response
+    
+    def summary():
+        pass
 
 
 class KeyValueSerializer(DynamicFieldsSerializer):
@@ -184,18 +187,6 @@ class KeyValueViewSet(viewsets.ModelViewSet):
     list_fields = KeyValueSerializer.Meta.fields
 
 
-@api_view(['get'])
-def budget(request):
-    root = reverse('api-root', request=request)
-    return Response({
-        'budget/accounts': f'{root}budget/accounts',
-        'budget/categories': f'{root}budget/categories',
-        'budget/keyvalue': f'{root}budget/keyvalue',
-        'budget/transactions': f'{root}budget/transactions',
-        'budget/upload': f'{root}budget/upload',
-    })
-
-
 def clean_amount(value):
     """ Clean a USD string such as -$99.99 to a Decimal value. """
     if isinstance(value, str):
@@ -205,6 +196,51 @@ def clean_amount(value):
     if isinstance(value, (int, float)):
         return Decimal(value)
     return value
+
+
+@api_view(['get'])
+def budget(request):
+    root = reverse('api-root', request=request)
+    return Response({
+        'budget/accounts': f'{root}budget/accounts',
+        'budget/categories': f'{root}budget/categories',
+        'budget/keyvalue': f'{root}budget/keyvalue',
+        'budget/summary': f'{root}budget/summary',
+        'budget/transactions': f'{root}budget/transactions',
+        'budget/upload': f'{root}budget/upload',
+    })
+
+
+@api_view(['get'])
+@permission_classes([IsAuthenticated])
+def summary(request, *args, **kwargs):
+    # Create a tuple of ranges to iterate
+    today = datetime.date.today()
+    monthstart = datetime.date.today().replace(day=1)
+    dateranges = (
+        ('thismonth', today, today.replace(day=1)),
+        ('lastmonth', monthstart, monthstart - relativedelta(months=1)),
+        ('pastyear', monthstart, monthstart - relativedelta(years=1)),
+    )
+    # Create a dict of aggregates for the query
+    result = {}
+    aggs = {'num_transactions': Count('id')}
+    for key, maxdate, mindate in dateranges:
+        result[key] = {}
+        result[key]['mindate'] = mindate.strftime(DATEFORMAT)
+        result[key]['maxdate'] = maxdate.strftime(DATEFORMAT)
+        aggs[f'{key}__transactions'] = Count('id', filter=Q(date__gte=mindate, date__lt=maxdate))
+        aggs[f'{key}__income'] = Sum('amount', filter=Q(date__gte=mindate, date__lt=maxdate, amount__gt=0))
+        aggs[f'{key}__spent'] = Sum('amount', filter=Q(date__gte=mindate, date__lt=maxdate, amount__lt=0))
+        aggs[f'{key}__total'] = Sum('amount', filter=Q(date__gte=mindate, date__lt=maxdate))
+    # Finish up
+    transactions = Transaction.objects.filter(user=request.user, category__exclude_budget=False)
+    transactions |= Transaction.objects.filter(user=request.user, category__isnull=True)
+    qresult = transactions.aggregate(**aggs)
+    for key, value in qresult.items():
+        utils.rset(result, key, value, delim='__')
+    result['pastyear']['average'] = round(Decimal(result['pastyear']['total'] / 12), 2)
+    return Response(result)
 
 
 @api_view(['put'])
