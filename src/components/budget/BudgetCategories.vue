@@ -8,8 +8,7 @@
       <b-table :data='tabledata' narrowed ref='table' tabindex='-1'>
         <template slot-scope='props'>
           <b-table-column v-for='cell in props.row' :key='cell.col.name' v-bind='cell.col'>
-            <TableCell v-bind='cell' :ref='`c${cell.tabindex}`' :key='cell.row.id'
-              @click.native='clickSetFocus($event, cell.tabindex)'/>
+            <TableCell v-bind='cell' :ref='`c${cell.tabindex}`' :key='cell.row.id' @click.native='click($event, cell.tabindex)'/>
           </b-table-column>
         </template>
         <template slot='empty'>No items to display.</template>
@@ -27,29 +26,27 @@
   import * as api from '@/api';
   import * as pathify from 'vuex-pathify';
   import * as utils from '@/utils/utils';
+  import {TYPES} from '@/components/TableMixin';
   import TableMixin from '@/components/TableMixin';
   import Vue from 'vue';
 
   export default {
     name: 'BudgetCategories',
     mixins: [TableMixin],
-    data: function() {
-      return {
-        sortfield: 'sortindex',
-        columns: [
-          {label:'Name', field:'name', editable:true, width:'250px'},
-          {label:'Budget', field:'budget', display:utils.usdint, opts:{color:true}, select:true,
-            numeric:true, editable:true, width:'100px', cls:'blur'},
-          {label:'Exclude From Budget', field:'exclude_budget', cls:'check', editable:true, width:'180px'},
-          {label:'Year Transactions', field:'meta.year_transactions', width:'120px', numeric:true, display:utils.intComma},
-          {label:'Monthly Average', field:'meta.year_average', width:'135px', numeric:true, display:utils.usd, opts:{color:true}},
-          {label:'Year Total', field:'meta.year_total', width:'135px', numeric:true, display:utils.usd, opts:{color:true}},
-        ],
-      };
-    },
+    data: () => { return {
+      sortfield: 'sortindex',
+      columns: [
+        {type:TYPES.editable, label:'Name', field:'name', width:'250px'},
+        {type:TYPES.editable, label:'Budget', field:'budget', display:utils.usdint, opts:{color:true}, select:true, numeric:true, width:'100px', cls:'blur'},
+        {type:TYPES.toggle, label:'Exclude From Budget', field:'exclude_budget', width:'180px'},
+        {label:'Year Transactions', field:'meta.year_transactions', width:'120px', numeric:true, display:utils.intComma},
+        {label:'Monthly Average', field:'meta.year_average', width:'135px', numeric:true, display:utils.usd, opts:{color:true}},
+        {label:'Year Total', field:'meta.year_total', width:'135px', numeric:true, display:utils.usd, opts:{color:true}},
+      ],
+    };},
     computed: {
       items: pathify.sync('budget/categories'),
-      keymap: function() { return this.tablemixin_keymap(); },
+      keymap: function() { return this.tableMixinKeymap(); },
     },
     mounted: function() {
       document.title = `PushingKarma - Budget Categories`;

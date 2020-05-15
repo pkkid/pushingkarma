@@ -107,8 +107,8 @@
   td.blur { font-family:$fontfamily-code; font-size:13px; }
   td .gtzero { color:$lightbg-green2; font-weight:bold; }
   td .zero { color:lighten($lightbg-fg2, 40%); }
-  th.check div { text-align:center; justify-content:center; }
-  td.check div { text-align:center; justify-content:center; }
+  th.toggle div { text-align:center; justify-content:center; }
+  td.toggle div { text-align:center; justify-content:center; }
 }
 
 // Tabs

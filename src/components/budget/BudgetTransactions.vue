@@ -22,8 +22,7 @@
           <b-table :data='tabledata' narrowed ref='table' tabindex='-1'>
             <template slot-scope='props'>
               <b-table-column v-for='cell in props.row' :key='cell.label' v-bind='cell.col'>
-                <TableCell v-bind='cell' :ref='`c${cell.tabindex}`' :key='cell.row.id'
-                  @click.native='clickSetFocus($event, cell.tabindex)'/>
+                <TableCell v-bind='cell' :ref='`c${cell.tabindex}`' :key='cell.row.id' @click.native='click($event, cell.tabindex)'/>
               </b-table-column>
             </template>
             <template slot='empty'>No items to display.</template>
@@ -42,6 +41,7 @@
   import * as api from '@/api';
   import * as pathify from 'vuex-pathify';
   import * as utils from '@/utils/utils';
+  import {TYPES} from '@/components/TableMixin';
   import PageWrap from '@/components/site/PageWrap';
   import TableMixin from '@/components/TableMixin';
   import trim from 'lodash/trim';
@@ -64,16 +64,15 @@
       account: pathify.get('budget/account'),
       categories: pathify.get('budget/categories'),
       items: function() { return this.transactions; },
-      keymap: function() { return this.tablemixin_keymap(); },
+      keymap: function() { return this.tableMixinKeymap(); },
       columns: function() { return [
         {label:'Name', field:'account.name', width:'68px'},
-        {label:'Date', field:'date', width:'100px', editable:true, reset:true, display:utils.formatDate},
-        {label:'Category', field:'category.name', width:'150px', editable:true, select:true, choices:this.categories},
-        {label:'Payee', field:'payee', editable:true, reset:true, width:'250px'},
-        {label:'Amount', field:'amount', display:utils.usd, opts:{color:true}, select:true,
-          numeric:true, editable:true, reset:true, width:'90px', cls:'blur'},
-        {label:'X', field:'approved', cls:'check', width:'26px', editable:true},
-        {label:'Comment', field:'comment', width:'180px', editable:true},
+        {type:TYPES.editable, label:'Date', field:'date', width:'100px', reset:true, display:utils.formatDate},
+        {type:TYPES.editable, label:'Category', field:'category.name', width:'150px', select:true, choices:this.categories},
+        {type:TYPES.editable, label:'Payee', field:'payee', reset:true, width:'250px'},
+        {type:TYPES.editable, label:'Amount', field:'amount', display:utils.usd, opts:{color:true}, select:true, numeric:true, reset:true, width:'90px', cls:'blur'},
+        {type:TYPES.toggle, label:'X', field:'approved', width:'26px'},
+        {type:TYPES.editable, label:'Comment', field:'comment', width:'180px'},
       ];},
     },
     watch: {

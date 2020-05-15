@@ -1,6 +1,6 @@
 <template>
   <div class='tablecell' :class='[status,{focused,editing}]' :style='{"max-width":col.width}'>
-    <div v-if='col.cls=="check"' @mousedown='preventDoubleClick' ref='div' tabindex='-1' :style='{"min-width":col.width}'>
+    <div v-if='col.type==TYPES.toggle' @mousedown='preventDoubleClick' ref='div' tabindex='-1' :style='{"min-width":col.width}'>
       <i v-if='value' class='mdi mdi-check'/></div>
     <div v-else v-html='html' :contenteditable='contenteditable' ref='div' :style='{"min-width":col.width}'
       spellcheck='false' @input="text=$event.target.textContent" tabindex='-1'
@@ -15,8 +15,8 @@
 <script>
   import * as utils from '@/utils/utils';
   import fuzzysort from 'fuzzysort';
+  import {TYPES} from '@/components/TableMixin';
   import trim from 'lodash/trim';
-  var CANNOT_FREE_EDIT = ['check'];
 
   export default {
     name: 'TableCell',
@@ -33,12 +33,14 @@
       focused: false,       // True if this cell is focused
       status: 'default',    // Sets bgcolor to status {success or error}
       text: '',             // Current textContent
+      TYPES: TYPES,
     }),
     computed: {
-      contenteditable: function() { return this.focused && this.editing; },     // True if currently editable
-      item: function() { return this.row; },                                    // Alias for this.row
-      value: function() { return utils.rget(this.row, this.col.field); },       // Raw value for this cell
-      editable: function() { return this.col.editable && !CANNOT_FREE_EDIT.includes(this.col.cls); },
+      contenteditable: function() { return this.focused && this.editing; },   // True if currently editable
+      editable: function() { return this.col.type.editable; },                // True if cell is editable
+      focusable: function() { return this.col.type.focusable; },              // True if cell is focusable
+      item: function() { return this.row; },                                  // Alias for this.row
+      value: function() { return utils.rget(this.row, this.col.field); },     // Raw value for this cell
       html: function() {
         if (this.col.opts) { return this.col.display(this.value, this.col.opts); }
         if (this.col.display) { return this.col.display(this.value); }

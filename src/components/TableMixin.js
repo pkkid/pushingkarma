@@ -24,13 +24,22 @@
 //      <b-table :data='tabledata' :narrowed='true' :hoverable='true' v-click-outside='cancelAll'>
 //        <template slot-scope='props'>
 //          <b-table-column v-for='data in props.row' :key='props.index+data.field' :label='data.name'>
-//            <TableCell v-bind='{data, focus, editing}' @click.native='clickSetFocus($event, data.tabindex)'/>
+//            <TableCell v-bind='{data, focus, editing}' @click.native='click($event, data.tabindex)'/>
 //          </b-table-column>
 //        </template>
 //        <template slot='empty'>No items to display.</template>
 //      </b-table>
 import * as utils from '@/utils/utils';
 import TableCell from '@/components/TableCell';
+import trim from 'lodash/trim';
+
+export const TYPES = {
+  readonly: {name:'readonly', focusable:false, editable:false},
+  editable: {name:'editable', focusable:true, editable:true},
+  toggle: {name:'toggle', focusable:true, editable:false},
+  choice: {name:'choice', focusable:true, editable:true, requires:['choices']},
+  popover: {name:'popover', focusable:true, editable:false, requires:['content']},
+};
 
 export default {
   components: {TableCell},
@@ -40,28 +49,29 @@ export default {
     sortfield: null,      // Specify sortfield to allow reordering
   }),
   computed: {
-    items: function() { return []; },  // Required to be populated by parent Compoennt
-    item: function() { return this.getCell(this.focus).row; },
-    editcols: function() { return this.columns.filter(c => c.editable).length; },
-    maxfocus: function() { return this.items ? this.items.length * this.editcols : 0; },
+    items: function() { return []; },                                                      // Required by parent compoennt
+    item: function() { return this.getCell(this.focus).row; },                             // Current focused cell data
+    focuscols: function() { return this.columns.filter(c => c.type.focusable).length; },   // Count of editcolumns defined
+    maxfocus: function() { return this.items ? this.items.length * this.focuscols : 0; },  // Max tabindex we can focus on
     
     // Table cells
     // Mold the data rows into a list of lists of cells
     tabledata: function() {
-      var data = [];
+      var data = [];                  // Data passed to Buefy table
+      var gtabindex = 0;              // Global tabindex
       for (var i in this.items) {
-        var row = [];               // List of cell objects
-        var editcount = 0;          // Current edit count
+        var row = [];                 // List of cell objects
         for (var col of this.columns) {
-          if (col.cls && !col['header-class']) { col['header-class'] = col.cls; }
-          if (col.cls && !col['cell-class']) { col['cell-class'] = col.cls; }
-          editcount += col.editable ? 1 : 0;
-          var tabindex = col.editable ? (i * this.editcols) + editcount : null;
+          col.type = col.type || TYPES.readonly;
+          col['header-class'] = trim(`${col.cls || ''} ${col.type.name}`);
+          col['cell-class'] = trim(`${col.cls || ''} ${col.type.name}`);
+          gtabindex += col.type.focusable ? 1 : 0;
+          var tabindex = col.type.focusable ? gtabindex : null;
           var cell = Object.assign({}, {
-            col: col,               // Column data for this cell
-            row: this.items[i],     // Row data for this cell
-            rowindex: parseInt(i),  // Current display row index
-            tabindex: tabindex,     // Cell tabindex for keyboard nav
+            col: col,                 // Column data for this cell
+            row: this.items[i],       // Row data for this cell
+            rowindex: parseInt(i),    // Current display row index
+            tabindex: tabindex,       // Cell tabindex for keyboard nav (null if not focusable)
           });
           row.push(cell);
         }
@@ -93,22 +103,44 @@ export default {
     }
   },
   methods: {
+    // Get Cell
+    // Return cell coresponding to specified tabindex
+    getCell: function(tabindex) {
+      tabindex = tabindex || this.focus;
+      var ref = this.$refs[`c${tabindex}`];
+      return ref ? ref[0] : null;
+    },
+
+    // In Container
+    // Check the document.activeElement is within this container
+    inContainer: function() {
+      return this.$refs.table.$el.contains(document.activeElement);
+    },
+
+    // Set Focus Last
+    // Set focus to the first cell in the last row
+    setFocusLast: async function() {
+      await this.$nextTick();
+      this.focus = (this.items.length - 1) * this.focuscols + 1;
+      this.editing = true;
+    },
+    
     // TableMixin Keymap
     // Keymaps used with this mixin.
-    tablemixin_keymap: function() {
+    tableMixinKeymap: function() {
       return {
-        'up': (event) => this.navigate(event, -this.editcols),
-        'down': (event) => this.navigate(event, this.editcols),
+        'up': (event) => this.navigate(event, -this.focuscols),
+        'down': (event) => this.navigate(event, this.focuscols),
         'left': (event) => this.navigate(event, -1),
         'right': (event) => this.navigate(event, 1),
         'tab': (event) => this.navigate(event, 1, true, true),
         'shift+tab': (event) => this.navigate(event, -1, true, true),
         'shift+up': (event) => this.reorder(event, -1),
         'shift+down': (event) => this.reorder(event, 1),
-        'space': (event) => this.toggleValue(event),
-        'enter': (event) => this.enterEditOrSave(event),
+        'space': (event) => this.toggle(event),
+        'enter': (event) => this.enter(event),
         'ctrl+z': (event) => this.resetValue(event),
-        'esc': (event) => this.cancelEdit(event),
+        'esc': (event) => this.cancel(event),
       };
     },
 
@@ -120,18 +152,9 @@ export default {
       this.setFocusLast();
     },
 
-    // Cancel All
-    // Called when user clicks off the table
-    cancelAll: function() {
-      if (this.focus || this.editing) {
-        this.editing = false;
-        this.focus = null;
-      }
-    },
-
     // Cancel Edit
     // Called when user hits esc
-    cancelEdit: function(event) {
+    cancel: function(event) {
       if (!this.inContainer()) { return; }
       if (this.item.id == null) {
         // Cancel editing & refresh
@@ -153,27 +176,18 @@ export default {
       }
     },
 
-    // Enter: Edit or Save
-    // Called when user hits enter on the page
-    enterEditOrSave: function(event) {
-      if (!this.inContainer()) { return false; }
-      if (this.focus) {
-        event.preventDefault();
-        var cell = this.getCell();
-        if (!this.editing && cell.editable) {
-          // Start editing
-          this.editing = true;
-        } else {
-          // Save and goto next item
-          if (!cell.editable) { this.toggleValue(event); }
-          this.navigate(event, this.editcols, true, true);
-        }
+    // Cancel All
+    // Called when user clicks off the table
+    cancelAll: function() {
+      if (this.focus || this.editing) {
+        this.editing = false;
+        this.focus = null;
       }
     },
 
     // Click: Set Focus
     // Called when user clicks on an editable cell
-    clickSetFocus: function(event, tabindex) {
+    click: function(event, tabindex) {
       if (tabindex != null) {
         event.preventDefault();
         var cell = this.getCell();
@@ -192,18 +206,22 @@ export default {
       }
     },
 
-    // Get Cell
-    // Return cell coresponding to specified tabindex
-    getCell: function(tabindex) {
-      tabindex = tabindex || this.focus;
-      var ref = this.$refs[`c${tabindex}`];
-      return ref ? ref[0] : null;
-    },
-
-    // In Container
-    // Check the document.activeElement is within this container
-    inContainer: function() {
-      return this.$refs.table.$el.contains(document.activeElement);
+    // Enter: Edit or Save
+    // Called when user hits enter on the page
+    enter: function(event) {
+      if (!this.inContainer()) { return; }
+      if (this.focus) {
+        event.preventDefault();
+        var cell = this.getCell();
+        if (!this.editing && cell.editable) {
+          // Start editing
+          this.editing = true;
+        } else {
+          // Save and goto next item
+          if (!cell.editable) { this.toggle(event); }
+          this.navigate(event, this.focuscols, true, true);
+        }
+      }
     },
 
     // Navigate
@@ -250,7 +268,7 @@ export default {
       var cell = this.getCell();
       var newrow = parseInt(cell.rowindex) + amount;
       var data = await this.save(cell.item.id, cell.rowindex, this.sortfield, newrow, null, true);
-      this.focus = (data.sortindex * this.editcols) + 1;
+      this.focus = (data.sortindex * this.focuscols) + 1;
     },
 
     // Enter: Edit or Save
@@ -265,17 +283,9 @@ export default {
       }
     },
 
-    // Set Focus Last
-    // Set focus to the first cell in the last row
-    setFocusLast: async function() {
-      await this.$nextTick();
-      this.focus = (this.items.length - 1) * this.editcols + 1;
-      this.editing = true;
-    },
-
     // Toggle Value
     // Only for non-editable cells, till toggle current value
-    toggleValue: function(event) {
+    toggle: function(event) {
       if (!this.inContainer()) { return; }  // Skip if not in container
       if (!this.focus) { return; }  // Skip if nothing selected
       if (this.editing) { return; }  // Skip if editing

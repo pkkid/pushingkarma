@@ -8,8 +8,7 @@
       <b-table :data='tabledata' narrowed ref='table' tabindex='-1'>
         <template slot-scope='props'>
           <b-table-column v-for='cell in props.row' :key='cell.col.name' v-bind='cell.col'>
-            <TableCell v-bind='cell' :ref='`c${cell.tabindex}`' :key='cell.row.id'
-              @click.native='clickSetFocus($event, cell.tabindex)'/>
+            <TableCell v-bind='cell' :ref='`c${cell.tabindex}`' :key='cell.row.id' @click.native='click($event, cell.tabindex)'/>
           </b-table-column>
         </template>
         <template slot='empty'>No items to display.</template>
@@ -27,27 +26,26 @@
   import * as api from '@/api';
   import * as pathify from 'vuex-pathify';
   import * as utils from '@/utils/utils';
+  import {TYPES} from '@/components/TableMixin';
   import TableMixin from '@/components/TableMixin';
   import Vue from 'vue';
 
   export default {
     name: 'BudgetAccounts',
     mixins: [TableMixin],
-    data: function() {
-      return {
-        columns: [
-          {label:'Name', field:'name', editable:true, width:'160px'},
-          {label:'FID', field:'fid', editable:true, select:true, width:'160px'},
-          {label:'Payee Field', field:'payee', editable:true, width:'160px'},
-          {label:'Last Updated', field:'balancedt', width:'140px', display:utils.timeAgo},
-          {label:'Transactions', field:'meta.num_transactions', width:'150px', numeric:true, display:utils.intComma},
-          {label:'Balance', field:'balance', width:'150px', cls:'blur', numeric:true, display:utils.usd, opts:{color:true}},
-        ],
-      };
-    },
+    data: () => { return {
+      columns: [
+        {type:TYPES.editable, label:'Name', field:'name', width:'160px'},
+        {type:TYPES.editable, label:'FID', field:'fid', select:true, width:'160px'},
+        {type:TYPES.editable, label:'Payee Field', field:'payee', width:'160px'},
+        {label:'Last Updated', field:'balancedt', width:'140px', display:utils.timeAgo},
+        {label:'Transactions', field:'meta.num_transactions', width:'150px', numeric:true, display:utils.intComma},
+        {label:'Balance', field:'balance', width:'150px', cls:'blur', numeric:true, display:utils.usd, opts:{color:true}},
+      ],
+    };},
     computed: {
       items: pathify.sync('budget/accounts'),
-      keymap: function() { return this.tablemixin_keymap(); },
+      keymap: function() { return this.tableMixinKeymap(); },
     },
     mounted: function() {
       document.title = `PushingKarma - Budget Accounts`;
