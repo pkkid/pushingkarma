@@ -1,7 +1,7 @@
 <template>
   <div id='budgetyear'>
     <PageWrap>
-      <div v-if='items'>
+      <div v-if='items' v-hotkey='keymap'>
         <h1>Past Year Spending
           <div class='subtext'>Global view of past years {{count | intcomma}} transactions</div>
         </h1>
@@ -36,6 +36,7 @@
   import * as dayjs from 'dayjs';
   import * as pathify from 'vuex-pathify';
   import * as utils from '@/utils/utils';
+  import {TYPES} from '@/components/TableMixin';
   import PageWrap from '@/components/site/PageWrap';
   import TableMixin from '@/components/TableMixin';
   import trim from 'lodash/trim';
@@ -56,9 +57,10 @@
     }),
     computed: {
       categories: pathify.sync('budget/categories'),
-      items: function() { return this.tablerows; },
-      months: function() { return this.initMonths(); },
       columns: function() { return this.initColumns(); },
+      items: function() { return this.tablerows; },
+      keymap: function() { return this.tableMixinKeymap(); },
+      months: function() { return this.initMonths(); },
     },
     watch: {
       search: function() {
@@ -88,12 +90,12 @@
       initColumns: function() {
         var columns = [];
         var opts = {color:true, symbol:'$'};
-        columns.push({label:'Category', field:'name', width:'148px'});
+        columns.push({type:TYPES.popover, label:'Category', field:'name', width:'148px'});
         for (var i in this.months) {
           var monthstr = this.months[i].format('YYYY-MM');
           var label = i == 0 ? ` ${this.months[i].format('MMM')}` : this.months[i].format('MMM');
           var cls = i == 0 ? 'current' : 'pastmonth';
-          columns.push({label:label, field:`${monthstr}.total`, numeric:true, display:utils.usdint, opts:opts, width:'64px', cls:`${cls} blur`});
+          columns.push({type:TYPES.popover, label:label, field:`${monthstr}.total`, numeric:true, display:utils.usdint, opts:opts, width:'64px', cls:`${cls} blur`});
         }
         columns.push({label:'Average', field:'average', numeric:true, display:utils.usdint, opts:opts, width:'70px', cls:'average blur'});
         columns.push({label:'Total', field:'total', numeric:true, display:utils.usdint, opts:opts, width:'70px', cls:'totalcol blur'});

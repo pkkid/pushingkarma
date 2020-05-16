@@ -42,6 +42,7 @@
       editable: function() { return this.col.type.editable; },                // True if cell is editable
       focusable: function() { return this.col.type.focusable; },              // True if cell is focusable
       item: function() { return this.row; },                                  // Alias for this.row
+      type: function() { return this.col.type; },                             // Type of cell
       value: function() { return utils.rget(this.row, this.col.field); },     // Raw value for this cell
       html: function() {
         if (this.col.opts) { return this.col.display(this.value, this.col.opts); }

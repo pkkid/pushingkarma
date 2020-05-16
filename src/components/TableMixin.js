@@ -47,12 +47,12 @@ export default {
     focus: null,          // Current focused cell number
     editing: false,       // True if editing
     sortfield: null,      // Specify sortfield to allow reordering
+    maxfocus: 0,          // Max tabindex we can focus on
   }),
   computed: {
     items: function() { return []; },                                                      // Required by parent compoennt
     item: function() { return this.getCell(this.focus).row; },                             // Current focused cell data
     focuscols: function() { return this.columns.filter(c => c.type.focusable).length; },   // Count of editcolumns defined
-    maxfocus: function() { return this.items ? this.items.length * this.focuscols : 0; },  // Max tabindex we can focus on
     
     // Table cells
     // Mold the data rows into a list of lists of cells
@@ -75,6 +75,7 @@ export default {
           });
           row.push(cell);
         }
+        this.maxfocus = gtabindex;
         data.push(row);
       }
       return data;
@@ -211,14 +212,19 @@ export default {
     enter: function(event) {
       if (!this.inContainer()) { return; }
       if (this.focus) {
-        event.preventDefault();
         var cell = this.getCell();
         if (!this.editing && cell.editable) {
-          // Start editing
+          // start editing
+          event.preventDefault();
           this.editing = true;
-        } else {
-          // Save and goto next item
-          if (!cell.editable) { this.toggle(event); }
+        } else if (cell.type == TYPES.toggle) {
+          // toggle value
+          event.preventDefault();
+          this.toggle(event);
+          this.navigate(event, this.focuscols, true, true);
+        } else if (cell.editable) {
+          // save value
+          event.preventDefault();
           this.navigate(event, this.focuscols, true, true);
         }
       }
