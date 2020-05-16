@@ -1,6 +1,7 @@
 <template>
   <div id='photo' :class='{showdetails}'>
-    <div class='bgimg' :style='{backgroundImage:bgimage, opacity:bgopacity}'/>
+    <!-- Removed backgroundImage:bgimage below -->
+    <div class='bgimg' :style='{opacity:bgopacity}'/>
     <div class='details' v-if='photo'>
       <div class='title'><span v-if='photo.title'>{{photo.title}} |</span> {{photo.user}}</div>
       <div class='description'>
@@ -12,7 +13,7 @@
 </template>
 
 <script>
-  import * as api from '@/api';
+  // import * as api from '@/api';
   import * as utils from '@/utils/utils';
 
   export default {
@@ -26,19 +27,25 @@
       showdetails: false,
     }),
     mounted: async function() {
-      var {data} = await api.Tools.getPhoto();
-      this.photo = data;
+      // Removed: Hard coded bg image below
+      // var {data} = await api.Tools.getPhoto();
+      // this.photo = data;
+      this.photo = {
+        title: 'Black Floral Wallpaper',
+        description: 'Black Floral Wallpaper 1920x1080',
+      };
       await utils.preloadImage(this.photo.url);
       this.bgopacity = 1;
     },
     methods: {
       refreshPhoto: async function() {
-        this.bgopacity = 0;
-        await utils.sleep(500);
-        var {data} = await api.Tools.refreshPhoto();
-        this.photo = data;
-        await utils.preloadImage(this.photo.url);
-        this.bgopacity = 1;
+        // Removed: Hard coded bg image below
+        // this.bgopacity = 0;
+        // await utils.sleep(500);
+        // var {data} = await api.Tools.refreshPhoto();
+        // this.photo = data;
+        // await utils.preloadImage(this.photo.url);
+        // this.bgopacity = 1;
       },
       toggleDetails: function() {
         this.showdetails = !this.showdetails;
@@ -53,6 +60,8 @@
       width: 100%;
       height: 100vh;
       opacity: 0;
+      // Added hard coded background-image below
+      background-image: url('../../assets/img/darkbg.jpg');
       background-position: center center;
       background-size: cover;
       z-index: 0;

@@ -1,11 +1,13 @@
 <template>
   <div class='tablecell' :class='[status,{focused,editing}]' :style='{"max-width":col.width}'>
+    <!-- Toggle -->
     <div v-if='col.type==TYPES.toggle' @mousedown='preventDoubleClick' ref='div' tabindex='-1' :style='{"min-width":col.width}'>
       <i v-if='value' class='mdi mdi-check'/></div>
+    <!-- Readonly, Editable, Choice, Popover -->
     <div v-else v-html='html' :contenteditable='contenteditable' ref='div' :style='{"min-width":col.width}'
-      spellcheck='false' @input="text=$event.target.textContent" tabindex='-1'
-      @keyup.up.prevent='moveChoice(-1)' @keyup.down.prevent='moveChoice(+1)'
-      @keydown.enter='makeChoice'/>
+      spellcheck='false' @input="text=$event.target.textContent" tabindex='-1' @keydown.enter='makeChoice'
+      @keyup.up.prevent='moveChoice(-1)' @keyup.down.prevent='moveChoice(+1)'/>
+    <!-- Choice -->
     <ul v-if='contenteditable && (choices.length > 0)' class='choices' :style='{"min-width":col.width}'>
       <li v-for='(c,i) in choices' :key='c.id' class='choice' :class='{highlighted:i==choice}' @click='makeChoice'>{{c.name}}</li>
     </ul>
@@ -58,19 +60,6 @@
       },
     },
     methods: {
-      // Filter Choices
-      // Filter available choices based on passed in text
-      filterChoices: function(text) {
-        if (!this.contenteditable) { return []; }
-        if (!this.col.choices) { return []; }
-        if (this.text == '') { return []; }
-        var lchoices = this.col.choices.map(c => c.name.toLowerCase());
-        if (!text || text == '') { return this.col.choices; }
-        if (lchoices.indexOf(text.toLowerCase()) >= 0) { return []; }
-        var result = fuzzysort.go(text, this.col.choices, {key:'name'});
-        return result.map(x => x.obj);
-      },
-
       // Focus
       // Focus on the input for this cell
       focus: async function() {
@@ -84,6 +73,39 @@
           selection.addRange(range);
           this.$refs.div.focus();
         }
+      },
+
+      // Set Status
+      // Sets visual indicator that saving value was success or error
+      setStatus: async function(status, duration=null) {
+        this.status = status;
+        if (duration !== null) {
+          await utils.sleep(duration);
+          this.status = 'fadestatus';
+          await utils.sleep(1000);
+          this.status = 'default';
+        }
+      },
+
+      // Prevent Double Click
+      // Checkmark cells need this to quickly toggle the value but
+      // it often also selects a word of text which is annoying.
+      preventDoubleClick: function(event) {
+        if (event.detail > 1) { event.preventDefault(); }
+      },
+
+      // ---------------------------
+      // Filter Choices
+      // Filter available choices based on passed in text
+      filterChoices: function(text) {
+        if (!this.contenteditable) { return []; }
+        if (!this.col.choices) { return []; }
+        if (this.text == '') { return []; }
+        var lchoices = this.col.choices.map(c => c.name.toLowerCase());
+        if (!text || text == '') { return this.col.choices; }
+        if (lchoices.indexOf(text.toLowerCase()) >= 0) { return []; }
+        var result = fuzzysort.go(text, this.col.choices, {key:'name'});
+        return result.map(x => x.obj);
       },
 
       // Make Choice
@@ -109,25 +131,6 @@
         newchoice = Math.max(newchoice, 0);
         newchoice = Math.min(newchoice, this.choices.length - 1);
         this.choice = newchoice;
-      },
-
-      // Set Status
-      // Sets visual indicator that saving value was success or error
-      setStatus: async function(status, duration=null) {
-        this.status = status;
-        if (duration !== null) {
-          await utils.sleep(duration);
-          this.status = 'fadestatus';
-          await utils.sleep(1000);
-          this.status = 'default';
-        }
-      },
-
-      // Prevent Double Click
-      // Checkmark cells need this to quickly toggle the value but
-      // it often also selects a word of text which is annoying.
-      preventDoubleClick: function(event) {
-        if (event.detail > 1) { event.preventDefault(); }
       },
     },
   };
