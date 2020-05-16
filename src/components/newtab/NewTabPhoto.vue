@@ -33,7 +33,6 @@
       showdetails: false,
     }),
     mounted: async function() {
-      // Removed: Hard coded bg image below
       if (FORCE_IMAGE !== null) {
         this.photo = FORCE_IMAGE;
         this.forced = true;
