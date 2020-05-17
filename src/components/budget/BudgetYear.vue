@@ -162,7 +162,6 @@
             if (monthstr != startstr) {
               tablerows[cat.name].total += amount;
               tablerows[TOTAL.name].total += amount;
-              
             }
           }
           // Pass 2: Remove empty rows or calculate the average

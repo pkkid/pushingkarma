@@ -1,7 +1,7 @@
 <template>
-  <div class='tablecell' :class='[status,{focused,editing}]' :style='{"max-width":col.width}'>
+  <div class='tablecell' :class='[status,{focused,editing,popped}]' :style='{"max-width":col.width}' @mousedown='preventDoubleClick'>
     <!-- Toggle -->
-    <div v-if='col.type==TYPES.toggle' @mousedown='preventDoubleClick' ref='div' tabindex='-1' :style='{"min-width":col.width}'>
+    <div v-if='col.type==TYPES.toggle' ref='div' tabindex='-1' :style='{"min-width":col.width}'>
       <i v-if='value' class='mdi mdi-check'/></div>
     <!-- Readonly, Editable, Choice, Popover -->
     <div v-else v-html='html' :contenteditable='contenteditable' ref='div' :style='{"min-width":col.width}'
@@ -11,6 +11,8 @@
     <ul v-if='contenteditable && (choices.length > 0)' class='choices' :style='{"min-width":col.width}'>
       <li v-for='(c,i) in choices' :key='c.id' class='choice' :class='{highlighted:i==choice}' @click='makeChoice'>{{c.name}}</li>
     </ul>
+    <!-- Popover -->
+    <div v-if='contentpopped' class='popover'>Hi Mom!</div>
   </div>
 </template>
 
@@ -33,14 +35,18 @@
       choices: [],          // Choices for display
       editing: false,       // True if editing this cell
       focused: false,       // True if this cell is focused
+      popped: false,        // True if this cell is popped
       status: 'default',    // Sets bgcolor to status {success or error}
       text: '',             // Current textContent
       TYPES: TYPES,
     }),
     computed: {
       contenteditable: function() { return this.focused && this.editing; },   // True if currently editable
+      contentpopped: function() { return this.focused && this.popped; },      // True if currently popped
       editable: function() { return this.col.type.editable; },                // True if cell is editable
       focusable: function() { return this.col.type.focusable; },              // True if cell is focusable
+      poppable: function() { return this.col.type.name == 'popover'; },       // True if cell is poppable
+      toggleable: function() { return this.col.type.name == 'toggle'; },      // True if cell is toggleable
       item: function() { return this.row; },                                  // Alias for this.row
       type: function() { return this.col.type; },                             // Type of cell
       value: function() { return utils.rget(this.row, this.col.field); },     // Raw value for this cell
@@ -196,6 +202,7 @@
         inset 0 0 0px 1px lighten($lightbg-bg1, 1%);
     }
 
+    //------------
     // Choices
     ul.choices {
       background-color: $lightbg-bg1;
@@ -217,6 +224,14 @@
         padding: 0px 5px;
         &.highlighted { color: #000; }
       }
+    }
+
+    //------------
+    // Popover
+    div.popover {
+      background-color: $lightbg-bg1;
+      padding: 5px;
+      box-shadow: 0 1px 3px 0 rgba(60,64,67,0.302), 0 4px 8px 3px rgba(60,64,67,0.149);
     }
   }
 </style>

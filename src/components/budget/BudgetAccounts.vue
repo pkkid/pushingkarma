@@ -89,7 +89,7 @@
       // Confirm and delete an existing account in the database
       confirmDelete: async function() {
         var self = this;
-        var account = this.item;
+        var account = this.getCell().row;
         this.$buefy.dialog.confirm({
             title: 'Delete Account',
             message: `Are you sure you want to delete the account <b>${account.name}</b>?`,

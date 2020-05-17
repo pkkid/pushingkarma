@@ -91,7 +91,7 @@
       // Confirm and delete an existing category in the database
       confirmDelete: async function() {
         var self = this;
-        var category = this.item;
+        var category = this.getCell().row;
         this.$buefy.dialog.confirm({
             title: 'Delete Category',
             message: `Are you sure you want to delete the category <b>${category.name}</b>?`,

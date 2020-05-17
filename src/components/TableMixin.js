@@ -45,14 +45,12 @@ export default {
   components: {TableCell},
   data: () => ({
     focus: null,          // Current focused cell number
-    editing: false,       // True if editing
     sortfield: null,      // Specify sortfield to allow reordering
     maxfocus: 0,          // Max tabindex we can focus on
   }),
   computed: {
-    items: function() { return []; },                                                      // Required by parent compoennt
-    item: function() { return this.getCell(this.focus).row; },                             // Current focused cell data
-    focuscols: function() { return this.columns.filter(c => c.type.focusable).length; },   // Count of editcolumns defined
+    items: function() { return []; },  // Required by parent compoennt
+    focuscols: function() { return this.columns.filter(c => c.type.focusable).length; },  // Num editcolumns defined
     
     // Table cells
     // Mold the data rows into a list of lists of cells
@@ -85,23 +83,17 @@ export default {
     // Watch Focus
     // Update the required TableCells with the new value
     focus: function(newvalue, oldvalue) {
+      var oldcell = this.getCell(oldvalue);
+      var newcell = this.getCell(newvalue);
       if (oldvalue) {
-        var oldcell = this.getCell(oldvalue);
         oldcell.focused = false;
         oldcell.editing = false;
       }
       if (newvalue) {
-        var newcell = this.getCell(newvalue);
         newcell.focused = true;
-        newcell.editing = this.editing;
+        newcell.editing = oldcell.editing;
       }
     },
-    // Watch Editing
-    // Update the required TableCells with the new value
-    editing: function(newvalue) {
-      var cell = this.getCell();
-      if (cell !== null) { cell.editing = newvalue; }
-    }
   },
   methods: {
     // Get Cell
@@ -109,7 +101,7 @@ export default {
     getCell: function(tabindex) {
       tabindex = tabindex || this.focus;
       var ref = this.$refs[`c${tabindex}`];
-      return ref ? ref[0] : null;
+      return ref ? ref[0] : {};
     },
 
     // In Container
@@ -123,7 +115,7 @@ export default {
     setFocusLast: async function() {
       await this.$nextTick();
       this.focus = (this.items.length - 1) * this.focuscols + 1;
-      this.editing = true;
+      this.getCell().editing = true;
     },
     
     // TableMixin Keymap
@@ -156,22 +148,24 @@ export default {
     // Cancel Edit
     // Called when user hits esc
     cancel: function(event) {
+      var cell = this.getCell();
+      var item = cell.row;
       if (!this.inContainer()) { return; }
-      if (this.item.id == null) {
-        // Cancel editing & refresh
+      if (item.id == null) {
+        // cancel editing & refresh
         event.preventDefault();
         document.getSelection().removeAllRanges();
-        this.editing = false;
+        cell.editing = false;
         this.focus = null;
         this.refresh();
-      } else if (this.editing) {
-        // Cancel editing
+      } else if (cell.editing) {
+        // cancel editing
         event.preventDefault();
         document.getSelection().removeAllRanges();
-        this.getCell().$el.focus();
-        this.editing = false;
+        cell.$el.focus();
+        cell.editing = false;
       } else if (this.focus) {
-        // Clear focus
+        // clear focus
         event.preventDefault();
         this.focus = null;
       }
@@ -180,8 +174,9 @@ export default {
     // Cancel All
     // Called when user clicks off the table
     cancelAll: function() {
-      if (this.focus || this.editing) {
-        this.editing = false;
+      var cell = this.getCell();
+      if (this.focus || cell.editing) {
+        cell.editing = false;
         this.focus = null;
       }
     },
@@ -191,18 +186,16 @@ export default {
     click: function(event, tabindex) {
       if (tabindex != null) {
         event.preventDefault();
-        var cell = this.getCell();
-        if (tabindex != this.focus) {
-          // Set new focus
+        var cell = this.getCell(tabindex);
+        if (cell.focusable && (tabindex != this.focus)) {
           this.focus = tabindex;
-          this.editing = false;
-        } else if (!cell.editable) {
-          // Toggle boolean value
+          cell.editing = false;
+        } else if (cell.toggleable) {
           var newvalue = !cell.value;
           this.save(cell.item.id, cell.rowindex, cell.col.field, newvalue, cell);
-        } else if (!this.editing) {
-          // Start editing
-          this.editing = true;
+        } else if (cell.editable && !cell.editing) {
+          // start editing
+          cell.editing = true;
         }
       }
     },
@@ -213,10 +206,10 @@ export default {
       if (!this.inContainer()) { return; }
       if (this.focus) {
         var cell = this.getCell();
-        if (!this.editing && cell.editable) {
+        if (!cell.editing && cell.editable) {
           // start editing
           event.preventDefault();
-          this.editing = true;
+          cell.editing = true;
         } else if (cell.type == TYPES.toggle) {
           // toggle value
           event.preventDefault();
@@ -235,11 +228,11 @@ export default {
     navigate: function(event, amount, saveFirst=false, allowEditing=false) {
       if (!this.inContainer()) { return; }  // Skip if not in container
       if (!this.focus) { return; }  // Skip if nothing selected
-      if (!allowEditing && this.editing) { return; }  // Skip if editing
+      var cell = this.getCell();
+      if (!allowEditing && cell.editing) { return; }  // Skip if editing
       event.preventDefault();
       // Save the new value
-      if (this.editing && saveFirst) {
-        var cell = this.getCell();
+      if (cell.editing && saveFirst) {
         var oldvalue = utils.textContent(cell.html);
         var newvalue = cell.text;
         if (oldvalue != newvalue) {
@@ -252,26 +245,26 @@ export default {
       // Set the new focus
       var newfocus = this.focus + amount;
       if ((newfocus > 0) && (newfocus <= this.maxfocus)) {
-        // Navigate to new item
+        // navigate to new item
         var newcell = this.getCell(newfocus);
         document.getSelection().removeAllRanges();
-        this.editing = newcell.editable ? this.editing : false;
+        cell.editing = newcell.editable ? cell.editing : false;
         this.focus = newfocus;
       } else {
-        // Reached the end of the table, just stop editing.
-        this.editing = false;
+        // reached the end of the table, just stop editing.
+        cell.editing = false;
       }
     },
 
     // Reorder
     // Move a table row up or down by the specified amount
     reorder: async function(event, amount) {
+      var cell = this.getCell();
       if (!this.sortfield) { return; }  // Skip if sortfield is not specified
       if (!this.inContainer()) { return; }  // Skip if not in container
       if (!this.focus) { return; }  // Skip if nothing selected
-      if (this.editing) { return; }  // Skip if editing
+      if (cell.editing) { return; }  // Skip if editing
       event.preventDefault();
-      var cell = this.getCell();
       var newrow = parseInt(cell.rowindex) + amount;
       var data = await this.save(cell.item.id, cell.rowindex, this.sortfield, newrow, null, true);
       this.focus = (data.sortindex * this.focuscols) + 1;
@@ -292,11 +285,11 @@ export default {
     // Toggle Value
     // Only for non-editable cells, till toggle current value
     toggle: function(event) {
+      var cell = this.getCell();
       if (!this.inContainer()) { return; }  // Skip if not in container
       if (!this.focus) { return; }  // Skip if nothing selected
-      if (this.editing) { return; }  // Skip if editing
+      if (cell.editing) { return; }  // Skip if editing
       event.preventDefault();
-      var cell = this.getCell();
       if (!cell.editable) {
         var newvalue = !cell.value;
         this.save(cell.item.id, cell.rowindex, cell.col.field, newvalue, cell);

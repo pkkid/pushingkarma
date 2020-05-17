@@ -140,9 +140,9 @@
       reset: function(search='') {
         var accountname = this.account ? this.account.name : 'All';
         document.title =`PushingKarma - ${accountname} Transactions`;
+        this.getCell().editing = false;
         this.transactions = null;
         this.search = search;
-        this.editing = false;
         this.focus = null;
         this.refresh();
       },
