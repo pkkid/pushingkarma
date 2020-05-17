@@ -53,10 +53,9 @@
     },
     methods: {
       // Save
-      // Save the current cell value - There is a slight bit of wonkyness here in
-      // that this function is called anytime a cell value changed, but depending
-      // on the state of row.id or row.name we may be creating or deleting the
-      // the category data.
+      // Save the current cell value - There is a slight bit of wonkyness here in that this
+      // function is called anytime a cell value changed, but depending on the state of
+      // row.id or row.name we may be creating or deleting the the category data.
       save: async function(id, rowindex, field, newvalue, cell=null, refresh=false) {
         if (id == null && field == 'name' && newvalue != '') { return this.create(newvalue); }
         if (id == null && field == 'name' && newvalue == '') { return this.refresh(); }
@@ -68,7 +67,7 @@
           if (refresh) { await this.refresh(); }
           return data;
         } catch(err) {
-          if (cell) { cell.setStatus('error'); }
+          if (cell) { cell.setStatus('error', 1000); }
           utils.snackbar(`Error saving category.`);
           console.log(err);
         }

@@ -66,7 +66,7 @@
           if (cell) { cell.setStatus('success', 1000); }
           if (refresh) { this.refresh(); }
         } catch(err) {
-          if (cell) { cell.setStatus('error'); }
+          if (cell) { cell.setStatus('error', 1000); }
           utils.snackbar(`Error saving account.`);
           console.log(err);
         }

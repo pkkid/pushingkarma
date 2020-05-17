@@ -65,6 +65,9 @@
         this.choices = this.filterChoices(text);
         this.choice = 0;
       },
+      editing: function(newvalue) {
+        if (newvalue && !this.editable) { this.editing = false; }
+      },
     },
     methods: {
       // Focus

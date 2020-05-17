@@ -97,7 +97,7 @@
         try {
           var change = utils.rset({}, field.replace('.','_'), newvalue);
           var {data} = await api.Budget.patchTransaction(id, change);
-          Vue.set(this.items, rowindex, data);
+          Vue.set(this.items, rowindex, data);  // TODO: Manually lookup rowindex
           if (cell) { cell.setStatus('success', 1000); }
           if (refresh) { await this.refresh(); }
           // Specially track unapproved and uncategorized
@@ -107,7 +107,7 @@
           if (field == 'category.name' && !cell.value && newvalue) { this.uncategorized -= 1; }
           return data;
         } catch(err) {
-          if (cell) { cell.setStatus('error'); }
+          if (cell) { cell.setStatus('error', 1000); }
           utils.snackbar(`Error saving transaction.`);
           console.log(err);
         }

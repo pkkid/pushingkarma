@@ -83,15 +83,16 @@ export default {
     // Watch Focus
     // Update the required TableCells with the new value
     focus: function(newvalue, oldvalue) {
-      var oldcell = this.getCell(oldvalue);
       var newcell = this.getCell(newvalue);
-      if (oldvalue) {
-        oldcell.focused = false;
-        oldcell.editing = false;
-      }
+      var oldcell = this.getCell(oldvalue);
+      document.getSelection().removeAllRanges();
       if (newvalue) {
         newcell.focused = true;
         newcell.editing = oldcell.editing;
+      }
+      if (oldvalue) {
+        oldcell.focused = false;
+        oldcell.editing = false;
       }
     },
   },
@@ -225,10 +226,10 @@ export default {
 
     // Navigate
     // Move the focused cell by the amount specified
-    navigate: function(event, amount, saveFirst=false, allowEditing=false) {
+    navigate: async function(event, amount, saveFirst=false, allowEditing=false) {
+      var cell = this.getCell();
       if (!this.inContainer()) { return; }  // Skip if not in container
       if (!this.focus) { return; }  // Skip if nothing selected
-      var cell = this.getCell();
       if (!allowEditing && cell.editing) { return; }  // Skip if editing
       event.preventDefault();
       // Save the new value
@@ -238,17 +239,12 @@ export default {
         if (oldvalue != newvalue) {
           console.log(`Saving ${cell.col.field}: '${oldvalue}' != '${newvalue}'`);
           this.save(cell.item.id, cell.rowindex, cell.col.field, newvalue, cell);
-        } else {
-          cell.setStatus('default');
         }
       }
       // Set the new focus
       var newfocus = this.focus + amount;
       if ((newfocus > 0) && (newfocus <= this.maxfocus)) {
         // navigate to new item
-        var newcell = this.getCell(newfocus);
-        document.getSelection().removeAllRanges();
-        cell.editing = newcell.editable ? cell.editing : false;
         this.focus = newfocus;
       } else {
         // reached the end of the table, just stop editing.
