@@ -245,9 +245,9 @@ export default {
     // Move the focused cell by the amount specified
     navigate: async function(event, amount, saveFirst=false, allowEditing=false) {
       var cell = this.getCell();
-      if (!this.inContainer()) { return; }  // Skip if not in container
-      if (!this.focus) { return; }  // Skip if nothing selected
-      if (!allowEditing && cell.editing) { return; }  // Skip if editing
+      if (!this.inContainer()) { return; }  // skip if not in container
+      if (!this.focus) { return; }  // skip if nothing selected
+      if (!allowEditing && cell.editing) { return; }  // skip if editing
       event.preventDefault();
       // Save the new value
       if (cell.editing && saveFirst) {
@@ -273,10 +273,10 @@ export default {
     // Move a table row up or down by the specified amount
     reorder: async function(event, amount) {
       var cell = this.getCell();
-      if (!this.sortfield) { return; }  // Skip if sortfield is not specified
-      if (!this.inContainer()) { return; }  // Skip if not in container
-      if (!this.focus) { return; }  // Skip if nothing selected
-      if (cell.editing) { return; }  // Skip if editing
+      if (!this.sortfield) { return; }  // skip if sortfield is not specified
+      if (!this.inContainer()) { return; }  // skip if not in container
+      if (!this.focus) { return; }  // skip if nothing selected
+      if (cell.editing) { return; }  // skip if editing
       event.preventDefault();
       var newrow = parseInt(cell.rowindex) + amount;
       var data = await this.save(cell.item.id, this.sortfield, newrow, null, true);
@@ -299,11 +299,11 @@ export default {
     // Only for non-editable cells, till toggle current value
     toggle: function(event) {
       var cell = this.getCell();
-      if (!this.inContainer()) { return; }  // Skip if not in container
-      if (!this.focus) { return; }  // Skip if nothing selected
-      if (cell.editing) { return; }  // Skip if editing
-      event.preventDefault();
+      if (!this.inContainer()) { return; }  // skip if not in container
+      if (!this.focus) { return; }  // skip if nothing selected
+      if (cell.editing) { return; }  // skip if editing
       if (!cell.editable) {
+        event.preventDefault();
         var newvalue = !cell.value;
         this.save(cell.item.id, cell.col.field, newvalue, cell);
       }
