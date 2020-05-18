@@ -86,14 +86,17 @@ export default {
       var newcell = this.getCell(newvalue);
       var oldcell = this.getCell(oldvalue);
       var editing = oldcell.editing;
+      var popped = oldcell.popped;
       document.getSelection().removeAllRanges();
       if (oldvalue) {
         oldcell.focused = false;
         oldcell.editing = false;
+        oldcell.popped = false;
       }
       if (newvalue) {
         newcell.focused = true;
         newcell.editing = editing;
+        newcell.popped = popped;
         newcell.focus();
       }
     },
@@ -111,14 +114,6 @@ export default {
     // Check the document.activeElement is within this container
     inContainer: function() {
       return this.$refs.table.$el.contains(document.activeElement);
-    },
-
-    // Set Focus Last
-    // Set focus to the first cell in the last row
-    setFocusLast: async function() {
-      await this.$nextTick();
-      this.focus = (this.items.length - 1) * this.focuscols + 1;
-      this.getCell().editing = true;
     },
     
     // TableMixin Keymap
@@ -143,9 +138,12 @@ export default {
     // Add
     // Add new row to populate, not yet saved to the db.
     // Generic helper function to add a new row.
-    add: function() {
+    add: async function() {
       this.items.push({});
-      this.setFocusLast();
+      // set focus to last new item
+      await this.$nextTick();
+      this.focus = (this.items.length-1) * this.focuscols+1;
+      this.getCell().editing = true;
     },
 
     // Cancel Edit
@@ -154,8 +152,12 @@ export default {
       var cell = this.getCell();
       var item = cell.row;
       if (!this.inContainer()) { return; }
-      if (item.id == null) {
-        // cancel editing & refresh
+      if (cell.popped) {
+        // hide popover
+        event.preventDefault();
+        cell.popped = false;
+      } else if (cell.editing && (item.id == null)) {
+        // cancel new item
         event.preventDefault();
         document.getSelection().removeAllRanges();
         cell.editing = false;
@@ -180,6 +182,7 @@ export default {
       var cell = this.getCell();
       if (this.focus || cell.editing) {
         cell.editing = false;
+        cell.popped = false;
         this.focus = null;
       }
     },
@@ -188,16 +191,24 @@ export default {
     // Called when user clicks on an editable cell
     click: function(event, tabindex) {
       if (tabindex != null) {
-        event.preventDefault();
         var cell = this.getCell(tabindex);
         if (cell.focusable && (tabindex != this.focus)) {
+          // focus on cell
+          event.preventDefault();
           this.focus = tabindex;
           cell.editing = false;
         } else if (cell.toggleable) {
+          // toggle value
+          event.preventDefault();
           var newvalue = !cell.value;
           this.save(cell.item.id, cell.col.field, newvalue, cell);
+        } else if (cell.poppable && !cell.popped) {
+          // show popover
+          event.preventDefault();
+          cell.popped = true;
         } else if (cell.editable && !cell.editing) {
           // start editing
+          event.preventDefault();
           cell.editing = true;
         }
       }
@@ -209,17 +220,21 @@ export default {
       if (!this.inContainer()) { return; }
       if (this.focus) {
         var cell = this.getCell();
-        if (!cell.editing && cell.editable) {
-          // start editing
-          event.preventDefault();
-          cell.editing = true;
-        } else if (cell.type == TYPES.toggle) {
+        if (cell.toggleable) {
           // toggle value
           event.preventDefault();
           this.toggle(event);
           this.navigate(event, this.focuscols, true, true);
-        } else if (cell.editable) {
-          // save value
+        } else if (cell.poppable) {
+          // show popover
+          event.preventDefault();
+          cell.popped = true;
+        } else if (cell.editable && !cell.editing) {
+          // start editing
+          event.preventDefault();
+          cell.editing = true;
+        } else if (cell.editable && cell.editing) {
+          // save and navigate
           event.preventDefault();
           this.navigate(event, this.focuscols, true, true);
         }
