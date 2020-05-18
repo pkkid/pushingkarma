@@ -85,14 +85,16 @@ export default {
     focus: function(newvalue, oldvalue) {
       var newcell = this.getCell(newvalue);
       var oldcell = this.getCell(oldvalue);
+      var editing = oldcell.editing;
       document.getSelection().removeAllRanges();
-      if (newvalue) {
-        newcell.focused = true;
-        newcell.editing = oldcell.editing;
-      }
       if (oldvalue) {
         oldcell.focused = false;
         oldcell.editing = false;
+      }
+      if (newvalue) {
+        newcell.focused = true;
+        newcell.editing = editing;
+        newcell.focus();
       }
     },
   },
@@ -193,7 +195,7 @@ export default {
           cell.editing = false;
         } else if (cell.toggleable) {
           var newvalue = !cell.value;
-          this.save(cell.item.id, cell.rowindex, cell.col.field, newvalue, cell);
+          this.save(cell.item.id, cell.col.field, newvalue, cell);
         } else if (cell.editable && !cell.editing) {
           // start editing
           cell.editing = true;
@@ -238,7 +240,7 @@ export default {
         var newvalue = cell.text;
         if (oldvalue != newvalue) {
           console.log(`Saving ${cell.col.field}: '${oldvalue}' != '${newvalue}'`);
-          this.save(cell.item.id, cell.rowindex, cell.col.field, newvalue, cell);
+          this.save(cell.item.id, cell.col.field, newvalue, cell);
         }
       }
       // Set the new focus
@@ -262,7 +264,7 @@ export default {
       if (cell.editing) { return; }  // Skip if editing
       event.preventDefault();
       var newrow = parseInt(cell.rowindex) + amount;
-      var data = await this.save(cell.item.id, cell.rowindex, this.sortfield, newrow, null, true);
+      var data = await this.save(cell.item.id, this.sortfield, newrow, null, true);
       this.focus = (data.sortindex * this.focuscols) + 1;
     },
 
@@ -274,7 +276,7 @@ export default {
         var cell = this.getCell();
         if (!cell.col.reset) { return; }
         event.preventDefault();
-        this.save(cell.item.id, cell.rowindex, cell.col.field, '_RESET', cell);
+        this.save(cell.item.id, cell.col.field, '_RESET', cell);
       }
     },
 
@@ -288,7 +290,18 @@ export default {
       event.preventDefault();
       if (!cell.editable) {
         var newvalue = !cell.value;
-        this.save(cell.item.id, cell.rowindex, cell.col.field, newvalue, cell);
+        this.save(cell.item.id, cell.col.field, newvalue, cell);
+      }
+    },
+
+    // Update Item
+    // Set new value for the specified item ID
+    updateItem: function(id, data) {
+      for (var i in this.items) {
+        if (this.items[i].id == id) {
+          this.$set(this.items, i, data);
+          break;
+        }
       }
     },
 

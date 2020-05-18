@@ -45,7 +45,6 @@
   import PageWrap from '@/components/site/PageWrap';
   import TableMixin from '@/components/TableMixin';
   import trim from 'lodash/trim';
-  import Vue from 'vue';
 
   export default {
     name: 'BudgetTransactions',
@@ -93,11 +92,11 @@
 
       // Save
       // Save the current cell value
-      save: async function(id, rowindex, field, newvalue, cell=null, refresh=false) {
+      save: async function(id, field, newvalue, cell=null, refresh=false) {
         try {
           var change = utils.rset({}, field.replace('.','_'), newvalue);
           var {data} = await api.Budget.patchTransaction(id, change);
-          Vue.set(this.items, rowindex, data);  // TODO: Manually lookup rowindex
+          this.updateItem(id, data);
           if (cell) { cell.setStatus('success', 1000); }
           if (refresh) { await this.refresh(); }
           // Specially track unapproved and uncategorized
@@ -107,7 +106,7 @@
           if (field == 'category.name' && !cell.value && newvalue) { this.uncategorized -= 1; }
           return data;
         } catch(err) {
-          if (cell) { cell.setStatus('error', 1000); }
+          if (cell) { cell.setStatus('error'); }
           utils.snackbar(`Error saving transaction.`);
           console.log(err);
         }

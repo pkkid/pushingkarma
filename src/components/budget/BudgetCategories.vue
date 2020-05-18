@@ -28,7 +28,6 @@
   import * as utils from '@/utils/utils';
   import {TYPES} from '@/components/TableMixin';
   import TableMixin from '@/components/TableMixin';
-  import Vue from 'vue';
 
   export default {
     name: 'BudgetCategories',
@@ -56,18 +55,18 @@
       // Save the current cell value - There is a slight bit of wonkyness here in that this
       // function is called anytime a cell value changed, but depending on the state of
       // row.id or row.name we may be creating or deleting the the category data.
-      save: async function(id, rowindex, field, newvalue, cell=null, refresh=false) {
+      save: async function(id, field, newvalue, cell=null, refresh=false) {
         if (id == null && field == 'name' && newvalue != '') { return this.create(newvalue); }
         if (id == null && field == 'name' && newvalue == '') { return this.refresh(); }
         try {
           var change = utils.rset({}, field, newvalue);
           var {data} = await api.Budget.patchCategory(id, change);
-          Vue.set(this.items, rowindex, data);
+          this.updateItem(id, data);
           if (cell) { cell.setStatus('success', 1000); }
           if (refresh) { await this.refresh(); }
           return data;
         } catch(err) {
-          if (cell) { cell.setStatus('error', 1000); }
+          if (cell) { cell.setStatus('error'); }
           utils.snackbar(`Error saving category.`);
           console.log(err);
         }
@@ -79,7 +78,7 @@
         try {
           var params = {name:name, budget:0};
           var {data} = await api.Budget.createCategory(params);
-          Vue.set(this.items, this.items.length-1, data);
+          this.$set(this.items, this.items.length-1, data);
         } catch(err) {
           utils.snackbar(`Error creating category ${name}.`);
           console.error(err);

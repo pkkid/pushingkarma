@@ -28,7 +28,6 @@
   import * as utils from '@/utils/utils';
   import {TYPES} from '@/components/TableMixin';
   import TableMixin from '@/components/TableMixin';
-  import Vue from 'vue';
 
   export default {
     name: 'BudgetAccounts',
@@ -56,17 +55,17 @@
       // that this function is called anytime a cell value changed, but depending
       // on the state of row.id or row.name we may be creating or deleting the
       // the account data.
-      save: async function(id, rowindex, field, newvalue, cell=null, refresh=false) {
+      save: async function(id, field, newvalue, cell=null, refresh=false) {
         if (id == null && field == 'name' && newvalue != '') { return this.create(newvalue); }
         if (id == null && field == 'name' && newvalue == '') { return this.refresh(); }
         try {
           var change = utils.rset({}, field, newvalue);
           var {data} = await api.Budget.patchAccount(id, change);
-          Vue.set(this.items, rowindex, data);
+          this.updateItem(id, data);
           if (cell) { cell.setStatus('success', 1000); }
           if (refresh) { this.refresh(); }
         } catch(err) {
-          if (cell) { cell.setStatus('error', 1000); }
+          if (cell) { cell.setStatus('error'); }
           utils.snackbar(`Error saving account.`);
           console.log(err);
         }
@@ -78,7 +77,7 @@
         try {
           var params = {name:name, type:'bank'};
           var {data} = await api.Budget.createAccount(params);
-          Vue.set(this.items, this.items.length-1, data);
+          this.$set(this.items, this.items.length-1, data);
         } catch(err) {
           utils.snackbar(`Error creating account ${name}.`);
           console.error(err);

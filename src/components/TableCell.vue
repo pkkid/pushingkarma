@@ -45,8 +45,8 @@
       contentpopped: function() { return this.focused && this.popped; },      // True if currently popped
       editable: function() { return this.col.type.editable; },                // True if cell is editable
       focusable: function() { return this.col.type.focusable; },              // True if cell is focusable
-      poppable: function() { return this.col.type.name == 'popover'; },       // True if cell is poppable
-      toggleable: function() { return this.col.type.name == 'toggle'; },      // True if cell is toggleable
+      poppable: function() { return this.col.type == TYPES.popover; },        // True if cell is poppable
+      toggleable: function() { return this.col.type == TYPES.toggle; },       // True if cell is toggleable
       item: function() { return this.row; },                                  // Alias for this.row
       type: function() { return this.col.type; },                             // Type of cell
       value: function() { return utils.rget(this.row, this.col.field); },     // Raw value for this cell
@@ -81,8 +81,8 @@
           if (!this.col.select) { range.collapse(false); }
           selection.removeAllRanges();
           selection.addRange(range);
-          this.$refs.div.focus();
         }
+        this.$refs.div.focus();
       },
 
       // Set Status
@@ -90,7 +90,7 @@
       setStatus: async function(status, duration=null) {
         this.status = status;
         if (duration !== null) {
-          await utils.sleep(duration);
+          await utils.sleep(duration * 10);
           this.status = 'fadestatus';
           await utils.sleep(1000);
           this.status = 'default';
@@ -193,16 +193,16 @@
     &.success div {
       background-color: desaturate(lighten($darkbg-green1, 40%), 30%);
       border: 1px solid $darkbg-green1;
-      box-shadow:
-        0 0 0 2px lighten($lightbg-bg1, 2%),
-        inset 0 0 0px 1px lighten($lightbg-bg1, 1%);
+      box-shadow: 0 0 0 2px lighten($lightbg-bg1, 2%), inset 0 0 0px 1px lighten($lightbg-bg1, 1%);
     }
     &.error div {
       background-color: desaturate(lighten($darkbg-red0, 40%), 30%);
       border-color: darken($darkbg-red0, 5%);
-      box-shadow:
-        0 0 0 2px lighten($lightbg-bg1, 2%),
-        inset 0 0 0px 1px lighten($lightbg-bg1, 1%);
+      box-shadow: 0 0 0 2px lighten($lightbg-bg1, 2%), inset 0 0 0px 1px lighten($lightbg-bg1, 1%);
+    }
+    &.focused.success div,
+    &.focused.error div {
+      border: 1px solid darken($lightbg-bg2, 50%);
     }
 
     //------------
