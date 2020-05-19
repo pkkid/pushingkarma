@@ -41,6 +41,7 @@
   .loading-background { background-color: transparent; }
   .loading-icon:after {
     animation-duration: 1s;
+    animation-timing-function: ease-in-out;
     border: 2px solid lighten($lightbg-fg1, 65%);
     border-top: 2px solid lighten($lightbg-fg1, 40%);
   }

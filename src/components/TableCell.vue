@@ -233,8 +233,20 @@
     //------------
     // Popover
     div.popover {
-      background-color: $lightbg-bg1;
+      $popover-width: 250px;
+      background-color: lighten($lightbg-bg1, 3%);
+      border-radius: 5px;
+      font-family: $fontfamily-article;
+      font-size: 1rem;
+      left: calc(50% - 125px);
+      min-height: 70px;
+      min-width: $popover-width;
       padding: 5px;
+      position: absolute;
+      text-align: left;
+      top: -30px;
+      width: $popover-width;
+      z-index: 20;
       box-shadow: 0 1px 3px 0 rgba(60,64,67,0.302), 0 4px 8px 3px rgba(60,64,67,0.149);
     }
   }
