@@ -15,7 +15,7 @@
         <div class='clickout-detector' v-click-outside='cancelAll'>
           <b-table :data='tabledata' narrowed ref='table' tabindex='-1'>
             <template slot-scope='props'>
-              <b-table-column v-for='cell in props.row' :key='cell.label' v-bind='cell.col'>
+              <b-table-column v-for='cell in props.row' :key='cell.col.label' :label='cell.col.label' :width='cell.col.width' :numeric='cell.col.numeric' :class='cell.col.cls'>
                 <TableCell v-bind='cell' :ref='`c${cell.tabindex}`' @click.native='click($event, cell.tabindex)'/>
               </b-table-column>
             </template>
@@ -40,7 +40,7 @@
   import PageWrap from '@/components/site/PageWrap';
   import TableMixin from '@/components/TableMixin';
   import trim from 'lodash/trim';
-  var TOTAL = {name:'Total', budget:0};
+  var TOTAL = {name:'Total', budget:0, _meta:{type:TYPES.readonly}};
   var UNCATEGORIZED = {name:'Uncategorized', budget:0};
 
   export default {
@@ -90,15 +90,15 @@
       initColumns: function() {
         var columns = [];
         var opts = {color:true, symbol:'$'};
-        columns.push({type:TYPES.popover, label:'Category', field:'name', width:'148px'});
+        columns.push({type:TYPES.popover, label:'Category', field:'name', width:148});
         for (var i in this.months) {
           var monthstr = this.months[i].format('YYYY-MM');
           var label = i == 0 ? ` ${this.months[i].format('MMM')}` : this.months[i].format('MMM');
           var cls = i == 0 ? 'current' : 'pastmonth';
-          columns.push({type:TYPES.popover, label:label, field:`${monthstr}.total`, numeric:true, display:utils.usdint, opts:opts, width:'64px', cls:`${cls} blur`});
+          columns.push({type:TYPES.popover, label:label, field:`${monthstr}.total`, numeric:true, format:utils.usdint, opts:opts, width:64, cls:`${cls} blur`});
         }
-        columns.push({label:'Average', field:'average', numeric:true, display:utils.usdint, opts:opts, width:'70px', cls:'average blur'});
-        columns.push({label:'Total', field:'total', numeric:true, display:utils.usdint, opts:opts, width:'70px', cls:'totalcol blur'});
+        columns.push({label:'Average', field:'average', numeric:true, format:utils.usdint, opts:opts, width:70, cls:'average blur'});
+        columns.push({label:'Total', field:'total', numeric:true, format:utils.usdint, opts:opts, width:70, cls:'totalcol blur'});
         return columns;
       },
 
@@ -117,6 +117,7 @@
           tablerows[cat.name].total = 0;
           tablerows[cat.name].average = 0;
           tablerows[cat.name].count = 0;
+          if (cat._meta) { tablerows[cat.name]._meta = cat._meta; }
           for (var month of this.months) {
             var monthstr = month.format('YYYY-MM');
             tablerows[cat.name][monthstr] = {};

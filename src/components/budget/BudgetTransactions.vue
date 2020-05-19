@@ -21,7 +21,7 @@
         <div class='clickout-detector' v-click-outside='cancelAll'>
           <b-table :data='tabledata' narrowed ref='table' tabindex='-1'>
             <template slot-scope='props'>
-              <b-table-column v-for='cell in props.row' :key='cell.label' v-bind='cell.col'>
+              <b-table-column v-for='cell in props.row' :key='cell.label' :label='cell.col.label' :width='cell.col.width' :numeric='cell.col.numeric' :class='cell.col.cls'>
                 <TableCell v-bind='cell' :ref='`c${cell.tabindex}`' :key='cell.row.id' @click.native='click($event, cell.tabindex)'/>
               </b-table-column>
             </template>
@@ -65,13 +65,13 @@
       items: function() { return this.transactions; },
       keymap: function() { return this.tableMixinKeymap(); },
       columns: function() { return [
-        {label:'Name', field:'account.name', width:'68px'},
-        {type:TYPES.editable, label:'Date', field:'date', width:'100px', reset:true, display:utils.formatDate},
-        {type:TYPES.editable, label:'Category', field:'category.name', width:'150px', select:true, choices:this.categories},
-        {type:TYPES.editable, label:'Payee', field:'payee', reset:true, width:'250px'},
-        {type:TYPES.editable, label:'Amount', field:'amount', display:utils.usd, opts:{color:true}, select:true, numeric:true, reset:true, width:'90px', cls:'blur'},
-        {type:TYPES.toggle, label:'X', field:'approved', width:'26px'},
-        {type:TYPES.editable, label:'Comment', field:'comment', width:'180px'},
+        {label:'Name', field:'account.name', width:68},
+        {type:TYPES.editable, label:'Date', field:'date', width:100, reset:true, format:utils.formatDate},
+        {type:TYPES.editable, label:'Category', field:'category.name', width:150, select:true, choices:this.categories},
+        {type:TYPES.editable, label:'Payee', field:'payee', reset:true, width:250},
+        {type:TYPES.editable, label:'Amount', field:'amount', format:utils.usd, opts:{color:true}, select:true, numeric:true, reset:true, width:90, cls:'blur'},
+        {type:TYPES.toggle, label:'X', field:'approved', width:26},
+        {type:TYPES.editable, label:'Comment', field:'comment', width:180},
       ];},
     },
     watch: {

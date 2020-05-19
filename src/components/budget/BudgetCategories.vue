@@ -7,7 +7,7 @@
     <div v-click-outside='cancelAll'>
       <b-table :data='tabledata' narrowed ref='table' tabindex='-1'>
         <template slot-scope='props'>
-          <b-table-column v-for='cell in props.row' :key='cell.col.name' v-bind='cell.col'>
+          <b-table-column v-for='cell in props.row' :key='cell.col.name' :label='cell.col.label' :width='cell.col.width' :numeric='cell.col.numeric' :class='cell.col.cls'>
             <TableCell v-bind='cell' :ref='`c${cell.tabindex}`' :key='cell.row.id' @click.native='click($event, cell.tabindex)'/>
           </b-table-column>
         </template>
@@ -35,12 +35,12 @@
     data: () => { return {
       sortfield: 'sortindex',
       columns: [
-        {type:TYPES.editable, label:'Name', field:'name', width:'250px'},
-        {type:TYPES.editable, label:'Budget', field:'budget', display:utils.usdint, opts:{color:true}, select:true, numeric:true, width:'100px', cls:'blur'},
-        {type:TYPES.toggle, label:'Exclude From Budget', field:'exclude_budget', width:'180px'},
-        {label:'Year Transactions', field:'meta.year_transactions', width:'120px', numeric:true, display:utils.intComma},
-        {label:'Monthly Average', field:'meta.year_average', width:'135px', numeric:true, display:utils.usd, opts:{color:true}},
-        {label:'Year Total', field:'meta.year_total', width:'135px', numeric:true, display:utils.usd, opts:{color:true}},
+        {type:TYPES.editable, label:'Name', field:'name', width:250},
+        {type:TYPES.editable, label:'Budget', field:'budget', format:utils.usdint, opts:{color:true}, select:true, numeric:true, width:100, cls:'blur'},
+        {type:TYPES.toggle, label:'Exclude From Budget', field:'exclude_budget', width:180},
+        {label:'Year Transactions', field:'meta.year_transactions', width:120, numeric:true, format:utils.intComma},
+        {label:'Monthly Average', field:'meta.year_average', width:135, numeric:true, format:utils.usd, opts:{color:true}},
+        {label:'Year Total', field:'meta.year_total', width:135, numeric:true, format:utils.usd, opts:{color:true}},
       ],
     };},
     computed: {

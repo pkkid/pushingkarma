@@ -1,14 +1,14 @@
 <template>
-  <div class='tablecell' :class='[status,{focused,editing,popped}]' :style='{"max-width":col.width}' @mousedown='preventDoubleClick'>
+  <div class='tablecell' :class='[status,{focused,editing,popped}]' :style='{maxWidth:width}' @mousedown='preventDoubleClick'>
     <!-- Toggle -->
-    <div v-if='col.type==TYPES.toggle' ref='div' tabindex='-1' :style='{"min-width":col.width}'>
+    <div v-if='col.type==TYPES.toggle' ref='div' tabindex='-1' :style='{minWidth:width}'>
       <i v-if='value' class='mdi mdi-check'/></div>
     <!-- Readonly, Editable, Choice, Popover -->
-    <div v-else v-html='html' :contenteditable='contenteditable' ref='div' :style='{"min-width":col.width}'
+    <div v-else v-html='html' :contenteditable='contenteditable' ref='div' :style='{minWidth:width}'
       spellcheck='false' @input="text=$event.target.textContent" tabindex='-1' @keydown.enter='makeChoice'
       @keyup.up.prevent='moveChoice(-1)' @keyup.down.prevent='moveChoice(+1)'/>
     <!-- Choice -->
-    <ul v-if='contenteditable && (choices.length > 0)' class='choices' :style='{"min-width":col.width}'>
+    <ul v-if='contenteditable && (choices.length > 0)' class='choices' :style='{minWidth:width}'>
       <li v-for='(c,i) in choices' :key='c.id' class='choice' :class='{highlighted:i==choice}' @click='makeChoice'>{{c.name}}</li>
     </ul>
     <!-- Popover -->
@@ -50,9 +50,10 @@
       item: function() { return this.row; },                                  // Alias for this.row
       type: function() { return this.col.type; },                             // Type of cell
       value: function() { return utils.rget(this.row, this.col.field); },     // Raw value for this cell
+      width: function() { return this.col.width ? `${this.col.width}px` : null; },
       html: function() {
-        if (this.col.opts) { return this.col.display(this.value, this.col.opts); }
-        if (this.col.display) { return this.col.display(this.value); }
+        if (this.col.opts) { return this.col.format(this.value, this.col.opts); }
+        if (this.col.format) { return this.col.format(this.value); }
         return this.value || '';
       },
     },

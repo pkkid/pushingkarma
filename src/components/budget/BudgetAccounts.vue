@@ -7,7 +7,7 @@
     <div v-click-outside='cancelAll'>
       <b-table :data='tabledata' narrowed ref='table' tabindex='-1'>
         <template slot-scope='props'>
-          <b-table-column v-for='cell in props.row' :key='cell.col.name' v-bind='cell.col'>
+          <b-table-column v-for='cell in props.row' :key='cell.col.name' :label='cell.col.label' :width='cell.col.width' :numeric='cell.col.numeric' :class='cell.col.cls'>
             <TableCell v-bind='cell' :ref='`c${cell.tabindex}`' :key='cell.row.id' @click.native='click($event, cell.tabindex)'/>
           </b-table-column>
         </template>
@@ -34,12 +34,12 @@
     mixins: [TableMixin],
     data: () => { return {
       columns: [
-        {type:TYPES.editable, label:'Name', field:'name', width:'160px'},
-        {type:TYPES.editable, label:'FID', field:'fid', select:true, width:'160px'},
-        {type:TYPES.editable, label:'Payee Field', field:'payee', width:'160px'},
-        {label:'Last Updated', field:'balancedt', width:'140px', display:utils.timeAgo},
-        {label:'Transactions', field:'meta.num_transactions', width:'150px', numeric:true, display:utils.intComma},
-        {label:'Balance', field:'balance', width:'150px', cls:'blur', numeric:true, display:utils.usd, opts:{color:true}},
+        {type:TYPES.editable, label:'Name', field:'name', width:160},
+        {type:TYPES.editable, label:'FID', field:'fid', select:true, width:160},
+        {type:TYPES.editable, label:'Payee Field', field:'payee', width:160},
+        {label:'Last Updated', field:'balancedt', width:140, format:utils.timeAgo},
+        {label:'Transactions', field:'meta.num_transactions', width:150, numeric:true, format:utils.intComma},
+        {label:'Balance', field:'balance', width:150, cls:'blur', numeric:true, format:utils.usd, opts:{color:true}},
       ],
     };},
     computed: {
