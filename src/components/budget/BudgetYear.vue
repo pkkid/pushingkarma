@@ -40,13 +40,14 @@
   import PageWrap from '@/components/site/PageWrap';
   import TableMixin from '@/components/TableMixin';
   import trim from 'lodash/trim';
+  import Vue from 'vue';
   var TOTAL = {name:'Total', budget:0, _meta:{type:TYPES.readonly}};
   var UNCATEGORIZED = {name:'Uncategorized', budget:0};
 
   export default {
     name: 'BudgetYear',
     mixins: [TableMixin],
-    components: {PageWrap},
+    components: {PageWrap, BudgetYearPopover},
     data: () => ({
       cancelsearch: null,   // Cancel search token
       tablerows: null,      // Row items to display
@@ -90,12 +91,13 @@
       initColumns: function() {
         var columns = [];
         var opts = {color:true, symbol:'$'};
-        columns.push({type:TYPES.popover, label:'Category', field:'name', width:148});
+        columns.push({type:TYPES.readonly, label:'Category', field:'name', width:148});
         for (var i in this.months) {
           var monthstr = this.months[i].format('YYYY-MM');
           var label = i == 0 ? ` ${this.months[i].format('MMM')}` : this.months[i].format('MMM');
           var cls = i == 0 ? 'current' : 'pastmonth';
-          columns.push({type:TYPES.popover, label:label, field:`${monthstr}.total`, numeric:true, format:utils.usdint, opts:opts, width:64, cls:`${cls} blur`});
+          columns.push({type:TYPES.popover, label:label, field:`${monthstr}.total`, numeric:true, format:utils.usdint,
+            opts:opts, width:64, cls:`${cls} blur`, monthstr:monthstr, popoverComponent:BudgetYearPopover});
         }
         columns.push({label:'Average', field:'average', numeric:true, format:utils.usdint, opts:opts, width:70, cls:'average blur'});
         columns.push({label:'Total', field:'total', numeric:true, format:utils.usdint, opts:opts, width:70, cls:'totalcol blur'});
@@ -181,6 +183,42 @@
       },
     }
   };
+
+  // Budget Year Popover Component
+  // Vue component renders the popover content displayed
+  var BudgetYearPopover = Vue.component('BudgetYearPopover', {
+    template: `
+      <div class="budgetyearpopover">
+        <h2>{{cell.row.name}}<div class='subtext'>{{datestr}}</div></h2>
+        <b-icon icon='close' size='is-small' @click.native.prevent.stop='cell.popped=false'/>
+        <dl>
+          <dt>Budgeted</dt><dd>$xxx</dd>
+          <dt>Actual</dt><dd>$xxx</dd>
+          <dt>Remaining</dt><dd>$xxx</dd>
+        </dl>
+        <table cellpadding='0' cellspacing='0'>
+          <tbody>
+            <tr v-for='item in items' :key='item.id'>
+              <td class='date'>{{item.date | formatDate('M/D')}}</td>
+              <td class='payee'>{{item.payee}}</td>
+              <td class='amount'>{{item.amount}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    `,
+    props: {
+      cell: {type:Object, required:true},
+    },
+    computed: {
+      datestr: self => dayjs(self.monthstr).format('MMMM YYYY'),
+      monthstr: self => self.cell.col.monthstr,
+      items: self => self.cell.row[self.monthstr].items,
+    },
+    mounted: function() {
+      console.log(this.cell);
+    }
+  });
 </script>
 
 <style lang='scss'>
@@ -225,6 +263,24 @@
         cursor: pointer;
         &:hover { opacity:0.5; }
       }
+    }
+
+    // Popover Content
+    .budgetyearpopover {
+      $popover-width: 300px;
+      width: $popover-width;
+      min-width: $popover-width;
+
+      h2 { color:$lightbg-fg0; position:relative; }
+      h2:before { background-color:#d65d0e; bottom:-3px; content:' '; display:block; height:1px; position:absolute; width:50px; }
+      h2 .subtext { padding:0px; margin-top:-2px; }
+      .icon { position:absolute; top:10px; right:10px; cursor:pointer; opacity:0.6; transition:opacity .3s ease; }
+      .icon:hover { opacity:1; }
+      dl { font-size: 0.7em; }
+      table { table-layout:fixed; font-size:0.7em; }
+      table .date { width:35px; }
+      table .payee { width:185px; overflow:hidden; white-space:nowrap; }
+      table .amount { width:60px; text-align:right; font-family:$fontfamily-code; }
     }
   }
 </style>

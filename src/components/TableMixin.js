@@ -60,7 +60,7 @@ export default {
       for (var i in this.items) {
         var row = [];                 // List of cell objects
         // var rowtype = utils.rget(this.items[i], '_meta.type');
-        // console.log(rowtype);  // TODO: Make this work.
+        // console.log(rowtype);  // TODO: Get row options working.
         for (var col of this.columns) {
           col.type = col.type || TYPES.readonly;
           col['header-class'] = trim(`${col.cls || ''} ${col.type.name}`);
@@ -194,6 +194,8 @@ export default {
     click: function(event, tabindex) {
       if (tabindex != null) {
         var cell = this.getCell(tabindex);
+        if (cell.editing) { return; }
+        if (cell.popped) { return; }
         if (cell.focusable && (tabindex != this.focus)) {
           // focus on cell
           event.preventDefault();

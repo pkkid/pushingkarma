@@ -12,7 +12,7 @@
       <li v-for='(c,i) in choices' :key='c.id' class='choice' :class='{highlighted:i==choice}' @click='makeChoice'>{{c.name}}</li>
     </ul>
     <!-- Popover -->
-    <div v-if='contentpopped' class='popover'>Hi Mom!</div>
+    <component v-if='contentpopped' :is='col.popoverComponent' :cell='this._self' class='popover'/>
   </div>
 </template>
 
@@ -68,6 +68,9 @@
       },
       editing: function(newvalue) {
         if (newvalue && !this.editable) { this.editing = false; }
+      },
+      popped: function(newvalue) {
+        if (newvalue && !this.poppable) { this.popped = false; }
       },
     },
     methods: {
@@ -161,20 +164,21 @@
       line-height: 20px;
       margin: 1px 0px;
       padding: 2px 5px;
-      width: 100%;
+      //width: 100%;
       height: 26px;
       transition: none;
       white-space: nowrap;  // overflow editing
       overflow: hidden;  // overflow editing
       max-width: 300px;  // overflow editing
+      z-index: 15;
       br { display:none; }
-      * { display:inline; white-space:nowrap; }
+      /* * { display:inline; white-space:nowrap; } */
     }
     
     // Focused & Editing
     &.fadestatus div { transition: all 2s ease !important; }
     &.focused {
-      div {
+      > div {
         background-color: darken($lightbg-bg1, 3%);
         border: 1px solid darken($lightbg-bg2, 8%);
         box-shadow:
@@ -183,7 +187,7 @@
         position: absolute;  // overflow editing
         max-width: fit-content;  // overflow editing
       }
-      &.editing div {
+      &.editing > div {
         border: 1px solid $lightbg-blue1;
         color: darken($lightbg-blue0, 50%);
         box-shadow: 0 0 0 2px rgba(7, 102, 120, 0.25);
@@ -191,18 +195,18 @@
     }
 
     // Success & Error
-    &.success div {
+    &.success > div {
       background-color: desaturate(lighten($darkbg-green1, 40%), 30%);
       border: 1px solid $darkbg-green1;
       box-shadow: 0 0 0 2px lighten($lightbg-bg1, 2%), inset 0 0 0px 1px lighten($lightbg-bg1, 1%);
     }
-    &.error div {
+    &.error > div {
       background-color: desaturate(lighten($darkbg-red0, 40%), 30%);
       border-color: darken($darkbg-red0, 5%);
       box-shadow: 0 0 0 2px lighten($lightbg-bg1, 2%), inset 0 0 0px 1px lighten($lightbg-bg1, 1%);
     }
-    &.focused.success div,
-    &.focused.error div {
+    &.focused.success > div,
+    &.focused.error > div {
       border: 1px solid darken($lightbg-bg2, 50%);
     }
 
@@ -233,15 +237,16 @@
     //------------
     // Popover
     div.popover {
-      $popover-width: 250px;
+      $popover-width: 150px;
       background-color: lighten($lightbg-bg1, 3%);
       border-radius: 5px;
+      color: $lightbg-fg1;
       font-family: $fontfamily-article;
       font-size: 1rem;
-      left: calc(50% - 125px);
-      min-height: 70px;
+      left: calc(50% - 40px);
+      height: auto;
       min-width: $popover-width;
-      padding: 5px;
+      padding: 10px;
       position: absolute;
       text-align: left;
       top: -30px;
