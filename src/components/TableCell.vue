@@ -94,7 +94,7 @@
       setStatus: async function(status, duration=null) {
         this.status = status;
         if (duration !== null) {
-          await utils.sleep(duration * 10);
+          await utils.sleep(duration);
           this.status = 'fadestatus';
           await utils.sleep(1000);
           this.status = 'default';
