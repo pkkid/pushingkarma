@@ -91,7 +91,6 @@ export default {
       var oldcell = this.getCell(oldvalue);
       var editing = oldcell.editing;
       var popped = oldcell.popped;
-      document.getSelection().removeAllRanges();
       if (oldvalue) {
         oldcell.focused = false;
         oldcell.editing = false;
@@ -176,6 +175,7 @@ export default {
       } else if (this.focus) {
         // clear focus
         event.preventDefault();
+        document.getSelection().removeAllRanges();
         this.focus = null;
       }
     },
