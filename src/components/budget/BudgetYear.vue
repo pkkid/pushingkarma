@@ -41,7 +41,7 @@
   import TableMixin from '@/components/TableMixin';
   import trim from 'lodash/trim';
   import Vue from 'vue';
-  var TOTAL = {name:'Total', budget:0, _meta:{type:TYPES.readonly}};
+  var TOTAL = {name:'Total', budget:0, meta:{type:TYPES.readonly, cls:'totalrow'}};
   var UNCATEGORIZED = {name:'Uncategorized', budget:0};
 
   export default {
@@ -119,7 +119,7 @@
           tablerows[cat.name].total = 0;
           tablerows[cat.name].average = 0;
           tablerows[cat.name].count = 0;
-          if (cat._meta) { tablerows[cat.name]._meta = cat._meta; }
+          if (cat.meta) { tablerows[cat.name].meta = cat.meta; }
           for (var month of this.months) {
             var monthstr = month.format('YYYY-MM');
             tablerows[cat.name][monthstr] = {};
@@ -232,8 +232,7 @@
     td.current { border-right:1px solid $lightbg-bg3; }
     th.average { border-left:1px solid darken($lightbg-bg3, 5%); }
     td.average { border-left:1px solid $lightbg-bg3; }
-    td.totalrow { background-color: $lightbg-fg2; }
-    tbody tr:last-child td { font-weight:600; background-color:$lightbg-bg1; }
+    td.totalrow { font-weight:600; background-color:$lightbg-bg1; }
 
     #page { max-width:1220px !important; min-width:1220px !important; }
     #searchwrap {
@@ -278,9 +277,10 @@
       .icon:hover { opacity:1; }
       dl { font-size: 0.7em; }
       table { table-layout:fixed; font-size:0.7em; }
-      table .date { width:35px; }
-      table .payee { width:185px; overflow:hidden; white-space:nowrap; }
-      table .amount { width:60px; text-align:right; font-family:$fontfamily-code; }
+      table td { line-height:16px; padding:0px; border-width:0px; color:$lightbg-fg3; }
+      table .date { width:35px; max-width:35px; }
+      table .payee { width:185px; max-width:185px; overflow:hidden; white-space:nowrap; }
+      table .amount { width:60px; max-width:60px; text-align:right; font-family:$fontfamily-code; }
     }
   }
 </style>

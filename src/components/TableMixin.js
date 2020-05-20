@@ -54,17 +54,19 @@ export default {
     
     // Table cells
     // Mold the data rows into a list of lists of cells
+    // A few baby dragons may be loitering around here
     tabledata: function() {
       var data = [];                  // Data passed to Buefy table
       var gtabindex = 0;              // Global tabindex
       for (var i in this.items) {
         var row = [];                 // List of cell objects
-        // var rowtype = utils.rget(this.items[i], '_meta.type');
-        // console.log(rowtype);  // TODO: Get row options working.
-        for (var col of this.columns) {
-          col.type = col.type || TYPES.readonly;
-          col['header-class'] = trim(`${col.cls || ''} ${col.type.name}`);
-          col['cell-class'] = trim(`${col.cls || ''} ${col.type.name}`);
+        var rowcls = utils.rget(this.items[i], 'meta.cls');
+        var rowtype = utils.rget(this.items[i], 'meta.type');
+        for (var column of this.columns) {
+          column.type = column.type || TYPES.readonly;
+          var col = Object.assign({}, column);
+          col.type = rowtype || col.type || TYPES.readonly;
+          col.cls = trim(`${col.cls || ''} ${col.type.name} ${rowcls}`);
           gtabindex += col.type.focusable ? 1 : 0;
           var tabindex = col.type.focusable ? gtabindex : null;
           var cell = Object.assign({}, {
