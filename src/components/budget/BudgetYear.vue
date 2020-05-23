@@ -192,9 +192,9 @@
         <h2>{{cell.row.name}}<div class='subtext'>{{datestr}}</div></h2>
         <b-icon icon='close' size='is-small' @click.native.prevent.stop='cell.popped=false'/>
         <dl>
-          <dt>Budgeted</dt><dd>$xxx</dd>
-          <dt>Actual</dt><dd>$xxx</dd>
-          <dt>Remaining</dt><dd>$xxx</dd>
+          <dt>Budgeted</dt><dd>{{cell.row.budget | usdint}}</dd>
+          <dt>Actual</dt><dd>{{cell.value | usdint}}</dd>
+          <dt>{{remainingtxt}}</dt><dd :class='remainingcls'>{{Math.abs(remaining) | usdint}}</dd>
         </dl>
         <table cellpadding='0' cellspacing='0'>
           <tbody>
@@ -214,6 +214,13 @@
       datestr: self => dayjs(self.monthstr).format('MMMM YYYY'),
       monthstr: self => self.cell.col.monthstr,
       items: self => self.cell.row[self.monthstr].items,
+      remaining: self => self.cell.row.budget - self.cell.value,
+      remainingtxt: function() {
+        if (this.cell.row.budget > 0)
+          return this.remaining > 0 ? "Remaining" : "Extra";
+        return this.remaining > 0 ? "Overspent" : "Remaining";
+      },
+      remainingcls: self => self.remaining > 0 ? "ltzero" : "gtzero",
     },
     mounted: function() {
       console.log(this.cell);
@@ -277,6 +284,9 @@
       .icon { position:absolute; top:10px; right:10px; cursor:pointer; opacity:0.6; transition:opacity .3s ease; }
       .icon:hover { opacity:1; }
       dl { font-size: 0.7em; }
+      dd { margin-left:70px; width:60px; text-align:right; }
+      dd.gtzero { color:$lightbg-green2; font-weight:bold; }
+      dd.ltzero { color:$lightbg-red1; font-weight:bold; }
       table { table-layout:fixed; font-size:0.7em; }
       table td { line-height:16px; padding:0px; border-width:0px; color:$lightbg-fg3; }
       table .date { width:35px; max-width:35px; }
