@@ -82,6 +82,7 @@
       upload: async function(formdata) {
         var {data} = await api.Budget.upload(formdata);
         console.log(data);
+        utils.snackbar(`${data.status}`);
       },
     },
   };
