@@ -55,8 +55,12 @@ class Command(BaseCommand):
 
     def get_o365_events(self, calendar):
         """ Returns a dict of o365 Events {eventids: event} for the specified calendar. """
+        o365_events = {}
         _eventid = lambda event: f'{hashlib.md5(event["ItemId"]["Id"].encode()).hexdigest()}'
-        return {_eventid(event):event for event in o365.get_events(calendar)}
+        for o365_event in o365.get_events(calendar):
+            eventid = _eventid(o365_event)
+            o365_events[eventid] = o365_event
+        return o365_events
 
     def get_gcal(self, service, name):
         """ Returns a dict object representing the specified Google Calendar. """
@@ -74,6 +78,7 @@ class Command(BaseCommand):
             log.info(f'Fetching gcal events (page={str(kwargs["pageToken"])[:10]})')
             result = service.events().list(**kwargs).execute()
             for gcal_event in result['items']:
+                gcal_event['summary'] = gcal_event.get('summary', '(No subject)')
                 o365_id = self.get_o365_id(gcal_event)
                 gcal_events[o365_id] = gcal_event
             kwargs['pageToken'] = result.get('nextPageToken', 'END')
@@ -99,6 +104,7 @@ class Command(BaseCommand):
     def check_update_event(self, gcal_event, o365_event):
         """ Check we need to update the office365 event. """
         _local = lambda dtstr: parse(dtstr).astimezone().strftime(DATEFORMAT)
+        import json; print(json.dumps(gcal_event, indent=2))
         if (gcal_event['summary'] != o365_event['Subject']
           or gcal_event.get('location','') != o365_event['Location']['DisplayName']
           or _local(gcal_event['start']['dateTime']) != _local(o365_event['Start'])
