@@ -1,8 +1,11 @@
 {
-  "sqltools.connections": [{
-    "database": "pk/db.sqlite3",
-    "dialect": "SQLite",
-    "name": "PushingKarma"
-  }],
+  "sqltools.connections": [
+    {
+      "previewLimit": 50,
+      "driver": "SQLite",
+      "name": "PushingKarma",
+      "database": "${workspaceFolder:pushingkarma}/pk/db.sqlite3"
+    }
+  ],
   "python.pythonPath": "/home/mjs7231/.virtualenvs/pk/bin/python",
 }
