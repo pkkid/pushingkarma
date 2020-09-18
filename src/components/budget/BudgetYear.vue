@@ -276,7 +276,7 @@
       $popover-width: 300px;
       width: $popover-width;
       min-width: $popover-width;
-      left: calc(50% - 100px);
+      left: calc(50% - 60px);
 
       h2 { color:$lightbg-fg0; position:relative; }
       h2:before { background-color:#d65d0e; bottom:-3px; content:' '; display:block; height:1px; position:absolute; width:50px; }
