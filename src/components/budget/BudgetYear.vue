@@ -193,18 +193,23 @@
         <b-icon icon='close' size='is-small' @click.native.prevent.stop='cell.popped=false'/>
         <dl>
           <dt>Budgeted</dt><dd>{{cell.row.budget | usdint}}</dd>
-          <dt>Actual</dt><dd>{{cell.value | usdint}}</dd>
           <dt>{{remainingtxt}}</dt><dd :class='remainingcls'>{{Math.abs(remaining) | usdint}}</dd>
         </dl>
-        <table cellpadding='0' cellspacing='0'>
-          <tbody>
-            <tr v-for='item in items' :key='item.id'>
-              <td class='date'>{{item.date | formatDate('M/D')}}</td>
-              <td class='payee'>{{item.payee}}</td>
-              <td class='amount'>{{item.amount}}</td>
-            </tr>
-          </tbody>
-        </table>
+        <div class='scrollwrap'>
+          <table cellpadding='0' cellspacing='0'>
+            <tbody>
+              <tr v-for='item in items' :key='item.id'>
+                <td class='date'>{{item.date | formatDate('M/D')}}</td>
+                <td class='payee'>{{item.payee}}</td>
+                <td class='amount'>{{item.amount}}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class='totals' v-if='items.length'>
+          <div class='total' :class='hasScroll'>{{cell.value | usdint}}</div>
+          <div class='count'>{{items.length}} transactions</div>
+        </div>
       </div>
     `,
     props: {
@@ -217,10 +222,12 @@
       remaining: self => self.cell.row.budget - self.cell.value,
       remainingtxt: function() {
         if (this.cell.row.budget > 0)
-          return this.remaining > 0 ? "Remaining" : "Extra";
-        return this.remaining > 0 ? "Overspent" : "Remaining";
+          return this.remaining > 0 ? 'Remaining' : 'Extra';
+        return this.remaining > 0 ? 'Overspent' : 'Remaining';
       },
-      remainingcls: self => self.remaining > 0 ? "ltzero" : "gtzero",
+      remainingcls: self => self.remaining > 0 ? 'ltzero' : 'gtzero',
+      hasScroll: self => self.items.length >= 13 ? 'hasScroll' : '',
+
     },
     mounted: function() {
       console.log(this.cell);
@@ -277,6 +284,7 @@
       width: $popover-width;
       min-width: $popover-width;
       left: calc(50% - 60px);
+      background-color: $lightbg-bg1;
 
       h2 { color:$lightbg-fg0; position:relative; }
       h2:before { background-color:#d65d0e; bottom:-3px; content:' '; display:block; height:1px; position:absolute; width:50px; }
@@ -292,6 +300,22 @@
       table .date { width:35px; max-width:35px; }
       table .payee { width:185px; max-width:185px; overflow:hidden; white-space:nowrap; }
       table .amount { width:60px; max-width:60px; text-align:right; font-family:$fontfamily-code; }
+      .totals { font-size:0.7em; font-weight:bold; padding-top:3px;}
+      .count { padding-top:1px; }
+      .total { float:right; padding-right:5px; border-top:1px solid $lightbg-fg4; text-align:right; min-width:60px;}
+      .total.hasScroll { margin-right:10px; }
+      .scrollwrap {
+        max-height: 200px;
+        padding-right: 5px;
+        overflow-y: auto;
+        background-color: darken($lightbg-bg1, 2%);
+        &::-webkit-scrollbar { width: 10px; }
+        &::-webkit-scrollbar-thumb {
+          background: rgba($darkbg-bg4, 0.8);
+          border-radius: 5px;
+          border: 2px solid $lightbg-bg1;
+        }
+      }
     }
   }
 </style>
