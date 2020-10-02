@@ -196,6 +196,7 @@ export default {
     click: function(event, tabindex) {
       if (tabindex != null) {
         var cell = this.getCell(tabindex);
+        if (cell === undefined) { return; }
         if (cell.editing) { return; }
         if (cell.popped) { return; }
         if (cell.focusable && (tabindex != this.focus)) {

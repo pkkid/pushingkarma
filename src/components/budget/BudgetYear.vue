@@ -16,7 +16,7 @@
           <b-table :data='tabledata' narrowed ref='table' tabindex='-1'>
             <template slot-scope='props'>
               <b-table-column v-for='cell in props.row' :key='cell.col.label' :label='cell.col.label' :width='cell.col.width' :numeric='cell.col.numeric' :class='cell.col.cls'>
-                <TableCell v-bind='cell' :ref='`c${cell.tabindex}`' @click.native='click($event, cell.tabindex)' @callback='tableCellCallback'/>
+                <TableCell v-bind='cell' :ref='`c${cell.tabindex}`' @click.native='click($event, cell.tabindex)'/>
               </b-table-column>
             </template>
             <template slot='empty'>No items to display.</template>
@@ -51,13 +51,13 @@
     data: () => ({
       cancelsearch: null,   // Cancel search token
       tablerows: null,      // Row items to display
-      search: null,         // Current search string
       loading: false,       // True to show loading indicator
       count: 0,             // Total transactions in view
       start: null,          // Starting month
     }),
     computed: {
       categories: pathify.sync('budget/categories'),
+      search: pathify.sync('budget/search'),
       view: pathify.sync('budget/view'),
       columns: function() { return this.initColumns(); },
       items: function() { return this.tablerows; },
@@ -73,7 +73,7 @@
       document.title = `PushingKarma - Past Year Spending`;
       this.start = dayjs().startOf('month');
       this.search = trim(this.search || this.$route.query.search || '');
-      //this.refresh();
+      this.refresh();
     },
     methods: {
       // Get Transactions
@@ -181,17 +181,6 @@
         } finally {
           setTimeout(() => this.loading = false, 300);
         }
-      },
-
-      // Table Cell Callback
-      // General callback used when the tablecell wants to communicate
-      // back to this driver class.
-      tableCellCallback: function(opts) {
-        var category = opts.cell.row.name;
-        var datestr = dayjs(opts.cell.col.monthstr).format('MMM');
-        var searchstr = `category="${category}" date=${datestr}`;
-        utils.updateHistory(this.$router, {search:searchstr});
-        this.view = 'transactions';
       },
     }
   };

@@ -26,6 +26,7 @@
 
 <script>
   import * as dayjs from 'dayjs';
+  import * as pathify from 'vuex-pathify';
 
   export default {
     name: 'BudgetYear',
@@ -33,6 +34,8 @@
       cell: {type:Object, required:true},
     },
     computed: {
+      search: pathify.sync('budget/search'),
+      view: pathify.sync('budget/view'),
       datestr: self => dayjs(self.monthstr).format('MMMM YYYY'),
       monthstr: self => self.cell.col.monthstr,
       items: self => self.cell.row[self.monthstr].items,
@@ -47,7 +50,10 @@
     },
     methods: {
       showTransactions: function() {
-        this.cell.$emit('callback', {action:'showTransactions', cell: this.cell});
+        var category = this.cell.row.name;
+        var datestr = dayjs(this.cell.col.monthstr).format('MMM');
+        this.search = `category="${category}" date=${datestr}`;
+        this.view = 'transactions';
       },
     },
   };

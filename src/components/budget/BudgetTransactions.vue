@@ -52,7 +52,6 @@
     components: {PageWrap},
     data: () => ({
       cancelsearch: null,   // Cancel search token
-      search: '',           // Current search string
       loading: false,       // True to show loading indicator
       transactions: null,   // Displayed transactions
       total: 0,             // Total transactions in current view
@@ -62,6 +61,7 @@
     computed: {
       account: pathify.get('budget/account'),
       categories: pathify.get('budget/categories'),
+      search: pathify.sync('budget/search'),
       items: function() { return this.transactions; },
       keymap: function() { return this.tableMixinKeymap(); },
       columns: function() { return [

@@ -50,6 +50,11 @@
       displayAccounts: function() { return this.accounts.filter(a => a.id); },
       balance: function() { return sumBy(this.accounts, a => parseFloat(a.balance) || 0).toFixed(2); },
     },
+    // watch: {
+    //   $route (to, from) {
+    //     console.log(`Changed! ${from} -> ${to}`);
+    //   },
+    // } 
   };
 </script>
 
