@@ -89,12 +89,12 @@ class CategoriesViewSet(ModelViewSetWithAnnotations):
     list_fields = CategorySerializer.Meta.fields
 
     def annotations(self):
-        maxdate = datetime.date.today().replace(day=1)
-        mindate = maxdate - relativedelta(years=1)
+        year_maxdate = datetime.date.today().replace(day=1)
+        year_mindate = year_maxdate - relativedelta(years=1)
         return {
             'num_transactions': Count('transaction'),
-            'year_transactions': Count('transaction', filter=Q(transaction__date__gte=mindate, transaction__date__lt=maxdate)),
-            'year_total': Sum('transaction__amount', filter=Q(transaction__date__gte=mindate, transaction__date__lt=maxdate)),
+            'year_transactions': Count('transaction', filter=Q(transaction__date__gte=year_mindate, transaction__date__lt=year_maxdate)),
+            'year_total': Sum('transaction__amount', filter=Q(transaction__date__gte=year_mindate, transaction__date__lt=year_maxdate)),
             'year_average': Cast(F('year_total') / 12, DecimalField(max_digits=9, decimal_places=2))
         }
     

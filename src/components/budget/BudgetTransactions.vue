@@ -113,7 +113,7 @@
       },
 
       // Refresh
-      // Refresh the list of categories displayed
+      // Refresh the list of transactions displayed
       refresh: async function(showLoading=false) {
         this.loading = showLoading;
         this.cancelsearch = api.cancel(this.cancelsearch);
