@@ -70,7 +70,7 @@
       },
     },
     mounted: function() {
-      document.title = `PushingKarma - Past Year Spending`;
+      document.title = `PK - Past Year Spending`;
       this.start = dayjs().startOf('month');
       this.search = trim(this.search || this.$route.query.search || '');
       this.refresh();

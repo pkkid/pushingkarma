@@ -138,7 +138,7 @@
       // Reset the page view when switching tabs
       reset: function(search='') {
         var accountname = this.account ? this.account.name : 'All';
-        document.title =`PushingKarma - ${accountname} Transactions`;
+        document.title =`PK - ${accountname} Transactions`;
         this.getCell().editing = false;
         this.transactions = null;
         this.search = search;

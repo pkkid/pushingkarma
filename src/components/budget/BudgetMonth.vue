@@ -28,7 +28,7 @@
     },
     mounted: function() {
       this.month = dayjs(dayjs().format('YYYY-MM'));
-      document.title = `PushingKarma - ${this.month.format('MMMM')} Budget`;
+      document.title = `PK - ${this.month.format('MMMM')} Budget`;
       this.refresh();
     },
     methods: {

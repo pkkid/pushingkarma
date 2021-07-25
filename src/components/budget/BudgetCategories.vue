@@ -48,7 +48,7 @@
       keymap: function() { return this.tableMixinKeymap(); },
     },
     mounted: function() {
-      document.title = `PushingKarma - Budget Categories`;
+      document.title = `PK - Budget Categories`;
     },
     methods: {
       // Save

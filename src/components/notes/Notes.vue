@@ -77,7 +77,7 @@
         var {data} = await api.Notes.getNote(noteid);
         this.note = data;
         this.editor.setContent(this.note.body);
-        document.title = `PushingKarma - ${this.note.title}`;
+        document.title = `PK - ${this.note.title}`;
       },
     },
 
