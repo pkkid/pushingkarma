@@ -1,7 +1,13 @@
 <template>
   <div id='budgetmonth'>
     <PageWrap>
-      <h1>{{month.format('MMMM')}} Budget</h1>
+      <h1>{{month.format('MMMM YYYY')}} Budget
+        <div style='float:right'>
+          <i class='mdi mdi-chevron-left' @click.prevent='incrementMonth(-1)'/>
+          <i class='mdi mdi-chevron-right' @click.prevent='incrementMonth(1)'/>
+        </div>
+        <div class='subtext'>View {{month.format('MMMM')}} transactions</div>
+      </h1>
       Hi Mom!!
       <b-loading :active='loading' :is-full-page='false'/>
     </PageWrap>
@@ -32,6 +38,12 @@
       this.refresh();
     },
     methods: {
+      // Increment Month
+      // Go to previous or next month
+      incrementMonth: function(inc) {
+        this.month = this.month.add(inc, 'month');
+      },
+
       // Refresh
       // Refresh the list of transactions displayed
       refresh: async function(showLoading=false) {
@@ -39,7 +51,8 @@
         this.cancelsearch = api.cancel(this.cancelsearch);
         var token = this.cancelsearch.token;
         try {
-          var params = {search: this.search};
+          var params = {search: `date="${this.month.format('MMM YYYY')}"`};
+          console.log(params);
           var {data} = await api.Budget.getTransactions(params, token);
           utils.updateHistory(this.$router, {month:this.month.format('YYYY-MM')});
           this.transactions = data.results;
@@ -56,8 +69,6 @@
 
 <style lang='scss'>
   #budgetmonth {
-    padding: 10px 20px;
-
     .tablewrap {
       background-color: white;
       border: 1px solid darken($lightbg-bg3, 10%);
@@ -65,6 +76,12 @@
       box-shadow: 0 1px 2px 0 rgba(60,64,67,.3), 0 1px 3px 1px rgba(60,64,67,.15);
       padding: 20px 10px;
       min-width: 1000px;
+    }
+
+    H1 .mdi:hover {
+      cursor: pointer;
+      background-color: rgba(0,0,0,0.05);
+      border-radius: 3px;
     }
 
   }
