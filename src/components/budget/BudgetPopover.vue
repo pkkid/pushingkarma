@@ -1,5 +1,5 @@
 <template>
-  <div class="budgetyearpopover">
+  <div class="budgetpopover">
     <h2>{{cell.row.name}}<div class='subtext'>{{datestr}}</div></h2>
     <b-icon icon='close' size='is-small' @click.native.prevent.stop='cell.popped=false'/>
     <dl>
@@ -38,7 +38,7 @@
       view: pathify.sync('budget/view'),
       datestr: self => dayjs(self.monthstr).format('MMMM YYYY'),
       monthstr: self => self.cell.col.monthstr,
-      items: self => self.cell.row[self.monthstr].items,
+      items: self => self.cell.row.items ? self.cell.row.items : self.cell.row[self.monthstr].items,
       remaining: self => self.cell.row.budget - self.cell.value,
       remainingtxt: function() {
         if (this.cell.row.budget > 0)
@@ -50,6 +50,7 @@
     },
     methods: {
       showTransactions: function() {
+        console.log('--- 111 ---');
         var category = this.cell.row.name;
         var datestr = dayjs(this.cell.col.monthstr).format('MMM');
         this.search = `category="${category}" date=${datestr}`;
@@ -60,7 +61,8 @@
 </script>
 
 <style lang='scss'>
-#budgetyear .budgetyearpopover {
+#budgetyear .budgetpopover,
+#budgetmonth .budgetpopover {
   $popover-width: 300px;
   width: $popover-width;
   min-width: $popover-width;

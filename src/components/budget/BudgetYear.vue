@@ -37,7 +37,7 @@
   import * as pathify from 'vuex-pathify';
   import * as utils from '@/utils/utils';
   import {TYPES} from '@/components/TableMixin';
-  import BudgetYearPopover from '@/components/budget/BudgetYearPopover';
+  import BudgetPopover from '@/components/budget/BudgetPopover';
   import PageWrap from '@/components/site/PageWrap';
   import TableMixin from '@/components/TableMixin';
   import trim from 'lodash/trim';
@@ -50,10 +50,10 @@
     components: {PageWrap},
     data: () => ({
       cancelsearch: null,   // Cancel search token
-      tablerows: null,      // Row items to display
-      loading: false,       // True to show loading indicator
       count: 0,             // Total transactions in view
+      loading: false,       // True to show loading indicator
       start: null,          // Starting month
+      tablerows: null,      // Row items to display
     }),
     computed: {
       categories: pathify.sync('budget/categories'),
@@ -80,8 +80,8 @@
       // Search for and update the list of displayed transactions
       getTransactions: async function() {
         this.cancelsearch = api.cancel(this.cancelsearch);
-        var mindatestr = this.start.clone().subtract(12, 'months').format('YYYY-MM-DD');
         var token = this.cancelsearch.token;
+        var mindatestr = this.start.clone().subtract(12, 'months').format('YYYY-MM-DD');
         var params = {search:`${this.search} date>=${mindatestr}`, limit:9999};
         var {data} = await api.Budget.getTransactions(params, token);
         return data.results;
@@ -98,14 +98,14 @@
           var label = i == 0 ? ` ${this.months[i].format('MMM')}` : this.months[i].format('MMM');
           var cls = i == 0 ? 'current' : 'pastmonth';
           columns.push({type:TYPES.popover, label:label, field:`${monthstr}.total`, numeric:true, format:utils.usdint,
-            opts:opts, width:64, cls:`${cls} blur`, monthstr:monthstr, popoverComponent:BudgetYearPopover});
+            opts:opts, width:64, cls:`${cls} blur`, monthstr:monthstr, popoverComponent:BudgetPopover});
         }
         columns.push({label:'Average', field:'average', numeric:true, format:utils.usdint, opts:opts, width:70, cls:'average blur'});
         columns.push({label:'Total', field:'total', numeric:true, format:utils.usdint, opts:opts, width:70, cls:'totalcol blur'});
         return columns;
       },
 
-      // Init Items
+      // Init Table Rows
       // Initialize an empty group collection
       initTablerows: function() {
         var tablerows = {};
