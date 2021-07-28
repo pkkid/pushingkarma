@@ -52,6 +52,7 @@
       value: function() { return utils.rget(this.row, this.col.field); },     // Raw value for this cell
       width: function() { return this.col.width ? `${this.col.width}px` : null; },
       html: function() {
+        if (this.col.html) { return this.col.html(this.value, this.row); }
         if (this.col.opts) { return this.col.format(this.value, this.col.opts); }
         if (this.col.format) { return this.col.format(this.value); }
         return this.value || '';

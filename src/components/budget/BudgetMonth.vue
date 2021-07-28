@@ -59,6 +59,19 @@
       this.refresh();
     },
     methods: {
+      // Difference Bar
+      // HTML for the difference column on the table
+      diffbar: function(value, row) {
+        console.log(value, row);
+        var amt = ((row.total / row.budget) * 100); 
+        return `
+          <div class="diffbar">
+            <div class="bg"></div>
+            <div class="amt" style="width: ${amt}px"></div>
+            <div class="line"></div>
+          </div>`;
+      },
+
       // Get Transactions
       // Search for and update the list of displayed transactions
       getTransactions: async function() {
@@ -85,7 +98,7 @@
         columns.push({type:TYPES.readonly, label:'Category', field:'name', width:200});
         columns.push({type:TYPES.readonly, label:'Budget', field:'budget', width:100, opts:opts, numeric:true, format:utils.usdint, cls:'blur'});
         columns.push({type:TYPES.popover, label:'Spent', field:'total', width:100, opts:opts, numeric:true, format:utils.usdint, cls:'blur', popoverComponent:BudgetPopover});
-        //columns.push({type:TYPES.readonly, label:'Difference', field:'name', width:148});
+        columns.push({type:TYPES.readonly, label:'Difference', field:'diff', width:150, html:this.diffbar});
         return columns;
       },
 
@@ -130,6 +143,10 @@
             tablerows[cat.name].total += amount;
             tablerows[butils.TOTAL.name].total += amount;
           }
+          // Remove empty rows
+          for (var key of Object.keys(tablerows)) {
+            if (tablerows[key].total == 0) { delete tablerows[key]; }
+          }
           this.tablerows = tablerows;
           this.count = count;
           utils.updateHistory(this.$router, {search:this.search});
@@ -146,7 +163,16 @@
 <style lang='scss'>
   #budgetmonth {
     .tablewrap {
-      width: 410px;
+      width: 562px;
+    }
+
+    .diffbar {
+      position: relative;
+      top: 5px;
+      .bg { width: 140px; height:10px; background-color:#ddd; border-radius:3px; position:absolute; }
+      .amt { min-width:0px; max-width:140px; height:10px; background-color:#58881b; border-radius:3px; position:absolute;
+        background: linear-gradient(90deg, #58881b 0%, #58881b 98px, #9d0006 106px, #9d0006 100%); }
+      .line { width: 1px; height:10px; background-color:#f2f2f2; position:absolute; left:99px; }
     }
 
     H1 .mdi:hover {
