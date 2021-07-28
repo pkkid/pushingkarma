@@ -1,5 +1,5 @@
 <template>
-  <div class="budgetpopover">
+  <div class='budgetpopover'>
     <h2>{{cell.row.name}}<div class='subtext'>{{datestr}}</div></h2>
     <b-icon icon='close' size='is-small' @click.native.prevent.stop='cell.popped=false'/>
     <dl>
@@ -48,13 +48,24 @@
       remainingcls: self => self.remaining > 0 ? 'ltzero' : 'gtzero',
       hasScroll: self => self.items.length >= 13 ? 'hasScroll' : '',
     },
+    mounted: function() {
+      this.setTopPosition();
+    },
     methods: {
       showTransactions: function() {
-        console.log('--- 111 ---');
         var category = this.cell.row.name;
-        var datestr = dayjs(this.cell.col.monthstr).format('MMM');
-        this.search = `category="${category}" date=${datestr}`;
+        var datestr = dayjs(this.cell.col.monthstr).format('MMM YYYY');
+        this.search = `category="${category}" date="${datestr}"`;
         this.view = 'transactions';
+      },
+      setTopPosition: function() {
+        var top = 30;
+        var winheight = document.documentElement.clientHeight;
+        var popover = this.$el.getBoundingClientRect();
+        if (popover.top > (winheight - 370)) {
+          top = -popover.height - 5;
+        }
+        this.$el.style.top = `${top}px`;
       },
     },
   };

@@ -250,7 +250,6 @@
       padding: 10px;
       position: absolute;
       text-align: left;
-      top: 30px;
       width: $popover-width;
       z-index: 20;
       box-shadow: 0 1px 3px 0 rgba(60,64,67,0.302), 0 4px 8px 3px rgba(60,64,67,0.149);
