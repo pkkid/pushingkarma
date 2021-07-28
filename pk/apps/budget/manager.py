@@ -112,13 +112,30 @@ class TransactionManager:
                 trx.payee = lookup[trx.amount]
                 self.labeled += 1
 
-    def categorize_transactions(self, transactions):
-        lastyear = datetime.datetime.now() - relativedelta(months=13)
-        items = Transaction.objects.filter(date__gte=lastyear).exclude(payee='')
+    def categorize_transactions(self, transactions, save=False):
+        # Get all categorized items from the last 24 months
+        lastyear = datetime.datetime.now() - relativedelta(months=24)
+        items = Transaction.objects.filter(date__gte=lastyear)
+        items = items.exclude(payee='').exclude(category=None)
         items = items.values_list('payee', 'category__id').order_by('date')
-        lookup = {payee.lower().rstrip(TRXJUNK):catid for payee,catid in items}
+        # Create lookup dictionary of already categorized items
+        lookup = {self._strip_chars(payee):catid for payee,catid in items}
+        # Attempt to categorize everything
         for trx in transactions:
-            payee = trx.payee.lower().rstrip(TRXJUNK)
+            payee = self._strip_chars(trx.payee)
             if not trx.category_id and payee in lookup:
                 trx.category_id = lookup[payee]
                 self.categorized += 1
+                if save: trx.save()
+    
+    def _strip_chars(self, payee):
+        # Strip out all garbage characters
+        validchars = 'abcdefghijklmnopqrstuvwxyz *'
+        payee = ''.join([c for c in payee.lower() if c in validchars])
+        payee = ' '.join(payee.split())
+        if '*' in payee:
+            parts = [part.strip() for part in payee.split('*')]
+            if len(parts[0]) >= 4:
+                return parts[0]
+            return parts[1]
+        return payee
