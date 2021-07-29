@@ -11,7 +11,10 @@ from pk import log
 from pk.utils.decorators import lazyproperty
 from .models import Account, Transaction
 
-TRXJUNK = '#0123456789 '
+REMOVE = "'"
+KEEP = ' ./'
+CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+NUMS = '0123456789'
 
 
 class TransactionManager:
@@ -114,28 +117,44 @@ class TransactionManager:
 
     def categorize_transactions(self, transactions, save=False):
         # Get all categorized items from the last 24 months
+        # All Special chars found: /*,':-`&_.#
         lastyear = datetime.datetime.now() - relativedelta(months=24)
         items = Transaction.objects.filter(date__gte=lastyear)
         items = items.exclude(payee='').exclude(category=None)
         items = items.values_list('payee', 'category__id').order_by('date')
         # Create lookup dictionary of already categorized items
-        lookup = {self._strip_chars(payee):catid for payee,catid in items}
+        lookup = {clean_name(payee):catid for payee,catid in items}
         # Attempt to categorize everything
         for trx in transactions:
-            payee = self._strip_chars(trx.payee)
+            payee = clean_name(trx.payee)
             if not trx.category_id and payee in lookup:
                 trx.category_id = lookup[payee]
                 self.categorized += 1
                 if save: trx.save()
-    
-    def _strip_chars(self, payee):
-        # Strip out all garbage characters
-        validchars = 'abcdefghijklmnopqrstuvwxyz *'
-        payee = ''.join([c for c in payee.lower() if c in validchars])
-        payee = ' '.join(payee.split())
-        if '*' in payee:
-            parts = [part.strip() for part in payee.split('*')]
-            if len(parts[0]) >= 4:
-                return parts[0]
-            return parts[1]
-        return payee
+        return self.categorized
+
+
+def clean_name(payee):
+    """ Clean the Payee string, removing crud that may differ between
+        transacations but still represent the same payee.
+    """
+    payee = ''.join([c for c in payee.upper() if c not in REMOVE])                # Remove bad chars
+    payee = ''.join([c if c in f'{CHARS}{NUMS}{KEEP}' else ' ' for c in payee])   # Replace special chars with space
+    payee = ' '.join([w for w in payee.split() if not _is_code(w)])               # Remove id codes
+    payee = ''.join([c for c in payee if c in f'{CHARS}{KEEP}'])                  # Remove all numbers
+    payee = ' '.join([w for w in payee.split() if not len(w) == 1])               # Remove 1 char words
+    return ' '.join(payee.split())
+
+
+def _is_code(word):
+    """ Return True if num-char-num or char-num-char word. """
+    currenttype = None      # current type of character (num or char)
+    switchcount = 0         # Number of times we switched types
+    for char in word:
+        ctype = 'char' if char in f'{CHARS}{KEEP}' else 'num'
+        if ctype != currenttype:
+            currenttype = ctype
+            switchcount += 1
+        if switchcount >= 3:
+            return True
+    return False

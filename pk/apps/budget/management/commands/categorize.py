@@ -16,4 +16,5 @@ class Command(BaseCommand):
         trxmanager = TransactionManager()
         user = User.objects.get(email=options['user'])
         uncategorized = Transaction.objects.filter(user=user, category=None)
-        trxmanager.categorize_transactions(uncategorized, save=True)
+        count = trxmanager.categorize_transactions(uncategorized, save=True)
+        print(f'{count} items categorized')
