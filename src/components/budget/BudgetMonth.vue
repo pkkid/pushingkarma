@@ -99,8 +99,8 @@
         var columns = [];
         var opts = {color:true, symbol:'$'};
         var monthstr = this.month.format('YYYY-MM');
-        columns.push({type:TYPES.readonly, label:'Category', field:'name', width:200});
-        columns.push({type:TYPES.readonly, label:'Budget', field:'budget', width:100, opts:opts, numeric:true, format:utils.usdint, cls:'blur'});
+        columns.push({type:TYPES.editable, label:'Category', field:'name', width:200});
+        columns.push({type:TYPES.editable, label:'Budget', field:'budget', width:100, opts:opts, numeric:true, format:utils.usdint, cls:'blur'});
         columns.push({type:TYPES.popover, label:'Spent', field:'total', width:100, opts:opts, numeric:true, format:utils.usdint, cls:'blur', monthstr:monthstr, popoverComponent:BudgetPopover});
         columns.push({type:TYPES.readonly, label:'Difference', field:'diff', width:150, html:this.diffbar});
         return columns;
@@ -116,6 +116,7 @@
         for (var cat of categories) {
           if (cat.exclude_budget == true) { continue; }
           tablerows[cat.name] = {};
+          tablerows[cat.name].id = cat.id;
           tablerows[cat.name].name = cat.name;
           tablerows[cat.name].budget = cat.budget;
           tablerows[cat.name].total = 0;
@@ -158,6 +159,21 @@
           if (!api.isCancel(err)) { throw(err); }
         } finally {
           setTimeout(() => this.loading = false, 300);
+        }
+      },
+
+      // Save
+      // Save the current cell value
+      save: async function(id, field, newvalue, cell=null) {
+        try {
+          var change = utils.rset({}, field, newvalue);
+          var {data} = await api.Budget.patchCategory(id, change);
+          if (cell) { cell.setStatus('success', 1000); }
+          return data;
+        } catch(err) {
+          if (cell) { cell.setStatus('error'); }
+          utils.snackbar(`Error saving category.`);
+          console.log(err);
         }
       },
     }
