@@ -5,7 +5,7 @@
   },
   "license": "CC-BY-SA-2.5",
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "buefy": "^0.8.13",
     "core-js": "^3.6.4",
     "dayjs": "^1.8.23",
@@ -41,7 +41,7 @@
     "webpack-bundle-analyzer": "^3.6.1"
   },
   "optionalDependencies": {
-    "fsevents": "^2.1.2"
+    "fsevents": "*"
   },
   "scripts": {
     "start": "mount-private.py; npm-run-all -p django-runserver vue-watch",
