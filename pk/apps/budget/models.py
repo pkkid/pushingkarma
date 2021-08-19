@@ -79,9 +79,3 @@ class Transaction(TimeStampedModel):
 
     def __str__(self):
         return '%s:%s:%s:%s' % (self.id, self.account, self.trxid, self.payee[:10])
-
-
-class KeyValue(TimeStampedModel):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
-    key = models.SlugField(primary_key=True, max_length=255, unique=True, null=False)
-    value = models.TextField()

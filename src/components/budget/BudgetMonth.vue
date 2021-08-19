@@ -7,10 +7,23 @@
           <i class='mdi mdi-chevron-right' @click.prevent='month = month.add(1, "month")'/>
           <b-button :class='{"active":month != today}' @click.prevent='month = today'>Today</b-button>
         </div>
-        <div class='subtext'>View {{month.format('MMMM')}} transactions</div>
+        <div class='subtext'>View {{count}} {{month.format('MMMM')}} transactions</div>
       </h1>
       <div style='clear:both'/>
       <div v-if='!loading' v-hotkey='keymap'>
+        <div id='monthdetails'>
+          April Spending Overview
+          <div>Income: {{this.income|usdint}}</div>
+          <div>Spent: {{this.spent|usdint}}</div>
+          <div>Remaining: {{this.income + this.spent|usdint}}</div>
+          <div>
+            <div v-for='(amount,comment) in this.comments' :key='comment'>
+              <template v-if='(amount < -100) || (amount > 100)'>
+                {{comment}}: {{amount|usdint}}
+              </template>
+            </div>
+          </div>
+        </div>
         <div class='tablewrap'>
           <div class='clickout-detector' v-click-outside='cancelAll'>
             <b-table :data='tabledata' narrowed ref='table' tabindex='-1'>
@@ -33,11 +46,16 @@
 
 <script>
   import * as api from '@/api';
-  import * as dayjs from 'dayjs';
   import * as pathify from 'vuex-pathify';
   import * as utils from '@/utils/utils';
   import * as butils from '@/components/budget/BudgetUtils';
+
+  import fromPairs from 'lodash/fromPairs';
+  import sortBy from 'lodash/sortBy';
+  import toPairs from 'lodash/toPairs';
+
   import {TYPES} from '@/components/TableMixin';
+  import dayjs from 'dayjs';
   import BudgetPopover from '@/components/budget/BudgetPopover';
   import PageWrap from '@/components/site/PageWrap';
   import TableMixin from '@/components/TableMixin';
@@ -48,11 +66,16 @@
     components: {PageWrap},
     data: () => ({
       cancelsearch: null,   // Cancel search token
-      count: 0,             // Total transactions in view
       loading: false,       // True to show loading indicator
       month: dayjs(),       // Current month displayed (dayjs object)
       today: dayjs(),       // Today's month
       tablerows: null,      // Row items to display
+      // Smmary data
+      count: 0,             // Total transactions in view
+      income: 0,            // Total income this month
+      spent: 0,             // Total spent this month
+      remaining: 0,         // Total remaining this month
+      comments: [],         // Summarized comments
     }),
     computed: {
       categories: pathify.sync('budget/categories'),
@@ -99,7 +122,7 @@
         var columns = [];
         var opts = {color:true, symbol:'$'};
         var monthstr = this.month.format('YYYY-MM');
-        columns.push({type:TYPES.editable, label:'Category', field:'name', width:200});
+        columns.push({type:TYPES.editable, label:'Category', field:'name', width:180});
         columns.push({type:TYPES.editable, label:'Budget', field:'budget', width:100, opts:opts, numeric:true, format:utils.usdint, cls:'blur'});
         columns.push({type:TYPES.popover, label:'Spent', field:'total', width:100, opts:opts, numeric:true, format:utils.usdint, cls:'blur', monthstr:monthstr, popoverComponent:BudgetPopover});
         columns.push({type:TYPES.readonly, label:'Difference', field:'diff', width:150, html:this.diffbar});
@@ -133,28 +156,36 @@
       refresh: async function() {
         this.loading = true;
         try {
-          var count = 0;
           var transactions = await this.getTransactions();
           var tablerows = this.initTablerows();
           var categories = Object.keys(tablerows);
           // Organize the transactions into their categories
+          this.count = 0;
+          this.income = 0;
+          this.spent = 0;
+          this.comments = new utils.DefaultDict(Number);
           for (var trx of transactions) {
             var amount = parseFloat(trx.amount);
             var cat = trx.category || butils.UNCATEGORIZED;
             if (categories.indexOf(cat.name) == -1) { continue; }
-            count += 1;
+            // Table data
             tablerows[cat.name].count += 1;
             tablerows[cat.name].items.push(trx);
             tablerows[cat.name].total += amount;
             tablerows[butils.TOTAL.name].total += amount;
+            // Summary data
+            this.count += 1;
+            this.income += cat.name == 'Income' ? amount : 0;
+            this.spent += cat.name != 'Income' ? amount : 0;
+            if (trx.comment) { this.comments[trx.comment] += amount; }
           }
           // Remove empty rows
           for (var key of Object.keys(tablerows)) {
             if (tablerows[key].total == 0) { delete tablerows[key]; }
           }
           this.tablerows = tablerows;
-          this.count = count;
           utils.updateHistory(this.$router, {search:this.search});
+          this.comments = fromPairs(sortBy(toPairs(this.comments), 1));
         } catch(err) {
           if (!api.isCancel(err)) { throw(err); }
         } finally {
@@ -182,9 +213,18 @@
 
 <style lang='scss'>
   #budgetmonth {
-    .tablewrap { width: 562px; }
-    td.totalrow { font-weight:600; background-color:$lightbg-bg1; }
-
+    
+    #monthdetails {
+      float: right;
+      width: 370px;
+      border: 1px solid #e1e1e1;
+      background-color: #f3f3f3;
+      border-radius: 3px;
+      padding: 5px 10px;
+    }
+    
+    .tablewrap { width: 542px; }
+    .totalrow { font-weight:600; background-color:$lightbg-bg1; }
     .diffbar {
       position: relative;
       top: 5px;

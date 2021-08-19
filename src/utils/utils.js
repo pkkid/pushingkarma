@@ -35,6 +35,23 @@ export function copyToClipboard(str) {
   document.body.removeChild(elem);
 }
 
+// Default Dict
+// In python you can have a defaultdict(int) which stores int as values. If you
+// try to do a 'get' on a key which is not present in the dictionary you get zero
+// as default value. This class closley matches that behavior in javascript.
+// https://stackoverflow.com/a/44622467/84463
+export class DefaultDict {
+  constructor(defaultInit) {
+    return new Proxy({}, {
+      get: (target, name) => name in target ?
+        target[name] :
+        (target[name] = typeof defaultInit === 'function' ?
+          new defaultInit().valueOf() :
+          defaultInit)
+    });
+  }
+}
+
 // Drag Type
 // Returns 'file' or <tagname> of element being dragged.
 export function dragType(event) {

@@ -14,7 +14,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from .manager import TransactionManager
-from .models import Account, Category, Transaction, KeyValue
+from .models import Account, Category, Transaction
 
 DATEFORMAT = '%Y-%m-%d'
 IGNORED = 'Ignored'
@@ -174,19 +174,6 @@ class TransactionsViewSet(viewsets.ModelViewSet):
         pass
 
 
-class KeyValueSerializer(DynamicFieldsSerializer):
-    class Meta:
-        model = KeyValue
-        fields = ('key','value','url')
-
-
-class KeyValueViewSet(viewsets.ModelViewSet):
-    queryset = KeyValue.objects.order_by('key')
-    serializer_class = KeyValueSerializer
-    permission_classes = [IsAuthenticated]
-    list_fields = KeyValueSerializer.Meta.fields
-
-
 def clean_amount(value):
     """ Clean a USD string such as -$99.99 to a Decimal value. """
     if isinstance(value, str):
@@ -204,7 +191,6 @@ def budget(request):
     return Response({
         'budget/accounts': f'{root}budget/accounts',
         'budget/categories': f'{root}budget/categories',
-        'budget/keyvalue': f'{root}budget/keyvalue',
         'budget/summary': f'{root}budget/summary',
         'budget/transactions': f'{root}budget/transactions',
         'budget/upload': f'{root}budget/upload',
