@@ -7,6 +7,10 @@ import django_extensions.db.fields
 import pk.apps.budget.models
 
 
+def get_uncategorized():
+    return pk.apps.budget.models.Category.objects.get(name='Uncategorized')
+
+
 class Migration(migrations.Migration):
 
     initial = True
@@ -83,7 +87,7 @@ class Migration(migrations.Migration):
                 ('memo', models.CharField(blank=True, default='', max_length=255)),
                 ('comment', models.TextField(blank=True, db_index=True, default='')),
                 ('account', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='budget.Account')),
-                ('category', models.ForeignKey(default=None, on_delete=models.SET(pk.apps.budget.models.get_uncategorized), to='budget.Category')),
+                ('category', models.ForeignKey(default=None, on_delete=models.SET(get_uncategorized), to='budget.Category')),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
             options={

@@ -4,11 +4,7 @@ from django.db import models, transaction
 from django_extensions.db.models import TimeStampedModel
 from pk import log
 
-UNCATEGORIZED = 'Uncategorized'
 ACCOUNT_CHOICES = [('bank','Bank'), ('credit','Credit')]
-
-def get_uncategorized():
-    return Category.objects.get(name=UNCATEGORIZED)
 
 
 class Account(TimeStampedModel):
