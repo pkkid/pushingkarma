@@ -12,17 +12,21 @@
       <div style='clear:both'/>
       <div v-if='!loading' v-hotkey='keymap'>
         <div id='monthdetails'>
-          April Spending Overview
-          <div>Income: {{this.income|usdint}}</div>
-          <div>Spent: {{this.spent|usdint}}</div>
-          <div>Remaining: {{this.income + this.spent|usdint}}</div>
-          <div>
-            <div v-for='(amount,comment) in this.comments' :key='comment'>
+          <div class='header'>{{month.format('MMMM')}} Spending Overview</div>
+          <dl class='spending'>
+            <dt>Income</dt><dd class='blur'>{{this.income|usdint}}</dd>
+            <dt>Spent</dt><dd class='blur'>{{this.spent|usdint}}</dd>
+            <dt>Remaining</dt><dd class='total' :class='amountcls(this.income + this.spent)'>{{this.income + this.spent|usdint}}</dd>
+          </dl>
+          <hr/>
+          <dl class='comments'>
+            <template v-for='(amount,comment) in this.comments'>
               <template v-if='(amount < -100) || (amount > 100)'>
-                {{comment}}: {{amount|usdint}}
+                <dt :key='comment + "_label"'>{{comment}}</dt>
+                <dd :key='comment' class='blur'>{{amount|usdint}}</dd>
               </template>
-            </div>
-          </div>
+            </template>
+          </dl>
         </div>
         <div class='tablewrap'>
           <div class='clickout-detector' v-click-outside='cancelAll'>
@@ -93,6 +97,13 @@
       this.refresh();
     },
     methods: {
+
+      // Amount Class
+      // Red Green or Regular class style
+      amountcls: function(amount) {
+        return amount > 0 ? 'gtzero blur' : 'ltzero blur';
+      },
+
       // Difference Bar
       // HTML for the difference column on the table
       diffbar: function(value, row) {
@@ -213,16 +224,23 @@
 
 <style lang='scss'>
   #budgetmonth {
-    
-    #monthdetails {
-      float: right;
-      width: 370px;
-      border: 1px solid #e1e1e1;
-      background-color: #f3f3f3;
+    // Previous and Next month buttons
+    h1 .mdi:hover {
+      cursor: pointer;
+      background-color: rgba(0,0,0,0.05); 
       border-radius: 3px;
-      padding: 5px 10px;
+      user-select: none;
     }
-    
+    h1 button {
+      padding: 20px 10px;
+      margin-top: 5px;
+      border-width: 0px;
+      background-color: transparent;
+      font-weight: bold;
+      &:hover { background-color: rgba(0,0,0,0.05); }
+    }
+
+    // Category table
     .tablewrap { width: 542px; }
     .totalrow { font-weight:600; background-color:$lightbg-bg1; }
     .diffbar {
@@ -230,10 +248,48 @@
       top: 5px;
       .bg { width: 140px; height:10px; background-color:#ddd; border-radius:3px; position:absolute; }
       .amt { min-width:0px; max-width:140px; height:10px; background-color:#58881b; border-radius:3px; position:absolute;
-        background:linear-gradient(90deg, #58881b 0%, #58881b 98px, #9d0006 106px, #9d0006 100%); }
+        background:linear-gradient(90deg, #58881b 0%, #58881b 100px, #9d0006 100px, #9d0006 100%); }
       .line { width: 1px; height:10px; background-color:#f2f2f2; position:absolute; left:99px; }
     }
 
-    H1 .mdi:hover { cursor:pointer; background-color:rgba(0,0,0,0.05);  border-radius:3px; user-select:none; }
+    // Side panel
+    #monthdetails {
+      float: right;
+      width: 370px;
+      border: 1px solid $lightbg-bg3;
+      background-color:  lighten($lightbg-bg1, 2%);
+      border-radius: 3px;
+      padding: 1px;
+
+      .header {
+        font-size: 12px;
+        font-weight: 600;
+        background-color: $lightbg-bg2;
+        line-height: 22px;
+        padding: 0px 10px;
+      }
+
+      .spending {
+        font-size: 0.95em;
+        padding: 0px 10px;
+        dt { width: 100px; }
+        dd { margin-left:270px; text-align:right; width:70px; }
+        dd.gtzero { color:$lightbg-green2; font-weight:bold; }
+        dd.ltzero { color:$lightbg-red1; font-weight:bold; }
+        .total { border-top: 1px solid $lightbg-fg4; }
+      }
+
+      hr { margin:10px auto; }
+
+
+      .comments {
+        opacity: 0.8;
+        padding: 0px 10px;
+        dt { width: 260px; }
+        dd { margin-left:270px; text-align:right; width:70px; }
+      }
+
+    }
+
   }
 </style>
