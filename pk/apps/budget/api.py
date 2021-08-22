@@ -3,7 +3,7 @@ import datetime
 from dateutil.relativedelta import relativedelta
 from decimal import Decimal
 from django.db.models import F, Q, Count, Sum, DecimalField
-from django.db.models.functions import Cast
+from django.db.models.functions import Cast, TruncMonth
 from pk import log, utils  # noqa
 from pk.utils.api.serializers import DynamicFieldsSerializer, PartialFieldsSerializer
 from pk.utils.api.viewsets import ModelViewSetWithAnnotations
@@ -196,6 +196,31 @@ def budget(request):
         'budget/upload': f'{root}budget/upload',
     })
 
+
+@api_view(['get'])
+@permission_classes([IsAuthenticated])
+def history(request, *args, **kwargs):
+    # Fetch the dataset to use
+    data = Transaction.objects.filter(user=request.user)                # Filter to only this user
+    data = data.exclude(category__exclude_budget=True)                  # Ignore ignored.. :P
+    data = data.annotate(month=TruncMonth('date'))                      # Truncate to month and add to select list
+    data = data.values('category__name', 'month')                       # Group By month
+    data = data.annotate(count=Count('id'), spent=Sum('amount'))        # Select the count of the grouping
+    data = data.values('category__name', 'month', 'spent', 'count')     # Select month and count
+    # Convert the dataset to a chartable format
+    # Category -> Year -> Month
+    history = {'Total':{}}
+    for item in data:
+        category = item['category__name']
+        year = item['month'].strftime('%Y')
+        month = int(item['month'].strftime('%m')) - 1
+        if category not in history: history[category] = {}
+        if year not in history[category]: history[category][year] = [0] * 12
+        if year not in history['Total']: history['Total'][year] = [0] * 12
+        history[category][year][month] = round(item['spent'], 2)
+        history['Total'][year][month] += round(item['spent'], 2)
+    return Response(history)
+    
 
 @api_view(['get'])
 @permission_classes([IsAuthenticated])
