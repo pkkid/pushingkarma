@@ -200,8 +200,11 @@ def budget(request):
 @api_view(['get'])
 @permission_classes([IsAuthenticated])
 def history(request, *args, **kwargs):
+    this_year = int(datetime.date.today().year)
+    two_years_ago = datetime.date(this_year - 2, 1, 1)
     # Fetch the dataset to use
     data = Transaction.objects.filter(user=request.user)                # Filter to only this user
+    data = data.filter(date__gte=two_years_ago)                         # Only get last two years of data
     data = data.exclude(category__exclude_budget=True)                  # Ignore ignored.. :P
     data = data.annotate(month=TruncMonth('date'))                      # Truncate to month and add to select list
     data = data.values('category__name', 'month')                       # Group By month
@@ -209,14 +212,17 @@ def history(request, *args, **kwargs):
     data = data.values('category__name', 'month', 'spent', 'count')     # Select month and count
     # Convert the dataset to a chartable format
     # Category -> Year -> Month
-    history = {'Total':{}}
+    history = {'Total':{this_year-2:[0]*12, this_year-1:[0]*12, this_year:[0]*12}}
     for item in data:
         category = item['category__name']
-        year = item['month'].strftime('%Y')
+        year = int(item['month'].strftime('%Y'))
         month = int(item['month'].strftime('%m')) - 1
+        # Setup the default data set
         if category not in history: history[category] = {}
-        if year not in history[category]: history[category][year] = [0] * 12
-        if year not in history['Total']: history['Total'][year] = [0] * 12
+        if this_year-2 not in history[category]: history[category][this_year-2] = [0]*12
+        if this_year-1 not in history[category]: history[category][this_year-1] = [0]*12
+        if this_year not in history[category]: history[category][this_year] = [0]*12
+        # Add the new data
         history[category][year][month] = round(item['spent'], 2)
         history['Total'][year][month] += round(item['spent'], 2)
     return Response(history)
