@@ -13,6 +13,7 @@ export const Budget = {
   deleteCategory(id) { return axios.delete(`/api/budget/categories/${id}`); },
   getAccounts() { return axios.get(`/api/budget/accounts`); },
   getCategories() { return axios.get(`/api/budget/categories`); },
+  getHistory() { return axios.get(`/api/budget/history`); },
   getSummary() { return axios.get(`/api/budget/summary`); },
   getTransactions(params, cancelToken) { return axios.get(`/api/budget/transactions`, {params, cancelToken}); },
   getKeyVals() { axios.get(`/api/budget/keyval`); },

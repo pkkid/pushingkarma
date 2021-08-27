@@ -8,7 +8,8 @@
       <template v-slot:contentarea>
         <Dropzone @filesDropped='upload'>
           <transition name='fadein'>
-            <BudgetMonth v-if='view=="month"'/>
+            <div v-if='loaded==false'/>
+            <BudgetMonth v-else-if='view=="month"'/>
             <BudgetYear v-else-if='view=="year"'/>
             <BudgetSettings v-else-if='view=="settings"'/>
             <BudgetTransactions v-else/>
@@ -36,11 +37,15 @@
     name: 'Budget',
     components: {BudgetMenu, BudgetMonth, BudgetYear, BudgetSettings,
       BudgetTransactions, Dropzone, Navigation, SidePanel},
+    data: () => ({
+      loaded: false,
+    }),
     computed: {
       account: pathify.sync('budget/account'),
       accounts: pathify.sync('budget/accounts'),
       categories: pathify.sync('budget/categories'),
       summary: pathify.sync('budget/summary'),
+      history: pathify.sync('budget/history'),
       demo: pathify.sync('budget/demo'),
       view: pathify.sync('budget/view'),
     },
@@ -65,15 +70,20 @@
       var apromise = api.Budget.getAccounts();
       var cpromise = api.Budget.getCategories();
       var spromise = api.Budget.getSummary();
+      var hpromise = api.Budget.getHistory();
       var {data:adata} = await apromise;
       var {data:cdata} = await cpromise;
       var {data:sdata} = await spromise;
+      var {data:hdata} = await hpromise;
       this.accounts = adata.results;
       this.categories = cdata.results;
       this.summary = sdata;
+      this.history = hdata;
       // Navigate to the account subtab
       var accountid = this.$route.query.account;
       if (accountid) { this.account = this.accounts[accountid]; }
+      console.log('loaded');
+      this.loaded = true;
     },
     
     methods: {

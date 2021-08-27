@@ -116,6 +116,7 @@ export function int(value) {
   return parseInt(value, 10);
 }
 
+
 // Keep In Range
 // Make sure the specified value is within min and max (inclusive).
 export function keepInRange(value, min, max) {
@@ -173,8 +174,9 @@ export function rset(object, property, value) {
   var current = parts.shift();
   var pointer = object;
   while (parts.length > 0) {
-    if (pointer[current] === undefined)
+    if (pointer[current] === undefined) {
       pointer[current] = {};
+    }
     pointer = pointer[current];
     current = parts.shift();
   }

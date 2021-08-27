@@ -29,7 +29,10 @@
               </template>
             </dl>
           </div>
-          <canvas id='spendchart'/>
+          <div id='monthdetails' style='margin-top:20px;'>
+            <div class='header'>Total Spending History</div>
+            <canvas id='spendchart'/>
+          </div>
         </div>
         <div class='tablewrap'>
           <div class='clickout-detector' v-click-outside='cancelAll'>
@@ -56,6 +59,7 @@
   import * as pathify from 'vuex-pathify';
   import * as utils from '@/utils/utils';
   import * as butils from '@/components/budget/BudgetUtils';
+  import Chart from 'chart.js/auto';
   import fromPairs from 'lodash/fromPairs';
   import sortBy from 'lodash/sortBy';
   import toPairs from 'lodash/toPairs';
@@ -76,6 +80,7 @@
       today: dayjs(),       // Today's month
       transactions: [],     // List of transactions in current view
       tablerows: null,      // Row items to display
+      spendchart: null,     // Chart.js Spend Chart
       // Smmary data
       count: 0,             // Total transactions in view
       income: 0,            // Total income this month
@@ -85,6 +90,7 @@
     }),
     computed: {
       categories: pathify.sync('budget/categories'),
+      history: pathify.sync('budget/history'),
       columns: function() { return this.initColumns(); },
       items: function() { return this.tablerows; },
       keymap: function() { return this.tableMixinKeymap(); },
@@ -122,14 +128,12 @@
       // Search for and update the list of displayed transactions
       getTransactions: async function() {
         try {
-          
           this.cancelsearch = api.cancel(this.cancelsearch);
           var token = this.cancelsearch.token;
           var datestr = this.month.format('MMM YYYY');
           var params = {search:`date="${datestr}"`, limit:9999};
           var {data} = await api.Budget.getTransactions(params, token);
           this.transactions = data.results;
-          
         } catch(err) {
           if (!api.isCancel(err)) { throw(err); }
         }
@@ -195,10 +199,12 @@
         this.income = 0;
         this.spent = 0;
         this.comments = new utils.DefaultDict(Number);
+        var catnames = Object.keys(this.tablerows);
         for (var trx of this.transactions) {
           var amount = parseFloat(trx.amount);
           var cat = trx.category || butils.UNCATEGORIZED;
           this.count += 1;
+          if (catnames.indexOf(cat.name) == -1) { continue; }
           this.income += cat.name == 'Income' ? amount : 0;
           this.spent += cat.name != 'Income' ? amount : 0;
           if (trx.comment) { this.comments[trx.comment] += amount; }
@@ -207,14 +213,65 @@
         this.comments = fromPairs(sortBy(toPairs(this.comments), 1));
       },
 
+      initChart: function() {
+        if (this.spendchart === null) {
+          var ctx = document.getElementById('spendchart');
+          var opts = {};
+          utils.rset(opts, 'type', 'line');
+          utils.rset(opts, 'data.labels', ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']);
+          utils.rset(opts, 'data.datasets', []);
+          utils.rset(opts, 'data.datasets.0.backgroundColor', 'rgba(200, 0, 0, 1)');
+          utils.rset(opts, 'data.datasets.0.borderColor', 'rgba(200, 0, 0, 1)');
+          utils.rset(opts, 'data.datasets.0.label', '2021');
+          utils.rset(opts, 'data.datasets.0.tension', 0.2);
+          utils.rset(opts, 'data.datasets.1.backgroundColor', 'rgba(200, 0, 0, 0.2)');
+          utils.rset(opts, 'data.datasets.1.borderColor', 'rgba(200, 0, 0, 0.2)');
+          utils.rset(opts, 'data.datasets.1.label', '2020');
+          utils.rset(opts, 'data.datasets.1.tension', 0.2);
+          utils.rset(opts, 'options.elements.point.radius', 0);
+          utils.rset(opts, 'options.plugins.legend.display', false);
+          utils.rset(opts, 'options.plugins.tooltip.displayColors', false);
+          utils.rset(opts, 'options.plugins.tooltip.intersect', false);
+          utils.rset(opts, 'options.plugins.tooltip.mode', 'index');
+          utils.rset(opts, 'options.plugins.tooltip.position', 'nearest');
+          utils.rset(opts, 'options.scales.x.grid.display', false);
+          utils.rset(opts, 'options.scales.x.ticks.font.size', 9);
+          utils.rset(opts, 'options.scales.y.grid.color', '#ddd');
+          utils.rset(opts, 'options.scales.y.ticks.font.size', 9);
+          // Callbacks
+          utils.rset(opts, 'options.scales.x.ticks.callback', function(value) {
+            if ([0,2,4,6,8,10].indexOf(value) != -1) { return opts.data.labels[value]; }
+            return '';
+          });
+          utils.rset(opts, 'options.scales.y.ticks.callback', function(value) {
+            if (Math.abs(value) < 5) { return ''; }
+            if ((value > 0) && (value < 1000)) { return `$${value}`; }
+            if ((value > 0) && (value < 1000000)) { return `$${parseInt(value/1000)}k`; }
+            if ((value < 0) && (value > -999)) { return `-$${parseInt((value*-1))}`; }
+            if ((value < 0) && (value > -999999)) { return `-$${parseInt((value*-1)/1000)}k`; }
+            return value;
+          });
+          this.spendchart = new Chart(ctx, opts);
+        }
+      },
+
+      updateChart: function(category) {
+        this.initChart();
+        category = category === undefined ? 'Total' : category;
+        this.spendchart.data.datasets[0].data = this.history[category][2021];
+        this.spendchart.data.datasets[1].data = this.history[category][2020];
+        this.spendchart.update();
+      },
+
       // Refresh
       // Refresh the list of transactions displayed
       refresh: async function() {
-        this.loading = true;
         await this.getTransactions();
         this.populateTablerows();
         this.populateMonthData();
-        setTimeout(() => this.loading = false, 100);
+        this.loading = false;
+        await this.$nextTick();
+        this.updateChart();
       },
 
       // Save
@@ -300,9 +357,8 @@
       }
     }
     #spendchart {
-      background-color: rgba(0,0,0,0.05);
       height: 250px;
-      margin-top: 20px;
+      margin: 10px 5px;
       width: 100%;
     }
 
