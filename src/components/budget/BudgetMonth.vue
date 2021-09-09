@@ -256,12 +256,8 @@
           utils.rset(opts, 'type', 'line');
           utils.rset(opts, 'data.labels', ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']);
           utils.rset(opts, 'data.datasets', []);
-          // utils.rset(opts, 'data.datasets.0.backgroundColor', 'rgba(200, 0, 0, 1)');
-          // utils.rset(opts, 'data.datasets.0.borderColor', 'rgba(200, 0, 0, 1)');
           utils.rset(opts, 'data.datasets.0.label', '2021');
           utils.rset(opts, 'data.datasets.0.tension', 0.2);
-          // utils.rset(opts, 'data.datasets.1.backgroundColor', 'rgba(200, 0, 0, 0.2)');
-          // utils.rset(opts, 'data.datasets.1.borderColor', 'rgba(200, 0, 0, 0.2)');
           utils.rset(opts, 'data.datasets.1.label', '2020');
           utils.rset(opts, 'data.datasets.1.tension', 0.2);
           utils.rset(opts, 'options.elements.point.radius', 0);
@@ -276,11 +272,8 @@
           utils.rset(opts, 'options.scales.y.grid.color', '#ddd');
           utils.rset(opts, 'options.scales.y.ticks.callback', (v) => (this.chartjs_yticks(opts, v)));
           utils.rset(opts, 'options.scales.y.ticks.font.size', 9);
-
-
           utils.rset(opts, 'plugins', []);
           utils.rset(opts, 'plugins.0.beforeRender', this.chartjs_plugin_linecolor);
-          //console.log(opts);
           this.spendchart = new Chart(ctx, opts);
         }
       },
@@ -306,24 +299,26 @@
       // Chart.js Plugin Linecolor
       // Sets the line color to greene above 0, red below.
       chartjs_plugin_linecolor: function(chart) {
+        // Gradient is based on the percent of the canvas with 0% being the top. We
+        // need to do a bunch of math here to determine what percent of the canvas
+        // the zero line is located at.
         const y = chart.scales.y;
         const numtotal = y.end - y.start;
         const numpctzero = 1 - ((numtotal - y.end) / numtotal);
         const pxzero = (y.bottom - y.top) * numpctzero;
         const pctzero = 1 - (pxzero / y.bottom);
-
+        // Add a subtle fade as we transition from red to green
         const fadeamt = 0.02;   // percentage to fade values
         const gmin = Math.min(Math.max(pctzero-fadeamt, 0), 1);
         const gmax = Math.min(Math.max(pctzero+fadeamt, 0), 1);
-
-        // higher percentages are lower down
+        // Update first dataset (this year)
         const gradient0 = chart.ctx.createLinearGradient(0, 0, 0, 200);
         gradient0.addColorStop(0, 'rgba(88,136,27,1)');
         gradient0.addColorStop(gmin, 'rgba(88,136,27,1)');
         gradient0.addColorStop(gmax, 'rgba(157,0,6,1)');
         gradient0.addColorStop(1, 'rgba(157,0,6,1)');
         chart.data.datasets[0].borderColor = gradient0;
-
+        // Update second dataset (last year)
         const gradient1 = chart.ctx.createLinearGradient(0, 0, 0, 200);
         gradient1.addColorStop(0, 'rgba(88,136,27,0.2)');
         gradient1.addColorStop(gmin, 'rgba(88,136,27,0.2)');
