@@ -213,50 +213,8 @@
         this.comments = fromPairs(sortBy(toPairs(this.comments), 1));
       },
 
-      initChart: function() {
-        if (this.spendchart === null) {
-          var ctx = document.getElementById('spendchart');
-          var opts = {};
-          utils.rset(opts, 'type', 'line');
-          utils.rset(opts, 'data.labels', ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']);
-          utils.rset(opts, 'data.datasets', []);
-          utils.rset(opts, 'data.datasets.0.backgroundColor', 'rgba(200, 0, 0, 1)');
-          utils.rset(opts, 'data.datasets.0.borderColor', 'rgba(200, 0, 0, 1)');
-          utils.rset(opts, 'data.datasets.0.label', '2021');
-          utils.rset(opts, 'data.datasets.0.tension', 0.2);
-          utils.rset(opts, 'data.datasets.1.backgroundColor', 'rgba(200, 0, 0, 0.2)');
-          utils.rset(opts, 'data.datasets.1.borderColor', 'rgba(200, 0, 0, 0.2)');
-          utils.rset(opts, 'data.datasets.1.label', '2020');
-          utils.rset(opts, 'data.datasets.1.tension', 0.2);
-          utils.rset(opts, 'options.elements.point.radius', 0);
-          utils.rset(opts, 'options.plugins.legend.display', false);
-          utils.rset(opts, 'options.plugins.tooltip.displayColors', false);
-          utils.rset(opts, 'options.plugins.tooltip.intersect', false);
-          utils.rset(opts, 'options.plugins.tooltip.mode', 'index');
-          utils.rset(opts, 'options.plugins.tooltip.position', 'nearest');
-          utils.rset(opts, 'options.scales.x.grid.display', false);
-          utils.rset(opts, 'options.scales.x.ticks.font.size', 9);
-          utils.rset(opts, 'options.scales.y.grid.color', '#ddd');
-          utils.rset(opts, 'options.scales.y.ticks.font.size', 9);
-          // Callbacks
-          utils.rset(opts, 'options.scales.x.ticks.callback', function(value) {
-            if ([0,2,4,6,8,10].indexOf(value) != -1) { return opts.data.labels[value]; }
-            return '';
-          });
-          utils.rset(opts, 'options.scales.y.ticks.callback', function(value) {
-            if (Math.abs(value) < 5) { return ''; }
-            if ((value > 0) && (value < 1000)) { return `$${value}`; }
-            if ((value > 0) && (value < 1000000)) { return `$${parseInt(value/1000)}k`; }
-            if ((value < 0) && (value > -999)) { return `-$${parseInt((value*-1))}`; }
-            if ((value < 0) && (value > -999999)) { return `-$${parseInt((value*-1)/1000)}k`; }
-            return value;
-          });
-          this.spendchart = new Chart(ctx, opts);
-        }
-      },
-
       updateChart: function(category) {
-        this.initChart();
+        this.chartjs_init();
         category = category === undefined ? 'Total' : category;
         this.spendchart.data.datasets[0].data = this.history[category][2021];
         this.spendchart.data.datasets[1].data = this.history[category][2020];
@@ -288,6 +246,92 @@
           console.log(err);
         }
       },
+
+      // Chart.js Init
+      // Initialize the chartjs history display
+      chartjs_init: function() {
+        if (this.spendchart === null) {
+          var ctx = document.getElementById('spendchart');
+          var opts = {};
+          utils.rset(opts, 'type', 'line');
+          utils.rset(opts, 'data.labels', ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']);
+          utils.rset(opts, 'data.datasets', []);
+          // utils.rset(opts, 'data.datasets.0.backgroundColor', 'rgba(200, 0, 0, 1)');
+          // utils.rset(opts, 'data.datasets.0.borderColor', 'rgba(200, 0, 0, 1)');
+          utils.rset(opts, 'data.datasets.0.label', '2021');
+          utils.rset(opts, 'data.datasets.0.tension', 0.2);
+          // utils.rset(opts, 'data.datasets.1.backgroundColor', 'rgba(200, 0, 0, 0.2)');
+          // utils.rset(opts, 'data.datasets.1.borderColor', 'rgba(200, 0, 0, 0.2)');
+          utils.rset(opts, 'data.datasets.1.label', '2020');
+          utils.rset(opts, 'data.datasets.1.tension', 0.2);
+          utils.rset(opts, 'options.elements.point.radius', 0);
+          utils.rset(opts, 'options.plugins.legend.display', false);
+          utils.rset(opts, 'options.plugins.tooltip.displayColors', false);
+          utils.rset(opts, 'options.plugins.tooltip.intersect', false);
+          utils.rset(opts, 'options.plugins.tooltip.mode', 'index');
+          utils.rset(opts, 'options.plugins.tooltip.position', 'nearest');
+          utils.rset(opts, 'options.scales.x.grid.display', false);
+          utils.rset(opts, 'options.scales.x.ticks.callback', (v) => (this.chartjs_xticks(opts, v)));
+          utils.rset(opts, 'options.scales.x.ticks.font.size', 9);
+          utils.rset(opts, 'options.scales.y.grid.color', '#ddd');
+          utils.rset(opts, 'options.scales.y.ticks.callback', (v) => (this.chartjs_yticks(opts, v)));
+          utils.rset(opts, 'options.scales.y.ticks.font.size', 9);
+
+
+          utils.rset(opts, 'plugins', []);
+          utils.rset(opts, 'plugins.0.beforeRender', this.chartjs_plugin_linecolor);
+          //console.log(opts);
+          this.spendchart = new Chart(ctx, opts);
+        }
+      },
+
+      // Chart.js X Ticks
+      // Callback function for x ticks display
+      chartjs_xticks: function(opts, value) {
+        if ([0,2,4,6,8,10].indexOf(value) != -1) { return opts.data.labels[value]; }
+        return '';
+      },
+
+      // Chart.js Y Ticks
+      // Callback function for y ticks display
+      chartjs_yticks: function(opts, value) {
+        if (Math.abs(value) < 5) { return ''; }
+        if ((value > 0) && (value < 1000)) { return `$${value}`; }
+        if ((value > 0) && (value < 1000000)) { return `$${parseInt(value/1000)}k`; }
+        if ((value < 0) && (value > -999)) { return `-$${parseInt((value*-1))}`; }
+        if ((value < 0) && (value > -999999)) { return `-$${parseInt((value*-1)/1000)}k`; }
+        return value;
+      },
+
+      // Chart.js Plugin Linecolor
+      // Sets the line color to greene above 0, red below.
+      chartjs_plugin_linecolor: function(chart) {
+        const y = chart.scales.y;
+        const numtotal = y.end - y.start;
+        const numpctzero = 1 - ((numtotal - y.end) / numtotal);
+        const pxzero = (y.bottom - y.top) * numpctzero;
+        const pctzero = 1 - (pxzero / y.bottom);
+
+        const fadeamt = 0.02;   // percentage to fade values
+        const gmin = Math.min(Math.max(pctzero-fadeamt, 0), 1);
+        const gmax = Math.min(Math.max(pctzero+fadeamt, 0), 1);
+
+        // higher percentages are lower down
+        const gradient0 = chart.ctx.createLinearGradient(0, 0, 0, 200);
+        gradient0.addColorStop(0, 'rgba(88,136,27,1)');
+        gradient0.addColorStop(gmin, 'rgba(88,136,27,1)');
+        gradient0.addColorStop(gmax, 'rgba(157,0,6,1)');
+        gradient0.addColorStop(1, 'rgba(157,0,6,1)');
+        chart.data.datasets[0].borderColor = gradient0;
+
+        const gradient1 = chart.ctx.createLinearGradient(0, 0, 0, 200);
+        gradient1.addColorStop(0, 'rgba(88,136,27,0.2)');
+        gradient1.addColorStop(gmin, 'rgba(88,136,27,0.2)');
+        gradient1.addColorStop(gmax, 'rgba(157,0,6,0.2)');
+        gradient1.addColorStop(1, 'rgba(157,0,6,0.2)');
+        chart.data.datasets[1].borderColor = gradient1;
+      },
+
     }
   };
 </script>

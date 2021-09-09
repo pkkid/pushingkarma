@@ -82,7 +82,6 @@
       // Navigate to the account subtab
       var accountid = this.$route.query.account;
       if (accountid) { this.account = this.accounts[accountid]; }
-      console.log('loaded');
       this.loaded = true;
     },
     
