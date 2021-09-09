@@ -46,6 +46,7 @@
             </b-table>
           </div>
         </div>
+        <div style='clear:both;'></div>
       </div>
       <div v-else>
         <b-loading active :is-full-page='false'/>
@@ -266,29 +267,42 @@
           utils.rset(opts, 'options.plugins.tooltip.intersect', false);
           utils.rset(opts, 'options.plugins.tooltip.mode', 'index');
           utils.rset(opts, 'options.plugins.tooltip.position', 'nearest');
+          utils.rset(opts, 'options.plugins.tooltip.caretSize', 0);
           utils.rset(opts, 'options.scales.x.grid.display', false);
-          utils.rset(opts, 'options.scales.x.ticks.callback', (v) => (this.chartjs_xticks(opts, v)));
+          utils.rset(opts, 'options.scales.x.ticks.callback', this.chartjs_xticks);
           utils.rset(opts, 'options.scales.x.ticks.font.size', 9);
-          utils.rset(opts, 'options.scales.y.grid.color', '#ddd');
-          utils.rset(opts, 'options.scales.y.ticks.callback', (v) => (this.chartjs_yticks(opts, v)));
+          utils.rset(opts, 'options.scales.y.grid.color', this.chartjs_ygridcolor);
+          utils.rset(opts, 'options.scales.y.grid.drawTicks', false);
+          utils.rset(opts, 'options.scales.y.ticks.callback', this.chartjs_yticks);
           utils.rset(opts, 'options.scales.y.ticks.font.size', 9);
           utils.rset(opts, 'plugins', []);
           utils.rset(opts, 'plugins.0.beforeRender', this.chartjs_plugin_linecolor);
+          utils.rset(opts, 'plugins.1.afterDatasetsDraw', this.chartjs_plugin_drawmonth);
           this.spendchart = new Chart(ctx, opts);
         }
       },
 
       // Chart.js X Ticks
       // Callback function for x ticks display
-      chartjs_xticks: function(opts, value) {
-        if ([0,2,4,6,8,10].indexOf(value) != -1) { return opts.data.labels[value]; }
+      chartjs_xticks: function(value) {
+        if (this.spendchart === null) { return ''; }
+        if ([0,2,4,6,8,10].indexOf(value) != -1) { return this.spendchart.data.labels[value]; }
         return '';
+      },
+
+      // Chart.js Y Grid Color
+      // Callback function for y grid color
+      chartjs_ygridcolor: function(ctx) {
+        return ctx.tick.value == 0 ? '#bbb' : 'transparent';
       },
 
       // Chart.js Y Ticks
       // Callback function for y ticks display
-      chartjs_yticks: function(opts, value) {
-        if (Math.abs(value) < 5) { return ''; }
+      chartjs_yticks: function(value) {
+        if (this.spendchart === null) { return ''; }
+        const y = this.spendchart.scales.y;
+        if ((value != y.max) && (value != y.min) && (value != 0)) { return ''; }
+        if (value == 0) { return '$0'; }
         if ((value > 0) && (value < 1000)) { return `$${value}`; }
         if ((value > 0) && (value < 1000000)) { return `$${parseInt(value/1000)}k`; }
         if ((value < 0) && (value > -999)) { return `-$${parseInt((value*-1))}`; }
@@ -308,9 +322,8 @@
         const pxzero = (y.bottom - y.top) * numpctzero;
         const pctzero = 1 - (pxzero / y.bottom);
         // Add a subtle fade as we transition from red to green
-        const fadeamt = 0.02;   // percentage to fade values
-        const gmin = Math.min(Math.max(pctzero-fadeamt, 0), 1);
-        const gmax = Math.min(Math.max(pctzero+fadeamt, 0), 1);
+        const gmin = Math.min(Math.max(pctzero, 0), 1);
+        const gmax = Math.min(Math.max(pctzero+0.04, 0), 1);
         // Update first dataset (this year)
         const gradient0 = chart.ctx.createLinearGradient(0, 0, 0, 200);
         gradient0.addColorStop(0, 'rgba(88,136,27,1)');
@@ -325,6 +338,23 @@
         gradient1.addColorStop(gmax, 'rgba(157,0,6,0.2)');
         gradient1.addColorStop(1, 'rgba(157,0,6,0.2)');
         chart.data.datasets[1].borderColor = gradient1;
+      },
+
+      // Chart.js Plugin Draw Month
+      // Draw the current month or month mouse is hovered over
+      chartjs_plugin_drawmonth: function(chart) {
+        console.log(chart);
+        var activepoint = chart.tooltip._active[0];
+        var index = parseInt(this.month.format('MM')) - 1;
+        var numlabels = (chart.data.labels.length - 1);
+        if (activepoint) { index = activepoint.index; }
+        const scale = (chart.chartArea.right - chart.chartArea.left) / numlabels;
+        const px = (index * scale) + chart.chartArea.left;
+        chart.ctx.beginPath();
+        chart.ctx.strokeStyle = '#999';
+        chart.ctx.moveTo(px, chart.chartArea.top);
+        chart.ctx.lineTo(px, chart.chartArea.bottom);
+        chart.ctx.stroke();
       },
 
     }
