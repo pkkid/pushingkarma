@@ -19,13 +19,11 @@
               <dt>Spent</dt><dd class='blur'>{{this.spent|usdint}}</dd>
               <dt>Remaining</dt><dd class='total' :class='amountcls(this.income + this.spent)'>{{this.income + this.spent|usdint}}</dd>
             </dl>
-            <hr/>
-            <dl class='comments'>
+            <hr v-if='numcomments'/>
+            <dl class='comments' v-if='numcomments'>
               <template v-for='(amount,comment) in this.comments'>
-                <template v-if='(amount < -100) || (amount > 100)'>
-                  <dt :key='comment + "_label"'>{{comment}}</dt>
-                  <dd :key='comment' class='blur'>{{amount|usdint}}</dd>
-                </template>
+                <dt :key='comment + "_label"'>{{comment}}</dt>
+                <dd :key='comment' class='blur'>{{amount|usdint}}</dd>
               </template>
             </dl>
           </div>
@@ -95,6 +93,7 @@
       columns: function() { return this.initColumns(); },
       items: function() { return this.tablerows; },
       keymap: function() { return this.tableMixinKeymap(); },
+      numcomments: function() { return Object.keys(this.comments).length; },
     },
     watch: {
       month: function() { this.refresh(); },
@@ -210,7 +209,9 @@
           this.spent += cat.name != 'Income' ? amount : 0;
           if (trx.comment) { this.comments[trx.comment] += amount; }
         }
-        // Sort comments by -amount
+        // Remove totals < $100 and sort by amount
+        // eslint-disable-next-line no-unused-vars
+        this.comments = Object.filter(this.comments, ([k,v]) => Math.abs(v) >= 100);
         this.comments = fromPairs(sortBy(toPairs(this.comments), 1));
       },
 
@@ -277,7 +278,6 @@
           utils.rset(opts, 'options.plugins.tooltip.displayColors', false);
           utils.rset(opts, 'options.plugins.tooltip.intersect', false);
           utils.rset(opts, 'options.plugins.tooltip.mode', 'index');
-          //utils.rset(opts, 'options.plugins.tooltip.position', 'nearest');
           utils.rset(opts, 'options.plugins.tooltip.position', 'custom');
           utils.rset(opts, 'options.plugins.tooltip.titleMarginBottom', 2);
           utils.rset(opts, 'options.scales.x.grid.display', false);
@@ -291,9 +291,6 @@
           utils.rset(opts, 'plugins.0.beforeRender', this.chartjs_plugin_linecolor);
           utils.rset(opts, 'plugins.1.afterDatasetsDraw', this.chartjs_plugin_drawmonth);
           this.spendchart = new Chart(elem, opts);
-
-          console.log(this.spendchart);
-
         }
       },
 
@@ -341,15 +338,15 @@
         const gmax = Math.min(Math.max(pctzero+0.04, 0), 1);
         // Update first dataset (this year)
         const gradient0 = chart.ctx.createLinearGradient(0, 0, 0, 200);
-        gradient0.addColorStop(0, 'rgba(88,136,27,1)');
-        gradient0.addColorStop(gmin, 'rgba(88,136,27,1)');
+        gradient0.addColorStop(0, 'rgba(118,111,106,1)');
+        gradient0.addColorStop(gmin, 'rgba(118,111,106,1)');
         gradient0.addColorStop(gmax, 'rgba(157,0,6,1)');
         gradient0.addColorStop(1, 'rgba(157,0,6,1)');
         chart.data.datasets[0].borderColor = gradient0;
         // Update second dataset (last year)
         const gradient1 = chart.ctx.createLinearGradient(0, 0, 0, 200);
-        gradient1.addColorStop(0, 'rgba(88,136,27,0.2)');
-        gradient1.addColorStop(gmin, 'rgba(88,136,27,0.2)');
+        gradient1.addColorStop(0, 'rgba(118,111,106,0.2)');
+        gradient1.addColorStop(gmin, 'rgba(118,111,106,0.2)');
         gradient1.addColorStop(gmax, 'rgba(157,0,6,0.2)');
         gradient1.addColorStop(1, 'rgba(157,0,6,0.2)');
         chart.data.datasets[1].borderColor = gradient1;
@@ -400,15 +397,16 @@
     }
 
     // Category table
+    $amtbg: desaturate($lightbg-fg4, 5%);  // #766F6A rgb(118,111,106)
     .tablewrap { width: 542px; }
     .totalrow { font-weight:600; background-color:$lightbg-bg1; }
     .diffbar {
       position: relative;
-      top: 5px;
-      .bg { width: 140px; height:10px; background-color:#ddd; border-radius:3px; position:absolute; }
-      .amt { min-width:0px; max-width:140px; height:10px; background-color:#58881b; border-radius:3px; position:absolute;
-        background:linear-gradient(90deg, #58881b 0%, #58881b 100px, #9d0006 100px, #9d0006 100%); }
-      .line { width: 1px; height:10px; background-color:#f2f2f2; position:absolute; left:99px; }
+      top: 7px;
+      .bg { width: 140px; height:6px; background-color:#ddd; border-radius:3px; position:absolute; }
+      .amt { min-width:0px; max-width:140px; height:6px; background-color:$amtbg; border-radius:3px; position:absolute;
+        background:linear-gradient(90deg, $amtbg 0%, $amtbg 100px, $lightbg-red1 100px, $lightbg-red1 100%); }
+      .line { width: 1px; height:6px; background-color:#f2f2f2; position:absolute; left:99px; }
     }
 
     // Side panel

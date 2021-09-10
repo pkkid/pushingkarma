@@ -5,6 +5,9 @@ import isEqual from 'lodash/isEqual';
 export {axios};
 import {SnackbarProgrammatic as Snackbar} from 'buefy';
 
+Object.filter = (obj,pred) => Object.fromEntries(Object.entries(obj).filter(pred));
+
+
 // Cancel
 // Cancel the specified request
 export function cancel(request) {
