@@ -263,11 +263,14 @@
           utils.rset(opts, 'data.datasets.1.tension', 0.2);
           utils.rset(opts, 'options.elements.point.radius', 0);
           utils.rset(opts, 'options.plugins.legend.display', false);
+          utils.rset(opts, 'options.plugins.tooltip.bodySpacing', 0);
+          utils.rset(opts, 'options.plugins.tooltip.callbacks.label', this.chartjs_tooltip_label);
+          utils.rset(opts, 'options.plugins.tooltip.caretSize', 0);
           utils.rset(opts, 'options.plugins.tooltip.displayColors', false);
           utils.rset(opts, 'options.plugins.tooltip.intersect', false);
           utils.rset(opts, 'options.plugins.tooltip.mode', 'index');
           utils.rset(opts, 'options.plugins.tooltip.position', 'nearest');
-          utils.rset(opts, 'options.plugins.tooltip.caretSize', 0);
+          utils.rset(opts, 'options.plugins.tooltip.titleMarginBottom', 2);
           utils.rset(opts, 'options.scales.x.grid.display', false);
           utils.rset(opts, 'options.scales.x.ticks.callback', this.chartjs_xticks);
           utils.rset(opts, 'options.scales.x.ticks.font.size', 9);
@@ -355,6 +358,10 @@
         chart.ctx.moveTo(px, chart.chartArea.top);
         chart.ctx.lineTo(px, chart.chartArea.bottom);
         chart.ctx.stroke();
+      },
+
+      chartjs_tooltip_label: function(ctx) {
+        return `${ctx.dataset.label}: ${utils.usdint(ctx.parsed.y)}`;
       },
 
     }
