@@ -251,8 +251,16 @@
       // Chart.js Init
       // Initialize the chartjs history display
       chartjs_init: function() {
+        // Register new function to place tooltip
+        const tooltipPlugin = Chart.registry.getPlugin('tooltip');
+        tooltipPlugin.positioners.custom = function(_, pos) {
+          if (pos === false) { return false; }
+          const chart = this._chart;
+          return {x:pos.x, y:chart.chartArea.top-10};
+        };
+        // Create the Chart
         if (this.spendchart === null) {
-          var ctx = document.getElementById('spendchart');
+          var elem = document.getElementById('spendchart');
           var opts = {};
           utils.rset(opts, 'type', 'line');
           utils.rset(opts, 'data.labels', ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec']);
@@ -269,7 +277,8 @@
           utils.rset(opts, 'options.plugins.tooltip.displayColors', false);
           utils.rset(opts, 'options.plugins.tooltip.intersect', false);
           utils.rset(opts, 'options.plugins.tooltip.mode', 'index');
-          utils.rset(opts, 'options.plugins.tooltip.position', 'nearest');
+          //utils.rset(opts, 'options.plugins.tooltip.position', 'nearest');
+          utils.rset(opts, 'options.plugins.tooltip.position', 'custom');
           utils.rset(opts, 'options.plugins.tooltip.titleMarginBottom', 2);
           utils.rset(opts, 'options.scales.x.grid.display', false);
           utils.rset(opts, 'options.scales.x.ticks.callback', this.chartjs_xticks);
@@ -281,7 +290,10 @@
           utils.rset(opts, 'plugins', []);
           utils.rset(opts, 'plugins.0.beforeRender', this.chartjs_plugin_linecolor);
           utils.rset(opts, 'plugins.1.afterDatasetsDraw', this.chartjs_plugin_drawmonth);
-          this.spendchart = new Chart(ctx, opts);
+          this.spendchart = new Chart(elem, opts);
+
+          console.log(this.spendchart);
+
         }
       },
 
@@ -346,7 +358,6 @@
       // Chart.js Plugin Draw Month
       // Draw the current month or month mouse is hovered over
       chartjs_plugin_drawmonth: function(chart) {
-        console.log(chart);
         var activepoint = chart.tooltip._active[0];
         var index = parseInt(this.month.format('MM')) - 1;
         var numlabels = (chart.data.labels.length - 1);
@@ -354,10 +365,12 @@
         const scale = (chart.chartArea.right - chart.chartArea.left) / numlabels;
         const px = (index * scale) + chart.chartArea.left;
         chart.ctx.beginPath();
-        chart.ctx.strokeStyle = '#999';
+        chart.ctx.strokeStyle = '#666';
+        chart.ctx.setLineDash([5,5]);
         chart.ctx.moveTo(px, chart.chartArea.top);
         chart.ctx.lineTo(px, chart.chartArea.bottom);
         chart.ctx.stroke();
+        chart.ctx.setLineDash([1,0]);
       },
 
       chartjs_tooltip_label: function(ctx) {
