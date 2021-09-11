@@ -138,9 +138,10 @@
               body: this.editor.getHTML()
             });
             this.editing = false;
-            this.$root.$emit('notify', 'Note saved!', 'mdi-check');
+            this.$root.$emit('notify', 'Note Saved', 'This note was successfully saved to the server.', 'mdi-check');
           } catch(err) {
-            this.$root.$emit('notify', 'Error saving note.', 'mdi-alert-circle-outline');
+            this.$root.$emit('notify', 'Error Saving Note.', `There was an error attempting to save this note to
+              the server. Please backup your work and try again.`, 'mdi-alert-circle-outline');
           }
         }
       },

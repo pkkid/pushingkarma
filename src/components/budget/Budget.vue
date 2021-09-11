@@ -91,7 +91,14 @@
       upload: async function(formdata) {
         var {data} = await api.Budget.upload(formdata);
         console.log(data);
-        utils.snackbar(`${data.status}`);
+        var title = `${data.account} Import`;
+        var message = `No new transactions found.`;
+        if (data.transactions > 0) {
+          message = `${data.transactions} transactions imported.`;
+          if (data.categorized > 0) { message += ` ${data.categorized} have been categorized.`; }
+          if (data.labeled > 0) { message += ` ${data.labeled} have been labeled.`; }
+        }
+        this.$root.$emit('notify', title, message, 'mdi-check');
       },
     },
   };

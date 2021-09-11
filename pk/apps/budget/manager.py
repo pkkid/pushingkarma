@@ -21,19 +21,21 @@ class TransactionManager:
 
     def __init__(self):
         self.status = []            # status msg per file
+        self.account = None         # account for this qfx file
+        self.categorized = 0        # num transactions categorized
         self.errors = 0             # num errors encoundered
         self.files = 0              # num files imported
-        self.transactions = 0       # num transactions imported
-        self.categorized = 0        # num transactions categorized
         self.labeled = 0            # num transactions labeled
+        self.transactions = 0       # num transactions imported
 
     def get_status(self):
         return {
-            'files': self.files,
-            'transactions': self.transactions,
+            'account': self.account.name,
             'categorized': self.categorized,
+            'filename': self.filename,
+            'files': self.files,
             'labeled': self.labeled,
-            'status': '\n'.join(self.status),
+            'transactions': self.transactions,
         }
 
     @lazyproperty
@@ -64,13 +66,15 @@ class TransactionManager:
         """ Import transactions from a qfx file. """
         try:
             self.files += 1
+            self.filename = filename
             transactions = []
             log.info('Importing transactions qfx file: %s' % filename)
             qfx = OfxParser.parse(handle)
             fid = int(qfx.account.institution.fid)
             if fid not in self._accounts:
                 raise Exception('Not tracking account fid: %s' % fid)
-            account = self._accounts[fid]
+            self.account = self._accounts[fid]
+
             # Update transactions
             for trx in qfx.account.statement.transactions:
                 trx = trx.__dict__
@@ -79,14 +83,14 @@ class TransactionManager:
                 if not self._transaction_exists(trx, addit=True):
                     transactions.append(Transaction(
                         user=user,
-                        account_id=account.id,
+                        account_id=self.account.id,
                         trxid=trx['id'],
-                        payee=trx[account.payee or 'payee'],
+                        payee=trx[self.account.payee or 'payee'],
                         amount=trx['amount'],
                         date=trx['date'].date(),
                         # original values
                         original_date=trx['date'].date(),
-                        original_payee=trx[account.payee or 'payee'],
+                        original_payee=trx[self.account.payee or 'payee'],
                         original_amount=trx['amount'],
                     ))
             self.label_transactions(transactions)
@@ -97,10 +101,10 @@ class TransactionManager:
             self.transactions += len(transactions)
             # Update account balance
             statementdt = timezone.make_aware(qfx.account.statement.end_date)
-            if account.balancedt is None or statementdt > account.balancedt:
-                account.balance = qfx.account.statement.balance
-                account.balancedt = statementdt
-                account.save()
+            if self.account.balancedt is None or statementdt > self.account.balancedt:
+                self.account.balance = qfx.account.statement.balance
+                self.account.balancedt = statementdt
+                self.account.save()
         except Exception as err:
             log.exception(err)
             self.status.append('Error %s: %s' % (filename, err))
