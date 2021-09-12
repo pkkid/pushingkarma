@@ -28,7 +28,7 @@
             </dl>
           </div>
           <div id='monthdetails' style='margin-top:20px;'>
-            <div class='header'>Total Spending History</div>
+            <div class='header'>{{category}} Spending History</div>
             <canvas id='spendchart'/>
           </div>
         </div>
@@ -86,6 +86,7 @@
       spent: 0,             // Total spent this month
       remaining: 0,         // Total remaining this month
       comments: [],         // Summarized comments
+      category: 'Total Spending', // Category displayed on chart
     }),
     computed: {
       categories: pathify.sync('budget/categories'),
@@ -174,6 +175,13 @@
         return tablerows;
       },
 
+      // Update chart on new focus
+      newFocus: function(tabindex, newcell) {
+        var category = tabindex === null ? undefined : newcell.row.name;
+        category = category == 'Uncategorized' ? undefined : category;
+        this.chartjs_update(category);
+      },
+
       // Populate Tablerows
       populateTablerows: function() {
         this.tablerows = this.initTablerows();
@@ -215,14 +223,6 @@
         this.comments = fromPairs(sortBy(toPairs(this.comments), 1));
       },
 
-      updateChart: function(category) {
-        this.chartjs_init();
-        category = category === undefined ? 'Total' : category;
-        this.spendchart.data.datasets[0].data = this.history[category][2021];
-        this.spendchart.data.datasets[1].data = this.history[category][2020];
-        this.spendchart.update();
-      },
-
       // Refresh
       // Refresh the list of transactions displayed
       refresh: async function() {
@@ -231,7 +231,7 @@
         this.populateMonthData();
         this.loading = false;
         await this.$nextTick();
-        this.updateChart();
+        this.chartjs_update();
       },
 
       // Save
@@ -288,10 +288,18 @@
           utils.rset(opts, 'options.scales.y.ticks.callback', this.chartjs_yticks);
           utils.rset(opts, 'options.scales.y.ticks.font.size', 9);
           utils.rset(opts, 'plugins', []);
-          utils.rset(opts, 'plugins.0.beforeRender', this.chartjs_plugin_linecolor);
+          utils.rset(opts, 'plugins.0.afterLayout', this.chartjs_plugin_linecolor);
           utils.rset(opts, 'plugins.1.afterDatasetsDraw', this.chartjs_plugin_drawmonth);
           this.spendchart = new Chart(elem, opts);
         }
+      },
+
+      chartjs_update: function(category) {
+        this.chartjs_init();
+        this.category = category === undefined ? 'Total' : category;
+        this.spendchart.data.datasets[0].data = this.history[this.category][2021];
+        this.spendchart.data.datasets[1].data = this.history[this.category][2020];
+        this.spendchart.update();
       },
 
       // Chart.js X Ticks
@@ -315,10 +323,10 @@
         const y = this.spendchart.scales.y;
         if ((value != y.max) && (value != y.min) && (value != 0)) { return ''; }
         if (value == 0) { return '$0'; }
-        if ((value > 0) && (value < 1000)) { return `$${value}`; }
-        if ((value > 0) && (value < 1000000)) { return `$${parseInt(value/1000)}k`; }
-        if ((value < 0) && (value > -999)) { return `-$${parseInt((value*-1))}`; }
-        if ((value < 0) && (value > -999999)) { return `-$${parseInt((value*-1)/1000)}k`; }
+        if ((value > 0) && (value < 1000)) { return `$${Math.round(value)}`; }
+        if ((value > 0) && (value < 1000000)) { return `$${Math.round(value/100)/10}k`; }
+        if ((value < 0) && (value > -999)) { return `-$${Math.round(value*-1)}`; }
+        if ((value < 0) && (value > -999999)) { return `-$${Math.round((value*-1)/100)/10}k`; }
         return value;
       },
 
@@ -331,20 +339,18 @@
         const y = chart.scales.y;
         const numtotal = y.end - y.start;
         const numpctzero = 1 - ((numtotal - y.end) / numtotal);
-        const pxzero = (y.bottom - y.top) * numpctzero;
-        const pctzero = 1 - (pxzero / y.bottom);
         // Add a subtle fade as we transition from red to green
-        const gmin = Math.min(Math.max(pctzero, 0), 1);
-        const gmax = Math.min(Math.max(pctzero+0.04, 0), 1);
+        const gmin = Math.min(Math.max(numpctzero, 0), 1);
+        const gmax = Math.min(Math.max(numpctzero+0.04, 0), 1);
         // Update first dataset (this year)
-        const gradient0 = chart.ctx.createLinearGradient(0, 0, 0, 200);
+        const gradient0 = chart.ctx.createLinearGradient(0, y.top, 0, y.bottom);
         gradient0.addColorStop(0, 'rgba(118,111,106,1)');
         gradient0.addColorStop(gmin, 'rgba(118,111,106,1)');
         gradient0.addColorStop(gmax, 'rgba(157,0,6,1)');
         gradient0.addColorStop(1, 'rgba(157,0,6,1)');
         chart.data.datasets[0].borderColor = gradient0;
         // Update second dataset (last year)
-        const gradient1 = chart.ctx.createLinearGradient(0, 0, 0, 200);
+        const gradient1 = chart.ctx.createLinearGradient(0, y.top, 0, y.bottom);
         gradient1.addColorStop(0, 'rgba(118,111,106,0.2)');
         gradient1.addColorStop(gmin, 'rgba(118,111,106,0.2)');
         gradient1.addColorStop(gmax, 'rgba(157,0,6,0.2)');

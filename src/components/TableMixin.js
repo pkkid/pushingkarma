@@ -102,6 +102,10 @@ export default {
         newcell.popped = popped;
         newcell.focus();
       }
+      // Optional callback triggered when changing focus
+      if (this.newFocus instanceof Function) {
+        this.newFocus(newvalue, newcell);
+      }
     },
   },
   methods: {
