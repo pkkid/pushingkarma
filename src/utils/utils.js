@@ -1,6 +1,5 @@
 import * as dayjs from 'dayjs';
 import axios from 'axios';
-import forOwn from 'lodash/forOwn';
 import isEqual from 'lodash/isEqual';
 export {axios};
 import {SnackbarProgrammatic as Snackbar} from 'buefy';
@@ -241,16 +240,36 @@ export function timeAgo(value) {
   return dayjs(value).fromNow();
 }
 
+// Union
+// Set Union operation
+export function union(setA, setB) {
+  let _union = new Set(setA);
+  for (let elem of setB) {
+    _union.add(elem);
+  }
+  return _union;
+}
+
 // Update History
 // Update the address bar history.
-export function updateHistory(router, changes) {
-  var query = {};
-  var fullquery = Object.assign({}, router.history.current.query, changes);
-  forOwn(fullquery, function(value, key) {
-      if (value) { query[key] = value.toString(); }
-  });
+//   router: Vue router object, typically this.$router when in a Component.
+//   updates: key,value pairs for parameters to update in the URL.
+//   filter: List of keys to keep in addition to keys specified in changes. If
+//     empty or not set, the option will be ignored.
+//   replace: If true, replace current history item rather than add a new entry.
+export function updateHistory(router, updates, filter, replace) {
+  filter = new Set(filter || []);
+  filter = filter.length > 0 ? filter : union(filter, new Set(Object.keys(updates)));
+  // Create query object containing only keys we care to keep in the URL
+  var query = Object.assign({}, router.history.current.query, updates);
+  for (const [key, value] of Object.entries(query)) {
+    if (!value) { delete query[key]; }
+    if ((filter.length > 0) && (!filter.has(key))) { delete query[key]; }
+  }
+  // Update or replace the browser history
   if (!isEqual(query, router.history.current.query)) {
-    router.push({query});
+    if (replace == true) { router.replace({query}); }
+    else { router.push({query}); }
   }
 }
 
