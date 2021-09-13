@@ -3,9 +3,9 @@
     <PageWrap>
       <h1>{{month.format('MMMM YYYY')}} Budget
         <div style='float:right'>
-          <i class='mdi mdi-chevron-left' @click.prevent='month = month.add(-1, "month")'/>
-          <i class='mdi mdi-chevron-right' @click.prevent='month = month.add(1, "month")'/>
-          <b-button :class='{"active":month != today}' @click.prevent='month = today'>Today</b-button>
+          <b-button @click.prevent='month = month.add(-1, "month")'><i class='mdi mdi-chevron-left'/></b-button>
+          <b-button :disabled='month.format("MMM YYYY") >= today.format("MMM YYYY")' @click.prevent='month = month.add(1, "month")'><i class='mdi mdi-chevron-right'/></b-button>
+          <b-button :disabled='month.format("MMM YYYY") == today.format("MMM YYYY")' @click.prevent='month = today'>Today</b-button>
         </div>
         <div class='subtext'>View {{loading ? '' : count}} {{month.format('MMMM')}} transactions</div>
       </h1>
@@ -100,8 +100,8 @@
       month: function() { this.refresh(); },
     },
     mounted: function() {
-      this.month = dayjs(dayjs().format('YYYY-MM'));
       this.today = dayjs(dayjs().format('YYYY-MM'));
+      this.month = dayjs(dayjs().format('YYYY-MM'));
       document.title = `PK - ${this.month.format('MMMM')} Budget`;
       this.refresh();
     },
@@ -387,19 +387,18 @@
 <style lang='scss'>
   #budgetmonth {
     // Previous and Next month buttons
-    h1 .mdi:hover {
-      cursor: pointer;
-      background-color: rgba(0,0,0,0.05); 
-      border-radius: 3px;
-      user-select: none;
-    }
     h1 button {
-      padding: 20px 10px;
+      padding: 0px 10px;
+      line-height: 40px;
+      height: 40px;
       margin-top: 5px;
       border-width: 0px;
       background-color: transparent;
       font-weight: bold;
+      outline: none;
+      box-shadow: none;
       &:hover { background-color: rgba(0,0,0,0.05); }
+      .mdi { font-size:1.5em; }
     }
 
     // Category table
