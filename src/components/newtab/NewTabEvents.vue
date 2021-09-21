@@ -49,7 +49,7 @@
 
       // Replace zoom urls with links
       linkZoom: function(location) {
-        return location.replace(/(https*:\/\/\w*\.zoom\.us\/j\/\d+\?\w+=\w+)/g, '<a href="$1">Zoom</a>');
+        return location.replace(/(https*:\/\/\w*\.zoom\.us\/j\/\d+\?(\w+=\w+&*)+)/g, '<a href="$1">Zoom</a>');
       },
     }
   };
