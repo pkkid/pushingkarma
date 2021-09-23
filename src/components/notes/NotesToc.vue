@@ -19,6 +19,7 @@
         let tocitems = [{text:this.title, slug:'#title', type:'h1'}];
         for (let item of this.content) {
           if (item.type == 'heading') {
+            if (item.content === undefined) { continue; }
             var text = item.content[0].text;
             tocitems.push({
               text: text,

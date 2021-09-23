@@ -264,7 +264,8 @@ export function updateHistory(router, updates, filter, replace) {
   var query = Object.assign({}, router.history.current.query, updates);
   for (const [key, value] of Object.entries(query)) {
     if (!value) { delete query[key]; }
-    if ((filter.length > 0) && (!filter.has(key))) { delete query[key]; }
+    else if ((filter.length > 0) && (!filter.has(key))) { delete query[key]; }
+    else { query[key] = value.toString(); }
   }
   // Update or replace the browser history
   if (!isEqual(query, router.history.current.query)) {
