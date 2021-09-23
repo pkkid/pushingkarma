@@ -37,6 +37,7 @@
 </template>
 
 <script>
+  import * as dayjs from 'dayjs';
   import * as pathify from 'vuex-pathify';
   import sumBy from 'lodash/sumBy';
   
@@ -47,12 +48,15 @@
       account: pathify.sync('budget/account'),
       accounts: pathify.get('budget/accounts'),
       summary: pathify.get('budget/summary'),
-      displayAccounts: function() { return this.accounts.filter(a => a.id); },
+      displayAccounts: function() {
+        return this.accounts.filter(function(a) {
+          if ((a.balance == 0) && dayjs().diff(a.balancedt, 'day') >= 90) { return false; }
+          if (!a.id) { return false; }
+          return true;
+        });
+      },
       balance: function() { return sumBy(this.accounts, a => parseFloat(a.balance) || 0).toFixed(2); },
     },
-    // watch: {
-    //   $route (to, from) { console.log(`Changed! ${from} -> ${to}`); },
-    // } 
   };
 </script>
 
