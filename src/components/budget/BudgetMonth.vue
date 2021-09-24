@@ -3,6 +3,7 @@
     <PageWrap>
       <h1>{{month.format('MMMM YYYY')}} Budget
         <div style='float:right'>
+          <div class='lwrap'><b-loading class='is-small' :active='loading' :is-full-page='false'/></div>
           <b-button @click.prevent='month = month.add(-1, "month")'><i class='mdi mdi-chevron-left'/></b-button>
           <b-button :disabled='month.format("MMM YYYY") >= today.format("MMM YYYY")' @click.prevent='month = month.add(1, "month")'><i class='mdi mdi-chevron-right'/></b-button>
           <b-button :disabled='month.format("MMM YYYY") == today.format("MMM YYYY")' @click.prevent='month = today'>Today</b-button>
@@ -10,7 +11,7 @@
         <div class='subtext'>View {{loading ? '' : count}} {{month.format('MMMM')}} transactions</div>
       </h1>
       <div style='clear:both'/>
-      <div v-if='!loading' v-hotkey='keymap'>
+      <div v-if='true' v-hotkey='keymap'>
         <div id='rightpanel'>
           <div id='monthdetails'>
             <div class='header'>{{month.format('MMMM')}} Spending Overview</div>
@@ -226,12 +227,13 @@
       // Refresh
       // Refresh the list of transactions displayed
       refresh: async function() {
+        this.loading = true;
         await this.getTransactions();
         this.populateTablerows();
         this.populateMonthData();
-        this.loading = false;
         await this.$nextTick();
         this.chartjs_update();
+        setTimeout(() => this.loading = false, 300);
       },
 
       // Save
@@ -387,7 +389,8 @@
 <style lang='scss'>
   #budgetmonth {
     // Previous and Next month buttons
-    h1 button {
+    h1 button,
+    h1 .loading {
       padding: 0px 10px;
       line-height: 40px;
       height: 40px;
@@ -400,6 +403,8 @@
       &:hover { background-color: rgba(0,0,0,0.05); }
       .mdi { font-size:1.5em; }
     }
+    h1 .lwrap { display:inline-flex; position:relative; width:20px; height:35px; margin-top:7px; margin-right:10px; }
+    //h1 .loading-overlay { display:inline-flex; width:20px; height:35px; }
 
     // Category table
     $amtbg: desaturate($lightbg-fg4, 5%);  // #766F6A rgb(118,111,106)
