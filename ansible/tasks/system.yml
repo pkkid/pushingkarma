@@ -55,3 +55,7 @@
     owner: www-data
     group: www-data
     state: directory
+
+- name: Set Permissions in Log Directory
+  tags: ['deploy']
+  file: path={{logs_dir}} owner=www-data group=www-data mode=0755 state=directory recurse=yes
