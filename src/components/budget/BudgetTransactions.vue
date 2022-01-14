@@ -95,6 +95,7 @@
       save: async function(id, field, newvalue, cell=null, refresh=false) {
         try {
           var change = utils.rset({}, field.replace('.','_'), newvalue);
+          if ('category_name' in change) { change.approved = true; }
           var {data} = await api.Budget.patchTransaction(id, change);
           this.updateItem(id, data);
           if (cell) { cell.setStatus('success', 1000); }
