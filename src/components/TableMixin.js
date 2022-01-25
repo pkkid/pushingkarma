@@ -127,8 +127,8 @@ export default {
     // Keymaps used with this mixin.
     tableMixinKeymap: function() {
       return {
-        'up': (event) => this.navigate(event, -this.focuscols),
-        'down': (event) => this.navigate(event, this.focuscols),
+        'up': (event) => this.navigate(event, -this.focuscols, true, true),
+        'down': (event) => this.navigate(event, this.focuscols, true, true),
         'left': (event) => this.navigate(event, -1),
         'right': (event) => this.navigate(event, 1),
         'tab': (event) => this.navigate(event, 1, true, true),
@@ -254,11 +254,12 @@ export default {
 
     // Navigate
     // Move the focused cell by the amount specified
-    navigate: async function(event, amount, saveFirst=false, allowEditing=false) {
+    navigate: async function(event, amount, saveFirst=false, allowWhileEditing=false) {
       var cell = this.getCell();
       if (!this.inContainer()) { return; }  // skip if not in container
       if (!this.focus) { return; }  // skip if nothing selected
-      if (!allowEditing && cell.editing) { return; }  // skip if editing
+      if (cell.editing && cell.choices.length) { return; }  // skip if editing a selection cell
+      if (!allowWhileEditing && cell.editing) { return; }  // skip if editing
       event.preventDefault();
       // Save the new value
       if (cell.editing && saveFirst) {
