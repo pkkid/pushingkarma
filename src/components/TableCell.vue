@@ -136,6 +136,7 @@
           this.text = newtext;
           this.choices = [];
           this.focus();
+          this.$emit('madeChoice', event);
         }
       },
 

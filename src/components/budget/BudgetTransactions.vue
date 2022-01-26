@@ -22,7 +22,7 @@
           <b-table :data='tabledata' narrowed ref='table' tabindex='-1'>
             <template slot-scope='props'>
               <b-table-column v-for='cell in props.row' :key='cell.label' :label='cell.col.label' :width='cell.col.width' :numeric='cell.col.numeric' :class='cell.col.cls'>
-                <TableCell v-bind='cell' :ref='`c${cell.tabindex}`' :key='cell.row.id' @click.native='click($event, cell.tabindex)'/>
+                <TableCell v-bind='cell' :ref='`c${cell.tabindex}`' :key='cell.row.id' @click.native='click($event, cell.tabindex)' @madeChoice='enter'/>
               </b-table-column>
             </template>
             <template slot='empty'>No items to display.</template>
