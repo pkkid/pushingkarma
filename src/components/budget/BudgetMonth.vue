@@ -5,8 +5,8 @@
         <div style='float:right'>
           <div class='lwrap'><b-loading class='is-small' :active='loading' :is-full-page='false'/></div>
           <b-button @click.prevent='month = month.add(-1, "month")'><i class='mdi mdi-chevron-left'/></b-button>
-          <b-button :disabled='month.format("MMM YYYY") >= today.format("MMM YYYY")' @click.prevent='month = month.add(1, "month")'><i class='mdi mdi-chevron-right'/></b-button>
-          <b-button :disabled='month.format("MMM YYYY") == today.format("MMM YYYY")' @click.prevent='month = today'>Today</b-button>
+          <b-button :disabled='month.format("YYYY MMM") >= today.format("YYYY MMM")' @click.prevent='month = month.add(1, "month")'><i class='mdi mdi-chevron-right'/></b-button>
+          <b-button :disabled='month.format("YYYY MMM") == today.format("YYYY MMM")' @click.prevent='month = today'>Today</b-button>
         </div>
         <div class='subtext'>View {{loading ? '' : count}} {{month.format('MMMM')}} transactions</div>
       </h1>
