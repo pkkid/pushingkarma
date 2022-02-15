@@ -1,0 +1,13 @@
+[Unit]
+Description=code-server
+After=nginx.service
+
+[Service]
+User=code
+Type=simple
+Environment=PASSWORD={{codeserver_password.stdout}}
+ExecStart=/usr/bin/code-server --bind-addr 127.0.0.1:8080 --user-data-dir /home/code/.vscode --auth password
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

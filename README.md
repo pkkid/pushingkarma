@@ -13,6 +13,8 @@ pk/manage.py migrate
 pk/manage.py runserver 0.0.0.0:8000
 
 # Setup NPM and Vue
+# Last tested with node=v10.24.1 npm=v8.3.1
+# You can use nvm to get the right version of node.
 sudo apt install npm
 npm install
 npm run vue-build

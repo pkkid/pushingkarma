@@ -1,0 +1,80 @@
+# Install and configure code-server.
+---
+- name: Create Code User and Home Directory
+  tags: ['code']
+  ansible.builtin.user:
+    name: code
+    comment: CodeSerevr User
+    create_home: yes
+    shell: /bin/bash
+
+- name: Check CodeServer is Installed
+  tags: ['code']
+  command: dpkg-query -W code-server
+  register: code_server_check_deb
+  failed_when: code_server_check_deb.rc > 1
+  changed_when: code_server_check_deb.rc == 1
+
+- name: Download CodeServer
+  tags: ['code']
+  get_url:
+    url="https://github.com/coder/code-server/releases/download/v4.0.2/code-server_4.0.2_amd64.deb"
+    dest="/root/.code-server.deb"
+  when: code_server_check_deb.rc == 1
+
+- name: Install CodeServer
+  tags: ['code']
+  apt: deb="/root/.code-server.deb"
+  when: code_server_check_deb.rc == 1
+
+- name: Get CodeServer Password From Secrets
+  tags: ['code']
+  command: 'python {{project_dir}}/settings/secrets.py CODESERVER_PASSWORD'
+  register: codeserver_password
+  
+- name: Create CodeServer Service
+  tags: ['code']
+  template:
+    src=templates/codeserver.service.j2
+    dest=/etc/systemd/system/codeserver.service
+  notify: Restart Services
+
+- name: Check CodeServer SSL Certificates
+  tags: ['code']
+  stat:
+    path: '/etc/letsencrypt/live/code.{{project_name}}.com/cert.pem'
+  register: codecert
+
+- name: Fetch Email From Secrets
+  tags: ['code']
+  command: 'python {{project_dir}}/settings/secrets.py EMAIL'
+  register: email
+  when: not codecert.stat.exists
+
+- name: Generate New CodeServer SSL Certitificate
+  tags: ['code']
+  shell: 'certbot certonly --nginx --noninteractive --agree-tos --email {{email.stdout}} -d code.{{project_name}}.com'
+  when: not codecert.stat.exists
+
+- name: Create CodeServer Certbot Cronjob
+  tags: ['code']
+  cron:
+    name: codecertbot-renew
+    job: 'certbot renew --quiet --no-self-upgrade >> {{logs_dir}}/codecertbot.log 2>&1'
+    minute: '0'
+    hour: '1'
+
+- name: Create Nginx code.{{project_name}}.conf
+  tags: ['code']
+  template:
+    src=templates/codeserver.conf.j2
+    dest=/etc/nginx/sites-available/code.{{project_name}}.conf
+  notify: Restart Services
+
+- name: Enable Nginx code.{{project_name}}.conf
+  tags: ['code']
+  file:
+    src=/etc/nginx/sites-available/code.{{project_name}}.conf
+    dest=/etc/nginx/sites-enabled/code.{{project_name}}.conf
+    state=link
+  notify: Restart Services

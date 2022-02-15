@@ -28,7 +28,6 @@ server {
 
 # Serve HTTPS non-www domain (static, ws, django).
 server {
-  listen 80;
   listen 443 ssl;
   listen [::]:443 ssl;
   server_name {{project_name}}.com;
