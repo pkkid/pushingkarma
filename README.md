@@ -6,19 +6,23 @@ means let me know. :)
 ### Setup Dev Environment
 ```bash
 # Create Python virtualenv environment
-sudo apt install ansible redis-server virtualenvwrapper
-mkvirtualenv --python=/usr/bin/python3 pk
+sudo apt install ansible redis-server
+pyenv virtualenv pk
+pyenv activate pk
 pip install -r pk/requirements.pip
+cd ~/Projects/pushingkarma/pk/settings && ln -s <secrets> .
 pk/manage.py migrate
 pk/manage.py runserver 0.0.0.0:8000
 
 # Setup NPM and Vue
-# Last tested with node=v10.24.1 npm=v8.3.1
+# Last tested with node=v10.24.1 npm=v6.14.12
 # You can use nvm to get the right version of node.
-sudo apt install npm
-npm install
-npm run vue-build
-npm run start
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
+nvm install 10.24.1
+nvm use 10.24.1
+cd ~/Projects/pushingkarma && npm install
+cd ~/Projects/pushingkarma && npm run vue-build
+cd ~/Projects/pushingkarma && npm run start
 ```
 
 ### Setup Production Environment

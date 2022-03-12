@@ -2,12 +2,12 @@
   <article id='projects' class='parallax-static'>
     <h1>Projects <div class='subtext'>Whats been keeping me busy</div></h1>
     <div class='projectlist'>
-      <div><a href='https://github.com/mjs7231/python-plexapi'>
+      <div><a href='https://github.com/pkkid/python-plexapi'>
         <i class='mdi mdi-code-braces'></i>
         <div class='title'>Python PlexAPI</div>
         <p>Python bindings for the Plex Server API. Navigate and manage your local or remote shared libraries.</p>
       </a></div>
-      <div><a href='https://github.com/mjs7231/pygrid'>
+      <div><a href='https://github.com/pkkid/pygrid'>
         <i class='mdi mdi-view-grid'></i>
         <div class='title'>PyGrid</div>
         <p>Easily organize open windows by tiling and positioning them to make the best use of your desktop.</p>
@@ -32,11 +32,6 @@
         <div class='title'>PushingKarma</div>
         <p>This websites Python, Django, and Vue source code freely available in the rare case someone finds it useful.</p>
       </a></div>
-      <!-- <li><a href='https://bitbucket.org/mjs7231/pks-movie-database/src'>
-        <i class='mdi mdi-movie'></i>
-        <div class='title'>PKs Movie Database</div>
-        <p>PHP app to publish and browse an Ant Movie Database. This gained popularity a few years back.</p>
-      </a></li> -->
       <div style='clear:both;'></div>
     </div>
   </article>
