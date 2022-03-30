@@ -34,7 +34,7 @@
           <!-- Login form -->
           <article v-else class='loginform' key='loginform'>
             <h2>Login to PushingKarma <div class='subtext'>Amazing things await you</div></h2>
-            <img v-if='gauth !== null' class='google' src='@/assets/img/google_signin.png' @click='googleLogin'/>
+            <img v-if='gclient !== null' class='google' src='@/assets/img/google_signin.png' @click='googleLogin'/>
             <i v-else class='fake-avatar mdi mdi-account-circle-outline'/>
             <form @submit.prevent="login()">
               <b-field label='Email'><b-input v-model='loginform.email' autocomplete='new-password' spellcheck='false' autofocus='true'/></b-field>
@@ -72,7 +72,7 @@
     computed: {
       globals: pathify.get('global/globals'),
       avatar: pathify.sync('global/avatar'),
-      gauth: pathify.sync('global/gauth'),
+      gclient: pathify.sync('global/gclient'),
       user: pathify.sync('global/user'),
     },
     watch: {
@@ -95,9 +95,10 @@
       // Login via Google popup box
       googleLogin: function() {
         let self = this;
-        this.gauth.grantOfflineAccess().then(function(data) {
+        self.gclient.callback = function(data) {
           if (data.code) { self.login({google_code:data.code}); }
-        });
+        };
+        self.gclient.requestCode({prompt: ''});
       },
 
       // Login

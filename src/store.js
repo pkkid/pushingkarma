@@ -29,8 +29,8 @@ const globals = {
   globals: {},
   layout: 'topnav',
   user: DEFAULT_USER,
+  gclient: null,
   avatar: '',
-  gauth: null,
 };
 
 export default new Vuex.Store({

@@ -21,7 +21,7 @@
 </template>
 
 <script>
-  /* global gapi */
+  /* global google */
   import * as pathify from 'vuex-pathify';
   import Notification from '@/components/Notification';
 
@@ -31,24 +31,25 @@
     computed: {
       layout: pathify.sync('global/layout'),
       globals: pathify.sync('global/globals'),
-      gauth: pathify.sync('global/gauth'),
+      gclient: pathify.sync('global/gclient'),
       user: pathify.sync('global/user'),
     },
     created: function() {
       this.globals = JSON.parse(document.getElementById('globals').textContent);
-      this.init_gauth();
+      this.init_google_code_client();
     },
     methods: {
       // Initialize Google Authenticatin service
       // Allows login via Google
-      init_gauth: function() {
+      init_google_code_client: function() {
         var self = this;
         if (this.globals.GOOGLE_ENABLED) {
-          gapi.load('auth2', function() {
-            self.gauth = gapi.auth2.init({
-              client_id: self.globals.GOOGLE_CLIENTID,
-              scope: self.globals.GOOGLE_SCOPES
-        });});}
+          console.log('Initialize a Code Client');
+          self.gclient = google.accounts.oauth2.initCodeClient({
+            client_id: self.globals.GOOGLE_CLIENTID,
+            scope: self.globals.GOOGLE_SCOPES,
+          });
+        }
       },
     },
   };

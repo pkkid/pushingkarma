@@ -27,7 +27,7 @@ class User(AbstractUser):
         raise Exception('Not logged into Google.')
     
     def google_service(self, service=None, version='v1'):
-        """ Return gauth credentials for the specified user or None. """
+        """ Return google credentials for the specified user or None. """
         creds, httpauth = self.google_auth()
         return discovery.build(service, version, http=httpauth)
 
@@ -52,8 +52,8 @@ class User(AbstractUser):
     @staticmethod
     def auth_google(request, google_code):
         """ Authenticate with Google and return the user.
-            https://developers.google.com/identity/sign-in/web/server-side-flow
-            https://developers.google.com/gmail/api/auth/web-server
+            https://developers.google.com/identity/oauth2/web/guides/migration-to-gis#gis-popup-ux
+            https://developers.google.com/identity/protocols/oauth2/web-server#python
         """
         creds = client.credentials_from_code(settings.GOOGLE_CLIENTID,
             settings.GOOGLE_SECRET, settings.GOOGLE_SCOPES, google_code)
