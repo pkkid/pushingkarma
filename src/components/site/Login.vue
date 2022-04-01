@@ -58,8 +58,6 @@
   import * as utils from '@/utils/utils';
   import * as pathify from 'vuex-pathify';
   import md5 from 'js-md5';
-  //import IconButton from '@/components/IconButton';
-  //import Modal from '@/components/Modal';
   import {DEFAULT_USER} from '@/store.js';
 
   export default {

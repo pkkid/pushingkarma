@@ -6,9 +6,9 @@ means let me know. :)
 ### Setup Dev Environment
 ```bash
 # Create Python virtualenv environment
-sudo apt install ansible redis-server
-pyenv virtualenv pk
-pyenv activate pk
+# Create Python virtualenv environment
+sudo apt install ansible redis-server virtualenvwrapper
+mkvirtualenv pk
 pip install -r pk/requirements.pip
 cd ~/Projects/pushingkarma/pk/settings && ln -s <secrets> .
 pk/manage.py migrate
