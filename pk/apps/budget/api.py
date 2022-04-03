@@ -267,5 +267,8 @@ def upload(request, format=None):
     """ Upload new transactions to the budget app. """
     trxmanager = TransactionManager()
     for fileobj in request.FILES.values():
-        trxmanager.import_qfx(request.user, fileobj.name, fileobj.file)
+        if fileobj.name.lower().endswith('.qfx'):
+            trxmanager.import_qfx(request.user, fileobj.name, fileobj.file)
+        elif fileobj.name.lower().endswith('.csv'):
+            trxmanager.import_csv(request.user, fileobj.name, fileobj.file)
     return Response(trxmanager.get_status())

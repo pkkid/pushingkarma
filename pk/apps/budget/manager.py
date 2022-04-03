@@ -3,9 +3,12 @@
 # References:
 #  https://github.com/jseutter/ofxparse
 #  https://console.developers.google.com/
-import datetime
+import csv, datetime, re
+import hashlib, base64
 from dateutil.relativedelta import relativedelta
+from decimal import Decimal
 from django.utils import timezone
+from io import StringIO
 from ofxparse import OfxParser
 from pk import log
 from pk.utils.decorators import lazyproperty
@@ -39,8 +42,12 @@ class TransactionManager:
         }
 
     @lazyproperty
-    def _accounts(self):
+    def _accounts_by_fid(self):
         return {a.fid:a for a in Account.objects.all()}
+
+    @lazyproperty
+    def _accounts_by_name(self):
+        return {a.name:a for a in Account.objects.all()}
 
     @lazyproperty
     def _existing(self):
@@ -62,6 +69,67 @@ class TransactionManager:
             self._lazy__existing_ids.add((int(trx['accountfid']), trx['trxid']))
         return result
 
+    def import_csv(self, user, filename, handle):
+        """ Import transactions from a csv file. """
+        try:
+            self.files += 1
+            self.filename = filename
+            transactions = []
+            log.info('Importing transactions csv file: %s' % filename)
+            # WARNING: This is auto-choosing the bank account from a generic filename. This
+            # is because DCU stopped allowing us to download qfx files which contain the
+            # bank FID information inside. I am hoping this is temporary.
+            if filename == 'Free Checking Transactions.csv': name = 'DCU'
+            else: raise Exception('Unknown CSV filename.')
+            self.account = self._accounts_by_name[name]
+            # Update transactions
+            csvdata = handle.read().decode()
+            csvdata = csv.DictReader(StringIO(csvdata))
+            balance = None
+            balancedt = None
+            for trx in csvdata:
+                hashstr = f'{trx["DATE"]}{trx["DESCRIPTION"]}{trx["AMOUNT"]}{trx["CURRENT BALANCE"]}'
+                trx['trxid'] = base64.b64encode(hashlib.md5(hashstr.encode()).digest()).decode()
+                trx['accountfid'] = self.account.fid
+                if not self._transaction_exists(trx, addit=True):
+                    date = datetime.datetime.strptime(trx['DATE'], '%m/%d/%Y')
+                    amount = Decimal(re.sub(r'[^\-*\d.]', '', trx['AMOUNT']))
+                    description = trx['DESCRIPTION'].replace('ELECTRONIC WITHDRAWAL', '')
+                    description = description.replace('ELECTRONIC DEPOSIT', '')
+                    description = description.strip(' -')
+                    transactions.append(Transaction(
+                        user=user,
+                        account_id=self.account.id,
+                        trxid=trx['trxid'],
+                        payee=description,
+                        amount=amount,
+                        date=date.date(),
+                        # original values
+                        original_date=date.date(),
+                        original_payee=description,
+                        original_amount=amount,
+                    ))
+                    # Newest transactions are first
+                    if balance is None:
+                        balance = Decimal(re.sub(r'[^\-*\d.]', '', trx['CURRENT BALANCE'])) 
+                        balancedt = date
+            self.label_transactions(transactions)
+            self.categorize_transactions(transactions)
+            log.info('Saving %s new transactions from qfx file: %s' % (len(transactions), filename))
+            Transaction.objects.bulk_create(transactions)
+            self.status.append('%s: added %s transactions' % (filename, len(transactions)))
+            self.transactions += len(transactions)
+            # Update account balance
+            if balancedt:
+                statementdt = timezone.make_aware(balancedt)
+                if self.account.balancedt is None or statementdt >= self.account.balancedt:
+                    self.account.balance = balance
+                    self.account.balancedt = statementdt
+                    self.account.save()
+        except Exception as err:
+            log.exception(err)
+            self.status.append('Error %s: %s' % (filename, err))
+
     def import_qfx(self, user, filename, handle):
         """ Import transactions from a qfx file. """
         try:
@@ -71,10 +139,9 @@ class TransactionManager:
             log.info('Importing transactions qfx file: %s' % filename)
             qfx = OfxParser.parse(handle)
             fid = int(qfx.account.institution.fid)
-            if fid not in self._accounts:
+            if fid not in self._accounts_by_fid:
                 raise Exception('Not tracking account fid: %s' % fid)
-            self.account = self._accounts[fid]
-
+            self.account = self._accounts_by_fid[fid]
             # Update transactions
             for trx in qfx.account.statement.transactions:
                 trx = trx.__dict__
