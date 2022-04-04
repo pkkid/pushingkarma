@@ -111,7 +111,7 @@ class TransactionManager:
                     ))
                     # Newest transactions are first
                     if balance is None:
-                        balance = Decimal(re.sub(r'[^\-*\d.]', '', trx['CURRENT BALANCE'])) 
+                        balance = Decimal(re.sub(r'[^\-*\d.]', '', trx['CURRENT BALANCE']))
                         balancedt = date
             self.label_transactions(transactions)
             self.categorize_transactions(transactions)
