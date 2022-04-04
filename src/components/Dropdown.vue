@@ -33,5 +33,3 @@
     animation-duration: 0.2s;
   }
 </style>
-
-
