@@ -63,22 +63,13 @@
       // Watch Search
       // Update results, history, and highlighted item.
       search: async function() {
-        this.cancelSearch = api.cancel(this.cancelSearch);
-        var token = this.cancelSearch.token;
-        try {
-          var {data} = await api.Notes.getNotes({search:this.search}, token);
-          this.notes = data.results;
-          this.highlighted = this.noteid || this.notes[0].id;
-          if (!this.noteid) { this.$emit('newSelection', this.highlighted); }
-          utils.updateHistory(this.$router, {search:this.search});
-        } catch(err) {
-          if (!api.isCancel(err)) { throw(err); }
-        }
+        this.updateResults();
       },
 
       // Watch Note ID
       // Update highlighted, history, focus.
       noteid: function(noteid) {
+        console.log(`New Note Id: ${noteid}`);
         this.highlighted = noteid;
         utils.updateHistory(this.$router, {noteid});
         this.$refs.search.focus();
@@ -108,6 +99,23 @@
         var newIndex = utils.keepInRange(index+offset, 0, this.notes.length-1);
         this.highlighted = this.notes[newIndex].id;
       },
+
+      // Update Results
+      // Update the result listing in the side bar
+      updateResults: async function() {
+        this.cancelSearch = api.cancel(this.cancelSearch);
+        var token = this.cancelSearch.token;
+        try {
+          var {data} = await api.Notes.getNotes({search:this.search}, token);
+          this.notes = data.results;
+          this.highlighted = this.noteid || this.notes[0].id;
+          if (!this.noteid) { this.$emit('newSelection', this.highlighted); }
+          utils.updateHistory(this.$router, {search:this.search});
+        } catch(err) {
+          if (!api.isCancel(err)) { throw(err); }
+        }
+      },
+
     },
   };
 </script>

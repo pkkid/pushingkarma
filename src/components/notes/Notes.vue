@@ -23,7 +23,10 @@
             <NotesToc :title='title' :content='content'/>
             <div class='controls' if='userid !== null'>
               <div v-if='editing'><i class='mdi mdi-cancel'/> <a @click='editing=false'>Cancel Changes</a></div>
-              <div v-else-if='userid'><i class='mdi mdi-pencil-outline'/> <a @click='editing=true'>Edit Note</a></div>
+              <div v-else-if='userid'>
+                <i class='mdi mdi-pencil-outline'/> <a @click='editing=true'>Edit Note</a><br/>
+                <i class='mdi mdi-delete'/> <a @click='deleteNote(note)'>Delete Note</a>
+              </div>
             </div>
           </div>
           <div style='clear:left;'/>
@@ -36,6 +39,7 @@
 <script>
   import * as api from '@/api';
   import * as pathify from 'vuex-pathify';
+  import * as utils from '@/utils/utils';
   import Navigation from '@/components/site/Navigation';
   import SidePanel from '@/components/site/SidePanel';
   import PageWrap from '@/components/site/PageWrap';
@@ -71,6 +75,26 @@
       });
     },
     methods: {
+
+      // Delete Note
+      // Delete the specified note id.
+      deleteNote: async function(note) {
+        var self = this;
+        this.$buefy.dialog.confirm({
+          title: 'Delete Note',
+          message: `Are you sure you want to delete the note <b>${note.title}</b>?`,
+          confirmText: 'Delete Note',
+          focusOn: 'cancel',
+          type: 'is-danger',
+          onConfirm: async function() {
+            await api.Notes.deleteNote(note.id);
+            self.$root.$emit('notify', 'Note Deleted', `Successfully deleted note ${note.title}.`, 'mdi-check');
+            self.note = {id:null, body:''};
+            self.$refs.search.updateResults();
+          },
+        });
+      },
+
       // Update Note
       // Load the specified note id.
       updateNote: async function(noteid) {
@@ -121,6 +145,7 @@
       position: fixed;
       width: 230px;
       .controls {
+        font-size: 1rem;
         margin-top: 20px;
         color: $lightbg-link;
         .mdi { margin-right: 5px; }
