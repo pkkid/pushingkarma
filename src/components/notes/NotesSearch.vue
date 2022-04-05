@@ -69,7 +69,6 @@
       // Watch Note ID
       // Update highlighted, history, focus.
       noteid: function(noteid) {
-        console.log(`New Note Id: ${noteid}`);
         this.highlighted = noteid;
         utils.updateHistory(this.$router, {noteid});
         this.$refs.search.focus();

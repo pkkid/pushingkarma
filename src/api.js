@@ -24,6 +24,7 @@ export const Budget = {
 };
 
 export const Notes = {
+  createNote(data) { return axios.post(`/api/notes`, data); },
   deleteNote(id) { return axios.delete(`/api/notes/${id}`); },
   getNote(id) { return axios.get(`/api/notes/${id}`); },
   getNotes(params, cancelToken) { return axios.get(`/api/notes`, {params, cancelToken}); },

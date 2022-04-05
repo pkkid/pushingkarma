@@ -25,6 +25,7 @@
               <div v-if='editing'><i class='mdi mdi-cancel'/> <a @click='editing=false'>Cancel Changes</a></div>
               <div v-else-if='userid'>
                 <i class='mdi mdi-pencil-outline'/> <a @click='editing=true'>Edit Note</a><br/>
+                <i class='mdi mdi-file-plus-outline'/> <a @click='createNote(note)'>Create Note</a><br/>
                 <i class='mdi mdi-delete'/> <a @click='deleteNote(note)'>Delete Note</a>
               </div>
             </div>
@@ -39,7 +40,6 @@
 <script>
   import * as api from '@/api';
   import * as pathify from 'vuex-pathify';
-  import * as utils from '@/utils/utils';
   import Navigation from '@/components/site/Navigation';
   import SidePanel from '@/components/site/SidePanel';
   import PageWrap from '@/components/site/PageWrap';
@@ -75,6 +75,15 @@
       });
     },
     methods: {
+
+      // Create Note
+      // Create and start editing a new note
+      createNote: async function() {
+        var params = {title:'New Note', body:'--'};
+        var {data} = await api.Notes.createNote(params);
+        this.$refs.search.updateResults();
+        this.updateNote(data.id);
+      },
 
       // Delete Note
       // Delete the specified note id.
