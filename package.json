@@ -6,7 +6,7 @@
   "license": "CC-BY-SA-2.5",
   "dependencies": {
     "axios": "^0.26.1",
-    "buefy": "^0.8.13",
+    "buefy": "^0.9.19",
     "chart.js": "^3.5.1",
     "core-js": "^3.16.1",
     "dayjs": "^1.11.0",
