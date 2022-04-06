@@ -43,9 +43,6 @@
     "vue-template-compiler": "^2.6.11",
     "webpack-bundle-analyzer": "^3.9.0"
   },
-  "optionalDependencies": {
-    "fsevents": "*"
-  },
   "scripts": {
     "start": "mount-private.py; npm-run-all -p django-runserver vue-watch",
     "django-runserver": "~/.virtualenvs/pk/bin/python pk/manage.py runserver",

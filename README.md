@@ -15,7 +15,7 @@ pk/manage.py migrate
 pk/manage.py runserver 0.0.0.0:8000
 
 # Setup NPM and Vue
-# Last tested with node=v10.24.1 npm=v6.14.12
+# Last tested with node=v14.19.1 npm=v8.6.0
 # You can use nvm to get the right version of node.
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.1/install.sh | bash
 nvm install 10.24.1
