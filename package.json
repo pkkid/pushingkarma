@@ -5,11 +5,11 @@
   },
   "license": "CC-BY-SA-2.5",
   "dependencies": {
-    "axios": "^0.21.1",
+    "axios": "^0.26.1",
     "buefy": "^0.8.13",
     "chart.js": "^3.5.1",
     "core-js": "^3.16.1",
-    "dayjs": "^1.10.6",
+    "dayjs": "^1.11.0",
     "fuzzysort": "^1.1.4",
     "highlight.js": "^9.18.1",
     "js-md5": "^0.7.3",
@@ -26,7 +26,7 @@
     "vuex-pathify": "^1.5.0"
   },
   "devDependencies": {
-    "@types/lodash": "^4.14.172",
+    "@types/lodash": "^4.14.181",
     "@vue/cli-plugin-babel": "^4.2.3",
     "@vue/cli-plugin-eslint": "^4.2.3",
     "@vue/cli-service": "^4.2.3",
