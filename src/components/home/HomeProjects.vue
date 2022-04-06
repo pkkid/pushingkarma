@@ -1,7 +1,7 @@
 <template>
   <article id='projects' class='parallax-static'>
     <h1>Projects <div class='subtext'>Whats been keeping me busy</div></h1>
-    <div class='projectlist'>
+    <div class='projectlist' style='min-width:1100px; max-width:1200px;'>
       <div><a href='https://github.com/pkkid/python-plexapi'>
         <i class='mdi mdi-code-braces'></i>
         <div class='title'>Python PlexAPI</div>
@@ -51,7 +51,7 @@
       margin-bottom: 30px;
       margin-left: 30px;
       min-width: 310px;
-      padding: 40px 40px 33px 40px;
+      padding: 30px 40px 33px 40px;
       position: relative;
       text-decoration: none !important;
       top: 0px;
@@ -68,13 +68,13 @@
         font-weight: 400;
         left: -1px;
         line-height: 1;
-        margin: 15px 0px 18px 0px;
+        margin: 12px 0px 16px 0px;
         position: relative;
       }
       p {
-        font-size: 1rem;
+        font-size: 0.95rem;
         font-weight: 400;
-        height: 75px;
+        height: 90px;
         letter-spacing: 0.5px;
         line-height: 1.7;
         word-wrap: break-word;

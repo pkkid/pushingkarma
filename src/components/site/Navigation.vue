@@ -11,7 +11,7 @@
       <div><a href='https://github.com/pkkid'><b-icon icon='github-box'/></a></div>
       <div><a href='https://www.linkedin.com/in/shepanski'><b-icon icon='linkedin-box'/></a></div>
       <div><a href='https://www.facebook.com/mshepanski'><b-icon icon='facebook-box'/></a></div>
-      <div @click='$refs.login.display = true' style='cursor:pointer;'>
+      <div class='avatarwrap' @click='$refs.login.display = true' style='cursor:pointer;'>
         <i v-if='user.id' class='avatar' key='avatar' :style="{backgroundImage:avatar}"/>
         <a v-else><b-icon icon='account-circle'/></a>
       </div>
@@ -98,17 +98,21 @@
       height: 60px;
     }
     .avatar {
-      background-size: 20px;
+      background-size: 24px;
       border-radius: 3px;
       display: block;
-      height: 20px;
-      left: 3px;
+      height: 26px;
+      top: -4px;
       position: relative;
-      top: -2px;
       transition: box-shadow 0.2s ease;
-      width: 20px;
-      &:hover { box-shadow: 0px 0px 8px rgba($darkbg-link, 0.4); }
+      width: 26px;
+      padding: 8px;
+      border: 1px solid #666;
     }
+    .links a { padding:11px 8px 5px 8px; border-radius:3px; }
+    .links a:hover { background-color: #444; color: #fbf1c7; transition: background-color 0.2s ease;  }
+    .links .avatarwrap { padding:9px 8px 2px 8px; border-radius:3px; }
+    .links .avatarwrap:hover { background-color: #444; transition: background-color 0.2s ease; }
   }
 
   // Top navigation

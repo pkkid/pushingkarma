@@ -40,7 +40,7 @@
     background-color: $darkbg-bg0;
     color: $darkbg-fg0;
     font-family: $fontfamily-article;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     line-height: 1.7;
     text-align: left;
 
