@@ -23,6 +23,11 @@ nvm use 10.24.1
 cd ~/Projects/pushingkarma && npm install
 cd ~/Projects/pushingkarma && npm run vue-build
 cd ~/Projects/pushingkarma && npm run start
+
+
+# New ASDF Setup
+# After installing asdf
+asdf install
 ```
 
 ### Setup Production Environment
