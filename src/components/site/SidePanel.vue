@@ -41,6 +41,7 @@ Side Panel - Panel on the left side of the content area used as a secondary
 
   #contentarea {
     background-color: $lightbg-bg3;
+    box-shadow: inset 0 0 5em 1em rgba($lightbg-fg0 ,0.15);
     box-sizing: border-box;
     color: $lightbg-text;
     font-weight: 300;

@@ -47,7 +47,7 @@ Set the Background Image URL
 
     .parallax-static {
       background-color: $lightbg-bg1;
-      color: #282828;
+      color: $lightbg-fg1;
       padding: 40px 40px 100px 40px;
       position: relative;
       text-align: left;

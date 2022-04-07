@@ -43,7 +43,8 @@
     margin: 75px 0px 0px -30px;
     list-style-type: none;
     a {
-      box-shadow: 0 0 20px rgba(0,0,0,.1);
+      background-color: lighten($lightbg-bg1, 5%);
+      box-shadow: 0 0 20px rgba($lightbg-fg0,.13);
       box-sizing: border-box;
       color: $lightbg-text;
       display: block;
