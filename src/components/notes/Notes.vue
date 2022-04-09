@@ -71,6 +71,7 @@
       this.editor = new Editor({
         editable: false,
         extensions: this.$refs.editmenu.extensions(),
+        onSelectionUpdate: this.onSelectionUpdate,
       });
     },
     methods: {
@@ -101,6 +102,14 @@
             self.$refs.search.updateResults();
           },
         });
+      },
+
+      // On Selection Update
+      // Keeps the Link href form up to date.
+      onSelectionUpdate: function(editor) {
+        if (this.editing) {
+          this.$refs.editmenu.linkUrl = this.editor.getAttributes('link').href;
+        }
       },
 
       // Update Note

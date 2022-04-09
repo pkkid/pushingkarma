@@ -170,8 +170,6 @@
         if (this.showLinkMenu) {
           return this.hideLinkMenu();
         }
-        // TODO: Update the linkURL every time the cursor changes
-        this.linkUrl = this.editor.getAttributes('link').href;
         this.showLinkMenu = true;
         this.$nextTick(function() {
           self.$refs.linkInput.focus();
