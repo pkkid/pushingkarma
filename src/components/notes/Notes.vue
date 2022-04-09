@@ -46,7 +46,7 @@
   import NotesEditMenu from './NotesEditMenu';
   import NotesToc from './NotesToc';
   import Search from './NotesSearch';
-  import {Editor, EditorContent} from 'tiptap';
+  import {Editor, EditorContent} from '@tiptap/vue-2';
 
   export default {
     name: 'Notes',
@@ -70,7 +70,6 @@
       // Tiptap Documentation: https://tiptap.scrumpy.io/docs
       this.editor = new Editor({
         editable: false,
-        onUpdate: this.updateToc,
         extensions: this.$refs.editmenu.extensions(),
       });
     },
@@ -109,7 +108,7 @@
       updateNote: async function(noteid) {
         var {data} = await api.Notes.getNote(noteid);
         this.note = data;
-        this.editor.setContent(this.note.body);
+        this.editor.commands.setContent(this.note.body);
         document.title = `PK - ${this.note.title}`;
       },
     },

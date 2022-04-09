@@ -1,46 +1,47 @@
 <template>
   <div id='notesmenubar'>
-    <transition name='custom-classes-transition'
-        enter-active-class='animated fadeIn'
-        leave-active-class='animated fadeOut'>
-      <editor-menu-bar :editor='editor' v-slot='{commands, getMarkAttrs, isActive}' v-if='editing'>
-        <div class='menubar'>
-          <!-- Format Menu Dropdown -->
-          <b-dropdown>
-            <button class='button is-text is-small texttype' slot='trigger' slot-scope='{active}'>
-              <span>{{currentFormat(isActive)}}</span>
-              <b-icon :icon="active ? 'menu-up' : 'menu-down'"></b-icon>
-            </button>
-            <b-dropdown-item :class='{"active":isActive.paragraph()}' @click='commands.paragraph'>Paragraph</b-dropdown-item>
-            <b-dropdown-item :class='{"active":isActive.heading({level:1})}' @click='commands.heading({level:1})'>Heading 1</b-dropdown-item>
-            <b-dropdown-item :class='{"active":isActive.heading({level:2})}' @click='commands.heading({level:2})'>Heading 2</b-dropdown-item>
-            <b-dropdown-item :class='{"active":isActive.heading({level:3})}' @click='commands.heading({level:3})'>Heading 3</b-dropdown-item>
-            <b-dropdown-item :class='{"active":isActive.code_block()}' @click='commands.code_block'>Code Block</b-dropdown-item>
-          </b-dropdown>
-          <!-- Regular Header Buttons -->
-          <div class='sep'/>
-          <b-button type='is-text is-small' :class='{"active":isActive.bold()}' @click='commands.bold'><b-icon size='is-small' icon='format-bold'/></b-button>
-          <b-button type='is-text is-small' :class='{"active":isActive.italic()}' @click='commands.italic'><b-icon size='is-small' icon='format-italic'/></b-button>
-          <b-button type='is-text is-small' :class='{"active":isActive.underline()}' @click='commands.underline'><b-icon size='is-small' icon='format-underline'/></b-button>
-          <div class='sep'/>
-          <b-button type='is-text is-small' :class='{"active":isActive.bullet_list()}' @click='commands.bullet_list'><b-icon size='is-small' icon='format-list-bulleted'/></b-button>
-          <b-button type='is-text is-small' :class='{"active":isActive.ordered_list()}' @click='commands.ordered_list'><b-icon size='is-small' icon='format-list-numbered'/></b-button>
-          <b-button type='is-text is-small' :class='{"active":isActive.todo_list()}' @click="commands.todo_list"><b-icon size='is-small' icon='format-list-checkbox'/></b-button>
-          <div class='sep'/>
-          <b-button type='is-text is-small' :class='{"active":isActive.link()}' @click='toggleLinkMenu(getMarkAttrs("link"))'><b-icon size='is-small' icon='link'/></b-button>
-          <b-button type='is-text is-small' :class='{"active":isActive.blockquote()}' @click='commands.blockquote'><b-icon size='is-small' icon='format-quote-close'/></b-button>
-          <b-button type='is-text is-small' :class='{"active":isActive.code()}' @click='commands.code'><b-icon size='is-small' icon='code-tags'/></b-button>
-          <b-button type='is-text is-small' @click.prevent='save' style='float:right;'><span>Save</span></b-button>
-          <!-- Link Form -->
-          <div v-if='showLinkMenu' class='expandform'>
-            <input type='text' name='url' class='input' v-model='linkUrl' ref='linkInput' placeholder='https://' spellcheck='false' autocomplete='off'
-              @keydown.enter.prevent='setLinkUrl(commands.link, linkUrl)'
-              @keydown.esc.stop='hideLinkMenu'
-              @click='$refs.linkInput.focus()'/>
-            <b-button type='is-text is-small' @click='setLinkUrl(commands.link, "")'>❌</b-button>
-          </div>
+    <transition name='custom-classes-transition' enter-active-class='animated fadeIn' leave-active-class='animated fadeOut'>
+      <div v-if='editing' class='menubar'>
+        
+        <!-- Paragraph Style -->
+        <b-dropdown>
+          <button class='button is-text is-small texttype' slot='trigger' slot-scope='{active}'>
+            <span>{{currentFormat(editor)}}</span>
+            <b-icon :icon="active ? 'menu-up':'menu-down'"></b-icon>
+          </button>
+          <b-dropdown-item @click='editor.chain().focus().setParagraph().run()' :class='{"active":editor.isActive("paragraph")}'>Paragraph</b-dropdown-item>
+          <b-dropdown-item @click='editor.chain().focus().toggleHeading({level:1}).run()' :class='{"active":editor.isActive("heading", {level:1})}'>Heading 1</b-dropdown-item>
+          <b-dropdown-item @click='editor.chain().focus().toggleHeading({level:2}).run()' :class='{"active":editor.isActive("heading", {level:2})}'>Heading 2</b-dropdown-item>
+          <b-dropdown-item @click='editor.chain().focus().toggleHeading({level:3}).run()' :class='{"active":editor.isActive("heading", {level:3})}'>Heading 3</b-dropdown-item>
+          <b-dropdown-item @click='editor.chain().focus().toggleCodeBlock().run()' :class='{"active":editor.isActive("codeBlock")}'>Code Block</b-dropdown-item>
+        </b-dropdown>
+        <div class='sep'/>
+        <!-- Bold, Italic, Strike -->
+        <b-button type='is-text is-small' @click="editor.chain().focus().toggleBold().run()" :class="{'active':editor.isActive('bold')}"><b-icon size='is-small' icon='format-bold'/></b-button>
+        <b-button type='is-text is-small' @click="editor.chain().focus().toggleItalic().run()" :class="{'active':editor.isActive('italic')}"><b-icon size='is-small' icon='format-italic'/></b-button>
+        <b-button type='is-text is-small' @click="editor.chain().focus().toggleStrike().run()" :class="{'active':editor.isActive('strike')}"><b-icon size='is-small' icon='format-strikethrough'/></b-button>
+        <div class='sep'/>
+        <!-- Lists -->
+        <b-button type='is-text is-small' @click="editor.chain().focus().toggleBulletList().run()" :class="{'active':editor.isActive('bulletList')}"><b-icon size='is-small' icon='format-list-bulleted'/></b-button>
+        <b-button type='is-text is-small' @click="editor.chain().focus().toggleOrderedList().run()" :class="{'active':editor.isActive('orderedList')}"><b-icon size='is-small' icon='format-list-numbered'/></b-button>
+        <div class='sep'/>
+        <!-- Block Quote, Code -->
+        <b-button type='is-text is-small' @click="editor.chain().focus().toggleBlockquote().run()" :class="{'active':editor.isActive('blockquote')}"><b-icon size='is-small' icon='format-quote-close'/></b-button>
+        <b-button type='is-text is-small' @click="editor.chain().focus().toggleCode().run()" :class="{'active':editor.isActive('code')}"><b-icon size='is-small' icon='code-tags'/></b-button>
+        <!-- Save -->
+        <b-button type='is-text is-small' @click.prevent='save' style='float:right;'><span>Save</span></b-button>
+
+        <!-- LINK NOT IMPLEMENTED YET
+        <b-button type='is-text is-small' :class='{"active":isActive.link()}' @click='toggleLinkMenu(getMarkAttrs("link"))'><b-icon size='is-small' icon='link'/></b-button>
+        <div v-if='showLinkMenu' class='expandform'>
+          <input type='text' name='url' class='input' v-model='linkUrl' ref='linkInput' placeholder='https://' spellcheck='false' autocomplete='off'
+            @keydown.enter.prevent='setLinkUrl(commands.link, linkUrl)'
+            @keydown.esc.stop='hideLinkMenu'
+            @click='$refs.linkInput.focus()'/>
+          <b-button type='is-text is-small' @click='setLinkUrl(commands.link, "")'>X</b-button>
         </div>
-      </editor-menu-bar>
+        END LINK -->
+      </div>
     </transition>
   </div>
 </template>
@@ -48,12 +49,14 @@
 <script>
   import * as api from '@/api';
   import * as pathify from 'vuex-pathify';
-  import {EditorMenuBar} from 'tiptap';
+  import StarterKit from '@tiptap/starter-kit';
+  import Code from '@tiptap/extension-code';
+  import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
+  import Link from '@tiptap/extension-link';
+  import Strike from '@tiptap/extension-strike';
+  import TaskItem from '@tiptap/extension-task-item';
+  import TaskList from '@tiptap/extension-task-item';
 
-  // TipTap Extensions
-  import {Blockquote, BulletList, CodeBlockHighlight, HardBreak, Heading,
-    Link, ListItem, OrderedList, Bold, Code, Italic, Strike, TodoItem,
-    TodoList, Underline, History} from 'tiptap-extensions';
   import bash from 'highlight.js/lib/languages/bash';
   import css from 'highlight.js/lib/languages/css';
   import javascript from 'highlight.js/lib/languages/javascript';
@@ -64,7 +67,7 @@
 
   export default {
     name: 'NotesEditMenu',
-    components: {EditorMenuBar},
+    //components: {EditorMenuBar},
     computed: {
       editing: pathify.sync('notes/editing'),
       editor: pathify.sync('notes/editor'),
@@ -92,38 +95,26 @@
     },
 
     methods: {
+      bold: function() {
+        this.editor.chain().focus().toggleBold().run();
+      },
+
       // Extensions
       // Returns list of enabled tiptap extensions
       extensions: function() {
-        return [
-          new Blockquote(),
-          new Bold(),
-          new BulletList(),
-          new Code(),
-          new CodeBlockHighlight({languages:LANGUAGES}),
-          new HardBreak(),
-          new Heading({levels:[1,2,3]}),
-          new History(),
-          new Italic(),
-          new Link({openOnClick:false}),
-          new ListItem(),
-          new OrderedList(),
-          new Strike(),
-          new TodoItem({nested: true}),
-          new TodoList(),
-          new Underline(),
-        ];
+        return [StarterKit, Code, CodeBlockLowlight, Link,
+          Strike, TaskItem, TaskList];
       },
 
       // CurrentFormat
       // Return the currently selected text format
-      currentFormat: function(isActive) {
-        if (isActive.paragraph()) { return 'Paragraph'; }
-        if (isActive.heading({level:1})) { return 'Heading 1'; }
-        if (isActive.heading({level:2})) { return 'Heading 2'; }
-        if (isActive.heading({level:3})) { return 'Heading 3'; }
-        if (isActive.code_block()) { return 'Code Block'; }
-        else { return 'Format'; }
+      currentFormat: function(editor) {
+        if (editor.isActive('paragraph')) { return 'Paragraph'; }
+        if (editor.isActive('heading', {level:1})) { return 'Heading 1'; }
+        if (editor.isActive('heading', {level:2})) { return 'Heading 2'; }
+        if (editor.isActive('heading', {level:3})) { return 'Heading 3'; }
+        if (editor.isActive('codeBlock')) { return 'Code Block'; }
+        return 'Format';
       },
 
       // Save
@@ -208,27 +199,28 @@
   #notesmenubar .menubar {
     animation-duration: .3s;
     background-color: $darkbg-color;
-    border-radius: 8px;
+    border-radius: 4px;
     box-shadow: 0 2px 3px rgba(0, 0, 0, .3);
     color: $darkbg-text;
+    line-height: 2.3em;
+    margin-left: -40px;
     padding: 5px 10px;
     position: fixed;
     top: 70px;
-    width: 900px;
-    margin-left: -51px;
+    width: 920px;
     z-index: 50;
-    line-height: 1.6em;
     :focus { box-shadow: none; }
     .sep {
       margin: 0px 10px 0px 5px;
       display: inline;
-      border-left: 1px solid #665c54;
+      border-left: 1px dotted #665c54;
     }
     .button {
       background-color: transparent;
       color: $darkbg-text;
       text-decoration: none;
       margin-right: 5px;
+      margin-top: 5px;
       &:hover { background-color: lighten($darkbg-color, 8%); }
       &.active { background-color: lighten($darkbg-color, 16%); }
       &.is-text {

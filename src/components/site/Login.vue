@@ -146,6 +146,14 @@
 </script>
 
 <style lang='scss'>
+  .modal .animation-content {
+    position: relative;
+  }
+  .modal .modal-close {
+    position: absolute;
+    top: 10px;
+    right: 8px;
+  }
   #login {
     background-color: $lightbg-bg1;
     border-radius: 5px;
@@ -190,6 +198,9 @@
       margin: 10px auto 20px auto;
       width: 80px;
     }
+    dt {
+      width: 60px;
+    }
     dd {
       overflow: hidden;
       text-overflow: ellipsis;
@@ -197,7 +208,7 @@
     }
     .actions {
       line-height: 0.9em;
-      margin-bottom: 5px;
+      //margin-bottom: 5px;
       a { color:#777; font-size: 0.8em; margin-right:15px; }
       a:hover { color:#333; }
     }
