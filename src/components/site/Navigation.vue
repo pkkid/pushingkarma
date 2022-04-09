@@ -8,12 +8,12 @@
       <div v-if='user.id'><router-link to='/budget'>Budget</router-link></div>
     </div>
     <div class='links'>
-      <div><a href='https://github.com/pkkid'><b-icon icon='github-box'/></a></div>
-      <div><a href='https://www.linkedin.com/in/shepanski'><b-icon icon='linkedin-box'/></a></div>
-      <div><a href='https://www.facebook.com/mshepanski'><b-icon icon='facebook-box'/></a></div>
-      <div class='avatarwrap' @click='$refs.login.display = true' style='cursor:pointer;'>
-        <i v-if='user.id' class='avatar' key='avatar' :style="{backgroundImage:avatar}"/>
-        <a v-else><b-icon icon='account-circle'/></a>
+      <div><a class='iconwrap' href='https://github.com/pkkid'><b-icon icon='github-box'/></a></div>
+      <div><a class='iconwrap' href='https://www.linkedin.com/in/shepanski'><b-icon icon='linkedin-box'/></a></div>
+      <div><a class='iconwrap' href='https://www.facebook.com/mshepanski'><b-icon icon='facebook-box'/></a></div>
+      <div @click='$refs.login.display=true'>
+        <a v-if='user.id' class='iconwrap' href='javascript:void(0)'><i class='avatar' key='avatar' :style="{backgroundImage:avatar}"/></a>
+        <a v-else class='iconwrap' href='javascript:void(0)'><b-icon icon='account-circle'/></a>
       </div>
     </div>
     <Login ref='login'/>
@@ -94,25 +94,38 @@
       position: absolute;
       bottom: 40px;
       left: 58px;
-      width: 130px;
-      height: 60px;
+      width: 164px;
+      height: 41px;
     }
-    .avatar {
-      background-size: 24px;
+    .links .iconwrap {
       border-radius: 3px;
       display: block;
-      height: 26px;
-      top: -4px;
+      height: 41px;
+      margin-top: 20px;
       position: relative;
-      transition: box-shadow 0.2s ease;
-      width: 26px;
-      padding: 8px;
-      border: 1px solid #666;
+      width: 41px;
+      &:hover {
+        background-color: $darkbg-bg1;
+        color: $darkbg-fg0;
+        transition: background-color 0.2s ease;
+      }
+      .icon {
+        position: absolute;
+        top: 9px;
+        left: 9px;
+      }
+      .avatar {
+        background-size: 25px;
+        border-radius: 3px;
+        display: block;
+        height: 26px;
+        position: absolute;
+        width: 26px;
+        border: 1px solid $darkbg-bg2;
+        top: 7px;
+        left: 7px;
+      }
     }
-    .links a { padding:11px 8px 5px 8px; border-radius:3px; }
-    .links a:hover { background-color: #444; color: #fbf1c7; transition: background-color 0.2s ease;  }
-    .links .avatarwrap { padding:9px 8px 2px 8px; border-radius:3px; }
-    .links .avatarwrap:hover { background-color: #444; transition: background-color 0.2s ease; }
   }
 
   // Top navigation
