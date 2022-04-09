@@ -101,8 +101,15 @@
       // Extensions
       // Returns list of enabled tiptap extensions
       extensions: function() {
-        return [StarterKit, Code, CodeBlockLowlight, Link,
-          Strike, TaskItem, TaskList];
+        return [
+          StarterKit,
+          Code,
+          CodeBlockLowlight,
+          Link.configure({openOnClick: false}),
+          Strike,
+          TaskItem,
+          TaskList
+        ];
       },
 
       // CurrentFormat
