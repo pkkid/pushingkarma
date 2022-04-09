@@ -54,14 +54,7 @@
   import Strike from '@tiptap/extension-strike';
   import TaskItem from '@tiptap/extension-task-item';
   import TaskList from '@tiptap/extension-task-item';
-
-  import bash from 'highlight.js/lib/languages/bash';
-  import css from 'highlight.js/lib/languages/css';
-  import javascript from 'highlight.js/lib/languages/javascript';
-  import python from 'highlight.js/lib/languages/python';
-  import sql from 'highlight.js/lib/languages/sql';
-  import xml from 'highlight.js/lib/languages/xml';
-  var LANGUAGES = {bash,css,javascript,python,sql,xml};
+  import lowlight from 'lowlight';
 
   export default {
     name: 'NotesEditMenu',
@@ -104,7 +97,7 @@
         return [
           StarterKit,
           Code,
-          CodeBlockLowlight,
+          CodeBlockLowlight.configure({lowlight}),
           Link.configure({openOnClick: false}),
           Strike,
           TaskItem,
