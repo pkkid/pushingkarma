@@ -6,13 +6,13 @@
         <Search ref='search' @newSelection='updateNote'/>
       </template>
       <template v-slot:contentarea>
-        <div id='notewrap'>
+        <div id='notewrap' :class='{editing}'>
           <!-- Edit Menu & Note -->
           <PageWrap>
             <NotesEditMenu ref='editmenu'/>
             <h1><input name='title' autocomplete='off' placeholder='Enter a Title' v-model='note.title' :readonly=!editing />
               <div class='subtext'>
-                {{note.created | formatDate('MMM DD, YYYY')}} - 
+                {{note.updated | formatDate('MMM DD, YYYY')}} &nbsp;•&nbsp;
                 <input name='tags' placeholder='tags' autocomplete='off' v-model='note.tags' :readonly=!editing />
               </div>
             </h1>
@@ -21,12 +21,16 @@
           <!-- Table of Contents & Edit Controls -->
           <div id='rightmenu'>
             <NotesToc :title='title' :content='content'/>
-            <div class='controls' if='userid !== null'>
-              <div v-if='editing'><i class='mdi mdi-cancel'/> <a @click='editing=false'>Cancel Changes</a></div>
-              <div v-else-if='userid'>
-                <i class='mdi mdi-pencil-outline'/> <a @click='editing=true'>Edit Note</a><br/>
-                <i class='mdi mdi-file-plus-outline'/> <a @click='createNote(note)'>Create Note</a><br/>
-                <i class='mdi mdi-delete'/> <a @click='deleteNote(note)'>Delete Note</a>
+            <NotesTags :tagstr='note.tags' :search='$refs.search'/>
+            <div v-if='userid'>
+              <h2 style='margin-top:40px;'>Editing Options</h2>
+              <div class='submenu'>
+                <div v-if='editing'><a @click='editing=false'>Cancel Changes</a></div>
+                <div v-else>
+                  <div><a @click='editing=true'>Edit Note</a></div>
+                  <div><a @click='createNote(note)'>Create Note</a></div>
+                  <div><a @click='deleteNote(note)'>Delete Note</a></div>
+                </div>
               </div>
             </div>
           </div>
@@ -45,12 +49,13 @@
   import PageWrap from '@/components/site/PageWrap';
   import NotesEditMenu from './NotesEditMenu';
   import NotesToc from './NotesToc';
+  import NotesTags from './NotesTags';
   import Search from './NotesSearch';
   import {Editor, EditorContent} from '@tiptap/vue-2';
 
   export default {
     name: 'Notes',
-    components: {Navigation, SidePanel, PageWrap, NotesEditMenu, NotesToc, Search, EditorContent},
+    components: {Navigation, SidePanel, PageWrap, NotesEditMenu, NotesToc, NotesTags, Search, EditorContent},
     computed: {
       editing: pathify.sync('notes/editing'),
       editor: pathify.sync('notes/editor'),
@@ -132,40 +137,55 @@
       margin: 0px auto;
       position: relative;
       padding: 30px 30px 60px 30px;
+      #pagewrap { float:left; margin-top:0px; transition: margin 0.2s ease; }
+      &.editing #pagewrap { margin-top:35px; background-color: $lightbg-blue1; }
     }
-    #pagewrap { padding: 0px; }
-    #page { float:left; }
+
     article {
       h1 input {
-        background-color: transparent;
+        background-color: darken($lightbg-bg1, 5%);
         border-width: 0px;
-        border-radius: 0px;
+        border-radius: 3px;
         font-family: $fontfamily-title;
         font-size: 2rem;
-        padding: 0px 3px;
-        margin-left: -3px;
-        width: 780px;
+        padding: 0px 5px;
+        margin-left: -5px;
+        width: 840px;
         color: $lightbg-text;
+        transition: background-color 0.2s ease;
+        &:read-only {
+          background-color: transparent;
+        }
       }
       h1 .subtext,
       h1 .subtext input {
         font-size: 1rem;
         font-family: $fontfamily-article;
       }
-      h1 .subtext input { width:250px; }
+      h1 .subtext input { width:700px; }
     }
     #rightmenu {
       float: left;
-      font-size: .8rem;
+      font-size: 1rem;
       font-weight: 400;
       margin-left: 920px;
       position: fixed;
-      width: 230px;
-      .controls {
-        font-size: 1rem;
-        margin-top: 20px;
-        color: $lightbg-link;
-        .mdi { margin-right: 5px; }
+      width: 250px;
+      h2 {
+        color: $lightbg-fg0;
+        font-size: 1.1em;
+        margin-bottom: 10px;
+        margin-top: 40px;
+      }
+      .submenu {
+        border-left: 3px solid $lightbg-blue1;
+        font-size: 0.9em;
+        padding-left: 10px;
+        a {
+          color: $lightbg-text;
+          margin-right: 3px;
+          &:hover { color:$lightbg-link; text-decoration:none; }
+        }
       }
     }
   }

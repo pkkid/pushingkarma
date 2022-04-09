@@ -9,6 +9,7 @@
         @keydown.down.prevent='setHighlighted(+1)'
         @keyup.enter.prevent='$emit("newSelection", highlighted)'
         @keydown.esc.stop='$refs.search.blur()'/>
+      <div class='clearsearch' @click='search=""; focus()'>✕</div>
       <!-- Search Results -->
       <div class='results'>
         <ScrollBox>
@@ -16,8 +17,8 @@
             :class='{highlighted:note.id == highlighted}' @click='$emit("newSelection", note.id)'>
             {{note.title}}
             <div class='subtext'>
-              {{note.tags}} <span v-if='note.tags'>-</span>
-              {{note.created | formatDate('MMM DD, YYYY')}}
+              {{note.updated | formatDate('MMM DD, YYYY')}}
+              <span v-if='note.tags'>&nbsp;•&nbsp;</span> {{note.tags}} 
               <i v-if='isPrivateNote(note)' class='mdi mdi-key lock'/>
             </div>
           </div>
@@ -128,6 +129,7 @@
     &:hover, &:focus,
     &:focus-within { opacity: 1; }
 
+    .searchwrap { position: relative; }
     .searchinput {
       background-color: darken($darkbg-color, 5%);
       border-bottom: 1px solid rgba(0, 0, 0, 0.2);
@@ -137,7 +139,7 @@
       font-weight: 500;
       height: 40px;
       line-height: 40px;
-      padding: 0px 10px 0px 45px;
+      padding: 0px 45px 0px 45px;
       position: relative;
       width: 300px;
       &:focus {
@@ -151,6 +153,23 @@
       position: absolute;
       top: 8px;
       z-index: 1;
+    }
+    .clearsearch {
+      line-height: 20px;
+      position: absolute;
+      right: 10px;
+      text-align: center;
+      top: 10px;
+      width: 20px;
+      cursor: pointer;
+      background-color: transparent;
+      transition: opacity 0.2s ease;
+      opacity: 0.3;
+      border-radius: 20px;
+      background-color: darken($darkbg-color, 15%);
+      &:hover {
+        opacity: 1;
+      }
     }
     .result {
       border-bottom-right-radius: 8px;
@@ -173,7 +192,7 @@
       .subtext {
         font-size: 0.8em;
         font-weight: 400;
-        color: $darkbg-text-dim;
+        color: rgba($darkbg-text-dim, 0.5);
         padding-top: 2px;
       }
       .lock {

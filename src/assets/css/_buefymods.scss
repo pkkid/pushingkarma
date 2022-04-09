@@ -1,30 +1,44 @@
 // Encoding: UTF-8
-// Buefy Overrides
 
+//----------------------------------------------------
 // Buttons
 // https://buefy.org/documentation/button
+//----------------------------------------------------
 .button {
-  border-width: 2px;
+  background-color: darken($lightbg-bg1, 10%);
+  border-width: 0px;
   border-radius: 5px;
   color: $lightbg-fg2;
   font-size: 0.9rem;
   line-height: 1em;
-  &:active { color: $lightbg-fg1; }
+  transition: background-color 0.2s ease, color 0.2s ease;
+  &:active { color: $lightbg-fg2; }
+  &:focus {
+    background-color: darken($lightbg-bg1, 10%);
+    box-shadow: none !important;
+  }
+  &:hover {
+    background-color: darken($lightbg-bg1, 20%) !important;
+    box-shadow: none !important;
+    color: darken($lightbg-fg2, 10%);
+  }
 }
 .button.is-small {
   font-size: 0.8rem;
 }
 .button.is-danger {
-  border-color: darken($darkbg-red0, 5%);
-  &:hover, &:focus {
-    border-color: darken($darkbg-red0, 15%);
-    box-shadow: none !important;
-  }
+  background-color: darken($lightbg-bg1, 10%);
+  color: darken($darkbg-red0, 5%);
+  &:focus { color: darken($darkbg-red0, 5%); }
+  &:hover { color: darken($darkbg-red0, 7%); }
 }
 .b-table + button { margin-top: 10px; }
 
+
+//----------------------------------------------------
 // Form Controls
-// Labels - https://buefy.org/documentation/field
+// Labels: https://buefy.org/documentation/field
+//----------------------------------------------------
 .label {
   font-weight: 400;
   margin-bottom: 0px !important;
@@ -35,8 +49,11 @@
   &:focus { box-shadow: 0 0 0 2px rgba(7, 102, 120, 0.25); }
 }
 
+
+//----------------------------------------------------
 // Loading Animation
 // https://buefy.org/documentation/loading
+//----------------------------------------------------
 .loading-overlay {
   .loading-background { background-color: transparent; }
   .loading-icon:after {
@@ -52,36 +69,44 @@
     left: calc(50% - 9px);
   }
 }
-.loading-overlay 
 
+
+//----------------------------------------------------
 // Modal Card
 // https://buefy.org/documentation/dialog
-.dialog .modal-card {
-  // background-color: $lightbg-bg1;
+//----------------------------------------------------
+.modal-card {
+  background-color: $lightbg-bg1;
+  border-radius: 5px;
+  box-shadow: inset 0 0 5em 1em rgba($lightbg-fg0, 0.15);
   .modal-card-head,
   .modal-card-body,
   .modal-card-foot {
-    background-color: $lightbg-bg1;
+    background-color: transparent;
     border-width: 0px;
-    color: $lightbg-fg1;
+    color: $lightbg-fg2;
     font-weight: 400;
-    .button { font-weight:400; }
   }
-  .modal-card-head {
-    padding-bottom: 0px;
-  }
+  .modal-card-head { padding: 25px 20px 0px 20px; }
+  .modal-card-foot { padding-top: 0px; }
 }
 
+
+//----------------------------------------------------
 // Notices
 // https://buefy.org/documentation/snackbar/
+//----------------------------------------------------
 .notices {
   font-size: 0.9rem;
   padding: 70px 20px 20px 20px;
 }
 
+
+//----------------------------------------------------
 // Tables
 // Kitchen sink of usefulness; Is this a love hate relationship?
 // https://buefy.org/documentation/table
+//----------------------------------------------------
 .table-wrapper {
   background-color: lighten($lightbg-bg1, 2%);
   border: 1px solid $lightbg-bg3;
@@ -92,7 +117,6 @@
   font-size: 15px;
   color: $lightbg-fg2;
 
-  
   tr { position:relative; }
   tr.is-empty td {
     font-size: 1.3em;
@@ -112,8 +136,11 @@
   td.toggle div { text-align:center; justify-content:center; }
 }
 
+
+//----------------------------------------------------
 // Tabs
 // https://buefy.org/documentation/tabs/
+//----------------------------------------------------
 .tabs ul { padding-left: 0px; border-bottom-width:2px; }
 .tabs a { border-bottom-width:2px; margin-bottom: -2px; }
 .b-tabs .tab-content { padding: 20px 0px; }

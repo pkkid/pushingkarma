@@ -37,7 +37,7 @@
             @keydown.enter.prevent="editor.commands.setLink({href:linkUrl})"
             @keydown.esc.stop='hideLinkMenu'
             @click='$refs.linkInput.focus()'/>
-          <b-button type='is-text is-small' @click='editor.commands.unsetLink(); linkUrl=""'>Remove Link</b-button>
+          <b-button type='is-text is-small' @click='editor.commands.unsetLink(); linkUrl=""'>Unlink</b-button>
         </div>
       </div>
     </transition>

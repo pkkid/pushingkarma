@@ -156,6 +156,7 @@
   }
   #login {
     background-color: $lightbg-bg1;
+    box-shadow: inset 0 0 5em 1em rgba($lightbg-fg0 ,0.15);
     border-radius: 5px;
     height: 500px;
     position: relative;
@@ -207,9 +208,8 @@
       width: 220px;
     }
     .actions {
-      line-height: 0.9em;
-      //margin-bottom: 5px;
-      a { color:#777; font-size: 0.8em; margin-right:15px; }
+      margin-top: -5px;
+      a { color:#777; font-size:0.8em; margin-right:15px; }
       a:hover { color:#333; }
     }
     .footnote {

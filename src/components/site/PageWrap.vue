@@ -12,7 +12,7 @@ Simple Layout that looks like a page (or a peice of paper).
 
 <style lang='scss'>
   #pagewrap {
-    padding: 30px 30px 60px 30px;
+    border: 2px solid transparent;
   }
   #page {
     background-color: $lightbg-bg1;

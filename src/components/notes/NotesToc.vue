@@ -1,7 +1,10 @@
 <template>
   <div id='toc'>
-    <div v-for='item in tocitems' v-bind:key='item.text' :class='item.type'>
-      <router-link :to='{hash:item.slug, query:$route.query}'>{{item.text}}</router-link>
+    <h2 style='margin-top:35px;'>Table of Contents</h2>
+    <div class='submenu'>
+      <div v-for='item in tocitems' v-bind:key='item.text' :class='item.type'>
+        <router-link :to='{hash:item.slug, query:$route.query}'>{{item.text}}</router-link>
+      </div>
     </div>
   </div>
 </template>
@@ -34,17 +37,9 @@
 </script>
 
 <style lang='scss'>
-  #toc {
-    border-left: 3px solid $lightbg-blue1;
-    font-family: $fontfamily-article;
-    font-weight: 400;
-    padding-left: 10px;
-    .h1 { font-weight:bold; color:darken($lightbg-text, 30%); }
+  #toc .submenu {
+    .h1 { padding-left:0px; }
     .h2 { padding-left:0px; }
     .h3 { padding-left:15px; }
-    a {
-      color: $lightbg-text;
-      &:hover { color:$lightbg-link; text-decoration:none; }
-    }
   }
 </style>
