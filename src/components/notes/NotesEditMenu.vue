@@ -25,22 +25,20 @@
         <b-button type='is-text is-small' @click="editor.chain().focus().toggleBulletList().run()" :class="{'active':editor.isActive('bulletList')}"><b-icon size='is-small' icon='format-list-bulleted'/></b-button>
         <b-button type='is-text is-small' @click="editor.chain().focus().toggleOrderedList().run()" :class="{'active':editor.isActive('orderedList')}"><b-icon size='is-small' icon='format-list-numbered'/></b-button>
         <div class='sep'/>
-        <!-- Block Quote, Code -->
+        <!-- Block Quote, Code, Link -->
         <b-button type='is-text is-small' @click="editor.chain().focus().toggleBlockquote().run()" :class="{'active':editor.isActive('blockquote')}"><b-icon size='is-small' icon='format-quote-close'/></b-button>
         <b-button type='is-text is-small' @click="editor.chain().focus().toggleCode().run()" :class="{'active':editor.isActive('code')}"><b-icon size='is-small' icon='code-tags'/></b-button>
+        <b-button type='is-text is-small' @click="toggleLinkMenu()" :class="{'active':editor.isActive('link')}"><b-icon size='is-small' icon='link'/></b-button>
         <!-- Save -->
         <b-button type='is-text is-small' @click.prevent='save' style='float:right;'><span>Save</span></b-button>
-
-        <!-- LINK NOT IMPLEMENTED YET
-        <b-button type='is-text is-small' :class='{"active":isActive.link()}' @click='toggleLinkMenu(getMarkAttrs("link"))'><b-icon size='is-small' icon='link'/></b-button>
+        <!-- Link Menu (hidden by default) -->
         <div v-if='showLinkMenu' class='expandform'>
           <input type='text' name='url' class='input' v-model='linkUrl' ref='linkInput' placeholder='https://' spellcheck='false' autocomplete='off'
-            @keydown.enter.prevent='setLinkUrl(commands.link, linkUrl)'
+            @keydown.enter.prevent="editor.commands.setLink({href:linkUrl})"
             @keydown.esc.stop='hideLinkMenu'
             @click='$refs.linkInput.focus()'/>
-          <b-button type='is-text is-small' @click='setLinkUrl(commands.link, "")'>X</b-button>
+          <b-button type='is-text is-small' @click='editor.commands.unsetLink(); linkUrl=""'>Remove Link</b-button>
         </div>
-        END LINK -->
       </div>
     </transition>
   </div>
@@ -84,6 +82,7 @@
       // When edit mode changes, make sure TipTap is informed.
       editing: function() {
         let editable = this.editing && (this.userid !== null);
+        this.showLinkMenu = false;
         this.editor.setOptions({editable});
       },
 
@@ -159,17 +158,17 @@
 
       // ToggleLinkMenu
       // Show or hide the link menu input
-      // see: https://tiptap.scrumpy.io/links
-      toggleLinkMenu: function(attrs) {
+      toggleLinkMenu: function() {
+        var self = this;
         if (this.showLinkMenu) {
-          this.hideLinkMenu();
-        } else {
-          this.linkUrl = attrs.href;
-          this.showLinkMenu = true;
-          this.$nextTick(function() {
-            this.$refs.linkInput.focus();
-          });
+          return this.hideLinkMenu();
         }
+        // TODO: Update the linkURL every time the cursor changes
+        this.linkUrl = this.editor.getAttributes('link').href;
+        this.showLinkMenu = true;
+        this.$nextTick(function() {
+          self.$refs.linkInput.focus();
+        });
       },
 
       // HideLinkMenu
@@ -204,7 +203,7 @@
     color: $darkbg-text;
     line-height: 2.3em;
     margin-left: -40px;
-    padding: 5px 10px;
+    padding: 5px 10px 2px 10px;
     position: fixed;
     top: 70px;
     width: 920px;
@@ -220,13 +219,12 @@
       color: $darkbg-text;
       text-decoration: none;
       margin-right: 5px;
-      margin-top: 5px;
+      padding: 15px 10px 13px 10px;
+      height: 32px;
       &:hover { background-color: lighten($darkbg-color, 8%); }
       &.active { background-color: lighten($darkbg-color, 16%); }
       &.is-text {
         font-size: 0.9em;
-        padding-top: 2px;
-        padding-bottom: 2px;
         height: 25px;
       }
       &.texttype { width: 120px; }
@@ -238,11 +236,14 @@
         background-color: #444;
         border-width: 0px;
         color: $darkbg-input;
-        font-size: 12px;
-        height: 25px;
-        font-weight: 500;
-        width: calc(100% - 100px);
         float: left;
+        font-size: 0.9em;
+        font-weight: 500;
+        line-height: 25px;
+        margin-bottom: 5px;
+        height: 32px;
+        padding-top: 6px;
+        width: calc(100% - 200px);
       }
       .button {
         margin-left: 5px;
