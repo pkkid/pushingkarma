@@ -116,7 +116,6 @@
       // Generate Token
       // Generate a new API token
       generateToken: async function() {
-        var self = this;
         this.$buefy.dialog.confirm({
           title: 'Generate New Token',
           message: `Are you sure you wish to generate a new API token? This will invalidate the current API token.`,
