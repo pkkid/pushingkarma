@@ -141,16 +141,18 @@ article {
         top: 2px;
         input { display:none; }
         span {
-          border-radius: 4px;
-          border: 2px solid $lightbg-fg3;
+          border-radius: 3px;
+          border: 1px solid lighten($lightbg-fg3, 30%);
           display: block;
-          height: 16px;
-          margin-top: 2px;
-          width: 16px;
+          height: 14px;
+          margin-top: 3px;
+          width: 14px;
+          background-color: lighten($lightbg-fg3, 60%);
         }
       }
     }
     li[data-checked='true'] label span {
+      border: 1px solid $lightbg-fg3;
       background: $lightbg-fg3 url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg'\
         viewBox='0 0 1 1'%3E%3Cpath d='M.04.627L.146.52.43.804.323.91zm.177.177L.854.167.96.273.323.91z'\
         fill='%23fff'/%3E%3C/svg%3E") no-repeat 50%;
