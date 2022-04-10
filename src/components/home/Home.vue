@@ -65,7 +65,7 @@
       animation: bounce 2s infinite;
       bottom: 5%;
       font-size: 1.6rem;
-      margin-left: 150px;
+      margin-left: 290px;
       position: absolute;
       z-index: 55;
     }

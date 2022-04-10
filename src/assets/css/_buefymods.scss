@@ -20,22 +20,28 @@
     text-decoration-style: dotted;
   }
   &:hover {
-    background-color: darken($lightbg-bg1, 20%) !important;
-    box-shadow: none !important;
+    background-color: darken($lightbg-bg1, 20%);
+    box-shadow: none;
     color: darken($lightbg-fg2, 10%);
   }
 }
-.button.is-primary {
+.button.is-primary,
+.button.is-primary:focus {
   background-color: darken($lightbg-bg1, 10%);
   color: darken($lightbg-fg2, 5%);
-  &:focus { color: darken($lightbg-fg2, 5%); }
-  &:hover { color: darken($lightbg-fg2, 7%); }
+  &:hover {
+    background-color: darken($lightbg-bg1, 20%);
+    color: darken($lightbg-fg2, 5%);
+  }
 }
-.button.is-danger {
+.button.is-danger,
+.button.is-danger:focus {
   background-color: darken($lightbg-bg1, 10%);
   color: darken($darkbg-red0, 5%);
-  &:focus { color: darken($darkbg-red0, 5%); }
-  &:hover { color: darken($darkbg-red0, 7%); }
+  &:hover {
+    background-color: darken($lightbg-bg1, 20%);
+    color: darken($darkbg-red0, 7%);
+  }
 }
 .button.is-small { font-size: 0.8rem; }
 .b-table + button { margin-top: 10px; }
