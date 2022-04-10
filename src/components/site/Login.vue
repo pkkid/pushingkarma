@@ -116,8 +116,20 @@
       // Generate Token
       // Generate a new API token
       generateToken: async function() {
-        var {data} = await api.Users.generateToken();
-        if (data.id) { this.user = data; }
+        var self = this;
+        this.$buefy.dialog.confirm({
+          title: 'Generate New Token',
+          message: `Are you sure you wish to generate a new API token? This will invalidate the current API token.`,
+          confirmText: 'Generate Token',
+          focusOn: 'cancel',
+          onConfirm: async function() {
+            var {data} = await api.Users.generateToken();
+            if (data.id) { this.user = data; }
+          },
+        });
+
+        // var {data} = await api.Users.generateToken();
+        // if (data.id) { this.user = data; }
       },
 
       // Generate Token

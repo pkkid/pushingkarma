@@ -16,6 +16,8 @@
   &:focus {
     background-color: darken($lightbg-bg1, 10%);
     box-shadow: none !important;
+    text-decoration-line: underline;
+    text-decoration-style: dotted;
   }
   &:hover {
     background-color: darken($lightbg-bg1, 20%) !important;
@@ -23,8 +25,11 @@
     color: darken($lightbg-fg2, 10%);
   }
 }
-.button.is-small {
-  font-size: 0.8rem;
+.button.is-primary {
+  background-color: darken($lightbg-bg1, 10%);
+  color: darken($lightbg-fg2, 5%);
+  &:focus { color: darken($lightbg-fg2, 5%); }
+  &:hover { color: darken($lightbg-fg2, 7%); }
 }
 .button.is-danger {
   background-color: darken($lightbg-bg1, 10%);
@@ -32,6 +37,7 @@
   &:focus { color: darken($darkbg-red0, 5%); }
   &:hover { color: darken($darkbg-red0, 7%); }
 }
+.button.is-small { font-size: 0.8rem; }
 .b-table + button { margin-top: 10px; }
 
 

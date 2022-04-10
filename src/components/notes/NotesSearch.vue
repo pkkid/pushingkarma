@@ -166,7 +166,7 @@
       transition: opacity 0.2s ease;
       opacity: 0.3;
       border-radius: 20px;
-      background-color: darken($darkbg-color, 15%);
+      background-color: darken($darkbg-color, 10%);
       &:hover {
         opacity: 1;
       }
