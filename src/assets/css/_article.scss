@@ -128,34 +128,32 @@ article {
   ol li { list-style-type: decimal; }
 
   // Todo Lists
-  ul[data-type='todo_list'] {
+  ul[data-type='taskList'] {
     padding-left: 0;
-    li[data-type='todo_item'] { display:flex; flex-direction:row; }
-    .todo-checkbox {
-      background-color: transparent;
-      border-radius: 0.2em;
-      border: 2px solid lighten($lightbg-text, 20%);
-      box-sizing: border-box;
-      cursor: pointer;
-      height: 1em;
-      margin-right: 10px;
-      margin-top: 5px;
-      transition: 0.4s background;
-      user-select: none;
-      width: 1em;
-    }
-    .todo-content {
-      flex: 1;
-      > p:last-of-type { margin-bottom:0; }
-      > ul[data-type='todo_list'] { margin:.5rem 0; }
-    }
-    li[data-done='true'] {
-      > .todo-content { > p { text-decoration:line-through; }}
-      > .todo-checkbox {
-        background: lighten($lightbg-text, 20%) url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg'\
-          viewBox='0 0 1 1'%3E%3Cpath d='M.04.627L.146.52.43.804.323.91zm.177.177L.854.167.96.273.323.91z'\
-          fill='%23fff'/%3E%3C/svg%3E") no-repeat 50%;
+    li {
+      list-style-type: none;
+      display: flex;
+      flex-direction: row;
+      label {
+        cursor: pointer;
+        margin-right: 10px;
+        position: relative;
+        top: 2px;
+        input { display:none; }
+        span {
+          border-radius: 4px;
+          border: 2px solid $lightbg-fg3;
+          display: block;
+          height: 16px;
+          margin-top: 2px;
+          width: 16px;
+        }
       }
+    }
+    li[data-checked='true'] label span {
+      background: $lightbg-fg3 url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg'\
+        viewBox='0 0 1 1'%3E%3Cpath d='M.04.627L.146.52.43.804.323.91zm.177.177L.854.167.96.273.323.91z'\
+        fill='%23fff'/%3E%3C/svg%3E") no-repeat 50%;
     }
   }
 

@@ -51,7 +51,14 @@
   import NotesToc from './NotesToc';
   import NotesMeta from './NotesMeta';
   import Search from './NotesSearch';
+  // TipTap and Extensions
   import {Editor, EditorContent} from '@tiptap/vue-2';
+  import StarterKit from '@tiptap/starter-kit';
+  import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
+  import Link from '@tiptap/extension-link';
+  import TaskItem from '@tiptap/extension-task-item';
+  import TaskList from '@tiptap/extension-task-list';
+  import lowlight from 'lowlight';
 
   export default {
     name: 'Notes',
@@ -75,8 +82,14 @@
       // Tiptap Documentation: https://tiptap.scrumpy.io/docs
       this.editor = new Editor({
         editable: false,
-        extensions: this.$refs.editmenu.extensions(),
         onSelectionUpdate: this.onSelectionUpdate,
+        extensions: [
+          StarterKit,
+          CodeBlockLowlight.configure({lowlight, languageClassPrefix:'_'}),
+          Link.configure({openOnClick:false}),
+          TaskItem.configure(),
+          TaskList,
+        ],
       });
     },
     methods: {
@@ -187,6 +200,16 @@
           &:hover { color:$lightbg-link; text-decoration:none; }
         }
       }
+    }
+    // Display the language for code samples
+    pre { position: relative; }
+    code[class*='_']::before {
+      color: #777;
+      content: attr(class);
+      font-size: 0.7rem;
+      position: absolute;
+      right: 10px;
+      top: 10px;
     }
   }
 </style>

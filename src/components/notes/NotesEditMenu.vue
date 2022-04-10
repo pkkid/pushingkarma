@@ -24,6 +24,7 @@
         <!-- Lists -->
         <b-button type='is-text is-small' @click="editor.chain().focus().toggleBulletList().run()" :class="{'active':editor.isActive('bulletList')}"><b-icon size='is-small' icon='format-list-bulleted'/></b-button>
         <b-button type='is-text is-small' @click="editor.chain().focus().toggleOrderedList().run()" :class="{'active':editor.isActive('orderedList')}"><b-icon size='is-small' icon='format-list-numbered'/></b-button>
+        <b-button type='is-text is-small' @click="editor.chain().focus().toggleTaskList().run()" :class="{'active':editor.isActive('taskList')}"><b-icon size='is-small' icon='format-list-checkbox'/></b-button>
         <div class='sep'/>
         <!-- Block Quote, Code, Link -->
         <b-button type='is-text is-small' @click="editor.chain().focus().toggleBlockquote().run()" :class="{'active':editor.isActive('blockquote')}"><b-icon size='is-small' icon='format-quote-close'/></b-button>
@@ -47,14 +48,6 @@
 <script>
   import * as api from '@/api';
   import * as pathify from 'vuex-pathify';
-  import StarterKit from '@tiptap/starter-kit';
-  import Code from '@tiptap/extension-code';
-  import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
-  import Link from '@tiptap/extension-link';
-  import Strike from '@tiptap/extension-strike';
-  import TaskItem from '@tiptap/extension-task-item';
-  import TaskList from '@tiptap/extension-task-item';
-  import lowlight from 'lowlight';
 
   export default {
     name: 'NotesEditMenu',
@@ -87,24 +80,6 @@
     },
 
     methods: {
-      bold: function() {
-        this.editor.chain().focus().toggleBold().run();
-      },
-
-      // Extensions
-      // Returns list of enabled tiptap extensions
-      extensions: function() {
-        return [
-          StarterKit,
-          Code,
-          CodeBlockLowlight.configure({lowlight}),
-          Link.configure({openOnClick: false}),
-          Strike,
-          TaskItem,
-          TaskList
-        ];
-      },
-
       // CurrentFormat
       // Return the currently selected text format
       currentFormat: function(editor) {
