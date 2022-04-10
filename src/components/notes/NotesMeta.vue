@@ -1,10 +1,9 @@
 <template>
-  <div id='tags' v-if='tags.length'>
-    <h2>Note Tags</h2>
-    <div class='submenu'>
-      <template v-for='tag in tags'>
-        <a v-bind:key='tag' @click='click(tag)'>{{tag}}</a>
-      </template>
+  <div id='meta' v-if='tags.length'>
+    <div>Published on {{note.created | formatDate('MMM DD, YYYY')}}.</div>
+    <div>Updated on {{note.modified | formatDate('MMM DD, YYYY')}}.</div>
+    <div v-if='tags.length'>
+      Tags: <a v-for='tag in tags' v-bind:key='tag' @click='click(tag)'>{{tag}}</a>
     </div>
   </div>
 </template>
@@ -13,8 +12,9 @@
   export default {
     name: 'NotesTags',
     props: {
+      note: Object,
       tagstr: String,
-      search: null,
+      search: Object,
     },       
     data: () => ({
       tags: [],
@@ -33,3 +33,11 @@
     }
   };
 </script>
+
+<style lang='scss'>
+  #meta {
+    font-size: 0.9em;
+    margin-top: 40px;
+    a { margin-right: 5px; }
+  }
+</style>

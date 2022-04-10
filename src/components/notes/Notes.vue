@@ -12,7 +12,7 @@
             <NotesEditMenu ref='editmenu'/>
             <h1><input name='title' autocomplete='off' placeholder='Enter a Title' v-model='note.title' :readonly=!editing />
               <div class='subtext'>
-                {{note.updated | formatDate('MMM DD, YYYY')}} &nbsp;•&nbsp;
+                {{note.modified | formatDate('MMM DD, YYYY')}} &nbsp;•&nbsp;
                 <input name='tags' placeholder='tags' autocomplete='off' v-model='note.tags' :readonly=!editing />
               </div>
             </h1>
@@ -21,7 +21,7 @@
           <!-- Table of Contents & Edit Controls -->
           <div id='rightmenu'>
             <NotesToc :title='title' :content='content'/>
-            <NotesTags :tagstr='note.tags' :search='$refs.search'/>
+            <NotesMeta :note='note' :tagstr='note.tags' :search='$refs.search'/>
             <div v-if='userid'>
               <h2 style='margin-top:40px;'>Editing Options</h2>
               <div class='submenu'>
@@ -49,13 +49,13 @@
   import PageWrap from '@/components/site/PageWrap';
   import NotesEditMenu from './NotesEditMenu';
   import NotesToc from './NotesToc';
-  import NotesTags from './NotesTags';
+  import NotesMeta from './NotesMeta';
   import Search from './NotesSearch';
   import {Editor, EditorContent} from '@tiptap/vue-2';
 
   export default {
     name: 'Notes',
-    components: {Navigation, SidePanel, PageWrap, NotesEditMenu, NotesToc, NotesTags, Search, EditorContent},
+    components: {Navigation, SidePanel, PageWrap, NotesEditMenu, NotesToc, NotesMeta, Search, EditorContent},
     computed: {
       editing: pathify.sync('notes/editing'),
       editor: pathify.sync('notes/editor'),

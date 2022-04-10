@@ -17,7 +17,7 @@
             :class='{highlighted:note.id == highlighted}' @click='$emit("newSelection", note.id)'>
             {{note.title}}
             <div class='subtext'>
-              {{note.updated | formatDate('MMM DD, YYYY')}}
+              {{note.modified | formatDate('MMM DD, YYYY')}}
               <span v-if='note.tags'>&nbsp;•&nbsp;</span> {{note.tags}} 
               <i v-if='isPrivateNote(note)' class='mdi mdi-key lock'/>
             </div>
