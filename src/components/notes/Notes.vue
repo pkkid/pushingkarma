@@ -85,7 +85,11 @@
         onSelectionUpdate: this.onSelectionUpdate,
         extensions: [
           StarterKit,
-          CodeBlockLowlight.configure({lowlight, languageClassPrefix:'_'}),
+          CodeBlockLowlight.configure({
+            lowlight,
+            languageClassPrefix:'_',
+            HTMLAttributes: {spellcheck: false},
+          }),
           Link.configure({openOnClick:false}),
           TaskItem.configure(),
           TaskList,
