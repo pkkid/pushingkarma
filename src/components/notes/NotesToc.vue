@@ -1,5 +1,5 @@
 <template>
-  <div id='toc'>
+  <div id='toc' v-if='tocitems.length > 1'>
     <h2 style='margin-top:35px;'>Table of Contents</h2>
     <div class='submenu'>
       <div v-for='item in tocitems' v-bind:key='item.text' :class='item.type'>
@@ -13,10 +13,12 @@
   export default {
     name: 'NotesToc',
     props: {
-      title: String,                // Article title
-      content: Array,               // Editor.getJSON().content object
+      title: String,      // Article title
+      content: Array,     // Editor.getJSON().content object
     },       
-    data: () => ({tocitems: []}),   // Toc items to display
+    data: () => ({
+      tocitems: []        // Toc items to display
+    }),   
     watch: {
       content: function() {
         let tocitems = [{text:this.title, slug:'#title', type:'h1'}];
