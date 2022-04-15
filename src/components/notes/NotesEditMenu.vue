@@ -33,11 +33,10 @@
         <!-- Save -->
         <b-button type='is-text is-small' @click.prevent='save' style='float:right;'><span>Save</span></b-button>
         <!-- Link Menu (hidden by default) -->
-        <div v-if='showLinkMenu' class='expandform'>
+        <div v-if='linkMenuVisible' class='expandform'>
           <input type='text' name='url' class='input' v-model='linkUrl' ref='linkInput' placeholder='https://' spellcheck='false' autocomplete='off'
-            @keydown.enter.prevent="editor.commands.setLink({href:linkUrl})"
-            @keydown.esc.stop='hideLinkMenu'
-            @click='$refs.linkInput.focus()'/>
+            @keydown.enter.prevent="hideLinkMenu(true)"
+            @keydown.esc.stop='hideLinkMenu(true)'/>
           <b-button type='is-text is-small' @click='editor.commands.unsetLink(); linkUrl=""'>Unlink</b-button>
         </div>
       </div>
@@ -60,7 +59,7 @@
     },
     data: () => ({
       linkUrl: null,        // Current URL text when editing links
-      showLinkMenu: false,  // True when displaying link input
+      linkMenuVisible: false,  // True when displaying link input
     }),
 
     watch: {
@@ -68,7 +67,7 @@
       // When edit mode changes, make sure TipTap is informed.
       editing: function() {
         let editable = this.editing && (this.userid !== null);
-        this.showLinkMenu = false;
+        this.linkMenuVisible = false;
         this.editor.setOptions({editable});
       },
 
@@ -76,6 +75,14 @@
       // If userid ever changes, make sure we stop editing.
       userid: function() {
         this.editing = false;
+      },
+
+      // Watch linkUrl
+      // Update the selected text link url when the model changes.
+      linkUrl: function() {
+        if (this.linkUrl) {
+          this.editor.commands.setLink({href:this.linkUrl});
+        }
       }
     },
 
@@ -131,31 +138,40 @@
         }
       },
 
+      // onSelectionUpdate
+      // Update the link menu status
+      onSelectionUpdate: function() {
+        this.linkUrl = this.editor.getAttributes('link').href;
+        this.linkUrl ? this.showLinkMenu() : this.hideLinkMenu(false);
+      },
+
       // ToggleLinkMenu
       // Show or hide the link menu input
       toggleLinkMenu: function() {
-        var self = this;
-        if (this.showLinkMenu) {
-          return this.hideLinkMenu();
-        }
-        this.showLinkMenu = true;
-        this.$nextTick(function() {
-          self.$refs.linkInput.focus();
-        });
+        this.linkMenuVisible ? this.hideLinkMenu() : this.showLinkMenu();
       },
 
       // HideLinkMenu
-      // Hide the link menu without changing anything
-      hideLinkMenu: function() {
-        this.linkUrl = null;
-        this.showLinkMenu = false;
+      // Save the set URL and Hide the link menu
+      hideLinkMenu: function(save=true) {
+        if (save) {
+          let linkUrlStr = this.linkUrl || '';
+          linkUrlStr.length >= 12
+            ? this.editor.commands.setLink({href:this.linkUrl})
+            : this.editor.commands.unsetLink();
+        }
+        this.linkMenuVisible = false;
       },
 
-      // SetLinkURL
-      // Set the link URL then hide the link menu
-      setLinkUrl: function(command, url) {
-        command({href: url});
-        this.hideLinkMenu();
+      // showLinkMenu
+      // Hide the link menu without changing anything 
+      showLinkMenu: function() {
+        var self = this;
+        this.linkUrl = this.linkUrl || 'http://';
+        this.linkMenuVisible = true;
+        this.$nextTick(function() {
+          self.$refs.linkInput.focus();
+        });
       },
     },
 

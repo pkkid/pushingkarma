@@ -130,7 +130,7 @@
       // Keeps the Link href form up to date.
       onSelectionUpdate: function() {
         if (this.editing) {
-          this.$refs.editmenu.linkUrl = this.editor.getAttributes('link').href;
+          this.$refs.editmenu.onSelectionUpdate();
         }
       },
 
