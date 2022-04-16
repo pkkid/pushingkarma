@@ -148,7 +148,7 @@
       // ToggleLinkMenu
       // Show or hide the link menu input
       toggleLinkMenu: function() {
-        this.linkMenuVisible ? this.hideLinkMenu() : this.showLinkMenu();
+        this.linkMenuVisible ? this.hideLinkMenu() : this.showLinkMenu(true);
       },
 
       // HideLinkMenu
@@ -165,13 +165,15 @@
 
       // showLinkMenu
       // Hide the link menu without changing anything 
-      showLinkMenu: function() {
+      showLinkMenu: function(focus=false) {
         var self = this;
         this.linkUrl = this.linkUrl || 'http://';
         this.linkMenuVisible = true;
-        this.$nextTick(function() {
-          self.$refs.linkInput.focus();
-        });
+        if (focus) {
+          this.$nextTick(function() {
+            self.$refs.linkInput.focus();
+          });
+        }
       },
     },
 
@@ -184,6 +186,9 @@
 </script>
 
 <style lang='scss'>
+  .editing #editor a {
+    cursor: text;
+  }
   #notesmenubar .menubar {
     animation-duration: .3s;
     background-color: $darkbg-color;

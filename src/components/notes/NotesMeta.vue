@@ -3,7 +3,7 @@
     <div>Published on {{note.created | formatDate('MMM DD, YYYY')}}.</div>
     <div>Updated on {{note.modified | formatDate('MMM DD, YYYY')}}.</div>
     <div v-if='tags.length'>
-      Tags: <a v-for='tag in tags' v-bind:key='tag' @click='click(tag)'>{{tag}}</a>
+      Tags: <a v-for='tag in tags' v-bind:key='tag' @click='click(tag)'>{{tag}} </a>
     </div>
   </div>
 </template>
@@ -21,7 +21,8 @@
     }),   
     watch: {
       tagstr: function() {
-        let tags = this.tagstr.toLowerCase().split(' ');
+        let tagstr = this.tagstr || '';
+        let tags = tagstr.toLowerCase().split(' ');
         this.tags = tags.filter(tag => tag.length);
       },
     },
@@ -38,6 +39,5 @@
   #meta {
     font-size: 0.9em;
     margin-top: 40px;
-    a { margin-right: 5px; }
   }
 </style>

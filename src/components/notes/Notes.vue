@@ -95,6 +95,7 @@
           TaskList,
         ],
       });
+      if (this.note.id) { this.updateNote(this.note.id); }
     },
     methods: {
 
