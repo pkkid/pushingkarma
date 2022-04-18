@@ -3,7 +3,7 @@
     <div class='searchwrap'>
       <!-- Search Input -->
       <b-icon class='searchicon' icon='magnify'/>
-      <input class='searchinput' type='text' v-model='search' autofocus='true'
+      <input class='searchinput' type='text' v-model='search'
         spellcheck='false' autocomplete='off' ref='search'
         @keydown.up.prevent='setHighlighted(-1)'
         @keydown.down.prevent='setHighlighted(+1)'
@@ -72,7 +72,6 @@
       noteid: function(noteid) {
         this.highlighted = noteid;
         utils.updateHistory(this.$router, {noteid});
-        this.$refs.search.focus();
       },
     },
 
