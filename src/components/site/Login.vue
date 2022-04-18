@@ -34,7 +34,7 @@
           <!-- Login form -->
           <article v-else class='loginform' key='loginform'>
             <h2>Login to PushingKarma <div class='subtext'>Amazing things await you</div></h2>
-            <img v-if='gclient !== null' class='google' src='@/assets/img/google_signin.png' @click='googleLogin'/>
+            <button v-if='gclient !== null' class='google' @click='googleLogin'>Sign in with Google</button>
             <i v-else class='fake-avatar mdi mdi-account-circle-outline'/>
             <form @submit.prevent="login()">
               <b-field label='Email'><b-input v-model='loginform.email' autocomplete='new-password' spellcheck='false' autofocus='true'/></b-field>
@@ -126,9 +126,6 @@
             if (data.id) { this.user = data; }
           },
         });
-
-        // var {data} = await api.Users.generateToken();
-        // if (data.id) { this.user = data; }
       },
 
       // Generate Token
@@ -189,10 +186,30 @@
       width: 350px;
     }
     .google {
-      cursor: pointer;
-      position: relative;
-      right: 2px;
-      margin: 10px 0px;
+      background-color: #f8f8f8;
+      background-image: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHhtbG5zPSJo\
+        dHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48cGF0aCBkPSJ\
+        NMTcuNiA5LjJsLS4xLTEuOEg5djMuNGg0LjhDMTMuNiAxMiAxMyAxMyAxMiAxMy42djIuMmgzYTguOCA4LjggMCAwIDAgMi\
+        42LTYuNnoiIGZpbGw9IiM0Mjg1RjQiIGZpbGwtcnVsZT0ibm9uemVybyIvPjxwYXRoIGQ9Ik05IDE4YzIuNCAwIDQuNS0uO\
+        CA2LTIuMmwtMy0yLjJhNS40IDUuNCAwIDAgMS04LTIuOUgxVjEzYTkgOSAwIDAgMCA4IDV6IiBmaWxsPSIjMzRBODUzIiBm\
+        aWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNNCAxMC43YTUuNCA1LjQgMCAwIDEgMC0zLjRWNUgxYTkgOSAwIDAgMCA\
+        wIDhsMy0yLjN6IiBmaWxsPSIjRkJCQzA1IiBmaWxsLXJ1bGU9Im5vbnplcm8iLz48cGF0aCBkPSJNOSAzLjZjMS4zIDAgMi\
+        41LjQgMy40IDEuM0wxNSAyLjNBOSA5IDAgMCAwIDEgNWwzIDIuNGE1LjQgNS40IDAgMCAxIDUtMy43eiIgZmlsbD0iI0VBN\
+        DMzNSIgZmlsbC1ydWxlPSJub256ZXJvIi8+PHBhdGggZD0iTTAgMGgxOHYxOEgweiIvPjwvZz48L3N2Zz4=');
+      background-position: 12px 9px;
+      background-repeat: no-repeat;
+      border-radius: 3px;
+      border: none;
+      box-shadow: 0 -1px 0 rgba(0, 0, 0, .04), 0 1px 1px rgba(0, 0, 0, .25);
+      color: #757575;
+      font-weight: 500;
+      margin-bottom: 20px;
+      padding: 10px 12px 10px 40px;
+      transition: background-color .2s ease-in, box-shadow .2s ease-in;
+      &:hover {
+        background-color: #ffffff;
+        box-shadow: 0 -1px 0 rgba(0, 0, 0, .04), 0 2px 4px rgba(0, 0, 0, .25);
+      }
     }
     button {
       margin-top: 15px;
