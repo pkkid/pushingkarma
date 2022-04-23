@@ -26,19 +26,21 @@
   }
 }
 .button.is-primary,
-.button.is-primary:focus {
+.button.is-primary:focus,
+.button.is-primary[disabled] {
   background-color: darken($lightbg-bg1, 10%);
   color: darken($lightbg-fg2, 5%);
-  &:hover {
+  &:hover:not[disabled] {
     background-color: darken($lightbg-bg1, 20%);
     color: darken($lightbg-fg2, 5%);
   }
 }
 .button.is-danger,
-.button.is-danger:focus {
+.button.is-danger:focus,
+.button.is-danger[disabled] {
   background-color: darken($lightbg-bg1, 10%);
   color: darken($darkbg-red0, 5%);
-  &:hover {
+  &:hover:not[disabled] {
     background-color: darken($lightbg-bg1, 20%);
     color: darken($darkbg-red0, 7%);
   }
