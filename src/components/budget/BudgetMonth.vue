@@ -98,7 +98,11 @@
       view: pathify.sync('budget/view'),
       columns: function() { return this.initColumns(); },
       items: function() { return this.tablerows; },
-      keymap: function() { return this.tableMixinKeymap(); },
+      keymap: function() { return {
+        ...this.tableMixinKeymap(),
+        'shift+left': () => this.setMonth(this.month.add(-1, "month")),
+        'shift+right': () => this.setMonth(this.month.add(1, "month")),
+      };},
       numcomments: function() { return Object.keys(this.comments).length; },
     },
     watch: {
@@ -266,12 +270,14 @@
       // Set Month
       // Set the current month to display
       setMonth: function(month) {
-        this.month = month;
-        var monthstr = this.month.format('YYYY-MM');
+        var monthstr = month.format('YYYY-MM');
         var todaystr = this.today.format('YYYY-MM');
-        var urlvalue = monthstr == todaystr ? null : monthstr;
-        utils.updateHistory(this.$router, {month:urlvalue});
-        this.refresh();
+        if (monthstr <= todaystr) {
+          this.month = month;
+          var urlvalue = monthstr == todaystr ? null : monthstr;
+          utils.updateHistory(this.$router, {month:urlvalue});
+          this.refresh();
+        }
       },
 
       // Chart.js Init
