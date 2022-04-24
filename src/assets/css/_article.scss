@@ -51,6 +51,7 @@ article {
       margin-top: -2px;
       padding: 0px 0px 0px 1px;
       text-transform: none;
+      a { color: darken($lightbg-link, 10%); }
     }
     .accent {
       color: $lightbg-accent;

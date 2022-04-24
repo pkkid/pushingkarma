@@ -8,7 +8,9 @@
           <b-button :disabled='month.format("YYYY-MM") >= today.format("YYYY-MM")' @click.prevent='setMonth(month.add(1, "month"))'><i class='mdi mdi-chevron-right'/></b-button>
           <b-button :disabled='month.format("YYYY-MM") == today.format("YYYY-MM")' @click.prevent='setMonth(today)'>Today</b-button>
         </div>
-        <div class='subtext'>View {{loading ? '' : count}} {{month.format('MMMM')}} transactions</div>
+        <div class='subtext'>
+          <a href='#' @click='showTransactions'>Showing {{loading ? '' : count}} {{month.format('MMMM')}} transactions</a>
+        </div>
       </h1>
       <div style='clear:both'/>
       <div v-if='true' v-hotkey='keymap'>
@@ -92,6 +94,8 @@
     computed: {
       categories: pathify.sync('budget/categories'),
       history: pathify.sync('budget/history'),
+      search: pathify.sync('budget/search'),
+      view: pathify.sync('budget/view'),
       columns: function() { return this.initColumns(); },
       items: function() { return this.tablerows; },
       keymap: function() { return this.tableMixinKeymap(); },
@@ -249,6 +253,14 @@
           utils.snackbar(`Error saving category.`);
           console.log(err);
         }
+      },
+
+      // Show Transactions
+      // load the current months individual transactions
+      showTransactions: function() {
+        var datestr = this.month.format('MMM YYYY');
+        this.search = `date="${datestr}"`;
+        this.view = 'transactions';
       },
 
       // Set Month
