@@ -53,8 +53,9 @@
     },
     methods: {
       showTransactions: function() {
-        var category = this.cell.row.name;
         var datestr = dayjs(this.cell.col.monthstr).format('MMM YYYY');
+        var category = this.cell.row.name;
+        category = category.toLowerCase() == 'uncategorized' ? 'None' : category;
         this.search = `category="${category}" date="${datestr}"`;
         this.view = 'transactions';
       },
