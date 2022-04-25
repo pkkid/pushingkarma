@@ -37,7 +37,7 @@
     position: fixed;
     right: 20px;
     top: 80px;
-    width: 300px;
+    width: 350px;
     z-index: 101;
     .notification {
       animation-duration: 0.6s;
