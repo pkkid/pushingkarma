@@ -102,7 +102,7 @@
       // Check we need to load more items
       onScroll: async function() {
         if (this.nexturl) {
-          var nexturl = this.nexturl;
+          var nexturl = utils.scrubOrigin(this.nexturl);
           var tablebottom = this.$refs.table.$el.getBoundingClientRect().bottom;
           var viewheight = window.innerHeight || document.documentElement.clientHeight;
           if ((tablebottom <= viewheight + 200) && (this.nexturl)) {

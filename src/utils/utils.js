@@ -186,6 +186,16 @@ export function rset(object, property, value) {
   return object;
 }
 
+// Scrub Origin
+// Not sure why Django rest framework keeps returning the urls back
+// with the wrong http or https scheme. My solution is to simply
+// scrupt the origin from URLs and let the browser handle it.
+export function scrubOrigin(url) {
+  url = url.replace(`http://${window.location.host}`, '');
+  url = url.replace(`https://${window.location.host}`, '');
+  return url;
+}
+
 // String Format
 // Format the specified template with the key/value object mapping.
 //   str - String to format with vars specified by brackets {var}.
