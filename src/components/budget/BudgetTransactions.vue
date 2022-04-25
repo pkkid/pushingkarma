@@ -45,6 +45,7 @@
   import PageWrap from '@/components/site/PageWrap';
   import TableMixin from '@/components/TableMixin';
   import trim from 'lodash/trim';
+  import axios from 'axios';
 
   export default {
     name: 'BudgetTransactions',
@@ -53,6 +54,7 @@
     data: () => ({
       cancelsearch: null,   // Cancel search token
       loading: false,       // True to show loading indicator
+      nexturl: null,        // URL for next page of transactions
       transactions: null,   // Displayed transactions
       total: 0,             // Total transactions in current view
       unapproved: 0,        // Total unapproved transactions in current view
@@ -82,12 +84,36 @@
       var search = trim(this.search || this.$route.query.search || '');
       this.reset(search);
     },
+    created () {
+      window.addEventListener('scroll', this.onScroll);
+    },
+    destroyed () {
+      window.removeEventListener('scroll', this.onScroll);
+    },
     methods: {
       // Append Search
       // Add the specified text to the search input
       appendSearch: function(text) {
         if (this.search.toLowerCase().includes(text.toLowerCase())) { return; }
         this.search = trim(`${this.search} ${text}`);
+      },
+
+      // On Scroll
+      // Check we need to load more items
+      onScroll: async function() {
+        if (this.nexturl) {
+          var nexturl = this.nexturl;
+          var tablebottom = this.$refs.table.$el.getBoundingClientRect().bottom;
+          var viewheight = window.innerHeight || document.documentElement.clientHeight;
+          if ((tablebottom <= viewheight + 200) && (this.nexturl)) {
+            this.nexturl = null;
+            this.cancelsearch = api.cancel(this.cancelsearch);
+            var cancelToken = this.cancelsearch.token;
+            var {data} = await axios.get(nexturl, {cancelToken});
+            this.transactions.push(...data.results);
+            this.nexturl = data.next;
+          }
+        }
       },
 
       // Save
@@ -125,6 +151,7 @@
           var {data} = await api.Budget.getTransactions(params, token);
           utils.updateHistory(this.$router, {search:this.search});
           this.total = data.count;
+          this.nexturl = data.next;
           this.unapproved = data.unapproved;
           this.uncategorized = data.uncategorized;
           this.transactions = data.results;
