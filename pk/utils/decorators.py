@@ -4,6 +4,7 @@ from django.core.cache import cache
 from django.db import connection
 from django.http import HttpResponse
 from rest_framework.response import Response
+from rest_framework.exceptions import PermissionDenied
 from pk import log
 
 COLORS = {'blue':34, 'cyan':36, 'green':32, 'grey':30, 'magenta':35, 'red':31, 'white':37, 'yellow':33}
@@ -68,6 +69,18 @@ def color(text, color=None):
             text = fmt_str % (COLORS[color], text)
         text += RESET
     return text
+
+
+def current_user_or_superuser_required(func):
+    """ Django Rest Framework wrapper. Blocks access to get and delete functions
+        if not the current user or superuser.
+    """
+    def wrapper(self, request, *args, **kwargs):
+        instance = self.get_object()
+        if request.user != instance.user or not request.user.is_superuser:
+            raise PermissionDenied
+        return func(self, request, *args, **kwargs)
+    return wrapper
 
 
 def lazyproperty(func):

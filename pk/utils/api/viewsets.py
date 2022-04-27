@@ -1,6 +1,8 @@
 # encoding: utf-8
 from decimal import Decimal
 from rest_framework import viewsets
+from django.contrib.auth.decorators import login_required
+from pk.utils.decorators import current_user_or_superuser_required
 
 
 class ModelViewSetWithAnnotations(viewsets.ModelViewSet):
@@ -27,21 +29,47 @@ class ModelViewSetWithAnnotations(viewsets.ModelViewSet):
         return response
 
     def list(self, request, *args, **kwargs):
-        response = super(ModelViewSetWithAnnotations, self).create(request, *args, **kwargs)
+        response = super(ModelViewSetWithAnnotations, self).list(request, *args, **kwargs)
         return self.append_metadata(response, self.get_queryset())
     
     def create(self, request, *args, **kwargs):
         response = super(ModelViewSetWithAnnotations, self).create(request, *args, **kwargs)
         return self.append_metadata(response, self.get_queryset().filter(pk=response.data['id']))
     
+    @current_user_or_superuser_required
     def retrieve(self, request, *args, **kwargs):
         response = super(ModelViewSetWithAnnotations, self).retrieve(request, *args, **kwargs)
         return self.append_metadata(response, self.get_queryset().filter(pk=kwargs['pk']))
     
+    @current_user_or_superuser_required
     def update(self, request, *args, **kwargs):
         response = super(ModelViewSetWithAnnotations, self).update(request, *args, **kwargs)
         return self.append_metadata(response, self.get_queryset().filter(pk=kwargs['pk']))
 
+    @current_user_or_superuser_required
     def partial_update(self, request, *args, **kwargs):
         response = super(ModelViewSetWithAnnotations, self).partial_update(request, *args, **kwargs)
         return self.append_metadata(response, self.get_queryset().filter(pk=kwargs['pk']))
+
+
+class ModelViewSetWithUserPermissions(viewsets.ModelViewSet):
+    """ This class assumes there is a `user` field on the model. """
+    
+    @login_required
+    def create(self, request, *args, **kwargs):
+        return super(ModelViewSetWithUserPermissions, self).create(request, *args, **kwargs)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+    
+    @current_user_or_superuser_required
+    def retrieve(self, request, *args, **kwargs):
+        return super(ModelViewSetWithUserPermissions, self).retrieve(request, *args, **kwargs)
+    
+    @current_user_or_superuser_required
+    def update(self, request, *args, **kwargs):
+        return super(ModelViewSetWithUserPermissions, self).update(request, *args, **kwargs)
+
+    @current_user_or_superuser_required
+    def partial_update(self, request, *args, **kwargs):
+        return super(ModelViewSetWithUserPermissions, self).partial_update(request, *args, **kwargs)

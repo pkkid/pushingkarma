@@ -1,8 +1,9 @@
 # encoding: utf-8
-from rest_framework import viewsets
+from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from pk.utils.api.serializers import DynamicFieldsSerializer
 from pk.utils.search import FIELDTYPES, SearchField, Search
+from pk.utils.api.viewsets import ModelViewSetWithUserPermissions
 from .models import Note
 
 NOTESEARCHFIELDS = {
@@ -18,10 +19,10 @@ class NoteSerializer(DynamicFieldsSerializer):
         fields = ('id','title','tags','body','created','modified','url','weburl')
 
     def get_tags(self, note):
-        return note.tags.split(' ')
+        return note.list_tags()
 
 
-class NotesViewSet(viewsets.ModelViewSet):
+class NotesViewSet(ModelViewSetWithUserPermissions):
     queryset = Note.objects.order_by('-modified')
     serializer_class = NoteSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
@@ -43,3 +44,11 @@ class NotesViewSet(viewsets.ModelViewSet):
         response.data.update(searchdata)
         response.data.move_to_end('results')
         return response
+
+    def retrieve(self, request, *args, **kwargs):
+        # Check we have permission to view this note
+        instance = self.get_object()
+        if instance.is_private():
+            if request.user != instance.user or not request.user.is_superuser:
+                raise PermissionDenied
+        return super(ModelViewSetWithUserPermissions, self).retrieve(request, *args, **kwargs)

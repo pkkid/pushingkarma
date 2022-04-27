@@ -1,5 +1,6 @@
 # encoding: utf-8
 import json
+from django.conf import settings
 from django.core.management import call_command
 from django.db import models
 from django.dispatch import receiver
@@ -22,6 +23,7 @@ class Stock(TimeStampedModel):
     data = models.TextField(help_text='AlphaVantage data')
     description = models.CharField(max_length=255, blank=True, default='')
     tags = models.CharField(max_length=255, blank=True, help_text='space delimited')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
     def __init__(self, *args, **kwargs):
         super(TimeStampedModel, self).__init__(*args, **kwargs)
