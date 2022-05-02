@@ -19,7 +19,6 @@
     - import_tasks: tasks/redis.yml
     - import_tasks: tasks/daphne.yml
     - import_tasks: tasks/nginx.yml
-    - import_tasks: tasks/codeserver.yml
 
   handlers:
     - name: Restart Redis
@@ -34,4 +33,3 @@
       with_items:
         - nginx
         - daphne
-        - codeserver
