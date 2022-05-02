@@ -1,7 +1,7 @@
 ## PushingKarma Website Code
 This is the core code running pushingkarma.com.  Feel free to borrow
 some ideas for your own site.  If you find anything useful, by all
-means let me know. :)
+means let me know.
 
 ### Setup Dev Environment
 ```bash
@@ -17,8 +17,11 @@ npm run start
 
 ### Setup Production Environment
 1. Create a new Ubuntu instance
-2. Update `ansible/inventory.ini` with the IP address of the new instance
-3. Run: `npm run deploy-full`
+2. Update domain server DNS entry to point your domain to the instance
+3. Wait for DNS resolution to update and ability to ssh in by domain name
+4. Update `ansible/inventory.ini` with the IP address of the new instance
+5. Make sure secrets.py is mounted or accessible
+6. Run: `npm run deploy-full`
 
 ### License
 Create Commons Attribution-ShareAlike 2.5 Generic (CC BY-SA 2.5) - 

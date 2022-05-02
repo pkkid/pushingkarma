@@ -29,7 +29,7 @@
 
 - name: Get CodeServer Password From Secrets
   tags: ['code']
-  command: 'python {{project_dir}}/settings/secrets.py CODESERVER_PASSWORD'
+  command: 'python3 {{project_dir}}/settings/secrets.py CODESERVER_PASSWORD'
   register: codeserver_password
   
 - name: Create CodeServer Service
@@ -47,7 +47,7 @@
 
 - name: Fetch Email From Secrets
   tags: ['code']
-  command: 'python {{project_dir}}/settings/secrets.py EMAIL'
+  command: 'python3 {{project_dir}}/settings/secrets.py EMAIL'
   register: email
   when: not codecert.stat.exists
 
