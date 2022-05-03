@@ -111,7 +111,7 @@
     mounted: function() {
       this.today = dayjs(dayjs().format('YYYY-MM'));
       this.month = dayjs(this.$route.query.month || this.today);
-      this.refresh();
+      //this.refresh();
     },
     methods: {
 
@@ -276,7 +276,7 @@
           this.month = month;
           var urlvalue = monthstr == todaystr ? null : monthstr;
           utils.updateHistory(this.$router, {month:urlvalue});
-          this.refresh();
+          //this.refresh();
         }
       },
 
