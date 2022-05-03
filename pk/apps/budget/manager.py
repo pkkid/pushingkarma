@@ -79,7 +79,7 @@ class TransactionManager:
             # WARNING: This is auto-choosing the bank account from a generic filename. This
             # is because DCU stopped allowing us to download qfx files which contain the
             # bank FID information inside. I am hoping this is temporary.
-            if filename == 'Free Checking Transactions.csv': name = 'DCU'
+            if filename.startswith('Free Checking Transactions') and filename.endswith('.csv'): name = 'DCU'
             else: raise Exception('Unknown CSV filename.')
             self.account = self._accounts_by_name[name]
             # Update transactions
