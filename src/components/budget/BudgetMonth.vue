@@ -326,10 +326,11 @@
       },
 
       chartjs_update: function(category) {
+        var thisyear = this.month.year();
         this.chartjs_init();
         this.category = category === undefined ? 'Total' : category;
-        this.spendchart.data.datasets[0].data = this.history[this.category][2021];
-        this.spendchart.data.datasets[1].data = this.history[this.category][2020];
+        this.spendchart.data.datasets[0].data = this.history[this.category][thisyear];
+        this.spendchart.data.datasets[1].data = this.history[this.category][thisyear-1];
         this.spendchart.update();
       },
 
