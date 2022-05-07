@@ -10,7 +10,7 @@
           <!-- Edit Menu & Note -->
           <PageWrap>
             <NotesEditMenu ref='editmenu'/>
-            <h1><input name='title' autocomplete='off' placeholder='Enter a Title' v-model='note.title' :readonly=!editing />
+            <h1><input name='title' autocomplete='off' placeholder='Enter a Title' v-model='note.title' ref='title' :readonly=!editing />
               <div class='subtext'>
                 {{note.modified | formatDate('MMM DD, YYYY')}} &nbsp;•&nbsp;
                 <input name='tags' placeholder='tags' autocomplete='off' v-model='note.tags' :readonly=!editing />
@@ -102,10 +102,12 @@
       // Create Note
       // Create and start editing a new note
       createNote: async function() {
-        var params = {title:'New Note', body:'--'};
+        var params = {title:'', body:'--'};
         var {data} = await api.Notes.createNote(params);
         this.$refs.search.updateResults();
         this.updateNote(data.id);
+        this.editing = true;
+        this.$refs.title.focus();
       },
 
       // Delete Note

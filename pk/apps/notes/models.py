@@ -9,7 +9,7 @@ PRIVATE = 'private'
 
 class Note(TimeStampedModel):
     slug = models.SlugField(max_length=255, unique=True, default=None)
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=255, blank=True)
     body = models.TextField(help_text='markdown format')
     tags = models.CharField(max_length=255, blank=True, help_text='space delimited')
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)

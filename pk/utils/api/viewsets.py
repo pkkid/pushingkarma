@@ -1,7 +1,7 @@
 # encoding: utf-8
 from decimal import Decimal
 from rest_framework import viewsets
-from django.contrib.auth.decorators import login_required
+from rest_framework.exceptions import PermissionDenied
 from pk.utils.decorators import current_user_or_superuser_required
 
 
@@ -55,8 +55,9 @@ class ModelViewSetWithAnnotations(viewsets.ModelViewSet):
 class ModelViewSetWithUserPermissions(viewsets.ModelViewSet):
     """ This class assumes there is a `user` field on the model. """
     
-    @login_required
     def create(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            raise PermissionDenied()
         return super(ModelViewSetWithUserPermissions, self).create(request, *args, **kwargs)
 
     def perform_create(self, serializer):
