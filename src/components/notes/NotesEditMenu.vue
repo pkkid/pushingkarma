@@ -27,16 +27,25 @@
         <b-button type='is-text is-small' @click="editor.chain().focus().toggleTaskList().run()" :class="{'active':editor.isActive('taskList')}"><b-icon size='is-small' icon='format-list-checkbox'/></b-button>
         <div class='sep'/>
         <!-- Block Quote, Code, Link -->
+        <b-button type='is-text is-small' @click="showImageMenu(true)" :class="{'active':editor.isActive('image')}"><b-icon size='is-small' icon='image'/></b-button>
+        <b-button type='is-text is-small' @click="showLinkMenu(true)" :class="{'active':editor.isActive('link')}"><b-icon size='is-small' icon='link'/></b-button>
         <b-button type='is-text is-small' @click="editor.chain().focus().toggleBlockquote().run()" :class="{'active':editor.isActive('blockquote')}"><b-icon size='is-small' icon='format-quote-close'/></b-button>
         <b-button type='is-text is-small' @click="editor.chain().focus().toggleCode().run()" :class="{'active':editor.isActive('code')}"><b-icon size='is-small' icon='code-tags'/></b-button>
-        <b-button type='is-text is-small' @click="toggleLinkMenu()" :class="{'active':editor.isActive('link')}"><b-icon size='is-small' icon='link'/></b-button>
         <!-- Save -->
-        <b-button type='is-text is-small' @click.prevent='save' style='float:right;'><span>Save</span></b-button>
+        <b-button type='is-text is-small' @click.prevent='save' style='float:right;'><span>Save Note</span></b-button>
+        <!-- Link Menu (hidden by default) -->
+        <div v-if='imageMenuVisible' class='expandform'>
+          <label>Image URL</label>
+          <input type='text' name='url' class='input' v-model='imageUrl' ref='imageInput' placeholder='https://' spellcheck='false' autocomplete='off'
+            @keydown.enter.prevent="hideImageMenu(true)"
+            @keydown.esc.stop='hideImageMenu()'/>
+        </div>
         <!-- Link Menu (hidden by default) -->
         <div v-if='linkMenuVisible' class='expandform'>
+          <label>Link URL</label>
           <input type='text' name='url' class='input' v-model='linkUrl' ref='linkInput' placeholder='https://' spellcheck='false' autocomplete='off'
             @keydown.enter.prevent="hideLinkMenu(true)"
-            @keydown.esc.stop='hideLinkMenu(true)'/>
+            @keydown.esc.stop='hideLinkMenu(false)'/>
           <b-button type='is-text is-small' @click='editor.commands.unsetLink(); linkUrl=""'>Unlink</b-button>
         </div>
       </div>
@@ -58,9 +67,16 @@
       userid: pathify.get('global/user@id'),
     },
     data: () => ({
-      linkUrl: null,        // Current URL text when editing links
-      linkMenuVisible: false,  // True when displaying link input
+      imageUrl: null,           // Current URL text when editing images
+      imageMenuVisible: false,  // True when displaying image input
+      linkUrl: null,            // Current URL text when editing links
+      linkMenuVisible: false,   // True when displaying link input
     }),
+
+    // BeforeDestory: Cleanup the editor
+    beforeDestroy: function() {
+      this.editor.destroy();
+    },
 
     watch: {
       // Watch Editing
@@ -80,9 +96,7 @@
       // Watch linkUrl
       // Update the selected text link url when the model changes.
       linkUrl: function() {
-        if (this.linkUrl) {
-          this.editor.commands.setLink({href:this.linkUrl});
-        }
+        if (this.linkUrl) { this.editor.commands.setLink({href:this.linkUrl}); }
       }
     },
 
@@ -110,10 +124,12 @@
               body: this.editor.getHTML()
             });
             this.editing = false;
-            this.$root.$emit('notify', 'Note Saved', 'This note was successfully saved to the server.', 'mdi-check');
+            this.$root.$emit('notify', 'Note Saved',
+              'This note was successfully saved to the server.', 'mdi-check');
           } catch(err) {
-            this.$root.$emit('notify', 'Error Saving Note.', `There was an error attempting to save this note to
-              the server. Please backup your work and try again.`, 'mdi-alert-circle-outline');
+            this.$root.$emit('notify', 'Error Saving Note.', `There was an error
+              attempting to save this note to the server. Please backup your work
+              and try again.`, 'mdi-alert-circle-outline');
           }
         }
       },
@@ -141,29 +157,38 @@
       // onSelectionUpdate
       // Update the link menu status
       onSelectionUpdate: function() {
+        this.imageUrl = this.editor.getAttributes('image').src;
+        this.imageUrl ? this.showImageMenu() : this.hideImageMenu();
         this.linkUrl = this.editor.getAttributes('link').href;
-        this.linkUrl ? this.showLinkMenu() : this.hideLinkMenu(false);
+        this.linkUrl ? this.showLinkMenu() : this.hideLinkMenu();
       },
 
-      // ToggleLinkMenu
-      // Show or hide the link menu input
-      toggleLinkMenu: function() {
-        this.linkMenuVisible ? this.hideLinkMenu() : this.showLinkMenu(true);
-      },
 
-      // HideLinkMenu
-      // Save the set URL and Hide the link menu
-      hideLinkMenu: function(save=true) {
-        if (save) {
-          let linkUrlStr = this.linkUrl || '';
-          linkUrlStr.length >= 12
-            ? this.editor.commands.setLink({href:this.linkUrl})
-            : this.editor.commands.unsetLink();
+      // ----------------------
+      // ShowImageMenu
+      // Hide the image menu without changing anything 
+      showImageMenu: function(focus=false) {
+        this.imageUrl = this.imageUrl || 'http://';
+        this.imageMenuVisible = true;
+        if (focus) {
+          this.$nextTick(function() {
+            self.$refs.imageInput.focus();
+          });
         }
-        this.linkMenuVisible = false;
       },
 
-      // showLinkMenu
+      // HideImageMenu
+      // Save the URL and Hide the image menu
+      hideImageMenu: function(save=false) {
+        if (save && this.imageUrl) {
+          this.editor.chain().focus().setImage({src:this.imageUrl}).run();
+        }
+        this.imageMenuVisible = false;
+        this.imageUrl = '';
+      },
+
+      // ----------------------
+      // ShowLinkMenu
       // Hide the link menu without changing anything 
       showLinkMenu: function(focus=false) {
         var self = this;
@@ -175,13 +200,20 @@
           });
         }
       },
-    },
 
-    // BeforeDestory: Cleanup the editor
-    beforeDestroy: function() {
-      this.editor.destroy();
-    },
+      // HideLinkMenu
+      // Save the URL and Hide the link menu
+      hideLinkMenu: function(save=false) {
+        if (save && this.linkUrl) {
+          let linkUrlStr = this.linkUrl || '';
+          linkUrlStr.length >= 12
+            ? this.editor.commands.setLink({href:this.linkUrl})
+            : this.editor.commands.unsetLink();
+        }
+        this.linkMenuVisible = false;
+      },
 
+    },
   };
 </script>
 
@@ -195,7 +227,7 @@
     border-radius: 4px;
     box-shadow: 0 2px 3px rgba(0, 0, 0, .3);
     color: $darkbg-text;
-    line-height: 2.3em;
+    line-height: 2.1em;
     margin-left: -40px;
     padding: 5px 10px 2px 10px;
     position: fixed;
@@ -226,21 +258,34 @@
     }
     .expandform {
       margin-top: 5px;
+      font-size: 0.8rem;
+      label {
+        float: left;
+        margin-right: 10px;
+        opacity: 0.7;
+        text-align: right;
+        width: 70px;
+        height: 28px;
+        line-height: 28px;
+        padding-top: 1px;
+      }
       .input {
         background-color: #444;
         border-width: 0px;
         color: $darkbg-input;
         float: left;
-        font-size: 0.9em;
+        font-size: 0.8rem;
         font-weight: 500;
+        height: 28px;
         line-height: 25px;
         margin-bottom: 5px;
-        height: 32px;
         padding-top: 6px;
         width: calc(100% - 200px);
       }
       .button {
         margin-left: 5px;
+        height: 28px;
+        font-size: 0.8rem;
       }
     }
     

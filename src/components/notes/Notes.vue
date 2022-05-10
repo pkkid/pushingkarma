@@ -55,6 +55,7 @@
   import {Editor, EditorContent} from '@tiptap/vue-2';
   import StarterKit from '@tiptap/starter-kit';
   import CodeBlockLowlight from '@tiptap/extension-code-block-lowlight';
+  import Image from '@tiptap/extension-image';
   import Link from '@tiptap/extension-link';
   import TaskList from '@tiptap/extension-task-list';
   import TaskItem from './TipTapTaskItem';
@@ -90,8 +91,9 @@
             languageClassPrefix:'_',
             HTMLAttributes: {spellcheck: false},
           }),
+          Image,
           Link.configure({openOnClick:false}),
-          TaskItem.configure(),
+          TaskItem,
           TaskList,
         ],
       });
