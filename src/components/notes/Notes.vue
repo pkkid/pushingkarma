@@ -220,5 +220,12 @@
       right: 10px;
       top: 10px;
     }
+    img {
+      height: 350px;
+      border: 2px solid #0008;
+      margin: 20px auto;
+      display: block;
+      border-radius: 5px;
+    }
   }
 </style>
