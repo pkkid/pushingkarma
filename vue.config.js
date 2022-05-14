@@ -7,7 +7,7 @@ module.exports = {
   publicPath: '/static/',       // Assets will be served at /static/
   runtimeCompiler: true,        // Enable using templates in javascript files
   css: {loaderOptions: {        // All components get variables by default
-    sass: {data: `@import "@/assets/css/_variables.scss";`}
+    sass: {additionalData: `@import "@/assets/css/_variables.scss";`}
   }},    
   configureWebpack: {
     plugins: [
