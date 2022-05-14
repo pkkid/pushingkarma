@@ -95,9 +95,9 @@
 
       // Watch linkUrl
       // Update the selected text link url when the model changes.
-      linkUrl: function() {
-        if (this.linkUrl) { this.editor.commands.setLink({href:this.linkUrl}); }
-      }
+      // linkUrl: function() {
+      //   if (this.linkUrl) { this.editor.commands.setLink({href:this.linkUrl}); }
+      // }
     },
 
     methods: {
@@ -194,6 +194,9 @@
         var self = this;
         this.linkUrl = this.linkUrl || 'http://';
         this.linkMenuVisible = true;
+        if (this.linkUrl == 'http://') {
+          this.editor.commands.setLink({href:this.linkUrl});
+        }
         if (focus) {
           this.$nextTick(function() {
             self.$refs.linkInput.focus();
@@ -204,11 +207,13 @@
       // HideLinkMenu
       // Save the URL and Hide the link menu
       hideLinkMenu: function(save=false) {
-        if (save && this.linkUrl) {
-          let linkUrlStr = this.linkUrl || '';
-          linkUrlStr.length >= 12
-            ? this.editor.commands.setLink({href:this.linkUrl})
-            : this.editor.commands.unsetLink();
+        if (!this.linkUrl || this.linkUrl.length < 12) {
+          this.editor.chain().focus().extendMarkRange('link')
+            .unsetLink().run();
+        }
+        if (save && this.linkUrl && this.linkUrl.length >= 12) {
+          this.editor.chain().focus().extendMarkRange('link')
+            .setLink({href:this.linkUrl}).run();
         }
         this.linkMenuVisible = false;
       },
