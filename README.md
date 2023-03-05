@@ -14,6 +14,10 @@ pip install -r pk/requirements.pip
 npm install
 npm run start
 ```
+REMEMBER: To make sure the Django dev server is running with DEBUG=True,
+otherwise static files will not be served when running `npm run start` and
+you will waste your day trying to figure it out.
+
 
 ### Setup Production Environment
 1. Create a new Ubuntu instance
