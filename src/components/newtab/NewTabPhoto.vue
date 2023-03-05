@@ -103,7 +103,7 @@
   @media screen and (max-width: 1100px) {
     #photo .details { opacity: 0 !important; }
   }
-  @media screen and (max-width: 800px) {
+  @media screen and (max-width: 970px) {
     #photo { opacity: 0; }
   }
 </style>

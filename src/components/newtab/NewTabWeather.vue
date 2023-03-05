@@ -101,7 +101,7 @@
       .forecast { opacity:1; }
     }
   }
-  @media screen and (max-width: 800px) {
+  @media screen and (max-width: 970px) {
     #weather .forecast { color: $raspi_dim; }
   }
 </style>

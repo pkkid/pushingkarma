@@ -118,7 +118,7 @@
   @media screen and (max-width: 1100px) {
     #events { left:20px; top:140px; width:400px; }
   }
-  @media screen and (max-width: 800px) {
+  @media screen and (max-width: 970px) {
     #events {
       .title { color: $raspi_dim; }
       .details { color: $raspi_dim; }

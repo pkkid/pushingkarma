@@ -81,7 +81,7 @@
   @media screen and (max-width: 1100px) {
     #news { bottom:20px; left:20px; width:700px; }
   }
-  @media screen and (max-width: 800px) {
+  @media screen and (max-width: 970px) {
     #news .subtext { color: $raspi_dim; }
   }
 </style>

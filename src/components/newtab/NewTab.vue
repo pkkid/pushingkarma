@@ -1,12 +1,14 @@
 <template>
-  <div id='newtab'>
-    <Photo ref='photo' v-if='width > 800'/>
-    <Clock @click.native='$refs.photo.toggleDetails'/>
-    <Events/>
-    <IPAddr/>
-    <News/>
-    <Tasks/>
-    <Weather/>
+  <div id='newtabwrap'>
+    <div id='newtab'>
+      <Photo ref='photo' v-if='width > 800'/>
+      <Clock @click.native='$refs.photo.toggleDetails'/>
+      <Events/>
+      <IPAddr/>
+      <News/>
+      <Tasks/>
+      <Weather/>
+    </div>
   </div>
 </template>
 
@@ -44,7 +46,7 @@
     z-index: 10;
     a,a:hover,a:visited { color:$newtab_color; text-decoration:none; }
   }
-  @media screen and (max-width: 800px) {
+  @media screen and (max-width: 970px) {
     #newtab {
       box-shadow: 0px 2px 10px rgba(0,0,0,0.5);
       color: $raspi_color;

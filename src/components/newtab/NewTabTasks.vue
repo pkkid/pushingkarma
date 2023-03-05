@@ -72,7 +72,7 @@
   @media screen and (max-width: 1100px) {
     #tasks { right:20px; left:auto; top:190px; width:275px; }
   }
-  @media screen and (max-width: 800px) {
+  @media screen and (max-width: 970px) {
     #tasks {
       .title { color: $raspi_dim; }
       .task:before { border: 2px solid $raspi_dim; }

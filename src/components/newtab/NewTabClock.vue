@@ -42,7 +42,7 @@
   @media screen and (max-width: 1100px) {
     #clock { left:20px; top:20px; width:300px; text-align:left; }
   }
-  @media screen and (max-width: 800px) {
+  @media screen and (max-width: 970px) {
     #clock .date { color: $raspi_dim; }
   }
 </style>
