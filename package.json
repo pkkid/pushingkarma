@@ -21,7 +21,7 @@
     "highlight.js": "^10.7.3",
     "js-md5": "^0.7.3",
     "lodash": "^4.17.21",
-    "npm": "^8.6.0",
+    "npm": "^8.11.0",
     "portal-vue": "^2.1.7",
     "v-click-outside": "^3.1.2",
     "v-hotkey": "^0.8.0",
