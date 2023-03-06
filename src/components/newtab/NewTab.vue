@@ -34,6 +34,12 @@
 </script>
 
 <style lang='scss'>
+  #newtabwrap {
+    height: 100vh;
+    width: 100%;
+    background-color: #000;
+    position: relative;
+  }
   #newtab {
     background-color: #000;
     height: 100vh;
@@ -47,12 +53,24 @@
     a,a:hover,a:visited { color:$newtab_color; text-decoration:none; }
   }
   @media screen and (max-width: 970px) {
+    $wiggle: 30px;
     #newtab {
       box-shadow: 0px 2px 10px rgba(0,0,0,0.5);
       color: $raspi_color;
       cursor: none;
+      opacity: 0.4;
       text-shadow: none;
+      height: calc(100vh - $wiggle);
+      width: calc(100% - $wiggle);
+      animation: square-move 3600s linear infinite;
       a,a:hover,a:visited { color:$raspi_color }
+    }
+    @keyframes square-move {
+      0% { top:0; left:0; }
+      25% { top:0; left:$wiggle; }
+      50% { top:$wiggle; left:$wiggle; }
+      75% { top:$wiggle; left:0; }
+      100% { top:0; left:0; }
     }
   }
 </style>
