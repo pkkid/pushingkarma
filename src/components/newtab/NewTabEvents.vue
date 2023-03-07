@@ -120,6 +120,7 @@
   }
   @media screen and (max-width: 970px) {
     #events {
+      zoom: $raspi_zoom;
       .title { color: $raspi_dim; }
       .details { color: $raspi_dim; }
     }

@@ -102,6 +102,7 @@
     }
   }
   @media screen and (max-width: 970px) {
+    #weather { zoom: $raspi_zoom; }
     #weather .forecast { color: $raspi_dim; }
   }
 </style>

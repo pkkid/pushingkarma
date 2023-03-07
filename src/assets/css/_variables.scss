@@ -93,7 +93,9 @@ $link-focus-border: $primary;
 $newtab_color: #fff;
 $newtab_dim: #eee;
 $raspi_color: #e5d9c0;
-$raspi_dim: darken($raspi_color, 15%);
+$raspi_dim: rgba($raspi_color, 85%);
+$raspi_zoom: 1.2;
+$raspi_opacity: 0.4;
 $newtab_transition: opacity 0.2s ease-in;
 
 // DEPRECATED

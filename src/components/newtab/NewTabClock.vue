@@ -43,6 +43,7 @@
     #clock { left:20px; top:20px; width:300px; text-align:left; }
   }
   @media screen and (max-width: 970px) {
+    #clock { zoom: $raspi_zoom; }
     #clock .date { color: $raspi_dim; }
   }
 </style>

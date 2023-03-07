@@ -82,6 +82,7 @@
     #news { bottom:20px; left:20px; width:700px; }
   }
   @media screen and (max-width: 970px) {
+    #news { zoom: $raspi_zoom; }
     #news .subtext { color: $raspi_dim; }
   }
 </style>

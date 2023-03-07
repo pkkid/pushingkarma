@@ -57,8 +57,8 @@
     #newtab {
       box-shadow: 0px 2px 10px rgba(0,0,0,0.5);
       color: $raspi_color;
+      opacity: $raspi_opacity;
       cursor: none;
-      opacity: 0.4;
       text-shadow: none;
       height: calc(100vh - $wiggle);
       width: calc(100% - $wiggle);

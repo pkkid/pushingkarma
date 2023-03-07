@@ -74,6 +74,7 @@
   }
   @media screen and (max-width: 970px) {
     #tasks {
+      zoom: $raspi_zoom;
       .title { color: $raspi_dim; }
       .task:before { border: 2px solid $raspi_dim; }
     }
