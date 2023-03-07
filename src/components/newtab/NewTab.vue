@@ -1,13 +1,13 @@
 <template>
   <div id='newtabwrap'>
-    <div id='newtab'>
+    <div id='newtab' :class='daytime'>
       <Photo ref='photo' v-if='width > 800'/>
       <Clock @click.native='$refs.photo.toggleDetails'/>
       <Events/>
       <IPAddr/>
       <News/>
       <Tasks/>
-      <Weather/>
+      <Weather ref='weather'/>
     </div>
   </div>
 </template>
@@ -20,16 +20,36 @@
   import Photo from './NewTabPhoto';
   import Tasks from './NewTabTasks';
   import Weather from './NewTabWeather';
+  import * as dayjs from 'dayjs';
 
   export default {
     name: 'NewTab',
     components: {Clock, Events, IPAddr, News, Photo, Tasks, Weather},
     data: () => ({
       width: window.innerWidth,
+      daytime: '',
     }),
     mounted: function() {
       this.$store.set('global/layout', 'nonav');
+      setInterval(this.checkDaytime, 1000*60);
+      this.checkDaytime();
     },
+    methods: {
+      checkDaytime: function() {
+        if (!this.$refs.weather.weather) {
+          this.daytime = 'day';
+        } else {
+          var now = dayjs().format('YYYY-MM-DDTHH:MM');
+          var sunrise = this.$refs.weather.weather.daily[0].sunrise;
+          var sunset = this.$refs.weather.weather.daily[0].sunset;
+          console.log('---');
+          console.log(`now: ${now}`);
+          console.log(`sunrise: ${sunrise}`);
+          console.log(`sunset: ${sunset}`);
+          this.daytime = ((now < sunrise) || (now > sunset)) ? 'night' : 'day';
+        }
+      },
+    }
   };
 </script>
 
@@ -57,13 +77,16 @@
     #newtab {
       box-shadow: 0px 2px 10px rgba(0,0,0,0.5);
       color: $raspi_color;
-      opacity: $raspi_opacity;
+      opacity: 1;
       cursor: none;
       text-shadow: none;
       height: calc(100vh - $wiggle);
       width: calc(100% - $wiggle);
       animation: square-move 1800s linear infinite;
+      transition: opacity 5s;
       a,a:hover,a:visited { color:$raspi_color }
+      &.day { opacity: 0.6; }
+      &.night { opacity: 0.4; }
     }
     @keyframes square-move {
       0% { top:0; left:0; }

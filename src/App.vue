@@ -44,7 +44,7 @@
       init_google_code_client: function() {
         var self = this;
         if (this.globals.GOOGLE_ENABLED) {
-          console.log('Initialize a Code Client');
+          console.log('Initialize Google Auth service');
           self.gclient = google.accounts.oauth2.initCodeClient({
             client_id: self.globals.GOOGLE_CLIENTID,
             scope: self.globals.GOOGLE_SCOPES,

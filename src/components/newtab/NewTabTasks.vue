@@ -56,9 +56,9 @@
         position: absolute;
         border: 2px solid $newtab_dim;
         border-radius: 3px;
-        width: 10px;
-        height: 10px;
-        top: 6px;
+        width: 11px;
+        height: 11px;
+        top: 4px;
         left: 3px;
       }
     }

@@ -4,7 +4,7 @@
       <div class='weather-today'>
         <div class='weather-today-details' @click.prevent='toggleDetails'>
           <div class='weather-temp'>{{weather.current_weather.temperature | int}}°F</div>
-          <div class='weather-feelslike'>Wind: {{weather.current_weather.windspeed | int}} mph</div>
+          <div class='weather-feelslike'>{{weather.current_weather.windspeed | int}} mph</div>
         </div>
         <div class='weather-today-icon' @click.prevent='toggleDetails'>
           <i :class='`mdi mdi-weather-${weather.current_weather.icon}`'/>
