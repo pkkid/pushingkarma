@@ -82,7 +82,7 @@
       text-shadow: none;
       height: calc(100vh - $wiggle);
       width: calc(100% - $wiggle);
-      animation: square-move 1800s linear infinite;
+      animation: square-move 2400s linear infinite;
       transition: opacity 5s;
       a,a:hover,a:visited { color:$raspi_color }
       &.day { opacity: 0.6; }
