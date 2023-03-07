@@ -95,8 +95,6 @@ def weather(request):
     weather['location'] = settings.OPENMETEO_LOCATION
     weather['current_weather']['text'] = settings.OPENMETEO_WEATHERCODES[weather['current_weather']['weathercode']]['text']
     weather['current_weather']['icon'] = settings.OPENMETEO_WEATHERCODES[weather['current_weather']['weathercode']]['icon']
-    # for i in range(len(weather['daily']['weathercode'])):
-    #     weather['daily']['weathercode'][i] = settings.OPENMETEO_WEATHERCODES[weather['daily']['weathercode'][i]]
     # Fix the daily weather format
     daily = []
     for i in range(len(weather['daily']['time'])):
