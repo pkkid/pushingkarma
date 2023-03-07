@@ -1,4 +1,5 @@
 # encoding: utf-8
+from datetime import datetime
 import praw, random, re, requests
 from django.conf import settings
 from pk.utils.decorators import cache_api_data
@@ -91,10 +92,11 @@ def tasks(request):
 @cached_api_view(['get'], 60*15)  # 15 minutes
 def weather(request):
     """ Get current weather information. """
+    CODES = settings.OPENMETEO_WEATHERCODES
     weather = requests.get(settings.OPENMETEO_URL).json()
     weather['location'] = settings.OPENMETEO_LOCATION
-    weather['current_weather']['text'] = settings.OPENMETEO_WEATHERCODES[weather['current_weather']['weathercode']]['text']
-    weather['current_weather']['icon'] = settings.OPENMETEO_WEATHERCODES[weather['current_weather']['weathercode']]['icon']
+    weather['current_weather']['text'] = CODES[weather['current_weather']['weathercode']]['text']
+    weather['current_weather']['icon'] = CODES[weather['current_weather']['weathercode']]['icon']
     # Fix the daily weather format
     daily = []
     for i in range(len(weather['daily']['time'])):
@@ -102,9 +104,15 @@ def weather(request):
         for key in weather['daily'].keys():
             daily[i][key] = weather['daily'][key][i]
             if key == 'weathercode':
-                daily[i]['text'] = settings.OPENMETEO_WEATHERCODES[daily[i][key]]['text']
-                daily[i]['icon'] = settings.OPENMETEO_WEATHERCODES[daily[i][key]]['icon']
+                daily[i]['text'] = CODES[daily[i][key]]['text']
+                daily[i]['icon'] = CODES[daily[i][key]]['icon']
     weather['daily'] = daily
+    # Display a Moon icon if after sunset or before sunrise
+    now = datetime.now().strftime('%Y-%m-%dT%H:%M')
+    sunrise, sunset = daily[0]['sunrise'], daily[0]['sunset']
+    if (now < sunrise or now > sunset):
+        if weather['current_weather']['icon'] == 'sunny': weather['current_weather']['icon'] = 'night'
+        if weather['current_weather']['icon'] == 'partly-cloudy': weather['current_weather']['icon'] = 'night-partly-cloudy'
     return Response(weather)
 
 
