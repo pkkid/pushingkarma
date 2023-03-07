@@ -88,12 +88,26 @@ def tasks(request):
     return Response(sorted(tasks.get('items',[]), key=lambda x:x['position']))
 
 
-@cached_api_view(['get'], 60*30)  # 30 minutes
+@cached_api_view(['get'], 60*15)  # 15 minutes
 def weather(request):
-    """ Get weather information from Weather Underground.
-        https://www.wunderground.com/weather/api/d/docs
-    """
-    return Response(requests.get(settings.DARKSKY_URL).json())
+    """ Get current weather information. """
+    weather = requests.get(settings.OPENMETEO_URL).json()
+    weather['location'] = settings.OPENMETEO_LOCATION
+    weather['current_weather']['text'] = settings.OPENMETEO_WEATHERCODES[weather['current_weather']['weathercode']]['text']
+    weather['current_weather']['icon'] = settings.OPENMETEO_WEATHERCODES[weather['current_weather']['weathercode']]['icon']
+    # for i in range(len(weather['daily']['weathercode'])):
+    #     weather['daily']['weathercode'][i] = settings.OPENMETEO_WEATHERCODES[weather['daily']['weathercode'][i]]
+    # Fix the daily weather format
+    daily = []
+    for i in range(len(weather['daily']['time'])):
+        daily.append({})
+        for key in weather['daily'].keys():
+            daily[i][key] = weather['daily'][key][i]
+            if key == 'weathercode':
+                daily[i]['text'] = settings.OPENMETEO_WEATHERCODES[daily[i][key]]['text']
+                daily[i]['icon'] = settings.OPENMETEO_WEATHERCODES[daily[i][key]]['icon']
+    weather['daily'] = daily
+    return Response(weather)
 
 
 def _get_subreddit_items(reddit, subreddit, count):

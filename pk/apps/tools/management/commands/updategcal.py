@@ -104,7 +104,6 @@ class Command(BaseCommand):
     def check_update_event(self, gcal_event, o365_event):
         """ Check we need to update the office365 event. """
         _local = lambda dtstr: parse(dtstr).astimezone().strftime(DATEFORMAT)
-        import json; print(json.dumps(gcal_event, indent=2))
         if (gcal_event['summary'] != o365_event['Subject']
           or gcal_event.get('location','') != o365_event['Location']['DisplayName']
           or _local(gcal_event['start']['dateTime']) != _local(o365_event['Start'])

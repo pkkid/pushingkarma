@@ -3,22 +3,22 @@
     <div id='weather' :class='{showdetails}' v-if='weather'>
       <div class='weather-today'>
         <div class='weather-today-details' @click.prevent='toggleDetails'>
-          <div class='weather-temp'>{{weather.currently.temperature | int}}°F</div>
-          <div class='weather-feelslike'>Feels: {{weather.currently.apparentTemperature | int}}°</div>
+          <div class='weather-temp'>{{weather.current_weather.temperature | int}}°F</div>
+          <div class='weather-feelslike'>Wind: {{weather.current_weather.windspeed | int}} mph</div>
         </div>
         <div class='weather-today-icon' @click.prevent='toggleDetails'>
-          <i :class='[iconcls(weather.currently.icon)]'/>
+          <i :class='`mdi mdi-weather-${weather.current_weather.icon}`'/>
         </div>
         <div class='weather-today-summary'>
-          <div class='weather-location'>Watertown</div>
-          <div class='weather-description'>{{weather.currently.summary}}</div>
+          <div class='weather-location'>{{weather.location}}</div>
+          <div class='weather-description'>{{weather.current_weather.text}}</div>
         </div>
       </div>
       <div class='forecast' style='clear:both'>
-        <div class='forecast-day' v-for='day in weather.daily.data.slice(0,5)' :key='day.time'>
-          <div class='forecast-weekday'>{{day.time | formatDate('ddd')}}</div>
-          <i :class='[iconcls(day.icon)]'/>
-          <div class='forecast-temp'>{{day.temperatureMax| int }}°</div>
+        <div class='forecast-day' v-for='day in weather.daily.slice(0,5)' :key='day.time'>
+          <div class='forecast-weekday'>{{dayofweek(day.time)}}</div>
+          <i :class='`mdi mdi-weather-${day.icon}`'/>
+          <div class='forecast-temp'>{{parseInt(day.apparent_temperature_max)}}°</div>
         </div>
       </div>
     </div>
@@ -27,7 +27,8 @@
 
 <script>
   import * as api from '@/api';
-  import * as utils from '@/utils/utils';
+  import * as dayjs from 'dayjs';
+  import startCase from 'lodash/startCase';
   require('@/assets/font/dripicons/dripicons-weather.css');
 
   export default {
@@ -41,8 +42,11 @@
       setInterval(this.update, 1000*60*5);
     },
     methods: {
-      iconcls: function(icon) {
-        return `diw-${utils.ds2wuIcon(icon)}`;
+      dayofweek: function(date) {
+        return dayjs(date).format('ddd');
+      },
+      titleize: function(text) {
+        return startCase(text.replace('weather','').replace('-',' '));
       },
       toggleDetails: function() {
         this.showdetails = !this.showdetails;
@@ -68,7 +72,7 @@
       text-align: right;
       & > div { float:right; padding-left:20px; }
       .weather-location { font-size:25px; line-height:27px; padding:4px 0px 4px 0px;}
-      .weather-today-icon { font-size:50px; cursor:pointer; }
+      .weather-today-icon { font-size:50px; cursor:pointer; padding-top:0.3em; }
       .weather-temp { font-size:35px; line-height:36px; }
       .weather-today-details { cursor:pointer; }
     }
@@ -87,7 +91,7 @@
       transition: $newtab_transition;
       .forecast-day { width:30px; margin-left:25px; text-align:center; float:left; }
       .forecast-weekday { padding-bottom:2px; }
-      [class^='diw-']:before { font-size:20px; }
+      .mdi:before { font-size:20px; padding-top:0.3em; }
       .forecast-temp { padding-top:6px; }
     }
     &.showdetails {

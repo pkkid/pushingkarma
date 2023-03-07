@@ -65,28 +65,6 @@ export function dragType(event) {
   return 'element';
 }
 
-// ds2wuIcon
-// DarkSky to WeatherUndereground icon translation
-// Unused WU icons: chanceflurries, chancerain, chancesleet,
-// chancesnow, chancetstorms, flurries, hazy, mostlycloudy,
-// mostlysunny, partlysunny, sunny, tstorms
-export function ds2wuIcon(dsicon) {
-  var wuicon;
-  dsicon = dsicon.replace('-day', '');
-  dsicon = dsicon.replace('-night', '');
-  switch(dsicon) {
-    case 'clear': wuicon = 'clear'; break;
-    case 'cloudy': wuicon = 'cloudy'; break;
-    case 'fog': wuicon = 'fog'; break;
-    case 'partly-cloudy': wuicon = 'partlycloudy'; break;
-    case 'rain': wuicon = 'rain'; break;
-    case 'sleet': wuicon = 'sleet'; break;
-    case 'snow': wuicon = 'snow'; break;
-    default: wuicon = 'unknown'; break;
-  }
-  return wuicon;
-}
-
 // Find Index
 // Find item in list of objects with the specified key/value.
 export function findIndex(objs, key, value) {
