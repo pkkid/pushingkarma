@@ -6,10 +6,14 @@
       <div class='title'><p style='-webkit-box-orient:vertical'>
         <a target='_blank' :href='articles[index].url'>{{articles[index].title}}</a>
       </p></div>
-      <div class='subtext'>
+      <div v-if='articles[index].selftext' class='subtext'>
+        {{articles[index].selftext}} | {{articles[index].score | intcomma}} upvotes
+      </div>
+      <div v-else class='subtext'>
         {{ articles[index].created_utc | timeAgo }} ago |
         <a target='_blank' :href='articles[index].redditurl'>{{articles[index].subreddit}}</a> |
-        <a target='_blank' :href='"https://"+ articles[index].domain'>{{articles[index].domain}}</a>
+        <a target='_blank' :href='"https://"+ articles[index].domain'>{{articles[index].domain}}</a> |
+        {{articles[index].score | intcomma}} upvotes
       </div>
     </div>
   </transition>

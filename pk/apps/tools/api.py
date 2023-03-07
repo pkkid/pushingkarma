@@ -13,7 +13,7 @@ from rest_framework.response import Response
 from rest_framework.reverse import reverse
 from . import o365, photos
 
-REDDIT_ATTRS = ['title','author.name','score','permalink','domain','created_utc']
+REDDIT_ATTRS = ['title','score','permalink','domain','created_utc','selftext']
 REDDIT_BADDOMAINS = ['i.redd.it', 'imgur.com', r'^self\.']
 LUCKY_URL = 'http://google.com/search?btnI=I%27m+Feeling+Lucky&sourceid=navclient&q={domain}%20{title}'
 AUTH_CLASSES = [SessionAuthentication, TokenAuthentication]
@@ -66,8 +66,11 @@ def news(request):
         technology=[_get_subreddit_items, reddit, 'technology', 15],
         worldnews=[_get_subreddit_items, reddit, 'worldnews', 15],
         boston=[_get_subreddit_items, reddit, 'boston', 10],
+        jokes=[_get_subreddit_items, reddit, 'jokes', 15],
     )
-    return Response([item for sublist in stories.values() for item in sublist])
+    items = [item for sublist in stories.values() for item in sublist]
+    random.shuffle(items)
+    return Response(items)
 
 
 @cached_api_view(['get'], 60*60*18)  # 18 hours
@@ -119,10 +122,7 @@ def weather(request):
 def _get_subreddit_items(reddit, subreddit, count):
     substories = []
     for post in reddit.subreddit(subreddit).top('day', limit=count*2):
-        # Check this is a bad domain
-        for regex in REDDIT_BADDOMAINS:
-            if re.findall(regex, post.domain):
-                continue
+        if _bad_domain(subreddit, post): continue
         # Clenaup and add this story to the return set
         story = {attr.replace('.','_'):utils.rget(post,attr) for attr in REDDIT_ATTRS}
         story['subreddit'] = subreddit
@@ -130,8 +130,20 @@ def _get_subreddit_items(reddit, subreddit, count):
         story['url'] = 'https://reddit.com%s' % story['permalink']
         if 'reddit' not in story['domain'].replace('.',''):
             story['url'] = LUCKY_URL.format(**story)
+        # If this is from r/jokes; make sure we have the punchline
+        if subreddit == 'jokes' and (len(story['title']) > 100 or len(story['selftext']) > 100 or not story['selftext']):
+            continue
         substories.append(story)
     return sorted(substories, key=lambda x:x['score'], reverse=True)[:count]
+
+
+def _bad_domain(subreddit, post):
+    if subreddit == 'jokes':
+        return False
+    for regex in REDDIT_BADDOMAINS:
+        if re.findall(regex, post.domain):
+            return True
+    return False
 
 
 @api_view(['get'])

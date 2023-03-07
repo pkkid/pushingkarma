@@ -5,10 +5,7 @@
         <div class='title'>Upcoming Events</div>
         <div class='event' v-for='event in events.slice(0,3)' :key='event.id' :class={soon:event.soon}>
           <div class='subject'>{{event.Subject}}</div>
-          <div class='details'>
-            {{ event.Start | formatDate('h:mm') }} - {{ event.End | formatDate('h:mm') }}
-            <span v-if='event.Location.DisplayName'>| <span v-html='linkZoom(event.Location.DisplayName)'/></span>
-          </div>
+          <div class='details'>{{event.Start | formatDate('h:mm')}} - {{event.End | formatDate('h:mm')}}</div>
         </div>
       </div>
       <div v-else class='noevents'>No events</div>
