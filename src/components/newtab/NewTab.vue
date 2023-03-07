@@ -62,7 +62,7 @@
       text-shadow: none;
       height: calc(100vh - $wiggle);
       width: calc(100% - $wiggle);
-      animation: square-move 3600s linear infinite;
+      animation: square-move 1800s linear infinite;
       a,a:hover,a:visited { color:$raspi_color }
     }
     @keyframes square-move {
