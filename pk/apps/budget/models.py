@@ -74,4 +74,4 @@ class Transaction(TimeStampedModel):
         unique_together = ('account', 'trxid')
 
     def __str__(self):
-        return '%s:%s:%s:%s' % (self.id, self.account, self.trxid, self.payee[:10])
+        return '%s:%s:%s:%s' % (self.id, self.account.id, self.trxid, self.payee[:10])

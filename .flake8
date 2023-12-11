@@ -16,7 +16,7 @@
 # W291: trailing whitespace
 # W293: blank line contains whitespace
 [flake8]
-ignore=E128,E226,E231,E251,E302,E305,E401,E501,E701,E731,W293,W503
+ignore=E128,E226,E231,E251,E302,E305,E401,E501,E701,E702,E731,W293,W503
 exclude=migrations,node_modules
 max-complexity = -1
 max-line-length = 125
