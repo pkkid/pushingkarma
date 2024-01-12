@@ -16,4 +16,5 @@
 *.sqlite3
 *.sublime-project
 *.sublime-workspace
+*.vscode
 *__pycache__*
