@@ -12,7 +12,7 @@ django-redis-sessions==0.6.1
 django==3.0.4
 djangorestframework==3.11.0
 flickrapi==2.4.0
-gevent==21.12.0
+gevent==24.2.1
 google-api-python-client==1.7.11
 oauth2client==4.1.3
 ofxparse==0.21
@@ -20,5 +20,5 @@ praw==6.5.1
 python-dateutil==2.8.1
 redis==3.4.1
 requests==2.23.0
-timelib==0.2.4
+timelib==0.3.0
 webdavclient3==3.14.4

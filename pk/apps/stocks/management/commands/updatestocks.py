@@ -11,7 +11,7 @@ log = logging.getLogger('cmd')
 
 URL = 'https://www.alphavantage.co/query?symbol={ticker}&function={function}&apikey={apikey}'
 APIKEY = settings.ALPHAVANTAGE_APIKEY
-
+LIMIT_REACHED = 'API rate limit'
 
 class Command(BaseCommand):
     help = __doc__
@@ -24,7 +24,7 @@ class Command(BaseCommand):
         lastupdate = None
         tz = pytz.timezone(settings.TIME_ZONE)
         now = make_aware(datetime.now())
-        expires = now - timedelta(hours=12)
+        expires = now - timedelta(days=3)
         stocks = Stock.objects.all()
         if options.get('ticker'):
             stocks = stocks.filter(ticker=options['ticker'])
@@ -39,7 +39,12 @@ class Command(BaseCommand):
                     url = URL.format(function=FUNCTION_KEY, ticker=ticker, apikey=APIKEY)
                     log.info(f'Updating stock {stock.ticker}: {url}')
                     response = requests.get(url)
-                    stock.data = json.dumps(response.json())  # validate json
+                    data = response.json()
+                    stock.data = json.dumps(data)  # validate json
+                    if 'Weekly Adjusted Time Series' not in data:
+                        info = data.get('Information', '')
+                        if LIMIT_REACHED in info:
+                            log.warning(str(info)); break
                     stock.save()
                     lastupdate = time.time()
                 else:

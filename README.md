@@ -9,7 +9,8 @@ sudo apt install ansible redis-server
 sudo apt install build-essential curl libbz2-dev libffi-dev liblzma-dev \
   libncursesw5-dev libreadline-dev libsqlite3-dev libssl-dev libxml2-dev \
   libxmlsec1-dev llvm make python3-dev tk-dev wget xz-utils zlib1g-dev
-asdf install
+pyenv virtualenv 3.11 pk
+pyenv local pk
 pip install -r pk/requirements.pip
 npm install
 npm run start
