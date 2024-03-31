@@ -12,6 +12,9 @@ sudo apt install build-essential curl libbz2-dev libffi-dev liblzma-dev \
 pyenv virtualenv 3.11 pk
 pyenv local pk
 pip install -r pk/requirements.pip
+
+nvm install 16
+nvm use 16
 npm install
 npm run start
 ```

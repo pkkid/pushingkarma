@@ -7,15 +7,27 @@ from django.dispatch import receiver
 from django_extensions.db.models import TimeStampedModel
 from pk import log
 
-FUNCTION = 'Weekly Adjusted Time Series'
-FUNCTION_KEY = 'TIME_SERIES_WEEKLY_ADJUSTED'
-OPEN = '1. open'
-HIGH = '2. high'
-LOW = '3. low'
-CLOSE = '4. close'
-ADJCLOSE = '5. adjusted close'
-VOLUME = '6. volume'
-DIVAMT = '7. dividend amount'
+PROVIDERS = {
+    'alphavantage': {
+        'url': 'https://www.alphavantage.co/query?symbol={ticker}&function=TIME_SERIES_WEEKLY_ADJUSTED&apikey={apikey}',
+        'apikey': settings.ALPHAVANTAGE_APIKEY,
+        'limit': 60,  # per minute (limit 25/day!)
+        'limitstr': 'API rate limit',
+        'historykey': 'Weekly Adjusted Time Series',
+        'closekey': '4. close',
+        'adjclosekey': '5. adjusted close',
+    },
+    'finazon': {
+        'url': 'https://api.finazon.io/latest/time_series?dataset=us_stocks_essential&ticker={ticker}&interval=1d&apikey={apikey}',
+        'apikey': settings.FINAZON_APIKEY,
+        'limit': 30,  # per minute
+        'limitstr': 'API_RATE_LIMIT_EXCEEDED',
+        'historykey': 'data',
+        'close': 'c',
+        'adjclose': 'a',
+    }
+}
+PROVIDER = PROVIDERS['finazon']
 
 
 class Stock(TimeStampedModel):
@@ -37,7 +49,7 @@ class Stock(TimeStampedModel):
     def history(self):
         if self._history is None:
             data = json.loads(self.data or '{}')
-            self._history = data.get(FUNCTION, {})
+            self._history = data.get(PROVIDER.get('historykey'), {})
         return self._history
 
     @property
@@ -58,14 +70,14 @@ class Stock(TimeStampedModel):
 
     @property
     def close(self):
-        return self.value(CLOSE)
+        return self.value(PROVIDER.get('closekey'))
 
     @property
     def adjclose(self):
-        return self.value(ADJCLOSE)
+        return self.value(PROVIDER.get('adjclosekey'))
 
     def value(self, key=None, date=None):
-        key = key or CLOSE
+        key = key or PROVIDER.get('closekey')
         date = date or self.maxdate
         return self.history.get(date, {}).get(key)
 

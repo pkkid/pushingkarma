@@ -8,7 +8,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.reverse import reverse
-from .models import ADJCLOSE, Stock
+from .models import PROVIDER, Stock
 
 
 class StockSerializer(DynamicFieldsSerializer):
@@ -84,12 +84,13 @@ def _get_stocks(request):
 
 
 def _get_value(datestr, stock):
-    """ The data from Alphavantage is messy. This function handles a few things.
-        1. If a value is missing, we grab the previous value.
+    """ Stock data can be messy.
+        If a value is missing, grab the previous value.
     """
-    value = stock.history.get(datestr,{}).get(ADJCLOSE,'')
+    key = PROVIDER.get('adjclosekey')
+    value = stock.history.get(datestr,{}).get(key, '')
     if not value:
         keys = sorted([key for key in stock.keys if key < datestr], reverse=True)
-        prev = stock.history[keys[0]].get(ADJCLOSE) if len(keys) >= 1 else None
+        prev = stock.history[keys[0]].get(key) if len(keys) >= 1 else None
         return prev
     return value
