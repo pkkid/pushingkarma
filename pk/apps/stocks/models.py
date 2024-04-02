@@ -19,7 +19,7 @@ PROVIDERS = {
     },
     'finazon': {
         'url': 'https://api.finazon.io/latest/time_series?dataset=us_stocks_essential&ticker={ticker}&interval=1d&apikey={apikey}',
-        'apikey': settings.FINAZON_APIKEY,
+        'apikey': None,  # settings.FINAZON_APIKEY,
         'limit': 30,  # per minute
         'limitstr': 'API_RATE_LIMIT_EXCEEDED',
         'historykey': 'data',
@@ -27,7 +27,7 @@ PROVIDERS = {
         'adjclose': 'a',
     }
 }
-PROVIDER = PROVIDERS['finazon']
+PROVIDER = PROVIDERS['alphavantage']
 
 
 class Stock(TimeStampedModel):

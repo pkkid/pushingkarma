@@ -10,7 +10,7 @@ except ImportError:
 # Django Core Settings
 HOSTNAME = platform.node()
 SITE_NAME = 'PushingKarma'
-ALLOWED_HOSTS = ['.pushingkarma.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['.pushingkarma.com', 'localhost', '127.0.0.1', '192.168.5.78']
 BASE_DIR = dirname(dirname(dirname(abspath(__file__))))
 LOG_DIR = f'{BASE_DIR}/pk/_logs'
 DEBUG = HOSTNAME in ['meshy']
