@@ -2,7 +2,8 @@
 # pip install -r requirements.pip
 ipython
 pytz
-ansible==2.10.7
+# ansible==2.10.7
+flickrapi==2.4.0
 daphne==2.4.1
 django-cache-memoize==0.1.6     
 django-cors-headers==3.2.1
@@ -11,7 +12,6 @@ django-redis-cache==2.1.0
 django-redis-sessions==0.6.1
 django==3.0.4
 djangorestframework==3.11.0
-flickrapi==2.4.0
 gevent==24.2.1
 google-api-python-client==1.7.11
 oauth2client==4.1.3
