@@ -12,7 +12,7 @@
     "@tiptap/extension-task-list": "^2.0.0-beta.26",
     "@tiptap/starter-kit": "^2.0.0-beta.183",
     "@tiptap/vue-2": "^2.0.0-beta.77",
-    "axios": "^0.26.1",
+    "axios": "^0.28.0",
     "buefy": "^0.8.20",
     "chart.js": "^3.7.1",
     "core-js": "^3.21.1",
