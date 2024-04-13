@@ -1,36 +1,44 @@
-## PushingKarma Website Code
-This is the core code running pushingkarma.com.  Feel free to borrow
-some ideas for your own site.  If you find anything useful, by all
-means let me know.
+# PushingKarma Website
+This is the core code running pushingkarma.com. Feel free to borrow some ideas
+for your own site. If you find anything useful, by all means let me know.
 
-### Setup Dev Environment
+## Development Setup
 ```bash
-sudo apt install ansible redis-server
-sudo apt install build-essential curl libbz2-dev libffi-dev liblzma-dev \
-  libncursesw5-dev libreadline-dev libsqlite3-dev libssl-dev libxml2-dev \
-  libxmlsec1-dev llvm make python3-dev tk-dev wget xz-utils zlib1g-dev
+# Clone the repo
+git git@github.com:pkkid/pushingkarma.git
+cd pushingkarma
+
+# Create Python virtualenv & install requirements
+pyenv install 3.11
 pyenv virtualenv 3.11 pk
 pyenv local pk
-pip install -r pk/requirements.pip
+pip install -r pk/requirements.txt
 
-nvm install 16
-nvm use 16
+# Install node v20.11 (lts)
+nvm install 20.11
+nvm use 20.11
 npm install
+
+# Start the Django and Vue servers together
+# Django http://localhost:8000/
+# Vue http://localhost:5173/ (use this one)
 npm run start
 ```
-REMEMBER: To make sure the Django dev server is running with DEBUG=True,
-otherwise static files will not be served when running `npm run start` and
-you will waste your day trying to figure it out.
 
+#### Other Useful Package Commands
+```bash
+npm run getdb          # Gets the Production sqlite db from http://pdash.nasuni.net/db.sqlite3
+npm run start          # Starts Django and Vue servers together
+npm run django         # Watch and reload Django when files changed
+npm run vue            # Watch and reload Vue when files changed
+npm run build          # Compile and Minify for Production
+npm run eslint         # Lint with [ESLint](https://eslint.org/)
+```
 
-### Setup Production Environment
-1. Create a new Ubuntu instance
-2. Update domain server DNS entry to point your domain to the instance
-3. Wait for DNS resolution to update and ability to ssh in by domain name
-4. Update `ansible/inventory.ini` with the IP address of the new instance
-5. Make sure secrets.py is mounted or accessible
-6. Run: `npm run deploy-full`
-
-### License
-Create Commons Attribution-ShareAlike 2.5 Generic (CC BY-SA 2.5) - 
-https://creativecommons.org/licenses/by-sa/2.5/
+#### References
+* [Volar Extension for VSCode](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (disable Vetur)
+* [Vite Configuration Reference](https://vitejs.dev/config/)
+* [Pinia Reference](https://pinia.vuejs.org/core-concepts/)
+* [PrimeVue](https://primevue.org/introduction/) (theme and components)
+* [VueUse](https://vueuse.org/) (Vue composition utilities)
+* [Material Symbols](https://fonts.google.com/icons?icon.set=Material+Symbols)

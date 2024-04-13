@@ -1,0 +1,6 @@
+{
+  "compilerOptions": {
+    "paths": {"@/*": ["./vue/*"]}
+  },
+  "exclude": ["./node_modules", "dist"]
+}
