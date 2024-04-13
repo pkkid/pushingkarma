@@ -1,6 +1,11 @@
 # Dockerfile
 # sudo docker build -t pushingkarma -f Dockerfile .
 # sudo docker run pushingkarma --name pushingkarma -d -p 8080:80/tcp -v /volume1/docker/pushingkarma:/app:rw
+#
+# Cronjobs
+# 0 0 * * 0 /var/www/venvs/pk/bin/python /root/pk/manage.py backupdb >> /var/www/pk/_logs/backupdb.log 2>&1
+# 0 2 * * * /var/www/venvs/pk/bin/python /root/pk/manage.py updatestocks >> /var/www/pk/_logs/updatestocks.log 2>&1
+# */5 * * * * /var/www/venvs/pk/bin/python /root/pk/manage.py updategcal >> /var/www/pk/_logs/updategcal.log 2>&1
 FROM python:3.11
 WORKDIR /app
 RUN apt-get update && apt-get install -y build-essential cron curl libbz2-dev libffi-dev \
