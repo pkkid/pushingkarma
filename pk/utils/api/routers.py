@@ -1,6 +1,6 @@
 # encoding: utf-8
 from collections import OrderedDict
-from django.conf.urls import url
+from django.urls import re_path
 from rest_framework import routers
 from rest_framework.reverse import reverse
 
@@ -15,7 +15,7 @@ class HybridRouter(routers.DefaultRouter):
         self.view_urls = []
 
     def add_url(self, regex, view, kwargs=None, name=None):
-        django_url = url(regex, view, kwargs, name)
+        django_url = re_path(regex, view, kwargs, name)
         self.view_urls.append(django_url)
 
     def get_urls(self):

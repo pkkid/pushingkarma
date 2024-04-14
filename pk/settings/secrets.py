@@ -1,1 +1,0 @@
-/home/pkkid/Private/Secrets/pushingkarma/secrets.py

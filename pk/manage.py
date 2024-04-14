@@ -7,7 +7,7 @@ from os.path import abspath, dirname
 
 if __name__ == "__main__":
     sys.path.insert(0, dirname(dirname(abspath(__file__))))
-    os.environ['DJANGO_SETTINGS_MODULE'] = 'pk.settings.settings'
+    os.environ['DJANGO_SETTINGS_MODULE'] = 'pk.settings'
     project_dir = dirname(__file__)
     if project_dir not in sys.path:
         sys.path.append(project_dir)

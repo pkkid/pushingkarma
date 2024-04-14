@@ -18,7 +18,7 @@ class Command(BaseCommand):
         dtstr = datetime.now().strftime(r'%Y-%m-%d')
         ext = os.path.basename(localpath).split('.')[-1]
         remotepath = settings.WEBDAV_BACKUP_DIR
-        remotepath += f'/{settings.SITE_NAME}-{settings.HOSTNAME}-{dtstr}.{ext}'.lower()
+        remotepath += f'/pushingkarma-{settings.HOSTNAME}-{dtstr}.{ext}'.lower()
         log.info('Backing up database localpath: %s; remotepath: %s', localpath, remotepath)
         client = Client(settings.WEBDAV_OPTIONS)
         client.upload_sync(local_path=localpath, remote_path=remotepath)
