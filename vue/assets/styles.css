@@ -1,0 +1,17 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  font-weight: normal;
+  margin: 0;
+}
+
+body {
+  color: #ddd;
+  background: #111;
+  transition: color 0.5s, background-color 0.5s;
+  line-height: 1.6;
+  font-family: Inter, Roboto, Oxygen, Ubuntu, sans-serif;
+  font-size: 15px;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
