@@ -20,7 +20,7 @@
     "vite": "^5.2.8"
   },
   "scripts": {
-    "getdb": "...",
+    "getdb": "scp -O synology:~/pushingkarma/pk/db.sqlite3 pk/db.sqlite3",
     "start": "npm-run-all -p django vue",
     "django": "python pk/manage.py runserver",
     "vue": "vite",
