@@ -1,5 +1,5 @@
 # encoding: utf-8
-from django.conf import settings
+from django.shortcuts import redirect
 from django.urls import include, re_path
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.views.decorators.csrf import ensure_csrf_cookie
@@ -41,13 +41,9 @@ api.add_url('^user$', user_api.user, name='user')
 @xframe_options_exempt
 @ensure_csrf_cookie
 def index(request, tmpl='index.html'):
-    return utils.response(request, tmpl, {'GLOBALS':{
-        'DEBUG': settings.DEBUG,
-        'GOOGLE_CLIENTID': settings.GOOGLE_CLIENTID,
-        'GOOGLE_SCOPES': ' '.join(settings.GOOGLE_SCOPES),
-        'GOOGLE_ENABLED': settings.GOOGLE_ENABLED,
-        'IPADDR': request.META.get('REMOTE_ADDR'),
-    }})
+    if url := utils.vue_devserver_running(request):
+        return redirect(url)
+    return utils.response(request, tmpl, {})
 
 
 urlpatterns = [

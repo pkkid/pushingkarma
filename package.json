@@ -22,7 +22,7 @@
   "scripts": {
     "getdb": "...",
     "start": "npm-run-all -p django vue",
-    "django": "python pk/manage.py runserver --insecure",
+    "django": "python pk/manage.py runserver",
     "vue": "vite",
     "build": "vite build",
     "eslint": "eslint . --ext .vue,.js"

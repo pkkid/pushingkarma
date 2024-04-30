@@ -1,5 +1,5 @@
 # encoding: utf-8
-import hashlib, json, os, queue
+import hashlib, json, os, queue, requests
 from django import template, conf
 from django.conf import settings
 from django.forms.utils import ErrorDict
@@ -126,3 +126,16 @@ def update(obj, **kwargs):
     for key, val in kwargs.items():
         setattr(obj, key, val)
     obj.save()
+
+
+def vue_devserver_running(request):
+    """ Return url if it looks like the Vue devserver is running. """
+    try:
+        if not settings.DEBUG:
+            return None
+        servername = rget(request, 'environ.SERVER_NAME', 'localhost')
+        serverurl = f'http://{servername}:5173'
+        requests.head(serverurl)
+        return serverurl
+    except Exception:
+        return None
