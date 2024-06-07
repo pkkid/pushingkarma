@@ -28,7 +28,7 @@ class CustomEmailHandler(AdminEmailHandler):
         now = time.time()
         etype, evalue, tb = record.exc_info
         if etype in self.ignore:
-            log.info(f'Not sending excpetion email; ignored')
+            log.info('Not sending excpetion email; ignored')
             return False
         hashkey = f'exc_{self._get_ehash(tb)}'
         count, timeout = self._get_cached(hashkey)
