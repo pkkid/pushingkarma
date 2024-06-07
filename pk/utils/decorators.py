@@ -11,15 +11,6 @@ COLORS = {'blue':34, 'cyan':36, 'green':32, 'grey':30, 'magenta':35, 'red':31, '
 RESET = '\033[0m'
 
 
-class ContextDecorator(object):
-    def __call__(self, f):
-        @functools.wraps(f)
-        def decorated(*args, **kwds):
-            with self:
-                return f(*args, **kwds)
-        return decorated
-
-
 def _response_to_data(response):
     """ Convert a response object to data dict. """
     if response.__class__.__name__ == 'HttpResponse':
@@ -108,11 +99,18 @@ def log_exception(logger=None):
     return wrapper1
 
 
-class log_queries(ContextDecorator):
+class log_queries:
     def __init__(self, label=None, filter=None, show_queries=True):
         self.label = label
         self.filter = filter
         self.show_queries = show_queries
+
+    def __call__(self, f):
+        @functools.wraps(f)
+        def decorated(*args, **kwds):
+            with self:
+                return f(*args, **kwds)
+        return decorated
 
     def __enter__(self):
         if self.label:

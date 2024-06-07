@@ -1,23 +1,9 @@
 # encoding: utf-8
-import hashlib, json, os, queue, requests
-from django import template, conf
+import json, queue, requests
 from django.conf import settings
-from django.forms.utils import ErrorDict
 from django.http import HttpResponse
 from django.shortcuts import render
 from threading import Thread
-
-register = template.Library()
-
-
-@register.simple_tag
-def include_verbatim(path):
-    for template_dir in conf.settings.TEMPLATE_DIRS:
-        filepath = '%s/%s' % (template_dir, path)
-        if os.path.isfile(filepath):
-            break
-    with open(filepath, 'r') as fp:
-        return fp.read()
 
 
 def get_object_or_none(cls, *args, **kwargs):
@@ -25,16 +11,6 @@ def get_object_or_none(cls, *args, **kwargs):
         return cls._default_manager.get(*args, **kwargs)
     except cls.DoesNotExist:
         return None
-
-
-def hash_args(*args, **kwargs):
-    hashobj = hashlib.md5()
-    for arg in sorted(args):
-        hashobj.update(str(arg).encode())
-    for key, value in sorted(kwargs.items()):
-        hashobj.update(str(key).encode())
-        hashobj.update(str(value).encode())
-    return hashobj.hexdigest()[:7]
 
 
 def move_to_end(odict, *keys):
@@ -55,19 +31,6 @@ def response_json(data, status=200):
     json.encoder.FLOAT_REPR = lambda f: ('%.5f' % f)  # fix floats
     data = json.dumps(dict(data), default=lambda x: str(x), sort_keys=True)
     return HttpResponse(data, content_type='application/json', status=status)
-
-
-def response_json_error(errors, data=None):
-    data = data or {}
-    data['success'] = False
-    data['errors'] = errors if isinstance(errors, (dict, ErrorDict)) else {'__all__': errors}
-    return response_json(data)
-
-
-def response_json_success(data=None):
-    data = data or {}
-    data['success'] = True
-    return response_json(data)
 
 
 def rget(obj, attrstr, default=None, delim='.'):
@@ -120,12 +83,6 @@ def _threadwrap(jobs, results):
             results[key] = callback(*args)
     except queue.Empty:
         pass
-
-
-def update(obj, **kwargs):
-    for key, val in kwargs.items():
-        setattr(obj, key, val)
-    obj.save()
 
 
 def vue_devserver_running(request):
