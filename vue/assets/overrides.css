@@ -1,0 +1,99 @@
+/* Third-Party Overrides */
+
+/* ------------ */
+/* Highlight JS */
+.hljs {
+  background-color: transparent;
+  border-radius: 5px;
+  font-family: 'Roboto Mono';
+  font-size: 12px;
+  margin: 0px;
+  overflow: auto;
+  padding: 0;
+}
+
+/* ----------------------------------- */
+/* Icons from Material Symbols Rounded */
+/* https://fonts.google.com/icons?selected=Material+Symbols+Rounded */
+.icon {
+  font-variation-settings:'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 40;
+  font-family: 'Material Symbols Rounded';
+  font-feature-settings: 'liga';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 1em;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}
+.icon.chevron {
+  position: relative;
+  top: 2px;
+  right: 2px;
+}
+
+/* ------------------------- */
+/* PrimeVue Fixes and Tweaks */
+/* Media sizes:
+/*   sm: @media screen and (min-width: 576px)
+/*   md: @media screen and (min-width: 768px)
+/*   lg: @media screen and (min-width: 992px)
+/*   xl: @media screen and (min-width: 1200px)
+*/
+
+/* Button Group */
+/* Fixbroken button groups */
+.p-button-group {
+  .p-button {
+    border-radius: 0px;
+    border-left: 1px solid var(--surface-200);
+  }
+  :first-child .p-button { border-radius: 6px 0px 0px 6px; border-left-width: 0px;}
+  :last-child .p-button { border-radius: 0px 6px 6px 0px; }
+}
+
+/* Data Table */
+.p-datatable {
+  font-size: 13px;
+}
+.minitable {
+  font-size: 12px;
+  border-radius: 5px;
+  border: 1px solid var(--surface-200);
+  tr { background-color:transparent; }
+  td,th { padding:7px 10px; white-space:nowrap; }
+}
+.searchtable {
+  th { user-select: none; }
+  td {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 300px;
+    user-select: none;
+  }
+}
+
+/* Float Label */
+/* Fix FloatLabels showing out of bounds */
+.p-float-label label {
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+/* Menubar */
+/* Fix Menubar Menuitems not lining up */
+.p-menubar .p-menuitem:first-child,
+.p-menubar .p-menuitem:last-child {
+  margin: 2px 0;
+}
+
+/* Tooltip */
+.p-tooltip-text { font-size: 12px; }
