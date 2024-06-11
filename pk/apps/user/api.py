@@ -45,8 +45,8 @@ def user(request, *args, **kwargs):
 @api_view(['post'])
 @permission_classes([AllowAny])
 def login(request, *args, **kwargs):
-    """ Allows logging in with various authentication schemes.
-        You must call this resource using a POST request.
+    """ Allows logging in with various authentication schemes. You must call this
+        resource using a POST request.
         * email/password - Login with a regular Django account.
         * google_code - Login via Google (email must match django account).
     """
@@ -76,6 +76,7 @@ def generate_token(request, *args, **kwargs):
         Token.objects.get_or_create(user=request.user)
     serializer = AccountSerializer(request.user, context={'request':request})
     return Response(serializer.data)
+
 
 @api_view(['post'])
 def disconnect(request, *args, **kwargs):
