@@ -28,7 +28,7 @@ class AccountSerializer(ModelSerializer):
     
     def get_google_email(self, obj):
         try:
-            creds, httpauth = obj.google_auth()
+            creds, _ = obj.get_google_creds()
             return creds.id_token['email']
         except Exception:
             return ''

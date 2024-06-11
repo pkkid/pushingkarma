@@ -16,7 +16,7 @@ class User(AbstractUser):
     class Meta:
         db_table = 'auth_user'
 
-    def google_auth(self):
+    def get_google_creds(self):
         if self.google_creds:
             creds = client.OAuth2Credentials.from_json(self.google_creds)
             if creds and creds.access_token_expired:
@@ -28,7 +28,7 @@ class User(AbstractUser):
     
     def google_service(self, service=None, version='v1'):
         """ Return google credentials for the specified user or None. """
-        creds, httpauth = self.google_auth()
+        _, httpauth = self.get_google_creds()
         return discovery.build(service, version, http=httpauth)
 
     def disconnect(self, provider):
