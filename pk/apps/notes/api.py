@@ -1,9 +1,9 @@
 # encoding: utf-8
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from pk.utils.api.serializers import DynamicFieldsSerializer
+from pk.utils.apiutils import DynamicFieldsSerializer
+from pk.utils.apiutils import ModelViewSetWithUserPermissions
 from pk.utils.search import FIELDTYPES, SearchField, Search
-from pk.utils.api.viewsets import ModelViewSetWithUserPermissions
 from .models import Note
 
 NOTESEARCHFIELDS = {

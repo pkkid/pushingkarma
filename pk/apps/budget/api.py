@@ -5,8 +5,8 @@ from decimal import Decimal
 from django.db.models import F, Q, Count, Sum, DecimalField
 from django.db.models.functions import Cast, TruncMonth
 from pk import log, utils  # noqa
-from pk.utils.api.serializers import DynamicFieldsSerializer, PartialFieldsSerializer
-from pk.utils.api.viewsets import ModelViewSetWithAnnotations
+from pk.utils.apiutils import DynamicFieldsSerializer, PartialFieldsSerializer
+from pk.utils.apiutils import ModelViewSetWithAnnotations
 from pk.utils.search import FIELDTYPES, SearchField, Search
 from rest_framework import serializers, viewsets
 from rest_framework.decorators import api_view, permission_classes
