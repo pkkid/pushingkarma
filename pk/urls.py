@@ -43,7 +43,7 @@ api.add_url('^user$', user_api.user, name='user')
 def index(request, tmpl='index.html'):
     if url := utils.vue_devserver_running(request):
         return redirect(url)
-    return utils.response(request, tmpl, {})
+    return utils.response(request, tmpl)
 
 
 urlpatterns = [
