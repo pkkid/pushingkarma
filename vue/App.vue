@@ -86,7 +86,28 @@
           text-transform: uppercase;
           letter-spacing: 1px;
           font-weight: 400;
+          position: relative;
+          transition: color .1s ease;
           &:hover { color:#fbf1c7; }
+        }
+        a:hover {
+          color: #fe8019;
+        }
+        a:before {
+          background-color: #fe8019;
+          content: "";
+          height: 2px;
+          left: 100%;
+          margin-left: 10px;
+          position: absolute;
+          top: calc(50% - 0px);
+          transform: translateY(-50%);
+          transition: all .3s ease;
+          width: 0px;
+        }
+        a:hover:before {
+          width: 35px;
+          background-color: #fe8019;
         }
       }
     }
@@ -140,7 +161,7 @@
           line-height: var(--navheight);
         }
         .sitelinks {
-          width: 500px;
+          width: 600px;
           margin-left: 320px;
         }
       }
