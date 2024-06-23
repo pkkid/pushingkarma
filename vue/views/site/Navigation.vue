@@ -71,7 +71,6 @@
 
   /* Left Navigation */
   body.leftnav {
-    --navwidth: 300px;
     #navigation {
       width: var(--navwidth);
       height: 100vh;
@@ -82,14 +81,10 @@
         div { padding-bottom: 15px; }
       }
     }
-    #content {
-      margin-left: var(--navwidth);
-    }
   }
 
   /* Top Navigation */
   body.topnav {
-    --navheight: 60px;
     line-height: var(--navheight);
     #navigation {
       width: 100vw;
@@ -98,9 +93,6 @@
         width: 450px;
         margin-left: 320px;
       }
-    }
-    #content {
-      padding-top: var(--navheight);
     }
   }
 

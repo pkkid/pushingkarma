@@ -19,12 +19,14 @@
 </script>
 
 <style>
-  #layout {
-    min-height: 100vh;
-
-    #content {
-      min-height: 100vh;
-      color: #111;
-    }
+  #layout { min-height:100vh; }
+  #content { min-height:100vh; color:#111; }
+  body.leftnav {
+    --navwidth: 300px;
+    #content { margin-left: var(--navwidth); }
+  }
+  body.topnav {
+    --navheight: 60px;
+    #content { padding-top: var(--navheight); }
   }
 </style>
