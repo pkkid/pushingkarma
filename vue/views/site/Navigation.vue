@@ -4,7 +4,6 @@
     <!-- Site Links -->
     <div class='sitelinks'>
       <div><router-link to='/#splash'>Home</router-link></div>
-      <div><router-link to='/#about'>About</router-link></div>
       <div><router-link to='/#projects'>Projects</router-link></div>
       <div><router-link to='/notes'>Notes</router-link></div>
       <div><router-link to='/budget'>Budget</router-link></div>  <!-- v-if='user.id' -->
@@ -96,7 +95,7 @@
       width: 100vw;
       height: 60px;
       .sitelinks {
-        width: 600px;
+        width: 450px;
         margin-left: 320px;
       }
     }
