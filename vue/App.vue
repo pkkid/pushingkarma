@@ -1,7 +1,7 @@
 <template>
-  <div id='layout'>
-    <Navigation />
-    <div id='content' class='gridbg'><router-view></router-view></div>
+  <Navigation />
+  <div id='content' class='gridbg'>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -19,7 +19,7 @@
 </script>
 
 <style>
-  #layout { min-height:100vh; }
+  body { min-height:100vh; }
   #content { min-height:100vh; color:#111; }
   body.leftnav {
     --navwidth: 300px;
