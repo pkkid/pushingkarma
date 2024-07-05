@@ -1,6 +1,6 @@
 <template>
   <Navigation />
-  <div id='content' class='gridbg'>
+  <div id='content' class='gridbgx'>
     <router-view></router-view>
   </div>
 </template>
