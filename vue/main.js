@@ -14,4 +14,5 @@ app.use(router)
 // asynchronously and the app will mount before they are ready.
 // Import our styles last so they take precident.
 import './assets/styles.css'
+import './assets/overrides.css'
 app.mount('#app')

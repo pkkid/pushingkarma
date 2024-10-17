@@ -19,14 +19,26 @@
 </script>
 
 <style>
-  body { min-height:100vh; }
-  #content { min-height:100vh; color:#111; }
+  body {
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+  #content {
+    min-height: 100vh;
+    color: #111;
+  }
   body.leftnav {
     --navwidth: 300px;
-    #content { margin-left: var(--navwidth); }
+    --navheight: 0px;
+    #content {
+      margin-left: var(--navwidth);
+    }
   }
   body.topnav {
+    --navwidth: 0px;
     --navheight: 60px;
-    #content { padding-top: var(--navheight); }
+    #content {
+      padding-top: var(--navheight);
+    }
   }
 </style>

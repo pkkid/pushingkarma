@@ -89,6 +89,7 @@
     #navigation {
       width: 100vw;
       height: 60px;
+      z-index: 99;
       .sitelinks {
         width: 450px;
         margin-left: 320px;
