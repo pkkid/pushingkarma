@@ -85,8 +85,9 @@
 
   /* Top Navigation */
   body.topnav {
-    line-height: var(--navheight);
+    
     #navigation {
+      line-height: var(--navheight);
       width: 100vw;
       height: 60px;
       z-index: 99;
