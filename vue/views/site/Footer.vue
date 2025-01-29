@@ -8,14 +8,14 @@
           <a href='https://vuejs.org/'>Vue</a>, <a href='https://buefy.org/'>Beufy</a>,
           and is hosted on <a href='https://www.digitalocean.com/'>Digital Ocean</a>.
           <div style='margin-top:5px;'>
-            <i class='mdi mdi-email'></i> {{email}}<span style='display:none;'>+site</span>@gmail.com
+            <i class='icon email'/> {{email}}<span style='display:none;'>+site</span>@gmail.com
           </div>
         </div>
         <div class='footercolumn' style='width:250px'>
           <h4>Social Media</h4>
-          <div><i class='mdi mdi-github-box'/> <a href='https://github.com/pkkid'>Github</a></div>
-          <div><i class='mdi mdi-linkedin-box'/> <a href='https://www.linkedin.com/in/shepanski'>Linked In</a></div>
-          <div><i class='mdi mdi-facebook-box'/> <a href='https://www.facebook.com/mshepanski'>Facebook</a></div>
+          <div><i class='icon github'/> <a href='https://github.com/pkkid'>Github</a></div>
+          <div><i class='icon linkedin'/> <a href='https://www.linkedin.com/in/shepanski'>Linked In</a></div>
+          <div><i class='icon facebook'/> <a href='https://www.facebook.com/mshepanski'>Facebook</a></div>
         </div>
         <div class='footercolumn' style='width:350px'>
           <h4>Legal</h4>
@@ -25,7 +25,7 @@
       </div>
     </div>
   </template>
-  
+
   <script setup>
     import {ref} from 'vue'
     const email = ref(atob('bWljaGFlbC5zaGVwYW5za2k='))
