@@ -3,11 +3,13 @@
   <div id='content' class='gridbgx'>
     <router-view></router-view>
   </div>
+  <Footer />
 </template>
 
 <script setup>
   import {onMounted} from 'vue'
   import Navigation from '@/views/site/Navigation.vue'
+  import Footer from '@/views/site/Footer.vue'
 
   onMounted(function() {
     // Check Dev Favicon
