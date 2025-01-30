@@ -10,12 +10,13 @@
     "vue-router": "^4.3.0"
   },
   "devDependencies": {
+    "@eslint/compat": "^1.2.5",
     "@vitejs/plugin-vue": "^5.0.4",
-    "eslint-plugin-vue": "^9.23.0",
     "eslint": "^9.19.0",
+    "eslint-plugin-vue": "^9.23.0",
     "npm-run-all": "^4.1.5",
-    "vite-plugin-vue-devtools": "^7.0.25",
-    "vite": "^6.0.11"
+    "vite": "^6.0.11",
+    "vite-plugin-vue-devtools": "^7.0.25"
   },
   "scripts": {
     "getdb": "scp -O synology:~/pushingkarma/pk/db.sqlite3 pk/db.sqlite3",

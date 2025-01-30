@@ -1,18 +1,22 @@
 import globals from 'globals'
 import path from 'node:path'
-import {fileURLToPath} from 'node:url'
 import js from '@eslint/js'
+import {fileURLToPath} from 'node:url'
 import {FlatCompat} from '@eslint/eslintrc'
+import {includeIgnoreFile} from "@eslint/compat"
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
+const gitignore = path.resolve(dirname, '.gitignore')
 const compat = new FlatCompat({
     baseDirectory: dirname,
     recommendedConfig: js.configs.recommended,
     allConfig: js.configs.all
 })
 
-export default [...compat.extends('plugin:vue/vue3-essential', 'eslint:recommended'), {
+export default [
+  ...compat.extends('plugin:vue/vue3-essential', 'eslint:recommended'),
+  includeIgnoreFile(gitignore), {
   languageOptions: {
     globals: {...globals.node},
     ecmaVersion: 'latest',
