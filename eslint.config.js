@@ -19,11 +19,11 @@ export default [...compat.extends('plugin:vue/vue3-essential', 'eslint:recommend
     sourceType: 'module',
   },
   rules: {
-    semi: ['error', 'never'],
+    'no-unused-vars': 'off',
+    'semi': ['error', 'never'],
     'vue/comment-directive': 'off',
     'vue/multi-word-component-names': 'off',
     'vue/no-reserved-component-names': 'off',
     'vue/valid-v-slot': ['error', {allowModifiers:true}],
-    'no-unused-vars': 'off',
   },
 }]
