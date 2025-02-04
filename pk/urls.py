@@ -8,6 +8,7 @@ from pk.apps.budget import api as budget_api
 from pk.apps.tools import api as tools_api
 from pk.apps.notes import api as note_api
 from pk.apps.stocks import api as stock_api
+from pk.apps.obsidian import api as obsidian_api
 from pk.utils.apiutils import HybridRouter
 from pk import utils
 
@@ -22,6 +23,7 @@ api.add_url('^budget/history', budget_api.history, name='budget/history')
 api.add_url('^budget/summary', budget_api.summary, name='budget/summary')
 api.add_url('^budget/upload$', budget_api.upload, name='budget/upload')
 api.add_url('^budget$', budget_api.budget, name='budget')
+api.add_url('^obsidian$', obsidian_api.search, name='obsidian/search')
 api.add_url('^stocks/csv$', stock_api.csv, name='stocks/csv')
 api.add_url('^stocks$', stock_api.stocks, name='stocks')
 api.add_url('^tools/error$', tools_api.error, name='tools/error')
