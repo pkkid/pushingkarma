@@ -1,13 +1,16 @@
 <template>
-  <img class='logoimg' src='/static/img/pk.svg' @dblclick='toggleNav'/>
+  <img class='logoimg' src='/static/img/pk.svg' @dblclick='showLogin = !showLogin'/>
   <div class='logotxt'>PushingKarma</div>
+  <Modal :visible='showLogin' @close='showLogin=false'>
+    
+  </Modal>
 </template>
 
 <script setup>
-  const toggleNav = function() {
-    document.body.classList.toggle('topnav')
-    document.body.classList.toggle('leftnav')
-  }
+  import {ref} from 'vue'
+  import Modal from '@/components/Modal.vue'
+
+  const showLogin = ref(false)
 </script>
 
 <style>

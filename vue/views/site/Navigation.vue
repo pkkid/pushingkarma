@@ -1,22 +1,11 @@
 <template>
   <div id='navigation'>
     <Logo/>
-    <!-- Site Links -->
     <div class='sitelinks'>
       <div><router-link to='/#splash'>Home</router-link></div>
       <div><router-link to='/#projects'>Projects</router-link></div>
       <div><router-link to='/notes'>Notes</router-link></div>
-      <div><router-link to='/budget'>Budget</router-link></div>  <!-- v-if='user.id' -->
-    </div>
-    <!-- Social Links -->
-    <div id='socialicons'>
-      <!-- <div><a class='iconwrap' href='https://github.com/pkkid'><b-icon icon='github-box'/></a></div> -->
-      <!-- <div><a class='iconwrap' href='https://www.linkedin.com/in/shepanski'><b-icon icon='linkedin-box'/></a></div> -->
-      <!-- <div><a class='iconwrap' href='https://www.facebook.com/mshepanski'><b-icon icon='facebook-box'/></a></div> -->
-      <!-- <div @click='$refs.login.display=true'>
-        <a v-if='user.id' class='iconwrap' href='javascript:void(0)'><i class='avatar' key='avatar' :style="{backgroundImage:avatar}"/></a>
-        <a v-else class='iconwrap' href='javascript:void(0)'><b-icon icon='account-circle'/></a>
-      </div> -->
+      <div><router-link to='/budget'>Budget</router-link></div>
     </div>
   </div>
 </template>
