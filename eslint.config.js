@@ -13,6 +13,7 @@ const compat = new FlatCompat({
 export default [
   ...compat.extends('eslint:recommended'),
   ...compat.extends('plugin:vue/vue3-essential'),
+  {env: {node: true}},
   {ignores: ['pk/*']},
   {rules: {
     'no-unused-vars': 'off',
