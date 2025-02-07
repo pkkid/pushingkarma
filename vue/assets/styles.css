@@ -36,7 +36,7 @@
   --lightbg-green1: #79740e;
   --lightbg-green2: #58881b;
   --lightbg-blue0: #458588;
-  --lightbg-blue1: #076678;
+  --lightbg-blue1: #065c6c;
   --lightbg-aqua0: #689d6a;
   --lightbg-aqua1: #427b58;
   --lightbg-purple0: #b16286;
@@ -136,7 +136,7 @@ label {
   font-size: 12px;
   color: var(--lightbg-fg3);
 }
-input,textarea,button,select {
+input,textarea,select {
   font-family: "Merriweather", sans-serif;
   font-size: 15px;
   color: var(--lightbg-fg1);
@@ -144,7 +144,39 @@ input,textarea,button,select {
   background-color: var(--lightbg-bg0);
   border: 1px solid var(--lightbg-bg3);
   border-radius: 4px;
-  box-shadow: #1111 0px 1px 3px 0px inset
+  box-shadow: transparent 0px 0px 0px 2px, #1111 0px 1px 3px 0px inset;
+  transition: all 0.3s ease;
+  &:focus {
+    outline: none;
+    box-shadow: var(--accent) 0px 0px 0px 2px, #1111 0px 1px 3px 0px inset;
+    background-color: #fff;
+  }
+}
+button {
+  background-color: var(--lightbg-bg3);
+  border-width: 0px;
+  cursor: pointer;
+  color: var(--lightbg-fg3);
+  display: inline-block;
+  width: auto;
+  font-family: "Merriweather", sans-serif;
+  font-size: 12px;
+  justify-content: center;
+  padding: 6px 20px;
+  transition: all 0.2s ease;
+  user-select: none;
+  align-self: flex-start;
+  &:focus {
+    text-decoration-line: underline;
+    text-decoration-style: dotted;
+    box-shadow: none;
+    outline: none;
+    color: var(--lightbg-fg1);
+  }
+  &:hover {
+    background-color: var(--lightbg-blue1);
+    color: #fff;
+  }
 }
 
 /*-------------------------------------------
