@@ -22,8 +22,6 @@
 <style>
   /* Base Navigation Styles */
   #navigation {
-    /* color: #fbf1c7; */
-    /* background-color: #282828; */
     position: fixed;
     font-family: 'Merriweather';
     .sitelinks {
