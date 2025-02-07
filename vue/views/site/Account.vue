@@ -3,7 +3,11 @@
     <div id='account'>
       <div class='loginform lightbg'>
         <h2>Login to PushingKarma</h2>
-        <Quote/>
+        <Quote style='margin-bottom:20px;'/>
+        <label for='email'>Email</label>
+        <input id='email' type='email'/>
+        <label for='password'>Password</label>
+        <input id='password' type='password'/>
       </div>
       <div class='image vignette'></div>
     </div>
@@ -26,16 +30,17 @@
   #account {
     display: flex;
     flex-direction: row;
-
     .loginform {
       width: 350px;
       padding: 20px;
+      display: flex;
+      flex-direction: column;
     }
     .quote {
       font-style: italic;
       color: var(--dim);
       font-size: 13px;
-      line-height: normal;
+      line-height: 1.5;
     }
 
     .image {
