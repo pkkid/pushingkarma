@@ -1,24 +1,27 @@
 # encoding: utf-8
-from pk import log, utils
+import logging
+from pk import utils
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as django_login
 from django.contrib.auth import logout as django_logout
-from django.views.decorators.cache import cache_page
 from rest_framework import status
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from .api import AccountSerializer
+log = logging.getLogger(__name__)
 
 
 @api_view(['get'])
-@cache_page(300)  # Cache results for 5 minutes
 def globalvars(request, *args, **kwargs):
     """ Return global variables. """
-    return Response(settings.GLOBALVARS)
+    result = dict(**settings.GLOBALVARS)
+    result['user'] = AccountSerializer(request.user, context={'request':request}).data
+    log.info(result)
+    return Response(result)
 
 
 @api_view(['post'])
@@ -42,7 +45,6 @@ def login(request, *args, **kwargs):
     try:
         email = request.data.get('email')
         password = request.data.get('password')
-        log.info(f'{email=}')
         user = utils.get_object_or_none(User, email=email)
         if user is not None:
             user = authenticate(username=user.username, password=password)

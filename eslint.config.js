@@ -13,8 +13,10 @@ const compat = new FlatCompat({
 export default [
   ...compat.extends('eslint:recommended'),
   ...compat.extends('plugin:vue/vue3-essential'),
-  {env: {node: true}},
   {ignores: ['pk/*']},
+  {languageOptions: { globals: {
+    process:'readonly'
+  }}},
   {rules: {
     'no-unused-vars': 'off',
     'semi': ['error', 'never'],
@@ -22,5 +24,5 @@ export default [
     'vue/multi-word-component-names': 'off',
     'vue/no-reserved-component-names': 'off',
     'vue/valid-v-slot': ['error', {allowModifiers:true}],
-  }}
+  }},
 ]

@@ -3,6 +3,7 @@ import * as utils from '@/utils/utils'
 
 export const isCancel = axios.isCancel
 axios.defaults.baseURL = utils.apibase
+axios.defaults.withCredentials = true
 console.debug(`Axios.defaults.baseURL: ${axios.defaults.baseURL}`)
 
 // Cancel
