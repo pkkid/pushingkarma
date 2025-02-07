@@ -1,6 +1,7 @@
 <template>
-  <div id='navigation'>
-    <Logo/>
+  <div id='navigation' class='darkbg'>
+    <Logo @dblclick='showAccount=true'/>
+    <Account :visible='showAccount' @close='showAccount=false'/>
     <div class='sitelinks'>
       <div><router-link to='/#splash'>Home</router-link></div>
       <div><router-link to='/#projects'>Projects</router-link></div>
@@ -11,36 +12,33 @@
 </template>
 
 <script setup>
+  import {ref} from 'vue'
   import Logo from '@/views/site/Logo.vue'
+  import Account from '@/views/site/Account.vue'
+
+  const showAccount = ref(false)
 </script>
 
 <style>
   /* Base Navigation Styles */
   #navigation {
-    color: #fbf1c7;
-    background-color: #282828;
+    /* color: #fbf1c7; */
+    /* background-color: #282828; */
     position: fixed;
     font-family: 'Merriweather';
     .sitelinks {
-      color: #fbf1c7;
       display: flex;
       flex-wrap: nowrap;
       justify-content: space-between;
       a {
-        color: #fbf1c7;
+        font-weight: 400;
+        letter-spacing: 1px;
+        position: relative;
         text-decoration: none;
         text-transform: uppercase;
-        letter-spacing: 1px;
-        font-weight: 400;
-        position: relative;
-        transition: color .1s ease;
-        &:hover { color:#fbf1c7; }
-      }
-      a:hover {
-        color: #fe8019;
       }
       a:before {
-        background-color: #fe8019;
+        background-color: var(--darkbg-bg0);
         content: "";
         height: 2px;
         left: 100%;
@@ -53,7 +51,7 @@
       }
       a:hover:before {
         width: 35px;
-        background-color: #fe8019;
+        background-color: var(--accent);
       }
     }
   }
@@ -74,7 +72,6 @@
 
   /* Top Navigation */
   body.topnav {
-    
     #navigation {
       line-height: var(--navheight);
       width: 100vw;

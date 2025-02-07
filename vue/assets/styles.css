@@ -71,31 +71,69 @@
   --darkbg-purple1: #d3869b;
 }
 
-*, *::before, *::after {
+/*-------------------------------------------
+ * Basic Colors
+ *------------------------------------------- */
+.lightbg {
+  --accent: var(--lightbg-orange0);
+  --bgcolor: var(--lightbg-bg1);
+  --dim: var(--lightbg-fg4);
+  --fgcolor: var(--lightbg-fg1);
+  --linkcolor: var(--lightbg-blue1);
+  --linkhover: var(--lightbg-blue1);
+}
+.darkbg {
+  --accent: var(--darkbg-orange1);
+  --bgcolor: var(--darkbg-bg0);
+  --dim: var(--darkbg-fg3);
+  --fgcolor: var(--darkbg-fg1);
+  --linkcolor: var(--darkbg-fg0);
+  --linkhover: var(--darkbg-orange1);
+}
+.lightbg,.darkbg {
+  background-color: var(--bgcolor);
+  color: var(--fgcolor);
+  a,a:visited { color: var(--linkcolor); }
+  a:hover { color: var(--linkhover); }
+}
+
+/*-------------------------------------------
+ * Reset & Basic Content
+ *------------------------------------------- */
+ *, *::before, *::after {
   box-sizing: border-box;
   font-weight: normal;
   margin: 0;
 }
-
-body {
-  color: #ddd;
-  font-family: Inter, Roboto, Oxygen, Ubuntu, sans-serif;
+html,body {
+  font-family: Inter,Roboto,Ubuntu,sans-serif;
   font-size: 15px;
   line-height: 1.6;
   text-rendering: optimizeLegibility;
-  transition: color 0.5s, background-color 0.5s;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale; 
 }
-
+body,button,input,select,textarea {
+  font-family: 'Merriweather', sans-serif;
+  font-weight: 400;
+  color: var(--lightbg-text)
+}
+h1,h2,h3,h4,h5 {
+  font-family: "Merriweather", sans-serif;
+}
+a {
+  text-decoration: none;
+  transition: color .1s ease;
+  &:hover { text-decoration: none; }
+}
 
 /*-------------------------------------------
  * Grid Background
  * Grid pattern filler content
  *------------------------------------------- */
 .gridbg {
-  --bgcolor: #f2f2ee;
-  --bgline: #d5dcff;
+  --bgcolor: var(--lightbg-bg1);
+  --bgline: var(--lightbg-bg3);
   background:
       linear-gradient(-90deg, rgba(0,0,0,.05) 1px, transparent 1px),
       linear-gradient(rgba(0,0,0,.05) 1px, transparent 1px), 
@@ -108,3 +146,22 @@ body {
       var(--bgcolor);
   background-size: 4px 4px, 4px 4px, 80px 80px, 80px 80px, 80px 80px, 80px 80px, 80px 80px, 80px 80px;
 }
+
+/*-------------------------------------------
+ * Vignette
+ * Add vignette to a div with a bg image
+ *------------------------------------------- */
+.vignette {
+  position: relative;
+  &::after {
+    background: radial-gradient(circle, transparent, #0008);
+    border-bottom-right-radius: 8px;
+    border-top-right-radius: 8px;
+    content: '';
+    height: 100%; width: 100%;
+    position: absolute;
+    top: 0; left: 0;
+  }
+}
+
+

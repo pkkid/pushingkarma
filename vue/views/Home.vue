@@ -80,7 +80,7 @@
 
     .bgimg {
       background-color: #282828;
-      background-image: url('/static/img/mountain_landscape.png');
+      background-image: url('/static/img/mtn-landscape.png');
       background-position: center center;
       background-size: cover;
       position: absolute;

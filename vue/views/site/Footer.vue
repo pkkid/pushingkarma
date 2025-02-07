@@ -1,5 +1,5 @@
 <template>
-  <div id='footer'>
+  <div id='footer' class='darkbg'>
     <div class='footerwrap'>
       <div class='footercolumn' style='width:400px'>
         <h4>PushingKarma</h4>
@@ -34,8 +34,6 @@
   
 <style>
   #footer {
-    background-color: var(--darkbg-bg0);
-    color: var(--darkbg-fg0);
     font-family: var(--fontfamily-article);
     font-size: 0.85rem;
     font-weight: 400;
@@ -43,12 +41,6 @@
     margin-top: 100px;
     text-align: left;
 
-    a,a:visited {
-      color: var(--darkbg-fg0);
-      text-decoration: none;
-      transition: color 0.2s ease;
-      &:hover { color: var(--darkbg-orange1); }
-    }
     .footerwrap {
       margin: 0px auto;
       width: 1005px;
@@ -59,14 +51,13 @@
       position: relative;
     }
     h4 {
-      color: var(--darkbg-fg0);
       font-family: var(--fontfamily-artsy);
       font-size: 1rem;
       font-weight: 400;
       margin-bottom: 15px;
       position: relative;
       &::before {
-        background-color: var(--darkbg-orange1);
+        background-color: var(--accent);
         bottom: -3px;
         content: ' ';
         display: block;
