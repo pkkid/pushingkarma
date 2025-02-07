@@ -13,7 +13,6 @@
 
 <script setup>
   import {onMounted, onBeforeUnmount} from 'vue'
-  import {defineProps, defineEmits} from 'vue'
   import hotkeys from 'hotkeys-js'
 
   const emit = defineEmits(['close'])
@@ -47,7 +46,8 @@
     height: 100%;
     background: #0006;
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
+    flex-direction: column;
     align-items: center;
     z-index: 1000;
   }
@@ -55,7 +55,7 @@
     border-radius: 8px;
     overflow: hidden;
     position: relative;
-    top: -10%;
+    top: 15%;
     box-shadow: 0px 4px 8px #0008, 0px 8px 20px #0004;
     min-width: 500px;
     min-height: 200px;
@@ -76,16 +76,19 @@
     &:hover {
       opacity: 1;
       background-color: #0001;
+      animation: spin 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55);
     }
   }
 
   /* Fade Transition */
-  .modal-fade-enter-active,
-  .modal-fade-leave-active {
-    transition: opacity 0.3s ease;
-  }
-  .modal-fade-enter-from,
-  .modal-fade-leave-to {
-    opacity: 0;
+  .modal-fade-enter-active, .modal-fade-leave-active { transition: opacity 0.3s ease; }
+  .modal-fade-enter-from, .modal-fade-leave-to { opacity: 0; }
+
+  /* Spin Animation */
+  /* animation: spin 0.5s cubic-bezier(0.68, -0.55, 0.27, 1.55); */
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    80% { transform: rotate(100deg); }
+    100% { transform: rotate(90deg); }
   }
 </style>
