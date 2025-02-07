@@ -1,12 +1,11 @@
 <template>
-  <Modal :visible='visible' @close='emit("close")'>
+  <Modal :visible='visible' closeButton closeOnEsc @close='emit("close")'>
     <div id='account'>
-      <div class='loginform'>
+      <div class='loginform lightbg'>
         <h2>Login to PushingKarma</h2>
         <Quote/>
       </div>
-      <div class='image vignette'>
-      </div>
+      <div class='image vignette'></div>
     </div>
   </Modal>
 </template>

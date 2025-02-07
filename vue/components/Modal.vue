@@ -2,8 +2,8 @@
   <teleport to="body">
     <transition name='modal-fade'>
       <div v-if='visible' class='modal-overlay' @click.self='close'>
-        <div class='modal-content lightbg'>
-          <!-- <button v-if='showCloseButton' class='modal-close-button' @click='emit("close")'>x</button> -->
+        <div class='modal-content'>
+          <span v-if='closeButton' class='icon modal-close-button' @click='emit("close")'>close</span>
           <slot>modal-content</slot>
         </div>
       </div>
@@ -14,14 +14,28 @@
 <script setup>
   import {onMounted, onBeforeUnmount} from 'vue'
   import {defineProps, defineEmits} from 'vue'
-
-  const props = defineProps({
-    visible: {type:Boolean, required:true},
-    showCloseButton: {type:Boolean, default:true},
-    closeOnEsc: {type:Boolean, default:true}
-  })
+  import hotkeys from 'hotkeys-js'
 
   const emit = defineEmits(['close'])
+  const props = defineProps({
+    visible: {type:Boolean, required:true},
+    closeButton: {type:Boolean, default:false},
+    closeOnEsc: {type:Boolean, default:false}
+  })
+
+  // On Mounted
+  // watch for esc pressed
+  onMounted(function() {
+    if (props.closeOnEsc) {
+      hotkeys('esc', function() {  emit('close') })
+    }
+  })
+
+  // On Before Unmount
+  // stop watching hotkeys
+  onBeforeUnmount(function() {
+    hotkeys.unbind('esc')
+  })
 </script>
 
 <style>
@@ -39,6 +53,7 @@
   }
   .modal-content {
     border-radius: 8px;
+    overflow: hidden;
     position: relative;
     top: -10%;
     box-shadow: 0px 4px 8px #0008, 0px 8px 20px #0004;
@@ -46,13 +61,22 @@
     min-height: 200px;
   }
   .modal-close-button {
-    position: absolute;
-    top: 10px;
-    right: 10px;
     background: transparent;
+    border-radius: 50%;
     border: none;
-    font-size: 20px;
+    color: var(--lightbg-fg1);
     cursor: pointer;
+    font-size: 20px;
+    opacity: 0.7;
+    padding: 5px;
+    position: absolute;
+    top: 15px; right: 15px;
+    transition: all 0.2s ease;
+    z-index: 1001;
+    &:hover {
+      opacity: 1;
+      background-color: #0001;
+    }
   }
 
   /* Fade Transition */
