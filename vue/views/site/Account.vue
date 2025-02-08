@@ -2,6 +2,7 @@
   <Modal :visible='visible' closeButton closeOnEsc @close='emit("close")'>
     <div id='account'>
       <div class='content lightbg'>
+        
         <!-- Login Form -->
         <form v-if='!user' class='loginform' @submit.prevent='login'>
           <h2>Login to PushingKarma</h2>
@@ -12,6 +13,7 @@
           <input id='password' type='password' v-model='password'/>
           <button type='submit' style='margin-top:20px;'>Login</button>
         </form>
+        
         <!-- Current User Data -->
         <div v-else class='lightbg'>
           <h2>Welcome {{user.name}}!</h2>
@@ -29,6 +31,7 @@
           </dl>
           <button style='margin-top:20px;' @click='logout'>Logout</button>
         </div>
+
       </div>
       <div class='image vignette'></div>
     </div>
@@ -42,7 +45,6 @@
   import Quote from '@/components/Quote.vue'
 
   const {user, setUser} = inject('user')
-
   const emit = defineEmits(['close'])
   const email = ref('')
   const password = ref('')
