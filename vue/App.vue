@@ -25,7 +25,8 @@
   onBeforeMount(async function() {
     // Fetch and save global variables
     var {data} = await api.Main.getGlobalVars()
-    user.value = utils.pop(data, 'user')
+    var userdata = utils.pop(data, 'user')
+    user.value = userdata.id ? userdata : null
     globalvars.value = data
     // Set the development favicon
     if (globalvars.value.DEBUG) {

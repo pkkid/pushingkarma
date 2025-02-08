@@ -1,5 +1,5 @@
 # encoding: utf-8
-import logging
+import binascii, logging, os
 from pk import utils
 from django.conf import settings
 from django.contrib.auth.models import User
@@ -20,7 +20,6 @@ def globalvars(request, *args, **kwargs):
     """ Return global variables. """
     result = dict(**settings.GLOBALVARS)
     result['user'] = AccountSerializer(request.user, context={'request':request}).data
-    log.info(result)
     return Response(result)
 
 
@@ -28,9 +27,10 @@ def globalvars(request, *args, **kwargs):
 def generate_token(request, *args, **kwargs):
     """ Generates a new token for the logged in user. """
     if request.user.is_active:
-        token = utils.get_object_or_none(Token, user=request.user.id)
-        if token: token.delete()
-        Token.objects.get_or_create(user=request.user)
+        if token := utils.get_object_or_none(Token, user=request.user.id):
+            token.delete()
+        key = binascii.hexlify(os.urandom(10)).decode()
+        Token.objects.get_or_create(user=request.user, key=key)
     serializer = AccountSerializer(request.user, context={'request':request})
     return Response(serializer.data)
 

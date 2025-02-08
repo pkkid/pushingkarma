@@ -7,15 +7,17 @@
       <div><router-link to='/#projects'>Projects</router-link></div>
       <div><router-link to='/notes'>Notes</router-link></div>
       <div><router-link to='/budget'>Budget</router-link></div>
+      <div v-if='user?.id'><a @click.prevent @click='showAccount=true'>{{user.name}}</a></div>
     </div>
   </div>
 </template>
 
 <script setup>
-  import {ref} from 'vue'
+  import {inject, ref} from 'vue'
   import Logo from '@/views/site/Logo.vue'
   import Account from '@/views/site/Account.vue'
 
+  const {user} = inject('user')
   const showAccount = ref(false)
 </script>
 

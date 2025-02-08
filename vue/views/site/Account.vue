@@ -2,7 +2,8 @@
   <Modal :visible='visible' closeButton closeOnEsc @close='emit("close")'>
     <div id='account'>
       <div class='content lightbg'>
-        <form v-if='!user?.id' class='loginform' @submit.prevent="login()">
+        <!-- Login Form -->
+        <form v-if='!user' class='loginform' @submit.prevent='login'>
           <h2>Login to PushingKarma</h2>
           <Quote style='margin-bottom:10px;'/>
           <label for='email'>Email</label>
@@ -11,25 +12,32 @@
           <input id='password' type='password' v-model='password'/>
           <button type='submit' style='margin-top:20px;'>Login</button>
         </form>
+        <!-- Current User Data -->
         <div v-else class='lightbg'>
           <h2>Welcome {{user.name}}!</h2>
           <Quote style='margin-bottom:10px;'/>
-          Joined --<br/>
-          Login --<br/>
-          Email --<br/>
-          Apikey --<br/>
-          Regenerate - Copy<br/>
+          <dl style='grid-template-columns: 70px 230px;'>
+            <dt>Joined</dt><dd>{{utils.formatDate(user.date_joined, 'MMM D, YYYY')}}</dd>
+            <dt>Login</dt><dd>{{utils.timeAgo(user.last_login)}}</dd>
+            <dt>Email</dt><dd>{{user.email}}</dd>
+            <dt>Apikey</dt><dd>{{user.auth_token}}
+              <div style='font-size:10px'>
+                <a @click.prevent @click='genToken' style='margin-right:5px'>Regenerate</a>&nbsp;
+                <a @click.prevent @click='copyToken'>Copy</a>
+              </div>
+            </dd>
+          </dl>
+          <button style='margin-top:20px;' @click='logout'>Logout</button>
         </div>
       </div>
       <div class='image vignette'></div>
     </div>
-    
   </Modal>
 </template>
 
 <script setup>
   import {inject, ref} from 'vue'
-  import {api} from '@/utils'
+  import {api, utils} from '@/utils'
   import Modal from '@/components/Modal.vue'
   import Quote from '@/components/Quote.vue'
 
@@ -49,10 +57,32 @@
     var {data} = await api.Main.login(params)
     if (data.id) {
       setUser(data)
-      email.value = ''
-      password.value = ''
       console.log(`Logged in as ${user.value.email}`)
     }
+  }
+
+  // Logout
+  // Log out of the current session
+  const logout = async function() {
+    await api.Main.logout()
+    setUser(null)
+    email.value = ''
+    password.value = ''
+  }
+
+  // Generate Token
+  // Create a new API token for the current user
+  const genToken = async function(event) {
+    utils.animate(event.target, 'rotateBounce', 500)
+    var {data} = await api.Main.genToken()
+    setUser(data)
+  }
+
+  // Copy Token
+  // Copy the token to the clipboard
+  const copyToken = async function(event) {
+    utils.animate(event.target, 'rotateBounce', 500)
+    utils.copyText(user.value.auth_token)
   }
 </script>
 
@@ -80,6 +110,7 @@
       border-top-right-radius: 8px;
       width: 400px; height: 400px;
     }
+    a { display: inline-block; }
   }
 </style>
 
