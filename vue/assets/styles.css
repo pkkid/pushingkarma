@@ -202,6 +202,42 @@ dd {
   
 }
 
+
+/*-------------------------------------------
+ * Close
+ * Animated close or clear button
+ *------------------------------------------- */
+.close {
+  background: transparent;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  opacity: 0.8;
+  padding: 5px;
+  transition: all 0.2s ease;
+  z-index: 1001;
+  &:hover {
+    opacity: 1;
+    background-color: #0001;
+    animation: spin 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+  }
+}
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  80% { transform: rotate(100deg); }
+  100% { transform: rotate(90deg); }
+}
+
+
+/*-------------------------------------------
+ * Fade Transition
+ * Simple Vue fade transition
+ *------------------------------------------- */
+.fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
+
+
 /*-------------------------------------------
  * Grid Background
  * Grid pattern filler content
@@ -243,11 +279,11 @@ dd {
  * Rotate Bounce Animation
  * Visual indicator a text link was clicked
  *------------------------------------------- */
-.rotateBounce {
-  animation: rotateBounce 0.5s linear;
+.rotate-bounce {
+  animation: rotate-bounce 0.5s linear;
   transform-origin: center;
 }
-@keyframes rotateBounce {
+@keyframes rotate-bounce {
   0%, 20%, 50%, 80%, 100% { transform: rotate(0deg); }
   40% { transform: rotate(8deg); }
   60% { transform: rotate(-5deg); }

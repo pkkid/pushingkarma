@@ -75,7 +75,7 @@
   // Generate Token
   // Create a new API token for the current user
   const genToken = async function(event) {
-    utils.animate(event.target, 'rotateBounce', 500)
+    utils.animate(event.target, 'rotate-bounce', 500)
     var {data} = await api.Main.genToken()
     setUser(data)
   }
@@ -83,7 +83,7 @@
   // Copy Token
   // Copy the token to the clipboard
   const copyToken = async function(event) {
-    utils.animate(event.target, 'rotateBounce', 500)
+    utils.animate(event.target, 'rotate-bounce', 500)
     utils.copyText(user.value.auth_token)
   }
 </script>

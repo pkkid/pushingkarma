@@ -81,6 +81,7 @@
     #navigation {
       height: 60px;
       line-height: var(--navheight);
+      box-shadow: 0px 1px 2px #0003;
       position: fixed;
       width: 100vw;
       z-index: 99;

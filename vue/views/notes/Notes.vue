@@ -2,7 +2,7 @@
   <div id='notes'>
     <SidePanel>
       <template #panel>
-        foo
+        <NotesSearch />
       </template>
       <template #content>
         bar
@@ -14,11 +14,9 @@
 <script setup>
   import {inject, onBeforeMount} from 'vue'
   import {utils} from '@/utils'
+  import NotesSearch from '@/views/notes/NotesSearch.vue'
   import SidePanel from '@/components/SidePanel.vue'
 
   onBeforeMount(function() { utils.setNavPosition('top') })
 </script>
 
-<style>
-
-</style>
