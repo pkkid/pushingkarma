@@ -1,5 +1,4 @@
 <template>
-  Budget View
 </template>
 
 <script setup>

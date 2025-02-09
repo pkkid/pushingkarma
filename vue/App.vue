@@ -43,20 +43,5 @@
   }
   #content {
     min-height: 100vh;
-    color: #111;
-  }
-  body.leftnav {
-    --navwidth: 300px;
-    --navheight: 0px;
-    #content {
-      margin-left: var(--navwidth);
-    }
-  }
-  body.topnav {
-    --navwidth: 0px;
-    --navheight: 60px;
-    #content {
-      padding-top: var(--navheight);
-    }
   }
 </style>

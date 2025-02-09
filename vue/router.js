@@ -12,9 +12,10 @@ const router = createRouter({
   ],
   scrollBehavior(to, from, savedPosition) {
     if (to.hash) {
-      return {el:to.hash, behavior:'smooth'}
+      var top = document.getElementById(to.hash.substring(1)).offsetTop
+      return {top:top, left:0, behavior:'smooth'}
     } else {
-      return {top:0}
+      return {top:0, left:0}
     }
   },
 })

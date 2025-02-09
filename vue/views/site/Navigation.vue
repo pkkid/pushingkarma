@@ -24,8 +24,6 @@
 <style>
   /* Base Navigation Styles */
   #navigation {
-    position: fixed;
-    font-family: 'Merriweather';
     .sitelinks {
       display: flex;
       flex-wrap: nowrap;
@@ -58,9 +56,12 @@
 
   /* Left Navigation */
   body.leftnav {
+    --navwidth: 300px;
+    --navheight: 0px;
     #navigation {
-      width: var(--navwidth);
       height: 100vh;
+      position: fixed;
+      width: var(--navwidth);
       .sitelinks {
         margin-top: 250px;
         margin-left: 66px;
@@ -68,19 +69,30 @@
         div { padding-bottom: 15px; }
       }
     }
+    #content {
+      padding-left: var(--navwidth);
+    }
   }
 
   /* Top Navigation */
   body.topnav {
+    --navwidth: 0px;
+    --navheight: 60px;
     #navigation {
-      line-height: var(--navheight);
-      width: 100vw;
       height: 60px;
+      line-height: var(--navheight);
+      position: fixed;
+      width: 100vw;
       z-index: 99;
       .sitelinks {
         width: 450px;
         margin-left: 320px;
+        justify-content: flex-start;
+        & > div { padding-right: 70px; }
       }
+    }
+    #content {
+      padding-top: var(--navheight);
     }
   }
 
