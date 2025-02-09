@@ -70,7 +70,10 @@
 </template>
 
 <script setup>
+  import {inject, onBeforeMount} from 'vue'
+  import {utils} from '@/utils'
 
+  onBeforeMount(function() { utils.setNavPosition('left') })
 </script>
 
 <style>

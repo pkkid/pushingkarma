@@ -81,6 +81,15 @@ export function pop(obj, key) {
   return null
 }
 
+// Set Nav Position
+// set the main site nav position to top or left.
+export function setNavPosition(pos) {
+  document.body.classList.remove(`leftnav`)
+  document.body.classList.remove(`topnav`)
+  document.body.classList.add(`${pos}nav`)
+}
+
+
 // Sort
 // Generic Sort for arrays or Object Keys
 export function sort(value) {
