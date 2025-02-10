@@ -15,6 +15,7 @@ api.add_url('^main/globalvars', main_apiviews.globalvars, name='main/globalvars'
 api.add_url('^main/login$', main_apiviews.login, name='main/login')
 api.add_url('^main/logout$', main_apiviews.logout, name='main/logout')
 api.add_url('^main/user$', main_apiviews.user, name='main/user')
+api.add_url('^obsidian/note$', obsidian_apiviews.note, name='obsidian/note')
 api.add_url('^obsidian/search$', obsidian_apiviews.search, name='obsidian/search')
 
 

@@ -1,6 +1,5 @@
 <template>
   <div id='notessearch'>
-    
     <!-- Search Input -->
     <div class='inputwrap'>
       <input ref='searchinput' v-model='search' type='text' maxlength='100' @keydown.enter='updateNotes'
@@ -10,11 +9,10 @@
         <span v-if='search.length' class='icon clear-search close' @click='search=""'>close</span>
       </transition>
     </div>
-
     <!-- Search Results -->
     <div ref='resultsdiv' class='results'>
       <a href='#' class='result' v-for='note in notes' :key='note.title'
-        @click.prevent @click='$emit("newSelection", note.title)'
+        @click.prevent @click='$emit("select", note.path)' @keydown.enter='$emit("select", note.path)' 
         @keydown.down='focusNext' @keydown.up='focusPrev'>
         {{note.title}}
         <div class='subtext'>{{utils.formatDate(note.mtime * 1000, 'MMM DD, YYYY')}}</div>

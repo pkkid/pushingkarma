@@ -27,5 +27,6 @@ export const Main = {
 }
 
 export const Obsidian = {
+  getNote(params, signal) { return axios.get(`/obsidian/note`, {params, signal}) },
   search(params, signal) { return axios.get(`/obsidian/search`, {params, signal}) },
 }
