@@ -3,7 +3,8 @@
     
     <!-- Search Input -->
     <div class='inputwrap'>
-      <input ref='searchinput' v-model='search' type='text' maxlength='100' @keydown.enter='updateNotes'/>
+      <input ref='searchinput' v-model='search' type='text' maxlength='100' @keydown.enter='updateNotes'
+        @keydown.down='focusNext' @keydown.up='focusPrev'/>
       <span class='icon search'>search</span>
       <transition name='fade'>
         <span v-if='search.length' class='icon clear-search close' @click='search=""'>close</span>
@@ -13,7 +14,8 @@
     <!-- Search Results -->
     <div ref='resultsdiv' class='results'>
       <a href='#' class='result' v-for='note in notes' :key='note.title'
-        @click.prevent @click='$emit("newSelection", note.title)'>
+        @click.prevent @click='$emit("newSelection", note.title)'
+        @keydown.down='focusNext' @keydown.up='focusPrev'>
         {{note.title}}
         <div class='subtext'>{{utils.formatDate(note.mtime * 1000, 'MMM DD, YYYY')}}</div>
       </a>
@@ -40,8 +42,6 @@
   onBeforeMount(() => {
     updateNotes()
     hotkeys('f1', 'notes', function() {  searchinput.value.focus() })
-    hotkeys('down', 'notes', focusNext)
-    hotkeys('up', 'notes', focusPrev)
     hotkeys.setScope('notes')
   })
 
