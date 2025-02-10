@@ -72,6 +72,23 @@
 }
 
 /*-------------------------------------------
+ * CSS Reset
+ *------------------------------------------- */
+ *, *::before, *::after {
+  box-sizing: border-box;
+  font-weight: normal;
+  margin: 0;
+}
+html,body {
+  font-family: Inter,Roboto,Ubuntu,sans-serif;
+  font-size: 15px;
+  line-height: 1.6;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/*-------------------------------------------
  * Basic Colors
  *------------------------------------------- */
 .lightbg {
@@ -81,6 +98,7 @@
   --fgcolor: var(--lightbg-fg1);
   --linkcolor: var(--lightbg-blue1);
   --linkhover: #111;
+  --scrollbar: var(--lightbg-bg4);
 }
 .darkbg {
   --accent: var(--darkbg-orange1);
@@ -89,6 +107,7 @@
   --fgcolor: var(--darkbg-fg1);
   --linkcolor: var(--darkbg-fg0);
   --linkhover: var(--darkbg-orange1);
+  --scrollbar: var(--darkbg-bg4);
 }
 .lightbg,.darkbg {
   background-color: var(--bgcolor);
@@ -97,13 +116,19 @@
   a:hover { color: var(--linkhover); }
 }
 
+
 /*-------------------------------------------
- * Reset & Basic Content
+ * Basic Content
  *------------------------------------------- */
- *, *::before, *::after {
+ *, *::before, *::after, *:focus {
   box-sizing: border-box;
   font-weight: normal;
   margin: 0;
+  
+}
+*:focus {
+  outline: 0px none transparent;
+  border-bottom: 2px dotted var(--accent);
 }
 html,body {
   font-family: Inter,Roboto,Ubuntu,sans-serif;
@@ -125,6 +150,17 @@ a {
   text-decoration: none;
   transition: color .1s ease;
   &:hover { text-decoration: none; }
+}
+
+/* Custom Scrollbars */
+body.firefox * {
+  scrollbar-color: var(--scrollbar) var(--bgcolor);
+}
+body.chrome ::-webkit-scrollbar { width: 8px; }
+body.chrome ::-webkit-scrollbar-thumb {
+  background: var(--scrollbar);
+  border-radius: 4px;
+  border: 2px solid var(--bgcolor);
 }
 
 /*-------------------------------------------

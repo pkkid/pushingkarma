@@ -3,7 +3,7 @@
     
     <!-- Search Input -->
     <div class='inputwrap'>
-      <input v-model='search' type='text' maxlength='100'/>
+      <input ref='searchinput' v-model='search' type='text' maxlength='100' @keydown.enter='updateNotes'/>
       <span class='icon search'>search</span>
       <transition name='fade'>
         <span v-if='search.length' class='icon clear-search close' @click='search=""'>close</span>
@@ -11,26 +11,45 @@
     </div>
 
     <!-- Search Results -->
-    <div class='results'>
-      <div class='result' v-for='note in notes' :key='note.title' @click='$emit("newSelection", note.title)'>
+    <div ref='resultsdiv' class='results'>
+      <a href='#' class='result' v-for='note in notes' :key='note.title'
+        @click.prevent @click='$emit("newSelection", note.title)'>
         {{note.title}}
         <div class='subtext'>{{utils.formatDate(note.mtime * 1000, 'MMM DD, YYYY')}}</div>
-      </div>
+      </a>
     </div>
   </div>
 </template>
 
 <script setup>
-  import {onBeforeMount, ref, watch} from 'vue'
+  import {onBeforeMount, onBeforeUnmount, ref} from 'vue'
   import {api, utils} from '@/utils'
+  import hotkeys from 'hotkeys-js'
 
-  var cancelctrl = null           // Cancel controller
-  const loading = ref(false)      // True to show loading indicator
-  const notes = ref(null)         // Current search results
-  const search = ref('')          // Current search string
+  const emit = defineEmits(['select'])    // Emit when user selects a new note
+
+  var cancelctrl = null                   // Cancel controller
+  const loading = ref(false)              // True to show loading indicator
+  const notes = ref(null)                 // Current search results
+  const search = ref('')                  // Current search string
+  const resultsdiv = ref(null)            // Reference to resultsdiv elem
+  const searchinput = ref(null)           // Reference to searchinput elem
   
-  onBeforeMount(() => { updateNotes() })
-  watch(search, utils.debounce(function() { updateNotes() }))
+  // On Before Mount
+  // Fetch initial notes to display
+  onBeforeMount(() => {
+    updateNotes()
+    hotkeys('f1', 'notes', function() {  searchinput.value.focus() })
+    hotkeys('down', 'notes', focusNext)
+    hotkeys('up', 'notes', focusPrev)
+    hotkeys.setScope('notes')
+  })
+
+  // On Before Mount
+  // Unbind all note hotkeys
+  onBeforeUnmount(() => {
+    hotkeys.deleteScope('notes')
+  })
 
   // Update Notes
   // when search.value changes
@@ -45,6 +64,31 @@
       if (!api.isCancel(err)) { throw(err) }
     } finally {
       setTimeout(() => loading.value = false, 500)
+    }
+  }
+
+  // Focus Next
+  // Focus on the next result
+  const focusNext = function(event) {
+    event.preventDefault()
+    var current = document.activeElement
+    if (current.classList.contains('result')) {
+      var next = current.nextElementSibling
+      if (next) { next.focus() }
+    } else {
+      var first = resultsdiv.value.querySelector('.result')
+      if (first) { first.focus() }
+    }
+  }
+
+  // Focus Prev
+  // Focus on the previous result
+  const focusPrev = function(event) {
+    event.preventDefault()
+    var current = document.activeElement
+    if (current.classList.contains('result')) {
+      var prev = current.previousElementSibling
+      if (prev) { prev.focus() }
     }
   }
 </script>
@@ -81,9 +125,11 @@
       opacity: 0.7;
       overflow-y: scroll;
       transition: opacity 0.5s ease;
-      &:hover { opacity: 1; }
+      &:hover, &:has(:focus) { opacity: 1; }
+      
     }
-    .result {
+    a.result {
+      display: block;
       border-left: 3px solid transparent;
       cursor: pointer;
       font-size: 12px;
@@ -92,8 +138,11 @@
       text-overflow: ellipsis;
       user-select: none;
       white-space: nowrap;
+      transition: all 0.3s ease;
+      border-bottom: 0px solid #0000;
       &.highlighted,
-      &:hover {
+      &:hover, &:focus {
+        color: var(--fgcolor);
         border-left: 3px solid var(--accent);
         background-color: #fff1;
       }

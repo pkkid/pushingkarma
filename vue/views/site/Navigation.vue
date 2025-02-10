@@ -7,7 +7,7 @@
       <div><router-link to='/#projects'>Projects</router-link></div>
       <div><router-link to='/notes'>Notes</router-link></div>
       <div v-if='user?.id'><router-link to='/budget'>Budget</router-link></div>
-      <div v-if='user?.id'><a @click.prevent @click='showAccount=true'>{{user.name}}</a></div>
+      <div v-if='user?.id'><a href='#' @click.prevent @click='showAccount=true'>{{user.name}}</a></div>
     </div>
   </div>
 </template>

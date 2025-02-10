@@ -12,28 +12,40 @@
 </template>
 
 <script setup>
-  import {onMounted, onBeforeUnmount} from 'vue'
+  import {onMounted, onBeforeUnmount, watchEffect} from 'vue'
   import hotkeys from 'hotkeys-js'
 
-  const emit = defineEmits(['close'])
+  var prevScope = null                              // Previous hotkeys-js scope
+  const emit = defineEmits(['close'])               // Emit when closing the modal
   const props = defineProps({
-    visible: {type:Boolean, required:true},
-    closeButton: {type:Boolean, default:false},
-    closeOnEsc: {type:Boolean, default:false}
+    visible: {type:Boolean, required:true},         // Display the modal
+    closeButton: {type:Boolean, default:false},     // Display the close button
+    closeOnEsc: {type:Boolean, default:false}       // Allow esc to close
+  })
+
+  // Watch visible
+  // Sets the hotkeys-js scope
+  watchEffect(function() {
+    if (props.visible) {
+      prevScope = hotkeys.getScope()
+      hotkeys.setScope('modal')
+    } else {
+      hotkeys.setScope(prevScope)
+    }
   })
 
   // On Mounted
   // watch for esc pressed
   onMounted(function() {
     if (props.closeOnEsc) {
-      hotkeys('esc', function() {  emit('close') })
+      hotkeys('esc', 'modal', function() { emit('close') })
     }
   })
 
   // On Before Unmount
   // stop watching hotkeys
   onBeforeUnmount(function() {
-    hotkeys.unbind('esc')
+    hotkeys.deleteScope('modal')
   })
 </script>
 
