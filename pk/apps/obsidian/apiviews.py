@@ -1,11 +1,10 @@
 # encoding: utf-8
-import glob
-from os.path import basename, dirname, getmtime, join
+import glob, re
+from django.conf import settings
+from os.path import basename, getmtime, join
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-
-NOTES_DIR = f'{dirname(__file__)}/notes'
 
 
 @api_view(['get'])
@@ -13,8 +12,9 @@ NOTES_DIR = f'{dirname(__file__)}/notes'
 def search(request, *args, **kwargs):
     results = {}
     query = request.query_params.get('search', '')
+    query = re.sub(r'[^a-zA-Z0-9\s]', '', query[:100])  # light sanitization
     words = query.lower().split()
-    for filepath in glob.glob(join(NOTES_DIR, '**', '*.md'), recursive=True):
+    for filepath in glob.glob(join(settings.OBSIDIAN_PUBLIC_NOTES, '**', '*.md'), recursive=True):
         title = basename(filepath)[:-3]
         titlelower = title.lower()
         count = sum(titlelower.count(word) for word in words) * 1000
@@ -24,7 +24,7 @@ def search(request, *args, **kwargs):
         results[title] = {'title':title, 'count':count, 'mtime':int(getmtime(filepath))}
     results = sorted(results.values(), key=lambda x: (-x['count'], -x['mtime']))
     results = [x for x in results if x['count'] > 0] if query != '' else results
-    return Response(results)
+    return Response({'results': results})
 
 
 @api_view(['get'])

@@ -39,6 +39,7 @@
     font-weight: 400;
     line-height: 1.7;
     text-align: left;
+    padding-left: 300px;
 
     .footerwrap {
       margin: 0px auto;

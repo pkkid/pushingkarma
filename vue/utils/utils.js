@@ -39,7 +39,7 @@ export function copyText(text, event) {
 
 // Debounce
 // Useful to debounce ajax calls
-export function debounce(func, wait) {
+export function debounce(func, wait=500) {
   let timeout
   return function(...args) {
     const context = this

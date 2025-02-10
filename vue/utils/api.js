@@ -1,21 +1,15 @@
 import axios from 'axios'
 import * as utils from '@/utils/utils'
-
 export const isCancel = axios.isCancel
-axios.defaults.baseURL = utils.apibase
-axios.defaults.withCredentials = true
-console.debug(`Axios.defaults.baseURL: ${axios.defaults.baseURL}`)
 
-// Add a request interceptor to include the CSRF token
-axios.interceptors.request.use(config => {
-  const csrfToken = document.cookie.split('; ').find(row => row.startsWith('csrftoken=')).split('=')[1]
-  if (csrfToken) {
-    config.headers['X-CSRFToken'] = csrfToken
-  }
-  return config
-}, error => {
-  return Promise.reject(error)
-})
+// Configure Axios CSRF Token and baseURL
+// https://axios-http.com/docs/req_config
+axios.defaults.withCredentials = true
+axios.defaults.withXSRFToken = true
+axios.defaults.xsrfCookieName = 'csrftoken'
+axios.defaults.xsrfHeaderName = 'X-CSRFToken'
+axios.defaults.baseURL = utils.apibase
+console.debug(`Axios.defaults.baseURL: ${axios.defaults.baseURL}`)
 
 // Cancel
 // Cancel a previously started request
@@ -30,4 +24,8 @@ export const Main = {
   getGlobalVars(signal) { return axios.get(`/main/globalvars`, {signal}) },
   login(data, signal) { return axios.post(`/main/login`, data, {signal}) },
   logout(signal) { return axios.post(`/main/logout`, null, {signal}) },
+}
+
+export const Obsidian = {
+  search(params, signal) { return axios.get(`/obsidian/search`, {params, signal}) },
 }

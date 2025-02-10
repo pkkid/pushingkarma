@@ -4,18 +4,18 @@ from django.urls import include, re_path
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.views.decorators.csrf import ensure_csrf_cookie
 from pk.apps.main import apiviews as main_apiviews
-from pk.apps.obsidian import api as obsidian_api
+from pk.apps.obsidian import apiviews as obsidian_apiviews
 from pk.utils.apiutils import HybridRouter
 from pk import utils
 
 # Create Router & User APIs
 api = HybridRouter(sort_urls=True, trailing_slash=False)
-api.add_url('^obsidian$', obsidian_api.search, name='obsidian/search')
-api.add_url('^main/globalvars', main_apiviews.globalvars, name='main/globalvars')
 api.add_url('^main/gentoken$', main_apiviews.generate_token, name='main/gentoken')
+api.add_url('^main/globalvars', main_apiviews.globalvars, name='main/globalvars')
 api.add_url('^main/login$', main_apiviews.login, name='main/login')
 api.add_url('^main/logout$', main_apiviews.logout, name='main/logout')
 api.add_url('^main/user$', main_apiviews.user, name='main/user')
+api.add_url('^obsidian/search$', obsidian_apiviews.search, name='obsidian/search')
 
 
 @xframe_options_exempt
