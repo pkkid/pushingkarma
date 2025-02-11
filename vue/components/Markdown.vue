@@ -7,8 +7,13 @@
 <script setup>
   import {computed, ref, watchEffect} from 'vue'
   import markdownIt from 'markdown-it'
+  import markdownhljs from 'markdown-it-highlightjs'
 
-  const md = new markdownIt()                       // Markdown it object                
+  // Init MarkdownIt
+  // create the markdown-it object
+  const md = new markdownIt()
+    .use(markdownhljs)
+
   const props = defineProps({
     source: {type:String, required:true},           // Source markdown content
     html: {type:Boolean, default:true},             // Enable HTML tags in source
@@ -25,13 +30,13 @@
   // Pass through markdown-it options
   const options = computed(function() {
     return {
-      html: this.html,
-      xhtmlOut: this.xhtmlout,
-      breaks: this.breaks,
-      linkify: this.linkify,
-      typographer: this.typographer,
-      langPrefix: this.langPrefix,
-      quotes: this.quotes,
+      html: props.html,
+      xhtmlOut: props.xhtmlOut,
+      breaks: props.breaks,
+      linkify: props.linkify,
+      typographer: props.typographer,
+      langPrefix: props.langPrefix,
+      quotes: props.quotes,
     }
   })
 
