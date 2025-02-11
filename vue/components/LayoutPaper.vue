@@ -13,7 +13,6 @@
   .layoutpaper {
     align-items: flex-start;
     background-color: var(--lightbg-bg4);
-    border: 1px solid red;
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
@@ -22,10 +21,9 @@
 
     .paper {
       border-radius: 2px;
-      border: 1px solid #0004;
       box-shadow: 0 1px 2px 0 #4445, 0 1px 3px 1px #4442;
       min-height: 70vh;
-      padding: 25px 30px;
+      padding: 25px 30px 60px 30px;
       position: relative;
       width: 900px;
       margin: 30px 20px;

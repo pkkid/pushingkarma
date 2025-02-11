@@ -5,11 +5,13 @@
         <NotesSearch @select='selected=$event'/>
       </template>
       <template #content>
-        <div class='contentwrap'>
+        <div v-if='note' class='contentwrap'>
           <LayoutPaper>
             <template #content>
-              <h1>{{note.title}}</h1>
-              <Markdown v-if='note' :source='note.content' />
+              <h1>{{note.title}}
+                <div class='subtext'>{{utils.formatDate(note.mtime * 1000, 'MMM DD, YYYY')}}</div>
+              </h1>
+              <Markdown :source='note.content' />
             </template>
             <template #controls>
               Controls
