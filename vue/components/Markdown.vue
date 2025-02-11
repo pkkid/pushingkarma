@@ -7,12 +7,15 @@
 <script setup>
   import {computed, ref, watchEffect} from 'vue'
   import markdownIt from 'markdown-it'
-  import markdownhljs from 'markdown-it-highlightjs'
+  // import markdownHighlightJs from 'markdown-it-highlightjs'
+  import markdownHighlightJs from '@/utils/markdown/markdown-hljs'
+  import markdownToc, {markdownHeadings} from '@/utils/markdown/markdown-toc'
 
   // Init MarkdownIt
   // create the markdown-it object
   const md = new markdownIt()
-    .use(markdownhljs)
+    .use(markdownHighlightJs)
+    .use(markdownToc)
 
   const props = defineProps({
     source: {type:String, required:true},           // Source markdown content
@@ -24,7 +27,10 @@
     typographer: {type:Boolean, default:false},     // Enable language-neutral replacement + quotes beautification
     quotes: {type:String, default:'“”‘’'},          // Quotes replacement pairs when typographer enabled
   })
-  const outhtml = computed(function() { return md.render(props.source) })  // Output html
+  const outhtml = computed(function() {
+    var result = md.render(props.source)
+    return result
+  })
 
   // Options 
   // Pass through markdown-it options

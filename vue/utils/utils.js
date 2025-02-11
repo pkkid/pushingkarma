@@ -90,6 +90,17 @@ export function setNavPosition(pos) {
 }
 
 
+// Slugify
+// Removes all special characters and replaces spaces with hyphens.
+export function slugify(value) {
+  if (!value) { return '' }
+  return value.toString().toLowerCase()
+    .replace(/&/g, 'and')
+    .replace(/[^\w\s-]+/g, '').trim()
+    .replace(/[\s]+/g, '-')
+}
+
+
 // Sort
 // Generic Sort for arrays or Object Keys
 export function sort(value) {
