@@ -1,5 +1,5 @@
 <template>
-  <div id='sidepanel'>
+  <div class='layoutsidepanel'>
     <div class='sidepanel-panel darkbg'>
       <slot name='panel'>SidePanel #panel</slot>
     </div>
@@ -10,13 +10,14 @@
 </template>
 
 <style>
-  #sidepanel {
+  .layoutsidepanel {
     --sidepanelwidth: 300px;
     --sidepanelheight: calc(100vh - var(--navheight));
     .sidepanel-panel {
       width: var(--sidepanelwidth);
       height: var(--sidepanelheight);
       position: fixed;
+      z-index: 100;
     }
     .sidepanel-content {
       padding-left: var(--sidepanelwidth);

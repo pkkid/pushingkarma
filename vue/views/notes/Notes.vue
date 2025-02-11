@@ -1,21 +1,33 @@
 <template>
   <div id='notes'>
-    <SidePanel>
+    <LayoutSidePanel>
       <template #panel>
         <NotesSearch @select='selected=$event'/>
       </template>
       <template #content>
-        {{selected}}
+        <div class='contentwrap'>
+          <LayoutPaper>
+            <template #content>
+              <h1>{{note.title}}</h1>
+              <Markdown v-if='note' :source='note.content' />
+            </template>
+            <template #controls>
+              Controls
+            </template>
+          </LayoutPaper>
+        </div>
       </template>
-    </SidePanel>
+    </LayoutSidePanel>
   </div>
 </template>
 
 <script setup>
   import {onBeforeMount, ref, watchEffect} from 'vue'
   import {api, utils} from '@/utils'
+  import Markdown from '@/components/Markdown.vue'
   import NotesSearch from '@/views/notes/NotesSearch.vue'
-  import SidePanel from '@/components/SidePanel.vue'
+  import LayoutSidePanel from '@/components/LayoutSidePanel.vue'
+  import LayoutPaper from '@/components/LayoutPaper.vue'
 
   var cancelctrl = null           // Cancel controller
   const loading = ref(false)      // True to show loading indicator
