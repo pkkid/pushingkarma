@@ -20,8 +20,8 @@
             <div v-if='user?.id'>
               <h2>Obsidian Options</h2>
               <div class='submenu'>
-                <div><a class='h1' :href='`obsidian://open?vault=${selected.vault}&file=${selected.path}`'>Edit Note</a></div>
-                <div><a class='h1' :href='`obsidian://new?vault=${selected.vault}&file=My New Note.md`'>Create New Note</a></div>
+                <div><a class='h1' :href='`obsidian://open?vault=${note.vault}&file=${note.path}`'>Edit Note</a></div>
+                <div><a class='h1' :href='`obsidian://new?vault=${note.vault}&file=My New Note.md`'>Create New Note</a></div>
               </div>
             </div>
           </template>
@@ -32,13 +32,14 @@
 </template>
 
 <script setup>
-  import {inject, onBeforeMount, ref, watchEffect} from 'vue'
+  import {inject, nextTick, onBeforeMount, ref, watchEffect} from 'vue'
+  import {useUrlParams} from '@/composables/useUrlParams.js'
   import {api, utils} from '@/utils'
+  import LayoutPaper from '@/components/LayoutPaper.vue'
+  import LayoutSidePanel from '@/components/LayoutSidePanel.vue'
   import Markdown from '@/components/Markdown.vue'
   import NotesSearch from '@/views/notes/NotesSearch.vue'
   import NotesToc from '@/views/notes/NotesToc.vue'
-  import LayoutSidePanel from '@/components/LayoutSidePanel.vue'
-  import LayoutPaper from '@/components/LayoutPaper.vue'
 
   var cancelctrl = null           // Cancel controller
   const {user} = inject('user')   // Current User
@@ -46,17 +47,29 @@
   const selected = ref(null)      // Currently selected note path
   const note = ref(null)          // Current note markdown contents
   const headings = ref(null)      // Current note headings
+  const {group, path} = useUrlParams({
+    group: {type: String},
+    path: {type: String}
+  })
 
   onBeforeMount(function() { utils.setNavPosition('top') })
 
-  // Watch Note
-  // update the note contents when note 
+  // Watch Selected
+  // update group & path when selection changes
   watchEffect(async function() {
     if (!selected.value) { return }
+    group.value = selected.value.group
+    path.value = selected.value.path
+  })
+
+  // Watch Group & Path
+  // update note when these change
+  watchEffect(async function() {
+    if ((!group.value) || (!path.value)) { return }
     loading.value = true
     cancelctrl = api.cancel(cancelctrl)
     try {
-      var params = {group:selected.value.group, path:selected.value.path}
+      var params = {group:group.value, path:path.value}
       var {data} = await api.Obsidian.getNote(params, cancelctrl.signal)
       note.value = data
       window.scrollTo(0, 0)
@@ -65,7 +78,6 @@
     } finally {
       setTimeout(() => loading.value = false, 500)
     }
-
   })
 </script>
 

@@ -1,0 +1,78 @@
+import {ref, watch} from 'vue'
+import {useRoute, useRouter} from 'vue-router'
+
+
+// UseUrlParams
+// params: an Object of {key:type} pairs
+export function useUrlParams(params) {
+  const route = useRoute()
+  const router = useRouter()
+  const refs = {}
+
+  // emptyOrFalsy
+  // Check if a value is empty or falsy
+  const hasData = function(key, value) {
+    if (params[key].type === Array) { return value && value.length >= 1 }
+    else if (params[key].type === Set) { return value && value.size >= 1 }
+    else if (value) { return true }
+    return false
+  }
+
+  // strToValue
+  // Convert a string to a parameter value
+  const strToValue = function(str, type) {
+    if (str === null || str === undefined) { return null }
+    if (type == Number) { return Number(str) }
+    if (type === Boolean) { return ['true', 't', '1'].includes(str.toLowerCase()) }
+    if (type === Array) { return str === null ? [] : str.split(',').map(s => s.trim()) }
+    if (type === Set) { return str === null ? new Set() : new Set(str.split(',').map(s => s.trim())) }
+    if (type == 'MultiSelect') { return str === null ? [] :
+      str.split(',').map(function(s) { return {name:s.trim(), code:s.trim()} }) }
+    return str
+  }
+
+  // valueToStr
+  // Convert a paramter value to a string
+  const valueToStr = function(value, type) {
+    if (value === null || value === undefined) { return null }
+    if (type == Number) { return value.toString() }
+    if (type === Boolean) { return value.toString() }
+    if (type === Array) { return value.join(',') }
+    if (type === Set) { return [...value].join(',') }
+    if (type == 'MultiSelect') { return value.map(x => x.code).join(',') }
+    return value
+  }
+
+  // Watch Params
+  // Update the Ref object if a parameter changes
+  watch(() => route.query, function(newquery) {
+    for (let key in refs) {
+      var curvalstr = valueToStr(refs[key].value, params[key].type)
+      if (curvalstr != newquery[key]) {
+        refs[key].value = strToValue(newquery[key], params[key].type)
+      }
+    }
+  })
+
+  // Initialize
+  // We intiialize the starting value of refs with values from the URL
+  // as well as watch for any changes to the refs and update the URL.
+  for (let key in params) {
+    var strval = route.query[key] || null
+    var value = strToValue(strval, params[key].type)
+    refs[key] = ref(value)
+    // Watch for changes on the ref()
+    // always update all values
+    watch(refs[key], async function() {
+      var query = {...route.query}
+      for (let key in refs) {
+        var qvalue = refs[key].value
+        if (query[key] == qvalue) { continue }
+        if (!hasData(key, qvalue)) { delete query[key] }
+        else { query[key] = valueToStr(qvalue, params[key].type) }
+      }
+      router.push({query})
+    })
+  }
+  return refs
+}
