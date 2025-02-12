@@ -17,7 +17,7 @@
           <!-- Table of Contents & Controls-->
           <template #controls>
             <NotesToc :title='note.title' :headings='headings' />
-            <div v-if='user.id'>
+            <div v-if='user?.id'>
               <h2>Obsidian Options</h2>
               <div class='submenu'>
                 <div><a class='h1' :href='`obsidian://open?vault=${selected.vault}&file=${selected.path}`'>Edit Note</a></div>
