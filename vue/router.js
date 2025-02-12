@@ -15,7 +15,7 @@ const router = createRouter({
       var top = document.getElementById(to.hash.substring(1)).offsetTop
       return {top:top, left:0, behavior:'smooth'}
     } else {
-      return {top:0, left:0}
+      return {top:0, left:0, behavior:'smooth'}
     }
   },
 })

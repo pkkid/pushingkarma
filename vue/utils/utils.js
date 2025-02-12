@@ -89,17 +89,15 @@ export function setNavPosition(pos) {
   document.body.classList.add(`${pos}nav`)
 }
 
-
-// Slugify
+// Slug
 // Removes all special characters and replaces spaces with hyphens.
-export function slugify(value) {
+export function slug(value) {
   if (!value) { return '' }
   return value.toString().toLowerCase()
     .replace(/&/g, 'and')
     .replace(/[^\w\s-]+/g, '').trim()
     .replace(/[\s]+/g, '-')
 }
-
 
 // Sort
 // Generic Sort for arrays or Object Keys

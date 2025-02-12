@@ -4,7 +4,9 @@
       <slot name='content'>paper article</slot>
     </article>
     <div class='controls'>
-      <slot name='controls'>controls</slot>
+      <div class='controls-fixed'>
+        <slot name='controls'>controls</slot>
+      </div>
     </div>
   </div>
 </template>
@@ -30,9 +32,37 @@
       ::selection { color:black; background:#ccc; }
     }
     .controls {
-      border: 1px solid red;
       margin: 30px 20px 30px 0px;
+      font-size: 16px;
+      width: 250px;
+
+      .controls-fixed {
+        position: fixed;
+        width: 250px;
+      }
+      h2 {
+        color: var(--lightbg-fg0);
+        font-size: 1.1em;
+        margin-bottom: 10px;
+        margin-top: 40px;
+      }
+      .submenu {
+        --linkcolor: var(--lightbg-text);
+        --linkhover: var(--lightbg-blue1);
+        --linkhoverunderline: 2px dotted var(--lightbg-blue1);
+        border-left: 3px solid var(--lightbg-blue1);
+        font-size: 13px;
+        padding-left: 10px;
+        position: relative;
+      }
+      a, a:visited {
+        display: inline-block;
+        line-height: 1.2;
+        max-width: calc(100% - 10px);
+        overflow: hidden !important;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
     }
   }
-  
 </style>

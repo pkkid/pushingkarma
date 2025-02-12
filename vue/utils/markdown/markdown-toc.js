@@ -10,10 +10,11 @@ export default function(md, options) {
     markdownHeadings = []
     state.tokens.forEach((token, index) => {
       if (token.type === 'heading_open') {
-        const id = utils.slugify(state.tokens[index+1].content)
+        const text = state.tokens[index+1].content
+        const id = utils.slug(text)
         token.attrs = token.attrs || []
         token.attrs.push(['id', id])
-        markdownHeadings.push({id:id, tag:token.tag})
+        markdownHeadings.push({id:`#${id}`, text:text, tag:token.tag})
       }
     })
   })

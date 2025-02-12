@@ -7,7 +7,6 @@
 <script setup>
   import {computed, ref, watchEffect} from 'vue'
   import markdownIt from 'markdown-it'
-  // import markdownHighlightJs from 'markdown-it-highlightjs'
   import markdownHighlightJs from '@/utils/markdown/markdown-hljs'
   import markdownToc, {markdownHeadings} from '@/utils/markdown/markdown-toc'
 
@@ -17,6 +16,7 @@
     .use(markdownHighlightJs)
     .use(markdownToc)
 
+  const emit = defineEmits(['headings'])            // Emit when new headings calculated
   const props = defineProps({
     source: {type:String, required:true},           // Source markdown content
     html: {type:Boolean, default:true},             // Enable HTML tags in source
@@ -29,6 +29,8 @@
   })
   const outhtml = computed(function() {
     var result = md.render(props.source)
+    console.log(markdownHeadings)
+    emit('headings', markdownHeadings)
     return result
   })
 

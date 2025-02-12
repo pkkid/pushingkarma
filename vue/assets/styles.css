@@ -99,7 +99,7 @@ html, body {
   --fgcolor: var(--lightbg-fg1);
   --linkcolor: var(--lightbg-blue1);
   --linkhover: #000;
-  --linkhoverunderline: 2px dotted var(--accent);
+  --linkhoverunderline: 2px dotted var(--linkhover);
   --scrollbar: var(--lightbg-bg4);
 }
 .darkbg {

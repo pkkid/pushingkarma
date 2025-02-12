@@ -11,10 +11,10 @@
               <h1>{{note.title}}
                 <div class='subtext'>{{utils.formatDate(note.mtime * 1000, 'MMM DD, YYYY')}}</div>
               </h1>
-              <Markdown :source='note.content' />
+              <Markdown :source='note.content' @headings='headings=$event'/>
             </template>
             <template #controls>
-              Controls
+              <NotesToc :title='note.title' :headings='headings' />
             </template>
           </LayoutPaper>
         </div>
@@ -28,6 +28,7 @@
   import {api, utils} from '@/utils'
   import Markdown from '@/components/Markdown.vue'
   import NotesSearch from '@/views/notes/NotesSearch.vue'
+  import NotesToc from '@/views/notes/NotesToc.vue'
   import LayoutSidePanel from '@/components/LayoutSidePanel.vue'
   import LayoutPaper from '@/components/LayoutPaper.vue'
 
@@ -35,6 +36,7 @@
   const loading = ref(false)      // True to show loading indicator
   const selected = ref(null)      // Currently selected note path
   const note = ref(null)          // Current note markdown contents
+  const headings = ref(null)      // Current note headings
 
   onBeforeMount(function() { utils.setNavPosition('top') })
 
