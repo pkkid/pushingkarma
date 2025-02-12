@@ -13,18 +13,20 @@ log = logging.getLogger(__name__)
 @permission_classes([AllowAny])
 def note(request, *args, **kwargs):
     """ Return the content of an obsidian note.
-        * path: path of the note to return (required)
+        * group: Name of the obsidian group (defined in settings.py)
+        * path: Path of note in the group vault (required)
     """
     try:
         path = request.query_params['path']
-        group, path = request.query_params['path'].split('/', 1)
-        group = settings.OBSIDIAN_NOTES[group]
+        groupname = request.query_params['group']
+        group = settings.OBSIDIAN_NOTES[groupname]
         public = group.get('public', False)
         if public or request.user.is_authenticated:
             filepath = join(group['root'], path)
             with open(filepath, 'r', encoding='utf-8') as handle:
                 content = handle.read()
             return Response({
+                'vault': group['vault'],
                 'path': path,
                 'title': basename(filepath)[:-3],
                 'content': content,
@@ -37,7 +39,7 @@ def note(request, *args, **kwargs):
 
 
 @api_view(['get'])
-@cache_page(300)
+# @cache_page(300)
 @permission_classes([AllowAny])
 def search(request, *args, **kwargs):
     """ Search obsidian notes. This will open every note and count the number
@@ -50,18 +52,20 @@ def search(request, *args, **kwargs):
         query = request.query_params.get('search', '')
         query = re.sub(r'[^a-zA-Z0-9\s]', '', query[:100])  # light sanitization
         words = query.lower().split()
-        for group, details in settings.OBSIDIAN_NOTES.items():
-            public = details.get('public', False)
+        for groupname, group in settings.OBSIDIAN_NOTES.items():
+            public = group.get('public', False)
             if public or request.user.is_authenticated:
-                for filepath in glob.glob(join(details['root'], '**', '*.md'), recursive=True):
-                    path = filepath.replace(details['root'], '')
+                for filepath in glob.glob(join(group['root'], '**', '*.md'), recursive=True):
+                    path = filepath.replace(group['root'], '')
                     title = basename(filepath)[:-3]
                     score = sum(title.lower().count(word) for word in words) * 1000
                     with open(filepath, 'r', encoding='utf-8') as handle:
                         content = handle.read().lower()
                         score += sum(content.count(word) for word in words)
                     results[title] = {
-                        'path': f'{group}{path}',
+                        'vault': group['vault'],
+                        'group': groupname,
+                        'path': path.lstrip('/'),
                         'title': title,
                         'mtime': int(getmtime(filepath)),
                         'public': public,

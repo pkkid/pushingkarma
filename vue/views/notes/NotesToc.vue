@@ -2,10 +2,10 @@
   <div class='toc' v-if='headings?.length > 1'>
     <h2 style='margin-top:30px;'>Table of Contents</h2>
     <div class='submenu'>
-      <div class='h1'><router-link to=''>{{title}}</router-link></div>
-      <div v-for='heading in headings' v-bind:key='heading.text' :class='heading.tag'>
-        <router-link :to='{hash:heading.id}'>{{heading.text}}</router-link>
-      </div>
+      <router-link class='h1' to=''>{{title}}</router-link>
+      <template v-for='heading in headings' v-bind:key='heading.text'>
+        <div><router-link :class='heading.tag' :to='{hash:heading.id}'>{{heading.text}}</router-link></div>
+      </template>
     </div>
   </div>
 </template>

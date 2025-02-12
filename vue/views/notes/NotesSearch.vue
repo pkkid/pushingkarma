@@ -12,7 +12,7 @@
     <!-- Search Results -->
     <div ref='resultsdiv' class='results'>
       <a href='#' class='result' v-for='note in notes' :key='note.title'
-        @click.prevent @click='$emit("select", note.path)' @keydown.enter='$emit("select", note.path)' 
+        @click.prevent @click='$emit("select", note)' @keydown.enter='$emit("select", note)' 
         @keydown.down='focusNext' @keydown.up='focusPrev'>
         {{note.title}}
         <div class='subtext'>{{utils.formatDate(note.mtime * 1000, 'MMM DD, YYYY')}}</div>

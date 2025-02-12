@@ -42,7 +42,7 @@
       }
       h2 {
         color: var(--lightbg-fg0);
-        font-size: 1.1em;
+        font-size: 18px;
         margin-bottom: 10px;
         margin-top: 40px;
       }
@@ -59,7 +59,7 @@
         display: inline-block;
         line-height: 1.2;
         max-width: calc(100% - 10px);
-        overflow: hidden !important;
+        overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
       }
