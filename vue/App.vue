@@ -35,7 +35,6 @@
     }
     // Add browser to the body for easier css
     var useragent = navigator.userAgent.toLowerCase()
-    console.log(useragent)
     if (useragent.indexOf('chrome') > -1) { document.body.classList.add('chrome') }
     if (useragent.indexOf('firefox') > -1) { document.body.classList.add('firefox') }
   })
