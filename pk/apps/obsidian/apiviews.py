@@ -13,7 +13,7 @@ log = logging.getLogger(__name__)
 @permission_classes([AllowAny])
 def note(request, *args, **kwargs):
     """ Return the content of an obsidian note.
-        * group: Name of the obsidian group (defined in settings.py)
+        * group: Name of Obsidian in settings.py (required)
         * path: Path of note in the group vault (required)
     """
     try:
@@ -39,7 +39,7 @@ def note(request, *args, **kwargs):
 
 
 @api_view(['get'])
-# @cache_page(300)
+@cache_page(300)
 @permission_classes([AllowAny])
 def search(request, *args, **kwargs):
     """ Search obsidian notes. This will open every note and count the number

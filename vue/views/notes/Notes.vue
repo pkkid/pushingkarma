@@ -56,9 +56,7 @@
     loading.value = true
     cancelctrl = api.cancel(cancelctrl)
     try {
-      console.log('selected', selected.value)
       var params = {group:selected.value.group, path:selected.value.path}
-      console.log('params', params)
       var {data} = await api.Obsidian.getNote(params, cancelctrl.signal)
       note.value = data
     } catch (err) {

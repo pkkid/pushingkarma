@@ -29,7 +29,6 @@
   })
   const outhtml = computed(function() {
     var result = md.render(props.source)
-    console.log(markdownHeadings)
     emit('headings', markdownHeadings)
     return result
   })
