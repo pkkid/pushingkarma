@@ -1,5 +1,5 @@
 <template>
-  <div class='toc' v-if='headings?.length > 1'>
+  <div class='toc' v-if='headings?.length >= 1'>
     <h2 style='margin-top:30px;'>Table of Contents</h2>
     <div class='submenu'>
       <router-link class='h1' to=''>{{title}}</router-link>
