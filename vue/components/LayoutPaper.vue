@@ -35,7 +35,7 @@
       margin: 30px 20px 30px 0px;
       font-size: 16px;
       width: 250px;
-
+      &:has(.controls-fixed:empty) { display: none; }
       .controls-fixed {
         position: fixed;
         width: 250px;

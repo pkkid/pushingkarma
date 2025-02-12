@@ -59,6 +59,7 @@
       var params = {group:selected.value.group, path:selected.value.path}
       var {data} = await api.Obsidian.getNote(params, cancelctrl.signal)
       note.value = data
+      window.scrollTo(0, 0)
     } catch (err) {
       if (!api.isCancel(err)) { throw(err) }
     } finally {
