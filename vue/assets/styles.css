@@ -118,12 +118,14 @@ html, body {
   a,a:visited {
     color: var(--linkcolor);
     cursor: pointer;
+    text-decoration: none;
     transition: all 0.3s ease;
     border-bottom: 2px dotted transparent;
   }
   a:hover {
     color: var(--linkhover);
     border-bottom: var(--linkhoverunderline);
+    text-decoration: none; 
   }
 }
 
@@ -135,7 +137,6 @@ html, body {
   box-sizing: border-box;
   font-weight: normal;
   margin: 0;
-  
 }
 *:focus {
   outline: 0px none transparent;
@@ -153,11 +154,6 @@ html,body {
 body,button,input,select,textarea {
   font-weight: 400;
   color: var(--lightbg-text);
-}
-a {
-  text-decoration: none;
-  transition: color .1s ease;
-  &:hover { text-decoration: none; }
 }
 
 /* Custom Scrollbars */

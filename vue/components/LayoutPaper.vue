@@ -15,6 +15,7 @@
   .layoutpaper {
     align-items: flex-start;
     background-color: var(--lightbg-bg4);
+    box-shadow: inset 0 0 5em 1em rgba(40, 40, 40, 0.15);
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
