@@ -7,7 +7,7 @@ const router = createRouter({
   routes: [
     {path:'/', name:'home', component:HomeView},
     {path:'/notes', name:'notes', component: () => import('@/views/notes/Notes.vue')},
-    {path:'/budget', name:'budget', component: () => import('@/views/Budget.vue')},
+    {path:'/budget', name:'budget', component: () => import('@/views/budget/Budget.vue')},
     {path:'/newtab', name:'newtab', component: () => import('@/views/NewTab.vue')},
   ],
   scrollBehavior(to, from, savedPosition) {

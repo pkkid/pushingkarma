@@ -1,15 +1,21 @@
 <template>
   <div class='layoutpaper'>
-    <article class='paper lightbg'>
+    <article class='paper lightbg' :style="{width:`${props.width}px`}">
       <slot name='content'>paper article</slot>
     </article>
-    <div class='controls'>
+    <div class='controls' v-if='$slots.controls'>
       <div class='controls-fixed'>
         <slot name='controls'>controls</slot>
       </div>
     </div>
   </div>
 </template>
+
+<script setup>
+  const props = defineProps({
+    width: {type:Number, default:900},
+  })
+</script>
 
 <style>
   .layoutpaper {
@@ -28,7 +34,7 @@
       min-height: 70vh;
       padding: 25px 30px 60px 30px;
       position: relative;
-      width: 900px;
+      /* width: 900px; */
       margin: 30px 20px;
       ::selection { color:black; background:#ccc; }
     }

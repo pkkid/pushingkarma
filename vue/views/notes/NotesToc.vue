@@ -19,8 +19,8 @@
 
 <style>
   .toc .submenu {
-    .h1 { padding-left:0px; }
-    .h2 { padding-left:0px; }
-    .h3 { padding-left:15px; }
+    .h1 { margin-left:0px; }
+    .h2 { margin-left:0px; }
+    .h3 { margin-left:15px; }
   }
 </style>
