@@ -9,10 +9,8 @@ git git@github.com:pkkid/pushingkarma.git
 cd pushingkarma
 
 # Create Python virtualenv & install requirements
-pyenv install 3.11
-pyenv virtualenv 3.11 pk
-pyenv local pk
-pip install -r pk/requirements.txt
+uv venv --python 3.12
+uv pip install -r pk/requirements.txt
 
 # Install node v20.11 (lts)
 nvm install 20.11

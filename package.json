@@ -23,7 +23,7 @@
   "scripts": {
     "getdb": "scp -O synology:~/pushingkarma/pk/db.sqlite3 pk/db.sqlite3",
     "start": "npm-run-all -p django vue",
-    "django": "python pk/manage.py runserver",
+    "django": "uv run python pk/manage.py runserver",
     "vue": "vite",
     "build": "vite build",
     "eslint": "eslint . --ext .vue,.js"
