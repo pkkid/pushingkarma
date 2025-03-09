@@ -17,7 +17,7 @@
       width: var(--sidepanelwidth);
       height: var(--sidepanelheight);
       position: fixed;
-      z-index: 100;
+      z-index: 98;
     }
     .sidepanel-content {
       padding-left: var(--sidepanelwidth);
