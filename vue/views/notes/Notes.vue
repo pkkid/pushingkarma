@@ -3,7 +3,7 @@
     <LayoutSidePanel>
       <!-- Search -->
       <template #panel>
-        <NotesSearch @select='selected=$event'/>
+        <NotesSearch :selected='selected' @select='selected=$event' @results='onResults'/>
       </template>
       <template #content>
         <LayoutPaper v-if='note'>
@@ -79,5 +79,11 @@
       setTimeout(() => loading.value = false, 500)
     }
   })
+
+  // On Results Loaded
+  // If no note selected, load the first note
+  const onResults = function(results) {
+    if (selected.value?.length >= 1) { selected.value = results[0] }
+  }
 </script>
 

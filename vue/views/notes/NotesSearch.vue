@@ -11,7 +11,7 @@
     </div>
     <!-- Search Results -->
     <div ref='resultsdiv' class='results'>
-      <a href='#' class='result' v-for='note in notes' :key='note.title'
+      <a href='#' class='result' v-for='note in notes' :key='note.title' :class='{selected:note.path==selected?.path}'
         @click.prevent @click='$emit("select", note)' @keydown.enter='$emit("select", note)' 
         @keydown.down='focusNext' @keydown.up='focusPrev'>
         {{note.title}}
@@ -26,7 +26,14 @@
   import {api, utils} from '@/utils'
   import hotkeys from 'hotkeys-js'
 
-  const emit = defineEmits(['select'])    // Emit when user selects a new note
+  const emit = defineEmits([
+    'results',    // Emitted when new result set is loaded
+    'select'      // Emitted when user selects a new note
+  ])
+
+  const props = defineProps({
+    selected: {},                         // Currently selected note
+  })
 
   var cancelctrl = null                   // Cancel controller
   const loading = ref(false)              // True to show loading indicator
@@ -58,6 +65,7 @@
       var searchstr = search.value.length < 3 ? '' : search.value
       var {data} = await api.Obsidian.search({search:searchstr}, cancelctrl.signal)
       notes.value = data.results
+      emit('results', data.results)
     } catch (err) {
       if (!api.isCancel(err)) { throw(err) }
     } finally {
@@ -139,7 +147,7 @@
       transition: all 0.3s ease;
       border-bottom: 0px solid #0000;
       &.highlighted,
-      &:hover, &:focus {
+      &:hover, &:focus, &.selected {
         color: var(--fgcolor);
         border-left: 3px solid var(--accent);
         background-color: #fff1;
