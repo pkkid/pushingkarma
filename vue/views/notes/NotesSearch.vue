@@ -146,7 +146,6 @@
       white-space: nowrap;
       transition: all 0.3s ease;
       border-bottom: 0px solid #0000;
-      &.highlighted,
       &:hover, &:focus, &.selected {
         color: var(--fgcolor);
         border-left: 3px solid var(--accent);
