@@ -1,6 +1,6 @@
 <template>
   <div class='layoutpaper'>
-    <article class='paper lightbg' :style="{width:`${props.width}px`}">
+    <article class='paper lightbg'>
       <slot name='content'>paper article</slot>
     </article>
     <div class='controls' v-if='$slots.controls'>
@@ -13,7 +13,7 @@
 
 <script setup>
   const props = defineProps({
-    width: {type:Number, default:900},
+    width: {type:String, default:'900px'},
   })
 </script>
 
@@ -34,7 +34,7 @@
       min-height: 70vh;
       padding: 25px 30px 60px 30px;
       position: relative;
-      /* width: 900px; */
+      width: v-bind(width);
       margin: 30px 20px;
       ::selection { color:black; background:#ccc; }
     }
