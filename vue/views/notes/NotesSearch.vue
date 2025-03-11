@@ -27,12 +27,11 @@
   import hotkeys from 'hotkeys-js'
 
   const emit = defineEmits([
-    'results',    // Emitted when new result set is loaded
-    'select'      // Emitted when user selects a new note
+    'results',      // New result set is loaded
+    'select'        // User selects a new note
   ])
-
   const props = defineProps({
-    selected: {},                         // Currently selected note
+    selected: {},   // Currently selected note
   })
 
   var cancelctrl = null                   // Cancel controller
