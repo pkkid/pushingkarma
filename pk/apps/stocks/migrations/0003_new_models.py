@@ -5,6 +5,14 @@ import pk.utils.djutils
 from django.db import migrations, models
 
 
+def copy_tickers(apps, schema_editor):
+    Stock = apps.get_model('stocks', 'Stock')
+    Ticker = apps.get_model('stocks', 'Ticker')
+    for stock in Stock.objects.all():
+        ticker = Ticker(ticker=stock.ticker, tags=stock.tags)
+        ticker.save()
+
+
 class Migration(migrations.Migration):
 
     dependencies = [
@@ -18,29 +26,23 @@ class Migration(migrations.Migration):
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('ticker', models.CharField(max_length=5, unique=True)),
                 ('tags', models.CharField(blank=True, max_length=255)),
-                ('info', pk.utils.djutils.JSON5Field()),
+                ('info', pk.utils.djutils.JSON5Field(null=True)),
             ],
         ),
-        migrations.AlterModelOptions(
-            name='stock',
-            options={'get_latest_by': 'modified'},
-        ),
-        migrations.AlterField(
-            model_name='stock',
-            name='id',
-            field=models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID'),
-        ),
+        migrations.AlterModelOptions(name='stock', options={'get_latest_by': 'modified'}),
+        migrations.AlterField(model_name='stock', name='id', field=models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
         migrations.CreateModel(
             name='TickerHistory',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('date', models.DateField()),
                 ('close', models.DecimalField(decimal_places=2, max_digits=9)),
-                ('high', models.DecimalField(decimal_places=2, max_digits=9)),
-                ('low', models.DecimalField(decimal_places=2, max_digits=9)),
-                ('open', models.DecimalField(decimal_places=2, max_digits=9)),
-                ('volume', models.IntegerField()),
+                ('high', models.DecimalField(decimal_places=2, max_digits=9, null=True)),
+                ('low', models.DecimalField(decimal_places=2, max_digits=9, null=True)),
+                ('volume', models.IntegerField(null=True)),
                 ('ticker', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='stocks.ticker')),
             ],
         ),
+        migrations.RunPython(copy_tickers),
+        migrations.DeleteModel(name='Stock'),
     ]
