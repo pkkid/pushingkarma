@@ -1,9 +1,21 @@
 # encoding: utf-8
 import json, queue, requests
+from decimal import Decimal
 from django.conf import settings
 from django.http import HttpResponse
 from django.shortcuts import render
 from threading import Thread
+
+
+def clean_amount(value):
+    """ Clean a USD string such as -$99.99 to a Decimal value. """
+    if isinstance(value, str):
+        value = value.replace('$', '')
+        value = value.replace(',', '')
+        return Decimal(value)
+    if isinstance(value, (int, float)):
+        return Decimal(value)
+    return value
 
 
 def get_object_or_none(cls, *args, **kwargs):

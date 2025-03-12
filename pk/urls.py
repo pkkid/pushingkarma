@@ -12,8 +12,8 @@ from pk import utils
 # Create Router & User APIs
 api = HybridRouter(sort_urls=True, trailing_slash=False)
 api.register('budget/accounts', budget_api.AccountsViewSet)
-# api.register('budget/categories', budget_api.CategoriesViewSet)
-# api.register('budget/transactions', budget_api.TransactionsViewSet)
+api.register('budget/categories', budget_api.CategoriesViewSet)
+api.register('budget/transactions', budget_api.TransactionsViewSet)
 api.add_url('^main/gentoken$', main_apiviews.generate_token, name='main/gentoken')
 api.add_url('^main/globalvars', main_apiviews.globalvars, name='main/globalvars')
 api.add_url('^main/login$', main_apiviews.login, name='main/login')
