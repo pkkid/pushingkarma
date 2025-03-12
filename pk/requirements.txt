@@ -1,6 +1,7 @@
 # pip requirements file
 # pip install -r requirements.pip
 ipython
+json5
 pytz
 flickrapi==2.4.0
 daphne==2.4.1

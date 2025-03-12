@@ -5,7 +5,7 @@ from django.core.management import call_command
 from django.db import models
 from django.dispatch import receiver
 from django_extensions.db.models import TimeStampedModel
-from pk import log
+from pk import log, utils
 
 PROVIDERS = {
     'alphavantage': {
@@ -28,6 +28,22 @@ PROVIDERS = {
     }
 }
 PROVIDER = PROVIDERS['alphavantage']
+
+
+class Ticker(models.Model):
+    ticker = models.CharField(max_length=5, unique=True)
+    tags = models.CharField(max_length=255, blank=True)
+    info = utils.JSON5Field()
+
+
+class TickerHistory(models.Model):
+    ticker = models.ForeignKey(Ticker, on_delete=models.CASCADE)
+    date = models.DateField()
+    close = models.DecimalField(max_digits=9, decimal_places=2)
+    high = models.DecimalField(max_digits=9, decimal_places=2)
+    low = models.DecimalField(max_digits=9, decimal_places=2)
+    open = models.DecimalField(max_digits=9, decimal_places=2)
+    volume = models.IntegerField()
 
 
 class Stock(TimeStampedModel):
