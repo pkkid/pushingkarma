@@ -36,7 +36,8 @@ class Command(BaseCommand):
                     response = requests.get(url)
                     data = response.json()
                     print('-------------')
-                    import pprint; pprint.pprint(data, indent=2)
+                    import pprint
+                    pprint.pprint(data, indent=2)
                     stock.data = json.dumps(data)  # validate json
                     if PROVIDER.get('limitstr') in stock.data:
                         log.warning(f'API Limit Reached? {stock.data}')

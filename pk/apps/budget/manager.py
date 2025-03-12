@@ -3,16 +3,16 @@
 # References:
 #  https://github.com/jseutter/ofxparse
 #  https://console.developers.google.com/
-import csv, datetime, re
+import csv, datetime, re, logging
 import hashlib, base64
 from dateutil.relativedelta import relativedelta
 from decimal import Decimal
 from django.utils import timezone
 from io import StringIO
 from ofxparse import OfxParser
-from pk import log
 from pk.utils.decorators import lazyproperty
 from .models import Account, Transaction
+log = logging.getLogger(__name__)
 
 REMOVE = "'"
 KEEP = ' ./'

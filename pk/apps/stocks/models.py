@@ -1,8 +1,10 @@
 # encoding: utf-8
+import logging
 from django.core.management import call_command
 from django.db import models
 from django.dispatch import receiver
-from pk import log, utils
+from pk import utils
+log = logging.getLogger(__name__)
 
 
 class Ticker(models.Model):

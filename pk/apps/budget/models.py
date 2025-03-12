@@ -1,8 +1,10 @@
 # encoding: utf-8
+import logging
 from django.conf import settings
 from django.db import models, transaction
 from django_extensions.db.models import TimeStampedModel
-from pk import log, utils
+from pk import utils
+log = logging.getLogger(__name__)
 
 ACCOUNT_CHOICES = [('bank','Bank'), ('credit','Credit')]
 
