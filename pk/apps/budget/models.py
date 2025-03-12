@@ -2,7 +2,7 @@
 from django.conf import settings
 from django.db import models, transaction
 from django_extensions.db.models import TimeStampedModel
-from pk import log
+from pk import log, utils
 
 ACCOUNT_CHOICES = [('bank','Bank'), ('credit','Credit')]
 
@@ -15,6 +15,7 @@ class Account(TimeStampedModel):
     payee = models.CharField(max_length=255, blank=True, default='')
     balance = models.DecimalField(max_digits=9, decimal_places=2, null=True, default=None)
     balancedt = models.DateTimeField(null=True, default=None)
+    import_rules = utils.JSON5Field(null=True, default=None)
 
     class Meta:
         unique_together = [['user', 'fid']]
