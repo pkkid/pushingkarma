@@ -85,6 +85,14 @@ def _threadwrap(jobs, results):
         pass
 
 
+def toback(obj, *keys):
+    """ Move keys to the back of dict. """
+    for key in keys:
+        value = obj.pop(key)
+        obj[key] = value
+    return obj
+
+
 def vue_devserver_running(request):
     """ Return url if it looks like the Vue devserver is running. """
     try:

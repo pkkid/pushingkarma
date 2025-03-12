@@ -1,13 +1,33 @@
 # encoding: utf-8
-from collections import OrderedDict
-from decimal import Decimal
+import logging
+from django_searchquery.search import Search
+from django.core.exceptions import NON_FIELD_ERRORS as DJANGO_NON_FIELD_ERRORS
+from django.core.exceptions import ValidationError as DjangoValidationError
+from django.db.models.query import QuerySet
 from django.urls import re_path
-from pk.utils.decorators import current_user_or_superuser_required
-from rest_framework import pagination, routers, serializers, viewsets
-from rest_framework.exceptions import NotAuthenticated, PermissionDenied
+from pk import utils
+from rest_framework import pagination, routers, serializers
+from rest_framework.exceptions import ValidationError as RestValidationError
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
-from pk import log
+from rest_framework.views import api_settings
+from rest_framework.views import exception_handler as rest_exception_handler
+log = logging.getLogger(__name__)
+
+REST_NON_FIELD_ERRORS = api_settings.NON_FIELD_ERRORS_KEY
+
+
+def api_exception_handler(exc, context):
+    """ Custom exception handler for Django Rest Framework.
+        https://djangotherightway.com/convert-django-validation-errors-to-drf-compatible-errors
+    """
+    if isinstance(exc, DjangoValidationError):
+        data = exc.message_dict
+        if DJANGO_NON_FIELD_ERRORS in data:
+            data[REST_NON_FIELD_ERRORS] = data[DJANGO_NON_FIELD_ERRORS]
+            del data[DJANGO_NON_FIELD_ERRORS]
+        exc = RestValidationError(detail=data)
+    return rest_exception_handler(exc, context)
 
 
 class CustomPageNumberPagination(pagination.PageNumberPagination):
@@ -59,83 +79,12 @@ class HybridRouter(routers.DefaultRouter):
                 response.data[view_url.name] = reverse(url_name, args=args,
                     kwargs=kwargs, request=request, format=kwargs.get('format', None))
                 if self.sort_urls is True:
-                    response.data = OrderedDict(sorted(response.data.items(), key=lambda x: x[0]))
+                    response.data = dict(sorted(response.data.items(), key=lambda x: x[0]))
             return response
         return view
 
 
-class ModelViewSetWithAnnotations(viewsets.ModelViewSet):
-    # Annotations to include
-    # Example: {'num_transactions': Count('transaction'), ...}
-    annotations_key = 'meta'
-    annotations = {}
-    
-    def append_metadata(self, response, queryset):
-        """ Append data to a DRF response. """
-        annotations = self.annotations()
-        if not annotations: return response
-        queryset = queryset.annotate(**annotations)
-        itemids = {x['id']:x for x in queryset.values()}
-        items = response.data['results'] if 'results' in response.data else [response.data]
-        for item in items:
-            itemdata = itemids[item['id']]
-            item[self.annotations_key] = {}
-            for key in annotations:
-                value = itemdata[key]
-                if isinstance(value, Decimal):
-                    value = round(value, 2)
-                item[self.annotations_key][key] = value
-        return response
-
-    def list(self, request, *args, **kwargs):
-        response = super(ModelViewSetWithAnnotations, self).list(request, *args, **kwargs)
-        return self.append_metadata(response, self.get_queryset())
-    
-    def create(self, request, *args, **kwargs):
-        response = super(ModelViewSetWithAnnotations, self).create(request, *args, **kwargs)
-        return self.append_metadata(response, self.get_queryset().filter(pk=response.data['id']))
-    
-    @current_user_or_superuser_required
-    def retrieve(self, request, *args, **kwargs):
-        response = super(ModelViewSetWithAnnotations, self).retrieve(request, *args, **kwargs)
-        return self.append_metadata(response, self.get_queryset().filter(pk=kwargs['pk']))
-    
-    @current_user_or_superuser_required
-    def update(self, request, *args, **kwargs):
-        response = super(ModelViewSetWithAnnotations, self).update(request, *args, **kwargs)
-        return self.append_metadata(response, self.get_queryset().filter(pk=kwargs['pk']))
-
-    @current_user_or_superuser_required
-    def partial_update(self, request, *args, **kwargs):
-        response = super(ModelViewSetWithAnnotations, self).partial_update(request, *args, **kwargs)
-        return self.append_metadata(response, self.get_queryset().filter(pk=kwargs['pk']))
-
-
-class ModelViewSetWithUserPermissions(viewsets.ModelViewSet):
-    """ This class assumes there is a `user` field on the model. """
-    
-    def create(self, request, *args, **kwargs):
-        if not request.user.is_authenticated:
-            raise PermissionDenied()
-        return super(ModelViewSetWithUserPermissions, self).create(request, *args, **kwargs)
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
-    
-    @current_user_or_superuser_required
-    def retrieve(self, request, *args, **kwargs):
-        return super(ModelViewSetWithUserPermissions, self).retrieve(request, *args, **kwargs)
-    
-    @current_user_or_superuser_required
-    def update(self, request, *args, **kwargs):
-        return super(ModelViewSetWithUserPermissions, self).update(request, *args, **kwargs)
-
-    @current_user_or_superuser_required
-    def partial_update(self, request, *args, **kwargs):
-        return super(ModelViewSetWithUserPermissions, self).partial_update(request, *args, **kwargs)
-
-
-def PartialFieldsSerializer(cls, fields=None, **kwargs):
+def PartialFieldsSerializer(cls, fields, *args, **kwargs):
     """ Serializer allows only showing some of the fields on a model. """
     _fields = fields or cls.Meta.fields
 
@@ -144,16 +93,78 @@ def PartialFieldsSerializer(cls, fields=None, **kwargs):
             model = cls.Meta.model
             fields = _fields
     
-    return _PartialFieldsSerializer(**kwargs)
+    return _PartialFieldsSerializer(*args, **kwargs)
 
 
-def custom_exception_handler(err, context):
-    """ Custom exception handler for Django Rest Framework.
-        https://www.django-rest-framework.org/api-guide/exceptions/
-    """
-    IGNORE_ERRORS = (NotAuthenticated,)
-    if isinstance(err, IGNORE_ERRORS):
-        log.warning(err)
-        return Response({'detail':str(err)})
-    log.exception(err)
-    return Response({'detail':str(err)})
+class ViewSetMixin():
+    """ Mixin provides useful utility functions to a viewset. """
+
+    def retrieve(self, request, *args, **kwargs):
+        """ Appends additional (more resource intensive) details to the result if requested. """
+        instance = self.get_object()
+        response = self.add_requested_details(instance, request)
+        self._reorder_keys(response.data)
+        return response
+
+    def add_requested_details(self, instance, request, data=None):
+        """ Convenience function to read the details GET argument and append
+            additional information to the response.
+        """
+        data = data or self.get_serializer(instance).data
+        details = filter(None, request.query_params.get('details', '').split(','))
+        for detail in details:
+            funcname = f'get_{detail}_details'
+            if func := getattr(self, funcname, None):
+                data[detail] = func(request, instance)
+                continue
+            log.warning(f"Details function not defined '{funcname}'")
+        return Response(data)
+    
+    def list_response(self, request, paginated=False, searchfields=None, queryset=None):
+        """ Search and list results with pagination and/or search. This is kind of
+            a kitchen sink response function, but it works well.
+        """
+        if queryset is None:
+            queryset = self.get_queryset()
+        # Run the queryset through django_searchquery.Search if searchfields specified.
+        # Reads the search GET parameter and filters the queryset accordingly.
+        if searchfields:
+            searchstr = request.GET.get('search')
+            search = Search(searchfields)
+            queryset = search.get_queryset(queryset, searchstr)
+        # Use the paginated serializer if requested.
+        # Otherwise all results returned by default.
+        context = {'request':request, 'view':'list'}
+        if paginated:
+            page = self.paginate_queryset(queryset)
+            serializer = self.serializer_class(page, fields=self.list_fields, context=context, many=True)
+            response = self.get_paginated_response(serializer.data)
+        else:
+            serializer = self.serializer_class(queryset, context=context, many=True)
+            data = {'count':len(serializer.data), 'results': serializer.data}
+            response = Response(data)
+        # Append additional search data to the response
+        # Search meta contains search fields and any errors
+        # Search.query is the raw SQL Query to fetch results
+        if searchfields:
+            response.data['search'] = search.meta
+            response.data['search']['query'] = utils.queryset_str(queryset)
+        # Check we want to append any metadata about the list results
+        if getattr(self, 'list_meta', None):
+            response.data['meta'] = self.list_meta(request, queryset)
+        # Reorder the keys and return
+        self._reorder_keys(response.data)
+        return response
+    
+    def _reorder_keys(self, data):
+        if 'previous' in data.keys():
+            utils.toback(data, 'previous')
+        if 'next' in data.keys():
+            utils.toback(data, 'next')
+        for key in list(data.keys()):
+            if isinstance(data[key], dict):
+                utils.toback(data, key)
+        for key in list(data.keys()):
+            if isinstance(data[key], (list, QuerySet)):
+                utils.toback(data, key)
+        return data
