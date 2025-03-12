@@ -8,6 +8,7 @@
       <div><router-link to='/notes'>Notes</router-link></div>
       <div v-if='user?.id'><router-link to='/budget'>Budget</router-link></div>
       <div v-if='user?.id'><a href='#' @click.prevent @click='showAccount=true'>{{user.name}}</a></div>
+      <div v-if='user?.id'><a :href='apiurl' target='_blank'>API</a></div>
     </div>
   </div>
 </template>
@@ -18,6 +19,7 @@
   import Account from '@/views/site/Account.vue'
 
   const {user} = inject('user')
+  const {apiurl} = inject('apiurl')
   const showAccount = ref(false)
 </script>
 
