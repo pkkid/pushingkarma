@@ -1,10 +1,10 @@
 <template>
   <div id='budget'>
     <LayoutSidePanel>
-      <!-- Side Panel -->
+      <!-- Side Panel (Navigation) -->
       <template #panel>
         <div class='menu' style='margin-top: 30px;'>
-          <div class='item'>
+          <div class='item' @click="view=''">
             <span class='icon'>account_balance</span>
             Transactions
           </div>
@@ -18,7 +18,7 @@
             <div class='balance'>$2</div>
             <div class='lastupdate'>Updated 3 days ago</div>
           </div>
-          <div class='item'>
+          <div class='item' @click="view='year'">
             <span class='icon'>checkbook</span>
             Year Overview
           </div>
@@ -32,29 +32,34 @@
             <div class='balance'>$2</div>
             <div class='lastupdate'>Average $124 / month</div>
           </div>
-          <div class='item'>
+          <div class='item' @click="view='settings'">
             <span class='icon'>settings</span>
-            Categories
+            Settings
           </div>
         </div>
       </template>
       <!-- Content -->
       <template #content>
-        <LayoutPaper width='1200'>
-          <template #content>
-            Hello Content!
-          </template>
-        </LayoutPaper>
+        <BudgetSettings v-if="view=='settings'" />
+        <BudgetYear v-if="view=='year'" />
+        <BudgetTransactions v-else />
       </template>
     </LayoutSidePanel>
   </div>
 </template>
 
 <script setup>
-  import {inject, onBeforeMount} from 'vue'
+  import {inject, onBeforeMount, ref} from 'vue'
   import {utils} from '@/utils'
-  import LayoutPaper from '@/components/LayoutPaper.vue'
+  import {useUrlParams} from '@/composables/useUrlParams.js'
   import LayoutSidePanel from '@/components/LayoutSidePanel.vue'
+  import BudgetTransactions from '@/views/budget/BudgetTransactions.vue'
+  import BudgetYear from '@/views/budget/BudgetYear.vue'
+  import BudgetSettings from '@/views/budget/BudgetSettings.vue'
+
+  const {view} = useUrlParams({
+    view: {type:String},
+  })
 
   onBeforeMount(function() { utils.setNavPosition('top') })
 </script>
