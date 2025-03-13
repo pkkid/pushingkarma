@@ -23,8 +23,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Ticker',
             fields=[
-                ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('ticker', models.CharField(max_length=5, unique=True)),
+                ('ticker', models.CharField(max_length=5, primary_key=True)),
                 ('tags', models.CharField(blank=True, max_length=255)),
                 ('info', pk.utils.djutils.JSON5Field(null=True)),
             ],
@@ -35,12 +34,12 @@ class Migration(migrations.Migration):
             name='TickerHistory',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('ticker', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='stocks.ticker')),
                 ('date', models.DateField()),
                 ('close', models.DecimalField(decimal_places=2, max_digits=9)),
                 ('high', models.DecimalField(decimal_places=2, max_digits=9, null=True)),
                 ('low', models.DecimalField(decimal_places=2, max_digits=9, null=True)),
                 ('volume', models.IntegerField(null=True)),
-                ('ticker', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='stocks.ticker')),
             ],
         ),
         migrations.RunPython(copy_tickers),

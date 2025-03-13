@@ -1,28 +1,30 @@
-# pip requirements file
-# pip install -r requirements.pip
 ipython
 json5
 pytz
-flickrapi==2.4.0
-daphne==2.4.1
+requests
+timelib
+tzdata
 django==5.0.4
-django-cache-memoize==0.2.0
 django-cors-headers==4.3.1
 django-extensions==3.2.3
 django-redis-cache==3.0.1
 django-redis-sessions==0.6.2
 djangorestframework==3.15.1
-gevent==24.2.1
-google-api-python-client==1.7.11
-oauth2client==4.1.3
 ofxparse==0.21
-praw==6.5.1
-python-dateutil==2.8.1
-redis==3.4.1
+pandas==2.2.3
+python-dateutil==2.9.0.post0
+redis==5.2.1
 regex==2024.7.24
-requests==2.32.3
-timelib==0.3.0
-webdavclient3==3.14.4
+requests-ratelimiter==0.7.0
+yfinance==0.2.54
 django_searchquery @ git+https://github.com/pkkid/django-searchquery.git
 
 # ansible==2.10.7
+# daphne==2.4.1
+# django-cache-memoize==0.2.0
+# flickrapi==2.4.0
+# gevent==24.2.1
+# google-api-python-client==1.7.11
+# oauth2client==4.1.3
+# praw==6.5.1
+# webdavclient3==3.14.4
