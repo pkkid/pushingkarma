@@ -1,96 +1,44 @@
 # encoding: utf-8
-import csv as pycsv
 from datetime import datetime, timedelta
-from django.http import HttpResponse, HttpResponseBadRequest
-from pk.utils.apiutils import DynamicFieldsSerializer
-from rest_framework import viewsets
-from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
-from rest_framework.reverse import reverse
-from .models import PROVIDER, Stock
+from django_searchquery import searchfields as sf
+from pk import utils
+from rest_framework import serializers, viewsets
+from rest_framework.permissions import IsAuthenticated
+from .models import Ticker
 
+TICKERSEARCHFIELDS = [
+    sf.StrField('ticker', 'ticker', desc='Ticker symbol', generic=True),
+    sf.StrField('tags', 'tags', desc='User tags', generic=True),
+]
+    
 
-class StockSerializer(DynamicFieldsSerializer):
+class TickerSerializer(utils.DynamicFieldsSerializer):
+    history = serializers.SerializerMethodField()
+
     class Meta:
-        model = Stock
-        fields = ('id','url','ticker','description','close',
-            'mindate','maxdate','modified','tags','history')
+        model = Ticker
+        fields = ('ticker', 'tags', 'info', 'history')
+    
+    def get_history(self, obj):
+        """ Limit whats returned when listing testgroup. """
+        mindate = datetime.now() - timedelta(days=366)
+        history = obj.history.filter(date__gte=mindate).values('date', 'close').order_by('-date')
+        history = {h['date'].strftime('%Y-%m-%d'): h['close'] for h in history}
+        return history
 
 
-class StocksViewSet(viewsets.ModelViewSet):
-    queryset = Stock.objects.order_by('ticker')
-    serializer_class = StockSerializer
-    list_fields = ['id','url','ticker','description',
-        'close','mindate','maxdate','tags']
+class TickerViewSet(utils.ViewSetMixin, viewsets.ModelViewSet):
+    serializer_class = TickerSerializer
+    queryset = Ticker.objects.order_by('ticker')
+    permission_classes = [IsAuthenticated]
+    list_fields = TickerSerializer.Meta.fields
 
     def list(self, request, *args, **kwargs):
-        queryset, _ = _get_stocks(request)
-        queryset = queryset or Stock.objects.order_by('ticker')
-        serializer = StockSerializer(queryset, context={'request':request},
-            many=True, fields=self.list_fields)
-        return Response({'data':serializer.data})
-
-
-@api_view(['get'])
-def stocks(request):
-    root = reverse('api-root', request=request)
-    return Response({
-        'stocks/csv': f'{root}stocks/csv',
-        'stocks/list': f'{root}stocks/list',
-    })
-
-
-@api_view(['get'])
-@permission_classes([AllowAny])
-def csv(request, *args, **kwargs):
-    # Get the list of stocks to return
-    stocks, title = _get_stocks(request)
-    stocks = [s for s in stocks if s.data != '{}']
-    if not stocks:
-        return HttpResponseBadRequest(content='No tickers specified')
-    # Find the min date to to return
-    years = request.GET.get('years', 3)
-    yearsago = (datetime.now() - timedelta(days=366*years)).strftime('%Y-%m-%d')
-    oldest = sorted(stocks, key=lambda x:x.mindate)[0]
-    # Build the csv response
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="stocks.csv"'
-    writer = pycsv.writer(response)
-    writer.writerow([title] + [s.ticker.replace('.','') for s in stocks])
-    writer.writerow([''] + [s.description for s in stocks])
-    for datestr in oldest.history.keys():
-        writer.writerow([datestr] + [_get_value(datestr, s) for s in stocks])
-        if datestr < yearsago:
-            break
-    return response
-
-
-def _get_stocks(request):
-    stocks, title = None, None
-    if 'ticker' in request.GET:
-        tickers = [request.GET.get('ticker','')]
-        stocks = Stock.objects.filter(ticker__in=tickers).order_by('ticker')
-        title = ', '.join(tickers)
-    elif 'tickers' in request.GET:
-        tickers = request.GET.get('tickers','').split(',')
-        stocks = Stock.objects.filter(ticker__in=tickers).order_by('ticker')
-        title = ', '.join(tickers)
-    elif 'tag' in request.GET:
-        tag = request.GET.get('tag','').lower()
-        stocks = Stock.objects.filter(tags__icontains=tag).order_by('ticker')
-        title = tag
-    return stocks, title
-
-
-def _get_value(datestr, stock):
-    """ Stock data can be messy.
-        If a value is missing, grab the previous value.
-    """
-    key = PROVIDER.get('adjclosekey')
-    value = stock.history.get(datestr,{}).get(key, '')
-    if not value:
-        keys = sorted([key for key in stock.keys if key < datestr], reverse=True)
-        prev = stock.history[keys[0]].get(key) if len(keys) >= 1 else None
-        return prev
-    return value
+        return self.list_response(request, paginated=True, searchfields=TICKERSEARCHFIELDS)
+    
+    def get_history_details(self, obj):
+        """ Returns the number of linked bugs. """
+        mindate = datetime.now() - timedelta(days=366)
+        history = obj.history.filter(date__gte=mindate).values('date', 'close').order_by('date')
+        history = {h['date'].strftime('%Y-%m-%d'): h['close'] for h in history}
+        return history

@@ -16,7 +16,7 @@ class Ticker(models.Model):
 
 
 class TickerHistory(models.Model):
-    ticker = models.ForeignKey(Ticker, on_delete=models.CASCADE)
+    ticker = models.ForeignKey(Ticker, related_name='history', on_delete=models.CASCADE)
     date = models.DateField()
     close = models.DecimalField(max_digits=9, decimal_places=2)
     high = models.DecimalField(max_digits=9, decimal_places=2, null=True)
@@ -30,5 +30,5 @@ class TickerHistory(models.Model):
 @receiver(models.signals.post_save, sender=Ticker)
 def post_save(sender, instance, created, *args, **kwargs):
     if created:
-        log.info(f'Calling Django command: updatestocks --ticker={instance.ticker}')
-        call_command('update_stocks', ticker=instance.ticker)
+        log.info(f'Calling Django command: update_stocks --symbols={instance.ticker} --period=1y')
+        call_command('update_stocks', symbols=instance.ticker, period='1y')

@@ -6,6 +6,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from pk.apps.main import apiviews as main_apiviews
 from pk.apps.obsidian import apiviews as obsidian_apiviews
 from pk.apps.budget import api as budget_api
+from pk.apps.stocks import api as stocks_api
 from pk.utils.apiutils import HybridRouter
 from pk import utils
 
@@ -14,6 +15,7 @@ api = HybridRouter(sort_urls=True, trailing_slash=False)
 api.register('budget/accounts', budget_api.AccountsViewSet)
 api.register('budget/categories', budget_api.CategoriesViewSet)
 api.register('budget/transactions', budget_api.TransactionsViewSet)
+api.register('stocks/tickers', stocks_api.TickerViewSet)
 api.add_url('^main/gentoken$', main_apiviews.generate_token, name='main/gentoken')
 api.add_url('^main/globalvars', main_apiviews.globalvars, name='main/globalvars')
 api.add_url('^main/login$', main_apiviews.login, name='main/login')
