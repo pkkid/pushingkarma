@@ -1,6 +1,6 @@
 <template>
   <div id='stocks'>
-    <LayoutPaper id='budgetsettings' width='1200px'>
+    <LayoutPaper id='budgetsettings' width='1000px'>
       <template #content>
         <h1>Stocks</h1>
       </template>
