@@ -26,6 +26,7 @@ class Command(BaseCommand):
     
     def _download(self, symbols):
         """ Download values from yfinance. """
+        # Rate limit this because yfiniance will go as fast as it can
         log.info(f'Downloading {len(symbols)} tickers from yfinance.')
         session = CachedLimiterSession(
             limiter=Limiter(RequestRate(limit=self.opts['limit'], interval=1)),  # 2/sec
