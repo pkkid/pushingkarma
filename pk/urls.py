@@ -1,6 +1,6 @@
 # encoding: utf-8
 from django.shortcuts import redirect
-from django.urls import include, re_path
+from django.urls import include, path, re_path
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.views.decorators.csrf import ensure_csrf_cookie
 from pk.apps.main import apiviews as main_apiviews
@@ -36,5 +36,6 @@ def index(request, tmpl='index.html'):
 
 urlpatterns = [
     re_path(r'^api/', include(api.urls), name='api'),
+    path("__debug__/", include("debug_toolbar.urls")),
     re_path(r'', index, name='index'),
 ]
