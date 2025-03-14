@@ -25,8 +25,11 @@ export const Main = {
   login(data, signal) { return axios.post(`/main/login`, data, {signal}) },
   logout(signal) { return axios.post(`/main/logout`, null, {signal}) },
 }
-
 export const Obsidian = {
   getNote(params, signal) { return axios.get(`/obsidian/note`, {params, signal}) },
   search(params, signal) { return axios.get(`/obsidian/search`, {params, signal}) },
+}
+export const Stocks = {
+  getTickers(params, signal) { return axios.get(`/stocks/tickers`, {params, signal}) },
+  projectionTrends(params, signal) { return axios.get(`/stocks/projection_trends`, {params, signal}) },
 }

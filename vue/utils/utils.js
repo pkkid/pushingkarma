@@ -81,6 +81,43 @@ export function pop(obj, key) {
   return null
 }
 
+// Round
+// Round the number to the specified decimal places
+export function round(value, decimals) {
+  return Number(Math.round(value + 'e' + decimals) + 'e-' + decimals)
+}
+
+// Recursive Get
+// Recursilvely get a value from a nested collection of objects.
+export function rget(obj, property, delim) {
+  delim = delim === undefined ? '.' : delim
+  var parts = property.split(delim)
+  var key = parts.shift()
+  if ((obj[key] !== undefined) && (obj[key] !== null)) {
+    if (parts.length >= 1)
+      return rget(obj[key], parts.join(delim), delim)
+    return obj[key]
+  }
+  return undefined
+}
+
+// Recursive Set
+// Recursilvely set a value from a delimited string
+export function rset(object, property, value) {
+  var parts = property.split('.')
+  var current = parts.shift()
+  var pointer = object
+  while (parts.length > 0) {
+    if (pointer[current] === undefined) {
+      pointer[current] = {}
+    }
+    pointer = pointer[current]
+    current = parts.shift()
+  }
+  pointer[current] = value
+  return object
+}
+
 // Set Nav Position
 // set the main site nav position to top or left.
 export function setNavPosition(pos) {
