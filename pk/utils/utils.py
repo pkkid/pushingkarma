@@ -32,6 +32,12 @@ def move_to_end(odict, *keys):
     return odict
 
 
+def percent(numerator, demoniator, precision=2):
+    if not demoniator:
+        return 0
+    return round(numerator / demoniator * 100, precision) if demoniator else 0
+
+
 def response(request, template, data):
     if 'json' in request.GET:
         return response_json(data)

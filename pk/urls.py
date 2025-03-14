@@ -6,7 +6,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from pk.apps.main import apiviews as main_apiviews
 from pk.apps.obsidian import apiviews as obsidian_apiviews
 from pk.apps.budget import api as budget_api
-from pk.apps.stocks import api as stocks_api
+from pk.apps.stocks import api as stocks_api, apiviews as stocks_apiviews
 from pk.utils.apiutils import HybridRouter
 from pk import utils
 
@@ -23,6 +23,7 @@ api.add_url('^main/logout$', main_apiviews.logout, name='main/logout')
 api.add_url('^main/user$', main_apiviews.user, name='main/user')
 api.add_url('^obsidian/note$', obsidian_apiviews.note, name='obsidian/note')
 api.add_url('^obsidian/search$', obsidian_apiviews.search, name='obsidian/search')
+api.add_url('^stocks/projection_trends$', stocks_apiviews.projection_trends, name='stocks/projection_trends')
 
 
 @xframe_options_exempt

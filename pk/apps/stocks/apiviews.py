@@ -1,0 +1,51 @@
+# encoding: utf-8
+from datetime import date, timedelta
+from django_searchquery.search import Search
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from pk import utils
+from .models import Ticker
+from . import api, utils as sutils
+
+
+@api_view(['get'])
+@permission_classes([IsAuthenticated])
+def projection_trends(request):
+    """ Return datasets to render a Projection Trends chart.
+        periods: Week periods to include in the chart (ie: 12w,10w,8w,6w,4w,2w)
+        maxresults: Maximum number of results to return (default: 10).
+        search: Filter tickers by search string.
+
+    """
+    periods = request.query_params.get('periods', '12w,10w,8w,6w,4w,2w').split(',')
+    maxresults = int(request.query_params.get('maxresults', 10))
+    searchstr = request.GET.get('search', '')
+    tickers = Search(api.TICKERSEARCHFIELDS).get_queryset(Ticker.objects, searchstr)
+    tickers = tickers.prefetch_related('history')
+    maxdate = date.today()
+    mindate = maxdate - timedelta(weeks=int(periods[0].rstrip('w')))
+    datasets = {}
+    # Pass 1: Calculate the percent change for each ticker
+    for ticker in tickers:
+        pctchange = []
+        history = sutils.history_dict(ticker.history.filter(date__gte=mindate))
+        maxdate_close = sutils.value_for_date(history, maxdate, ticker.ticker)
+        for period in periods:
+            pdate = maxdate - timedelta(weeks=int(period.rstrip('w')))
+            pdate_close = sutils.value_for_date(history, pdate, ticker.ticker)
+            pdate_pctchange = utils.percent(maxdate_close, pdate_close)
+            pctchange.append(pdate_pctchange)
+        datasets[ticker.ticker] = {}
+        datasets[ticker.ticker]['label'] = ticker.ticker
+        datasets[ticker.ticker]['pctchange'] = pctchange
+        datasets[ticker.ticker]['rank'] = []
+    # Limit datasets to maxresults
+    datasets = sorted(datasets.values(), key=lambda x: x['pctchange'][-1], reverse=True)[:maxresults]
+    # Pass 2: For each period, rank the tickers by the percent change
+    for i, period in enumerate(periods):
+        tickers = sorted(datasets, key=lambda x: x['pctchange'][i], reverse=True)
+        for rank, ticker in enumerate(tickers):
+            ticker_rank = rank + 1
+            ticker['rank'].append(ticker_rank)
+    return Response({'labels':periods, 'datasets':datasets})

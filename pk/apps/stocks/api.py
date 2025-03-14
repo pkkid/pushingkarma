@@ -2,7 +2,7 @@
 from datetime import datetime, timedelta
 from django_searchquery import searchfields as sf
 from pk import utils
-from rest_framework import serializers, viewsets
+from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from .models import Ticker
 
@@ -13,18 +13,9 @@ TICKERSEARCHFIELDS = [
     
 
 class TickerSerializer(utils.DynamicFieldsSerializer):
-    history = serializers.SerializerMethodField()
-
     class Meta:
         model = Ticker
         fields = ('ticker', 'tags', 'info', 'history')
-    
-    def get_history(self, obj):
-        """ Limit whats returned when listing testgroup. """
-        mindate = datetime.now() - timedelta(days=366)
-        history = obj.history.filter(date__gte=mindate).values('date', 'close').order_by('-date')
-        history = {h['date'].strftime('%Y-%m-%d'): h['close'] for h in history}
-        return history
 
 
 class TickerViewSet(utils.ViewSetMixin, viewsets.ModelViewSet):
