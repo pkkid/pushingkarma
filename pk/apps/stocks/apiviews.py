@@ -1,5 +1,5 @@
 # encoding: utf-8
-from datetime import date, timedelta
+from datetime import timedelta
 from django_searchquery.search import Search
 from django.db.models import Max
 from rest_framework.decorators import api_view, permission_classes
@@ -21,15 +21,15 @@ def projection_trends(request):
     periods = request.query_params.get('periods', '12w,10w,8w,6w,4w,2w').split(',')
     maxresults = int(request.query_params.get('maxresults', 10))
     searchstr = request.GET.get('search', '')
-    tickers = Search(api.TICKERSEARCHFIELDS).get_queryset(Ticker.objects, searchstr)
-    tickers = tickers.prefetch_related('history')
+    tickers = Search(api.TICKERSEARCHFIELDS).get_queryset(Ticker.objects.all(), searchstr)
     maxdate = TickerHistory.objects.filter(ticker__in=tickers).aggregate(Max('date'))['date__max']
     mindate = maxdate - timedelta(weeks=int(periods[0].rstrip('w')))
-    datasets = {}
+    histories = sutils.histories_dict(tickers, mindate)
     # Pass 1: Calculate the percent change for each ticker
+    datasets = {}
     for ticker in tickers:
         change = []
-        history = sutils.history_dict(ticker.history.filter(date__gte=mindate))
+        history = histories[ticker.ticker]
         maxdate_close = sutils.value_for_date(history, maxdate, ticker.ticker)
         for period in periods:
             pdate = maxdate - timedelta(weeks=int(period.rstrip('w')))
