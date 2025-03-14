@@ -4,7 +4,7 @@ from django_searchquery import searchfields as sf
 from pk import utils
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
-from .models import Ticker
+from .models import Ticker, TickerHistory
 
 TICKERSEARCHFIELDS = [
     sf.StrField('ticker', 'ticker', desc='Ticker symbol', generic=True),
@@ -15,7 +15,7 @@ TICKERSEARCHFIELDS = [
 class TickerSerializer(utils.DynamicFieldsSerializer):
     class Meta:
         model = Ticker
-        fields = ('ticker', 'tags', 'info', 'history')
+        fields = ('ticker', 'tags', 'info')
 
 
 class TickerViewSet(utils.ViewSetMixin, viewsets.ModelViewSet):
@@ -33,3 +33,9 @@ class TickerViewSet(utils.ViewSetMixin, viewsets.ModelViewSet):
         history = obj.history.filter(date__gte=mindate).values('date', 'close').order_by('date')
         history = {h['date'].strftime('%Y-%m-%d'): h['close'] for h in history}
         return history
+
+
+class TickerHistorySerializer(utils.DynamicFieldsSerializer):
+    class Meta:
+        model = TickerHistory
+        fields = ('ticker', 'date', 'close', 'high', 'low', 'volume')

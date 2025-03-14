@@ -1,6 +1,6 @@
 # encoding: utf-8
-import logging, sqlparse
-import regex as re
+import logging, re, sqlparse
+# import regex as re
 from django.core.exceptions import EmptyResultSet
 from django.db import connection
 log = logging.getLogger(__name__)
