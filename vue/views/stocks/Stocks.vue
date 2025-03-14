@@ -49,7 +49,7 @@
       & > div {
         background-color: #00000008;
         border-radius: 6px;
-        padding: 10px;
+        padding: 15px 10px 10px 10px;
       }
     }
   }

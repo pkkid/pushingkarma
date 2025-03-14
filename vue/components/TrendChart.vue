@@ -73,7 +73,6 @@
     utils.rset(opts, 'plugins.title.display', true)
     utils.rset(opts, 'plugins.title.font.family', 'Merriweather')
     utils.rset(opts, 'plugins.title.font.size', '16px')
-    utils.rset(opts, 'plugins.title.padding.bottom', 10)
     utils.rset(opts, 'plugins.title.text', props.title)
     // Legend
     utils.rset(opts, 'plugins.legend.align', 'end')
@@ -81,11 +80,18 @@
     utils.rset(opts, 'plugins.legend.display', true)
     utils.rset(opts, 'plugins.legend.labels.boxHeight', 5)
     utils.rset(opts, 'plugins.legend.labels.boxWidth', 5)
-    utils.rset(opts, 'plugins.legend.labels.padding', 4.7)
     utils.rset(opts, 'plugins.legend.position', 'right')
     utils.rset(opts, 'plugins.legend.title.display', true)
     utils.rset(opts, 'plugins.legend.title.padding', 5)
     utils.rset(opts, 'plugins.legend.title.text', '')
+    // Line up the Legend
+    // In order to make the legend items line up correctly with the chart, there
+    // are three options that need to be set in coordination with eachother.
+    // 1. title.padding is set to lign up the top legend item with the top chart.
+    // 2. labels.padding is set to line each other legend item with their plots.
+    // 3. Stocks.vue Chart Height (in css) controls the global chart height.
+    utils.rset(opts, 'plugins.title.padding.bottom', 10)
+    utils.rset(opts, 'plugins.legend.labels.padding', 4.2)
     // Tooltips
     utils.rset(opts, 'plugins.tooltip.backgroundColor', '#282828')
     utils.rset(opts, 'plugins.tooltip.bodyColor', '#fbf1c7')
