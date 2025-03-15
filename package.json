@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
+    "@highlightjs/vue-plugin": "^2.1.0",
     "@vueuse/core": "^12.5.0",
     "axios": "^1.6.7",
     "highlight.js": "^11.11.1",

@@ -149,6 +149,61 @@ export function sort(value) {
   }
 }
 
+// Stringify
+// A better pretty printer for JSON string.
+// Options: {indent:2, maxLength:80}
+// https://github.com/lydell/json-stringify-pretty-compact
+export function stringify(passedObj, options={}) {
+  const stringOrChar = /("(?:[^\\"]|\\.)*")|[:,]/g
+  const indent = JSON.stringify([1], undefined,
+    options.indent === undefined ? 2 : options.indent
+  ).slice(2, -3)
+  const maxLength = indent === ""
+    ? Infinity : options.maxLength === undefined
+    ? 80 : options.maxLength
+  let {replacer} = options
+  return (function _stringify(obj, currentIndent, reserved) {
+    if (obj && typeof obj.toJSON === "function") { obj = obj.toJSON() }
+    const string = JSON.stringify(obj, replacer)
+    if (string === undefined) { return string }
+    const length = maxLength - currentIndent.length - reserved
+    if (string.length <= length) {
+      const prettified = string.replace(stringOrChar, (match, stringLiteral) => {
+        return stringLiteral || `${match} ` })
+      if (prettified.length <= length) { return prettified }
+    }
+    if (replacer != null) {obj = JSON.parse(string); replacer = undefined }
+    if (typeof obj === "object" && obj !== null) {
+      const nextIndent = currentIndent + indent
+      const items = []
+      let start, end
+      if (Array.isArray(obj)) {
+        start="[", end="]"
+        const {length} = obj
+        for (let index=0; index < length; index++) {
+          items.push(_stringify(obj[index], nextIndent,
+            index === length - 1 ? 0 : 1) || "null")
+        }
+      } else {
+        start="{", end="}"
+        const keys = Object.keys(obj)
+        const {length} = keys
+        for (let index=0; index < length; index++) {
+          const key = keys[index]
+          const keyPart = `${JSON.stringify(key)}: `
+          const value = _stringify(obj[key], nextIndent,
+            keyPart.length + (index === length - 1 ? 0 : 1))
+          if (value !== undefined) { items.push(keyPart + value) }
+        }
+      }
+      if (items.length > 0) {
+        return [start, indent + items.join(`,\n${nextIndent}`), end].join(`\n${currentIndent}`)
+      }
+    }
+    return string
+  })(passedObj, "", 0)
+}
+
 // Time Ago
 // Convert seconds or milliseconds to a human readable time ago string.
 // https://day.js.org/docs/en/plugin/relative-time

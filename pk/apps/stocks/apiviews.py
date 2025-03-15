@@ -9,14 +9,13 @@ from pk import utils
 from .models import Ticker, TickerHistory
 from . import api, utils as sutils
 
-
 @api_view(['get'])
 @permission_classes([IsAuthenticated])
 def projection_trends(request):
     """ Return datasets to render a Projection Trends chart.
-        periods: Week periods to include in the chart (ie: 12w,10w,8w,6w,4w,2w)
-        maxresults: Maximum number of results to return (default: 10).
-        search: Filter tickers by search string.
+        • periods: Week periods to include in the chart (ie: 12w,10w,8w,6w,4w,2w)
+        • maxresults: Maximum number of results to return (default: 10).
+        • search: Filter tickers by search string.
     """
     periods = request.query_params.get('periods', '12w,10w,8w,6w,4w,2w').split(',')
     maxresults = int(request.query_params.get('maxresults', 10))

@@ -9,8 +9,7 @@
       <div class='budget' v-if='user?.id'><router-link to='/budget'>Budget</router-link></div>
       <div class='stocks' v-if='user?.id'><router-link to='/stocks'>Stocks</router-link></div>
       <div class='account' v-if='user?.id'><a href='#' @click.prevent @click='showAccount=true'>{{user.name}}</a></div>
-      <div class='api' v-if='user?.id'><a :href='apiurl' target='_blank'>API</a></div>
-      <div class='apidoc' v-if='user?.id'><router-link to='/apidoc'>API2</router-link></div>
+      <div class='apidoc' v-if='user?.id'><router-link to='/apidoc'>API</router-link></div>
     </div>
   </div>
 </template>

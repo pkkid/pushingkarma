@@ -51,6 +51,11 @@ def response_json(data, status=200):
     return HttpResponse(data, content_type='application/json', status=status)
 
 
+def rgb(text, color='#aaa'):
+    r,g,b = tuple(int(x * 2, 16) for x in color.lstrip('#'))
+    return f'\033[38;2;{r};{g};{b}m{text}\033[00m'
+
+
 def rget(obj, attrstr, default=None, delim='.'):
     try:
         parts = attrstr.split(delim, 1)

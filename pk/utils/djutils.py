@@ -1,8 +1,7 @@
 # encoding: utf-8
-import logging, re
-import json5 as json
-from django.db import models
-from django.core.exceptions import ValidationError
+import logging, re, time
+from django.db import connection
+from pk import utils
 
 
 class ColoredFormatter(logging.Formatter):
@@ -19,17 +18,43 @@ class ColoredFormatter(logging.Formatter):
         self._formatters = {}
         substr = re.findall(self.RELVL, fmt)[0]
         for lvl, color in self.COLORS.items():
-            newfmt = fmt.replace(substr, self.rgb(substr, color))
+            newfmt = fmt.replace(substr, utils.rgb(substr, color))
             self._formatters[lvl] = logging.Formatter(newfmt)
 
     def format(self, record):
         formatter = self._formatters.get(record.levelno, super())
         return formatter.format(record)
-
-    def rgb(self, text, color='#aaa'):
-        r,g,b = tuple(int(x * 2, 16) for x in color.lstrip('#'))
-        return f'\033[38;2;{r};{g};{b}m{text}\033[00m'
     
+
+def print_queries(filter=None):
+    """ Print all queries executed in this funnction. """
+    def wrapper1(func):
+        def wrapper2(*args, **kwargs):
+            sqltime, longest, numshown = 0.0, 0.0, 0
+            initqueries = len(connection.queries)
+            starttime = time.time()
+            result = func(*args, **kwargs)
+            for query in connection.queries[initqueries:]:
+                sqltime += float(query['time'].strip('[]s'))
+                longest = max(longest, float(query['time'].strip('[]s')))
+                if not filter or filter in query['sql']:
+                    numshown += 1
+                    querystr = utils.rgb('\n[%ss] ' % query['time'], '#d93')
+                    querystr += utils.rgb(query['sql'], '#488')
+                    print(querystr)
+            numqueries = len(connection.queries) - initqueries
+            numhidden = numqueries - numshown
+            runtime = round(time.time() - starttime, 3)
+            proctime = round(runtime - sqltime, 3)
+            print(utils.rgb("------", '#488'))
+            print(utils.rgb('Total Time:  %ss' % runtime, '#d93'))
+            print(utils.rgb('Proc Time:   %ss' % proctime, '#d93'))
+            print(utils.rgb('Query Time:  %ss (longest: %ss)' % (sqltime, longest), '#d93'))
+            print(utils.rgb('Num Queries: %s (%s hidden)\n' % (numqueries, numhidden), '#d93'))
+            return result
+        return wrapper2
+    return wrapper1
+
 
 def update_logging_filepath(filepath, handler_name='default'):
     """ Update logging filehandler to the specified filepath. """

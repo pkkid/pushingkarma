@@ -284,7 +284,7 @@ article {
     background-color: var(--lightbg-bg3);
     border-radius: 3px;
     box-shadow: inset 0 1px 2px #0002;
-    font-family: 'Roboto Mono', monospace;
+    font-family: var(--fontfamily-code);
     font-size: 0.8em;
     font-weight: 400;
     margin: 0px 1px;
@@ -301,7 +301,7 @@ article pre {
   border: 1px solid #0002;
   box-shadow: inset -30px 30px 200px #665c5422;
   color:  var(---lightbg-fg1);
-  font-family: 'Roboto Mono', monospace;
+  font-family: var(--fontfamily-code);
   line-height: 1.3;
   overflow-x: auto; 
   padding: 8px 15px;
@@ -312,6 +312,7 @@ article pre {
     background-color: transparent;
     box-shadow: none;
     padding: 0px;
+    line-height: 1.3;
 
     .hljs-comment { color:#7e6449; }
     .hljs-tag { color: var(--lightbg-fg3); }
