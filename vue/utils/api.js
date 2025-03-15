@@ -18,18 +18,33 @@ export function cancel(controller) {
   return new AbortController()
 }
 
+// Get (wrapper)
+// Wrapping the axios.get method to save the latest GET request URL. This
+// allows the API button in the navigation to show the latest request.
+export var lastApiGet = null
+async function get(url, config) {
+  var params = config.params || {}
+  params = Object.keys(params).map(function(key) { 
+    return `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`
+  }).join('&')
+  lastApiGet = params ? `${url}?${params}` : url
+  return axios.get(url, config)
+}
+
+// Api Endpoints
+// Endpoints defined in the Django application
 export const Main = {
   generateToken(signal) { return axios.post(`/main/generate_token`, null, {signal}) },
-  getCurrentUser(signal) { return axios.get(`/main/user`, {signal}) },
-  getGlobalVars(signal) { return axios.get(`/main/global_vars`, {signal}) },
+  getCurrentUser(signal) { return get(`/main/user`, {signal}) },
+  getGlobalVars(signal) { return get(`/main/global_vars`, {signal}) },
   login(data, signal) { return axios.post(`/main/login`, data, {signal}) },
   logout(signal) { return axios.post(`/main/logout`, null, {signal}) },
 }
 export const Obsidian = {
-  getNote(params, signal) { return axios.get(`/obsidian/note`, {params, signal}) },
-  search(params, signal) { return axios.get(`/obsidian/search`, {params, signal}) },
+  getNote(params, signal) { return get(`/obsidian/note`, {params, signal}) },
+  search(params, signal) { return get(`/obsidian/search`, {params, signal}) },
 }
 export const Stocks = {
-  getTickers(params, signal) { return axios.get(`/stocks/tickers`, {params, signal}) },
-  projectionTrends(params, signal) { return axios.get(`/stocks/projection_trends`, {params, signal}) },
+  getTickers(params, signal) { return get(`/stocks/tickers`, {params, signal}) },
+  projectionTrends(params, signal) { return get(`/stocks/projection_trends`, {params, signal}) },
 }
