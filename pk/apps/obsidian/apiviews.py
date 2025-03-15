@@ -13,12 +13,13 @@ log = logging.getLogger(__name__)
 @permission_classes([AllowAny])
 def note(request, *args, **kwargs):
     """ Return the content of an obsidian note.
-        • group: Name of Obsidian group in settings.py (required)
         • path: Path of note in the group vault (required)
+        • group: Name of Obsidian group in settings.py (required)
     """
     try:
-        path = request.query_params['path']
-        groupname = request.query_params['group']
+        path = request.query_params.get('path')
+        groupname = request.query_params.get('group')
+        if not path: path, groupname = _getFirstNote(request)
         group = settings.OBSIDIAN_NOTES[groupname]
         public = group.get('public', False)
         if public or request.user.is_authenticated:
@@ -35,7 +36,13 @@ def note(request, *args, **kwargs):
             })
     except Exception as err:
         log.exception(err)
-    return Response({'error': 'Unknown note path.'}, status=404)
+    return Response({'error': 'Unknown note path or group.'}, status=404)
+
+
+def _getFirstNote(request):
+    """ Return the first note from an empty search. """
+    note = search(request._request).data['results'][0]
+    return note['path'], note['group']
 
 
 @api_view(['get'])
