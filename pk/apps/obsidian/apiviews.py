@@ -13,8 +13,8 @@ log = logging.getLogger(__name__)
 @permission_classes([AllowAny])
 def note(request, *args, **kwargs):
     """ Return the content of an obsidian note.
-        * group: Name of Obsidian in settings.py (required)
-        * path: Path of note in the group vault (required)
+        • group: Name of Obsidian group in settings.py (required)
+        • path: Path of note in the group vault (required)
     """
     try:
         path = request.query_params['path']
@@ -45,7 +45,7 @@ def search(request, *args, **kwargs):
     """ Search obsidian notes. This will open every note and count the number
         of times the search query word appears in the title and content. The results
         are sorted by count and mtime, and returned as a list of dictionaries.
-        * query: search query string
+        • search: search query string
     """
     try:
         results = {}

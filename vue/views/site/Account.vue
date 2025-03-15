@@ -76,7 +76,7 @@
   // Create a new API token for the current user
   const genToken = async function(event) {
     utils.animate(event.target, 'rotate-bounce', 500)
-    var {data} = await api.Main.genToken()
+    var {data} = await api.Main.generateToken()
     setUser(data)
   }
 

@@ -22,19 +22,16 @@
           <!-- Note Content-->
           <template #content v-if='options && response'>
             <h1>{{viewName}}</h1>
-            <div class='description' v-html='options.data.description.replace(/\n/g, "<br/>")'></div>
+            <div class='description' v-html='options.data?.description?.replace(/\n/g, "<br/>")'></div>
             <div class='headers'>
               <div class='inputwrap'>
                 <span class='label'>GET</span>
                 <input class='urlinput' type='text' v-model='url' spellcheck='false' @keydown.enter='view=url'/>
               </div>
-              <span class='label'>HTTP {{response.status}} {{response.statusText || response.response.statusText}}</span><br/>
+              <span class='label'>HTTP {{response.status}} {{response.statusText}}</span><br/>
               <span class='label'>Allow:</span><span class='value'>{{options.headers.allow}}</span><br/>
-              <template v-if='response.headers'>
-                <span class='label'>Content-Type:</span><span class='value'>{{response.headers['content-type']}}</span><br/>
-                <span class='label'>Content-Length:</span><span class='value'>{{response.headers['content-length']}}</span><br/>
-                <span class='label'>Vary:</span><span class='value'>{{response.headers.vary}}</span>
-              </template>
+              <span class='label'>Content-Type:</span><span class='value'>{{response.headers['content-type']}}</span><br/>
+              <span class='label'>Content-Length:</span><span class='value'>{{response.headers['content-length']}}</span><br/>
             </div>
             <div class='code-block'>
               <highlightjs :code='utils.stringify(response.data || response.response.data, {indent:2})' :language='"json"' :autodetect='false'/>
@@ -127,10 +124,10 @@
     var endpoint = view.value.replace(/\/api\//g, '')
     await axios.options(endpoint)
       .then(resp => options.value = resp)
-      .catch(err => options.value = err)
+      .catch(err => options.value = err.response)
     await axios.get(endpoint)
       .then(resp => response.value = resp)
-      .catch(err => response.value = err)
+      .catch(err => response.value = err.response)
     console.log('options', options.value)
     console.log('response', response.value)
   })

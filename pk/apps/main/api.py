@@ -19,4 +19,3 @@ class AccountSerializer(ModelSerializer):
     def get_auth_token(self, obj):
         token = utils.get_object_or_none(Token, user=obj.id or -1)
         return token.key if token else None
-

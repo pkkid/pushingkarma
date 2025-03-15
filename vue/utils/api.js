@@ -19,9 +19,9 @@ export function cancel(controller) {
 }
 
 export const Main = {
-  genToken(signal) { return axios.post(`/main/gentoken`, null, {signal}) },
+  generateToken(signal) { return axios.post(`/main/generate_token`, null, {signal}) },
   getCurrentUser(signal) { return axios.get(`/main/user`, {signal}) },
-  getGlobalVars(signal) { return axios.get(`/main/globalvars`, {signal}) },
+  getGlobalVars(signal) { return axios.get(`/main/global_vars`, {signal}) },
   login(data, signal) { return axios.post(`/main/login`, data, {signal}) },
   logout(signal) { return axios.post(`/main/logout`, null, {signal}) },
 }

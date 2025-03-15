@@ -16,7 +16,7 @@ log = logging.getLogger(__name__)
 
 
 @api_view(['get'])
-def globalvars(request, *args, **kwargs):
+def global_vars(request, *args, **kwargs):
     """ Return global variables. """
     result = dict(**settings.GLOBALVARS)
     result['user'] = AccountSerializer(request.user, context={'request':request}).data
@@ -39,8 +39,8 @@ def generate_token(request, *args, **kwargs):
 @permission_classes([AllowAny])
 def login(request, *args, **kwargs):
     """ Allows logging in to the django application.
-        email: Email of the account to log into.
-        password: Password of the account to log into.
+        • email: Email of the account to log into.
+        • password: Password of the account to log into.
     """
     try:
         email = request.data.get('email')
