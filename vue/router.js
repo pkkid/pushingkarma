@@ -10,6 +10,7 @@ const router = createRouter({
     {path:'/budget', name:'budget', component: () => import('@/views/budget/Budget.vue')},
     {path:'/stocks', name:'stocks', component: () => import('@/views/stocks/Stocks.vue')},
     {path:'/newtab', name:'newtab', component: () => import('@/views/NewTab.vue')},
+    {path:'/apidoc', name:'apidoc', component: () => import('@/views/ApiDoc.vue')},
   ],
   scrollBehavior(to, from, savedPosition) {
     if (to.hash) {

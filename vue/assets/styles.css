@@ -168,6 +168,52 @@ body.chrome ::-webkit-scrollbar-thumb {
 }
 
 /*-------------------------------------------
+ * Sidepanel Menus
+ *------------------------------------------- */
+.sidepanel-panel:has(.menu) {
+  overflow-y: scroll;
+  .menu {
+    color: var(--linkcolor);
+    margin-top: 30px;
+    margin-bottom: 30px;
+    .item {
+      margin-top: 20px;
+      padding: 7px 20px 10px 20px;
+      font-size: 16px;
+      border-left: 3px solid transparent;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      transition: all 0.3s ease;
+      border-bottom: 0px solid #0000;
+    }
+    .subitem {
+      border-left: 3px solid transparent;
+      padding: 3px 20px 3px 57px;
+      font-size: 12px;
+      opacity: 0.6;
+      min-height: 27px;
+      .name { float: left; }
+      .balance { text-align: right; }
+      .lastupdate { font-size: 9px; opacity: 0.6;}
+    }
+    .link:hover, .link:focus, .link.selected {
+      background-color: #fff1;
+      border-left: 3px solid var(--accent);
+      color: var(--fgcolor);
+      cursor: pointer;
+      user-select: none;
+    }
+    .icon {
+      font-size: 22px;
+      position: relative;
+      top: 5px;
+      margin-right: 10px;
+    }
+  }
+}
+
+/*-------------------------------------------
  * Article
  *------------------------------------------- */
 article {
