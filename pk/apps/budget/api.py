@@ -91,13 +91,13 @@ class CategoriesViewSet(viewsets.ModelViewSet, utils.ViewSetMixin):
 
 
 class TransactionSerializer(utils.DynamicFieldsSerializer):
-    account = utils.PartialFieldsSerializer(AccountSerializer, ('url', 'name'))
     category = utils.PartialFieldsSerializer(CategorySerializer, ('url', 'name', 'budget'))
+    account = utils.PartialFieldsSerializer(AccountSerializer, ('url', 'name'))
 
     class Meta:
         model = Transaction
         fields = ('id', 'url', 'trxid', 'date', 'payee', 'amount', 'approved',
-            'comment', 'account', 'category')
+            'comment', 'category', 'account')
 
     def to_internal_value(self, data):
         if data.get('amount') in RESET: data['amount'] = RESET_DECIMAL
@@ -110,6 +110,10 @@ class TransactionSerializer(utils.DynamicFieldsSerializer):
         user = self.context['request'].user
         # Update category_name
         category_name = self.context['request'].data.get('category_name')
+        # TODO: I think the below can just be the following:
+        # instance.category = utils.get_object_or_none(Category, user=user, name__iexact=category_name)
+        # if not instance.category:
+        #     raise ValidationError("Unknown category '%s'." % category_name)
         if category_name is not None:
             instance.category = None
             if category_name != '':
@@ -126,10 +130,11 @@ class TransactionSerializer(utils.DynamicFieldsSerializer):
 
 class TransactionsViewSet(viewsets.ModelViewSet, utils.ViewSetMixin):
     """ Rest endpoint to list or modifiy user's transactions. """
-    queryset = Transaction.objects.order_by('-date')
+    queryset = Transaction.objects.select_related('category').order_by('-date')
     serializer_class = TransactionSerializer
     permission_classes = [IsAuthenticated]
     list_fields = TransactionSerializer.Meta.fields
+    list_fields = [x for x in TransactionSerializer.Meta.fields if x not in ['account']]
 
     def list(self, request, *args, **kwargs):
         return self.list_response(request, paginated=True, searchfields=TRANSACTIONSEARCHFIELDS)
