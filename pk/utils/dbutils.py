@@ -3,16 +3,19 @@ import logging, re, sqlparse
 # import regex as re
 from django.core.exceptions import EmptyResultSet
 from django.db import connection
+from django.db.models.query import QuerySet
 log = logging.getLogger(__name__)
 
 
-def queryset_str(qs):
+def queryset_str(sql_or_queryset):
     """ Return the raw sql of a queryset. It includes quotes! """
     try:
-        sql, params = qs.query.sql_with_params()
-        with connection.cursor() as cursor:
-            cursor.execute(f'EXPLAIN {sql}', params)
-            sql = cursor.db.ops.last_executed_query(cursor, sql, params)
+        sql = sql_or_queryset
+        if isinstance(sql, QuerySet):
+            sql, params = sql.query.sql_with_params()
+            with connection.cursor() as cursor:
+                cursor.execute(f'EXPLAIN {sql}', params)
+                sql = cursor.db.ops.last_executed_query(cursor, sql, params)
         sql = re.sub('SELECT (.+?) FROM', 'SELECT * FROM', sql)
         sql = sqlparse.format(sql, reindent=True)
         sql = sql.replace('SELECT *\nFROM', 'SELECT * FROM')

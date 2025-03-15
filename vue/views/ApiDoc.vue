@@ -19,8 +19,8 @@
       </template>
       <template #content>
         <LayoutPaper>
-          <!-- Note Content-->
           <template #content v-if='options && response'>
+            <!-- Request Description and Url -->
             <h1>{{viewName}}</h1>
             <div class='description' v-html='options.data?.description?.replace(/\n/g, "<br/>")'></div>
             <div class='headers'>
@@ -28,11 +28,16 @@
                 <span class='label'>GET</span>
                 <input class='urlinput' type='text' v-model='url' spellcheck='false' @keydown.enter='view=url'/>
               </div>
+              <!-- Response Headers -->
               <span class='label'>HTTP {{response.status}} {{response.statusText}}</span><br/>
-              <span class='label'>Allow:</span><span class='value'>{{options.headers.allow}}</span><br/>
-              <span class='label'>Content-Type:</span><span class='value'>{{response.headers['content-type']}}</span><br/>
-              <span class='label'>Content-Length:</span><span class='value'>{{response.headers['content-length']}}</span><br/>
+              <template v-for='header in showheaders'>
+                <div v-if='response.headers[header]' :key='header'>
+                  <span class='label'>{{utils.title(header)}}:</span>
+                  <span class='value'>{{response.headers[header]}}</span><br/>
+                </div>
+              </template>
             </div>
+            <!-- Response Content -->
             <div class='code-block'>
               <highlightjs :code='utils.stringify(response.data, {indent:2})' :language='"json"' :autodetect='false'/>
             </div>
@@ -54,7 +59,10 @@
   var toc = ref(null)         // Table of contents (api root)
   var options = ref(null)     // Current options response
   var response = ref(null)    // Current get response
-  const {view} = useUrlParams({view: {type:String}})
+  var showheaders = ['allow', 'content-type', 'content-length', 'x-queries']
+  const {view} = useUrlParams({
+    view: {type:String, default:''}
+  })
   const url = ref(view.value)
 
   // Watch View
@@ -111,7 +119,7 @@
   // View Name
   // Return the current view title
   const viewName = computed(function() {
-    if (view.value == null) { return 'PushingKarma API' }
+    if (view.value == '/api/') { return 'PushingKarma API' }
     var endpoint = view.value.replace(/\/api\//g, '')
     endpoint = endpoint.split('?')[0]
     return utils.title(endpoint.replace(/\//g, ' '))
@@ -120,7 +128,8 @@
   // View Options
   // Return the current view options
   watchEffect(async function() {
-    if (view.value == null) { return {} }
+    // if (view.value == null) { return {} }
+    view.value = view.value || '/api/'
     var endpoint = view.value.replace(/\/api\//g, '')
     await axios.options(endpoint)
       .then(resp => options.value = resp)

@@ -51,9 +51,11 @@ def response_json(data, status=200):
     return HttpResponse(data, content_type='application/json', status=status)
 
 
-def rgb(text, color='#aaa'):
+def rgb(text, color='#aaa', reset=True):
     r,g,b = tuple(int(x * 2, 16) for x in color.lstrip('#'))
-    return f'\033[38;2;{r};{g};{b}m{text}\033[00m'
+    rgbstr = f'\033[38;2;{r};{g};{b}m{text}'
+    rgbstr += '\033[00m' if reset else ''
+    return rgbstr
 
 
 def rget(obj, attrstr, default=None, delim='.'):
