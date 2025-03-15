@@ -1,7 +1,9 @@
 # encoding: utf-8
-import logging, re, time
+import logging, re, textwrap, time
+from django.conf import settings
 from django.db import connection
 from pk import utils
+log = logging.getLogger(__name__)
 
 
 class ColoredFormatter(logging.Formatter):
@@ -26,34 +28,45 @@ class ColoredFormatter(logging.Formatter):
         return formatter.format(record)
     
 
-def print_queries(filter=None):
-    """ Print all queries executed in this funnction. """
-    def wrapper1(func):
-        def wrapper2(*args, **kwargs):
-            sqltime, longest, numshown = 0.0, 0.0, 0
-            initqueries = len(connection.queries)
-            starttime = time.time()
-            result = func(*args, **kwargs)
-            for query in connection.queries[initqueries:]:
-                sqltime += float(query['time'].strip('[]s'))
-                longest = max(longest, float(query['time'].strip('[]s')))
-                if not filter or filter in query['sql']:
-                    numshown += 1
-                    querystr = utils.rgb('\n[%ss] ' % query['time'], '#d93')
-                    querystr += utils.rgb(query['sql'], '#488')
-                    print(querystr)
-            numqueries = len(connection.queries) - initqueries
-            numhidden = numqueries - numshown
-            runtime = round(time.time() - starttime, 3)
-            proctime = round(runtime - sqltime, 3)
-            print(utils.rgb("------", '#488'))
-            print(utils.rgb('Total Time:  %ss' % runtime, '#d93'))
-            print(utils.rgb('Proc Time:   %ss' % proctime, '#d93'))
-            print(utils.rgb('Query Time:  %ss (longest: %ss)' % (sqltime, longest), '#d93'))
-            print(utils.rgb('Num Queries: %s (%s hidden)\n' % (numqueries, numhidden), '#d93'))
-            return result
-        return wrapper2
-    return wrapper1
+class QueryCounterMiddleware:
+    DATACOLOR, REQCOLOR, SQLCOLOR = '#d93', '#b68', '#488'
+    FIRST, LAST = utils.rgb('┌ ', REQCOLOR), utils.rgb('└ ', REQCOLOR)
+    BULLET, PIPE = utils.rgb('├ ', REQCOLOR), utils.rgb('│ ', REQCOLOR)
+    INDENTSTR = PIPE + utils.rgb('   ', '#488', reset=False)
+
+    def __init__(self, get_response):
+        self.get_response = get_response
+        
+    def __call__(self, request):
+        if not settings.QUERYCOUNTER_ENABLED:
+            return self.get_response(request)
+        # Track connection.queries
+        initqueries = len(connection.queries)
+        starttime = time.time()
+        response = self.get_response(request)
+        numqueries = len(connection.queries) - initqueries
+        runtime = time.time() - starttime
+        # Start logging and add time of all queries
+        sqltime, longest = 0.0, 0.0
+        if settings.QUERYCOUNTER_ENABLE_PRINT:
+            print(self.FIRST + utils.rgb(f'{request.method} {request.get_full_path()}', '#b68'))
+        for query in connection.queries[initqueries:]:
+            querytime = float(query['time'].strip('[]s'))
+            sqltime += querytime
+            longest = max(longest, querytime)
+            if settings.QUERYCOUNTER_ENABLE_PRINT:
+                logstr = self.BULLET + utils.rgb(f'[{querytime:.3f}s] ', '#d93')
+                logstr += utils.rgb(query['sql'], '#488')
+                print(textwrap.fill(logstr, width=160, subsequent_indent=self.INDENTSTR))
+        proctime = runtime - sqltime
+        rsummary = f'Request took {runtime:.3f}s ({proctime:.3f}s processing)'
+        qsummary = f'{numqueries} queries took {sqltime:.3f}s (longest {longest:.3f}s)'
+        if settings.QUERYCOUNTER_ENABLE_PRINT and numqueries:
+            print(self.BULLET + utils.rgb(rsummary, '#d93'))
+            print(self.LAST + utils.rgb(qsummary, '#d93'))
+        if settings.QUERYCOUNTER_ENABLE_HEADERS:
+            response['X-Queries'] = qsummary
+        return response
 
 
 def update_logging_filepath(filepath, handler_name='default'):
