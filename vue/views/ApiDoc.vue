@@ -34,7 +34,7 @@
               <span class='label'>Content-Length:</span><span class='value'>{{response.headers['content-length']}}</span><br/>
             </div>
             <div class='code-block'>
-              <highlightjs :code='utils.stringify(response.data || response.response.data, {indent:2})' :language='"json"' :autodetect='false'/>
+              <highlightjs :code='utils.stringify(response.data, {indent:2})' :language='"json"' :autodetect='false'/>
             </div>
           </template>
         </LayoutPaper>
@@ -44,7 +44,7 @@
 </template>
 
 <script setup>
-  import {computed, onBeforeMount, ref, watch, watchEffect} from 'vue'
+  import {computed, nextTick, onBeforeMount, ref, watch, watchEffect} from 'vue'
   import {utils} from '@/utils'
   import {useUrlParams} from '@/composables/useUrlParams.js'
   import axios from 'axios'
@@ -114,7 +114,7 @@
     if (view.value == null) { return 'PushingKarma API' }
     var endpoint = view.value.replace(/\/api\//g, '')
     endpoint = endpoint.split('?')[0]
-    return utils.title(endpoint.replace(/\//g, ' - '))
+    return utils.title(endpoint.replace(/\//g, ' '))
   })
 
   // View Options
@@ -128,9 +128,29 @@
     await axios.get(endpoint)
       .then(resp => response.value = resp)
       .catch(err => response.value = err.response)
-    console.log('options', options.value)
-    console.log('response', response.value)
+    console.debug(`${endpoint} options`, options.value)
+    console.debug(`${endpoint} response`, response.value)
+    nextTick(linkAPIURLs)
   })
+
+  // Link API URLs
+  // Create links for all api urls
+  const linkAPIURLs = function() {
+    var spans = document.querySelectorAll('.code-block pre code span.hljs-string')
+    spans = Array.from(spans).filter(span => span.textContent.startsWith(`"${axios.defaults.baseURL}`))
+    spans.forEach(span => {
+      const newspan = document.createElement('span')
+      newspan.textContent = span.textContent
+      newspan.style.cursor = 'pointer'
+      newspan.className = `${span.className} link`
+      newspan.addEventListener('click', () => {
+        var newview = newspan.textContent.slice(1, -1)
+        newview = '/api/' + newview.replace(axios.defaults.baseURL, '')
+        view.value = newview
+      })
+      span.replaceWith(newspan)
+    })
+  }
 </script>
 
 <style>
@@ -165,7 +185,15 @@
       .label { font-weight:bold; margin-right:5px; }
       .value { color:var(--lightbg-blue1) }
     }
-    pre, code { font-size:11px; line-height:1.3; }
+    pre, code {
+      font-size:11px;
+      line-height:1.3;
+      .link {
+        cursor: pointer;
+        transition: color 0.3s;
+        &:hover { color: var(--fgcolor); }
+      }
+    }
   }
 </style>
 
