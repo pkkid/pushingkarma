@@ -97,6 +97,8 @@ html, body {
   --bgcolor: var(--lightbg-bg1);
   --dim: var(--lightbg-fg4);
   --fgcolor: var(--lightbg-fg1);
+  --fgcolor60: #84827f;
+  --fgcolor40: #777060;
   --linkcolor: var(--lightbg-blue1);
   --linkhover: #000;
   --linkhoverunderline: 2px dotted var(--linkhover);
@@ -107,6 +109,8 @@ html, body {
   --bgcolor: var(--darkbg-bg0);
   --dim: var(--darkbg-fg3);
   --fgcolor: var(--darkbg-fg1);
+  --fgcolor60: #9d947b;
+  --fgcolor40: #777060;
   --linkcolor: var(--darkbg-fg0);
   --linkhover: var(--darkbg-orange1);
   --linkhoverunderline: 2px dotted transparent;
@@ -174,28 +178,29 @@ body.chrome ::-webkit-scrollbar-thumb {
   overflow-y: scroll;
   .menu {
     color: var(--linkcolor);
-    margin-top: 30px;
     margin-bottom: 30px;
+    margin-top: 30px;
     .item {
-      margin-top: 20px;
-      padding: 7px 20px 10px 20px;
-      font-size: 16px;
-      border-left: 3px solid transparent;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
-      transition: all 0.3s ease;
       border-bottom: 0px solid #0000;
+      border-left: 3px solid transparent;
+      font-size: 16px;
+      margin-top: 20px;
+      overflow: hidden;
+      padding: 7px 20px 10px 20px;
+      text-overflow: ellipsis;
+      transition: all 0.3s ease;
+      white-space: nowrap;
     }
     .subitem {
       border-left: 3px solid transparent;
-      padding: 3px 20px 3px 57px;
       font-size: 12px;
-      opacity: 0.6;
       min-height: 27px;
+      color: var(--fgcolor60);
+      padding: 3px 20px 3px 57px;
+      transition: all 0.3s ease;
       .name { float: left; }
       .balance { text-align: right; }
-      .lastupdate { font-size: 9px; opacity: 0.6;}
+      .lastupdate { font-size:9px; color:var(--fgcolor40);}
     }
     .link:hover, .link:focus, .link.selected {
       background-color: #fff1;
@@ -206,9 +211,9 @@ body.chrome ::-webkit-scrollbar-thumb {
     }
     .icon {
       font-size: 22px;
+      margin-right: 10px;
       position: relative;
       top: 5px;
-      margin-right: 10px;
     }
   }
 }

@@ -1,6 +1,6 @@
 <template>
   <div id='apidoc'>
-    <LayoutSidePanel>
+    <LayoutSidePanel width='250px'>
       <!-- API Categorties -->
       <template #panel>
         <div class='menu'>
@@ -10,7 +10,8 @@
               {{utils.title(category)}}
             </div>
             <template v-for='item in categoryItems(category)' :key='`${category}/${item}`'>
-              <div class='subitem link' @click="view=`/api/${category}/${item}`">
+              <div class='subitem link' :class='{selected:view === `/api/${category}/${item}`}' 
+                @click='view=`/api/${category}/${item}`'>
                 <div class='name'>{{utils.title(item)}}</div>
               </div>
             </template>

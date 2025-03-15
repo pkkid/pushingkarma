@@ -9,9 +9,15 @@
   </div>
 </template>
 
+<script setup>
+  const props = defineProps({
+    width: {type:String, default:'300px'},
+  })
+</script>
+
 <style>
   .layoutsidepanel {
-    --sidepanelwidth: 300px;
+    --sidepanelwidth: v-bind(width);
     --sidepanelheight: calc(100vh - var(--navheight));
     .sidepanel-panel {
       width: var(--sidepanelwidth);
