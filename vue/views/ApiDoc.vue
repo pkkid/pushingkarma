@@ -68,15 +68,29 @@
 
   // Watch View
   // Keep the url updated when view changed
-  watch(view, (newValue) => { url.value = newValue})
+  watch(view, function(newval) {
+    checkView()
+    url.value = newval
+  })
 
   // On Before Mount
   // Update to top nav and get the toc
   onBeforeMount(async function() {
     utils.setNavPosition('top')
+    checkView()
     var data = await axios.get('')
     toc.value = data.data
   })
+
+  // Check View
+  // Make sure view is not null and starts with /api/
+  const checkView = function() {
+    if (view.value == null) {
+      view.value = '/api/'
+    } else if (!view.value.startsWith('/api/')) {
+      view.value = `/api/${view.value}`.replace(/\/\//g, '/')
+    }
+  }
 
   // Categories
   // List of API Categories
@@ -129,8 +143,7 @@
   // View Options
   // Return the current view options
   watchEffect(async function() {
-    // if (view.value == null) { return {} }
-    view.value = view.value || '/api/'
+    if (view.value === null) { return }
     var endpoint = view.value.replace(/\/api\//g, '')
     await axios.options(endpoint)
       .then(resp => options.value = resp)

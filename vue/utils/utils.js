@@ -227,7 +227,7 @@ export function timeAgo(value, shorten) {
 // Title
 // Titleize the specified string
 export function title(str) {
-  return str.replace(/_/g, ' ').split(' ')
-    .map(w => w[0].toUpperCase() + w.substring(1).toLowerCase())
-    .join(' ')
+  str = str.replace(/_/g, ' ').split(' ')
+  str = str.map(w => w.length > 0 ? w[0].toUpperCase() + w.substring(1) : w)
+  return str.join(' ')
 }

@@ -1,11 +1,12 @@
 # encoding: utf-8
+from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.urls import include, re_path
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.views.decorators.csrf import ensure_csrf_cookie
+from pk.apps.budget import api as budget_api
 from pk.apps.main import apiviews as main_apiviews
 from pk.apps.obsidian import apiviews as obsidian_apiviews
-from pk.apps.budget import api as budget_api
 from pk.apps.stocks import api as stocks_api, apiviews as stocks_apiviews
 from pk.utils.apiutils import HybridRouter
 from pk import utils
@@ -34,7 +35,12 @@ def index(request, tmpl='index.html'):
     return utils.response(request, tmpl)
 
 
+def api_404(request, exc=None):
+    return JsonResponse({'error': 'API endpoint not found'}, status=404)
+
+
 urlpatterns = [
     re_path(r'^api/', include(api.urls), name='api'),
+    re_path(r'^api/.*$', api_404),
     re_path(r'', index, name='index'),
 ]
