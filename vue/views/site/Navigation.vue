@@ -26,6 +26,8 @@
   const router = useRouter()
   const route = useRoute()
 
+  // Navigate to ApiDoc
+  // Loads API view at the last API GET request
   function navigateToApiDoc() {
     if (route.path === '/apidoc') {
       return router.push({query:{view:'/api/'}})
