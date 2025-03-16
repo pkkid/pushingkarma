@@ -28,6 +28,6 @@
     "django": "uv run python pk/manage.py runserver",
     "vue": "vite",
     "build": "vite build",
-    "eslint": "eslint . --ext .vue,.js"
+    "eslint": "eslint ."
   }
 }
