@@ -47,7 +47,8 @@
     var datasets = []
     for (var i=0; i<props.data.datasets.length; i++) {
       datasets.push({
-        label: props.data.datasets[i].label,
+        label: `plot${i}`,  // generic name for animation
+        ticker: props.data.datasets[i].label,
         data: props.data.datasets[i].rank.map(v => v * -1),
         borderColor: chartColors[i % chartColors.length],
         backgroundColor: chartColors[i % chartColors.length],
@@ -84,6 +85,14 @@
     utils.rset(opts, 'plugins.legend.title.display', true)
     utils.rset(opts, 'plugins.legend.title.padding', 5)
     utils.rset(opts, 'plugins.legend.title.text', '')
+    utils.rset(opts, 'plugins.legend.labels.generateLabels', function(chart) {
+      return chart.data.datasets.map(function(dataset, i) { return {
+        text: dataset.ticker,
+        fillStyle: dataset.backgroundColor,
+        strokeStyle: dataset.borderColor,
+        datasetIndex: i
+      }})
+    })
     // Line up the Legend
     // In order to make the legend items line up correctly with the chart, there
     // are three options that need to be set in coordination with eachother.
@@ -110,7 +119,7 @@
       return 0
     })
     utils.rset(opts, 'plugins.tooltip.callbacks.label', function(ctx) {
-      var ticker = ctx.dataset.label
+      var ticker = ctx.dataset.ticker
       var i = ctx.dataIndex
       var change = utils.round(datadict.value[ticker].change[i], 1)
       return ` ${ticker.padEnd(4, ' ')} ${change.toString().padStart(5, ' ')}%`

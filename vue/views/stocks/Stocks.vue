@@ -3,7 +3,7 @@
     <LayoutSidePanel>
       <!-- Search -->
       <template #panel>
-        <StocksSearch />
+        <StocksSearch :stockgroups='stockgroups' />
       </template>
       <template #content>
         <LayoutPaper width='1000px'>
@@ -22,24 +22,36 @@
 </template>
 
 <script setup>
-  import {onBeforeMount, onMounted, ref} from 'vue'
-  import {utils} from '@/utils'
-  import {api} from '@/utils'
+  import {onBeforeMount, onMounted, provide, ref, watchEffect} from 'vue'
+  import {useUrlParams} from '@/composables/useUrlParams.js'
+  import {api, utils} from '@/utils'
   import LayoutPaper from '@/components/LayoutPaper.vue'
   import LayoutSidePanel from '@/components/LayoutSidePanel.vue'
   import StocksSearch from '@/views/stocks/StocksSearch.vue'
   import TrendChart from '@/components/TrendChart.vue'
   
+  var stockgroups = {
+    'ETFs & Bonds': 'tags:etfs',
+    'Nasuni 401k': 'tags:nasuni',
+    'Papas Picks': 'tags:dad',
+  }
+
   const shortdata = ref(null)
   const longdata = ref(null)
+  const {search} = useUrlParams({search: {type:String}})
+  provide('search', {search, updateSearch:(newval) => search.value = newval })
 
+  // On Before Mount
+  // Set top navigation
   onBeforeMount(function() { utils.setNavPosition('top') })
 
-  onMounted(function() {
-    api.Stocks.projectionTrends({periods:'52w,42w,32w,22w,12w', search:'tags:etfs'})
+  // Watch Search
+  // Update the projection trends and stock list
+  watchEffect(function() {
+    api.Stocks.projectionTrends({periods:'52w,42w,32w,22w,12w', search:search.value})
       .then(resp => longdata.value = resp.data)
       .catch(err => longdata.value = err)
-    api.Stocks.projectionTrends({periods:'10w,8w,6w,4w,2w', search:'tags:etfs'})
+    api.Stocks.projectionTrends({periods:'10w,8w,6w,4w,2w', search:search.value})
       .then(resp => shortdata.value = resp.data)
       .catch(err => shortdata.value = err)
   })

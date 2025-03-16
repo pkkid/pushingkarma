@@ -2,8 +2,9 @@
   <div id='notessearch'>
     <!-- Search Input -->
     <div class='searchwrap'>
-      <input ref='searchinput' class='searchinput' v-model='search' type='text' maxlength='100'
-        @keydown.enter='updateNotes' @keydown.down='focusNext' @keydown.up='focusPrev'/>
+      <input ref='searchinput' class='searchinput' v-model='search' type='text'
+        maxlength='100' spellcheck='false' autocomplete='off' @keydown.enter='updateNotes'
+        @keydown.down='focusNext' @keydown.up='focusPrev'/>
       <span class='icon search'>search</span>
       <transition name='fade'>
         <span v-if='search.length' class='icon clear-search close' @click='search=""'>close</span>

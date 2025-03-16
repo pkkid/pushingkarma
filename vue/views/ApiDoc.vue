@@ -52,20 +52,18 @@
 
 <script setup>
   import {computed, nextTick, onBeforeMount, ref, watch, watchEffect} from 'vue'
-  import {utils} from '@/utils'
   import {useUrlParams} from '@/composables/useUrlParams.js'
+  import {utils} from '@/utils'
   import axios from 'axios'
   import LayoutPaper from '@/components/LayoutPaper.vue'
   import LayoutSidePanel from '@/components/LayoutSidePanel.vue'
 
+  var showheaders = ['allow', 'content-type', 'content-length', 'response-time', 'queries']
   var toc = ref(null)         // Table of contents (api root)
   var options = ref(null)     // Current options response
   var response = ref(null)    // Current get response
-  var duration = ref(0)       // Duration of response
-  var showheaders = ['allow', 'content-type', 'content-length', 'response-time', 'queries']
-  const {view} = useUrlParams({
-    view: {type:String, default:''}
-  })
+  
+  const {view} = useUrlParams({view: {type:String}})
   const url = ref(view.value)
 
   // Watch View
