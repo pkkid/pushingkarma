@@ -48,8 +48,3 @@
     hotkeys.deleteScope('stocks')
   })
 </script>
-
-<style>
-  #stockssearch {
-  }
-</style>
