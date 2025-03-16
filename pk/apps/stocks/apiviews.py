@@ -21,6 +21,7 @@ def projection_trends(request):
     maxresults = int(request.query_params.get('maxresults', 10))
     searchstr = request.GET.get('search', '')
     tickers = Search(api.TICKERSEARCHFIELDS).get_queryset(Ticker.objects.all(), searchstr)
+    if not len(tickers): return Response({'labels':[], 'datasets':[]})
     maxdate = TickerHistory.objects.filter(ticker__in=tickers).aggregate(Max('date'))['date__max']
     mindate = maxdate - timedelta(weeks=int(periods[0].rstrip('w')))
     histories = sutils.histories_dict(tickers, mindate)

@@ -43,6 +43,7 @@
   // Format the datasets for chart.js
   const datasets = computed(function() {
     if (props.data === null) { return null }  // still loading
+    if (props.data?.datasets?.length == 0) { return {} }  // no data
     if (props.data instanceof Error) { return {} }  // no data
     var datasets = []
     for (var i=0; i<props.data.datasets.length; i++) {
