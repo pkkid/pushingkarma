@@ -172,6 +172,37 @@ body.chrome ::-webkit-scrollbar-thumb {
 }
 
 /*-------------------------------------------
+ * Sidepanel Search
+ *------------------------------------------- */
+ .sidepanel-panel .searchwrap {
+  position: relative;
+  .searchinput, .searchinput:focus {
+    background-color: #0003;
+    border-radius: 0px;
+    border-width: 0px;
+    box-shadow: none;
+    color: var(--accent);
+    line-height: 40px;
+    outline: none;
+    padding: 0px 30px 0px 38px;
+    width: 100%;
+  }
+  .icon.search {
+    position: absolute;
+    font-size: 18px;
+    top: 11px;
+    left: 10px;
+  }
+  .icon.close {
+    position: absolute;
+    top: 8px;
+    right: 5px;
+    transition: opacity 0.3s ease;
+  }
+}
+
+
+/*-------------------------------------------
  * Sidepanel Menus
  *------------------------------------------- */
 .sidepanel-panel:has(.menu) {
