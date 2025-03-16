@@ -12,12 +12,9 @@
   import Navigation from '@/views/site/Navigation.vue'
   import Footer from '@/views/site/Footer.vue'
 
-  const apiurl = ref(utils.apibase)     // current apiurl in the navigation menu
   const globalvars = ref(null)          // global variables fetched from the server
   const user = ref(null)                // currently logged in user details
-
   provide('globalvars', {globalvars})
-  provide('apiurl', {apiurl, updateApiUrl:(path) => apiurl.value = `${utils.apibase}${path || '/'}` })
   provide('user', {user, setUser:(data) => user.value = data })
 
   // On Mounted
