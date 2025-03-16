@@ -25,7 +25,7 @@ export var lastApiGet = null
 async function get(url, config) {
   var params = config.params || {}
   params = Object.keys(params).map(function(key) { 
-    return `${encodeURIComponent(key)}=${encodeURIComponent(params[key])}`
+    return `${key}=${params[key]}`
   }).join('&')
   lastApiGet = params ? `${url}?${params}` : url
   return axios.get(url, config)
