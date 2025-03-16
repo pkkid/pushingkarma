@@ -37,6 +37,7 @@
                   <span class='value'>{{response.headers[header]}}</span><br/>
                 </div>
               </template>
+              
             </div>
             <!-- Response Content -->
             <div class='code-block'>
@@ -60,7 +61,8 @@
   var toc = ref(null)         // Table of contents (api root)
   var options = ref(null)     // Current options response
   var response = ref(null)    // Current get response
-  var showheaders = ['allow', 'content-type', 'content-length', 'x-queries']
+  var duration = ref(0)       // Duration of response
+  var showheaders = ['allow', 'content-type', 'content-length', 'response-time', 'queries']
   const {view} = useUrlParams({
     view: {type:String, default:''}
   })
