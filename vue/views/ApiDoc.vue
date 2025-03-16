@@ -147,12 +147,14 @@
   watchEffect(async function() {
     if (view.value === null) { return }
     var endpoint = view.value.replace(/\/api\//g, '')
-    await axios.options(endpoint)
-      .then(resp => options.value = resp)
-      .catch(err => options.value = err.response)
-    await axios.get(endpoint)
-      .then(resp => response.value = resp)
-      .catch(err => response.value = err.response)
+    await Promise.all([
+      axios.options(endpoint)
+        .then(resp => options.value = resp)
+        .catch(err => options.value = err.response),
+      axios.get(endpoint)
+        .then(resp => response.value = resp)
+        .catch(err => response.value = err.response)
+   ])
     console.debug(`${endpoint} options`, options.value)
     console.debug(`${endpoint} response`, response.value)
     nextTick(linkAPIURLs)
