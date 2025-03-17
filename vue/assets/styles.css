@@ -88,6 +88,13 @@ html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+.mdi {
+  width: 1em;
+  height: 1em;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
 
 /*-------------------------------------------
  * Basic Colors
@@ -137,7 +144,7 @@ html, body {
 /*-------------------------------------------
  * Basic Content
  *------------------------------------------- */
- *, *::before, *::after, *:focus {
+*, *::before, *::after, *:focus {
   box-sizing: border-box;
   font-weight: normal;
   margin: 0;
@@ -171,42 +178,12 @@ body.chrome ::-webkit-scrollbar-thumb {
   border: 2px solid var(--bgcolor);
 }
 
-/*-------------------------------------------
- * Sidepanel Search
- *------------------------------------------- */
- .sidepanel-panel .searchwrap {
-  position: relative;
-  .searchinput, .searchinput:focus {
-    background-color: #0003;
-    border-radius: 0px;
-    border-width: 0px;
-    box-shadow: none;
-    color: var(--accent);
-    line-height: 40px;
-    outline: none;
-    padding: 0px 30px 0px 38px;
-    width: 100%;
-  }
-  .icon.search {
-    position: absolute;
-    font-size: 18px;
-    top: 11px;
-    left: 10px;
-  }
-  .icon.close {
-    position: absolute;
-    top: 8px;
-    right: 5px;
-    transition: opacity 0.3s ease;
-  }
-}
-
 
 /*-------------------------------------------
  * Sidepanel Menus
  *------------------------------------------- */
 .sidepanel-panel:has(.menu) {
-  overflow-y: scroll;
+  overflow-y: auto;
   .menu {
     color: var(--linkcolor);
     margin-bottom: 30px;
@@ -240,12 +217,43 @@ body.chrome ::-webkit-scrollbar-thumb {
       cursor: pointer;
       user-select: none;
     }
-    .icon {
+    .mdi {
       font-size: 22px;
       margin-right: 10px;
       position: relative;
-      top: 5px;
+      top: 2px;
     }
+  }
+}
+
+/*-------------------------------------------
+ * Sidepanel Search
+ *------------------------------------------- */
+ .sidepanel-panel .searchwrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  .searchinput, .searchinput:focus {
+    background-color: #0003;
+    border-radius: 0px;
+    border-width: 0px;
+    box-shadow: none;
+    color: var(--accent);
+    line-height: 40px;
+    outline: none;
+    padding: 0px 30px 0px 38px;
+    width: 100%;
+  }
+  .mdi.mdi-magnify {
+    position: absolute;
+    font-size: 19px;
+    left: 10px;
+  }
+  .mdi.mdi-close {
+    position: absolute;
+    font-size: 14px;
+    right: 10px;
+    transition: opacity 0.3s ease;
   }
 }
 
@@ -468,20 +476,21 @@ dd {
  * Close
  * Animated close or clear button
  *------------------------------------------- */
-.close {
+.mdi-close {
   background: transparent;
   border-radius: 50%;
   border: none;
   cursor: pointer;
   font-size: 20px;
-  opacity: 0.8;
+  opacity: 0.6;
   padding: 5px;
   transition: all 0.2s ease;
+  transition-timing-function: steps(10, end);
   z-index: 1001;
   &:hover {
     opacity: 1;
     background-color: #0001;
-    animation: spin 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    animation: spin 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
   }
 }
 @keyframes spin {

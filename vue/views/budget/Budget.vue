@@ -5,7 +5,7 @@
       <template #panel>
         <div class='menu'>
           <div class='item link' @click="view=''">
-            <span class='icon'>account_balance</span>
+            <i class='mdi mdi-credit-card-outline'/>
             Transactions
           </div>
           <div class='subitem account'>
@@ -19,7 +19,7 @@
             <div class='lastupdate'>Updated 3 days ago</div>
           </div>
           <div class='item link' @click="view='year'">
-            <span class='icon'>checkbook</span>
+            <i class='mdi mdi-checkbook'/>
             Year Overview
           </div>
           <div class='subitem account'>
@@ -33,7 +33,7 @@
             <div class='lastupdate'>Average $124 / month</div>
           </div>
           <div class='item link' @click="view='settings'">
-            <span class='icon'>settings</span>
+            <i class='mdi mdi-cog'/>
             Settings
           </div>
         </div>

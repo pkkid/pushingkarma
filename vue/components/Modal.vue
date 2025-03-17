@@ -3,7 +3,7 @@
     <transition name='fade'>
       <div v-if='visible' class='modal-overlay' @click.self='close'>
         <div class='modal-content'>
-          <span v-if='closeButton' class='icon close' @click='emit("close")'>close</span>
+          <i v-if='closeButton' class='mdi mdi-close' @click='emit("close")' />
           <slot>modal-content</slot>
         </div>
       </div>
@@ -71,11 +71,16 @@
       min-width: 500px;
       min-height: 200px;
     }
-    .close {
+    .mdi-close {
       color: var(--lightbg-fg1);
       position: absolute;
       right: 15px;
       top: 15px;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
   }
 </style>

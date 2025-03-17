@@ -4,15 +4,15 @@
     <div class='searchwrap'>
       <input ref='searchinput' class='searchinput' v-model='_search' type='text' maxlength='100'
         spellcheck='false' autocomplete='off' @keydown.enter='updateSearch(_search)'/>
-      <span class='icon search'>search</span>
+      <i class='mdi mdi-magnify'/>
       <transition name='fade'>
-        <span v-if='search?.length' class='icon clear-search close' @click='updateSearch("")'>close</span>
+        <i v-if='_search?.length' class='mdi mdi-close' @click='updateSearch("")' />
       </transition>
     </div>
     <!-- Pre-Canned Searches -->
     <div class='menu'>
       <div class='item'>
-        <span class='icon'>payments</span>
+        <i class='mdi mdi-checkbook'/>
         Stock Groups
       </div>
       <div v-for='(gsrch, name) in stockgroups' :key='name' class='subitem link'

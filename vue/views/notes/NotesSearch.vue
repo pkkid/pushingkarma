@@ -2,12 +2,12 @@
   <div id='notessearch'>
     <!-- Search Input -->
     <div class='searchwrap'>
-      <input ref='searchinput' class='searchinput' v-model='search' type='text'
-        maxlength='100' spellcheck='false' autocomplete='off' @keydown.enter='updateNotes'
+      <input ref='searchinput' class='searchinput' v-model='search' type='text' maxlength='100'
+        spellcheck='false' autocomplete='off' @keydown.enter='updateNotes'
         @keydown.down='focusNext' @keydown.up='focusPrev'/>
-      <span class='icon search'>search</span>
+      <i class='mdi mdi-magnify'/>
       <transition name='fade'>
-        <span v-if='search.length' class='icon clear-search close' @click='search=""'>close</span>
+        <i v-if='search.length' class='mdi mdi-close' @click='search=""' />
       </transition>
     </div>
     <!-- Search Results -->
@@ -101,6 +101,7 @@
 
 <style>
   #notessearch {
+    width: var(--sidepanel-width);
     .results {
       height: calc(100vh - 102px);
       opacity: 0.7;

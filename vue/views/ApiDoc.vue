@@ -6,7 +6,7 @@
         <div class='menu'>
           <template v-for='category in catergories' :key='category'>
             <div class='item'>
-              <span class='icon'>{{categoryIcon(category)}}</span>
+              <i class='mdi' :class='categoryIcon(category)'/>
               {{utils.title(category)}}
             </div>
             <template v-for='item in categoryItems(category)' :key='`${category}/${item}`'>
@@ -21,6 +21,10 @@
       <template #content>
         <LayoutPaper>
           <template #content v-if='options && response'>
+            <div class='buttongroup' style='float:right; font-size:25px;'>
+              <i class='mdi mdi-database'/>
+              <i class='mdi mdi-database'/>
+            </div>
             <!-- Request Description and Url -->
             <h1>{{viewName}}</h1>
             <div class='description' v-html='options.data?.description?.replace(/\n/g, "<br/>")'></div>
@@ -58,6 +62,14 @@
   import LayoutPaper from '@/components/LayoutPaper.vue'
   import LayoutSidePanel from '@/components/LayoutSidePanel.vue'
 
+  // Icon for each API cateogry
+  var categoryIcons = {
+    'budget': 'mdi-piggy-bank-outline',
+    'main': 'mdi-earth',
+    'obsidian': 'mdi-notebook-outline',
+    'stocks': 'mdi-chart-line',
+    'default': 'code',
+  }
   var showheaders = ['allow', 'content-type', 'content-length', 'response-time', 'queries']
   var toc = ref(null)         // Table of contents (api root)
   var options = ref(null)     // Current options response
@@ -122,13 +134,7 @@
   // Category Icon
   // Icon for the API Category
   const categoryIcon = function(category) {
-    switch (category) {
-      case 'budget': return 'savings'
-      case 'main': return 'public'
-      case 'obsidian': return 'description'
-      case 'stocks': return 'monitoring'
-      default: return 'code'
-    }
+    return categoryIcons[category] || categoryIcons['default']
   }
 
   // View Name

@@ -34,7 +34,6 @@ npm run eslint         # Lint with [ESLint](https://eslint.org/)
 ```
 
 #### References
-* [Volar Extension for VSCode](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (disable Vetur)
+* [Vue Extension for VSCode](https://marketplace.visualstudio.com/items?itemName=Vue.volar)
 * [Vite Configuration Reference](https://vitejs.dev/config/)
-* [VueUse](https://vueuse.org/) (Vue composition utilities)
-* [Material Symbols](https://fonts.google.com/icons?icon.set=Material+Symbols)
+* [Material Design Icons](https://pictogrammers.com/library/mdi/)

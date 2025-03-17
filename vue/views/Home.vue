@@ -32,37 +32,37 @@
       <h1>Projects <div class='subtext'>Whats been keeping me busy</div></h1>
       <div class='projectlist' style='min-width:1100px; max-width:1200px;'>
         <div><a href='https://github.com/pkkid/django-searchquery'>
-          <span class='icon'>search</span>
+          <i class='mdi mdi-magnify'/>
           <div class='title'>Django Searchquery</div>
           <p>Provides advanced search and filtering capabilities to structured data in Django models.</p>
         </a></div>
         <div><a href='https://github.com/pkkid/python-plexapi'>
-          <span class='icon'>data_object</span>
+          <i class='mdi mdi-code-block-braces'/>
           <div class='title'>Python PlexAPI</div>
           <p>Python bindings for the Plex Server API. Navigate and manage your local or remote shared libraries.</p>
         </a></div>
         <div><a href='https://github.com/pkkid/pygrid'>
-          <span class='icon'>dashboard</span>
+          <i class='mdi mdi-view-dashboard-outline'/>
           <div class='title'>PyGrid</div>
           <p>Easily organize open windows by tiling and positioning them to make the best use of your desktop.</p>
         </a></div>
         <div><a href='https://github.com/django-dbbackup/django-dbbackup'>
-          <span class='icon'>database</span>
+          <i class='mdi mdi-database-outline'/>
           <div class='title'>Django DBBackup</div>
           <p>Management commands to backup and restore project database to AmazonS3, Dropbox or Local Disk.</p>
         </a></div>
         <div><a href='https://github.com/pkkid/link-manager'>
-          <span class='icon'>linked_services</span>
+          <i class='mdi mdi-vector-link'/>
           <div class='title'>Link Manager</div>
           <p>Collection of scripts to help easily sync specific configuration files across all your Linux computers.</p>
         </a></div>
         <div><a href='https://github.com/pkkid/pkmeter-conky'>
-          <span class='icon'>speed</span>
+          <i class='mdi mdi-speedometer-slow'/>
           <div class='title'>PKMeter-Conky</div>
           <p>Collection of scripts and a Conky configuration. Makes fetching data easy and results stored as json.</p>
         </a></div>
         <div><a href='https://github.com/pkkid/pushingkarma'>
-          <span class='icon'>public</span>
+          <i class='mdi mdi-earth'/>
           <div class='title'>PushingKarma</div>
           <p>This websites Python, Django, and Vue source code freely available in the rare case someone finds it useful.</p>
         </a></div>
@@ -176,7 +176,7 @@
         top: 0px;
         transition: all .2s ease;
 
-        .icon {
+        .mdi{
           font-size: 3rem;
           position: relative;
           left: -6px;
