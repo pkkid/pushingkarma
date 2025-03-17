@@ -21,10 +21,6 @@
       <template #content>
         <LayoutPaper>
           <template #content v-if='options && response'>
-            <div class='buttongroup' style='float:right; font-size:25px;'>
-              <i class='mdi mdi-database'/>
-              <i class='mdi mdi-database'/>
-            </div>
             <!-- Request Description and Url -->
             <h1>{{viewName}}</h1>
             <div class='description' v-html='options.data?.description?.replace(/\n/g, "<br/>")'></div>
@@ -41,7 +37,6 @@
                   <span class='value'>{{response.headers[header]}}</span><br/>
                 </div>
               </template>
-              
             </div>
             <!-- Response Content -->
             <div class='code-block'>
