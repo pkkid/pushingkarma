@@ -2,14 +2,17 @@ import {ref, watch} from 'vue'
 import {useRoute, useRouter} from 'vue-router'
 
 
-// UseUrlParams
+// Use URL Params
+// Creates reactive refs that sync with URL query parameters. I had to combine
+// all values into a single object so that I could watch the entire object
+// and update the URL only once when any number of the values change.
 // params: an Object of {key:type} pairs
 export function useUrlParams(params) {
   const route = useRoute()
   const router = useRouter()
   const refs = {}
 
-  // emptyOrFalsy
+  // Has Data
   // Check if a value is empty or falsy
   const hasData = function(key, value) {
     if (params[key].type === Array) { return value && value.length >= 1 }
@@ -18,7 +21,7 @@ export function useUrlParams(params) {
     return false
   }
 
-  // strToValue
+  // String to Value
   // Convert a string to a parameter value
   const strToValue = function(str, type) {
     if (str === null || str === undefined) { return null }
@@ -31,7 +34,7 @@ export function useUrlParams(params) {
     return str
   }
 
-  // valueToStr
+  // Value to String
   // Convert a paramter value to a string
   const valueToStr = function(value, type) {
     if (value === null || value === undefined) { return null }
@@ -43,7 +46,7 @@ export function useUrlParams(params) {
     return value
   }
 
-  // Watch Params
+  // Watch Route.Query
   // Update the Ref object if a parameter changes
   watch(() => route.query, function(newquery) {
     for (let key in refs) {
