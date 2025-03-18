@@ -48,20 +48,22 @@ class QueryCounterMiddleware:
         resptime = time.time() - starttime
         # Start logging and add time of all queries
         sqltime, longest = 0.0, 0.0
-        if settings.QUERYCOUNTER_ENABLE_PRINT:
+        print_enabled = settings.QUERYCOUNTER_ENABLE_PRINT \
+            or request.headers.get('Print-Queries', '').lower() == 'true'
+        if print_enabled:
             print(self.FIRST + utils.rgb(f'{request.method} {request.get_full_path()}', '#b68'))
         for query in connection.queries[initqueries:]:
             querytime = float(query['time'].strip('[]s'))
             sqltime += querytime
             longest = max(longest, querytime)
-            if settings.QUERYCOUNTER_ENABLE_PRINT:
+            if print_enabled:
                 logstr = self.BULLET + utils.rgb(f'[{querytime:.3f}s] ', '#d93')
                 logstr += utils.rgb(query['sql'], '#488')
                 print(textwrap.fill(logstr, width=160, subsequent_indent=self.INDENTSTR))
         proctime = resptime - sqltime
         rsummary = f'Request took {resptime:.3f}s ({proctime:.3f}s processing)'
         qsummary = f'{numqueries} queries took {sqltime:.3f}s (longest {longest:.3f}s)'
-        if settings.QUERYCOUNTER_ENABLE_PRINT and numqueries:
+        if print_enabled and numqueries:
             print(self.BULLET + utils.rgb(rsummary, '#d93'))
             print(self.LAST + utils.rgb(qsummary, '#d93'))
         if settings.QUERYCOUNTER_ENABLE_HEADERS:
