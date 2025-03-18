@@ -1,4 +1,4 @@
-import { ref, watch } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 
 // Use Storage
 // Creates a reactive ref that persists its value in localStorage
@@ -9,9 +9,9 @@ export function useStorage(key, defaultValue) {
   const value = ref(storedValue ? JSON.parse(storedValue) : defaultValue)
 
   // Watch for changes and update localStorage
-  watch(value, (newValue) => {
-    localStorage.setItem(key, JSON.stringify(newValue))
-  }, { deep: true })
+  watch(value, function(newval) {
+    localStorage.setItem(key, JSON.stringify(newval))
+  }, {deep:true})
 
   return value
 }

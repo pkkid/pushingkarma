@@ -88,6 +88,7 @@
   onBeforeMount(async function() {
     utils.setNavPosition('top')
     checkView()
+    toggleLogQueries(logQueries.value)
     var data = await axios.get('')
     toc.value = data.data
   })
@@ -184,11 +185,8 @@
   // Toggle queries function
   const toggleLogQueries = function(newval) {
     logQueries.value = newval
-    if (newval) {
-      axios.defaults.headers.common['Print-Queries'] = 'true'
-    } else {
-      delete axios.defaults.headers.common['Print-Queries']
-    }
+    if (newval) { axios.defaults.headers.common['Log-Queries'] = 'true' }
+    else { delete axios.defaults.headers.common['Log-Queries'] }
   }
 </script>
 

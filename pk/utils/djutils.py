@@ -30,8 +30,8 @@ class ColoredFormatter(logging.Formatter):
 
 class QueryCounterMiddleware:
     DATACOLOR, REQCOLOR, SQLCOLOR = '#d93', '#b68', '#488'
-    FIRST, LAST = utils.rgb('┌ ', REQCOLOR), utils.rgb('└ ', REQCOLOR)
-    BULLET, PIPE = utils.rgb('├ ', REQCOLOR), utils.rgb('│ ', REQCOLOR)
+    FIRST, LAST = utils.rgb('  ┌ ', REQCOLOR), utils.rgb('  └ ', REQCOLOR)
+    BULLET, PIPE = utils.rgb('  ├ ', REQCOLOR), utils.rgb('  │ ', REQCOLOR)
     INDENTSTR = PIPE + utils.rgb('   ', '#488', reset=False)
 
     def __init__(self, get_response):
@@ -47,25 +47,26 @@ class QueryCounterMiddleware:
         numqueries = len(connection.queries) - initqueries
         resptime = time.time() - starttime
         # Start logging and add time of all queries
-        sqltime, longest = 0.0, 0.0
-        print_enabled = settings.QUERYCOUNTER_ENABLE_PRINT \
-            or request.headers.get('Print-Queries', '').lower() == 'true'
-        if print_enabled:
-            print(self.FIRST + utils.rgb(f'{request.method} {request.get_full_path()}', '#b68'))
+        sqltime, longest, logmsg = 0.0, 0.0, ''
+        log_header = request.headers.get('Log-Queries', '').lower() == 'true'
+        log_enabled = settings.QUERYCOUNTER_ENABLE_LOG or log_header
+        if log_enabled:
+            logmsg += self.FIRST + utils.rgb(f'{request.method} {request.get_full_path()}', '#b68') + '\n'
         for query in connection.queries[initqueries:]:
             querytime = float(query['time'].strip('[]s'))
             sqltime += querytime
             longest = max(longest, querytime)
-            if print_enabled:
-                logstr = self.BULLET + utils.rgb(f'[{querytime:.3f}s] ', '#d93')
-                logstr += utils.rgb(query['sql'], '#488')
-                print(textwrap.fill(logstr, width=160, subsequent_indent=self.INDENTSTR))
+            if log_enabled:
+                _logstr = self.BULLET + utils.rgb(f'[{querytime:.3f}s] ', '#d93')
+                _logstr += utils.rgb(query['sql'], '#488')
+                logmsg += textwrap.fill(_logstr, width=160, subsequent_indent=self.INDENTSTR) + '\n'
         proctime = resptime - sqltime
         rsummary = f'Request took {resptime:.3f}s ({proctime:.3f}s processing)'
         qsummary = f'{numqueries} queries took {sqltime:.3f}s (longest {longest:.3f}s)'
-        if print_enabled and numqueries:
-            print(self.BULLET + utils.rgb(rsummary, '#d93'))
-            print(self.LAST + utils.rgb(qsummary, '#d93'))
+        if log_enabled and numqueries:
+            logmsg += self.BULLET + utils.rgb(rsummary, '#d93') + '\n'
+            logmsg += self.LAST + utils.rgb(qsummary, '#d93')
+            log.info(f'QueryCounter tracked {numqueries} sql statements\n' + logmsg)
         if settings.QUERYCOUNTER_ENABLE_HEADERS:
             response['Response-Time'] = f'{resptime:.3f}s'
             response['Queries'] = qsummary
