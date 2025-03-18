@@ -1,5 +1,5 @@
-import {useDateFormat, useTimeAgo} from '@vueuse/core'
-
+// Utils.js
+// Collection of utility functions
 
 // Set apibase URL to port 8000 if running in development mode.
 // This is the port that the Django runserver uses.
@@ -49,10 +49,95 @@ export function debounce(func, wait=500) {
 }
 
 // Format Date
-// https://vueuse.org/shared/useDateFormat/
+// Format a date using various format strings:
 export function formatDate(value, format) {
   format = format || 'MMM DD, YYYY'
-  return useDateFormat(value, format).value
+  if (!value) return ''
+  const date = new Date(value)
+  if (isNaN(date)) return ''
+  // Get the date components
+  const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+  const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August',
+    'September', 'October', 'November', 'December']
+  const year = date.getFullYear()
+  const month = date.getMonth() + 1
+  const day = date.getDate() 
+  const hours24 = date.getHours()
+  const hours12 = hours24 % 12 || 12
+  const minutes = date.getMinutes()
+  const seconds = date.getSeconds()
+  const ms = date.getMilliseconds()
+  const dayOfWeek = date.getDay()
+  const pad = (num) => String(num).padStart(2, '0')
+  const getOrdinal = (n) => {
+    const s = ['th', 'st', 'nd', 'rd']
+    const v = n % 100
+    return n + (s[(v - 20) % 10] || s[v] || s[0])
+  }
+  // Format map
+  const formatMap = {
+    YY: () => String(year).slice(-2),               // Year two digits (25)
+    YYYY: () => String(year),                       // Year four digits (2025)
+    Yo: () => getOrdinal(year),                     // Year, ordinal formatted (2018th)
+    M: () => String(month),                         // Month number (1-12)
+    MM: () => pad(month),                           // Month number with zero (01-12)
+    MMM: () => monthNames[month - 1].slice(0, 3),   // Month name (Jan-Dec)
+    MMMM: () => monthNames[month - 1],              // Month name (January-December)
+    Mo: () => getOrdinal(month),                    // Month, ordinal formatted (1st-12th)
+    D: () => String(day),                           // Day of month (1-31)
+    DD: () => pad(day),                             // Day of month with zero (01-31)
+    Do: () => getOrdinal(day),                      // Day of month, ordinal formatted (1st-31st)
+    H: () => String(hours24),                       // Hour (0-23)
+    HH: () => pad(hours24),                         // Hour with zero (01-23)
+    Ho: () => getOrdinal(hours24),                  // Hour, ordinal formatted (0th-23rd)
+    h: () => String(hours12),                       // 12-hour (1-12)
+    hh: () => pad(hours12),                         // 12-hour with zero (01-12)
+    ho: () => getOrdinal(hours12),                  // 12-Hour, ordinal formatted (1st-12th)
+    m: () => String(minutes),                       // Minutes (1)
+    mm: () => pad(minutes),                         // Minutes with zero (01)
+    mo: () => getOrdinal(minutes),                  // Minute, ordinal formatted (0th-59th)
+    s: () => String(seconds),                       // Seconds (0-59)
+    ss: () => pad(seconds),                         // Seconds with zero (00-59)
+    so: () => getOrdinal(seconds),                  // Second, ordinal formatted (0th-59th)
+    SSS: () => String(ms).padStart(3, '0'),         // Milliseconds (000)
+    A: () => hours24 >= 12 ? 'PM' : 'AM',           // Meridiem (AM/PM)
+    AA: () => hours24 >= 12 ? 'P.M.' : 'A.M.',      // Meridiem with periods (A.M./P.M.)
+    a: () => hours24 >= 12 ? 'pm' : 'am',           // Meridiem lowercase (am/pm)
+    aa: () => hours24 >= 12 ? 'p.m.' : 'a.m.',      // Meridiem lowercase with periods (p.m./a.m.)
+    d: () => String(dayOfWeek),                     // Day of week, with Sunday as 0
+    dd: () => dayNames[dayOfWeek][0],               // Min name of the day of week (S-S)
+    ddd: () => dayNames[dayOfWeek].slice(0, 3),     // Short name of the day of week (Sun-Sat)
+    dddd: () => dayNames[dayOfWeek],                // Day of the week (Sunday-Saturday)
+    z: () => date.toTimeString().slice(9, 17),      // Timezone (GMT, GMT+1)
+    zz: () => date.toTimeString().slice(9, 17),     // Timezone (GMT, GMT+1)
+    zzz: () => date.toTimeString().slice(9, 17),    // Timezone (GMT, GMT+1)
+    zzzz: () => date.toTimeString().slice(9, 17),   // Long timezone (GMT, GMT+01:00)
+  }
+  // Sort the format tokens by length and replace them in the format string. This walks through each
+  // character in the format string and checks all replacements from longest to shortest. If the format
+  // starts with one of the replacements, we pop the relevant section of the format out of the string
+  // and place the resulting formatted text into a new string. If the first character of the format
+  // does not match any tokens, we simply copy that character over to the result.
+  const tokens = Object.keys(formatMap).sort((a, b) => b.length - a.length)
+  var result = ''
+  var i = 0
+  while (i < format.length) {
+    var matched = false
+    for (const token of tokens) {
+      if (format.startsWith(token, i)) {
+        result += formatMap[token]()
+        i += token.length
+        matched = true
+        break
+      }
+    }
+    if (!matched) {
+      result += format[i]
+      i++
+    }
+  }
+  console.log(value, format, result)
+  return result
 }
 
 // Insert Commas
@@ -206,13 +291,31 @@ export function stringify(passedObj, options={}) {
 
 // Time Ago
 // Convert seconds or milliseconds to a human readable time ago string.
-// https://day.js.org/docs/en/plugin/relative-time
 export function timeAgo(value, shorten) {
   shorten = shorten === undefined ? false : shorten
   if (value === null || value === undefined) { return 'Never' }
   if (Number.isInteger(value) && value < 99999999999) { value *= 1000 }
-  var result = useTimeAgo(value).value
-  if (shorten && !result.includes('last')) {
+  // Calculate difference in seconds, minutes, hours, days, weeks, and months
+  const now = Date.now()
+  const diff = now - value
+  const seconds = Math.floor(diff / 1000)
+  const minutes = Math.floor(seconds / 60)
+  const hours = Math.floor(minutes / 60) 
+  const days = Math.floor(hours / 24)
+  const weeks = Math.floor(days / 7)
+  const months = Math.floor(days / 30)
+  const years = Math.floor(days / 365)
+  // Build the return string
+  var result
+  if (years > 0) { result = years === 1 ? '1 year ago' : `${years} years ago` }
+  else if (months > 0) { result = months === 1 ? '1 month ago' : `${months} months ago` }
+  else if (weeks > 0) { result = weeks === 1 ? '1 week ago' : `${weeks} weeks ago` }
+  else if (days > 0) { result = days === 1 ? '1 day ago' : `${days} days ago` }
+  else if (hours > 0) { result = hours === 1 ? '1 hour ago' : `${hours} hours ago` }
+  else if (minutes > 0) { result = minutes === 1 ? '1 minute ago' : `${minutes} minutes ago` }
+  else { result = seconds <= 1 ? '1 second ago' : `${seconds} seconds ago` }
+  // Shorten the return string if requested
+  if (shorten && !result.includes('just')) {
     result = result.replace(' years', 'y').replace(' year', 'y')
     result = result.replace(' months', 'mo').replace(' month', 'm')
     result = result.replace(' weeks', 'w').replace(' week', 'w')
