@@ -22,6 +22,7 @@
         <LayoutPaper>
           <template #content v-if='options && response'>
             <!-- Request Description and Url -->
+            <ToggleSwitch v-model="logQueries" label="Log Queries" style='float:right' @update='toggleLogQueries'/>
             <h1>{{viewName}}</h1>
             <div class='description' v-html='options.data?.description?.replace(/\n/g, "<br/>")'></div>
             <div class='headers'>
@@ -52,11 +53,12 @@
 <script setup>
   import {computed, nextTick, onBeforeMount, ref, watch, watchEffect} from 'vue'
   import {useUrlParams} from '@/composables/useUrlParams.js'
+  import {useStorage} from '@/composables/useStorage'
   import {utils} from '@/utils'
   import axios from 'axios'
   import LayoutPaper from '@/components/LayoutPaper.vue'
   import LayoutSidePanel from '@/components/LayoutSidePanel.vue'
-
+  import ToggleSwitch from '@/components/ToggleSwitch.vue'
   // Icon for each API cateogry
   var categoryIcons = {
     'budget': 'mdi-piggy-bank-outline',
@@ -70,8 +72,9 @@
   var options = ref(null)     // Current options response
   var response = ref(null)    // Current get response
   
-  const {view} = useUrlParams({view: {type:String}})
-  const url = ref(view.value)
+  const logQueries = useStorage('axios.logqueries', false)  // Log queries on the server
+  const {view} = useUrlParams({view: {type:String}})        // Current view to display
+  const url = ref(view.value)                               // Current url to display
 
   // Watch View
   // Keep the url updated when view changed
@@ -176,6 +179,16 @@
       })
       span.replaceWith(newspan)
     })
+  }
+
+  // Toggle queries function
+  const toggleLogQueries = function(newval) {
+    logQueries.value = newval
+    if (newval) {
+      axios.defaults.headers.common['Print-Queries'] = 'true'
+    } else {
+      delete axios.defaults.headers.common['Print-Queries']
+    }
   }
 </script>
 
