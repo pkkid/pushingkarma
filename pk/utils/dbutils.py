@@ -1,6 +1,5 @@
 # encoding: utf-8
 import logging, re, sqlparse
-# import regex as re
 from django.core.exceptions import EmptyResultSet
 from django.db import connection
 from django.db.models.query import QuerySet

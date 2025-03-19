@@ -13,7 +13,6 @@ djangorestframework==3.15.1
 ofxparse==0.21
 python-dateutil==2.9.0.post0
 redis==5.2.1
-regex==2024.7.24
 requests-ratelimiter==0.7.0
 yfinance==0.2.54
 django_searchquery @ git+https://github.com/pkkid/django-searchquery.git
