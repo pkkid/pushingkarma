@@ -22,7 +22,10 @@
         <LayoutPaper>
           <template #content v-if='options && response'>
             <!-- Request Description and Url -->
-            <ToggleSwitch v-model="logQueries" label="Log Queries" style='float:right' @update='toggleLogQueries'/>
+            <div class='options'>
+              <ToggleSwitch v-model="countQueries" label="Count Queries" @update='toggleCountQueries'/>
+              <ToggleSwitch v-model="logQueries" label="Log Queries" @update='toggleLogQueries'/>
+            </div>
             <h1>{{viewName}}</h1>
             <div class='description' v-html='options.data?.description?.replace(/\n/g, "<br/>")'></div>
             <div class='headers'>
@@ -72,9 +75,10 @@
   var options = ref(null)     // Current options response
   var response = ref(null)    // Current get response
   
-  const logQueries = useStorage('axios.logqueries', false)  // Log queries on the server
-  const {view} = useUrlParams({view: {type:String}})        // Current view to display
-  const url = ref(view.value)                               // Current url to display
+  const countQueries = useStorage('axios.countqueries', false)  // Count queries on the server
+  const logQueries = useStorage('axios.logqueries', false)      // Log queries on the server
+  const {view} = useUrlParams({view: {type:String}})            // Current view to display
+  const url = ref(view.value)                                   // Current url to display
 
   // Watch View
   // Keep the url updated when view changed
@@ -87,10 +91,13 @@
   // Update to top nav and get the toc
   onBeforeMount(async function() {
     utils.setNavPosition('top')
-    checkView()
+    toggleCountQueries(countQueries.value)
     toggleLogQueries(logQueries.value)
-    var data = await axios.get('')
-    toc.value = data.data
+    checkView()
+    toc.value = (await axios.get('')).data
+
+    // var data = await axios.get('')
+    // toc.value = data.data
   })
 
   // Check View
@@ -182,7 +189,16 @@
     })
   }
 
-  // Toggle queries function
+  // Toggle Count Queries
+  // Includes the Count-Queries header in requests
+  const toggleCountQueries = function(newval) {
+    countQueries.value = newval
+    if (newval) { axios.defaults.headers.common['Count-Queries'] = 'true' }
+    else { delete axios.defaults.headers.common['Count-Queries'] }
+  }
+  
+  // Toggle Log Queries
+  // Includes the Log-Queries header in requests
   const toggleLogQueries = function(newval) {
     logQueries.value = newval
     if (newval) { axios.defaults.headers.common['Log-Queries'] = 'true' }
@@ -195,6 +211,13 @@
     .description {
       font-size: 14px;
       margin-top: -10px;
+    }
+    .options {
+      float: right;
+      display: flex;
+      flex-direction: column;
+      font-size: 10px;
+      gap: 3px;
     }
     .inputwrap {
       background-color: transparent;
