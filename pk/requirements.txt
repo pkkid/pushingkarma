@@ -1,19 +1,15 @@
 ipython
 json5
+python-dateutil
 pytz
 requests
 timelib
 tzdata
-django==5.0.4
-django-cors-headers==4.3.1
+django==5.1.7
+django-cors-headers==4.7.0
 django-extensions==3.2.3
-django-redis-cache==3.0.1
-django-redis-sessions==0.6.2
-djangorestframework==3.15.1
+djangorestframework==3.15.2
 ofxparse==0.21
-python-dateutil==2.9.0.post0
-redis==5.2.1
 requests-ratelimiter==0.7.0
 yfinance==0.2.54
 django_searchquery @ git+https://github.com/pkkid/django-searchquery.git
-

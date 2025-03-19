@@ -9,7 +9,6 @@ from rest_framework.response import Response
 log = logging.getLogger(__name__)
 
 @api_view(['get'])
-# @cache_page(300)
 @permission_classes([AllowAny])
 def note(request, *args, **kwargs):
     """ Return the content of an obsidian note.
