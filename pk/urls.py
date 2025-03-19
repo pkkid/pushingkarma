@@ -32,7 +32,7 @@ api.add_url('^stocks/projection_trends$', stocks_apiviews.projection_trends, nam
 def index(request, tmpl='index.html'):
     if url := utils.vue_devserver_running(request):
         return redirect(url)
-    return utils.response(request, tmpl)
+    return utils.response(request, tmpl, {})
 
 
 def api_404(request, exc=None):
