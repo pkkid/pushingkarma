@@ -14,6 +14,17 @@
               <TrendChart title='Long Term Trend' :data='longdata'/>
               <TrendChart title='Short Term Trend' :data='shortdata'/>
             </div>
+            <!-- Stocks Table -->
+            <DataTable :items='tickers?.results' keyattr='ticker'>
+              <template #headers>
+                <th>Ticker</th>
+                <th>Name</th>
+              </template>
+              <template #columns="{item}">
+                <td data-title='Ticker'>{{item.ticker}}</td>
+                <td data-title='Name'>{{item.info.longName}}</td>
+              </template>
+            </DataTable>
           </template>
         </LayoutPaper>
       </template>
@@ -25,6 +36,7 @@
   import {onBeforeMount, onMounted, provide, ref, watchEffect} from 'vue'
   import {useUrlParams} from '@/composables/useUrlParams.js'
   import {api, utils} from '@/utils'
+  import DataTable from '@/components/DataTable.vue'
   import LayoutPaper from '@/components/LayoutPaper.vue'
   import LayoutSidePanel from '@/components/LayoutSidePanel.vue'
   import StocksSearch from '@/views/stocks/StocksSearch.vue'
@@ -36,6 +48,7 @@
     'Papas Picks': 'tags:dad',
   }
 
+  const tickers = ref(null)
   const shortdata = ref(null)
   const longdata = ref(null)
   const {search} = useUrlParams({search: {type:String}})
@@ -54,6 +67,9 @@
     api.Stocks.projectionTrends({periods:'10w,8w,6w,4w,2w', search:search.value})
       .then(resp => shortdata.value = resp.data)
       .catch(err => shortdata.value = err)
+    api.Stocks.getTickers({search:search.value})
+      .then(resp => tickers.value = resp.data)
+      .catch(err => tickers.value = err)
   })
 </script>
 
