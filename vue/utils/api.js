@@ -1,4 +1,5 @@
 import axios from 'axios'
+import {ref} from 'vue'
 import * as utils from '@/utils/utils'
 export const isCancel = axios.isCancel
 
@@ -21,13 +22,11 @@ export function cancel(controller) {
 // Get (wrapper)
 // Wrapping the axios.get method to save the latest GET request URL. This
 // allows the API button in the navigation to show the latest request.
-export var lastApiGet = null
+export const apidocurl = ref('/apidoc')
 async function get(url, config) {
   var params = config.params || {}
-  params = Object.keys(params).map(function(key) { 
-    return `${key}=${params[key] || ''}`
-  }).join('&')
-  lastApiGet = params ? `${url}?${params}` : url
+  params = Object.keys(params).map(function(key) { return `${key}=${params[key] || ''}` }).join('%26')
+  apidocurl.value = params ? `/apidoc?view=/api${url}?${params}` : `/apidoc?view=/api${url}`
   return axios.get(url, config)
 }
 

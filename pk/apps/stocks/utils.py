@@ -1,7 +1,9 @@
 # encoding: utf-8
+import logging
 from collections import defaultdict
 from datetime import timedelta
 from .models import TickerHistory
+log = logging.getLogger(__name__)
 
 
 def histories_dict(tickers, mindate):

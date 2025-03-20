@@ -23,7 +23,7 @@ def projection_trends(request):
     tickers = Search(api.TICKERSEARCHFIELDS).get_queryset(Ticker.objects.all(), searchstr)
     if not len(tickers): return Response({'labels':[], 'datasets':[]})
     maxdate = TickerHistory.objects.filter(ticker__in=tickers).aggregate(Max('date'))['date__max']
-    mindate = maxdate - timedelta(weeks=int(periods[0].rstrip('w')))
+    mindate = maxdate - timedelta(weeks=int(periods[0].rstrip('w'))+1)
     histories = sutils.histories_dict(tickers, mindate)
     # Pass 1: Calculate the percent change for each ticker
     datasets = {}

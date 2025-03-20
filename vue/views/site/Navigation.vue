@@ -9,31 +9,20 @@
       <div class='budget' v-if='user?.id'><router-link to='/budget'>Budget</router-link></div>
       <div class='stocks' v-if='user?.id'><router-link to='/stocks'>Stocks</router-link></div>
       <div class='account' v-if='user?.id'><a href='#' @click.prevent @click='showAccount=true'>{{user.name}}</a></div>
-      <div class='apidoc' v-if='user?.id'><a href='#' @click.prevent='navigateToApiDoc'>API</a></div>
+      <div class='apidoc' v-if='user?.id'><a :href='apidocurl'>API</a></div>
     </div>
   </div>
 </template>
 
 <script setup>
-  import {inject, ref} from 'vue'
+  import {inject, ref, watchEffect} from 'vue'
   import {useRoute, useRouter} from 'vue-router'
-  import {lastApiGet} from '@/utils/api'
+  import {apidocurl} from '@/utils/api'
   import Logo from '@/views/site/Logo.vue'
   import Account from '@/views/site/Account.vue'
 
   const {user} = inject('user')
   const showAccount = ref(false)
-  const router = useRouter()
-  const route = useRoute()
-
-  // Navigate to ApiDoc
-  // Loads API view at the last API GET request
-  function navigateToApiDoc() {
-    if (route.path === '/apidoc') {
-      return router.push({query:{view:'/api/'}})
-    }
-    router.push({path:'/apidoc', query:{view:`/api${lastApiGet}`}})
-  }
 </script>
 
 <style>
