@@ -334,3 +334,35 @@ export function title(str) {
   str = str.map(w => w.length > 0 ? w[0].toUpperCase() + w.substring(1) : w)
   return str.join(' ')
 }
+
+
+// USD
+// Format number to USD display -$99.99 with cents.
+export function usd(value, opts={}) {
+  value = value || 0
+  var result
+  var places = opts.places !== undefined ? opts.places : 2
+  var valuestr = Math.abs(value).toFixed(places)
+  var symbol = opts.symbol === null ? '' : '$'
+  if (value < 0) { result = `-${symbol}${intComma(valuestr)}` }
+  else { result = `${symbol}${intComma(valuestr)}` }
+  if (places == 2) {
+    if (result.match(/\.\d{1}$/)) { return result +'0' }
+    if (!result.match(/\./)) { return result +'.00' }
+  }
+  // Apply the color styles
+  if (opts.color) {
+    var cls = 'zero'
+    cls = value > 0 ? 'gtzero' : cls
+    cls = value < 0 ? 'ltzero' : cls
+    result = `<span class='${cls}'>${result}</span>`
+  }
+  return result
+}
+
+// USD Int
+// Format number to USD display without cents -$99
+export function usdint(value, opts={}) {
+  opts = Object.assign({}, opts, {places:0})
+  return usd(value, opts)
+}

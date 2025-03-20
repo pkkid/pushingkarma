@@ -1,15 +1,18 @@
 # encoding: utf-8
 import logging
+from django_extensions.db.models import TimeStampedModel
 from django.core.management import call_command
 from django.db import models
 from django.dispatch import receiver
 log = logging.getLogger(__name__)
 
 
-class Ticker(models.Model):
+class Ticker(TimeStampedModel):
     ticker = models.CharField(max_length=5, primary_key=True)
-    tags = models.CharField(max_length=255, blank=True)
+    tags = models.CharField(max_length=255, null=True)
     info = models.JSONField(null=True)
+    lastday = models.ForeignKey('TickerHistory', null=True, blank=True,
+        on_delete=models.SET_NULL, related_name='+')
 
     def __str__(self):
         return f'<Ticker:{self.ticker}:{self.tags.replace(' ',',')}>'

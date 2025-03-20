@@ -17,12 +17,43 @@
             <!-- Stocks Table -->
             <DataTable :items='tickers?.results' keyattr='ticker'>
               <template #headers>
-                <th>Ticker</th>
-                <th>Name</th>
+                <th><div class='thwrap ticker'>Ticker</div></th>
+                <th><div class='thwrap name'>Name</div></th>
+                <th><div class='thwrap close'>Close</div></th>
+                <th><div class='thwrap change200d'>200-Day</div></th>
+                <th><div class='thwrap change50d'>50-Day</div></th>
+                <th><div class='thwrap beta'>Beta</div></th>
               </template>
               <template #columns="{item}">
-                <td data-title='Ticker'>{{item.ticker}}</td>
-                <td data-title='Name'>{{item.info.longName}}</td>
+                <!-- Ticker -->
+                <td><div class='tdwrap ticker'>
+                  {{item.ticker}}
+                </div></td>
+                <!-- Name & Category -->
+                <td><div class='tdwrap name'>
+                  <div>
+                    {{item.info.longName}}
+                    <div class='subtext'>
+                      {{utils.title(item.info.category || item.info.industry || item.info.quoteType.toLowerCase())}}
+                    </div>
+                  </div>
+                </div></td>
+                <!-- Close -->
+                <td><div class='tdwrap close'>
+                  {{utils.usd(item.lastday.close)}}
+                </div></td>
+                <!-- Close 200-Day -->
+                <td><div class='tdwrap change200d'>
+                  {{utils.round(item.info.twoHundredDayAverageChange, 2)}}%
+                </div></td>
+                <!-- Close 50-Day -->
+                <td><div class='tdwrap change50d'>
+                  {{utils.round(item.info.fiftyDayAverageChange, 2)}}%
+                </div></td>
+                <!-- Beta -->
+                <td><div class='tdwrap change50d'>
+                  {{item.info.beta || item.info.beta3Year}}
+                </div></td>
               </template>
             </DataTable>
           </template>
@@ -77,18 +108,30 @@
   #stocks {
     .chartlayout {
       display: grid;
-      grid-template-rows: 240px;
-      grid-template-columns: 100%;
-      grid-row-gap: 20px;
       grid-column-gap: 20px;
-      margin: 20px 0 20px 0;
-
+      grid-row-gap: 20px;
+      grid-template-columns: 100%;
       grid-template-columns: calc(50% - 10px) calc(50% - 10px);
+      grid-template-rows: 240px;
+      margin: 20px 0 20px 0;
       & > div {
-        background-color: #00000008;
+        background-color: #eaeae7;
         border-radius: 6px;
         padding: 15px 10px 10px 10px;
       }
     }
+
+    .datatable {
+      .thwrap, .tdwrap { display:flex; align-items:center; justify-content: center; }
+      .thwrap { font-size:10px; line-height: 1.3;  height:20px;}
+      .name { flex-direction: row; justify-content: flex-start; }
+    }
+
+    .subtext {
+      font-size: 0.7em;
+      opacity: 0.6;
+      margin-top: -2px;
+    }
+
   }
 </style>

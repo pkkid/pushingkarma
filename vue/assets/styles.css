@@ -229,7 +229,7 @@ body.chrome ::-webkit-scrollbar-thumb {
 /*-------------------------------------------
  * Sidepanel Search
  *------------------------------------------- */
- .sidepanel-panel .searchwrap {
+.sidepanel-panel .searchwrap {
   position: relative;
   display: flex;
   align-items: center;
@@ -271,17 +271,17 @@ article {
     font-family: 'Merriweather';
     font-size: 30px;
     margin-bottom: 30px;
-    .subtext {
-      font-size: 0.5em;
-      color: var(--lightbg-fg2);
-      margin-top: -5px;
-    }
     &:after {
       border-bottom: 2px solid var(--lightbg-orange0);
       content: " ";
       display: block;
       height: 10px;
       width: 300px;
+    }
+    .subtext {
+      font-size: 0.5em;
+      color: var(--lightbg-fg2);
+      margin-top: -5px;
     }
   }
   h2 {
@@ -301,6 +301,7 @@ article {
     margin-inline-end: 0px;
     margin-inline-start: 0px;
   }
+  
   strong {
     font-weight: bold;
   }
