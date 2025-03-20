@@ -1,5 +1,4 @@
 ipython
-json5
 python-dateutil
 pytz
 requests
