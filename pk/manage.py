@@ -2,17 +2,16 @@
 # encoding: utf-8
 import os, sys, time
 from django.core.management import execute_from_command_line
-from os.path import abspath, dirname, islink, exists, expanduser
+from os.path import abspath, dirname, exists, expanduser
 
 PROJECT_DIR = dirname(dirname(abspath(__file__)))
 SETTINGS = f'{PROJECT_DIR}/pk/settings.py'
 MOUNT_CMD = expanduser('~/Sync/Scripts/mount-private.py')
-isbroken = lambda path: islink(path) and not exists(path)
 
 
 if __name__ == "__main__":
     # Make sure private drive is mounted
-    if isbroken(SETTINGS) and 'runserver' in sys.argv:
+    if not exists(SETTINGS) and 'runserver' in sys.argv:
         time.sleep(1)
         os.system(MOUNT_CMD)
     # Start Django management
