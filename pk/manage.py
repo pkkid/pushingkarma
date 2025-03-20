@@ -10,7 +10,7 @@ MOUNT_CMD = expanduser('~/Sync/Scripts/mount-private.py')
 
 
 if __name__ == "__main__":
-    # Make sure private drive is mounted
+    # Make sure settings exists
     if not exists(SETTINGS) and 'runserver' in sys.argv:
         time.sleep(1)
         os.system(MOUNT_CMD)
