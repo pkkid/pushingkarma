@@ -29,7 +29,7 @@ class TickerSerializer(utils.DynamicFieldsSerializer):
 class TickerViewSet(utils.ViewSetMixin, viewsets.ModelViewSet):
     """ Rest endpoint to list or modifiy watched tickers. """
     serializer_class = TickerSerializer
-    queryset = Ticker.objects.order_by('ticker')
+    queryset = Ticker.objects.select_related('lastday').order_by('ticker')
     permission_classes = [IsAuthenticated]
     list_fields = TickerSerializer.Meta.fields
 
