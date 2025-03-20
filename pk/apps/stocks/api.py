@@ -9,12 +9,21 @@ TICKERSEARCHFIELDS = [
     sf.StrField('ticker', 'ticker', desc='Ticker symbol', generic=True),
     sf.StrField('tags', 'tags', desc='User tags', generic=True),
 ]
-    
+
+
+class TickerHistorySerializer(utils.DynamicFieldsSerializer):
+    class Meta:
+        model = TickerHistory
+        fields = ('ticker', 'date', 'close', 'high', 'low', 'volume')
+
 
 class TickerSerializer(utils.DynamicFieldsSerializer):
+    lastday = utils.PartialFieldsSerializer(TickerHistorySerializer,
+        ('date', 'close', 'high', 'low', 'volume'))
+
     class Meta:
         model = Ticker
-        fields = ('ticker', 'tags', 'info')
+        fields = ('ticker', 'tags', 'info', 'lastday')
 
 
 class TickerViewSet(utils.ViewSetMixin, viewsets.ModelViewSet):
@@ -26,9 +35,3 @@ class TickerViewSet(utils.ViewSetMixin, viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         return self.list_response(request, paginated=True, searchfields=TICKERSEARCHFIELDS)
-
-
-class TickerHistorySerializer(utils.DynamicFieldsSerializer):
-    class Meta:
-        model = TickerHistory
-        fields = ('ticker', 'date', 'close', 'high', 'low', 'volume')
