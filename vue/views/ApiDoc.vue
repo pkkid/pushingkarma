@@ -103,9 +103,6 @@
     toggleLogQueries(logQueries.value)
     checkView()
     toc.value = (await axios.get('')).data
-
-    // var data = await axios.get('')
-    // toc.value = data.data
   })
 
   // Check View
