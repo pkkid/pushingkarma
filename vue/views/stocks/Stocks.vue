@@ -16,44 +16,34 @@
             </div>
             <!-- Stocks Table -->
             <DataTable :items='tickers?.results' keyattr='ticker'>
-              <template #headers>
-                <th><div class='thwrap ticker'>Ticker</div></th>
-                <th><div class='thwrap name'>Name</div></th>
-                <th><div class='thwrap close'>Close</div></th>
-                <th><div class='thwrap change200d'>200-Day</div></th>
-                <th><div class='thwrap change50d'>50-Day</div></th>
-                <th><div class='thwrap beta'>Beta</div></th>
-              </template>
               <template #columns="{item}">
                 <!-- Ticker -->
-                <td><div class='tdwrap ticker'>
+                <Column title='Ticker'>
                   {{item.ticker}}
-                </div></td>
-                <!-- Name & Category -->
-                <td><div class='tdwrap name'>
-                  <div>
-                    {{item.info.longName}}
-                    <div class='subtext'>
-                      {{utils.title(item.info.category || item.info.industry || item.info.quoteType.toLowerCase())}}
-                    </div>
+                </Column>
+                <!-- Name -->
+                <Column title='Name'>
+                  {{item.info.longName}}
+                  <div class='subtext'>
+                    {{utils.title(item.info.category || item.info.industry || item.info.quoteType.toLowerCase())}}
                   </div>
-                </div></td>
+                </Column>
                 <!-- Close -->
-                <td><div class='tdwrap close'>
+                <Column title='Close'>
                   {{utils.usd(item.lastday.close)}}
-                </div></td>
-                <!-- Close 200-Day -->
-                <td><div class='tdwrap change200d'>
+                </Column>
+                <!-- Change 200d -->
+                <Column title='Change 200d'>
                   {{utils.round(item.info.twoHundredDayAverageChange, 2)}}%
-                </div></td>
-                <!-- Close 50-Day -->
-                <td><div class='tdwrap change50d'>
+                </Column>
+                <!-- Change 50d -->
+                <Column title='Change 25d'>
                   {{utils.round(item.info.fiftyDayAverageChange, 2)}}%
-                </div></td>
+                </Column>
                 <!-- Beta -->
-                <td><div class='tdwrap change50d'>
+                <Column title='Beta'>
                   {{item.info.beta || item.info.beta3Year}}
-                </div></td>
+                </Column>
               </template>
             </DataTable>
           </template>
@@ -67,6 +57,7 @@
   import {onBeforeMount, onMounted, provide, ref, watchEffect} from 'vue'
   import {useUrlParams} from '@/composables/useUrlParams.js'
   import {api, utils} from '@/utils'
+  import Column from '@/components/Column.vue'
   import DataTable from '@/components/DataTable.vue'
   import LayoutPaper from '@/components/LayoutPaper.vue'
   import LayoutSidePanel from '@/components/LayoutSidePanel.vue'
@@ -122,16 +113,14 @@
     }
 
     .datatable {
-      .thwrap, .tdwrap { display:flex; align-items:center; justify-content: center; }
-      .thwrap { font-size:10px; line-height: 1.3;  height:20px;}
-      .name { flex-direction: row; justify-content: flex-start; }
+      .thwrap, .tdwrap { line-height:1.3; padding:5px 10px; text-align:center;}
+      .thwrap { font-size:10px; }
+      tr [data-name='name'] > div { text-align:left; }
     }
-
     .subtext {
       font-size: 0.7em;
       opacity: 0.6;
       margin-top: -2px;
     }
-
   }
 </style>

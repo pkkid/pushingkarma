@@ -1,11 +1,14 @@
 <template>
-  <div class='datatable'>
+  <div class='datatable' ref='datatable'>
     <table v-if='items !== null'>
-      <thead>
-        <tr><slot name='headers'></slot></tr>
-        <tr v-if="$slots.headerrow"><slot name='headerrow'></slot></tr>
-      </thead>
+      <!-- Header Row (dynamically created) -->
+      <thead><tr>
+        <th v-for='head in headers' :key='head.name' :data-name='head.name'>
+          <div class='thwrap' :class='head.name'>{{head.title}}</div>
+        </th>
+      </tr></thead>
       <tbody>
+        <!-- Body Rows -->
         <tr v-for='item in items' :key='item[keyattr]'>
           <slot name='columns' :item="item"></slot>
         </tr>
@@ -15,9 +18,25 @@
 </template>
 
 <script setup>
+  import {ref, nextTick, onMounted, watch} from 'vue'
+
+  const datatable = ref(null)
+  const headers = ref(null)
   const props = defineProps({
     items: {type:Array, required:true},
     keyattr: {type:String, required:true},
+  })
+
+  // Watch Items
+  // Update the headers from the data attributes of the first row
+  watch(() => props.items, async function() {
+    await nextTick()
+    var tds = datatable.value.querySelectorAll('tbody tr:first-child td')
+    console.log(tds)
+    headers.value = Array.from(tds).map(td => ({
+      title: td.dataset.title,
+      name: td.dataset.name,
+    }))
   })
 </script>
 
