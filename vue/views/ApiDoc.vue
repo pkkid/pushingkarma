@@ -21,11 +21,18 @@
       <template #content>
         <LayoutPaper>
           <template #content v-if='options && response'>
-            <!-- Request Description and Url -->
             <div class='options'>
-              <ToggleSwitch v-model="countQueries" label="Count Queries" @update='toggleCountQueries'/>
-              <ToggleSwitch v-model="logQueries" label="Log Queries" @update='toggleLogQueries'/>
+              <!-- Count Queries -->
+              <Tooltip width='250px' text="Returns an additonal header 'Queries' in all api requests
+                detailing the count and duration of sql queries.">
+                <ToggleSwitch v-model="countQueries" label="Count Queries" @update='toggleCountQueries'/>
+              </Tooltip>
+              <!-- Log Queries -->
+              <Tooltip width='250px' text="Enables server side logging of all sql queries and duration.">
+                <ToggleSwitch v-model="logQueries" label="Log Queries" @update='toggleLogQueries'/>
+              </Tooltip>
             </div>
+            <!-- Request Description and URL -->
             <h1>{{viewName}}</h1>
             <div class='description' v-html='options.data?.description?.replace(/\n/g, "<br/>")'></div>
             <div class='headers'>
@@ -62,6 +69,7 @@
   import LayoutPaper from '@/components/LayoutPaper.vue'
   import LayoutSidePanel from '@/components/LayoutSidePanel.vue'
   import ToggleSwitch from '@/components/ToggleSwitch.vue'
+  import Tooltip from '@/components/Tooltip.vue'
   // Icon for each API cateogry
   var categoryIcons = {
     'budget': 'mdi-piggy-bank-outline',
