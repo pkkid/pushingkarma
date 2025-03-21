@@ -2,7 +2,6 @@
   <div class='tooltip-container' ref='container' @mouseenter='showTooltip' @mouseleave='hideTooltip'>
     <div v-if='visible' class='tooltip' ref='tooltip' :class='position' :style='tstyle'>
       <slot name='tooltip'>{{text}}</slot>
-      <div class='tooltip-arrow' :class='position'/>
     </div>
     <slot></slot>
   </div>
@@ -11,7 +10,8 @@
 <script setup>
   import {ref, nextTick} from 'vue'
 
-  var timeout = null                                  // Timeout for showing tooltip    
+  var timeout_show = null                             // Timeout for showing tooltip
+  var timeout_hide = null                             // Timeout for hiding tooltip
   const container = ref(null)                         // Reference to tooltip container
   const tooltip = ref(null)                           // Reference to tooltip element
   const tstyle = ref({})                              // Dynamic style for tooltip
@@ -27,7 +27,8 @@
   // Called when moused over tooltip-container. Waits for
   // props.delay then sets tooltip visisbility to true
   const showTooltip = function() {
-    timeout = setTimeout(async function() {
+    clearTimeout(timeout_hide)
+    timeout_show = setTimeout(async function() {
       visible.value = true
       await nextTick()
       updateTooltipStyle()
@@ -62,8 +63,10 @@
   // Hide Tooltip
   // Clears timeout and sets tooltip visibility to false
   const hideTooltip = function() {
-    clearTimeout(timeout)
-    visible.value = false
+    clearTimeout(timeout_show)
+    timeout_hide = setTimeout(function() {
+      visible.value = false
+    }, 200)
   }
 </script>
 
@@ -86,7 +89,9 @@
       z-index: 1000;
       &.loaded { opacity: 1; }
     }
-    .tooltip-arrow {
+    .tooltip::before {
+      display: block;
+      content: ' ';
       width: 0;
       height: 0;
       border-style: solid;
@@ -94,53 +99,51 @@
       border-color: transparent transparent transparent transparent;
       border-width: 5px 5px 5px 5px;
     }
-    
-    /* Top */
-    .tooltip.topleft .tooltip-arrow,
-    .tooltip.top .tooltip-arrow,
-    .tooltip.topright .tooltip-arrow {
+    .tooltip.topleft::before,
+    .tooltip.top::before,
+    .tooltip.topright::before {
       border-bottom-width: 0px;
       border-top-color: var(--bgcolor);
       transform: translateX(-50%);
     }
-    .tooltip.topleft .tooltip-arrow { bottom: -5px; right: 5px; }
-    .tooltip.top .tooltip-arrow { bottom: -5px; left: 50%; }
-    .tooltip.topright .tooltip-arrow { bottom: -5px; left: 15px; }
+    .tooltip.topleft::before { bottom: -5px; right: 5px; }
+    .tooltip.top::before { bottom: -5px; left: 50%; }
+    .tooltip.topright::before { bottom: -5px; left: 15px; }
     
     /* Right */
-    .tooltip.righttop .tooltip-arrow,
-    .tooltip.right .tooltip-arrow,
-    .tooltip.rightbottom .tooltip-arrow {
+    .tooltip.righttop::before,
+    .tooltip.right::before,
+    .tooltip.rightbottom::before {
       border-left-width: 0px;
       border-right-color: var(--bgcolor);
       transform: translateY(-50%);
     }
-    .tooltip.righttop .tooltip-arrow { bottom: 5px; left: -5px; }
-    .tooltip.right .tooltip-arrow { top: 50%; left: -5px; }
-    .tooltip.rightbottom .tooltip-arrow { top: 15px; left: -5px; }
+    .tooltip.righttop::before { bottom: 5px; left: -5px; }
+    .tooltip.right::before { top: 50%; left: -5px; }
+    .tooltip.rightbottom::before { top: 15px; left: -5px; }
     
     /* Bottom */
-    .tooltip.bottomleft .tooltip-arrow,
-    .tooltip.bottom .tooltip-arrow,
-    .tooltip.bottomright .tooltip-arrow {
+    .tooltip.bottomleft::before,
+    .tooltip.bottom::before,
+    .tooltip.bottomright::before {
       border-top-width: 0px;
       border-bottom-color: var(--bgcolor);
       transform: translateX(-50%);
     }
-    .tooltip.bottomleft .tooltip-arrow { top: -5px; right: 5px; }
-    .tooltip.bottom .tooltip-arrow { top: -5px; left: 50%; }
-    .tooltip.bottomright .tooltip-arrow { top: -5px; left: 15px; }
+    .tooltip.bottomleft::before { top: -5px; right: 5px; }
+    .tooltip.bottom::before { top: -5px; left: 50%; }
+    .tooltip.bottomright::before { top: -5px; left: 15px; }
     
     /* Left */
-    .tooltip.lefttop .tooltip-arrow,
-    .tooltip.left .tooltip-arrow,
-    .tooltip.leftbottom .tooltip-arrow {
+    .tooltip.lefttop::before,
+    .tooltip.left::before,
+    .tooltip.leftbottom::before {
       border-right-width: 0px;
       border-left-color: var(--bgcolor);
       transform: translateY(-50%);
     }
-    .tooltip.lefttop .tooltip-arrow { bottom: 5px; right: -5px; }
-    .tooltip.left .tooltip-arrow { top: 50%; right: -5px; }
-    .tooltip.leftbottom .tooltip-arrow { top: 15px; right: -5px; }
+    .tooltip.lefttop::before { bottom: 5px; right: -5px; }
+    .tooltip.left::before { top: 50%; right: -5px; }
+    .tooltip.leftbottom::before { top: 15px; right: -5px; }
   }
 </style>
