@@ -12,7 +12,7 @@ MOUNT_CMD = expanduser('~/Sync/Scripts/mount-private.py')
 if __name__ == "__main__":
     # Make sure settings exists
     if not exists(SETTINGS) and 'runserver' in sys.argv:
-        time.sleep(1)
+        time.sleep(0.3)
         os.system(MOUNT_CMD)
     # Start Django management
     sys.path.insert(0, PROJECT_DIR)
