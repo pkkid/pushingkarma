@@ -54,7 +54,7 @@
       width: 100%;
     }
     th, td { padding: 1px 6px; }
-    th { background-color: #eaeae7; }
+    th { background-color: var(--lightbg-bg2); }
     td { border-top: 1px solid var(--lightbg-bg3); } 
     .thwrap {
       font-family: var(--fontfamily-title);
