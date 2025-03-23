@@ -69,7 +69,6 @@
       top: 15%;
       box-shadow: 0px 4px 8px #0008, 0px 8px 20px #0004;
       min-width: 500px;
-      min-height: 200px;
     }
     .mdi-close {
       color: var(--lightbg-fg1);
