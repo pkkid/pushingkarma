@@ -17,6 +17,7 @@ def projection_trends(request):
         • maxresults: Maximum number of results to return (default: 10).
         • search: Filter tickers by search string.
     """
+    # import time; time.sleep(5)
     periods = request.query_params.get('periods', '12w,10w,8w,6w,4w,2w').split(',')
     maxresults = int(request.query_params.get('maxresults', 10))
     searchstr = request.GET.get('search', '')

@@ -1,7 +1,9 @@
 <template>
   <div v-if='nodata' class='nodata empty'>Data not available</div>
-  <div v-else-if='datasets'><Line :options='options' :data='datasets'/></div>
-  <div v-else class='loading-chart'><LoadingIcon /></div>
+  <div v-else-if='datasets==null' class='loading'><LoadingIcon /></div>
+  <div v-else><Transition name='fade' appear>
+    <Line :options='options' :data='datasets'/>
+  </Transition></div>
 </template>
 
 <script setup>
@@ -62,7 +64,8 @@
   // Long list of chart.js options
   const options = computed(function() {
     var opts = {}
-    utils.rset(opts, 'animation.duration', 300)
+    utils.rset(opts, 'animation.duration', 0)
+    utils.rset(opts, 'animation.onComplete', function() { this.options.animation.duration = 300 })
     utils.rset(opts, 'elements.line.borderWidth', 1.5)
     utils.rset(opts, 'elements.line.tension', 0.4)
     utils.rset(opts, 'elements.point.radius', 0)
@@ -189,7 +192,7 @@
 
 <style>
   .nodata,
-  .loading-chart {
+  .loading {
     display: flex;
     align-items: center;
     justify-content: center;
