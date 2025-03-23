@@ -1,7 +1,7 @@
 <template>
   <div v-if='nodata' class='nodata empty'>Data not available</div>
   <div v-else-if='datasets'><Line :options='options' :data='datasets'/></div>
-  <div v-else class='loading-chart'><LoadingIcon style='height:30px;'/></div>
+  <div v-else class='loading-chart'><LoadingIcon /></div>
 </template>
 
 <script setup>
