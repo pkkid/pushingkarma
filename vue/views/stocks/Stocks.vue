@@ -18,32 +18,32 @@
             <DataTable :items='tickers?.results' keyattr='ticker'>
               <template #columns="{item}">
                 <!-- Ticker -->
-                <DataTableColumn title='Ticker'>
+                <Column title='Ticker'>
                   {{item.ticker}}
-                </DataTableColumn>
+                </Column>
                 <!-- Name -->
-                <DataTableColumn title='Name'>
+                <Column title='Name'>
                   {{item.info.longName}}
                   <div class='subtext'>
                     {{utils.title(item.info.category || item.info.industry || item.info.quoteType.toLowerCase())}}
                   </div>
-                </DataTableColumn>
+                </Column>
                 <!-- Close -->
-                <DataTableColumn title='Close'>
+                <Column title='Close'>
                   {{utils.usd(item.lastday.close)}}
-                </DataTableColumn>
+                </Column>
                 <!-- Change 200d -->
-                <DataTableColumn title='Change 200d'>
+                <Column title='Change 200d'>
                   {{utils.round(item.info.twoHundredDayAverageChange, 2)}}%
-                </DataTableColumn>
+                </Column>
                 <!-- Change 50d -->
-                <DataTableColumn title='Change 25d'>
+                <Column title='Change 25d'>
                   {{utils.round(item.info.fiftyDayAverageChange, 2)}}%
-                </DataTableColumn>
+                </Column>
                 <!-- Beta -->
-                <DataTableColumn title='Beta'>
+                <Column title='Beta'>
                   {{item.info.beta || item.info.beta3Year}}
-                </DataTableColumn>
+                </Column>
               </template>
             </DataTable>
           </template>
@@ -54,10 +54,10 @@
 </template>
 
 <script setup>
-  import {onBeforeMount, onMounted, provide, ref, watchEffect} from 'vue'
+  import {onBeforeMount, provide, ref, watchEffect} from 'vue'
+  import {DataTable, DataTableColumn as Column} from '@/components/DataTable'
   import {useUrlParams} from '@/composables/useUrlParams.js'
   import {api, utils} from '@/utils'
-  import {DataTable, DataTableColumn} from '@/components/DataTable'
   import LayoutPaper from '@/components/LayoutPaper.vue'
   import LayoutSidePanel from '@/components/LayoutSidePanel.vue'
   import StocksSearch from '@/views/stocks/StocksSearch.vue'

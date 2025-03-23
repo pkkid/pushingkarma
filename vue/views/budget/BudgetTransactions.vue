@@ -18,25 +18,25 @@
       <!-- Transactions Table -->
       <DataTable v-if='transactions' :items='transactions?.results' keyattr='id'>
         <template #columns='{item}'>
-          <DataTableColumn title='Act'>{{item.account.name}}</DataTableColumn>
-          <DataTableColumn title='Date'>
+          <Column title='Act'>{{item.account.name}}</Column>
+          <Column title='Date'>
             {{utils.formatDate(item.date, 'MMM DD, YYYY')}}
-          </DataTableColumn>
-          <DataTableColumn title='Category'>
+          </Column>
+          <Column title='Category'>
             {{item.category?.name}}
-          </DataTableColumn>
-          <DataTableColumn title='Payee'>
+          </Column>
+          <Column title='Payee'>
             {{item.payee}}
-          </DataTableColumn>
-          <DataTableColumn title='Amount'>
+          </Column>
+          <Column title='Amount'>
             {{utils.usd(item.amount)}}
-          </DataTableColumn>
-          <DataTableColumn title='X'>
+          </Column>
+          <Column title='X'>
             {{item.approved}}
-          </DataTableColumn>
-          <DataTableColumn title='Comment'>
+          </Column>
+          <Column title='Comment'>
             {{item.comment}}
-          </DataTableColumn>
+          </Column>
         </template>
       </DataTable>
     </template>
@@ -45,8 +45,8 @@
 
 <script setup>
   import {onBeforeMount, ref, watch, watchEffect} from 'vue'
+  import {DataTable, DataTableColumn as Column} from '@/components/DataTable'
   import {api, utils} from '@/utils'
-  import {DataTable, DataTableColumn} from '@/components/DataTable'
   import LayoutPaper from '@/components/LayoutPaper.vue'
 
   var cancelctrl = null                 // Cancel controller
