@@ -6,7 +6,10 @@
         <h3>Accounts</h3>
         <Sortable>
           <SortableItem v-for='account in accounts.results' :key='account.id'>
-            <div class='name'>{{account.name}}</div>
+            <Expandable>
+              <template #header>{{account.name}}</template>
+              <template #content>Hi Mom!</template>
+            </Expandable>
           </SortableItem>
         </Sortable>
       </div>
@@ -19,9 +22,11 @@
 
 <script setup>
   import {ref, watchEffect} from 'vue'
-  import {api, utils} from '@/utils'
-  import Modal from '@/components/Modal.vue'
   import {Sortable, SortableItem} from '@/components/Sortable'
+  import {api} from '@/utils'
+  import Expandable from '@/components/Expandable.vue'
+  import Modal from '@/components/Modal.vue'
+  
 
   const emit = defineEmits(['close'])
   const accounts = ref(null)

@@ -507,12 +507,17 @@ dd {
 
 
 /*-------------------------------------------
- * Fade Transition
- * Simple Vue fade transition
+ * Vue Transitions
  *------------------------------------------- */
+/* Fade */
 .fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease; }
 .fade-enter-from, .fade-leave-to { opacity: 0; }
 
+/* Slide Fade */
+/* adjust `style:--max-height:100px` to your content on the Transition */
+.slide-fade-enter-active, .slide-fade-leave-active { transition: all 0.3s ease; }
+.slide-fade-enter-from, .slide-fade-leave-to { max-height:0px; opacity:0; }
+.slide-fade-enter-to, .slide-fade-leave-from { max-height:var(--maxheight); opacity:1; }
 
 /*-------------------------------------------
  * Grid Background
