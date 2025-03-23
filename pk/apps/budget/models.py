@@ -11,9 +11,9 @@ ACCOUNT_CHOICES = [('bank','Bank'), ('credit','Credit')]
 class Account(TimeStampedModel):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     name = models.CharField(max_length=255, db_index=True)
-    fid = models.IntegerField(null=True, db_index=True)
-    type = models.CharField(max_length=255, choices=ACCOUNT_CHOICES)
-    payee = models.CharField(max_length=255, blank=True, default='')
+    fid = models.IntegerField(null=True, db_index=True)                 # not used; move to import rules
+    type = models.CharField(max_length=255, choices=ACCOUNT_CHOICES)    # not used
+    payee = models.CharField(max_length=255, blank=True, default='')    # not used; move to import_rules
     balance = models.DecimalField(max_digits=9, decimal_places=2, null=True, default=None)
     balancedt = models.DateTimeField(null=True, default=None)
     import_rules = models.JSONField(null=True, default=None)
@@ -25,8 +25,8 @@ class Account(TimeStampedModel):
 class Category(TimeStampedModel):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     name = models.CharField(max_length=255, unique=True, db_index=True)
-    budget = models.DecimalField(max_digits=8, decimal_places=2)
-    comment = models.TextField(blank=True, default='')
+    budget = models.DecimalField(max_digits=8, decimal_places=2)    # not used
+    comment = models.TextField(blank=True, default='')              # not used
     sortindex = models.IntegerField(default=None)
     exclude_budget = models.BooleanField(default=False)
 
