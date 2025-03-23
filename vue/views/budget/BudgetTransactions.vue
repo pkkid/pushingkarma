@@ -18,7 +18,7 @@
       <!-- Transactions Table -->
       <DataTable v-if='transactions' :items='transactions?.results' keyattr='id'>
         <template #columns='{item}'>
-          <Column title='Act'>--</Column>
+          <Column title='Act'>{{item.account.name}}</Column>
           <Column title='Date'>
             {{utils.formatDate(item.date, 'MMM DD, YYYY')}}
           </Column>
