@@ -36,7 +36,6 @@
     if (props.items?.length == 0) { return }
     await nextTick()
     var tds = datatable.value.querySelectorAll('tbody tr:first-child td')
-    console.log(tds)
     headers.value = Array.from(tds).map(td => ({
       title: td.dataset.title,
       name: td.dataset.name,

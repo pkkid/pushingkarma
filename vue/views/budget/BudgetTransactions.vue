@@ -46,9 +46,8 @@
 <script setup>
   import {onBeforeMount, ref, watch, watchEffect} from 'vue'
   import {api, utils} from '@/utils'
+  import {DataTable, Column} from '@/components/DataTable'
   import LayoutPaper from '@/components/LayoutPaper.vue'
-  import Column from '@/components/Column.vue'
-  import DataTable from '@/components/DataTable.vue'
 
   var cancelctrl = null                 // Cancel controller
   const loading = ref(false)            // True to show loading indicator
