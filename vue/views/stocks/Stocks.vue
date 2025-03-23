@@ -110,16 +110,10 @@
         padding: 15px 10px 10px 10px;
       }
     }
-
     .datatable {
       .thwrap, .tdwrap { line-height:1.3; padding:5px 10px; text-align:center;}
       .thwrap { font-size:10px; }
       tr [data-name='name'] > div { text-align:left; }
-    }
-    .subtext {
-      font-size: 0.7em;
-      opacity: 0.6;
-      margin-top: -2px;
     }
   }
 </style>
