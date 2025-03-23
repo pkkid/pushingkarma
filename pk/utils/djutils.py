@@ -75,10 +75,7 @@ class QueryCounterMiddleware:
         for conn in connections.all():
             for query in conn.queries:
                 if sql := query.get('sql'):
-                    if where := self.REGEX_WHERE.search(sql):
-                        values = self.REGEX_VALUE.sub(r'\1<val>\2', where.group(2))
-                        repl = 'r\1{}\3' if where.group(3) else r'\1{}'
-                        sql = self.REGEX_WHERE.sub(repl.format(values), sql)
+                    sql = self._clean_sql(sql)
                     sqltime = float(query['time'].strip('[s]'))
                     summary['count'] += 1
                     summary['sqltime'] += sqltime
@@ -90,6 +87,16 @@ class QueryCounterMiddleware:
         if duplicate := sum(q['count'] - 1 for q in summary['queries'].values()):
             summarystr += f' ({duplicate} duplicate)'
         return summary, summarystr
+    
+    def _clean_sql(self, sql):
+        """ Cleans up the sql query for logging. """
+        if settings.QUERYCOUNTER_SIMPLIFY_SQL:
+            sql = re.sub('SELECT (.+?) FROM', 'SELECT * FROM', sql)
+        if where := self.REGEX_WHERE.search(sql):
+            values = self.REGEX_VALUE.sub(r'\1<val>\2', where.group(2))
+            repl = 'r\1{}\3' if where.group(3) else r'\1{}'
+            sql = self.REGEX_WHERE.sub(repl.format(values), sql)
+        return sql
     
     def _log_summary(self, request, resptime, summary, summarystr):
         """ Logs the queries to the logger. """
