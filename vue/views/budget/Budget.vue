@@ -32,7 +32,7 @@
             <div class='balance'>$2</div>
             <div class='lastupdate'>Average $124 / month</div>
           </div>
-          <div class='item link' @click="view='settings'">
+          <div class='item link' @click='showSettings=true'>
             <i class='mdi mdi-cog'/>
             Settings
           </div>
@@ -40,16 +40,16 @@
       </template>
       <!-- Content -->
       <template #content>
-        <BudgetSettings v-if="view=='settings'" />
         <BudgetYear v-if="view=='year'" />
         <BudgetTransactions v-else />
       </template>
     </LayoutSidePanel>
   </div>
+  <BudgetSettings :visible='showSettings' @close='showSettings=false'/>
 </template>
 
 <script setup>
-  import {inject, onBeforeMount, ref} from 'vue'
+  import {onBeforeMount, ref} from 'vue'
   import {utils} from '@/utils'
   import {useUrlParams} from '@/composables/useUrlParams.js'
   import LayoutSidePanel from '@/components/LayoutSidePanel.vue'
@@ -57,6 +57,7 @@
   import BudgetYear from '@/views/budget/BudgetYear.vue'
   import BudgetSettings from '@/views/budget/BudgetSettings.vue'
 
+  const showSettings = ref(false)
   const {view} = useUrlParams({
     view: {type:String},
   })

@@ -1,34 +1,27 @@
 <template>
-  <LayoutPaper id='budgetsettings' width='900px'>
-    <template #content>
-      <h1>Budget Settings</h1>
-      <!-- Accounts -->
-      <h2>Accounts</h2>
+  <Modal :visible='visible' closeButton closeOnEsc @close='emit("close")'>
+    <div id='budgetsettings' class='lightbg'>
+      <h2>Budget Settings</h2>
       <div class='accounts'>
-        <div class='account'>
-          <div class='name'>Bank 1</div>
-          <div class='balance'>$1</div>
-          <div class='lastupdate'>Updated 1 week ago</div>
-        </div>
+        <h3>Accounts</h3>
       </div>
-      <!-- Categories -->
-    </template>
-  </LayoutPaper>
+    </div>
+  </Modal>
 </template>
 
 <script setup>
-  import LayoutPaper from '@/components/LayoutPaper.vue'
+  import Modal from '@/components/Modal.vue'
+
+  const emit = defineEmits(['close'])
+  const props = defineProps({
+    visible: {type:Boolean, required:true},
+  })
+
 </script>
 
 <style>
   #budgetsettings {
-    .accounts {
-      display: flex;
-      flex-wrap: wrap;
-      .account {
-        width: 30%;
-        height: 100px;
-      }
-    }
+    padding: 20px;
+    width: 600px;
   }
 </style>
