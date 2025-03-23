@@ -40,6 +40,7 @@ export const Main = {
   logout(signal) { return axios.post(`/main/logout`, null, {signal}) },
 }
 export const Budget = {
+  getAccounts(params, signal) { return get(`/budget/accounts`, {params, signal}) },
   getCategories(params, signal) { return get(`/budget/categories`, {params, signal}) },
   getTransactions(params, signal) { return get(`/budget/transactions`, {params, signal}) },
 }
