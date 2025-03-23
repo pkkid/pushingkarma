@@ -45,6 +45,7 @@
 
 <style>
   .datatable {
+    background-color: var(--lightbg-bg0);
     border: 1px solid var(--lightbg-bg3);
     border-radius: 6px;
     padding: 1px;
