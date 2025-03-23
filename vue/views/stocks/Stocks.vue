@@ -9,7 +9,7 @@
         <LayoutPaper width='1000px'>
           <!-- Stocks Overview -->
           <template #content>
-            <h1>Stocks</h1>
+            <h1>Stock Analysis</h1>
             <div class='chartlayout' style='margin-top:20px;'>
               <TrendChart title='Long Term Trend' :data='longdata'/>
               <TrendChart title='Short Term Trend' :data='shortdata'/>
