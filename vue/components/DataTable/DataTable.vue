@@ -10,7 +10,7 @@
       <tbody>
         <!-- Body Rows -->
         <tr v-for='item in items' :key='item[keyattr]'>
-          <slot name='columns' :item="item"/>
+          <slot name='columns' :item="item"></slot>
         </tr>
       </tbody>
     </table>
