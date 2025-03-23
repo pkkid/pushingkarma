@@ -23,12 +23,12 @@
           <template #content v-if='options && response'>
             <div class='options'>
               <!-- Count Queries -->
-              <Tooltip width='250px' text="Returns an additonal header 'Queries' in all api requests
+              <Tooltip width='250px' text="An additonal 'Queries' header is added to api requests
                 detailing the count and duration of sql queries.">
                 <ToggleSwitch v-model="countQueries" label="Count Queries" @update='toggleCountQueries'/>
               </Tooltip>
               <!-- Log Queries -->
-              <Tooltip width='250px' text="Enables server side logging of all sql queries and duration.">
+              <Tooltip width='250px' text="Enables server side logging of all sql queries and their duration.">
                 <ToggleSwitch v-model="logQueries" label="Log Queries" @update='toggleLogQueries'/>
               </Tooltip>
             </div>
