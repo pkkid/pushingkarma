@@ -29,7 +29,11 @@
 
   // Watch Items
   // Update the headers from the data attributes of the first row
-  watch(() => props.items, async function() {
+  onMounted(function() { updateHeaders() })
+  watch(() => props.items, function() { updateHeaders() })
+
+  const updateHeaders = async function() {
+    if (props.items?.length == 0) { return }
     await nextTick()
     var tds = datatable.value.querySelectorAll('tbody tr:first-child td')
     console.log(tds)
@@ -37,7 +41,7 @@
       title: td.dataset.title,
       name: td.dataset.name,
     }))
-  })
+  }
 </script>
 
 <style>
@@ -62,6 +66,7 @@
     }
     .tdwrap {
       font-size: 13px;
+      color: var(--lightbg-fg2);
     }
   }
 </style>

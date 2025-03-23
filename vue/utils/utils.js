@@ -131,12 +131,8 @@ export function formatDate(value, format) {
         break
       }
     }
-    if (!matched) {
-      result += format[i]
-      i++
-    }
+    if (!matched) { result += format[i]; i++ }
   }
-  console.log(value, format, result)
   return result
 }
 

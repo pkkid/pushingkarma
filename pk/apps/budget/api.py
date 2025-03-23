@@ -131,7 +131,6 @@ class TransactionSerializer(utils.DynamicFieldsSerializer):
 class TransactionsViewSet(viewsets.ModelViewSet, utils.ViewSetMixin):
     """ Rest endpoint to list or modifiy user's transactions. """
     queryset = Transaction.objects.select_related('category').order_by('-date')
-    queryset = Transaction.objects.order_by('-date')
     serializer_class = TransactionSerializer
     permission_classes = [IsAuthenticated]
     list_fields = TransactionSerializer.Meta.fields

@@ -39,6 +39,10 @@ export const Main = {
   login(data, signal) { return axios.post(`/main/login`, data, {signal}) },
   logout(signal) { return axios.post(`/main/logout`, null, {signal}) },
 }
+export const Budget = {
+  getCategories(params, signal) { return get(`/budget/categories`, {params, signal}) },
+  getTransactions(params, signal) { return get(`/budget/transactions`, {params, signal}) },
+}
 export const Obsidian = {
   getNote(params, signal) { return get(`/obsidian/note`, {params, signal}) },
   search(params, signal) { return get(`/obsidian/search`, {params, signal}) },
