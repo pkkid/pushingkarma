@@ -1,19 +1,20 @@
 <template>
-  <LayoutPaper id='transactions' width='900px'>
+  <LayoutPaper id='transactions' width='1000px'>
     <template #content>
-      <!-- Header -->
-      <h1>
-        Budget Transactions
-        <div class='subtext'>Showing X of Y Transactions</div>
-      </h1>
       <!-- Search -->
       <div class='searchwrap'>
         <input type='text' v-model='_search' placeholder='Search Transactions'
           class='searchinput' @keydown.enter='search=_search'>
         <transition name='fade'>
-          <i v-if='_search?.length' class='mdi mdi-close' @click='search=""'/>
+          <i v-if='_search?.length' class='mdi mdi-close' @click='search=""; _search=""'/>
         </transition>
       </div>
+      <!-- Header -->
+      <h1>
+        Budget Transactions
+        <div class='subtext'>Showing X of Y Transactions</div>
+      </h1>
+      
       <!-- Transactions Table -->
       <DataTable v-if='transactions' :items='transactions?.results' keyattr='id'>
         <template #columns='{item}'>
@@ -90,8 +91,12 @@
       justify-content: flex-end;
       margin-top: -10px;
       align-items: center;
+      padding-top: 22px;
+      float: right;
+      width: 550px;
+
       input {
-        width: 60%;
+        width: 100%;
         border-radius: 20px;
         padding: 5px 15px;
       }
@@ -102,19 +107,20 @@
       }
     }
     .datatable {
-      margin-top: 20px;
+      /* margin-top: 20px; */
+      table { width: 100%; }
       .tdwrap {
         white-space: nowrap;
         overflow: hidden;
         line-height: 26px;
       }
-      .act { width:14px; }
-      .date { width:88px; }
-      .category { width:118px; }
-      .payee { width:268px; }
-      .amount { width:78px; text-align:right; }
-      .x { width:14px; text-align:center; }
-      .comment { width:172px; }
+      .act { width:15px; }
+      .date { width:90px; }
+      .category { width:120px; }
+      .payee { width:280px; }
+      .amount { width:80px; text-align:right; }
+      .x { width:15px; text-align:center; }
+      .comment { width:252px; }
     }
   }
 </style>
