@@ -69,6 +69,11 @@
       top: 15%;
       box-shadow: 0px 4px 8px #0008, 0px 8px 20px #0004;
       min-width: 500px;
+      max-height: 70%;
+      & > div, & > article {
+        max-height: 100%;
+        overflow-y: auto;
+      }
     }
     .mdi-close {
       color: var(--lightbg-fg1);

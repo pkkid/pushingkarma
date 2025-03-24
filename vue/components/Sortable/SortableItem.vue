@@ -1,28 +1,33 @@
 <template>
-  <div class='sortableitem' draggable='true' @dragstart='onDragStart'
-      @dragover='onDragOver' @drop='onDrop' @dragend='onDragEnd'>
+  <div class='sortableitem' ref='self' :data-itemid='itemid' draggable='true'
+    @dragstart='onDragStart' @dragover='onDragOver' @drop='onDrop' @dragend='onDragEnd'>
     <div class='grip' >⋮</div>
-    <div class='content' draggable='true' @dragstart='preventDragStart'>
+    <div class='content' draggable='true' @dragstart='$event.preventDefault()'>
       <slot></slot>
     </div>
   </div>
 </template>
 
 <script setup>
-  var dragitem = null
+  import {onMounted, onUnmounted, ref} from 'vue'
+  import {sortableState} from '.'
+
+  const props = defineProps({
+    itemid: {required:true},              // Unique item id for this Sortable group
+  })
+  const self = ref(null)                  // Reference to this element
+
+  // On Mounted / Unmounted
+  // Created and remove dragenter event listener
+  onMounted(function() { document.addEventListener('dragenter', onDragEnter) })
+  onUnmounted(function() { document.removeEventListener('dragenter', onDragEnter) })
 
   // On Drag Start
   // Save the dragitem and tell the browser were moving it
   const onDragStart = function(event) {
-    dragitem = event.target
+    sortableState.group = self.value.closest('.sortable').dataset.group
+    sortableState.itemid = props.itemid.toString()
     event.dataTransfer.effectAllowed = 'move'
-  }
-
-  // Prevent Drag Start
-  // Since we only want to allow dragging by the grip elememt, we catch dragging
-  // the content and preventDefault to stop us.
-  const preventDragStart = function(event) {
-    event.preventDefault()
   }
 
   // On Drag Over
@@ -30,17 +35,17 @@
   const onDragOver = function(event) {
     event.preventDefault()
     event.dataTransfer.dropEffect = 'move'
-    const target = event.target.closest('.sortableitem')
-    if (target && target !== dragitem) {
-      clearDragOverClasses()
-      const rect = target.getBoundingClientRect()
-      const offsetY = event.clientY - rect.top
-      if (offsetY < rect.height / 2) {
-        target.classList.add('dragover-before')
-        target.classList.remove('dragover-after')
+    var item = event.target.closest('.sortableitem')
+    if (isSameGroup(item)) {
+      clearDropIndicators(item)
+      const tbox = item.getBoundingClientRect()
+      const offset = event.clientY - tbox.top
+      if (offset < tbox.height / 2) {
+        item.classList.add('dropbefore')
+        item.classList.remove('dropafter')
       } else {
-        target.classList.add('dragover-after')
-        target.classList.remove('dragover-before')
+        item.classList.add('dropafter')
+        item.classList.remove('dropbefore')
       }
     }
   }
@@ -48,24 +53,50 @@
   // On Drop
   // Emit an event telling Sortable we have a new drag order
   const onDrop = function(event) {
-    console.log('onDrop')
     event.preventDefault()
+    var item = event.target.closest('.sortableitem')
+    if (isSameGroup(item)) {
+      var newsort = []
+      var sortable = item.closest('.sortable')
+      var items = sortable.querySelectorAll('.sortableitem')
+      for (var i=0; i<items.length; i++) {
+        item = items[i]
+        var itemid = item.dataset.itemid
+        if (item.classList.contains('dropbefore')) { newsort.push(sortableState.itemid) }
+        if (itemid != sortableState.itemid) { newsort.push(itemid) }
+        if (item.classList.contains('dropafter')) { newsort.push(sortableState.itemid) }
+      }
+      const newEvent = new CustomEvent('sort', {detail: {group:sortable.dataset.group, sort:newsort}})
+      sortable.dispatchEvent(newEvent)
+    }
   }
 
   // On Drag End
   // Clear the dragitem and remove the dragover class
   const onDragEnd = function() {
-    clearDragOverClasses()
-    dragitem = null
+    sortableState.group = null
+    sortableState.itemid = null
+    clearDropIndicators()
   }
 
-  // Clear dragover class
-  // Remove the existing dragover-before and dragover-after classes
-  const clearDragOverClasses = function() {
-    const prevDragOverItem = document.querySelector('.sortableitem.dragover-before, .sortableitem.dragover-after')
-    if (prevDragOverItem) {
-      prevDragOverItem.classList.remove('dragover-before', 'dragover-after')
-    }
+  // On Drag Enter
+  // Detect if dragging outside the container element
+  const onDragEnter = function(event) {
+    if (!isSameGroup(event.target)) { clearDropIndicators() }
+  }
+
+  // Is Same Group
+  // Check if the target and container are the Sortable same
+  const isSameGroup = function(item) {
+    var group = item.closest('.sortable')?.dataset.group
+    return group == sortableState.group
+  }
+
+  // Clear Drop Indicators
+  // Globally remove the dropbefore and dropafter classes
+  const clearDropIndicators = function() {
+    var items = document.querySelector('.dropbefore, .dropafter')
+    if (items) { items.classList.remove('dropbefore', 'dropafter') }
   }
 </script>
 
@@ -73,7 +104,8 @@
   .sortableitem {
     border-top: 1px solid var(--lightbg-bg3);
     position: relative; 
-    &:first-child { border-top: none; }
+    &:first-child { border-top:none; }
+    &:last-child { margin-bottom:1px; }
 
     .content {
       padding: 5px 10px 5px 25px;
@@ -88,8 +120,13 @@
       position: absolute;
       top: 5px; left: 3px;
       width: 18px; height:22px;
+      opacity: 0.5;
+      transition: opacity 0.3s ease;
+      &:hover {
+        opacity: 1;
+      }
     }
-    &.dragover-before::before {
+    &.dropbefore::before {
       background-color: var(--accent);
       border-radius: 3px;
       content: '';
@@ -100,7 +137,7 @@
       width: calc(100% - 10px);
       z-index: 900;
     }
-    &.dragover-after::before {
+    &.dropafter::before {
       background-color: var(--accent);
       border-radius: 3px;
       content: '';

@@ -4,8 +4,8 @@
       <h2 style='margin-top:0px;'>Budget Settings</h2>
       <div v-if='accounts' class='accounts'>
         <h3>Accounts</h3>
-        <Sortable>
-          <SortableItem v-for='account in accounts.results' :key='account.id'>
+        <Sortable group='accounts' @sort='onSort'>
+          <SortableItem v-for='account in accounts.results' :key='account.id' :itemid='account.id'>
             <Expandable>
               <template #header>{{account.name}}</template>
               <template #content>Hi Mom!</template>
@@ -15,6 +15,11 @@
       </div>
       <div v-if='categories' class='categories'>
         <h3>Categories</h3>
+        <Sortable group='categories' style='max-height:300px; overflow-y:auto;'>
+          <SortableItem v-for='category in categories.results' :key='category.id' :itemid='category.id'>
+            {{category.name}}
+          </SortableItem>
+        </Sortable>
       </div>
     </article>
   </Modal>
@@ -27,7 +32,6 @@
   import Expandable from '@/components/Expandable.vue'
   import Modal from '@/components/Modal.vue'
   
-
   const emit = defineEmits(['close'])
   const accounts = ref(null)
   const categories = ref(null)
@@ -56,6 +60,10 @@
   const updateCategories = async function() {
     var {data} = await api.Budget.getCategories()
     categories.value = data
+  }
+
+  const onSort = function(event) {
+    console.log('Sorted:', event)
   }
 
 </script>

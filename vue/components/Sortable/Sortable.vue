@@ -1,11 +1,18 @@
 <template>
-  <div class='sortable'>
+  <div class='sortable' :data-group='group' @sort='onSort'>
     <slot></slot>
   </div>
 </template>
 
 <script setup>
+  const emit = defineEmits(['sort'])
+  const props = defineProps({
+    group: {type:String, required:true},
+  })
 
+  const onSort = function(event) {
+    emit('sort', event.detail)
+  }
 </script>
 
 <style>

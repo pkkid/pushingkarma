@@ -4,7 +4,7 @@
       <slot name='header'></slot>
       <i class='mdi mdi-chevron-right expand'/>
     </div>
-    <Transition name='slide-fade' style='--maxheight:100px;'>
+    <Transition name='slide-fade' :style='`--maxheight:${maxheight};`'>
       <div class='expandable-content' :class='{expanded}' v-show='expanded'>
         <slot name='content'></slot>
       </div>
@@ -15,9 +15,15 @@
 <script setup>
   import {ref, watchEffect} from 'vue'
 
-  const emit = defineEmits(['expanded'])
-  const expanded = ref(false)
+  const props = defineProps({
+    initexpanded: {default:false},          // Initial expanded state
+    maxheight: {default:'100px'},           // Estimated height of the content
+  })
+  const expanded = ref(props.initexpanded)  // True when this is expanded
+  const emit = defineEmits(['expanded'])    // Emit expanded event
 
+  // Watch Expanded
+  // Emit expanded event when expanded changes
   watchEffect(function() {
     emit('expanded', expanded.value)
   })
@@ -41,9 +47,7 @@
     .expandable-content {
       background-color: var(--bgcolor);
       border: 1px solid var(--lightbg-bg2);
-      /* padding: 5px 10px; */
       border-radius: 4px;
-      /* margin: 5px 0px; */
     }
   }
 </style>
