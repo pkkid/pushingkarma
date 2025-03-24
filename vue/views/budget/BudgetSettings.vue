@@ -4,7 +4,7 @@
       <h2 style='margin-top:0px;'>Budget Settings</h2>
       <div v-if='accounts' class='accounts'>
         <h3>Accounts</h3>
-        <Sortable group='accounts' @sort='onSort'>
+        <Sortable group='accounts' @sort='onSortAccounts'>
           <SortableItem v-for='account in accounts.results' :key='account.id' :itemid='account.id'>
             <Expandable>
               <template #header>{{account.name}}</template>
@@ -15,7 +15,7 @@
       </div>
       <div v-if='categories' class='categories'>
         <h3>Categories</h3>
-        <Sortable group='categories' style='max-height:300px; overflow-y:auto;'>
+        <Sortable group='categories' @sort='onSortCategories' style='max-height:300px; overflow-y:auto;'>
           <SortableItem v-for='category in categories.results' :key='category.id' :itemid='category.id'>
             {{category.name}}
           </SortableItem>
@@ -62,10 +62,17 @@
     categories.value = data
   }
 
-  const onSort = function(event) {
-    console.log('Sorted:', event)
+  // On Sort Accounts
+  // Update the accounts sort order
+  const onSortAccounts = function(event) {
+    console.log('onSortAccounts', event)
   }
 
+  // On Sort Categories
+  // Update the categories sort order
+  const onSortCategories = function(event) {
+    console.log('onSortCategories', event)
+  }
 </script>
 
 <style>
