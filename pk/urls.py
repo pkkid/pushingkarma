@@ -13,10 +13,10 @@ from pk import utils
 
 # Create Router & User APIs
 api = HybridRouter(sort_urls=True, trailing_slash=False)
-api.register('budget/accounts', budget_api.AccountsViewSet)
-api.register('budget/categories', budget_api.CategoriesViewSet)
-api.register('budget/transactions', budget_api.TransactionsViewSet)
-api.register('stocks/tickers', stocks_api.TickerViewSet)
+api.register('budget/accounts', budget_api.AccountsViewSet, basename='account')
+api.register('budget/categories', budget_api.CategoriesViewSet, basename='category')
+api.register('budget/transactions', budget_api.TransactionsViewSet, basename='transaction')
+api.register('stocks/tickers', stocks_api.TickerViewSet, basename='ticker')
 api.add_url('^main/generate_token$', main_apiviews.generate_token, name='main/generate_token')
 api.add_url('^main/global_vars', main_apiviews.global_vars, name='main/global_vars')
 api.add_url('^main/login$', main_apiviews.login, name='main/login')

@@ -49,7 +49,6 @@ class AccountSerializer(utils.DynamicFieldsSerializer):
 class AccountsViewSet(viewsets.ModelViewSet, utils.ViewSetMixin):
     """ Rest endpoint to list or modifiy user's financial accounts. """
     serializer_class = AccountSerializer
-    queryset = Account.objects.order_by('name')
     permission_classes = [IsAuthenticated]
     list_fields = AccountSerializer.Meta.fields
 
@@ -74,7 +73,6 @@ class CategorySerializer(utils.DynamicFieldsSerializer):
 
 class CategoriesViewSet(viewsets.ModelViewSet, utils.ViewSetMixin):
     """ Rest endpoint to list or modifiy user's budget categories. """
-    queryset = Category.objects.order_by('sortindex')
     serializer_class = CategorySerializer
     permission_classes = [IsAuthenticated]
     list_fields = CategorySerializer.Meta.fields
@@ -130,7 +128,6 @@ class TransactionSerializer(utils.DynamicFieldsSerializer):
 
 class TransactionsViewSet(viewsets.ModelViewSet, utils.ViewSetMixin):
     """ Rest endpoint to list or modifiy user's transactions. """
-    queryset = Transaction.objects.order_by('-date')
     serializer_class = TransactionSerializer
     permission_classes = [IsAuthenticated]
     list_fields = TransactionSerializer.Meta.fields
