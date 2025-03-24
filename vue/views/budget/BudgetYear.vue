@@ -7,7 +7,7 @@
 </template>
 
 <script setup>
-  import LayoutPaper from '@/components/LayoutPaper.vue'
+  import {LayoutPaper} from '@/components/Layout'
 </script>
 
 <style>

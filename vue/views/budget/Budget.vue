@@ -50,9 +50,9 @@
 
 <script setup>
   import {onBeforeMount, ref} from 'vue'
-  import {utils} from '@/utils'
+  import {LayoutSidePanel} from '@/components/Layout'
   import {useUrlParams} from '@/composables/useUrlParams.js'
-  import LayoutSidePanel from '@/components/LayoutSidePanel.vue'
+  import {utils} from '@/utils'
   import BudgetTransactions from '@/views/budget/BudgetTransactions.vue'
   import BudgetYear from '@/views/budget/BudgetYear.vue'
   import BudgetSettings from '@/views/budget/BudgetSettings.vue'

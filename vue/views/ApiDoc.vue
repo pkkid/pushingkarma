@@ -62,12 +62,11 @@
 
 <script setup>
   import {computed, nextTick, onBeforeMount, ref, watch, watchEffect} from 'vue'
+  import {LayoutPaper, LayoutSidePanel} from '@/components/Layout'
   import {useUrlParams} from '@/composables/useUrlParams.js'
   import {useStorage} from '@/composables/useStorage'
   import {utils} from '@/utils'
   import axios from 'axios'
-  import LayoutPaper from '@/components/LayoutPaper.vue'
-  import LayoutSidePanel from '@/components/LayoutSidePanel.vue'
   import ToggleSwitch from '@/components/ToggleSwitch.vue'
   import Tooltip from '@/components/Tooltip.vue'
   // Icon for each API cateogry

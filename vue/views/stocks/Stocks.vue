@@ -55,11 +55,10 @@
 
 <script setup>
   import {onBeforeMount, provide, ref, watchEffect} from 'vue'
+  import {LayoutPaper, LayoutSidePanel} from '@/components/Layout'
   import {DataTable, DataTableColumn as Column} from '@/components/DataTable'
   import {useUrlParams} from '@/composables/useUrlParams.js'
   import {api, utils} from '@/utils'
-  import LayoutPaper from '@/components/LayoutPaper.vue'
-  import LayoutSidePanel from '@/components/LayoutSidePanel.vue'
   import StocksSearch from '@/views/stocks/StocksSearch.vue'
   import TrendChart from '@/components/TrendChart.vue'
   
