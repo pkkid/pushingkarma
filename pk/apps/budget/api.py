@@ -74,13 +74,13 @@ class CategorySerializer(utils.DynamicFieldsSerializer):
 
 class CategoriesViewSet(viewsets.ModelViewSet, utils.ViewSetMixin):
     """ Rest endpoint to list or modifiy user's budget categories. """
-    queryset = Category.objects.order_by('-sortindex')
+    queryset = Category.objects.order_by('sortindex')
     serializer_class = CategorySerializer
     permission_classes = [IsAuthenticated]
     list_fields = CategorySerializer.Meta.fields
     
     def get_queryset(self):
-        return Category.objects.filter(user=self.request.user).order_by('-sortindex')
+        return Category.objects.filter(user=self.request.user).order_by('sortindex')
 
     def to_internal_value(self, data):
         if data.get('budget'): data['budget'] = utils.clean_amount(data['budget'])
