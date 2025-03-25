@@ -22,11 +22,9 @@
     "vite-plugin-vue-devtools": "^7.0.25"
   },
   "scripts": {
-    "getdb": "scp -O synology:~/pk/pk/db.sqlite3 pk/db.sqlite3",
     "start": "npm-run-all -p vue django",
     "django": "uv run python pk/manage.py runserver",
-    "vue": "vite",
-    "build": "vite build",
-    "eslint": "eslint ."
+    "vue": "scripts/build-hljs-themes.py && vite",
+    "build": "scripts/build-hljs-themes.py && vite build"
   }
 }
