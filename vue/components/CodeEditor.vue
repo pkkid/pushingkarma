@@ -123,13 +123,18 @@
 
 <style>
   .codeeditor {
-    /* Define a few basic theme variables if you want to customize
-    /* things yourself. I use these for the scrollbar thumb. */
+    /* Editor background color comes from the .hljs class. Since we wrapped all
+    /* highlight.js themes in a [theme=<themename>] selector, the .hljs element
+    /* must be inside the element defining the theme. Also, since the codearea
+    /* contains overflow:hidden, this made the scrollbar drawings clipped and
+    /* look bad when they were present with a border-radius. By applying the
+    /* border-radius to .codewrap which doesn't contain overflow:hidden, things
+    /* render correctly (but scrollbars may appear outside the border-radius). */
     font-family: Consolas, Monaco, monospace; 
     font-size: 13px;
     line-height: 1.2;
     position: relative;
-    .codewrap {
+    .codewrap.hljs {
       border-radius: 6px;
       padding: 0px;
     }
