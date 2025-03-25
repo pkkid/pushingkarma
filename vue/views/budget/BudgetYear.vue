@@ -1,8 +1,8 @@
 <template>
   <LayoutPaper width='1200px'>
     <template #content>
-      <CodeEditor height='600px' theme='gruvbox-light-hard' :showLineNums='true' language='javascript' fontSize='12px'
-        style='height:400px; width:600px;' v-model='code'/>
+      <CodeEditor theme='gruvbox-light-hard' language='javascript' padding='12px'
+        style='height:400px; width:500px;' v-model='code'/>
     </template>
   </LayoutPaper>
 </template>
