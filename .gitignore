@@ -18,4 +18,6 @@
 **/build
 **/coverage
 **/node_modules/
+
+vue/assets/hljs-themes.css
 settings.py
