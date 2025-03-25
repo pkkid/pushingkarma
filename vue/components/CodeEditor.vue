@@ -1,14 +1,16 @@
 <template>
   <div class='codeeditor' :theme='theme' :class='{readOnly, showLineNums, scrollable}'>
-    <div ref='codearea' class='codearea hljs'>
-      <div v-if='showLineNums' class='linenumbar'></div>
-      <div v-if='showLineNums' ref='lineNums' class='linenums'>
-        <div v-for='num in numLines' :key='num'>{{num}}</div>
+    <div class='codewrap hljs'>
+      <div ref='codearea' class='codearea'>
+        <div v-if='showLineNums' class='linenumbar'></div>
+        <div v-if='showLineNums' ref='lineNums' class='linenums'>
+          <div v-for='num in numLines' :key='num'>{{num}}</div>
+        </div>
+        <textarea ref='textarea' spellcheck='false' :readOnly='readOnly' :autofocus='autoFocus'
+          :value='content' @input='updateContent($event.target.value)' @scroll='onScroll'
+          @keydown.tab.prevent.stop='onTab'></textarea>
+        <pre><code ref='code' :class='codeClass'></code></pre>
       </div>
-      <textarea ref='textarea' spellcheck='false' :readOnly='readOnly' :autofocus='autoFocus'
-        :value='content' @input='updateContent($event.target.value)' @scroll='onScroll'
-        @keydown.tab.prevent.stop='onTab'></textarea>
-      <pre><code ref='code' :class='codeClass'></code></pre>
     </div>
   </div>
 </template>
@@ -123,17 +125,15 @@
   .codeeditor {
     /* Define a few basic theme variables if you want to customize
     /* things yourself. I use these for the scrollbar thumb. */
-    --bgcolor: v-bind(backgroundColor);
-    --scrollbar: #8888;
-    background-color: #ddd;
-    border-radius: 6px;
     font-family: Consolas, Monaco, monospace; 
     font-size: 13px;
     line-height: 1.2;
     position: relative;
-
+    .codewrap {
+      border-radius: 6px;
+      padding: 0px;
+    }
     .codearea {
-      border-radius: inherit !important;
       height: 100%;
       overflow: hidden;
       position: relative;
@@ -175,6 +175,7 @@
       box-sizing: border-box;
       caret-color: rgb(127, 127, 127);
       color: transparent;
+      height: 100%;
       margin-left: 0px;
       outline: none;
       overflow-y: hidden;
@@ -183,7 +184,7 @@
       resize: none;
       top: 0; left: 0;
       white-space: pre;
-      width: 100%; height: 100%;
+      width: 100%;
       word-wrap: normal;
       z-index: 1;
     }
