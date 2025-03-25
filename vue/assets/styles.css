@@ -109,7 +109,6 @@ html, body {
   --linkcolor: var(--lightbg-blue1);
   --linkhover: #000;
   --linkhoverunderline: 2px dotted var(--linkhover);
-  --scrollbar: var(--lightbg-bg4);
 }
 .darkbg {
   --accent: var(--darkbg-orange1);
@@ -121,7 +120,6 @@ html, body {
   --linkcolor: var(--darkbg-fg0);
   --linkhover: var(--darkbg-orange1);
   --linkhoverunderline: 2px dotted transparent;
-  --scrollbar: var(--darkbg-bg4);
 }
 .lightbg,.darkbg {
   background-color: var(--bgcolor);
@@ -137,6 +135,10 @@ html, body {
     color: var(--linkhover);
     border-bottom: var(--linkhoverunderline);
     text-decoration: none; 
+  }
+  ::selection {
+    background: #8886 !important; /* Sets the background color to yellow */
+    color: #333 !important;      /* Sets the text color to black */
   }
 }
 
@@ -166,23 +168,21 @@ body,button,input,select,textarea {
   font-weight: 400;
   color: var(--lightbg-text);
 }
-
-/* Custom Scrollbars */
-body.firefox * {
-  scrollbar-color: var(--scrollbar) transparent;
-}
-body.chrome ::-webkit-scrollbar { width: 8px; }
-body.chrome ::-webkit-scrollbar-thumb {
-  background: var(--scrollbar);
-  border-radius: 4px;
-  border: 2px solid var(--bgcolor);
-}
 .subtext {
   font-size: 0.7em;
   opacity: 0.6;
   margin-top: -2px;
 }
 
+/*-------------------------------------------
+ * Custom Scrollbars
+ *------------------------------------------- */
+body.firefox * { scrollbar-color:#8888 transparent; }
+body.chrome {
+  ::-webkit-scrollbar { width:6px; height:6px; }
+  ::-webkit-scrollbar-thumb { background:#8888; border-radius:3px; }
+  ::-webkit-scrollbar-track, ::-webkit-scrollbar-corner { display:none; }
+}
 
 /*-------------------------------------------
  * Sidepanel Menus
@@ -345,9 +345,8 @@ article {
  *------------------------------------------- */
 [theme='gruvbox-light-hard'] {
   .hljs {
+    background-color: #ddddd9 !important;
     color: var(--lightbg-fg1);
-    background: var(--lightbg-bg2) !important;
-    box-shadow: inset 0 1px 10px #0002 !important;
   }
   .hljs-comment { color: #7e6449 !important; }
 }
