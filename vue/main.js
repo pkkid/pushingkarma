@@ -24,4 +24,5 @@ app.use(hljsVuePlugin)
 
 // Mount the App after waiting for all component promises to be met.
 import './assets/styles.css'
+import './assets/hljs-themes.css'
 app.mount('#app')
