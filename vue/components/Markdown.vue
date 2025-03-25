@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-  import {computed, ref, watchEffect} from 'vue'
+  import {computed, watchEffect} from 'vue'
   import markdownIt from 'markdown-it'
   import markdownHighlightJs from '@/utils/markdown/markdown-hljs'
   import markdownToc, {markdownHeadings} from '@/utils/markdown/markdown-toc'
