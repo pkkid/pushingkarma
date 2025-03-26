@@ -32,7 +32,7 @@
     readOnly: {type:Boolean, default:false},        // Enable editable or not
     showLineNums: {type:Boolean, default:false},    // Show line numbers
     tabSpaces: {type:Number, default:2},            // Number of spaces for tab
-    theme: {type:String, default:'dracula'},        // Highlight.js theme to apply
+    theme: {type:String, default:'gruvbox-light-hard'},  // Highlight.js theme to apply
     value: {type:String, default:'Hello World!'},   // Static value if not using v-model
   })
 
@@ -137,6 +137,7 @@
     .codewrap.hljs {
       border-radius: 6px;
       padding: 0px;
+      height: 100%;
     }
     .codearea {
       height: 100%;
