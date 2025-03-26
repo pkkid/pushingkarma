@@ -10,11 +10,11 @@
             <Expandable maxheight='250px'>
               <template #header>{{account.name}}</template>
               <template #content>
-                <div style='margin:5px 0px 15px 0px'>
+                <div style='padding:5px 0px 15px 0px'>
                   <h4>Import Configuration</h4>
                   <CodeEditor :value='account.import_config' language='json' showLineNums=true padding='8px'
-                    style='height:150px; width:100%; font-size:12px; margin-bottom:10px;'/>
-                  <div class='button-row'>
+                    style='height:150px; width:100%; font-size:12px;'/>
+                  <div class='button-row' style='margin-top:5px;'>
                     <button>Save Account</button>
                     <button>Delete Account</button>
                   </div>

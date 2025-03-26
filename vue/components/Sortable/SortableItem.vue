@@ -33,7 +33,7 @@
   // On Drag Over
   // Highlight the top or bottom border of the item we are hovering
   const onDragOver = function(event) {
-    event.preventDefault()
+    // event.preventDefault()
     event.dataTransfer.dropEffect = 'move'
     var item = event.target.closest('.sortableitem')
     if (isSameGroup(item)) {
@@ -103,13 +103,13 @@
 <style>
   .sortableitem {
     border-top: 1px solid var(--lightbg-bg3);
-    position: relative; 
-    &:first-child { border-top:none; }
-    &:last-child { margin-bottom:1px; }
+    position: relative;
 
-    .content {
-      padding: 5px 10px 5px 25px;
-    }
+    &:first-child { border-top:none; }
+    .content:not(:has(.expandable)) { padding:5px 10px 5px 25px; }
+    .content:has(.expandable) .expandable-header { padding:5px 10px 5px 25px; }
+    .content:has(.expandable) .expandable-content { padding:0px 10px 5px 25px; }
+
     .grip {
       color: var(--lightbg-fg3);
       cursor: grab;
@@ -122,21 +122,9 @@
       width: 18px; height:22px;
       opacity: 0.5;
       transition: opacity 0.3s ease;
-      &:hover {
-        opacity: 1;
-      }
+      &:hover { opacity: 1; }
     }
-    &.dropbefore::before {
-      background-color: var(--accent);
-      border-radius: 3px;
-      content: '';
-      display: block;
-      height: 3px;
-      position: absolute;
-      top: -2px; left:5px;
-      width: calc(100% - 10px);
-      z-index: 900;
-    }
+    &.dropbefore::before,
     &.dropafter::before {
       background-color: var(--accent);
       border-radius: 3px;
@@ -144,9 +132,12 @@
       display: block;
       height: 3px;
       position: absolute;
-      bottom: -2px; left:5px;
       width: calc(100% - 10px);
-      z-index: 900;
+      z-index: 999;
     }
+    &.dropbefore::before { top:-2px; left:5px; }
+    &.dropafter::before { bottom:-2px; left:5px; }
+    &:first-child.dropbefore::before { top:0px }
+    &:last-child.dropafter::before { bottom:0px }
   }
 </style>

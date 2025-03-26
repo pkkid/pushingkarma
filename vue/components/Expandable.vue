@@ -1,8 +1,8 @@
 <template>
-  <div class='expandable'>
+  <div class='expandable' :class='{expanded}'>
     <div class='expandable-header' @click='expanded=!expanded'>
       <slot name='header'></slot>
-      <i class='mdi mdi-chevron-right expand'/>
+      <i class='mdi mdi-chevron-right expand-icon'/>
     </div>
     <Transition name='slide-fade' :style='`--maxheight:${maxheight};`'>
       <div class='expandable-content' :class='{expanded}' v-show='expanded'>
@@ -17,7 +17,7 @@
 
   const props = defineProps({
     initexpanded: {default:false},          // Initial expanded state
-    maxheight: {default:'100px'},           // Estimated height of the content
+    maxheight: {default:'250px'},           // Estimated height of the content
   })
   const expanded = ref(props.initexpanded)  // True when this is expanded
   const emit = defineEmits(['expanded'])    // Emit expanded event
@@ -28,6 +28,11 @@
     emit('expanded', expanded.value)
   })
 
+  // Open, Close, Toggle
+  // Functions to open, close, and toggle the expanded state
+  const open = function() { expanded.value = true }
+  const close = function() { expanded.value = false }
+  const toggle = function() { expanded.value = !expanded.value }
 </script>
 
 <style>
@@ -36,18 +41,25 @@
       display: flex;
       align-items: center;
       cursor: pointer;
-      .expand {
+
+      .expand-icon {
         font-size: 20px;
         margin-left:auto; 
         opacity: 0.5;
-        transition: opacity 0.3s ease;
+        transition: all 0.3s ease;
       }
-      &:hover .expand { opacity: 1; }
+      &:hover .expand-icon { opacity: 1; }
+    }
+    &.expanded,
+    &:has(.expandable-header:hover) {
+      background-color: #ddddd988;
+    }
+    &.expanded .expand-icon {
+      transform: rotate(90deg);
+      opacity: 1;
     }
     .expandable-content {
-      background-color: var(--bgcolor);
-      border: 1px solid var(--lightbg-bg2);
-      border-radius: 4px;
+      background-color: var(--lightbg-bg0);
     }
   }
 </style>
