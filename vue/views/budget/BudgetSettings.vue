@@ -93,7 +93,6 @@
 <style>
   #budgetsettings .modal-wrap {
     width: 600px;
-    /* .modal-header article { padding: 20px 20px 10px 20px; } */
-    /* .modal-content article { padding: 10px 20px 20px 20px; } */
+    padding-bottom: 10px;
   }
 </style>
