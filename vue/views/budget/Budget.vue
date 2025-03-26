@@ -64,3 +64,11 @@
 
   onBeforeMount(function() { utils.setNavPosition('top') })
 </script>
+
+<style>
+  .sidepanel-panel .subitem {
+    .name { float: left; }
+    .balance { text-align: right; }
+    .lastupdate { font-size:9px; color:var(--fgcolor40);}
+  }
+</style>

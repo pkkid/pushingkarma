@@ -1,0 +1,53 @@
+/*-------------------------------------------
+ * Components.css
+ *------------------------------------------- */
+
+/*
+ * Grid Background
+ * nice grid background pattern I found someplace online. Useful
+ * for filler content to look a bit less boring.
+ */
+.gridbg {
+  --gridbg: var(--lightbg-bg1);
+  --gridline: var(--lightbg-bg3);
+  background:
+    linear-gradient(-90deg, rgba(0,0,0,.05) 1px, transparent 1px),
+    linear-gradient(rgba(0,0,0,.05) 1px, transparent 1px), 
+    linear-gradient(-90deg, rgba(0, 0, 0, .04) 1px, transparent 1px),
+    linear-gradient(rgba(0,0,0,.04) 1px, transparent 1px),
+    linear-gradient(transparent 3px, var(--gridbg) 3px, var(--gridbg) 78px, transparent 78px),
+    linear-gradient(-90deg, var(--gridline) 1px, transparent 1px),
+    linear-gradient(-90deg, transparent 3px, var(--gridbg) 3px, var(--gridbg) 78px, transparent 78px),
+    linear-gradient(var(--gridline) 1px, transparent 1px),
+    var(--gridbg);
+  background-size: 4px 4px, 4px 4px, 80px 80px, 80px 80px, 80px 80px, 80px 80px, 80px 80px, 80px 80px;
+}
+
+/*
+ * Horizontal Ruler
+ * A fancier <hr/> style that fades on the edges.
+ */
+hr.fancy {
+  background-color: var(--lightbg-bg3);
+  background: linear-gradient(90deg, transparent, var(--lightbg-bg3) 10%, var(--lightbg-bg3) 90%, transparent 100%);
+  height: 1px;
+  width: 50%;
+  margin: 50px auto;
+}
+
+/*
+ * Vignette
+ * Add vignette to a div with a bg image
+ */
+.vignette {
+  position: relative;
+  &::after {
+    background: radial-gradient(circle, transparent, #0008);
+    border-bottom-right-radius: 8px;
+    border-top-right-radius: 8px;
+    content: '';
+    height: 100%; width: 100%;
+    position: absolute;
+    top: 0; left: 0;
+  }
+}

@@ -24,7 +24,7 @@
   "scripts": {
     "start": "npm-run-all -p vue django",
     "django": "uv run python pk/manage.py runserver",
-    "vue": "scripts/build-hljs-themes.py && vite",
-    "build": "scripts/build-hljs-themes.py && vite build"
+    "vue": "scripts/build-hljsthemes.py && vite",
+    "build": "scripts/build-hljsthemes.py && vite build"
   }
 }

@@ -1,0 +1,159 @@
+/*---------------------------------------------------------------
+ * Theme
+ * Main css color variables and themeing not specific to any
+ * single component.
+ *--------------------------------------------------------------- */
+:root {
+  /* Website Fonts */
+  --fontfamily-title: 'Merriweather', sans-serif;
+  --fontfamily-article: 'Merriweather', sans-serif;
+  --fontfamily-subtext: 'Open Sans', sans-serif;
+  --fontfamily-artsy: 'Merriweather', sans-serif;
+  --fontfamily-code: 'Roboto Mono', monospace;
+
+  /* Gruvbox Color Scheme
+   * https://github.com/morhetz/gruvbox-contrib */
+  --lightbg-bg0: #f8f8f8;
+  --lightbg-bg1: #f2f2ee;
+  --lightbg-bg2: #e1e1e1;
+  --lightbg-bg3: #d5d5d5;
+  --lightbg-bg4: #cbcbcb;
+  --lightbg-bg5: #a89984;
+  --lightbg-bgh: #f9f5d7;
+  --lightbg-bgs: #f2e5bc;
+  --lightbg-fg0: #282828;
+  --lightbg-fg1: #3c3836;
+  --lightbg-fg2: #504945;
+  --lightbg-fg3: #665c54;
+  --lightbg-fg4: #7c6f64;
+  --lightbg-gray: #928374;
+  --lightbg-red0: #cc241d;
+  --lightbg-red1: #9d0006;
+  --lightbg-orange0: #d65d0e;
+  --lightbg-orange1: #af3a03;
+  --lightbg-yellow0: #d79921;
+  --lightbg-yellow1: #b57614;
+  --lightbg-green0: #98971a;
+  --lightbg-green1: #79740e;
+  --lightbg-green2: #58881b;
+  --lightbg-blue0: #458588;
+  --lightbg-blue1: #065c6c;
+  --lightbg-aqua0: #689d6a;
+  --lightbg-aqua1: #427b58;
+  --lightbg-purple0: #b16286;
+  --lightbg-purple1: #8f3f71;
+
+  --darkbg-bg0: #282828;
+  --darkbg-bg1: #444444;
+  --darkbg-bg2: #666666;
+  --darkbg-bg3: #665c54;
+  --darkbg-bg4: #7c6f64;
+  --darkbg-bgh: #1d2021;
+  --darkbg-bgs: #32302f;
+  --darkbg-fg0: #fbf1c7;
+  --darkbg-fg1: #ebdbb2;
+  --darkbg-fg2: #d5c4a1;
+  --darkbg-fg3: #bdae93;
+  --darkbg-fg4: #a89984;
+  --darkbg-gray: #928374;
+  --darkbg-red0: #cc241d;
+  --darkbg-red1: #fb4934;
+  --darkbg-orange0: #d65d0e;
+  --darkbg-orange1: #fe8019;
+  --darkbg-yellow1: #fabd2f;
+  --darkbg-yellow0: #d79921;
+  --darkbg-green0: #98971a;
+  --darkbg-green1: #b8bb26;
+  --darkbg-blue0: #458588;
+  --darkbg-blue1: #83a598;
+  --darkbg-aqua0: #689d6a;
+  --darkbg-aqua1: #8ec07c;
+  --darkbg-purple0: #b16286;
+  --darkbg-purple1: #d3869b;
+}
+
+/*-------------------------------------------
+ * CSS Reset
+ *------------------------------------------- */
+*, *::before, *::after {
+  box-sizing: border-box;
+  font-weight: normal;
+  margin: 0;
+}
+*:focus {
+  outline: 0px none transparent;
+  border-bottom: 2px dotted var(--accent);
+}
+html,body {
+  color: var(--lightbg-text);
+  font-family: "Merriweather", sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.6;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+
+/*-------------------------------------------
+ * Light and Dark Backgrounds
+ *------------------------------------------- */
+.lightbg {
+  --accent: var(--lightbg-orange0);
+  --bgcolor: var(--lightbg-bg1);
+  --dim: var(--lightbg-fg4);
+  --fgcolor: var(--lightbg-fg1);
+  --fgcolor60: #84827f;
+  --fgcolor40: #777060;
+  --linkcolor: var(--lightbg-blue1);
+  --linkhover: #000;
+  --linkhoverunderline: 2px dotted var(--linkhover);
+  ::selection {
+    background: #8886 !important;
+    color: #333 !important;
+  }
+}
+.darkbg {
+  --accent: var(--darkbg-orange1);
+  --bgcolor: var(--darkbg-bg0);
+  --dim: var(--darkbg-fg3);
+  --fgcolor: var(--darkbg-fg1);
+  --fgcolor60: #9d947b;
+  --fgcolor40: #777060;
+  --linkcolor: var(--darkbg-fg0);
+  --linkhover: var(--darkbg-orange1);
+  --linkhoverunderline: 2px dotted transparent;
+  ::selection {
+    background: #8882 !important;
+    color: #bb8 !important;
+  }
+}
+.lightbg,.darkbg {
+  background-color: var(--bgcolor);
+  color: var(--fgcolor);
+  a,a:visited {
+    color: var(--linkcolor);
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border-bottom: 2px dotted transparent;
+  }
+  a:hover {
+    color: var(--linkhover);
+    border-bottom: var(--linkhoverunderline);
+    text-decoration: none; 
+  }
+}
+
+/*-------------------------------------------
+ * Custom Scrollbars
+ *------------------------------------------- */
+body.firefox * {
+  scrollbar-color:#8888 transparent;
+}
+body.chrome {
+  ::-webkit-scrollbar { width:6px; height:6px; }
+  ::-webkit-scrollbar-thumb { background:#8888; border-radius:3px; }
+  ::-webkit-scrollbar-track, ::-webkit-scrollbar-corner { display:none; }
+}

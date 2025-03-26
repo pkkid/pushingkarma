@@ -1,0 +1,64 @@
+/*-------------------------------------------
+ * Animations.css
+ *------------------------------------------- */
+
+/* 
+ * Mdi Close
+ * Animated close or clear button
+ */
+.mdi-close {
+  background: transparent;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  font-size: 20px;
+  opacity: 0.6;
+  padding: 5px;
+  transition: all 0.2s ease;
+  transition-timing-function: steps(10, end);
+  z-index: 1001;
+  &:hover {
+    opacity: 1;
+    animation: spin90deg 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
+  }
+}
+@keyframes spin90deg {
+  0% { transform: rotate(0deg); }
+  80% { transform: rotate(100deg); }
+  100% { transform: rotate(90deg); }
+}
+
+/*
+ * Rotate Bounce Animation
+ * Visual indicator a text link was clicked
+ */
+.rotate-bounce {
+  animation: rotate-bounce 0.5s linear;
+  transform-origin: center;
+}
+@keyframes rotate-bounce {
+  0%, 20%, 50%, 80%, 100% { transform: rotate(0deg); }
+  40% { transform: rotate(8deg); }
+  60% { transform: rotate(-5deg); }
+}
+
+/*
+ * Fade - Vue Transition
+ * Fades the content in and out. You can control the duration by setting
+ * the transition-duration on the transition itself.
+ */
+.fade-enter-active, .fade-leave-active { transition: opacity 0.3s ease; }
+.fade-enter-from, .fade-leave-to { opacity: 0; }
+
+
+/* 
+ * Slide Fade - Vue Transition
+ * Slides and fades the content in and out. You need to adjust the max-height
+ * to approximatly the hight of the resulting content. A little over is fine,
+ * but too little may look jittery. You can spcify the max-height in the
+ * in the transition itself:
+ * Ex: <transition name="slide-fade" style="--max-height:100px">
+ */
+.slide-fade-enter-active, .slide-fade-leave-active { transition: all 0.3s ease; }
+.slide-fade-enter-from, .slide-fade-leave-to { max-height:0px; opacity:0; }
+.slide-fade-enter-to, .slide-fade-leave-from { max-height:var(--maxheight); opacity:1; }

@@ -1,0 +1,46 @@
+/*-------------------------------------------
+ * Code.css
+ * 
+ *------------------------------------------- */
+
+/*
+ * Grivbox Light Hard
+ * The full theme is defined in the hljstheme.css stylesheet. Here we are
+ */
+[theme='gruvbox-light-hard'] {
+  .hljs {
+    background-color: #ddddd9 !important;
+    color: var(--lightbg-fg1);
+  }
+  .hljs-comment { color: #7e6449 !important; }
+}
+
+/*
+ * Markdown Codearea
+ * Tweaking the CodeEditor styles to fit well in
+ * the Notes markdown content
+ */
+.md-codearea {
+  position: relative;
+  padding: 10px 20px;
+  border-radius: 6px;
+  line-height: 1.3;
+  margin: 0px;
+  code {
+    padding: 0px;
+    margin: 0px;
+  }
+  label {
+    display: block;
+    font-size: 10px;
+    margin: 0px;
+    opacity: 0;
+    position: absolute;
+    right: 6px;
+    top: 4px;
+    transition: all 1s ease;
+  }
+  &:hover label {
+    opacity: 0.8;
+  }
+}

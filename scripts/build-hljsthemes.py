@@ -13,7 +13,7 @@ log.basicConfig(stream=sys.stdout, level=log.INFO, format=logformat)
 
 ROOT = dirname(dirname(abspath(__file__)))
 HLJSDIR = f'{ROOT}/node_modules/highlight.js/styles/base16'
-DESTFILE = f'{ROOT}/vue/assets/hljs-themes.css'
+DESTFILE = f'{ROOT}/vue/assets/hljsthemes.css'
 _ = lambda path: path.replace(ROOT, '')
 
 

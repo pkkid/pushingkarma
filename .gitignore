@@ -19,5 +19,5 @@
 **/coverage
 **/node_modules/
 
-vue/assets/hljs-themes.css
+vue/assets/hljsthemes.css
 settings.py

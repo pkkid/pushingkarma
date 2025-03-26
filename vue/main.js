@@ -1,4 +1,5 @@
 // Main Vue Setup
+// @ts-nocheck
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
@@ -23,6 +24,5 @@ hljs.registerLanguage('sql', sql)
 app.use(hljsVuePlugin)
 
 // Mount the App after waiting for all component promises to be met.
-import './assets/styles.css'
-import './assets/hljs-themes.css'
+import './assets/main.css'
 app.mount('#app')

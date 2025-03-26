@@ -1,0 +1,49 @@
+/*-------------------------------------------
+ * Content.css
+ *------------------------------------------- */
+
+/*
+ * Material Design Icons
+ * Customizes how the mdi icons are displayed.
+ * https://pictogrammers.com/library/mdi/
+ */
+.mdi {
+  width: 1em;
+  height: 1em;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/*
+ * Subtext
+ * General style for smaller text under another main heading.
+ * Quick and dirty, but I use this everywhere.
+ */
+.subtext {
+  font-size: 0.7em;
+  opacity: 0.6;
+  margin-top: -2px;
+}
+
+/*
+ * Data List
+ * dl, dt, dd
+ */
+dl {
+  display: grid;
+  grid-row-gap: 2px;
+  font-size: 13px;
+  margin: 10px 0px;
+}
+dt {
+  color: var(--lightbg-fg4);
+  grid-column-start: 1;
+  margin-right: 15px;
+  text-transform: uppercase;
+}
+dd {
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  
+}
