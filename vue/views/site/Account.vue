@@ -1,5 +1,5 @@
 <template>
-  <Modal :visible='visible' closeButton closeOnEsc @close='emit("close")'>
+  <Modal id='account-modal' :visible='visible' closeButton closeOnEsc @close='emit("close")'>
     <div id='account'>
       <div class='content lightbg'>
         
@@ -94,7 +94,7 @@
     flex-direction: row;
     .content > * {
       width: 350px;
-      padding: 20px;
+      padding: 0px 20px 0px 0px;
       display: flex;
       flex-direction: column;
     }
@@ -110,9 +110,15 @@
       background-size: cover;
       border-bottom-right-radius: 8px;
       border-top-right-radius: 8px;
-      width: 400px; height: 400px;
+      height: 400px;
+      margin: -20px -20px -20px 0px;
+      width: 400px;
     }
     a { display: inline-block; }
+  }
+  #account-modal .modal-wrap {
+    min-height: 340px !important;
+    .modal-content { overflow: hidden; }
   }
 </style>
 

@@ -1,10 +1,11 @@
 <template>
   <teleport to="body">
     <transition name='fade'>
-      <div v-if='visible' class='modal-overlay' @click.self='close'>
-        <div class='modal-content'>
-          <i v-if='closeButton' class='mdi mdi-close' @click='emit("close")' />
-          <slot>modal-content</slot>
+      <div v-if='visible' :id='id' class='modal-overlay' @click.self='close'>
+        <div class='modal-wrap lightbg'>
+          <i v-if='closeButton' class='mdi mdi-close close-button' @click='emit("close")' />
+          <div v-if='$slots.header' class='modal-header'><slot name='header'></slot></div>
+          <div class='modal-content'><slot>modal-content</slot></div>
         </div>
       </div>
     </transition>
@@ -18,6 +19,7 @@
   var prevScope = null                              // Previous hotkeys-js scope
   const emit = defineEmits(['close'])               // Emit when closing the modal
   const props = defineProps({
+    id: {type:String},                              // Unique id for the modal
     visible: {type:Boolean, required:true},         // Display the modal
     closeButton: {type:Boolean, default:false},     // Display the close button
     closeOnEsc: {type:Boolean, default:false}       // Allow esc to close
@@ -51,40 +53,55 @@
 
 <style>
   .modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    align-items: center;
     background: #0006;
     display: flex;
-    justify-content: flex-start;
     flex-direction: column;
-    align-items: center;
+    height: 100%;
+    justify-content: flex-start;
+    left: 0;
+    position: fixed;
+    top: 0;
+    width: 100%;
     z-index: 1000;
-    .modal-content {
+
+    .modal-wrap {
       border-radius: 8px;
       overflow: hidden;
       position: relative;
       top: 15%;
       box-shadow: 0px 4px 8px #0008, 0px 8px 20px #0004;
       min-width: 500px;
-      max-height: 70%;
-      & > div, & > article {
-        max-height: 100%;
+      max-height: 80%;
+
+      .close-button {
+        align-items: center;
+        color: var(--lightbg-fg1);
+        display: flex;
+        height: 32px;
+        justify-content: center;
+        position: absolute;
+        right: 15px;
+        top: 15px;
+        width: 32px;
+      }
+      .modal-header {
+        height: 70px;
+        line-height: 70px;
+        padding: 0px 20px;
+        &>article { padding:0px; }
+      }
+      .modal-content {
+        padding: 0px 20px 20px 20px;
+        &>article { padding:0px; }
+      }
+      &:has(.modal-header) .modal-content {
+        max-height: calc(100% - 70px);
         overflow-y: auto;
       }
-    }
-    .mdi-close {
-      color: var(--lightbg-fg1);
-      position: absolute;
-      right: 15px;
-      top: 15px;
-      width: 32px;
-      height: 32px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      &:not(:has(.modal-header)) .modal-content {
+        padding-top:20px;
+      }
     }
   }
 </style>

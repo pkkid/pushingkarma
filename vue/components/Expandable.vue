@@ -37,29 +37,23 @@
 
 <style>
   .expandable {
+    background-color: transparent;
+    transition: background-color 0.3s ease;
     .expandable-header {
-      display: flex;
       align-items: center;
       cursor: pointer;
-
+      display: flex;
       .expand-icon {
         font-size: 20px;
-        margin-left:auto; 
+        margin-left: auto; 
         opacity: 0.5;
         transition: all 0.3s ease;
       }
-      &:hover .expand-icon { opacity: 1; }
+      &:hover .expand-icon { opacity:1; }
     }
-    &.expanded,
-    &:has(.expandable-header:hover) {
-      background-color: #ddddd988;
-    }
-    &.expanded .expand-icon {
-      transform: rotate(90deg);
-      opacity: 1;
-    }
-    .expandable-content {
-      background-color: var(--lightbg-bg0);
-    }
+    &.expanded, &:hover { background-color:#ddddd988; }
+    &.expanded .expand-icon { transform:rotate(90deg); opacity:1; }
+    .expandable-content { background-color:var(--lightbg-bg0); }
   }
+  .sortableitem:has(.grip:hover) .expandable { background-color:#ddddd988; }
 </style>

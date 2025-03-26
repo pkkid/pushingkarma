@@ -1,10 +1,12 @@
 <template>
-  <Modal :visible='visible' closeButton closeOnEsc @close='emit("close")'>
-    <article id='budgetsettings' class='lightbg'>
-      <h2 style='margin-top:0px;'>Budget Settings</h2>
+  <Modal id='budgetsettings' :visible='visible' closeButton closeOnEsc @close='emit("close")'>
+    <template #header>
+      <article><h2 style='margin:0px;'>Budget Settings</h2></article>
+    </template>
+    <article>
       <!-- Accounts -->
       <div v-if='accounts' class='accounts'>
-        <h3>Accounts</h3>
+        <h3 style='margin-top:0px;'>Accounts</h3>
         <Sortable group='accounts' @sort='onSortAccounts'>
           <SortableItem v-for='account in accounts.results' :key='account.id' :itemid='account.id'>
             <Expandable maxheight='250px'>
@@ -12,7 +14,7 @@
               <template #content>
                 <div style='padding:5px 0px 15px 0px'>
                   <h4>Import Configuration</h4>
-                  <CodeEditor :value='account.import_config' language='json' showLineNums=true padding='8px'
+                  <CodeEditor :value='account.import_config' language='json' padding='8px'
                     style='height:150px; width:100%; font-size:12px;'/>
                   <div class='button-row' style='margin-top:5px;'>
                     <button>Save Account</button>
@@ -26,7 +28,6 @@
       </div>
       <!-- Categories -->
       <div v-if='categories' class='categories'>
-        
         <h3>Categories</h3>
         <Sortable group='categories' @sort='onSortCategories' style='min-height:100px; max-height:300px; overflow-y:auto;'>
           <SortableItem v-for='category in categories.results' :key='category.id' :itemid='category.id'>
@@ -90,8 +91,9 @@
 </script>
 
 <style>
-  #budgetsettings {
-    padding: 20px;
+  #budgetsettings .modal-wrap {
     width: 600px;
+    /* .modal-header article { padding: 20px 20px 10px 20px; } */
+    /* .modal-content article { padding: 10px 20px 20px 20px; } */
   }
 </style>
