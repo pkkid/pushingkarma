@@ -20,7 +20,7 @@
       </template>
       <template #content>
         <LayoutPaper>
-          <template #content v-if='options && response'>
+          <template #content v-if='toc && response'>
             <div class='options'>
               <!-- Count Queries -->
               <Tooltip width='250px' text="An additonal 'Queries' header is added to api requests
@@ -34,7 +34,7 @@
             </div>
             <!-- Request Description and URL -->
             <h1>{{viewName}}</h1>
-            <div class='description' v-html='options.data?.description?.replace(/\n/g, "<br/>")'></div>
+            <div class='description' v-html='toc.endpoints[view].GET?.description.replace(/\n/g, "<br/>")'></div>
             <div class='headers'>
               <div class='inputwrap'>
                 <span class='label'>GET</span>
@@ -50,7 +50,7 @@
               </template>
             </div>
             <!-- Response Content -->
-            <div class='code-block'>
+            <div theme='gruvbox-light-hard' class='codearea'>
               <highlightjs :code='utils.stringify(response.data, {indent:2})' :language='"json"' :autodetect='false'/>
             </div>
           </template>
@@ -79,7 +79,6 @@
   }
   var showheaders = ['allow', 'content-type', 'content-length', 'response-time', 'queries']
   var toc = ref(null)         // Table of contents (api root)
-  var options = ref(null)     // Current options response
   var response = ref(null)    // Current get response
   
   const countQueries = useStorage('axios.countqueries', false)  // Count queries on the server
@@ -119,8 +118,9 @@
   const catergories = computed(function() {
     if (toc.value == null) { return [] }
     var categories = []
-    Object.keys(toc.value).forEach(key => {
-      var category = key.split('/')[0]
+    Object.keys(toc.value.endpoints).forEach(key => {
+      var category = key.split('/')[2]
+      if (category == '') { return }
       if (!categories.includes(category)) {
         categories.push(category)
       }
@@ -133,9 +133,9 @@
   const categoryItems = function(category) {
     if (toc.value == null) { return [] }
     var items = []
-    Object.keys(toc.value).forEach(key => {
-      if (key.startsWith(category)) {
-        items.push(key.split('/')[1])
+    Object.keys(toc.value.endpoints).forEach(key => {
+      if (key.startsWith(`/api/${category}`)) {
+        items.push(key.split('/')[3])
       }
     })
     return items
@@ -161,15 +161,9 @@
   watchEffect(async function() {
     if (view.value === null) { return }
     var endpoint = view.value.replace(/\/api\//g, '')
-    await Promise.all([
-      axios.options(endpoint)
-        .then(resp => options.value = resp)
-        .catch(err => options.value = err.response),
-      axios.get(endpoint)
-        .then(resp => response.value = resp)
-        .catch(err => response.value = err.response)
-   ])
-    console.debug(`${endpoint} options`, options.value)
+    await axios.get(endpoint)
+      .then(resp => response.value = resp)
+      .catch(err => response.value = err.response)
     console.debug(`${endpoint} response`, response.value)
     nextTick(linkAPIURLs)
   })
@@ -177,7 +171,7 @@
   // Link API URLs
   // Create links for all api urls
   const linkAPIURLs = function() {
-    var spans = document.querySelectorAll('.code-block pre code span.hljs-string')
+    var spans = document.querySelectorAll('.codearea pre code span.hljs-string')
     spans = Array.from(spans).filter(span => span.textContent.startsWith(`"${axios.defaults.baseURL}`))
     spans.forEach(span => {
       const newspan = document.createElement('span')
