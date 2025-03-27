@@ -6,6 +6,7 @@
 # E226: missing whitespace around arithmetic operator
 # E231: missing whitespace after ‘,’, ‘;’, or ‘:’
 # E251: unexpected spaces around keyword / parameter equals
+# E252: missing whitespace around parameter equals
 # E265: block comment should start with ‘# ‘
 # E302: expected 2 blank lines, found 1
 # E401: multiple imports on one line
@@ -16,7 +17,7 @@
 # W291: trailing whitespace
 # W293: blank line contains whitespace
 [flake8]
-ignore=E128,E226,E231,E251,E302,E305,E401,E501,E701,E731,W293,W503
+ignore=E128,E226,E231,E251,E252,E302,E305,E401,E501,E701,E731,W293,W503
 exclude=migrations,node_modules
 max-complexity = -1
 max-line-length = 125
