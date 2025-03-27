@@ -47,11 +47,6 @@ def list_notes(request, search:Optional[str]=''):
     return sorted(results, key=lambda r: -r.score)
 
 
-
-
-
-
-
 # --------------------------------------------
 # import glob, logging, re
 # from django.conf import settings
