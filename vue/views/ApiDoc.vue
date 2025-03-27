@@ -34,7 +34,7 @@
             </div>
             <!-- Request Description and URL -->
             <h1>{{viewName}}</h1>
-            <div class='description' v-html='(toc.endpoints[view].GET || toc.endpoints[view].POST)?.description.replace(/\n/g, "<br/>")'></div>
+            <div class='description' v-html='description'></div>
             <div class='headers'>
               <div class='inputwrap'>
                 <span class='label'>GET</span>
@@ -85,6 +85,15 @@
   const logQueries = useStorage('axios.logqueries', false)      // Log queries on the server
   const {view} = useUrlParams({view: {type:String}})            // Current view to display
   const url = ref(view.value)                                   // Current url to display
+
+  // Description
+  // Returns this views description
+  const description = computed(function() {
+    if (toc.value == null) { return '' }
+    var endpoint = toc.value.endpoints[view.value]?.GET ||
+      toc.value.endpoints[view.value]?.POST
+    return endpoint?.description.replace(/\n/g, '<br/>')
+  })
 
   // Watch View
   // Keep the url updated when view changed
