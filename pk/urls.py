@@ -6,11 +6,13 @@ from django.views.decorators.clickjacking import xframe_options_exempt
 from django.views.decorators.csrf import ensure_csrf_cookie
 from ninja import NinjaAPI
 from pk.apps.main.api import router as main_router
+from pk.apps.obsidian.api import router as obsidian_router
 from pk import utils
 
 api = NinjaAPI()
 api.add_router('/', utils.root_router)
 api.add_router('/main', main_router)
+api.add_router('/obsidian', obsidian_router)
 
 
 @xframe_options_exempt
