@@ -23,3 +23,8 @@ class UserSchema(Schema):
 class LoginSchema(Schema):
     email: str
     password: str
+
+
+class GlobalVarsSchema(Schema):
+    debug: bool
+    user: UserSchema
