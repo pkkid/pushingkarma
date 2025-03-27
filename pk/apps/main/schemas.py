@@ -26,5 +26,5 @@ class LoginSchema(Schema):
 
 
 class GlobalVarsSchema(Schema):
-    debug: bool
+    DEBUG: bool
     user: UserSchema

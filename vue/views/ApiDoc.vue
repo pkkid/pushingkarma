@@ -150,6 +150,15 @@
     return items
   }
 
+  // Cateogry Item Summary
+  // Returns the summary for the specified category item
+  const categoryItemSummary = function(category, item) {
+    if (toc.value == null) { return '' }
+    var endpoint = toc.value.endpoints[`/api/${category}/${item}`]
+    if (endpoint == null) { return '' }
+    return endpoint.GET?.summary || endpoint.POST?.summary || ''
+  }
+
   // Category Icon
   // Icon for the API Category
   const categoryIcon = function(category) {

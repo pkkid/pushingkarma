@@ -1,4 +1,5 @@
 # encoding: utf-8
+import logging
 from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.urls import re_path
@@ -8,8 +9,9 @@ from ninja import NinjaAPI
 from pk.apps.main.api import router as main_router
 from pk.apps.obsidian.api import router as obsidian_router
 from pk import utils
+log = logging.getLogger(__name__)
 
-api = NinjaAPI()
+api = NinjaAPI(urls_namespace='api')
 api.add_router('/', utils.root_router)
 api.add_router('/main', main_router)
 api.add_router('/obsidian', obsidian_router)
@@ -23,13 +25,22 @@ def index(request, tmpl='index.html'):
     return utils.response(request, tmpl, {})
 
 
+@api.exception_handler(Exception)
+def api_uncaught_exception(request, err):
+    log.exception(err)
+    return api.create_response(request, status=500,
+        data={'status':'error', 'message':str(err)})
+
+
 def api_404(request, exc=None):
-    return JsonResponse({'error': 'API endpoint not found'}, status=404)
+    message = 'API endpoint not found'
+    return JsonResponse(status=404,
+        data={'status':'error', 'message':message})
 
 
 urlpatterns = [
     re_path('api/', api.urls),
-    re_path(r'^api/.*$', api_404),
+    re_path(r'^api/.*$', lambda r: api_404),
     re_path(r'', index, name='index'),
 ]
 

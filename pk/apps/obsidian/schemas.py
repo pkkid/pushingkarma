@@ -5,6 +5,7 @@ from typing import Optional
 
 
 class NoteSchema(Schema):
+    url: str
     bucket: str
     vault: str
     path: str
