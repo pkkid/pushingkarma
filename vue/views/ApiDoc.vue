@@ -34,7 +34,7 @@
             </div>
             <!-- Request Description and URL -->
             <h1>{{viewName}}</h1>
-            <div class='description' v-html='toc.endpoints[view].GET?.description.replace(/\n/g, "<br/>")'></div>
+            <div class='description' v-html='(toc.endpoints[view].GET || toc.endpoints[view].POST)?.description.replace(/\n/g, "<br/>")'></div>
             <div class='headers'>
               <div class='inputwrap'>
                 <span class='label'>GET</span>

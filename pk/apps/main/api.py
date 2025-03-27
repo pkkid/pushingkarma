@@ -16,7 +16,9 @@ router = Router()
 def get_global_vars(request):
     """ Return global variables. """
     result = dict(**settings.GLOBALVARS)
-    result['user'] = 'Guest'
+    # result['user'] = 'Guest'
+    # result['user'] = AccountSerializer(request.user, context={'request':request}).data
+    result['user'] = UserSchema.from_user(request.user).dict()
     return result
 
 
@@ -27,15 +29,13 @@ def login(request, data:LoginSchema):
         • password: Password of the account to log into.
     """
     try:
-        # email = request.data.get('email')
-        # password = request.data.get('password')
         user = utils.get_object_or_none(User, email=data.email)
         if user is not None:
             user = authenticate(username=user.username, password=data.password)
             if user and user.is_active:
                 django_login(request, user)
                 log.info('Logged in as %s', user.email)
-                return UserSchema.from_user(user)
+                return UserSchema.from_user(user).dict()
             log.info(f'Unknown email or password: {data.email}')
     except Exception as err:
         log.error(err, exc_info=1)
