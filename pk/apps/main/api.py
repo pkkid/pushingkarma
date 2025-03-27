@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as django_login
+from django.contrib.auth import logout as django_logout
 from ninja import Router
 from ninja.errors import HttpError
 from pk import utils
@@ -16,8 +17,6 @@ router = Router()
 def get_global_vars(request):
     """ Return global variables. """
     result = dict(**settings.GLOBALVARS)
-    # result['user'] = 'Guest'
-    # result['user'] = AccountSerializer(request.user, context={'request':request}).data
     result['user'] = UserSchema.from_user(request.user).dict()
     return result
 
@@ -42,25 +41,8 @@ def login(request, data:LoginSchema):
     return HttpError(403, 'Unknown email or password.')
 
 
-# ---------------------------------------------
-# # encoding: utf-8
-# from pk import utils
-# from django.contrib.auth.models import User
-# from rest_framework.authtoken.models import Token
-# from rest_framework.serializers import SerializerMethodField, ModelSerializer
-
-
-# class AccountSerializer(ModelSerializer):
-#     name = SerializerMethodField()
-#     auth_token = SerializerMethodField()
-
-#     class Meta:
-#         model = User
-#         fields = ('id', 'name', 'email', 'date_joined', 'last_login', 'auth_token')
-    
-#     def get_name(self, obj):
-#         return obj.get_full_name() if obj.is_active else 'Guest'
-
-#     def get_auth_token(self, obj):
-#         token = utils.get_object_or_none(Token, user=obj.id or -1)
-#         return token.key if token else None
+@router.post('/logout', response=dict)
+def logout(request, *args, **kwargs):
+    """ Logs the current user out. """
+    django_logout(request)
+    return {'status': 'Successfully logged out.'}
