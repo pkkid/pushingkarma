@@ -24,8 +24,8 @@ def get_global_vars(request):
 @router.post('/login', response=dict)
 def login(request, data:LoginSchema):
     """ Allows logging in to the django application.
-        • email: Email of the account to log into.
-        • password: Password of the account to log into.
+        • email (str): Email of the account to log into.
+        • password (str): Password of the account to log into.
     """
     try:
         user = utils.get_object_or_none(User, email=data.email)
