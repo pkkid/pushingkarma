@@ -14,6 +14,36 @@ log = logging.getLogger(__name__)
 router = Router()
 
 
+@router.get('/notes/{bucketname}/{path}', response=NoteSchema, exclude_unset=True, url_name='note')
+def get_note(request, bucketname:str, path:str):
+    """ Returns a single note from the obsian vault. The path is relative to the
+        vault bucket. The bucketname is the name of the group in settings.py.
+        • bucketname: Name of Obsidian bucket in settings.py (required)
+        • path: Path of note in the bucket vault (required)
+    """
+    if bucketname not in settings.OBSIDIAN_BUCKETS:
+        raise HttpError(404, 'Unknown bucket name.')
+    bucket = settings.OBSIDIAN_BUCKETS[bucketname]
+    public = bucket.get('public', False)
+    if public or request.user.is_authenticated:
+        filepath = join(bucket['path'], path)
+        if not exists(filepath):
+            raise HttpError(404, 'Unknown note path.')
+        with open(filepath, 'r', encoding='utf-8') as handle:
+            content = handle.read()
+        return dict(
+            url = utils.reverse(request, 'api:note', bucketname=bucketname, path=path),
+            bucket = bucketname,
+            vault = bucket['vault'],
+            path = path,
+            title = basename(filepath)[:-3],
+            content = content,
+            mtime = int(getmtime(filepath)),
+            public = public,
+        )
+    raise HttpError(403, 'Permission denied.')
+
+
 @router.get('/notes', response=List[NoteSchema], exclude_unset=True)
 @paginate(PageNumberPagination)
 @decorate_view(cache_page(0 if settings.DEBUG else 300))
@@ -48,32 +78,3 @@ def list_notes(request, search:Optional[str]=''):
                 ))
     results = [r for r in results if r['score'] > 0] if search != '' else results
     return sorted(results, key=lambda r: (-r['score'],-r['mtime']))
-
-
-@router.get('/notes/{bucketname}/{path}', response=NoteSchema, exclude_unset=True, url_name='note')
-def get_note(request, bucketname:str, path:str):
-    """ Returns a single note from the obsian vault. The path is relative to the
-        vault bucket. The bucketname is the name of the group in settings.py.
-        • bucket: Name of Obsidian bucket in settings.py (required)
-        • path: Path of note in the bucket vault (required)
-    """
-    if bucketname not in settings.OBSIDIAN_BUCKETS:
-        raise HttpError(404, 'Unknown bucket name.')
-    bucket = settings.OBSIDIAN_BUCKETS[bucketname]
-    public = bucket.get('public', False)
-    if public or request.user.is_authenticated:
-        filepath = join(bucket['path'], path)
-        if not exists(filepath):
-            raise HttpError(404, 'Unknown note path.')
-        with open(filepath, 'r', encoding='utf-8') as handle:
-            content = handle.read()
-        return dict(
-            url = utils.reverse(request, 'api:note', bucketname=bucketname, path=path),
-            bucket = bucketname,
-            vault = bucket['vault'],
-            path = path,
-            title = basename(filepath)[:-3],
-            content = content,
-            mtime = int(getmtime(filepath)),
-            public = public,
-        )
