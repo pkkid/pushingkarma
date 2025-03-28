@@ -1,6 +1,6 @@
 # encoding: utf-8
 import logging
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 from django.urls import re_path
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.views.decorators.csrf import ensure_csrf_cookie
@@ -23,7 +23,7 @@ api.add_router('/obsidian', obsidian_router)
 def index(request, tmpl='index.html'):
     if url := utils.vue_devserver_running(request):
         return redirect(url)
-    return utils.response(request, tmpl, {})
+    return render(request, tmpl, {})
 
 
 @api.exception_handler(Exception)

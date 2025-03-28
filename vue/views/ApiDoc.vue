@@ -4,16 +4,18 @@
       <!-- API Categorties -->
       <template #panel>
         <div v-if='toc' class='menu'>
-          <template v-for='[category, endpoints] in Object.entries(toc.endpoints)' :key='category'>
-            <div class='item'>
-              <i class='mdi' :class='categoryIcon(category)'/>
-              {{utils.title(category)}}
-            </div>
-            <template v-for='endpoint in endpoints' :key='`${endpoint.method} ${endpoint.path}`'>
-              <div class='subitem link' :class='{selected:view === "foobar"}' 
-                @click='view=getView(endpoint.path)'>
-                <div class='name'>{{endpoint.summary}}</div>
+          <template v-for='[category, endpts] in Object.entries(toc.endpoints)' :key='category'>
+            <template v-if='category.length'>
+              <div class='item'>
+                <i class='mdi' :class='categoryIcon(category)'/>
+                {{utils.title(category)}}
               </div>
+              <template v-for='endpt in endpts' :key='`${endpt.method} ${endpt.path}`'>
+                <div class='subitem link' :class='{selected:view === "foobar"}' 
+                  @click='view=getView(endpt.path)'>
+                  <div class='name'>{{endpt.summary}}</div>
+                </div>
+              </template>
             </template>
           </template>
         </div>
@@ -33,13 +35,16 @@
               </Tooltip>
             </div>
             <!-- Request Description and URL -->
-            <h1>{{viewName}}</h1>
-            <div class='description' v-html='description'></div>
+            <h1>{{endpointName}}</h1>
+            <!-- Input Wrap -->
+            <div class='inputwrap'>
+              <select v-model='method'>
+                <option v-for='meth in allowed' :key='meth' :value='meth'>{{meth}}</option>
+              </select>
+              <input class='urlinput' type='text' v-model='url' spellcheck='false' @keydown.enter='view=url'/>
+            </div>
+            <div class='description' v-html='endpoint?.description.replace(/\n/g, "<br/>")'></div>
             <div class='headers'>
-              <div class='inputwrap'>
-                <span class='label'>GET</span>
-                <input class='urlinput' type='text' v-model='url' spellcheck='false' @keydown.enter='view=url'/>
-              </div>
               <!-- Response Headers -->
               <span class='label'>HTTP {{response.status}} {{response.statusText}}</span><br/>
               <template v-for='header in showheaders'>
@@ -51,7 +56,7 @@
             </div>
             <!-- Response Content -->
             <div theme='gruvbox-light-hard' class='codearea'>
-              <highlightjs :code='utils.stringify(response.data, {indent:2})' :language='"json"' :autodetect='false'/>
+              <highlightjs :code='utils.stringify(response.data, {indent:2})' language='json' :autodetect='false'/>
             </div>
           </template>
         </LayoutPaper>
@@ -77,22 +82,57 @@
     'stocks': 'mdi-chart-line',
     'default': 'code',
   }
-  var showheaders = ['allow', 'content-type', 'content-length', 'response-time', 'queries']
-  var toc = ref(null)         // Table of contents (api root)
-  var response = ref(null)    // Current get response
   
+  var methods = ['GET', 'POST', 'PUT', 'DELETE']
+  var showheaders = ['allow', 'content-type', 'content-length', 'response-time', 'queries']
   const countQueries = useStorage('axios.countqueries', false)  // Count queries on the server
   const logQueries = useStorage('axios.logqueries', false)      // Log queries on the server
-  const {view} = useUrlParams({view: {type:String}})            // Current view to display
+  const {method, view} = useUrlParams({
+    method: {type:String},                                      // Current method to display
+    view: {type:String}                                         // Current view to display
+  })
+  var toc = ref(null)                                           // Table of contents (api root)
+  var endpoint = ref(null)
+  var response = ref(null)                                      // Current get response
+  const allowed = ref(null)                                     // Allowed methods for current endpoint
   const url = ref(view.value)                                   // Current url to display
 
-  // Description
-  // Returns this views description
-  const description = computed(function() {
-    if (toc.value == null) { return '' }
-    var endpoint = toc.value.endpoints[view.value]?.GET ||
-      toc.value.endpoints[view.value]?.POST
-    return endpoint?.description.replace(/\n/g, '<br/>')
+  // Endpoint
+  // Return the endpoint details from the view
+  watchEffect(function() {
+    if (!toc.value) { return null }
+    var allow = []
+    var endptset = false
+    const cleanView = view.value.split('?')[0]
+    for (var meth of methods) {
+      for (const [category, endpts] of Object.entries(toc.value.endpoints)) {
+        for (const endpt of endpts) {
+          if (endpt.method !== meth) { continue }
+          var pattern = endpt.path.split(/(?=\/api\/)/)[1]
+          pattern = pattern.replace(/{\w+}/g, '[^/]+')
+          pattern = pattern.replace(/\//g, '\\/')
+          var regex = new RegExp(`^${pattern}$`)
+          if (regex.test(cleanView)) {
+            allow.push(meth)
+            endpt.category = category
+            if (!endptset) {
+              endpoint.value = endpt
+              endptset = true
+            }
+          }
+        }
+      }
+    }
+    console.log('allow', allow)
+    allowed.value = allow.length ? allow : ['GET']
+    method.value = allowed.value[0]
+  })
+
+  // Endpoint Name
+  // Return the endpoint name from the view
+  const endpointName = computed(function() {
+    if (!endpoint.value) { return 'Unknown Endpoint' }
+    return `${utils.title(endpoint.value.category)} ${endpoint.value.summary}`
   })
 
   // Watch View
@@ -128,31 +168,11 @@
     return `/api/${path.split('/api/')[1]}`
   }
 
-  // Get Endpoint
-  // Return the endpoint details from the view
-  const endpoint = computed(function() {
-    if (!toc.value) { return null }
-    const cleanview = view.value.split('?')[0]
-    console.log(cleanview)
-
-
-    return ''
-  })
-
   // Category Icon
   // Icon for the API Category
   const categoryIcon = function(category) {
     return categoryIcons[category] || categoryIcons['default']
   }
-
-  // View Name
-  // Return the current view title
-  const viewName = computed(function() {
-    if (view.value == '/api/') { return 'PushingKarma API' }
-    var endpoint = view.value.replace(/\/api\//g, '')
-    endpoint = endpoint.split('?')[0]
-    return utils.title(endpoint.replace(/\//g, ' '))
-  })
 
   // View Options
   // Return the current view options
@@ -163,7 +183,8 @@
       .then(resp => response.value = resp)
       .catch(err => response.value = err.response)
     console.debug(`${endpoint} response`, response.value)
-    nextTick(linkAPIURLs)
+    await nextTick()
+    linkAPIURLs()
   })
 
   // Link API URLs
@@ -206,7 +227,7 @@
   #apidoc {
     .description {
       font-size: 14px;
-      margin-top: -10px;
+      margin: 20px 0px;
     }
     .options {
       float: right;
@@ -216,22 +237,38 @@
       gap: 3px;
     }
     .inputwrap {
-      background-color: transparent;
+      background-color: #00000008; 
       border-radius: 4px;
-      margin-left: -8px;
-      padding-left: 8px;
-      margin-bottom: 5px;
+      margin: -10px 0px 20px -2px;
       transition: background-color 0.3s;
-      &:has(input:focus) { background-color: #00000008; }
+      &:has(input:focus) { background-color: #00000010; }
+      select {
+        background-color: #00000008;
+        background-color: var(--lightbg-bg2);
+        border-bottom-left-radius: 4px;
+        border-bottom-right-radius: 0px;
+        border-top-left-radius: 4px;
+        border-top-right-radius: 0px;
+        border-width: 0px;
+        display: inline-block;
+        font-family: var(--fontfamily-code);
+        font-size: 12px;
+        font-weight: bold;
+        height: 30px;
+        padding: 2px 3px;
+        width: 80px;
+      }
       input {
         background-color: transparent;
         border-width: 0px;
+        border-radius: 0px;
         box-shadow: none;
         color: var(--lightbg-blue1);
         font-family: var(--fontfamily-code);
         font-size: 12px;
-        padding: 8px 0px;
-        width: calc(100% - 30px);
+        padding: 0px 0px 0px 10px;
+        line-height: 30px;
+        width: calc(100% - 90px);
       }
     }
     .headers {

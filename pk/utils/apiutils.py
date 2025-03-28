@@ -17,8 +17,8 @@ def api_root(request):
     endpoints = defaultdict(list)
     for path, methods in paths.items():
         category = path.split('/')[2]
-        if not category: continue
-        print(category)
+        # if not category: continue
+        # print(category)
         for method, details in methods.items():
             endpoints[category].append({
                 'method': method.upper(),

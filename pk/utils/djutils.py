@@ -1,8 +1,10 @@
 # encoding: utf-8
-import logging, re, textwrap, time
+import logging, re, requests, textwrap, time
 from collections import defaultdict
 from django.conf import settings
 from django.db import connections
+from django.urls import reverse as django_reverse
+from urllib.parse import unquote
 from pk import utils
 log = logging.getLogger(__name__)
 
@@ -114,6 +116,17 @@ class QueryCounterMiddleware:
         log.info(logmsg)
 
 
+def get_object_or_none(cls, *args, **kwargs):
+    try:
+        return cls._default_manager.get(*args, **kwargs)
+    except cls.DoesNotExist:
+        return None
+
+
+def reverse(request, viewname, **kwargs):
+    return unquote(request.build_absolute_uri(django_reverse(viewname, kwargs=kwargs)))
+
+
 def update_logging_filepath(filepath, handler_name='default'):
     """ Update logging filehandler to the specified filepath. """
     for handler in logging.getLogger().handlers:
@@ -124,3 +137,15 @@ def update_logging_filepath(filepath, handler_name='default'):
             break
     else:
         raise Exception(f'Unknown filehandler name {handler_name}')
+
+
+def vue_devserver_running(request):
+    """ Return url if it looks like the Vue devserver is running. """
+    try:
+        if not settings.DEBUG: return None
+        servername = utils.rget(request, 'environ.SERVER_NAME', 'localhost')
+        serverurl = f'http://{servername}:5173'
+        requests.head(serverurl)
+        return serverurl
+    except Exception:
+        return None
