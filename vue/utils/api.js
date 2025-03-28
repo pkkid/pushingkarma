@@ -47,6 +47,7 @@ export const Obsidian = {
   listNotes(params, signal) { return get(`/obsidian/notes`, {params, signal}) },
 }
 export const Stocks = {
-  getTickers(params, signal) { return get(`/stocks/tickers`, {params, signal}) },
-  projectionTrends(params, signal) { return get(`/stocks/projection_trends`, {params, signal}) },
+  getTicker(ticker, params, signal) { return get(`/stocks/tickers/${ticker}`, {params, signal}) },
+  listTickers(params, signal) { return get(`/stocks/tickers`, {params, signal}) },
+  getProjectionRanks(params, signal) { return get(`/stocks/projection_ranks`, {params, signal}) },
 }

@@ -2,7 +2,7 @@
 from datetime import date
 from decimal import Decimal
 from ninja import Schema
-from typing import Optional
+from typing import List, Optional
 
 
 class TickerSchema(Schema):
@@ -20,3 +20,8 @@ class TickerHistory(Schema):
     high: Decimal
     low: Decimal
     volume: Decimal
+
+
+class DatasetsSchema(Schema):
+    labels: List[str]
+    datasets: List[dict]

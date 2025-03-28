@@ -34,7 +34,7 @@ def login(request, data:LoginSchema):
 
 
 @router.post('/logout', response=dict)
-def logout(request, *args, **kwargs):
+def logout(request):
     """ Logs the current user out. """
     django_logout(request)
     return {'status': 'Successfully logged out.'}

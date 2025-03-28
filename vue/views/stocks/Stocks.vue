@@ -15,7 +15,7 @@
               <TrendChart title='Short Term Trend' :data='shortdata'/>
             </div>
             <!-- Stocks Table -->
-            <DataTable :items='tickers?.results' keyattr='ticker'>
+            <DataTable v-if='tickers' :items='tickers.items' keyattr='ticker'>
               <template #columns="{item}">
                 <!-- Ticker -->
                 <Column title='Ticker'>
@@ -57,7 +57,7 @@
   import {onBeforeMount, provide, ref, watchEffect} from 'vue'
   import {LayoutPaper, LayoutSidePanel} from '@/components/Layout'
   import {DataTable, DataTableColumn as Column} from '@/components/DataTable'
-  import {useUrlParams} from '@/composables/useUrlParams.js'
+  import {useUrlParams} from '@/composables'
   import {api, utils} from '@/utils'
   import StocksSearch from '@/views/stocks/StocksSearch.vue'
   import TrendChart from '@/components/TrendChart.vue'
@@ -81,15 +81,15 @@
   // Watch Search
   // Update the projection trends and stock list
   watchEffect(function() {
-    api.Stocks.projectionTrends({periods:'52w,42w,32w,22w,12w', search:search.value})
-      .then(resp => longdata.value = resp.data)
-      .catch(err => longdata.value = err)
-    api.Stocks.projectionTrends({periods:'10w,8w,6w,4w,2w', search:search.value})
-      .then(resp => shortdata.value = resp.data)
-      .catch(err => shortdata.value = err)
-    api.Stocks.getTickers({search:search.value})
+    api.Stocks.listTickers({search:search.value})
       .then(resp => tickers.value = resp.data)
       .catch(err => tickers.value = err)
+    api.Stocks.getProjectionRanks({periods:'52w,42w,32w,22w,12w', search:search.value})
+      .then(resp => longdata.value = resp.data)
+      .catch(err => longdata.value = err)
+    api.Stocks.getProjectionRanks({periods:'10w,8w,6w,4w,2w', search:search.value})
+      .then(resp => shortdata.value = resp.data)
+      .catch(err => shortdata.value = err)
   })
 </script>
 

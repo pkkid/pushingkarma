@@ -6,7 +6,6 @@ from ninja import Router
 from ninja.decorators import decorate_view
 from ninja.errors import HttpError
 from os.path import basename, exists, getmtime, join
-from typing import Optional
 from pk.utils import PageSchema, paginate, reverse
 from .schemas import NoteSchema
 log = logging.getLogger(__name__)
@@ -45,12 +44,13 @@ def get_note(request, bucketname:str, path:str):
 
 @router.get('/notes', response=PageSchema(NoteSchema), exclude_unset=True)
 @decorate_view(cache_page(0 if settings.DEBUG else 300))
-def list_notes(request, search:Optional[str]='', page:Optional[int]=1):
+def list_notes(request, search:str='', page:int=1):
     """ Lists obsidian notes in the defined groups from settings. When searching,
         each word in the search string is counted in the content and title to give
         a score for sorting the results. The results are sorted by count and mtime,
         and returned as a list of dictionaries.
         • search (str): search query string.
+        • page: Page number of results to return
     """
     items = []
     search = re.sub(r'[^a-zA-Z0-9\s]', '', search[:100])
