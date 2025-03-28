@@ -46,20 +46,6 @@ urlpatterns = [
 
 
 # ------------------------------
-# # encoding: utf-8
-# from django.http import JsonResponse
-# from django.shortcuts import redirect
-# from django.urls import include, path, re_path
-# from django.views.decorators.clickjacking import xframe_options_exempt
-# from django.views.decorators.csrf import ensure_csrf_cookie
-# from pk.apps.budget import api as budget_api
-# from pk.apps.main import apiviews as main_apiviews
-# from pk.apps.obsidian import apiviews as obsidian_apiviews
-# from pk.apps.stocks import api as stocks_api, apiviews as stocks_apiviews
-# from pk.utils.apiutils import HybridRouter
-# from pk import utils
-
-# # Create Router & User APIs
 # api = HybridRouter(sort_urls=True, trailing_slash=False)
 # api.register('budget/accounts', budget_api.AccountsViewSet, basename='account')
 # api.register('budget/categories', budget_api.CategoriesViewSet, basename='category')
@@ -73,22 +59,3 @@ urlpatterns = [
 # api.add_url('^obsidian/note$', obsidian_apiviews.note, name='obsidian/note')
 # api.add_url('^obsidian/search$', obsidian_apiviews.search, name='obsidian/search')
 # api.add_url('^stocks/projection_trends$', stocks_apiviews.projection_trends, name='stocks/projection_trends')
-
-
-# @xframe_options_exempt
-# @ensure_csrf_cookie
-# def index(request, tmpl='index.html'):
-#     if url := utils.vue_devserver_running(request):
-#         return redirect(url)
-#     return utils.response(request, tmpl, {})
-
-
-# def api_404(request, exc=None):
-#     return JsonResponse({'error': 'API endpoint not found'}, status=404)
-
-
-# urlpatterns = [
-#     re_path(r'^api/', include(api.urls), name='api'),
-#     re_path(r'^api/.*$', api_404),
-#     re_path(r'', index, name='index'),
-# ]
