@@ -53,7 +53,7 @@ def paginate(request, items, page=1, perpage=100):
         count = paginator.count,
         previous = _pageurl(request, pageobj.previous_page_number()) if pageobj.has_previous() else None,
         next = _pageurl(request, pageobj.next_page_number()) if pageobj.has_next() else None,
-        items = pageobj.object_list,
+        items = list(pageobj.object_list),
     ).items() if v is not None}
 
 

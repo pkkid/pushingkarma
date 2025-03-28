@@ -41,6 +41,13 @@ def list_tickers(request, search:Optional[str]='', page:Optional[int]=1):
         searchobj = Search(TICKERSEARCHFIELDS)
         tickers = searchobj.get_queryset(tickers, search)
     data = paginate(request, tickers, page=page, perpage=10)
+    for i in range(len(data['items'])):
+        item = data['items'][i]
+        itemdict = model_to_dict(item)
+        itemdict['url'] = reverse(request, 'api:ticker', ticker=item.ticker)
+        itemdict['lastday'] = model_to_dict(item.lastday)
+        del itemdict['lastday']['ticker']
+        data['items'][i] = itemdict
     return data
 
 

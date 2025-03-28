@@ -1,20 +1,22 @@
 # encoding: utf-8
+from datetime import date
+from decimal import Decimal
 from ninja import Schema
 from typing import Optional
 
 
 class TickerSchema(Schema):
-    # url: str
+    url: str
     ticker: str
-    info: Optional[dict] = None
     tags: Optional[str] = None
-    # lastday: Optional['TickerHistory'] = None
+    info: Optional[dict] = None
+    lastday: Optional['TickerHistory'] = None
 
 
-# class TickerHistory(Schema):
-#     ticker = TickerSchema
-#     date = date
-#     close = Decimal
-#     high = Optional[float] = None
-#     low = Optional[float] = None
-#     volume = Optional[int] = None
+class TickerHistory(Schema):
+    ticker: Optional[TickerSchema] = None
+    date: date
+    close: Decimal
+    high: Decimal
+    low: Decimal
+    volume: Decimal
