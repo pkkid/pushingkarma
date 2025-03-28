@@ -3,16 +3,16 @@
     <LayoutSidePanel width='250px'>
       <!-- API Categorties -->
       <template #panel>
-        <div class='menu'>
-          <template v-for='category in catergories' :key='category'>
+        <div v-if='toc' class='menu'>
+          <template v-for='[category, endpoints] in Object.entries(toc.endpoints)' :key='category'>
             <div class='item'>
               <i class='mdi' :class='categoryIcon(category)'/>
               {{utils.title(category)}}
             </div>
-            <template v-for='item in categoryItems(category)' :key='`${category}/${item}`'>
-              <div class='subitem link' :class='{selected:view === `/api/${category}/${item}`}' 
-                @click='view=`/api/${category}/${item}`'>
-                <div class='name'>{{utils.title(item)}}</div>
+            <template v-for='endpoint in endpoints' :key='`${endpoint.method} ${endpoint.path}`'>
+              <div class='subitem link' :class='{selected:view === "foobar"}' 
+                @click='view=getView(endpoint.path)'>
+                <div class='name'>{{endpoint.summary}}</div>
               </div>
             </template>
           </template>
@@ -122,42 +122,22 @@
     }
   }
 
-  // Categories
-  // List of API Categories
-  const catergories = computed(function() {
-    if (toc.value == null) { return [] }
-    var categories = []
-    Object.keys(toc.value.endpoints).forEach(key => {
-      var category = key.split('/')[2]
-      if (category == '') { return }
-      if (!categories.includes(category)) {
-        categories.push(category)
-      }
-    })
-    return categories
+  // Get View
+  // Returns view name from the endpoint path
+  const getView = function(path) {
+    return `/api/${path.split('/api/')[1]}`
+  }
+
+  // Get Endpoint
+  // Return the endpoint details from the view
+  const endpoint = computed(function() {
+    if (!toc.value) { return null }
+    const cleanview = view.value.split('?')[0]
+    console.log(cleanview)
+
+
+    return ''
   })
-
-  // Cateogry Items
-  // List of API Items for the Category
-  const categoryItems = function(category) {
-    if (toc.value == null) { return [] }
-    var items = []
-    Object.keys(toc.value.endpoints).forEach(key => {
-      if (key.startsWith(`/api/${category}`)) {
-        items.push(key.split('/')[3])
-      }
-    })
-    return items
-  }
-
-  // Cateogry Item Summary
-  // Returns the summary for the specified category item
-  const categoryItemSummary = function(category, item) {
-    if (toc.value == null) { return '' }
-    var endpoint = toc.value.endpoints[`/api/${category}/${item}`]
-    if (endpoint == null) { return '' }
-    return endpoint.GET?.summary || endpoint.POST?.summary || ''
-  }
 
   // Category Icon
   // Icon for the API Category

@@ -14,14 +14,18 @@ def api_root(request):
     }}
     schema = root_router.api.get_openapi_schema()
     paths = schema.get('paths', {})
-    endpoints = defaultdict(dict)
+    endpoints = defaultdict(list)
     for path, methods in paths.items():
+        category = path.split('/')[2]
+        if not category: continue
+        print(category)
         for method, details in methods.items():
-            endpoints[path][method.upper()] = {
+            endpoints[category].append({
+                'method': method.upper(),
                 'summary': details.get('summary', ''),
                 'description': details.get('description', '').strip(),
                 'path': f'{baseurl}{path}',
-            }
+            })
     response['endpoints'] = endpoints
     return response
 

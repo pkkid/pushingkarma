@@ -5,6 +5,7 @@ from django.urls import reverse
 from django.views.decorators.cache import cache_page
 from ninja import Router
 from ninja.decorators import decorate_view
+from ninja.errors import HttpError
 from ninja.pagination import paginate, PageNumberPagination
 from os.path import basename, exists, getmtime, join
 from typing import List, Optional
@@ -58,12 +59,14 @@ def get_note(request, bucketname:str, path:str):
         • bucket: Name of Obsidian bucket in settings.py (required)
         • path: Path of note in the bucket vault (required)
     """
-    assert bucketname in settings.OBSIDIAN_BUCKETS, 'Unknown bucket name.'
+    if bucketname not in settings.OBSIDIAN_BUCKETS:
+        raise HttpError(404, 'Unknown bucket name.')
     bucket = settings.OBSIDIAN_BUCKETS[bucketname]
     public = bucket.get('public', False)
     if public or request.user.is_authenticated:
         filepath = join(bucket['path'], path)
-        assert exists(filepath), 'Unknown note path.'
+        if not exists(filepath):
+            raise HttpError(404, 'Unknown note path.')
         with open(filepath, 'r', encoding='utf-8') as handle:
             content = handle.read()
         url = request.build_absolute_uri(reverse('api:note',

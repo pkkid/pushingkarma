@@ -1,14 +1,15 @@
 # encoding: utf-8
 import logging
-from django.http import JsonResponse
 from django.shortcuts import redirect
 from django.urls import re_path
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.views.decorators.csrf import ensure_csrf_cookie
+from http import HTTPStatus
 from ninja import NinjaAPI
+from ninja.errors import HttpError
+from pk import utils
 from pk.apps.main.api import router as main_router
 from pk.apps.obsidian.api import router as obsidian_router
-from pk import utils
 log = logging.getLogger(__name__)
 
 api = NinjaAPI(urls_namespace='api')
@@ -26,21 +27,20 @@ def index(request, tmpl='index.html'):
 
 
 @api.exception_handler(Exception)
-def api_uncaught_exception(request, err):
-    log.exception(err)
-    return api.create_response(request, status=500,
-        data={'status':'error', 'message':str(err)})
+def api_exception(request, err):
+    status = getattr(err, 'status_code', 500)
+    phrase = HTTPStatus(status).phrase
+    data = dict(status=phrase, message=str(err))
+    return api.create_response(request, data, status=status)
 
 
 def api_404(request, exc=None):
-    message = 'API endpoint not found'
-    return JsonResponse(status=404,
-        data={'status':'error', 'message':message})
+    return api_exception(request, HttpError(404, 'API endpoint not found.'))
 
 
 urlpatterns = [
-    re_path('api/', api.urls),
-    re_path(r'^api/.*$', lambda r: api_404),
+    re_path(r'^api/', api.urls),
+    re_path(r'^api/.*$', api_404),
     re_path(r'', index, name='index'),
 ]
 
