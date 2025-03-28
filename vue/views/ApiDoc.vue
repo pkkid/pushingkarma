@@ -11,7 +11,7 @@
                 {{utils.title(category)}}
               </div>
               <template v-for='endpt in endpts' :key='`${endpt.method} ${endpt.path}`'>
-                <div class='subitem link' :class='{selected:view === "foobar"}' 
+                <div class='subitem link' :class='{selected:endpoint==endpt}' 
                   @click='view=getView(endpt.path)'>
                   <div class='name'>{{endpt.summary}}</div>
                 </div>
@@ -68,12 +68,10 @@
 <script setup>
   import {computed, nextTick, onBeforeMount, ref, watch, watchEffect} from 'vue'
   import {LayoutPaper, LayoutSidePanel} from '@/components/Layout'
-  import {useUrlParams} from '@/composables/useUrlParams.js'
-  import {useStorage} from '@/composables/useStorage'
+  import {ToggleSwitch, Tooltip} from '@/components'
+  import {useStorage, useUrlParams} from '@/composables'
   import {utils} from '@/utils'
   import axios from 'axios'
-  import ToggleSwitch from '@/components/ToggleSwitch.vue'
-  import Tooltip from '@/components/Tooltip.vue'
   
   // Icon for each API cateogry
   var categoryIcons = {
@@ -124,7 +122,6 @@
         }
       }
     }
-    console.log('allow', allow)
     allowed.value = allow.length ? allow : ['GET']
     method.value = allowed.value[0]
   })
@@ -183,7 +180,6 @@
     await axios.get(endpoint)
       .then(resp => response.value = resp)
       .catch(err => response.value = err.response)
-    console.debug(`${endpoint} response`, response.value)
     await nextTick()
     linkAPIURLs()
   })

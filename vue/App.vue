@@ -8,9 +8,8 @@
 
 <script setup>
   import {onBeforeMount, provide, ref} from 'vue'
+  import {Footer, Navigation} from '@/views/site'
   import {api, utils} from '@/utils'
-  import Navigation from '@/views/site/Navigation.vue'
-  import Footer from '@/views/site/Footer.vue'
 
   const globalvars = ref(null)          // global variables fetched from the server
   const user = ref(null)                // currently logged in user details

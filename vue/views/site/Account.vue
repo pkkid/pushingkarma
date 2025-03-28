@@ -40,9 +40,8 @@
 
 <script setup>
   import {inject, ref} from 'vue'
+  import {Modal, Quote} from '@/components'
   import {api, utils} from '@/utils'
-  import Modal from '@/components/Modal.vue'
-  import Quote from '@/components/Quote.vue'
 
   const {user, setUser} = inject('user')
   const emit = defineEmits(['close'])

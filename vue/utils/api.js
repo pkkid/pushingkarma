@@ -33,8 +33,6 @@ async function get(url, config) {
 // Api Endpoints
 // Endpoints defined in the Django application
 export const Main = {
-  generateToken(signal) { return axios.post(`/main/generate_token`, null, {signal}) },
-  getCurrentUser(signal) { return get(`/main/user`, {signal}) },
   getGlobalVars(signal) { return get(`/main/global_vars`, {signal}) },
   login(data, signal) { return axios.post(`/main/login`, data, {signal}) },
   logout(signal) { return axios.post(`/main/logout`, null, {signal}) },
@@ -45,8 +43,8 @@ export const Budget = {
   getTransactions(params, signal) { return get(`/budget/transactions`, {params, signal}) },
 }
 export const Obsidian = {
-  getNote(params, signal) { return get(`/obsidian/note`, {params, signal}) },
-  search(params, signal) { return get(`/obsidian/search`, {params, signal}) },
+  getNote(bucket, path, params, signal) { return get(`/obsidian/notes/${bucket}/${path}`, {params, signal}) },
+  listNotes(params, signal) { return get(`/obsidian/notes`, {params, signal}) },
 }
 export const Stocks = {
   getTickers(params, signal) { return get(`/stocks/tickers`, {params, signal}) },

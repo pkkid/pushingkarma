@@ -32,11 +32,11 @@
 </template>
 
 <script setup>
-  import {inject, nextTick, onBeforeMount, ref, watchEffect} from 'vue'
+  import {inject, onBeforeMount, ref, watchEffect} from 'vue'
   import {LayoutPaper, LayoutSidePanel} from '@/components/Layout'
-  import {useUrlParams} from '@/composables/useUrlParams.js'
+  import {Markdown} from '@/components'
+  import {useUrlParams} from '@/composables'
   import {api, utils} from '@/utils'
-  import Markdown from '@/components/Markdown.vue'
   import NotesSearch from '@/views/notes/NotesSearch.vue'
   import NotesToc from '@/views/notes/NotesToc.vue'
 
@@ -46,8 +46,8 @@
   const selected = ref(null)      // Currently selected note path
   const note = ref(null)          // Current note markdown contents
   const headings = ref(null)      // Current note headings
-  const {group, path} = useUrlParams({
-    group: {type: String},
+  const {bucket, path} = useUrlParams({
+    bucket: {type: String},
     path: {type: String}
   })
 
@@ -57,19 +57,19 @@
   // update group & path when selection changes
   watchEffect(async function() {
     if (!selected.value) { return }
-    group.value = selected.value.group
+    bucket.value = selected.value.bucket
     path.value = selected.value.path
   })
 
   // Watch Group & Path
   // update note when these change
   watchEffect(async function() {
-    if ((!group.value) || (!path.value)) { return }
+    if ((!bucket.value) || (!path.value)) { return }
     loading.value = true
     cancelctrl = api.cancel(cancelctrl)
     try {
-      var params = {group:group.value, path:path.value}
-      var {data} = await api.Obsidian.getNote(params, cancelctrl.signal)
+      var {data} = await api.Obsidian.getNote(bucket.value,
+        path.value, null, cancelctrl.signal)
       note.value = data
       window.scrollTo(0, 0)
     } catch (err) {

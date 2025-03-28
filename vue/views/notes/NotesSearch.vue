@@ -16,7 +16,7 @@
         @click.prevent @click='$emit("select", note)' @keydown.enter='$emit("select", note)' 
         @keydown.down='focusNext' @keydown.up='focusPrev'>
         {{note.title}}
-        <div class='subtext'>{{utils.formatDate(note.mtime * 1000, 'MMM DD, YYYY')}}</div>
+        <div class='subtext'>{{utils.formatDate(note.mtime, 'MMM DD, YYYY')}}</div>
       </a>
     </div>
   </div>
@@ -63,8 +63,8 @@
     cancelctrl = api.cancel(cancelctrl)
     try {
       var searchstr = search.value.length < 3 ? '' : search.value
-      var {data} = await api.Obsidian.search({search:searchstr}, cancelctrl.signal)
-      notes.value = data.results
+      var {data} = await api.Obsidian.listNotes({search:searchstr}, cancelctrl.signal)
+      notes.value = data.items
       emit('results', data.results)
     } catch (err) {
       if (!api.isCancel(err)) { throw(err) }

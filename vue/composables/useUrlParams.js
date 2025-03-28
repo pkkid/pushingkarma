@@ -7,7 +7,7 @@ import {useRoute, useRouter} from 'vue-router'
 // all values into a single object so that I could watch the entire object
 // and update the URL only once when any number of the values change.
 // params: an Object of {key:type} pairs
-export function useUrlParams(params) {
+export default function useUrlParams(params) {
   const route = useRoute()
   const router = useRouter()
   const refs = {}

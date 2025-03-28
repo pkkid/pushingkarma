@@ -15,11 +15,9 @@
 </template>
 
 <script setup>
-  import {inject, ref, watchEffect} from 'vue'
-  import {useRoute, useRouter} from 'vue-router'
+  import {inject, ref} from 'vue'
+  import {Account, Logo} from '@/views/site'
   import {apidocurl} from '@/utils/api'
-  import Logo from '@/views/site/Logo.vue'
-  import Account from '@/views/site/Account.vue'
 
   const {user} = inject('user')
   const showAccount = ref(false)
