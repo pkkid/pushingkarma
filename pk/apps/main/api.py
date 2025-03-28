@@ -13,14 +13,6 @@ log = logging.getLogger(__name__)
 router = Router()
 
 
-@router.get('/global_vars', response=GlobalVarsSchema)
-def get_global_vars(request):
-    """ Return global variables. """
-    result = dict(**settings.GLOBALVARS)
-    result['user'] = UserSchema.from_user(request.user)
-    return result
-
-
 @router.post('/login', response=UserSchema)
 def login(request, data:LoginSchema):
     """ Allows logging in to the django application.
@@ -46,3 +38,11 @@ def logout(request, *args, **kwargs):
     """ Logs the current user out. """
     django_logout(request)
     return {'status': 'Successfully logged out.'}
+
+
+@router.get('/global_vars', response=GlobalVarsSchema)
+def get_global_vars(request):
+    """ Return global variables. """
+    result = dict(**settings.GLOBALVARS)
+    result['user'] = UserSchema.from_user(request.user)
+    return result
