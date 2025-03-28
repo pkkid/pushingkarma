@@ -6,7 +6,7 @@ from ninja import Router
 from ninja.decorators import decorate_view
 from ninja.errors import HttpError
 from os.path import basename, exists, getmtime, join
-from typing import List, Optional
+from typing import Optional
 from pk.utils import PageSchema, paginate, reverse
 from .schemas import NoteSchema
 log = logging.getLogger(__name__)

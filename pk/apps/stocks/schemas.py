@@ -1,7 +1,6 @@
 # encoding: utf-8
 from ninja import Schema
 from typing import Optional
-from pk import utils
 
 
 class TickerSchema(Schema):
