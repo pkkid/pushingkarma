@@ -74,6 +74,7 @@
   import axios from 'axios'
   import ToggleSwitch from '@/components/ToggleSwitch.vue'
   import Tooltip from '@/components/Tooltip.vue'
+  
   // Icon for each API cateogry
   var categoryIcons = {
     'budget': 'mdi-piggy-bank-outline',

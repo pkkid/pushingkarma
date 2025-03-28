@@ -31,6 +31,7 @@ def api_exception(request, err):
     status = getattr(err, 'status_code', 500)
     phrase = HTTPStatus(status).phrase
     data = dict(status=phrase, message=str(err))
+    if status == 500: log.exception(err)
     return api.create_response(request, data, status=status)
 
 

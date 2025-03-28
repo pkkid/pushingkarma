@@ -46,7 +46,7 @@ def list_notes(request, search:Optional[str]=''):
                     mtime = int(getmtime(filepath)),
                     score = score,
                 ))
-    results = [r for r in results if r.score > 0] if search != '' else results
+    results = [r for r in results if r['score'] > 0] if search != '' else results
     return sorted(results, key=lambda r: (-r['score'],-r['mtime']))
 
 
