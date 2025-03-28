@@ -53,9 +53,9 @@ def list_tickers(request, search:str='', page:int=1):
     return data
 
 
-@router.get('/projection_ranks', response=DatasetsSchema, exclude_unset=True)
+@router.get('/projected_ranks', response=DatasetsSchema, exclude_unset=True)
 @decorate_view(cache_page(0 if settings.DEBUG else 300))
-def get_projection_ranks(request, periods:str=None, maxresults:int=10, search:str=''):
+def get_projected_ranks(request, periods:str=None, maxresults:int=10, search:str=''):
     """ Return datasets to render a Projection Trends chart.
         • periods: Week periods to include in the chart (ie: 12w,10w,8w,6w,4w,2w)
         • maxresults: Maximum number of results to return (default: 10).
