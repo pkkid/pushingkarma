@@ -9,30 +9,28 @@ from pk.apps.main.schemas import UserSchema
 class AccountSchema(Schema):
     url: str
     name: str
-    fid: int
-    type: str
-    payee: str
-    balance: Decimal
-    balancedt: datetime
+    fid: Optional[int] = None
+    payee: Optional[str] = None
+    balance: Optional[Decimal] = None
+    balancedt: Optional[datetime] = None
     import_rules: Optional[dict] = None
 
 
 class CategorySchema(Schema):
     url: str
     name: str
-    budget: Decimal
-    comment: str
-    sortindex: int
-    exclude_budget: bool
+    sortindex: Optional[int] = None
+    exclude_budget: Optional[bool] = None
+    comment: Optional[str] = None
 
 
-# class TransactionSchema(Schema):
-#     user = UserSchema
-#     account = AccountSchema
-#     trxid = str
-#     date = date
-#     payee = str
-#     category = CategorySchema
-#     amount = Decimal
-#     approved = bool
-#     comment = str
+class TransactionSchema(Schema):
+    url: str
+    trxid: str
+    date: date
+    payee: str
+    amount: Decimal
+    approved: bool
+    comment: Optional[str] = None
+    account: AccountSchema
+    category: Optional[CategorySchema] = None
