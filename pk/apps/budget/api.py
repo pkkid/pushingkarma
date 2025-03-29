@@ -136,33 +136,3 @@ def list_transactions(request, search:str='', page:int=1):
         ) if item.category else None
         data['items'][i] = itemdict
     return data
-
-
-# def update_category()
-#     def to_internal_value(self, data):
-#         if data.get('amount') in RESET: data['amount'] = RESET_DECIMAL
-#         elif data.get('amount'): data['amount'] = utils.clean_amount(data['amount'])
-#         return super(TransactionSerializer, self).to_internal_value(data)
-
-#     def update(self, instance, validated_data):
-#         for attr, value in validated_data.items():
-#             setattr(instance, attr, value)
-#         user = self.context['request'].user
-#         # Update category_name
-#         category_name = self.context['request'].data.get('category_name')
-#         # TODO: I think the below can just be the following:
-#         # instance.category = utils.get_object_or_none(Category, user=user, name__iexact=category_name)
-#         # if not instance.category:
-#         #     raise ValidationError("Unknown category '%s'." % category_name)
-#         if category_name is not None:
-#             instance.category = None
-#             if category_name != '':
-#                 instance.category = utils.get_object_or_none(Category, user=user, name__iexact=category_name)
-#                 if not instance.category:
-#                     raise ValidationError("Unknown category '%s'." % category_name)
-#         # Some values can be reset
-#         if self.context['request'].data.get('date') in RESET: instance.date = instance.original_date
-#         if self.context['request'].data.get('payee') in RESET: instance.payee = instance.original_payee
-#         if self.context['request'].data.get('amount') in RESET: instance.amount = instance.original_amount
-#         instance.save()
-#         return instance

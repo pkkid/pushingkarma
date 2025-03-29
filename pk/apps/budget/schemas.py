@@ -2,8 +2,7 @@
 from datetime import date, datetime
 from decimal import Decimal
 from ninja import Schema
-from typing import List, Optional
-from pk.apps.main.schemas import UserSchema
+from typing import Optional
 
 
 class AccountSchema(Schema):
