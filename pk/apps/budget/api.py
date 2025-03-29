@@ -1,7 +1,7 @@
 # encoding: utf-8
 from decimal import Decimal
 from django_searchquery import searchfields as sf
-from pk import utils
+from pk.utils import utils
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import ValidationError
