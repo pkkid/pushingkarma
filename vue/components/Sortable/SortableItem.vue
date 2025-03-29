@@ -26,6 +26,7 @@
   // Save the dragitem and tell the browser were moving it
   const onDragStart = function(event) {
     sortableState.group = self.value.closest('.sortable').dataset.group
+    console.log('props.itemid', props.itemid)
     sortableState.itemid = props.itemid.toString()
     event.dataTransfer.effectAllowed = 'move'
   }

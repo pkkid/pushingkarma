@@ -105,11 +105,14 @@ def get_transaction(request, transactionid:int):
     itemdict = model_to_dict(item)
     itemdict['url'] = reverse(request, 'api:transaction', transactionid=item.id)
     itemdict['account'] = dict(
+        url = reverse(request, 'api:account', accountid=item.account.id),
+        id = item.account.id,
         name = item.account.name,
-        url = reverse(request, 'api:account', accountid=item.account.id))
+    )
     itemdict['category'] = dict(
+        url = reverse(request, 'api:category', categoryid=item.category.id),
+        id = item.category.id,
         name = item.category.name,
-        url = reverse(request, 'api:category', categoryid=item.category.id)
     ) if item.category else None
     return itemdict
 
@@ -128,11 +131,14 @@ def list_transactions(request, search:str='', page:int=1):
         itemdict = model_to_dict(item)
         itemdict['url'] = reverse(request, 'api:transaction', transactionid=item.id)
         itemdict['account'] = dict(
+            url = reverse(request, 'api:account', accountid=item.account.id),
+            id = item.account.id,
             name = item.account.name,
-            url = reverse(request, 'api:account', accountid=item.account.id))
+        )
         itemdict['category'] = dict(
+            url = reverse(request, 'api:category', categoryid=item.category.id),
+            id = item.category.id,
             name = item.category.name,
-            url = reverse(request, 'api:category', categoryid=item.category.id)
         ) if item.category else None
         data['items'][i] = itemdict
     return data

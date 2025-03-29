@@ -107,7 +107,7 @@
   // Update CSS Variables
   // Variables passed to css for dynamic styling
   const updateCssVarables = function() {
-    lineNumsWidth.value = `${lineNums.value.offsetWidth}px`
+    lineNumsWidth.value = `${lineNums.value?.offsetWidth}px`
     scrollbarWidth.value = `${textarea.value.offsetWidth - textarea.value.clientWidth}px`
     scrollbarHeight.value = `${textarea.value.offsetHeight - textarea.value.clientHeight}px`
     backgroundColor.value = window.getComputedStyle(codearea.value).backgroundColor

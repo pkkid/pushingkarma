@@ -16,7 +16,7 @@
       </h1>
       
       <!-- Transactions Table -->
-      <DataTable v-if='transactions' :items='transactions?.results' keyattr='id'>
+      <DataTable v-if='transactions' :items='transactions?.items' keyattr='id'>
         <template #columns='{item}'>
           <Column title='Act'>{{item.account.name}}</Column>
           <Column title='Date'>

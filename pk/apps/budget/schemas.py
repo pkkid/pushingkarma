@@ -7,6 +7,7 @@ from typing import Optional
 
 class AccountSchema(Schema):
     url: str
+    id: int
     name: str
     fid: Optional[int] = None
     payee: Optional[str] = None
@@ -17,6 +18,7 @@ class AccountSchema(Schema):
 
 class CategorySchema(Schema):
     url: str
+    id: int
     name: str
     sortindex: Optional[int] = None
     exclude_budget: Optional[bool] = None

@@ -8,7 +8,7 @@
       <div v-if='accounts' class='accounts'>
         <h3 style='margin-top:0px;'>Accounts</h3>
         <Sortable group='accounts' @sort='onSortAccounts'>
-          <SortableItem v-for='account in accounts.results' :key='account.id' :itemid='account.id'>
+          <SortableItem v-for='account in accounts.items' :key='account.id' :itemid='account.id'>
             <Expandable maxheight='250px'>
               <template #header>{{account.name}}</template>
               <template #content>
@@ -30,7 +30,7 @@
       <div v-if='categories' class='categories'>
         <h3>Categories</h3>
         <Sortable group='categories' @sort='onSortCategories' style='min-height:100px; max-height:300px; overflow-y:auto;'>
-          <SortableItem v-for='category in categories.results' :key='category.id' :itemid='category.id'>
+          <SortableItem v-for='category in categories.items' :key='category.id' :itemid='category.id'>
             {{category.name}}
           </SortableItem>
         </Sortable>
