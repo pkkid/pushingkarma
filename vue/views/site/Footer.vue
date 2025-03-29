@@ -3,10 +3,10 @@
     <div class='footerwrap'>
       <div class='footercolumn' style='width:400px'>
         <h4>PushingKarma</h4>
-        Site created using <a href='https://www.djangoproject.com/'>Django</a>,
-        <a href='https://www.django-rest-framework.org/'>Django Rest Framework</a>,
-        <a href='https://vuejs.org/'>Vue</a> and hosted on
-        <a href='https://www.digitalocean.com/'>Digital Ocean</a>.
+        Created with <i class='mdi mdi-heart'/> using<br/>
+        <a href='https://www.djangoproject.com/'>Django</a>,
+        <a href='https://django-ninja.dev'>Django Ninja</a>, and
+        <a href='https://vuejs.org/'>Vue</a>.
         <div style='margin-top:5px;'>
           <i class='mdi mdi-email-outline'/>
           {{email}}<span style='display:none;'>+site</span>@gmail.com
