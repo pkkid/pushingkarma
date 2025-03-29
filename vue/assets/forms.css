@@ -58,3 +58,15 @@ button {
     color: #fff;
   }
 }
+
+/* Button Row */
+.button-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+  .mdi {
+    font-size: 1.2em;
+    margin-right: 5px;
+  }
+}

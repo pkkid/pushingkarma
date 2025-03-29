@@ -1,7 +1,7 @@
 <template>
   <div class='expandable' :class='{expanded}'>
     <div class='expandable-header' @click='expanded=!expanded'>
-      <slot name='header'></slot>
+      <slot name='header' :expanded='expanded'></slot>
       <i class='mdi mdi-chevron-right expand-icon'/>
     </div>
     <Transition name='slide-fade' :style='`--maxheight:${maxheight};`'>
@@ -16,23 +16,25 @@
   import {ref, watchEffect} from 'vue'
 
   const props = defineProps({
-    initexpanded: {default:false},          // Initial expanded state
-    maxheight: {default:'250px'},           // Estimated height of the content
+    initexpanded: {default:false},                // Initial expanded state
+    maxheight: {default:'250px'},                 // Estimated height of the content
+    itemid: {},                                   // Optional itemid included in events
   })
-  const expanded = ref(props.initexpanded)  // True when this is expanded
-  const emit = defineEmits(['expanded'])    // Emit expanded event
+  const expanded = ref(props.initexpanded)        // True when this is expanded
+  const emit = defineEmits(['opened', 'closed'])  // Emit expanded event
 
   // Watch Expanded
   // Emit expanded event when expanded changes
   watchEffect(function() {
-    emit('expanded', expanded.value)
+    var emitstr = expanded.value ? 'opened' : 'closed'
+    emit(emitstr, {expanded:expanded.value, itemid:props.itemid})
   })
 
-  // Open, Close, Toggle
-  // Functions to open, close, and toggle the expanded state
-  const open = function() { expanded.value = true }
-  const close = function() { expanded.value = false }
-  const toggle = function() { expanded.value = !expanded.value }
+  // Define Exposed
+  defineExpose({
+    itemid: props.itemid,
+    close: function() { expanded.value = false },
+  })
 </script>
 
 <style>
