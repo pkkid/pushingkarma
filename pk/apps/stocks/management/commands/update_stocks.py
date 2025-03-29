@@ -1,5 +1,4 @@
 # encoding: utf-8
-# Update strock values from AlphaVantage
 import logging, os, time
 import yfinance as yf
 from collections import namedtuple
@@ -9,8 +8,8 @@ from django.conf import settings
 from django.core.management.base import BaseCommand
 from django.db import transaction
 from numpy import isnan
-from pk.utils import logging_utils
 from pk.apps.stocks.models import Ticker, TickerHistory
+from pk.utils.logging import update_logging_filepath
 
 log = logging.getLogger(__name__)
 YData = namedtuple('YData', ['ticker', 'info', 'history'])
@@ -93,7 +92,7 @@ class Command(BaseCommand):
         # Setup logging
         logging.getLogger().setLevel(self.opts['loglevel'])
         basename = os.path.basename(__file__).replace('.py', '')
-        logging_utils.update_logging_filepath(f'{settings.LOGDIR}/{basename}.log')
+        update_logging_filepath(f'{settings.LOGDIR}/{basename}.log')
         # Run the script
         symbols = self.opts['symbols'].split(',') if self.opts['symbols'] \
             else list(Ticker.objects.values_list('ticker', flat=True))

@@ -1,6 +1,6 @@
 # encoding: utf-8
 import logging
-from pk.utils.django_utils import TimeStampedModel
+from pk.utils.django import TimeStampedModel
 from django.core.management import call_command
 from django.db import models
 from django.dispatch import receiver

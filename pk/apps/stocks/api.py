@@ -10,8 +10,8 @@ from django.shortcuts import get_object_or_404
 from django.views.decorators.cache import cache_page
 from ninja import Router
 from ninja.decorators import decorate_view
-from pk.utils.django_utils import reverse
-from pk.utils.ninja_utils import PageSchema, paginate
+from pk.utils.django import reverse
+from pk.utils.ninja import PageSchema, paginate
 from pk.utils.utils import percent
 from .models import Ticker, TickerHistory
 from .schemas import TickerSchema, DatasetsSchema

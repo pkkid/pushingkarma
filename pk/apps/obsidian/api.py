@@ -6,8 +6,8 @@ from ninja import Router
 from ninja.decorators import decorate_view
 from ninja.errors import HttpError
 from os.path import basename, exists, getmtime, join
-from pk.utils.django_utils import reverse
-from pk.utils.ninja_utils import PageSchema, paginate
+from pk.utils.django import reverse
+from pk.utils.ninja import PageSchema, paginate
 from .schemas import NoteSchema
 log = logging.getLogger(__name__)
 router = Router()
