@@ -3,6 +3,7 @@
 # References:
 #  https://github.com/jseutter/ofxparse
 #  https://console.developers.google.com/
+from functools import cached_property
 import csv, datetime, re, logging
 import hashlib, base64
 from dateutil.relativedelta import relativedelta
@@ -10,7 +11,6 @@ from decimal import Decimal
 from django.utils import timezone
 from io import StringIO
 from ofxparse import OfxParser
-from pk.utils.decorators import lazyproperty
 from .models import Account, Transaction
 log = logging.getLogger(__name__)
 
@@ -41,24 +41,24 @@ class TransactionManager:
             'transactions': self.transactions,
         }
 
-    @lazyproperty
+    @cached_property
     def _accounts_by_fid(self):
         return {a.fid:a for a in Account.objects.all()}
 
-    @lazyproperty
+    @cached_property
     def _accounts_by_name(self):
         return {a.name:a for a in Account.objects.all()}
 
-    @lazyproperty
+    @cached_property
     def _existing(self):
         existing = Transaction.objects.order_by('-date')
         return existing.values('account__fid','trxid','payee','category__name','amount')
 
-    @lazyproperty
+    @cached_property
     def _existing_ids(self):
         return set((trx['account__fid'], trx['trxid']) for trx in self._existing)
 
-    @lazyproperty
+    @cached_property
     def _existing_categories(self):
         return {trx['payee'].lower().rstrip('0123456789 '):trx['category__name']
             for trx in self._existing if trx['payee'] and trx['category__name']}
