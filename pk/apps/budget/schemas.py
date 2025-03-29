@@ -8,23 +8,22 @@ from pk.apps.main.schemas import UserSchema
 
 class AccountSchema(Schema):
     url: str
-    id: int
     name: str
     fid: int
     type: str
     payee: str
     balance: Decimal
     balancedt: datetime
-    import_rules: Optional[str] = None
+    import_rules: Optional[dict] = None
 
 
-# class CategorySchema(Schema):
-#     user = UserSchema
-#     name = str
-#     budget = Decimal
-#     comment = str
-#     sortindex = int
-#     exclude_budget = bool
+class CategorySchema(Schema):
+    url: str
+    name: str
+    budget: Decimal
+    comment: str
+    sortindex: int
+    exclude_budget: bool
 
 
 # class TransactionSchema(Schema):

@@ -24,10 +24,15 @@ TICKERSEARCHFIELDS = [
 
 @router.get('/tickers/{ticker}', response=TickerSchema, exclude_unset=True, url_name='ticker')
 def get_ticker(request, ticker:str):
-    """ List details for the specified ticker. """
-    data = model_to_dict(get_object_or_404(Ticker, ticker=ticker))
-    data['url'] = reverse(request, 'api:ticker', ticker=data['ticker'])
-    return data
+    """ List details for the specified ticker.
+        • ticker: Ticker symbol
+    """
+    item = get_object_or_404(Ticker, ticker=ticker)
+    itemdict = model_to_dict(item)
+    itemdict['url'] = reverse(request, 'api:ticker', ticker=item.ticker)
+    itemdict['lastday'] = model_to_dict(item.lastday)
+    del itemdict['lastday']['ticker']
+    return itemdict
 
 
 @router.get('/tickers', response=PageSchema(TickerSchema), exclude_unset=True)
@@ -36,9 +41,9 @@ def list_tickers(request, search:str='', page:int=1):
         • search: Filter tickers by search string.
         • page: Page number of results to return
     """
-    tickers = Ticker.objects.select_related('lastday').order_by('ticker')
-    if search: tickers = Search(TICKERSEARCHFIELDS).get_queryset(tickers, search)
-    data = paginate(request, tickers, page=page, perpage=10)
+    items = Ticker.objects.select_related('lastday').order_by('ticker')
+    if search: items = Search(TICKERSEARCHFIELDS).get_queryset(items, search)
+    data = paginate(request, items, page=page, perpage=10)
     for i in range(len(data['items'])):
         item = data['items'][i]
         itemdict = model_to_dict(item)

@@ -9,7 +9,7 @@ from ninja import Router
 from pk.utils.django import reverse
 from pk.utils.ninja import PageSchema, paginate
 from .models import Account, Category, Transaction
-from .schemas import AccountSchema
+from .schemas import AccountSchema, CategorySchema
 log = logging.getLogger(__name__)
 router = Router()
 
@@ -40,29 +40,61 @@ TRANSACTIONSEARCHFIELDS = {
 }
 
 
-@router.get('/tickers/{accountid}', response=AccountSchema, exclude_unset=True, url_name='account')
+@router.get('/accounts/{accountid}', response=AccountSchema, exclude_unset=True, url_name='account')
 def get_account(request, accountid:int):
-    """ List details for the specified ticker. """
-    data = model_to_dict(get_object_or_404(Account, user=request.user, id=accountid))
-    data['url'] = reverse(request, 'api:account', accountid=data['id'])
-    return data
+    """ List details for the specified account.
+        • accountid: Account id
+    """
+    item = get_object_or_404(Account, user=request.user, id=accountid)
+    itemdict = model_to_dict(item)
+    itemdict['url'] = reverse(request, 'api:account', accountid=item.id)
+    return itemdict
 
 
-@router.get('/tickers', response=PageSchema(AccountSchema), exclude_unset=True)
+@router.get('/accounts', response=PageSchema(AccountSchema), exclude_unset=True)
 def list_accounts(request, search:str='', page:int=1):
     """ List accounts for the logged in user.
-        • search: Filter tickers by search string.
+        • search: Filter accounts by search string.
         • page: Page number of results to return
     """
-    accounts = Account.objects.filter(user=request.user).order_by('name')
-    if search: accounts = Search(ACCOUNTSEARCHFIELDS).get_queryset(accounts, search)
-    data = paginate(request, accounts, page=page, perpage=100)
+    items = Account.objects.filter(user=request.user).order_by('name')
+    if search: items = Search(ACCOUNTSEARCHFIELDS).get_queryset(items, search)
+    data = paginate(request, items, page=page, perpage=100)
     for i in range(len(data['items'])):
         item = data['items'][i]
         itemdict = model_to_dict(item)
         itemdict['url'] = reverse(request, 'api:account', accountid=item.id)
         data['items'][i] = itemdict
     return data
+
+
+@router.get('/categories/{categoryid}', response=CategorySchema, exclude_unset=True, url_name='category')
+def get_category(request, categoryid:int):
+    """ List details for the specified category.
+        • categoryid: Category id
+    """
+    item = get_object_or_404(Category, user=request.user, id=categoryid)
+    itemdict = model_to_dict(item)
+    itemdict['url'] = reverse(request, 'api:category', categoryid=item.id)
+    return itemdict
+
+
+@router.get('/categories', response=PageSchema(CategorySchema), exclude_unset=True)
+def list_categories(request, search:str='', page:int=1):
+    """ List categories for the logged in user.
+        • search: Filter categories by search string.
+        • page: Page number of results to return
+    """
+    items = Category.objects.filter(user=request.user).order_by('sortindex')
+    if search: items = Search(CATEGORYSEARCHFIELDS).get_queryset(items, search)
+    data = paginate(request, items, page=page, perpage=100)
+    for i in range(len(data['items'])):
+        item = data['items'][i]
+        itemdict = model_to_dict(item)
+        itemdict['url'] = reverse(request, 'api:category', categoryid=item.id)
+        data['items'][i] = itemdict
+    return data
+
 
 
 # -------------------------------
