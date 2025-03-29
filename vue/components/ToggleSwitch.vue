@@ -1,5 +1,5 @@
 <template>
-  <div class='toggle-switch' :class='{active: value}' @click='toggle'>
+  <div class='toggle-switch' :class='{active}' @click='toggle'>
     <div class='toggle-track'>
       <div class='toggle-thumb'></div>
     </div>
@@ -8,15 +8,23 @@
 </template>
 
 <script setup>
+  import {computed} from 'vue'
+
   const props = defineProps({
-    value: {type:Boolean, required:true },   // Current model value
-    label: {type:String, default:''},             // Toggle label
-    width: {type:String, default:'28px'},         // Width of the toggle
-    height: {type:String, default:'16px'},        // Height of the toggle
+    modelValue: {type:Boolean, default:undefined},  // Two-way binding
+    value: {type:Boolean, default:undefined},       // One-way binding
+    label: {type:String, default:''},               // Toggle label
+    width: {type:String, default:'28px'},           // Width of the toggle
+    height: {type:String, default:'16px'},          // Height of the toggle
   })
 
   const emit = defineEmits(['update'])
-  const toggle = () => { emit('update', !props.value) }
+  const active = computed(function() { return props.modelValue ?? props.value })
+  const toggle = function() { 
+    const newval = !active.value
+    if (props.modelValue == undefined) { emit('update', newval) }
+    else { emit('update:modelValue', newval) }
+  }
 </script>
 
 <style>
