@@ -1,11 +1,17 @@
 # encoding: utf-8
+import logging
 from decimal import Decimal
 from django_searchquery import searchfields as sf
-from pk.utils import utils
-from rest_framework import viewsets
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.exceptions import ValidationError
+from django_searchquery.search import Search
+from django.shortcuts import get_object_or_404
+from django.forms.models import model_to_dict
+from ninja import Router
+from pk.utils.django import reverse
+from pk.utils.ninja import PageSchema, paginate
 from .models import Account, Category, Transaction
+from .schemas import AccountSchema
+log = logging.getLogger(__name__)
+router = Router()
 
 
 IGNORED = 'Ignored'
@@ -34,109 +40,143 @@ TRANSACTIONSEARCHFIELDS = {
 }
 
 
-class AccountSerializer(utils.DynamicFieldsSerializer):
-    class Meta:
-        model = Account
-        fields = ('id', 'url', 'name', 'fid', 'type', 'payee', 'balance', 'balancedt')
-
-    def create(self, validated_data):
-        validated_data['user'] = self.context['request'].user
-        account = Account(**validated_data)
-        account.save()
-        return account
+@router.get('/tickers/{accountid}', response=AccountSchema, exclude_unset=True, url_name='account')
+def get_account(request, accountid:int):
+    """ List details for the specified ticker. """
+    data = model_to_dict(get_object_or_404(Account, user=request.user, id=accountid))
+    data['url'] = reverse(request, 'api:account', accountid=data['id'])
+    return data
 
 
-class AccountsViewSet(viewsets.ModelViewSet, utils.ViewSetMixin):
-    """ Rest endpoint to list or modifiy user's financial accounts. """
-    serializer_class = AccountSerializer
-    permission_classes = [IsAuthenticated]
-    list_fields = AccountSerializer.Meta.fields
+@router.get('/tickers', response=PageSchema(AccountSchema), exclude_unset=True)
+def list_accounts(request, search:str='', page:int=1):
+    """ List accounts for the logged in user.
+        • search: Filter tickers by search string.
+        • page: Page number of results to return
+    """
+    accounts = Account.objects.filter(user=request.user).order_by('name')
+    if search: accounts = Search(ACCOUNTSEARCHFIELDS).get_queryset(accounts, search)
+    data = paginate(request, accounts, page=page, perpage=100)
+    for i in range(len(data['items'])):
+        item = data['items'][i]
+        itemdict = model_to_dict(item)
+        itemdict['url'] = reverse(request, 'api:account', accountid=item.id)
+        data['items'][i] = itemdict
+    return data
 
-    def get_queryset(self):
-        return Account.objects.filter(user=self.request.user).order_by('name')
 
-    def list(self, request, *args, **kwargs):
-        return self.list_response(request, paginated=True, searchfields=ACCOUNTSEARCHFIELDS)
+# -------------------------------
+# from decimal import Decimal
+# from django_searchquery import searchfields as sf
+# from pk.utils import utils
+# from rest_framework import viewsets
+# from rest_framework.permissions import IsAuthenticated
+# from rest_framework.exceptions import ValidationError
+# from .models import Account, Category, Transaction
+
+# class AccountSerializer(utils.DynamicFieldsSerializer):
+#     class Meta:
+#         model = Account
+#         fields = ('id', 'url', 'name', 'fid', 'type', 'payee', 'balance', 'balancedt')
+
+#     def create(self, validated_data):
+#         validated_data['user'] = self.context['request'].user
+#         account = Account(**validated_data)
+#         account.save()
+#         return account
 
 
-class CategorySerializer(utils.DynamicFieldsSerializer):
-    class Meta:
-        model = Category
-        fields = ('id', 'url', 'name', 'sortindex', 'budget', 'comment', 'exclude_budget')
+# class AccountsViewSet(viewsets.ModelViewSet, utils.ViewSetMixin):
+#     """ Rest endpoint to list or modifiy user's financial accounts. """
+#     serializer_class = AccountSerializer
+#     permission_classes = [IsAuthenticated]
+#     list_fields = AccountSerializer.Meta.fields
+
+#     def get_queryset(self):
+#         return Account.objects.filter(user=self.request.user).order_by('name')
+
+#     def list(self, request, *args, **kwargs):
+#         return self.list_response(request, paginated=True, searchfields=ACCOUNTSEARCHFIELDS)
+
+
+# class CategorySerializer(utils.DynamicFieldsSerializer):
+#     class Meta:
+#         model = Category
+#         fields = ('id', 'url', 'name', 'sortindex', 'budget', 'comment', 'exclude_budget')
     
-    def create(self, validated_data):
-        validated_data['user'] = self.context['request'].user
-        account = Category(**validated_data)
-        account.save()
-        return account
+#     def create(self, validated_data):
+#         validated_data['user'] = self.context['request'].user
+#         account = Category(**validated_data)
+#         account.save()
+#         return account
 
 
-class CategoriesViewSet(viewsets.ModelViewSet, utils.ViewSetMixin):
-    """ Rest endpoint to list or modifiy user's budget categories. """
-    serializer_class = CategorySerializer
-    permission_classes = [IsAuthenticated]
-    list_fields = CategorySerializer.Meta.fields
+# class CategoriesViewSet(viewsets.ModelViewSet, utils.ViewSetMixin):
+#     """ Rest endpoint to list or modifiy user's budget categories. """
+#     serializer_class = CategorySerializer
+#     permission_classes = [IsAuthenticated]
+#     list_fields = CategorySerializer.Meta.fields
     
-    def get_queryset(self):
-        return Category.objects.filter(user=self.request.user).order_by('sortindex')
+#     def get_queryset(self):
+#         return Category.objects.filter(user=self.request.user).order_by('sortindex')
 
-    def to_internal_value(self, data):
-        if data.get('budget'): data['budget'] = utils.clean_amount(data['budget'])
-        return super(CategorySerializer, self).to_internal_value(data)
+#     def to_internal_value(self, data):
+#         if data.get('budget'): data['budget'] = utils.clean_amount(data['budget'])
+#         return super(CategorySerializer, self).to_internal_value(data)
 
-    def list(self, request, *args, **kwargs):
-        return self.list_response(request, paginated=True, searchfields=CATEGORYSEARCHFIELDS)
-
-
-class TransactionSerializer(utils.DynamicFieldsSerializer):
-    category = utils.PartialFieldsSerializer(CategorySerializer, ('url', 'name', 'budget'))
-    account = utils.PartialFieldsSerializer(AccountSerializer, ('url', 'name'))
-
-    class Meta:
-        model = Transaction
-        fields = ('id', 'url', 'trxid', 'date', 'payee', 'amount', 'approved',
-            'comment', 'category', 'account')
-
-    def to_internal_value(self, data):
-        if data.get('amount') in RESET: data['amount'] = RESET_DECIMAL
-        elif data.get('amount'): data['amount'] = utils.clean_amount(data['amount'])
-        return super(TransactionSerializer, self).to_internal_value(data)
-
-    def update(self, instance, validated_data):
-        for attr, value in validated_data.items():
-            setattr(instance, attr, value)
-        user = self.context['request'].user
-        # Update category_name
-        category_name = self.context['request'].data.get('category_name')
-        # TODO: I think the below can just be the following:
-        # instance.category = utils.get_object_or_none(Category, user=user, name__iexact=category_name)
-        # if not instance.category:
-        #     raise ValidationError("Unknown category '%s'." % category_name)
-        if category_name is not None:
-            instance.category = None
-            if category_name != '':
-                instance.category = utils.get_object_or_none(Category, user=user, name__iexact=category_name)
-                if not instance.category:
-                    raise ValidationError("Unknown category '%s'." % category_name)
-        # Some values can be reset
-        if self.context['request'].data.get('date') in RESET: instance.date = instance.original_date
-        if self.context['request'].data.get('payee') in RESET: instance.payee = instance.original_payee
-        if self.context['request'].data.get('amount') in RESET: instance.amount = instance.original_amount
-        instance.save()
-        return instance
+#     def list(self, request, *args, **kwargs):
+#         return self.list_response(request, paginated=True, searchfields=CATEGORYSEARCHFIELDS)
 
 
-class TransactionsViewSet(viewsets.ModelViewSet, utils.ViewSetMixin):
-    """ Rest endpoint to list or modifiy user's transactions. """
-    serializer_class = TransactionSerializer
-    permission_classes = [IsAuthenticated]
-    list_fields = TransactionSerializer.Meta.fields
+# class TransactionSerializer(utils.DynamicFieldsSerializer):
+#     category = utils.PartialFieldsSerializer(CategorySerializer, ('url', 'name', 'budget'))
+#     account = utils.PartialFieldsSerializer(AccountSerializer, ('url', 'name'))
 
-    def get_queryset(self):
-        transactions = Transaction.objects.filter(user=self.request.user)
-        transactions = transactions.select_related('category')
-        transactions = transactions.select_related('account')
-        return transactions.order_by('-date')
+#     class Meta:
+#         model = Transaction
+#         fields = ('id', 'url', 'trxid', 'date', 'payee', 'amount', 'approved',
+#             'comment', 'category', 'account')
 
-    def list(self, request, *args, **kwargs):
-        return self.list_response(request, paginated=True, searchfields=TRANSACTIONSEARCHFIELDS)
+#     def to_internal_value(self, data):
+#         if data.get('amount') in RESET: data['amount'] = RESET_DECIMAL
+#         elif data.get('amount'): data['amount'] = utils.clean_amount(data['amount'])
+#         return super(TransactionSerializer, self).to_internal_value(data)
+
+#     def update(self, instance, validated_data):
+#         for attr, value in validated_data.items():
+#             setattr(instance, attr, value)
+#         user = self.context['request'].user
+#         # Update category_name
+#         category_name = self.context['request'].data.get('category_name')
+#         # TODO: I think the below can just be the following:
+#         # instance.category = utils.get_object_or_none(Category, user=user, name__iexact=category_name)
+#         # if not instance.category:
+#         #     raise ValidationError("Unknown category '%s'." % category_name)
+#         if category_name is not None:
+#             instance.category = None
+#             if category_name != '':
+#                 instance.category = utils.get_object_or_none(Category, user=user, name__iexact=category_name)
+#                 if not instance.category:
+#                     raise ValidationError("Unknown category '%s'." % category_name)
+#         # Some values can be reset
+#         if self.context['request'].data.get('date') in RESET: instance.date = instance.original_date
+#         if self.context['request'].data.get('payee') in RESET: instance.payee = instance.original_payee
+#         if self.context['request'].data.get('amount') in RESET: instance.amount = instance.original_amount
+#         instance.save()
+#         return instance
+
+
+# class TransactionsViewSet(viewsets.ModelViewSet, utils.ViewSetMixin):
+#     """ Rest endpoint to list or modifiy user's transactions. """
+#     serializer_class = TransactionSerializer
+#     permission_classes = [IsAuthenticated]
+#     list_fields = TransactionSerializer.Meta.fields
+
+#     def get_queryset(self):
+#         transactions = Transaction.objects.filter(user=self.request.user)
+#         transactions = transactions.select_related('category')
+#         transactions = transactions.select_related('account')
+#         return transactions.order_by('-date')
+
+#     def list(self, request, *args, **kwargs):
+#         return self.list_response(request, paginated=True, searchfields=TRANSACTIONSEARCHFIELDS)
