@@ -1,5 +1,5 @@
 # encoding: utf-8
-# Useful Python decorators
+
 
 def lazyproperty(func):
     """ Decorator that makes a property lazy-evaluated.

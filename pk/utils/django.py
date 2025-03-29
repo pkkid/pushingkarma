@@ -1,42 +1,29 @@
 # encoding: utf-8
-import logging, re, requests, textwrap, time
+import logging, re, requests
+import sqlparse, textwrap, time
 from collections import defaultdict
 from django.conf import settings
-from django.db import connections
-from django.db.models import Model, DateTimeField
+from django.core.exceptions import EmptyResultSet
+from django.db import connection, connections
+from django.db.models.query import QuerySet
+# from django.db.models import Model, DateTimeField
 from django.urls import reverse as django_reverse
 from urllib.parse import unquote
-from . import utils
 log = logging.getLogger(__name__)
 
 
-class ColoredFormatter(logging.Formatter):
-    RELVL = r'%\(levelname\)\-7s'
-    COLORS = {
-        logging.DEBUG: '#555',
-        logging.WARNING: '#D93',
-        logging.ERROR: '#C21',
-        logging.CRITICAL: '#F44',
-    }
-    
-    def __init__(self, fmt=None, **kwargs):
-        super().__init__(fmt, **kwargs)
-        self._formatters = {}
-        substr = re.findall(self.RELVL, fmt)[0]
-        for lvl, color in self.COLORS.items():
-            newfmt = fmt.replace(substr, utils.rgb(substr, color))
-            self._formatters[lvl] = logging.Formatter(newfmt)
+def rgb(text, color='#aaa', reset=True):
+    r,g,b = tuple(int(x * 2, 16) for x in color.lstrip('#'))
+    rgbstr = f'\033[38;2;{r};{g};{b}m{text}'
+    rgbstr += '\033[00m' if reset else ''
+    return rgbstr
 
-    def format(self, record):
-        formatter = self._formatters.get(record.levelno, super())
-        return formatter.format(record)
-    
 
 class QueryCounterMiddleware:
     DATACOLOR, REQCOLOR, SQLCOLOR = '#d93', '#b68', '#488'
-    FIRST, LAST = utils.rgb('  ┌ ', REQCOLOR), utils.rgb('  └ ', REQCOLOR)
-    BULLET, PIPE = utils.rgb('  ├ ', REQCOLOR), utils.rgb('  │ ', REQCOLOR)
-    INDENTSTR = PIPE + utils.rgb('   ', '#488', reset=False)
+    FIRST, LAST = rgb('  ┌ ', REQCOLOR), rgb('  └ ', REQCOLOR)
+    BULLET, PIPE = rgb('  ├ ', REQCOLOR), rgb('  │ ', REQCOLOR)
+    INDENTSTR = PIPE + rgb('   ', '#488', reset=False)
     REGEX_WHERE = re.compile(r'(\s+WHERE\s+)(.*)(\s+(?:GROUP|ORDER|HAVING)\s+)*')
     REGEX_VALUE = re.compile(r'(\s*[a-zA-Z_."]+?(?:_id|\."id)"\s*=\s*)\d+(\s*)')
 
@@ -104,16 +91,16 @@ class QueryCounterMiddleware:
     def _log_summary(self, request, resptime, summary, summarystr):
         """ Logs the queries to the logger. """
         logmsg = f'QueryCounter tracked {summary["count"]} sql statements\n'
-        logmsg += self.FIRST + utils.rgb(f'{request.method} {request.get_full_path()}', self.REQCOLOR) + '\n'
+        logmsg += self.FIRST + rgb(f'{request.method} {request.get_full_path()}', self.REQCOLOR) + '\n'
         for sql, sqldata in summary['queries'].items():
-            sqlstr = self.BULLET + utils.rgb(f'[{sqldata["sqltime"]:.3f}s] ', self.DATACOLOR)
+            sqlstr = self.BULLET + rgb(f'[{sqldata["sqltime"]:.3f}s] ', self.DATACOLOR)
             if sqldata['count'] > 1:
-                sqlstr = self.BULLET + utils.rgb(f'[{sqldata["count"]}x {sqldata["avgtime"]:.3f}s] ', self.DATACOLOR)
-            sqlstr += utils.rgb(sql, self.SQLCOLOR)
+                sqlstr = self.BULLET + rgb(f'[{sqldata["count"]}x {sqldata["avgtime"]:.3f}s] ', self.DATACOLOR)
+            sqlstr += rgb(sql, self.SQLCOLOR)
             logmsg += textwrap.fill(sqlstr, width=160, subsequent_indent=self.INDENTSTR) + '\n'
         proctime = resptime - summary['sqltime']
-        logmsg += self.BULLET + utils.rgb(f'Request took {resptime:.3f}s ({proctime:.3f}s processing)', self.DATACOLOR) + '\n'
-        logmsg += self.LAST + utils.rgb(summarystr, self.DATACOLOR)
+        logmsg += self.BULLET + rgb(f'Request took {resptime:.3f}s ({proctime:.3f}s processing)', self.DATACOLOR) + '\n'
+        logmsg += self.LAST + rgb(summarystr, self.DATACOLOR)
         log.info(logmsg)
 
 
@@ -138,6 +125,33 @@ def get_object_or_none(cls, *args, **kwargs):
         return None
 
 
+def queryset_str(sql_or_queryset):
+    """ Return the raw sql of a queryset. It includes quotes! """
+    try:
+        sql = sql_or_queryset
+        if isinstance(sql, QuerySet):
+            sql, params = sql.query.sql_with_params()
+            with connection.cursor() as cursor:
+                cursor.execute(f'EXPLAIN {sql}', params)
+                sql = cursor.db.ops.last_executed_query(cursor, sql, params)
+        sql = re.sub('SELECT (.+?) FROM', 'SELECT * FROM', sql)
+        sql = sqlparse.format(sql, reindent=True)
+        sql = sql.replace('SELECT *\nFROM', 'SELECT * FROM')
+        sql = sql.replace(' OR ', '\n  OR ')
+        sql = sql.replace(' AND ', '\n  AND ')
+        sql = re.sub(r'COUNT\(CASE\s+WHEN', '\n  COUNT(CASE WHEN', sql)
+        sql = re.sub(r'THEN 1\s+ELSE NULL\s+END', 'THEN 1 ELSE NULL END', sql)
+        sql = '\n'.join([x for x in sql.split('\n') if x.strip()])
+        result, indent = [], 0
+        for line in sql.split('\n'):
+            line = f'  {line.strip()}' if line.startswith('  ') else line.strip()
+            result.append(f'{" "*indent}{line}')
+            indent = indent + line.count('(') - line.count(')')
+        return '\n'.join(result) + ';'
+    except EmptyResultSet:
+        return 'EmptyResultSet'
+
+
 def reverse(request, viewname, **kwargs):
     return unquote(request.build_absolute_uri(django_reverse(viewname, kwargs=kwargs)))
 
@@ -158,7 +172,7 @@ def vue_devserver_running(request):
     """ Return url if it looks like the Vue devserver is running. """
     try:
         if not settings.DEBUG: return None
-        servername = utils.rget(request, 'environ.SERVER_NAME', 'localhost')
+        servername = request['environ'].get('SERVER_NAME', 'localhost')
         serverurl = f'http://{servername}:5173'
         requests.head(serverurl)
         return serverurl
