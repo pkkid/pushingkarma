@@ -31,12 +31,14 @@ class QueryCounterMiddleware:
         self.get_response = get_response
         
     def _count_enabled(self, request):
-        count_header = request.headers.get('Count-Queries', '').lower() == 'true'
-        return settings.QUERYCOUNTER_ENABLE_HEADERS or count_header
+        if settings.QUERYCOUNTER_ENABLE_HEADERS is None:
+            return request.headers.get('Count-Queries', '').lower() == 'true'
+        return settings.QUERYCOUNTER_ENABLE_HEADERS
     
     def _log_enabled(self, request):
-        count_header = request.headers.get('Log-Queries', '').lower() == 'true'
-        return settings.QUERYCOUNTER_ENABLE_LOG or count_header
+        if settings.QUERYCOUNTER_ENABLE_LOG is None:
+            return request.headers.get('Log-Queries', '').lower() == 'true'
+        return settings.QUERYCOUNTER_ENABLE_LOG
     
     def __call__(self, request):
         """ Main middleware function, wraps the request. """
