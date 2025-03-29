@@ -47,12 +47,3 @@ urlpatterns = [
     re_path(r'^api/.*$', api_404),
     re_path(r'', index, name='index'),
 ]
-
-
-# ------------------------------
-# api = HybridRouter(sort_urls=True, trailing_slash=False)
-# api.register('budget/accounts', budget_api.AccountsViewSet, basename='account')
-# api.register('budget/categories', budget_api.CategoriesViewSet, basename='category')
-# api.register('budget/transactions', budget_api.TransactionsViewSet, basename='transaction')
-# api.register('stocks/tickers', stocks_api.TickerViewSet, basename='ticker')
-# api.add_url('^stocks/projection_trends$', stocks_apiviews.projection_trends, name='stocks/projection_trends')
