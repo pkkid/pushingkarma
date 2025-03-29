@@ -6,7 +6,6 @@ timelib
 tzdata
 django==5.1.7
 django-cors-headers==4.7.0
-django-extensions==3.2.3
 django-ninja==1.4.0
 ofxparse==0.21
 yfinance==0.2.54

@@ -27,3 +27,15 @@ class ColoredFormatter(logging.Formatter):
         rgbstr = f'\033[38;2;{r};{g};{b}m{text}'
         rgbstr += '\033[00m' if reset else ''
         return rgbstr
+
+
+def update_logging_filepath(filepath, handler_name='default'):
+    """ Update logging filehandler to the specified filepath. """
+    for handler in logging.getLogger().handlers:
+        if handler._name == handler_name and isinstance(handler, logging.FileHandler):
+            handler.close()
+            handler.baseFilename = filepath
+            handler.stream = handler._open()
+            break
+    else:
+        raise Exception(f'Unknown filehandler name {handler_name}')

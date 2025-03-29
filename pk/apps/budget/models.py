@@ -2,7 +2,7 @@
 import logging
 from django.conf import settings
 from django.db import models, transaction
-from django_extensions.db.models import TimeStampedModel
+from pk.utils.django_utils import TimeStampedModel
 log = logging.getLogger(__name__)
 
 ACCOUNT_CHOICES = [('bank','Bank'), ('credit','Credit')]

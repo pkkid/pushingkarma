@@ -7,7 +7,7 @@ from django.contrib.auth import login as django_login
 from django.contrib.auth import logout as django_logout
 from ninja import Router
 from ninja.errors import HttpError
-from pk import utils
+from pk.utils import utils
 from .schemas import GlobalVarsSchema, UserSchema, LoginSchema
 log = logging.getLogger(__name__)
 router = Router()

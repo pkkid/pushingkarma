@@ -6,7 +6,7 @@ from django.conf import settings
 from django.core.exceptions import EmptyResultSet
 from django.db import connection, connections
 from django.db.models.query import QuerySet
-# from django.db.models import Model, DateTimeField
+from django.db.models import Model, DateTimeField
 from django.urls import reverse as django_reverse
 from urllib.parse import unquote
 log = logging.getLogger(__name__)
@@ -104,18 +104,17 @@ class QueryCounterMiddleware:
         log.info(logmsg)
 
 
-# NOT SURE WHY I CANT PUT THIS HERE
-# class TimeStampedModel(Model):
-#     """ TimeStampedModel - An abstract base class model that provides self-managed
-#         created and modified fields. Pulled from Django-Extentions.
-#         https://github.com/django-extensions/django-extensions
-#     """
-#     created = DateTimeField(editable=False, blank=True, auto_now_add=True)
-#     modified = DateTimeField(auto_now=True)
+class TimeStampedModel(Model):
+    """ TimeStampedModel - An abstract base class model that provides self-managed
+        created and modified fields. Pulled from Django-Extentions.
+        https://github.com/django-extensions/django-extensions
+    """
+    created = DateTimeField(editable=False, blank=True, auto_now_add=True)
+    modified = DateTimeField(auto_now=True)
 
-#     class Meta:
-#         get_latest_by = 'modified'
-#         abstract = True
+    class Meta:
+        get_latest_by = 'modified'
+        abstract = True
 
 
 def get_object_or_none(cls, *args, **kwargs):

@@ -10,10 +10,12 @@ from django.shortcuts import get_object_or_404
 from django.views.decorators.cache import cache_page
 from ninja import Router
 from ninja.decorators import decorate_view
-from pk.utils import PageSchema, paginate, percent, reverse
+from pk.utils.django_utils import reverse
+from pk.utils.ninja_utils import PageSchema, paginate
+from pk.utils.utils import percent
 from .models import Ticker, TickerHistory
 from .schemas import TickerSchema, DatasetsSchema
-from . import utils as stockutils
+from . import utils as stock_utils
 log = logging.getLogger(__name__)
 router = Router()
 
@@ -67,16 +69,16 @@ def get_projected_ranks(request, periods:str=None, maxresults:int=10, search:str
     if not len(tickers): return {'labels':[], 'datasets':[]}
     maxdate = TickerHistory.objects.filter(ticker__in=tickers).aggregate(Max('date'))['date__max']
     mindate = maxdate - timedelta(weeks=int(periods[0].rstrip('w'))+1)
-    histories = stockutils.histories_dict(tickers, mindate)
+    histories = stock_utils.histories_dict(tickers, mindate)
     # Pass 1: Calculate the percent change for each ticker
     datasets = {}
     for ticker in tickers:
         change = []
         history = histories[ticker.ticker]
-        maxdate_close = stockutils.value_for_date(history, maxdate, ticker.ticker)
+        maxdate_close = stock_utils.value_for_date(history, maxdate, ticker.ticker)
         for period in periods:
             pdate = maxdate - timedelta(weeks=int(period.rstrip('w')))
-            pdate_close = stockutils.value_for_date(history, pdate, ticker.ticker)
+            pdate_close = stock_utils.value_for_date(history, pdate, ticker.ticker)
             pdate_change = percent(maxdate_close, pdate_close) - 100
             change.append(pdate_change)
         datasets[ticker.ticker] = {}
