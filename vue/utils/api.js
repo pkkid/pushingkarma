@@ -39,8 +39,13 @@ export const Main = {
 }
 export const Budget = {
   getAccounts(params, signal) { return get(`/budget/accounts`, {params, signal}) },
+  getAccount(accountid, params, signal) { return get(`/budget/accounts/${accountid}`, {params, signal}) },
+  sortAccounts(data, signal) { return axios.patch(`/budget/sort_accounts`, data, {signal}) },
   getCategories(params, signal) { return get(`/budget/categories`, {params, signal}) },
+  getCategory(categoryid, params, signal) { return get(`/budget/categories/${categoryid}`, {params, signal}) },
+  sortCategories(data, signal) { return axios.patch(`/budget/sort_categories`, data, {signal}) },
   getTransactions(params, signal) { return get(`/budget/transactions`, {params, signal}) },
+  getTransaction(transactionid, params, signal) { return get(`/budget/transactions/${transactionid}`, {params, signal}) },
 }
 export const Obsidian = {
   getNote(bucket, path, params, signal) { return get(`/obsidian/notes/${bucket}/${path}`, {params, signal}) },

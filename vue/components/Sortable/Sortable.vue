@@ -1,5 +1,5 @@
 <template>
-  <div class='sortable' :data-group='group' @sort='onSort'>
+  <div class='sortable' :data-group='group' @sort='emit("sort", $event.detail)'>
     <slot></slot>
   </div>
 </template>
@@ -9,10 +9,6 @@
   const props = defineProps({
     group: {type:String, required:true},
   })
-
-  const onSort = function(event) {
-    emit('sort', event.detail)
-  }
 </script>
 
 <style>

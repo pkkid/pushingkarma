@@ -2,27 +2,25 @@
 from datetime import date, datetime
 from decimal import Decimal
 from ninja import Schema
-from typing import Optional
+from typing import List, Optional
 
 
 class AccountSchema(Schema):
+    id: Optional[int] = None
     url: str
-    id: int
     name: str
-    fid: Optional[int] = None
-    payee: Optional[str] = None
     balance: Optional[Decimal] = None
-    balancedt: Optional[datetime] = None
+    balance_updated: Optional[datetime] = None
     import_rules: Optional[dict] = None
+    sortid: Optional[int] = None
 
 
 class CategorySchema(Schema):
+    id: Optional[int] = None
     url: str
-    id: int
     name: str
-    sortindex: Optional[int] = None
-    exclude_budget: Optional[bool] = None
-    comment: Optional[str] = None
+    exclude: Optional[bool] = None
+    sortid: Optional[int] = None
 
 
 class TransactionSchema(Schema):
@@ -35,3 +33,7 @@ class TransactionSchema(Schema):
     comment: Optional[str] = None
     account: AccountSchema
     category: Optional[CategorySchema] = None
+
+
+class SortSchema(Schema):
+    sortlist: List[int]

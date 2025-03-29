@@ -79,14 +79,16 @@
 
   // On Sort Accounts
   // Update the accounts sort order
-  const onSortAccounts = function(event) {
-    console.log('onSortAccounts', event)
+  const onSortAccounts = async function(event) {
+    var {data} = await api.Budget.sortAccounts({sortlist:event.sortlist})
+    accounts.value = data
   }
 
   // On Sort Categories
   // Update the categories sort order
-  const onSortCategories = function(event) {
-    console.log('onSortCategories', event)
+  const onSortCategories = async function(event) {
+    var {data} = await api.Budget.sortCategories({sortlist:event.sortlist})
+    categories.value = data
   }
 </script>
 

@@ -26,7 +26,6 @@
   // Save the dragitem and tell the browser were moving it
   const onDragStart = function(event) {
     sortableState.group = self.value.closest('.sortable').dataset.group
-    console.log('props.itemid', props.itemid)
     sortableState.itemid = props.itemid.toString()
     event.dataTransfer.effectAllowed = 'move'
   }
@@ -34,7 +33,7 @@
   // On Drag Over
   // Highlight the top or bottom border of the item we are hovering
   const onDragOver = function(event) {
-    // event.preventDefault()
+    event.preventDefault()
     event.dataTransfer.dropEffect = 'move'
     var item = event.target.closest('.sortableitem')
     if (isSameGroup(item)) {
@@ -57,17 +56,18 @@
     event.preventDefault()
     var item = event.target.closest('.sortableitem')
     if (isSameGroup(item)) {
-      var newsort = []
+      var sortlist = []
       var sortable = item.closest('.sortable')
+      var group = sortable.dataset.group
       var items = sortable.querySelectorAll('.sortableitem')
       for (var i=0; i<items.length; i++) {
         item = items[i]
         var itemid = item.dataset.itemid
-        if (item.classList.contains('dropbefore')) { newsort.push(sortableState.itemid) }
-        if (itemid != sortableState.itemid) { newsort.push(itemid) }
-        if (item.classList.contains('dropafter')) { newsort.push(sortableState.itemid) }
+        if (item.classList.contains('dropbefore')) { sortlist.push(sortableState.itemid) }
+        if (itemid != sortableState.itemid) { sortlist.push(itemid) }
+        if (item.classList.contains('dropafter')) { sortlist.push(sortableState.itemid) }
       }
-      const newEvent = new CustomEvent('sort', {detail: {group:sortable.dataset.group, sort:newsort}})
+      const newEvent = new CustomEvent('sort', {detail: {group, sortlist}})
       sortable.dispatchEvent(newEvent)
     }
   }

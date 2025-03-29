@@ -82,7 +82,7 @@
     'default': 'code',
   }
   
-  var methods = ['GET', 'POST', 'PUT', 'DELETE']
+  var methods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
   var showheaders = ['allow', 'content-type', 'content-length', 'response-time', 'queries']
   // const countQueries = useStorage('axios.countqueries', false)  
   // const logQueries = useStorage('axios.logqueries', false)      // Log queries on the server
