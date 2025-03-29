@@ -25,13 +25,13 @@
           <template #content v-if='toc && response'>
             <div class='options'>
               <!-- Count Queries -->
-              <Tooltip width='250px' text="An additonal 'Queries' header is added to api requests
-                detailing the count and duration of sql queries.">
-                <ToggleSwitch v-model="countQueries" label="Count Queries" @update='toggleCountQueries'/>
+              <Tooltip width='250px' text='An additonal Queries header is added to api requests
+                detailing the count and duration of sql queries.'>
+                <ToggleSwitch :value='countQueries' label='Count Queries' @update='setCountQueries'/>
               </Tooltip>
               <!-- Log Queries -->
-              <Tooltip width='250px' text="Enables server side logging of all sql queries and their duration.">
-                <ToggleSwitch v-model="logQueries" label="Log Queries" @update='toggleLogQueries'/>
+              <Tooltip width='250px' text='Enables server side logging of all sql queries and their duration.'>
+                <ToggleSwitch :value='logQueries' label='Log Queries' @update='setLogQueries'/>
               </Tooltip>
             </div>
             <!-- Request Description and URL -->
@@ -66,10 +66,10 @@
 </template>
 
 <script setup>
-  import {computed, nextTick, onBeforeMount, ref, watch, watchEffect} from 'vue'
+  import {computed, inject, nextTick, onBeforeMount, ref, watch, watchEffect} from 'vue'
   import {LayoutPaper, LayoutSidePanel} from '@/components/Layout'
   import {ToggleSwitch, Tooltip} from '@/components'
-  import {useStorage, useUrlParams} from '@/composables'
+  import {useUrlParams} from '@/composables'
   import {utils} from '@/utils'
   import axios from 'axios'
   
@@ -84,17 +84,20 @@
   
   var methods = ['GET', 'POST', 'PUT', 'DELETE']
   var showheaders = ['allow', 'content-type', 'content-length', 'response-time', 'queries']
-  const countQueries = useStorage('axios.countqueries', false)  // Count queries on the server
-  const logQueries = useStorage('axios.logqueries', false)      // Log queries on the server
+  // const countQueries = useStorage('axios.countqueries', false)  
+  // const logQueries = useStorage('axios.logqueries', false)      // Log queries on the server
+  
+  const {countQueries, setCountQueries} = inject('countQueries')  // Count queries on the server
+  const {logQueries, setLogQueries} = inject('logQueries')        // Log queries on the server
   const {method, view} = useUrlParams({
-    method: {type:String},                                      // Current method to display
-    view: {type:String}                                         // Current view to display
+    method: {type:String},                        // Current method to display
+    view: {type:String}                           // Current view to display
   })
-  var toc = ref(null)                                           // Table of contents (api root)
-  var endpoint = ref(null)
-  var response = ref(null)                                      // Current get response
-  const allowed = ref(null)                                     // Allowed methods for current endpoint
-  const url = ref(view.value)                                   // Current url to display
+  var toc = ref(null)                             // Table of contents (api root)
+  var endpoint = ref(null)                        // Current endpoint details
+  var response = ref(null)                        // Current get response
+  const allowed = ref(null)                       // Allowed methods for current endpoint
+  const url = ref(view.value)                     // Current url to display
 
   // Endpoint
   // Return the endpoint details from the view
@@ -144,8 +147,6 @@
   // Update to top nav and get the toc
   onBeforeMount(async function() {
     utils.setNavPosition('top')
-    toggleCountQueries(countQueries.value)
-    toggleLogQueries(logQueries.value)
     checkView()
     toc.value = (await axios.get('')).data
   })
@@ -201,22 +202,6 @@
       })
       span.replaceWith(newspan)
     })
-  }
-
-  // Toggle Count Queries
-  // Includes the Count-Queries header in requests
-  const toggleCountQueries = function(newval) {
-    countQueries.value = newval
-    if (newval) { axios.defaults.headers.common['Count-Queries'] = 'true' }
-    else { delete axios.defaults.headers.common['Count-Queries'] }
-  }
-  
-  // Toggle Log Queries
-  // Includes the Log-Queries header in requests
-  const toggleLogQueries = function(newval) {
-    logQueries.value = newval
-    if (newval) { axios.defaults.headers.common['Log-Queries'] = 'true' }
-    else { delete axios.defaults.headers.common['Log-Queries'] }
   }
 </script>
 

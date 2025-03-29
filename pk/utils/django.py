@@ -51,7 +51,7 @@ class QueryCounterMiddleware:
         summary, summarystr = self._summarize_queries()
         resptime = time.time() - starttime
         # Log the summary and return the header
-        if log_enabled:
+        if log_enabled and summary['count']:
             self._log_summary(request, resptime, summary, summarystr)
         if count_enabled:
             response['Response-Time'] = f'{resptime:.3f}s'

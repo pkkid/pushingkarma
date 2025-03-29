@@ -1,5 +1,5 @@
 <template>
-  <div class='toggle-switch' :class='{active: modelValue}' @click='toggle'>
+  <div class='toggle-switch' :class='{active: value}' @click='toggle'>
     <div class='toggle-track'>
       <div class='toggle-thumb'></div>
     </div>
@@ -9,14 +9,14 @@
 
 <script setup>
   const props = defineProps({
-    modelValue: {type:Boolean, required:true },   // Current model value
+    value: {type:Boolean, required:true },   // Current model value
     label: {type:String, default:''},             // Toggle label
     width: {type:String, default:'28px'},         // Width of the toggle
     height: {type:String, default:'16px'},        // Height of the toggle
   })
 
   const emit = defineEmits(['update'])
-  const toggle = () => { emit('update', !props.modelValue) }
+  const toggle = () => { emit('update', !props.value) }
 </script>
 
 <style>
