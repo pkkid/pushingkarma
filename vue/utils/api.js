@@ -49,5 +49,5 @@ export const Obsidian = {
 export const Stocks = {
   getTicker(ticker, params, signal) { return get(`/stocks/tickers/${ticker}`, {params, signal}) },
   listTickers(params, signal) { return get(`/stocks/tickers`, {params, signal}) },
-  getProjectedRanks(params, signal) { return get(`/stocks/projected_ranks`, {params, signal}) },
+  chartRanks(params, signal) { return get(`/stocks/chart_ranks`, {params, signal}) },
 }

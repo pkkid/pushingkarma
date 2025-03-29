@@ -55,10 +55,10 @@ def list_tickers(request, search:str='', page:int=1):
     return data
 
 
-@router.get('/projected_ranks', response=DatasetsSchema, exclude_unset=True)
+@router.get('/chart_ranks', response=DatasetsSchema, exclude_unset=True)
 @decorate_view(cache_page(0 if settings.DEBUG else 300))
-def get_projected_ranks(request, periods:str=None, maxresults:int=10, search:str=''):
-    """ Return datasets to render a Projection Trends chart.
+def chart_ranks(request, periods:str=None, maxresults:int=10, search:str=''):
+    """ Return datasets to render a the Projected Ranks chart.
         • periods: Week periods to include in the chart (ie: 12w,10w,8w,6w,4w,2w)
         • maxresults: Maximum number of results to return (default: 10).
         • search: Filter tickers by search string.
@@ -79,12 +79,13 @@ def get_projected_ranks(request, periods:str=None, maxresults:int=10, search:str
         for period in periods:
             pdate = maxdate - timedelta(weeks=int(period.rstrip('w')))
             pdate_close = stock_utils.value_for_date(history, pdate, ticker.ticker)
-            pdate_change = percent(maxdate_close, pdate_close) - 100
+            pdate_change = float(percent(maxdate_close, pdate_close) - 100)
             change.append(pdate_change)
         datasets[ticker.ticker] = {}
         datasets[ticker.ticker]['label'] = ticker.ticker
         datasets[ticker.ticker]['change'] = change
         datasets[ticker.ticker]['rank'] = []
+    print(datasets[ticker.ticker]['change'])
     # Limit datasets to maxresults
     datasets = sorted(datasets.values(), key=lambda x: x['change'][-1], reverse=True)[:maxresults]
     # Pass 2: For each period, rank the tickers by the percent change
@@ -94,38 +95,3 @@ def get_projected_ranks(request, periods:str=None, maxresults:int=10, search:str
             ticker_rank = rank + 1
             ticker['rank'].append(ticker_rank)
     return {'labels':periods, 'datasets':datasets}
-
-
-# -------------------------------------
-# from django_searchquery import searchfields as sf
-# from pk import utils
-# from rest_framework import viewsets
-# from rest_framework.permissions import IsAuthenticated
-# from .models import Ticker, TickerHistory
-
-# class TickerHistorySerializer(utils.DynamicFieldsSerializer):
-#     class Meta:
-#         model = TickerHistory
-#         fields = ('ticker', 'date', 'close', 'high', 'low', 'volume')
-
-
-# class TickerSerializer(utils.DynamicFieldsSerializer):
-#     lastday = utils.PartialFieldsSerializer(TickerHistorySerializer,
-#         ('date', 'close', 'high', 'low', 'volume'))
-
-#     class Meta:
-#         model = Ticker
-#         fields = ('ticker', 'tags', 'info', 'lastday')
-
-
-# class TickerViewSet(utils.ViewSetMixin, viewsets.ModelViewSet):
-#     """ Rest endpoint to list or modifiy watched tickers. """
-#     serializer_class = TickerSerializer
-#     permission_classes = [IsAuthenticated]
-#     list_fields = TickerSerializer.Meta.fields
-
-#     def get_queryset(self):
-#         return Ticker.objects.select_related('lastday').order_by('ticker')
-
-#     def list(self, request, *args, **kwargs):
-#         return self.list_response(request, paginated=True, searchfields=TICKERSEARCHFIELDS)
