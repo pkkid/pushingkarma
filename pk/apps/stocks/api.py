@@ -3,13 +3,10 @@ import logging
 from datetime import timedelta
 from django_searchquery import searchfields as sf
 from django_searchquery.search import Search
-from django.conf import settings
 from django.db.models import Max
 from django.forms.models import model_to_dict
 from django.shortcuts import get_object_or_404
-from django.views.decorators.cache import cache_page
 from ninja import Router
-from ninja.decorators import decorate_view
 from pk.utils.django import reverse
 from pk.utils.ninja import PageSchema, paginate
 from pk.utils.utils import percent
@@ -26,7 +23,6 @@ TICKERSEARCHFIELDS = [
 
 
 @router.get('/tickers/{ticker}', response=TickerSchema, exclude_unset=True, url_name='ticker')
-@decorate_view(cache_page(0 if settings.DEBUG else 300))
 def get_ticker(request, ticker:str):
     """ List details for the specified ticker. """
     data = model_to_dict(get_object_or_404(Ticker, ticker=ticker))
@@ -35,15 +31,13 @@ def get_ticker(request, ticker:str):
 
 
 @router.get('/tickers', response=PageSchema(TickerSchema), exclude_unset=True)
-@decorate_view(cache_page(0 if settings.DEBUG else 300))
 def list_tickers(request, search:str='', page:int=1):
     """ List tickers and basic information from the database.
         • search: Filter tickers by search string.
         • page: Page number of results to return
     """
     tickers = Ticker.objects.select_related('lastday').order_by('ticker')
-    if search:
-        tickers = Search(TICKERSEARCHFIELDS).get_queryset(tickers, search)
+    if search: tickers = Search(TICKERSEARCHFIELDS).get_queryset(tickers, search)
     data = paginate(request, tickers, page=page, perpage=10)
     for i in range(len(data['items'])):
         item = data['items'][i]
@@ -56,7 +50,6 @@ def list_tickers(request, search:str='', page:int=1):
 
 
 @router.get('/chart_ranks', response=DatasetsSchema, exclude_unset=True)
-@decorate_view(cache_page(0 if settings.DEBUG else 300))
 def chart_ranks(request, periods:str=None, maxresults:int=10, search:str=''):
     """ Return datasets to render a the Projected Ranks chart.
         • periods: Week periods to include in the chart (ie: 12w,10w,8w,6w,4w,2w)
