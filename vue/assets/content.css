@@ -27,6 +27,16 @@
 }
 
 /*
+ * Empty
+ * Empty banner when there is no content to display.
+ */
+.empty {
+  padding: 30px 0px;
+  text-align: center;
+  font-size: 12px;
+}
+
+/*
  * Data List
  * dl, dt, dd
  */

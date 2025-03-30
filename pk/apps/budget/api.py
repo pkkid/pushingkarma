@@ -47,7 +47,7 @@ def get_account(request, accountid:int):
     """ List details for the specified account.
         • accountid: Account id
     """
-    item = get_object_or_404(Account, user=request.user, id=accountid).order_by('sortid')
+    item = get_object_or_404(Account, user=request.user, id=accountid)
     itemdict = model_to_dict(item)
     itemdict['url'] = reverse(request, 'api:account', accountid=item.id)
     return itemdict

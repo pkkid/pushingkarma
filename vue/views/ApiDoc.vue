@@ -1,7 +1,7 @@
 <template>
   <div id='apidoc'>
     <LayoutSidePanel width='250px'>
-      <!-- API Categorties -->
+      <!-- Side Panel: API Categorties -->
       <template #panel>
         <div v-if='toc' class='menu'>
           <template v-for='[category, endpts] in Object.entries(toc.endpoints)' :key='category'>
@@ -11,7 +11,6 @@
                 {{utils.title(category)}}
               </div>
               <template v-for='endpt in endpts' :key='`${endpt.method} ${endpt.path}`'>
-                <!-- {{console.log(endpoint===endpt, 'endpoint', endpoint, 'endpt', endpt)}} -->
                 <div class='subitem link' :class='{selected:endpoint===endpt}' @click='setView(endpt)'>
                   <div class='name'>{{endpt.summary}}</div>
                 </div>
@@ -22,21 +21,19 @@
       </template>
       <template #content>
         <LayoutPaper>
-          <template #content v-if='toc && response'>
+          <template #content v-if='toc'>
+            <!-- Request Options: Count Queries and Log Queries -->
             <div class='options'>
-              <!-- Count Queries -->
               <Tooltip width='250px' text='An additonal Queries header is added to api requests
                 detailing the count and duration of sql queries.'>
                 <ToggleSwitch :value='countQueries' label='Count Queries' @update='setCountQueries'/>
               </Tooltip>
-              <!-- Log Queries -->
               <Tooltip width='250px' text='Enables server side logging of all sql queries and their duration.'>
                 <ToggleSwitch :value='logQueries' label='Log Queries' @update='setLogQueries'/>
               </Tooltip>
             </div>
-            <!-- Request Description and URL -->
+            <!-- Request Method, URL and Description -->
             <h1>{{endpointName}}</h1>
-            <!-- Input Wrap -->
             <div class='inputwrap'>
               <select v-model='method'>
                 <option v-for='meth in allowed' :key='meth' :value='meth'>{{meth}}</option>
@@ -44,19 +41,23 @@
               <input class='urlinput' type='text' :value='view' spellcheck='false' @keydown.enter='view=$event.target.value'/>
             </div>
             <div class='description' v-html='endpoint?.description.replace(/\n/g, "<br/>")'></div>
-            <div class='headers'>
-              <!-- Response Headers -->
-              <span class='label'>HTTP {{response.status}} {{response.statusText}}</span><br/>
-              <template v-for='header in showheaders'>
-                <div v-if='response.headers[header]' :key='header'>
-                  <span class='label'>{{utils.title(header)}}:</span>
-                  <span class='value'>{{response.headers[header]}}</span><br/>
-                </div>
-              </template>
-            </div>
-            <!-- Response Content -->
-            <div theme='gruvbox-light-hard' class='codearea'>
-              <highlightjs :code='utils.stringify(response.data, {indent:2})' language='json' :autodetect='false'/>
+            <!-- Response Headers and Content -->
+            <template v-if='response'>
+              <div class='headers'>
+                <span class='label'>HTTP {{response.status}} {{response.statusText}}</span><br/>
+                <template v-for='header in showheaders'>
+                  <div v-if='response.headers[header]' :key='header'>
+                    <span class='label'>{{utils.title(header)}}:</span>
+                    <span class='value'>{{response.headers[header]}}</span><br/>
+                  </div>
+                </template>
+              </div>
+              <div theme='gruvbox-light-hard' class='codearea'>
+                <highlightjs :code='utils.stringify(response?.data || "", {indent:2})' language='json' :autodetect='false'/>
+              </div>
+            </template>
+            <div v-else class='headers'>
+              <span class='label'>{{method}} request not initiated</span>
             </div>
           </template>
         </LayoutPaper>
@@ -155,13 +156,6 @@
     return categoryIcons[category] || categoryIcons['default']
   }
 
-  // Watch View
-  // Auto send request method=GET
-  watchEffect(async function() {
-    if (view.value === null) { return }
-    if (method.value == 'GET') { sendRequest() }
-  })
-
   // Send Request
   // Send the http request!
   const sendRequest = async function() {
@@ -173,6 +167,20 @@
     await nextTick()
     linkAPIURLs()
   }
+
+  // Watch View
+  // Auto send request method=GET
+  watch(view, function() {
+    response.value = null
+    if (view.value === null) { return }
+    if (method.value == 'GET') { sendRequest() }
+  }, {immediate:true})
+
+  // Watch Method
+  watch(method, function() {
+    response.value = null
+    if (method.value == 'GET') { sendRequest() }
+  })
 
   // Link API URLs
   // Create links for all api urls
