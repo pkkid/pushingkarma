@@ -28,12 +28,14 @@
     autoFocus: {type:Boolean, default:false},       // Autofocus on the editor
     language: {type:String, default:'javascript'},  // Language of the editor
     modelValue: {type:String},                      // v-model; varied value
-    padding: {type:String, default:'20px'},         // Padding around the editor
     readOnly: {type:Boolean, default:false},        // Enable editable or not
     showLineNums: {type:Boolean, default:false},    // Show line numbers
     tabSpaces: {type:Number, default:2},            // Number of spaces for tab
     theme: {type:String, default:'gruvbox-light-hard'},  // Highlight.js theme to apply
     value: {type:String, default:'Hello World!'},   // Static value if not using v-model
+    // These styles are a bit more complicated so defining them here
+    height: {type:String, default:'auto'},          // Height of the editor
+    padding: {type:String, default:'20px'},         // Padding around the editor
   })
 
   var lineNumsObserver = null                       // ResizeObserver for lineNums
@@ -52,7 +54,7 @@
   const currentValue = ref(null)                    // Current value of the editor
   
   const codeClass = computed(function() { return `language-${props.language}` })
-  const numLines = computed(function() { return currentValue.value?.split('\n').length || 0 })
+  const numLines = computed(function() { return Math.max(currentValue.value?.split('\n').length || 1, 1) })
   const scrollable = computed(function() { return props.height == 'auto' ? false : true })
 
   // Watch Model Value
@@ -147,10 +149,12 @@
     font-size: 13px;
     line-height: 1.2;
     position: relative;
+
     .codewrap, .codearea, .linenums, textarea, pre, code {
       font-family: inherit !important;
       font-size: inherit !important;
       line-height: inherit !important;
+      height: 100%;
     }
     .codewrap.hljs {
       border-radius: 6px;
@@ -158,7 +162,7 @@
       height: 100%;
     }
     .codearea {
-      height: 100%;
+      /* height: 100%; */
       overflow: hidden;
       position: relative;
       text-align: left;
@@ -166,6 +170,7 @@
     }
     .linenums {
       box-sizing: border-box;
+      /* height: 100%; */
       min-width: 36px;
       padding-bottom: v-bind(padding);
       padding-left: 8px;
@@ -180,9 +185,9 @@
       background-color: currentColor;
       content: ' ';
       display: block;
-      height: 100%;
+      /* height: 100%; */
       left: calc(v-bind(lineNumsWidth) - 1px);
-      opacity: 0.1;
+      opacity: 0.2;
       position: absolute;
       top: 0px;
       width: 1px;
@@ -224,6 +229,7 @@
       border-radius: 0;
       box-sizing: border-box;
       display: block;
+      height: calc(v-bind(numLines) * 1.2em + v-bind(padding) * 2);
       left: v-bind(scrollLeft);
       margin: 0px;
       overflow-x: visible !important;
@@ -232,14 +238,17 @@
       top: v-bind(scrollTop);
     }
     /* Show Line Numbers */
-    &.showLineNums textarea,
-    &.showLineNums pre {
-      margin-left: v-bind(lineNumsWidth);
-      width: calc(100% - v-bind(lineNumsWidth));
+    &.showLineNums {
+      textarea, pre {
+        margin-left: v-bind(lineNumsWidth);
+        width: calc(100% - v-bind(lineNumsWidth));
+      }
     }
     /* Scroll */
-    &.scrollable .codearea { height:100%; }
-    &.scrollable textarea { overflow:auto; }
-    &.scrollable pre { width:100%; height:100%; overflow:hidden; }
+    &.scrollable {
+      height: v-bind(height);
+      textarea { overflow:auto; }
+      pre { width:100%; height:100%; overflow:hidden; }
+    }
   }
 </style>

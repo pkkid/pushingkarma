@@ -40,7 +40,7 @@
                   @keydown.enter='$event.shiftKey ? sendRequest() : path=$event.target.value'/>
               </div>
               <div v-if='method != "GET"' class='paramwrap'>
-                <CodeEditor  v-model='params' :showLineNums='true' padding='10px'
+                <CodeEditor  v-model='params' :showLineNums='true' padding='10px' height='100px'
                   @keydown.shift.enter.prevent='sendRequest'/>
                 <Tooltip class='send-request' position='lefttop'>
                   <template #tooltip>Send Request<div class='subtext'>shift+enter</div></template>
@@ -103,7 +103,7 @@
     var matches = Array.from(docstr.matchAll(pattern))
     var newparams = {}
     for (var [_, name, type] of matches) {
-      if (endpoint.value.path.includes(`\{${name}\}`)) { continue }
+      if (endpoint.value.path.includes(`{${name}}`)) { continue }
       type = type.toLowerCase()
       newparams[name] = type == 'list' ? [] : type == 'dict' ? {} :
         type == 'int' ? 0 : type == 'bool' ? false : ''
@@ -262,12 +262,11 @@
       .paramwrap {
         position: relative;
         .codeeditor {
-          height: 100px;
           font-size: 12px;
         }
         .send-request {
           position: absolute;
-          bottom: 5px;
+          bottom: 4px;
           right: 15px;
           z-index: 100;
           .mdi {
