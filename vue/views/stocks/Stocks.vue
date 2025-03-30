@@ -70,7 +70,7 @@
   const tickers = ref(null)
   const shortdata = ref(null)
   const longdata = ref(null)
-  const {search} = useUrlParams({search: {type:String}})
+  const {search} = useUrlParams({search:{}})
   provide('search', {search, updateSearch:(newval) => search.value = newval })
 
   // On Before Mount

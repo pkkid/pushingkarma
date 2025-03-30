@@ -44,10 +44,7 @@
   const selected = ref(null)      // Currently selected note path
   const note = ref(null)          // Current note markdown contents
   const headings = ref(null)      // Current note headings
-  const {bucket, path} = useUrlParams({
-    bucket: {type: String},
-    path: {type: String}
-  })
+  const {bucket, path} = useUrlParams({bucket:{}, path:{}})
 
   onBeforeMount(function() { utils.setNavPosition('top') })
 

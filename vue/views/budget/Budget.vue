@@ -56,9 +56,7 @@
   import {utils} from '@/utils'
 
   const showSettings = ref(false)
-  const {view} = useUrlParams({
-    view: {type:String},
-  })
+  const {view} = useUrlParams({view:{}})
 
   onBeforeMount(function() { utils.setNavPosition('top') })
 </script>
