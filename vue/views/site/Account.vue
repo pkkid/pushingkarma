@@ -16,7 +16,7 @@
         
         <!-- Current User Data -->
         <div v-else class='lightbg'>
-          <h2>Welcome {{user.name}}!</h2>
+          <h2>Welcome {{user.first_name}}!</h2>
           <Quote style='margin-bottom:10px;'/>
           <dl style='grid-template-columns: 70px 230px;'>
             <dt>Joined</dt><dd>{{utils.formatDate(user.date_joined, 'MMM D, YYYY')}}</dd>

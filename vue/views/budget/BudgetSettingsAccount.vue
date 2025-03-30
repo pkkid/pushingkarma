@@ -44,6 +44,7 @@
   import {ref, watchEffect} from 'vue'
   import {CodeEditor, Expandable, Tooltip} from '@/components'
   import {SortableItem} from '@/components/Sortable'
+  import JSON5 from 'json5'
 
   const props = defineProps({
     account: {required:true},                                   // Account to be displayed
@@ -58,7 +59,7 @@
   watchEffect(function() {
     console.log('validJson', importRules.value)
     try {
-      JSON.parse(importRules.value)
+      JSON5.parse(importRules.value)
       jsonIcon.value = 'mdi-check'
       jsonText.value = 'Valid JSON'
     } catch (e) {

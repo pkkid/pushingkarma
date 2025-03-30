@@ -33,6 +33,7 @@ def index(request, tmpl='index.html'):
 
 @api.exception_handler(Exception)
 def api_exception(request, err):
+    log.info('-=-=-=-=-')
     status = getattr(err, 'status_code', 500)
     phrase = HTTPStatus(status).phrase
     data = dict(status=phrase, message=str(err))

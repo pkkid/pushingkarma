@@ -8,7 +8,7 @@
       <div class='notes'><router-link to='/notes'>Notes</router-link></div>
       <div class='budget' v-if='user?.id'><router-link to='/budget'>Budget</router-link></div>
       <div class='stocks' v-if='user?.id'><router-link to='/stocks'>Stocks</router-link></div>
-      <div class='account' v-if='user?.id'><a href='#' @click.prevent @click='showAccount=true'>{{user.name}}</a></div>
+      <div class='account' v-if='user?.id'><a href='#' @click.prevent @click='showAccount=true'>{{user.first_name}}</a></div>
       <div class='apidoc' v-if='user?.id'><a :href='apidocurl'>API</a></div>
     </div>
   </div>
