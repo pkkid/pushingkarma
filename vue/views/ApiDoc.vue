@@ -21,7 +21,7 @@
         <LayoutPaper>
           <template #content v-if='toc'>
             <!-- Request Options: Count Queries and Log Queries -->
-            <div class='options'>
+            <div class='apioptions'>
               <Tooltip width='250px' text='An additonal Queries header is added to api requests
                 detailing the count and duration of sql queries.'>
                 <ToggleSwitch :value='countQueries' label='Count Queries' @update='setCountQueries'/>
@@ -31,12 +31,22 @@
               </Tooltip>
             </div>
             <!-- Request Method, URL and Description -->
-            <h1>{{utils.title(endpoint.category)}} {{endpoint.summary}}</h1>
+            <h1 v-if='endpoint'>{{utils.title(endpoint.category)}} {{endpoint.summary}}</h1>
+            <h1 v-else>Unknown Endpoint</h1>
             <div class='inputwrap'>
-              <select v-model='method'>
-                <option v-for='meth in allowed' :key='meth' :value='meth'>{{meth}}</option>
-              </select>
-              <input class='urlinput' type='text' :value='path' spellcheck='false' @keydown.enter='path=$event.target.value'/>
+              <div class='urlwrap'>
+                <select v-model='method'><option v-for='meth in allowed' :key='meth' :value='meth'>{{meth}}</option></select>
+                <input class='urlinput' type='text' v-model='path' spellcheck='false'
+                  @keydown.enter='$event.shiftKey ? sendRequest() : path=$event.target.value'/>
+              </div>
+              <div v-if='method != "GET"' class='paramwrap'>
+                <CodeEditor  v-model='params' :showLineNums='true' padding='10px'
+                  @keydown.shift.enter.prevent='sendRequest'/>
+                <Tooltip class='send-request' position='lefttop'>
+                  <template #tooltip>Send Request<div class='subtext'>shift+enter</div></template>
+                  <i class='mdi mdi-send' @click='sendRequest'/>
+                </Tooltip>
+              </div>
             </div>
             <div class='description' v-html='endpoint?.description.replace(/\n/g, "<br/>")'></div>
             <!-- Response Headers and Content -->
@@ -66,11 +76,12 @@
 
 <script setup>
   import {computed, inject, nextTick, onBeforeMount, onMounted, ref, watch, watchEffect} from 'vue'
-  import {LayoutPaper, LayoutSidePanel} from '@/components/Layout'
+  import {CodeEditor, LayoutPaper, LayoutSidePanel} from '@/components'
   import {ToggleSwitch, Tooltip} from '@/components'
   import {useUrlParams} from '@/composables'
   import {utils} from '@/utils'
   import axios from 'axios'
+  import JSON5 from 'json5'
   
   var APIROOT = '/api/'
   var showheaders = ['allow', 'content-type', 'content-length', 'response-time', 'queries']
@@ -79,8 +90,26 @@
   const {method, path} = useUrlParams({method:{}, path:{}})       // Method & path url params
   var toc = ref(null)                                             // Table of contents (api root)
   var endpoint = ref(null)                                        // Current endpoint details
+  var params = ref(null)                                          // Current parameters
   var response = ref(null)                                        // Current get response
   const allowed = ref(null)                                       // Allowed methods for current endpoint
+
+  // Watch Endpoint
+  // Set body params by parsing the description
+  watchEffect(function() {
+    if (method.value == 'GET') { return '' }
+    var docstr = endpoint.value?.description || ''
+    var pattern = /•\s*(\w+)\s*\((\w+)\)/g
+    var matches = Array.from(docstr.matchAll(pattern))
+    var newparams = {}
+    for (var [_, name, type] of matches) {
+      if (endpoint.value.path.includes(`\{${name}\}`)) { continue }
+      type = type.toLowerCase()
+      newparams[name] = type == 'list' ? [] : type == 'dict' ? {} :
+        type == 'int' ? 0 : type == 'bool' ? false : ''
+    }
+    params.value = JSON5.stringify(newparams, null, 2)
+  })
 
   // On Mounted
   // Set topnav and fetch toc
@@ -111,14 +140,6 @@
       setPath(toc.value.endpoints.root[0])
     }
   })
-
-  // Watch Path & Method
-  // Check we want to auto send the request
-  watch([path, method], function() {
-    if (!toc.value || !path.value || !method.value) { return }
-    response.value = null
-    if (method.value == 'GET') { sendRequest() }
-  }, {immediate:true})
 
   // Get Icon
   // Icon for the API Category
@@ -172,62 +193,94 @@
   // Send the http request
   const sendRequest = async function() {
     if (path.value === null) { return }
-    await axios[method.value.toLowerCase()](path.value)
+    var payload = (method.value != 'GET') ? JSON5.parse(params.value) || {} : undefined
+    await axios[method.value.toLowerCase()](path.value, payload)
       .then(resp => response.value = resp)
       .catch(err => response.value = err.response)
     await nextTick()
     linkResponseUrls()
   }
+
+  // Watch Path & Method
+  // Check we want to auto send the request
+  watch([path, method], function() {
+    if (!path.value || !method.value) { return }
+    response.value = null
+    if (method.value == 'GET') { sendRequest() }
+  }, {immediate:true})
 </script>
 
 <style>
   #apidoc {
+    /* Header and API Options */
     .description {
       font-size: 14px;
       margin: 20px 0px;
     }
-    .options {
+    .apioptions {
       float: right;
       display: flex;
       flex-direction: column;
       font-size: 10px;
       gap: 3px;
     }
+
+    /* Input Wrap */
     .inputwrap {
-      background-color: #00000008; 
-      border-radius: 4px;
-      margin: -10px 0px 20px -2px;
-      transition: background-color 0.3s;
-      &:has(input:focus) { background-color: #00000010; }
-      select {
-        background-color: #00000008;
-        background-color: var(--lightbg-bg2);
-        border-bottom-left-radius: 4px;
-        border-bottom-right-radius: 0px;
-        border-top-left-radius: 4px;
-        border-top-right-radius: 0px;
-        border-width: 0px;
-        display: inline-block;
-        font-family: var(--fontfamily-code);
-        font-size: 12px;
-        font-weight: bold;
-        height: 30px;
-        padding: 2px 3px;
-        width: 80px;
+      .urlwrap {
+        background-color: #00000008; 
+        border-radius: 4px;
+        margin-bottom: 10px;
+        transition: background-color 0.3s;
+        &:has(input:focus) { background-color: #00000010; }
+        select {
+          background-color: var(--lightbg-bg2);
+          border-radius: 4px 0px 0px 4px;
+          border-width: 0px;
+          box-shadow: none;
+          display: inline-block;
+          font-family: var(--fontfamily-code);
+          font-size: 12px;
+          font-weight: bold;
+          height: 30px;
+          width: 80px;
+          &:focus { box-shadow: none; }
+        }
+        input {
+          background-color: transparent;
+          border-radius: 0px;
+          border-width: 0px;
+          box-shadow: none;
+          color: var(--lightbg-blue1);
+          font-family: var(--fontfamily-code);
+          font-size: 12px;
+          line-height: 30px;
+          padding: 0px 0px 0px 10px;
+          width: calc(100% - 90px);
+        }
       }
-      input {
-        background-color: transparent;
-        border-width: 0px;
-        border-radius: 0px;
-        box-shadow: none;
-        color: var(--lightbg-blue1);
-        font-family: var(--fontfamily-code);
-        font-size: 12px;
-        padding: 0px 0px 0px 10px;
-        line-height: 30px;
-        width: calc(100% - 90px);
+      .paramwrap {
+        position: relative;
+        .codeeditor {
+          height: 100px;
+          font-size: 12px;
+        }
+        .send-request {
+          position: absolute;
+          bottom: 5px;
+          right: 15px;
+          z-index: 100;
+          .mdi {
+            opacity: 0.6;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+            &:hover { opacity:1; }
+          }
+        }
       }
     }
+
+    /* API Response */
     .headers {
       font-size: 12px;
       margin: 5px 0px 20px 0px;
@@ -236,12 +289,12 @@
       .value { color:var(--lightbg-blue1) }
     }
     pre, code {
-      font-size:11px;
-      line-height:1.3;
+      font-size: 11px;
+      line-height: 1.3;
       .link {
         cursor: pointer;
         transition: color 0.3s;
-        &:hover { color: var(--fgcolor); }
+        &:hover { color:var(--fgcolor); }
       }
     }
   }
