@@ -110,8 +110,8 @@ html,body {
   --linkhover: #000;
   --linkhoverunderline: 2px dotted var(--linkhover);
   ::selection {
-    background: #8886 !important;
-    color: #333 !important;
+    background: #d50d !important;
+    color: #eeee !important;
   }
 }
 .darkbg {
@@ -125,8 +125,8 @@ html,body {
   --linkhover: var(--darkbg-orange1);
   --linkhoverunderline: 2px dotted transparent;
   ::selection {
-    background: #8882 !important;
-    color: #bb8 !important;
+    background: #fff3 !important;
+    color: #eee !important;
   }
 }
 .lightbg,.darkbg {
