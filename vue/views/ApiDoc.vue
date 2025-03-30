@@ -40,7 +40,7 @@
                   @keydown.enter='$event.shiftKey ? sendRequest() : path=$event.target.value'/>
               </div>
               <div v-if='method != "GET"' class='paramwrap'>
-                <CodeEditor  v-model='params' :showLineNums='true' padding='10px' height='100px'
+                <CodeEditor  v-model='params' :showLineNums='true' padding='10px'
                   @keydown.shift.enter.prevent='sendRequest'/>
                 <Tooltip class='send-request' position='lefttop'>
                   <template #tooltip>Send Request<div class='subtext'>shift+enter</div></template>

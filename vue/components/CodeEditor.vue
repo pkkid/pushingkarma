@@ -1,8 +1,8 @@
 <template>
-  <div class='codeeditor' :theme='theme' :class='{readOnly, showLineNums, scrollable}'>
+  <div class='codeeditor' ref='codeeditor' :theme='theme' :class='{readOnly, showLineNums, scrollable}'>
     <div class='codewrap hljs'>
       <div ref='codearea' class='codearea'>
-        <div v-if='showLineNums' class='linenumbar'></div>
+        <div v-if='showLineNums' class='linenumsbar'></div>
         <div v-if='showLineNums' ref='lineNums' class='linenums'>
           <div v-for='num in numLines' :key='num'>{{num}}</div>
         </div>
@@ -33,7 +33,9 @@
     tabSpaces: {type:Number, default:2},            // Number of spaces for tab
     theme: {type:String, default:'gruvbox-light-hard'},  // Highlight.js theme to apply
     value: {type:String, default:'Hello World!'},   // Static value if not using v-model
-    // These styles are a bit more complicated so defining them here
+    // These styles are needed to calculate the size of things so we need to define them as
+    // attributes on the component. Everything else should be set as normal css styles on
+    // the CodeEditor element. 
     height: {type:String, default:'auto'},          // Height of the editor
     padding: {type:String, default:'20px'},         // Padding around the editor
   })
@@ -50,6 +52,7 @@
   const scrollbarWidth = ref('0px')                 // Width of textarea scrollbar
   const scrollLeft = ref('0px')                     // Amount scrolled right
   const scrollTop = ref('0px')                      // Amount scrolled down
+  const codeeditor = ref(null)
   const textarea = ref(null)                        // Reference to textarea
   const currentValue = ref(null)                    // Current value of the editor
   
@@ -170,7 +173,6 @@
     }
     .linenums {
       box-sizing: border-box;
-      /* height: 100%; */
       min-width: 36px;
       padding-bottom: v-bind(padding);
       padding-left: 8px;
@@ -179,15 +181,15 @@
       position: absolute;
       text-align: right;
       top: v-bind(scrollTop); left: 0;
-      & > div { opacity:0.2; }
+      & > div { opacity:0.3; }
     }
-    .linenumbar {
+    .linenumsbar {
       background-color: currentColor;
       content: ' ';
       display: block;
-      /* height: 100%; */
+      height: 100%;
       left: calc(v-bind(lineNumsWidth) - 1px);
-      opacity: 0.2;
+      opacity: 0.1;
       position: absolute;
       top: 0px;
       width: 1px;
