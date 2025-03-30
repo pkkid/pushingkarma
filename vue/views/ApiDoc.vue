@@ -185,7 +185,7 @@
   // Set Path
   // Update path and method from the endpoint path
   const setPath = function(endpt) {
-    path.value = new URL(endpt.path).pathname
+    path.value = decodeURIComponent(new URL(endpt.path).pathname)
     method.value = endpt.method
   }
 
