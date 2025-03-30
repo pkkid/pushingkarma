@@ -1,6 +1,5 @@
 # encoding: utf-8
 import logging
-from decimal import Decimal
 from django_searchquery import searchfields as sf
 from django_searchquery.search import Search
 from django.shortcuts import get_object_or_404
@@ -15,11 +14,6 @@ from .schemas import SortSchema
 log = logging.getLogger(__name__)
 router = Router()
 
-
-IGNORED = 'Ignored'
-RESET_DECIMAL = Decimal('-99999.99')
-RESET = ['_RESET', RESET_DECIMAL]
-REVERSE = True   # Set 'True' or 'False' for reversed month order.
 ACCOUNTSEARCHFIELDS = [
     sf.StrField('name', 'name', desc='Account name', generic=True),
     sf.StrField('fid', 'fid', desc='Financial institution id', generic=True),
@@ -45,7 +39,7 @@ TRANSACTIONSEARCHFIELDS = {
 @router.get('/accounts/{accountid}', response=AccountSchema, exclude_unset=True, url_name='account')
 def get_account(request, accountid:int):
     """ List details for the specified account.
-        • accountid: Account id
+        • accountid (int): Path param to specify account id.
     """
     item = get_object_or_404(Account, user=request.user, id=accountid)
     itemdict = model_to_dict(item)
@@ -56,8 +50,9 @@ def get_account(request, accountid:int):
 @router.patch('/accounts/{accountid}', response=AccountSchema, exclude_unset=True)
 def update_account(request, accountid:int, data:AccountSchema):
     """ Update the specified account.
-        • accountid: Account id
-        • data: Account data to update
+        • accountid (int): Path param to specify account id.
+        • name (str): Body param containing new account name.
+        • import_rules (json): Body param contianing new import rules.
     """
     log.info(f'update_account({accountid}) {data}')
     return get_account(request, accountid)
@@ -66,8 +61,8 @@ def update_account(request, accountid:int, data:AccountSchema):
 @router.get('/accounts', response=PageSchema(AccountSchema), exclude_unset=True)
 def list_accounts(request, search:str='', page:int=1):
     """ List accounts for the logged in user.
-        • search: Filter accounts by search string.
-        • page: Page number of results to return
+        • search (str): Query param to filter accounts.
+        • page (int): Query param to request page number.
     """
     items = Account.objects.filter(user=request.user).order_by('sortid')
     if search: items = Search(ACCOUNTSEARCHFIELDS).get_queryset(items, search)
@@ -83,7 +78,7 @@ def list_accounts(request, search:str='', page:int=1):
 @router.patch('/sort_accounts', response=PageSchema(AccountSchema), exclude_unset=True)
 def sort_accounts(request, data:SortSchema):
     """ Sort accounts for the logged in user.
-        • sort: List of account ids in the desired order
+        • sort (array[ids]): Body param containing account ids in sorted order.
     """
     items = Account.objects.filter(user=request.user, id__in=data.sortlist)
     if len(items) != len(data.sortlist):
@@ -97,7 +92,7 @@ def sort_accounts(request, data:SortSchema):
 @router.get('/categories/{categoryid}', response=CategorySchema, exclude_unset=True, url_name='category')
 def get_category(request, categoryid:int):
     """ List details for the specified category.
-        • categoryid: Category id
+        • categoryid (int): Path param to specify category id.
     """
     item = get_object_or_404(Category, user=request.user, id=categoryid)
     itemdict = model_to_dict(item)
@@ -108,8 +103,8 @@ def get_category(request, categoryid:int):
 @router.get('/categories', response=PageSchema(CategorySchema), exclude_unset=True)
 def list_categories(request, search:str='', page:int=1):
     """ List categories for the logged in user.
-        • search: Filter categories by search string.
-        • page: Page number of results to return
+        • search (str): Query param to filter categories.
+        • page (int): Query param to request page number.
     """
     items = Category.objects.filter(user=request.user).order_by('sortid')
     if search: items = Search(CATEGORYSEARCHFIELDS).get_queryset(items, search)
@@ -125,7 +120,7 @@ def list_categories(request, search:str='', page:int=1):
 @router.patch('/sort_categories', response=PageSchema(CategorySchema), exclude_unset=True)
 def sort_categories(request, data:SortSchema):
     """ Sort categories for the logged in user.
-        • sort: List of category ids in the desired order
+        • sort (array[ids]): Body param containing category ids in sorted order.
     """
     items = Category.objects.filter(user=request.user, id__in=data.sortlist)
     if len(items) != len(data.sortlist):
@@ -139,7 +134,7 @@ def sort_categories(request, data:SortSchema):
 @router.get('/transactions/{transactionid}', response=TransactionSchema, exclude_unset=True, url_name='transaction')
 def get_transaction(request, transactionid:int):
     """ List details for the specified transaction.
-        • transactionid: Transaction id
+        • transactionid: Path param to specify transaction id.
     """
     item = get_object_or_404(Transaction, user=request.user, id=transactionid)
     itemdict = model_to_dict(item)
@@ -160,8 +155,8 @@ def get_transaction(request, transactionid:int):
 @router.get('/transactions', response=PageSchema(TransactionSchema), exclude_unset=True)
 def list_transactions(request, search:str='', page:int=1):
     """ List transactions for the logged in user.
-        • search: Filter transactions by search string.
-        • page: Page number of results to return
+        • search (str): Query param to filter transactions.
+        • page (int): Query param to request page number.
     """
     items = Transaction.objects.filter(user=request.user).order_by('-date', 'payee')
     if search: items = Search(TRANSACTIONSEARCHFIELDS).get_queryset(items, search)
