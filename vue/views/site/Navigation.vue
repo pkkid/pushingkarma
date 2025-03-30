@@ -9,7 +9,7 @@
       <div class='budget' v-if='user?.id'><router-link to='/budget'>Budget</router-link></div>
       <div class='stocks' v-if='user?.id'><router-link to='/stocks'>Stocks</router-link></div>
       <div class='account' v-if='user?.id'><a href='#' @click.prevent @click='showAccount=true'>{{user.first_name}}</a></div>
-      <div class='apidoc' v-if='user?.id'><a :href='apidocurl'>API</a></div>
+      <div class='apidoc' v-if='user?.id'><a href='/apidoc'>API</a></div>
     </div>
   </div>
 </template>
@@ -17,7 +17,6 @@
 <script setup>
   import {inject, ref} from 'vue'
   import {Account, Logo} from '@/views/site'
-  import {apidocurl} from '@/utils/api'
 
   const {user} = inject('user')
   const showAccount = ref(false)

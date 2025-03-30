@@ -20,16 +20,7 @@
       <template #content>
         <LayoutPaper>
           <template #content v-if='toc'>
-            <!-- Request Options: Count Queries and Log Queries -->
-            <div class='apioptions'>
-              <Tooltip width='250px' text='An additonal Queries header is added to api requests
-                detailing the count and duration of sql queries.'>
-                <ToggleSwitch :value='countQueries' label='Count Queries' @update='setCountQueries'/>
-              </Tooltip>
-              <Tooltip width='250px' text='Enables server side logging of all sql queries and their duration.'>
-                <ToggleSwitch :value='logQueries' label='Log Queries' @update='setLogQueries'/>
-              </Tooltip>
-            </div>
+            <ApiSettings/>
             <!-- Request Method, URL and Description -->
             <h1 v-if='endpoint'>{{utils.title(endpoint.category)}} {{endpoint.summary}}</h1>
             <h1 v-else>Unknown Endpoint</h1>
@@ -76,23 +67,31 @@
 
 <script setup>
   import {computed, inject, nextTick, onBeforeMount, onMounted, ref, watch, watchEffect} from 'vue'
-  import {CodeEditor, LayoutPaper, LayoutSidePanel} from '@/components'
-  import {ToggleSwitch, Tooltip} from '@/components'
+  import {CodeEditor, LayoutPaper, LayoutSidePanel, Tooltip} from '@/components'
+  import {ApiSettings} from '@/views/api'
   import {useUrlParams} from '@/composables'
   import {utils} from '@/utils'
   import axios from 'axios'
   import JSON5 from 'json5'
   
   var APIROOT = '/api/'
-  var showheaders = ['allow', 'content-type', 'content-length', 'response-time', 'queries']
-  const {countQueries, setCountQueries} = inject('countQueries')  // Count queries on the server
-  const {logQueries, setLogQueries} = inject('logQueries')        // Log queries on the server
+  var showheaders = ['content-type', 'content-length', 'response-time', 'queries']
   const {method, path} = useUrlParams({method:{}, path:{}})       // Method & path url params
   var toc = ref(null)                                             // Table of contents (api root)
   var endpoint = ref(null)                                        // Current endpoint details
   var params = ref(null)                                          // Current parameters
   var response = ref(null)                                        // Current get response
   const allowed = ref(null)                                       // Allowed methods for current endpoint
+
+  // On Mounted
+  // Set topnav and fetch toc
+  onMounted(async function() {
+    utils.setNavPosition('top')
+    toc.value = (await axios.get(APIROOT)).data
+    if (!path.value || !method.value) {
+      setPath(toc.value.endpoints.root[0])
+    }
+  })
 
   // Watch Endpoint
   // Set body params by parsing the description
@@ -109,16 +108,6 @@
         type == 'int' ? 0 : type == 'bool' ? false : ''
     }
     params.value = JSON5.stringify(newparams, null, 2)
-  })
-
-  // On Mounted
-  // Set topnav and fetch toc
-  onMounted(async function() {
-    utils.setNavPosition('top')
-    toc.value = (await axios.get(APIROOT)).data
-    if (!path.value || !method.value) {
-      setPath(toc.value.endpoints.root[0])
-    }
   })
 
   // Watch Path
@@ -216,13 +205,6 @@
     .description {
       font-size: 14px;
       margin: 20px 0px;
-    }
-    .apioptions {
-      float: right;
-      display: flex;
-      flex-direction: column;
-      font-size: 10px;
-      gap: 3px;
     }
 
     /* Input Wrap */
