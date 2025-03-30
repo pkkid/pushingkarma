@@ -148,6 +148,11 @@
     font-size: 13px;
     line-height: 1.2;
     position: relative;
+    .codewrap, .codearea, .linenums, textarea, pre, code {
+      font-family: inherit !important;
+      font-size: inherit !important;
+      line-height: inherit !important;
+    }
     .codewrap.hljs {
       border-radius: 6px;
       padding: 0px;
@@ -159,11 +164,6 @@
       position: relative;
       text-align: left;
       width: 100%;
-    }
-    .linenums, textarea, code {
-      font-family: inherit !important;
-      font-size: inherit !important;
-      line-height: inherit !important;
     }
     .linenums {
       box-sizing: border-box;
