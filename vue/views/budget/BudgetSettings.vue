@@ -21,8 +21,8 @@
                       <ul>
                         <li><strong>file_pattern:</strong> Regex pattern to match the file name.</li>
                         <li><strong>fid:</strong> Financial Institution ID (when importing qfx files).</li>
-                        <li><strong>columns:</strong> {dbcol: trxcol} pairs to map transactions in the
-                          database. Database columns are: {trxid, date, payee, amount}.</li>
+                        <li><strong>columns:</strong> Dict of {dbcol: trxcol} pairs to map transactions in
+                          the database. Database columns are: {trxid, date, payee, amount}.</li>
                       </ul>
                     </template>
                     <i class='mdi mdi-information-outline'/>
