@@ -10,7 +10,7 @@
               {{utils.title(category)}}
             </div>
             <template v-for='endpt in endpts' :key='`${endpt.method} ${endpt.path}`'>
-              <div class='subitem link' :class='{selected:endpoint===endpt}' @click='setPath(endpt)'>
+              <div class='subitem link' :class='{selected:endpoint==endpt}' @click='setPath(endpt)'>
                 <div class='name'>{{endpt.summary}}</div>
               </div>
             </template>
@@ -31,7 +31,7 @@
               </Tooltip>
             </div>
             <!-- Request Method, URL and Description -->
-            <h1>{{endpointName}}</h1>
+            <h1>{{utils.title(endpoint.category)}} {{endpoint.summary}}</h1>
             <div class='inputwrap'>
               <select v-model='method'>
                 <option v-for='meth in allowed' :key='meth' :value='meth'>{{meth}}</option>
@@ -85,13 +85,6 @@
   var response = ref(null)                        // Current get response
   const allowed = ref(null)                       // Allowed methods for current endpoint
 
-  // Endpoint Name
-  // Return the endpoint name from the path
-  const endpointName = computed(function() {
-    if (!endpoint.value) { return 'Unknown Endpoint' }
-    return `${utils.title(endpoint.value.category)} ${endpoint.value.summary}`
-  })
-
   // On Mounted
   // Set topnav and fetch toc
   onMounted(async function() {
@@ -106,20 +99,11 @@
   // Sets the current endpoint and alloed methods
   watchEffect(function() {
     if (!toc.value) { return null }
-    var allow = []
-    for (const [category, endpts] of Object.entries(toc.value.endpoints)) {
-      for (const endpt of endpts) {
-        if (pathMatches(path.value, endpt.path)) {
-          allow.push(endpt.method)
-          if (endpt.method == method.value) {
-            endpt.category = category
-            endpoint.value = endpt
-            method.value = endpt.method
-          }
-        }
-      }
-    }
-    allowed.value = allow.length ? allow : ['GET']
+    const endpoints = Object.values(toc.value.endpoints).flat()
+    const matches = endpoints.filter(endpt => pathMatches(path.value, endpt.path))
+    allowed.value = matches.length ? matches.map(endpt => endpt.method) : ['GET']
+    endpoint.value = matches.find(endpt => endpt.method === method.value) || null
+    if (endpoint.value) { method.value = endpoint.value.method }
   })
 
   // Watch Path

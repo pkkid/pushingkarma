@@ -30,6 +30,7 @@ def api_root(request):
                 'summary': details.get('summary', ''),
                 'description': details.get('description', '').strip(),
                 'path': f'{baseurl}{path}',
+                'category': category,
             })
     response['endpoints'] = endpoints
     return response
