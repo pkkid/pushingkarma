@@ -11,7 +11,7 @@
                 {{utils.title(category)}}
               </div>
               <template v-for='endpt in endpts' :key='`${endpt.method} ${endpt.path}`'>
-                <div class='subitem link' :class='{selected:endpoint===endpt}' @click='setView(endpt)'>
+                <div class='subitem link' :class='{selected:endpoint===endpt}' @click='setPath(endpt)'>
                   <div class='name'>{{endpt.summary}}</div>
                 </div>
               </template>
@@ -38,7 +38,7 @@
               <select v-model='method'>
                 <option v-for='meth in allowed' :key='meth' :value='meth'>{{meth}}</option>
               </select>
-              <input class='urlinput' type='text' :value='view' spellcheck='false' @keydown.enter='view=$event.target.value'/>
+              <input class='urlinput' type='text' :value='path' spellcheck='false' @keydown.enter='path=$event.target.value'/>
             </div>
             <div class='description' v-html='endpoint?.description.replace(/\n/g, "<br/>")'></div>
             <!-- Response Headers and Content -->
@@ -84,14 +84,11 @@
   }
   
   var showheaders = ['allow', 'content-type', 'content-length', 'response-time', 'queries']
-  // const countQueries = useStorage('axios.countqueries', false)  
-  // const logQueries = useStorage('axios.logqueries', false)      // Log queries on the server
-  
   const {countQueries, setCountQueries} = inject('countQueries')  // Count queries on the server
   const {logQueries, setLogQueries} = inject('logQueries')        // Log queries on the server
-  const {method, view} = useUrlParams({
+  const {method, path} = useUrlParams({
     method: {type:String},                        // Current method to display
-    view: {type:String}                           // Current view to display
+    path: {type:String}                           // Current path to display
   })
   var toc = ref(null)                             // Table of contents (api root)
   var endpoint = ref(null)                        // Current endpoint details
@@ -99,20 +96,20 @@
   const allowed = ref(null)                       // Allowed methods for current endpoint
 
   // Endpoint Name
-  // Return the endpoint name from the view
+  // Return the endpoint name from the path
   const endpointName = computed(function() {
     if (!endpoint.value) { return 'Unknown Endpoint' }
     return `${utils.title(endpoint.value.category)} ${endpoint.value.summary}`
   })
 
-  // Endpoint View
-  // Return the endpoint details from the view
+  // Watch Path
+  // Return the endpoint details from the path
   watchEffect(function() {
     if (!toc.value) { return null }
     var allow = []
     for (const [category, endpts] of Object.entries(toc.value.endpoints)) {
       for (const endpt of endpts) {
-        if (pathMatches(view.value, endpt.path)) {
+        if (pathMatches(path.value, endpt.path)) {
           allow.push(endpt.method)
           if (endpt.method == method.value) {
             endpt.category = category
@@ -133,20 +130,20 @@
     toc.value = (await axios.get('')).data
   })
 
-  // Watch View
+  // Watch Path
   // Clean messy view strings
   watchEffect(function() {
-    if (view.value == null) { view.value = '/api/' }
-    else if (view.value.length <= 5) { view.value = '/api/' }
-    else if (!view.value.startsWith('/api/')) {
-      view.value = `/api/${view.value}`.replace(/\/\//g, '/')
+    if (path.value == null) { path.value = '/api/' }
+    else if (path.value.length <= 5) { path.value = '/api/' }
+    else if (!path.value.startsWith('/api/')) {
+      path.value = `/api/${path.value}`.replace(/\/\//g, '/')
     }
   })
 
-  // Get View
-  // Returns view name from the endpoint path
-  const setView = function(endpoint) {
-    view.value = `/api/${endpoint.path.split('/api/')[1]}`
+  // Set Path
+  // Update path and method from the endpoint path
+  const setPath = function(endpoint) {
+    path.value = `/api/${endpoint.path.split('/api/')[1]}`
     method.value = endpoint.method
   }
 
@@ -159,8 +156,8 @@
   // Send Request
   // Send the http request!
   const sendRequest = async function() {
-    if (view.value === null) { return }
-    var endpoint = view.value.replace(/\/api\//g, '')
+    if (path.value === null) { return }
+    var endpoint = path.value.replace(/\/api\//g, '')
     await axios[method.value.toLowerCase()](endpoint)
       .then(resp => response.value = resp)
       .catch(err => response.value = err.response)
@@ -168,11 +165,11 @@
     linkAPIURLs()
   }
 
-  // Watch View
+  // Watch Path
   // Auto send request method=GET
-  watch(view, function() {
+  watch(path, function() {
     response.value = null
-    if (view.value === null) { return }
+    if (path.value === null) { return }
     if (method.value == 'GET') { sendRequest() }
   }, {immediate:true})
 
@@ -193,9 +190,9 @@
       newspan.style.cursor = 'pointer'
       newspan.className = `${span.className} link`
       newspan.addEventListener('click', () => {
-        var newview = newspan.textContent.slice(1, -1)
-        newview = '/api/' + newview.replace(axios.defaults.baseURL, '')
-        view.value = newview
+        var newpath = newspan.textContent.slice(1, -1)
+        newpath = '/api/' + newpath.replace(axios.defaults.baseURL, '')
+        path.value = newpath
       })
       span.replaceWith(newspan)
     })
@@ -203,10 +200,10 @@
 
   // Paths Match
   // Check the two paths match
-  const pathMatches = function(tmpl, path) {
+  const pathMatches = function(tmpl, pstr) {
     if (tmpl.includes('/api/')) { tmpl = tmpl.split('/api/')[1] }
-    if (path.includes('/api/')) { path = path.split('/api/')[1] }
-    var pattern = path.replace(/{\w+}/g, '[^/]+').replace(/\//g, '\\/')
+    if (pstr.includes('/api/')) { pstr = pstr.split('/api/')[1] }
+    var pattern = pstr.replace(/{\w+}/g, '[^/]+').replace(/\//g, '\\/')
     return new RegExp(`^${pattern}$`).test(tmpl)
   }
 </script>
