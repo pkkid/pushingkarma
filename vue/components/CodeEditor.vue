@@ -72,7 +72,6 @@
   // On Mounted
   // Watch textarea and lineNum resizing
   onMounted(function() {
-    console.log('onMounted props.modelValue', props.modelValue, currentValue.value)
     textareaObserver = new ResizeObserver(updateCssVarables)
     textareaObserver.observe(textarea.value)
     if (props.showLineNums) {
