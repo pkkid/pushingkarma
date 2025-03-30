@@ -33,6 +33,7 @@
   // Define Exposed
   defineExpose({
     itemid: props.itemid,
+    open: function() { expanded.value = true },
     close: function() { expanded.value = false },
   })
 </script>

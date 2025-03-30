@@ -8,30 +8,33 @@
 </template>
 
 <script setup>
-  import {ref, watchEffect} from 'vue'
+  import {ref, watch} from 'vue'
 
   const props = defineProps({
-    modelValue: {type:Boolean, default:undefined},  // Two-way binding
-    value: {type:Boolean, default:undefined},       // One-way binding
-    label: {type:String, default:''},               // Toggle label
-    width: {type:String, default:'28px'},           // Width of the toggle
-    height: {type:String, default:'16px'},          // Height of the toggle
+    modelValue: {type:Boolean, default:undefined},          // Two-way binding
+    value: {type:Boolean, default:undefined},               // One-way binding
+    label: {type:String, default:''},                       // Toggle label
+    width: {type:String, default:'28px'},                   // Width of the toggle
+    height: {type:String, default:'16px'},                  // Height of the toggle
   })
-
   const emit = defineEmits(['update:modelValue', 'update']) // Emit update event
   const currentValue = ref(null)                            // Current value of the toggle
-  watchEffect(function() { currentValue.value = props.modelValue || props.value })
+
+  // Watch Model Value
+  // Update currentValue when modelValue changes
+  watch(() => props.modelValue, (newval) => {
+    if (newval !== currentValue.value) {
+      currentValue.value = newval ?? props.value
+    }
+  }, {immediate: true})
 
   // Toggle
   // Emit the new value when the toggle is clicked
-  const onClick = function() { 
-    const newval = !currentValue.value
-    if (props.modelValue) {
-      emit('update:modelValue', newval)
-    } else {
-      currentValue.value = newval
-      emit('update', newval)
-    }
+  const onClick = function() {
+    var newval = !currentValue.value
+    currentValue.value = newval
+    emit('update:modelValue', newval)
+    emit('update', newval)
   }
 </script>
 

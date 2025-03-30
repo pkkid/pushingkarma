@@ -20,7 +20,7 @@
   // Even simpler implementation of Simple-Code-Editor
   // https://github.com/justcaliturner/simple-code-editor
   // https://github.com/highlightjs/highlight.js
-  import {computed, nextTick, onMounted, onUnmounted, ref, watch, watchEffect, onUpdated} from 'vue'
+  import {computed, nextTick, onMounted, onUnmounted, ref, watch, watchEffect} from 'vue'
   import hljs from 'highlight.js'
 
   const emit = defineEmits(['update:modelValue', 'update'])
@@ -54,12 +54,24 @@
   const numLines = computed(function() { return currentValue.value?.split('\n').length || 0 })
   const scrollable = computed(function() { return props.height == 'auto' ? false : true })
 
-  watchEffect(function() { currentValue.value = props.modelValue || props.value })
-  watchEffect(() => props.theme, function() { updateCssVarables() })
+  // Watch Model Value
+  // Update currentValue when modelValue changes
+  watch(() => props.modelValue, (newval) => {
+    if (newval !== currentValue.value) {
+      currentValue.value = newval ?? props.value
+    }
+  }, {immediate: true})
+
+  // Watch Theme
+  // Update css variables when theme changes
+  watch(() => props.theme, function() {
+    updateCssVarables()
+  })
 
   // On Mounted
   // Watch textarea and lineNum resizing
   onMounted(function() {
+    console.log('onMounted props.modelValue', props.modelValue, currentValue.value)
     textareaObserver = new ResizeObserver(updateCssVarables)
     textareaObserver.observe(textarea.value)
     if (props.showLineNums) {
@@ -116,12 +128,9 @@
   // Update Content
   // Emits the update or simply updates currentValue.value
   const updateContent = function(newval) {
-    if (props.modelValue) {
-      emit('update:modelValue', newval)
-    } else {
-      currentValue.value = newval
-      emit('update', newval)
-    }
+    currentValue.value = newval
+    emit('update:modelValue', newval)
+    emit('update', newval)
   }
 </script>
 
