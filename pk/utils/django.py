@@ -173,9 +173,9 @@ def vue_devserver_running(request):
     """ Return url if it looks like the Vue devserver is running. """
     try:
         if not settings.DEBUG: return None
-        servername = request['environ'].get('SERVER_NAME', 'localhost')
+        servername = request.environ.get('SERVER_NAME', 'localhost')
         serverurl = f'http://{servername}:5173'
         requests.head(serverurl)
         return serverurl
-    except Exception:
-        return None
+    except Exception as err:
+        log.error(err)
