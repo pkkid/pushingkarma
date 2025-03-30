@@ -52,7 +52,7 @@ def update_account(request, accountid:int, data:AccountSchema):
     """ Update the specified account.
         • accountid (int): Path param to specify account id.
         • name (str): Body param containing new account name.
-        • import_rules (json): Body param contianing new import rules.
+        • import_rules (dict): Body param contianing new import rules.
     """
     log.info(f'update_account({accountid}) {data}')
     return get_account(request, accountid)
@@ -78,7 +78,7 @@ def list_accounts(request, search:str='', page:int=1):
 @router.patch('/sort_accounts', response=PageSchema(AccountSchema), exclude_unset=True)
 def sort_accounts(request, data:SortSchema):
     """ Sort accounts for the logged in user.
-        • sort (array[ids]): Body param containing account ids in sorted order.
+        • sort (list): Body param containing account ids in sorted order.
     """
     items = Account.objects.filter(user=request.user, id__in=data.sortlist)
     if len(items) != len(data.sortlist):
@@ -120,7 +120,7 @@ def list_categories(request, search:str='', page:int=1):
 @router.patch('/sort_categories', response=PageSchema(CategorySchema), exclude_unset=True)
 def sort_categories(request, data:SortSchema):
     """ Sort categories for the logged in user.
-        • sort (array[ids]): Body param containing category ids in sorted order.
+        • sort (list): Body param containing category ids in sorted order.
     """
     items = Category.objects.filter(user=request.user, id__in=data.sortlist)
     if len(items) != len(data.sortlist):
