@@ -1,5 +1,5 @@
 <template>
-  <div class='toggle-switch' :class='{active}' @click='toggle'>
+  <div class='toggle-switch' :class='{active:currentValue}' @click='onClick'>
     <div class='toggle-track'>
       <div class='toggle-thumb'></div>
     </div>
@@ -8,7 +8,7 @@
 </template>
 
 <script setup>
-  import {computed} from 'vue'
+  import {ref, watchEffect} from 'vue'
 
   const props = defineProps({
     modelValue: {type:Boolean, default:undefined},  // Two-way binding
@@ -18,12 +18,20 @@
     height: {type:String, default:'16px'},          // Height of the toggle
   })
 
-  const emit = defineEmits(['update'])
-  const active = computed(function() { return props.modelValue ?? props.value })
-  const toggle = function() { 
-    const newval = !active.value
-    if (props.modelValue == undefined) { emit('update', newval) }
-    else { emit('update:modelValue', newval) }
+  const emit = defineEmits(['update:modelValue', 'update']) // Emit update event
+  const currentValue = ref(null)                            // Current value of the toggle
+  watchEffect(function() { currentValue.value = props.modelValue || props.value })
+
+  // Toggle
+  // Emit the new value when the toggle is clicked
+  const onClick = function() { 
+    const newval = !currentValue.value
+    if (props.modelValue) {
+      emit('update:modelValue', newval)
+    } else {
+      currentValue.value = newval
+      emit('update', newval)
+    }
   }
 </script>
 

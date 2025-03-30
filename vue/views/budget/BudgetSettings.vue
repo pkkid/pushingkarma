@@ -15,8 +15,20 @@
               </template>
               <template #content>
                 <div style='padding:5px 0px 15px 0px'>
+                  <Tooltip width='400px' position='leftbottom' style='float:right; margin-right:5px;'>
+                    <template #tooltip>
+                      Rules for importing transactions files.
+                      <ul>
+                        <li><strong>file_pattern:</strong> Regex pattern to match the file name.</li>
+                        <li><strong>fid:</strong> Financial Institution ID (when importing qfx files).</li>
+                        <li><strong>columns:</strong> {dbcol: trxcol} pairs to map transactions in the
+                          database. Database columns are: {trxid, date, payee, amount}.</li>
+                      </ul>
+                    </template>
+                    <i class='mdi mdi-information-outline'/>
+                  </Tooltip>
                   <h4>Import Configuration</h4>
-                  <CodeEditor :value='account.import_config' language='json' padding='8px'
+                  <CodeEditor :value='account.import_config' :showLineNums='true' language='json' padding='8px'
                     style='height:150px; width:100%; font-size:12px;'/>
                   <div class='button-row' style='margin-top:5px;'>
                     <button>Save Account</button>

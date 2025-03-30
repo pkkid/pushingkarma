@@ -47,21 +47,21 @@ article {
     font-weight: bold;
   }
   ul, ol {
-    font-size: 15px; 
-    padding-left: 30px;
-    margin-block-end: 12px;
-    margin-block-start: 12px;
+    font-size: 0.9em;
+    padding-left: 1.6em;
+    margin-block-end: 0.5em;
+    margin-block-start: 0.3em;
     margin-inline-end: 0px;
     margin-inline-start: 0px;
 
     li p, ul p { margin: 0px; }
     ul, ol {
       margin-top: 0px !important;
-      margin-bottom: 3px !important;
-      padding-left: 20px !important;
+      margin-bottom: 0.2em !important;
+      padding-left: 0.2em !important;
     }
   }
-  ul li { list-style-type: disc; }
+  ul li { list-style-type: disc; text-indent: -0.2em; }
   ol li { list-style-type: decimal; }
   p > code {
     color: var(--lightbg-fg3);

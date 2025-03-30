@@ -7,7 +7,7 @@
           <div v-for='num in numLines' :key='num'>{{num}}</div>
         </div>
         <textarea ref='textarea' spellcheck='false' :readOnly='readOnly' :autofocus='autoFocus'
-          :value='content' @input='updateContent($event.target.value)' @scroll='onScroll'
+          :value='currentValue' @input='updateContent($event.target.value)' @scroll='onScroll'
           @keydown.tab.prevent.stop='onTab'></textarea>
         <pre><code ref='code' :class='codeClass'></code></pre>
       </div>
@@ -23,7 +23,7 @@
   import {computed, nextTick, onMounted, onUnmounted, ref, watch, watchEffect, onUpdated} from 'vue'
   import hljs from 'highlight.js'
 
-  const emit = defineEmits(['update:modelValue'])
+  const emit = defineEmits(['update:modelValue', 'update'])
   const props = defineProps({
     autoFocus: {type:Boolean, default:false},       // Autofocus on the editor
     language: {type:String, default:'javascript'},  // Language of the editor
@@ -48,13 +48,13 @@
   const scrollLeft = ref('0px')                     // Amount scrolled right
   const scrollTop = ref('0px')                      // Amount scrolled down
   const textarea = ref(null)                        // Reference to textarea
-  const content = ref(null)
+  const currentValue = ref(null)                    // Current value of the editor
   
   const codeClass = computed(function() { return `language-${props.language}` })
-  const numLines = computed(function() { return content.value?.split('\n').length || 0 })
+  const numLines = computed(function() { return currentValue.value?.split('\n').length || 0 })
   const scrollable = computed(function() { return props.height == 'auto' ? false : true })
 
-  watchEffect(function() { content.value = props.modelValue || props.value })
+  watchEffect(function() { currentValue.value = props.modelValue || props.value })
   watchEffect(() => props.theme, function() { updateCssVarables() })
 
   // On Mounted
@@ -79,7 +79,7 @@
   // Calls highlight.js
   watchEffect(function() {
     if (code.value == null) { return }
-    code.value.textContent = content.value
+    code.value.textContent = currentValue.value
     delete code.value.dataset.highlighted
     hljs.highlightElement(code.value)
     code.value.classList.remove('hljs')
@@ -114,10 +114,14 @@
   }
 
   // Update Content
-  // Emits the update or simply updates content.value
+  // Emits the update or simply updates currentValue.value
   const updateContent = function(newval) {
-    if (props.modelValue) { emit('update:modelValue', newval) }
-    else { content.value = newval }
+    if (props.modelValue) {
+      emit('update:modelValue', newval)
+    } else {
+      currentValue.value = newval
+      emit('update', newval)
+    }
   }
 </script>
 
