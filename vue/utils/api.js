@@ -26,7 +26,7 @@ export const apidocurl = ref('/apidoc')
 async function get(url, config) {
   var params = config.params || {}
   params = Object.keys(params).map(function(key) { return `${key}=${params[key] || ''}` }).join('%26')
-  apidocurl.value = params ? `/apidoc?view=/api${url}?${params}` : `/apidoc?view=/api${url}`
+  apidocurl.value = params ? `/apidoc?method=GET&path=${url}?${params}` : `/apidoc?method=GET&path=${url}`
   return axios.get(url, config)
 }
 
