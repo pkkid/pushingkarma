@@ -33,8 +33,7 @@
 
 <script setup>
   import {inject, onBeforeMount, ref, watchEffect} from 'vue'
-  import {LayoutPaper, LayoutSidePanel} from '@/components/Layout'
-  import {Markdown} from '@/components'
+  import {LayoutPaper, LayoutSidePanel, Markdown} from '@/components'
   import {useUrlParams} from '@/composables'
   import {api, utils} from '@/utils'
   import NotesSearch from '@/views/notes/NotesSearch.vue'

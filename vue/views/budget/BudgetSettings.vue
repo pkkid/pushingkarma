@@ -16,13 +16,7 @@
       <div v-if='categories' class='categories'>
         <h3>Categories</h3>
         <Sortable group='categories' @sort='onSortCategories' style='min-height:100px; max-height:300px; overflow-y:auto;'>
-          <SortableItem v-for='category in categories.items' :key='category.id' :itemid='category.id'>
-            <input type='text' :value='category.name' spellcheck='false' autocomplete='off' @click.stop/>
-            <Tooltip position='left' style='float:right;'>
-              <template #tooltip>Delete Category<div class='subtext'>shift + double-click</div></template>
-              <i class='mdi mdi-trash-can-outline delete-category' @dblclick='deleteCategory($event, category.id)'/>
-            </Tooltip>
-          </SortableItem>
+          <BudgetSettingsCategory v-for='category in categories.items' :key='category.id' :category='category'/>
         </Sortable>
       </div>
     </article>
@@ -31,10 +25,10 @@
 
 <script setup>
   import {ref, watchEffect} from 'vue'
-  import {Modal, Tooltip} from '@/components'
-  import {Sortable, SortableItem} from '@/components/Sortable'
+  import {Modal, Sortable} from '@/components'
   import {api} from '@/utils'
   import BudgetSettingsAccount from './BudgetSettingsAccount.vue'
+  import BudgetSettingsCategory from './BudgetSettingsCategory.vue'
   
   const emit = defineEmits(['close'])         // Emit close event
   const accounts = ref(null)                  // Accounts response from server
@@ -88,14 +82,6 @@
   const onSortCategories = async function(event) {
     var {data} = await api.Budget.sortCategories({sortlist:event.sortlist})
     categories.value = data
-  }
-
-  // Delete Category
-  // Delete the specified account
-  const deleteCategory = async function(event, accountid) {
-    if (event.shiftKey) {
-      console.log('Delete cateogry', accountid)
-    }
   }
 </script>
 

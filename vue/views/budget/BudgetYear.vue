@@ -9,8 +9,7 @@
 
 <script setup>
   import {ref, watch} from 'vue'
-  import {LayoutPaper} from '@/components/Layout'
-  import CodeEditor from '@/components/CodeEditor.vue'
+  import {CodeEditor, LayoutPaper} from '@/components'
 
   const code = ref(`// Main Vue Setup
 import { createApp } from 'vue'

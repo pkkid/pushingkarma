@@ -45,8 +45,8 @@
 
 <script setup>
   import {onBeforeMount, ref, watch, watchEffect} from 'vue'
-  import {DataTable, DataTableColumn as Column} from '@/components/DataTable'
-  import {LayoutPaper} from '@/components/Layout'
+  import {LayoutPaper} from '@/components'
+  import {DataTable, DataTableColumn as Column} from '@/components'
   import {api, utils} from '@/utils'
 
   var cancelctrl = null                 // Cancel controller

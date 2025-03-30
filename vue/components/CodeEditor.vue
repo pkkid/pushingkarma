@@ -8,7 +8,7 @@
         </div>
         <textarea ref='textarea' spellcheck='false' :readOnly='readOnly' :autofocus='autoFocus'
           :value='currentValue' @input='updateContent($event.target.value)' @scroll='onScroll'
-          @keydown.tab.prevent.stop='onTab'></textarea>
+          @keydown.tab.prevent.stop='onTab' @keydown.ctrl.s.prevent='emit("save")'></textarea>
         <pre><code ref='code' :class='codeClass'></code></pre>
       </div>
     </div>
@@ -23,7 +23,7 @@
   import {computed, nextTick, onMounted, onUnmounted, ref, watch, watchEffect} from 'vue'
   import hljs from 'highlight.js'
 
-  const emit = defineEmits(['update:modelValue', 'update'])
+  
   const props = defineProps({
     autoFocus: {type:Boolean, default:false},       // Autofocus on the editor
     language: {type:String, default:'javascript'},  // Language of the editor
@@ -38,6 +38,7 @@
 
   var lineNumsObserver = null                       // ResizeObserver for lineNums
   var textareaObserver = null                       // ResizeObserver for textarea
+  const emit = defineEmits(['save', 'update:modelValue', 'update'])
   const backgroundColor = ref('transparent')        // Background color of current theme
   const code = ref(null)                            // Reference to code element
   const codearea = ref(null)                        // Reference to codearea div

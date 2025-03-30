@@ -1,8 +1,9 @@
 <template>
-  <SortableItem :itemid='account.id'>
+  <SortableItem class='budgetsettingsaccount' :itemid='account.id'>
     <Expandable ref='expandy' maxheight='250px' :itemid='account.id' @opened='emit("opened", $event)'>
       <template #header>
-        <input type='text' :value='account.name' spellcheck='false' autocomplete='off' @click.stop/>
+        <input type='text' v-model='accountName' spellcheck='false' autocomplete='off'
+          @click.stop @keydown.ctrl.s.prevent='saveAccount' @keydown.enter.prevent='saveAccount'/>
       </template>
       <template #content>
         <div style='padding:5px 0px 15px 0px'>
@@ -23,11 +24,10 @@
           <Tooltip position='leftbottom' :text='jsonText' style='float:right; margin-right:5px;'>
             <i class='mdi' :class='jsonIcon'/>
           </Tooltip>
-          <h4>Import Configuration</h4>
-          <CodeEditor v-model='importRules' :showLineNums='true' language='json' padding='8px'
-            style='height:150px; width:100%; font-size:12px;'/>
+          <label>Import Configuration</label>
+          <CodeEditor v-model='accountRules' :showLineNums='true' language='json' padding='8px' @save='saveAccount'/>
           <div class='button-row' style='margin-top:5px;'>
-            <button>Save Account</button>
+            <button @click='saveAccount'>Save Account</button>
             <Tooltip position='left'>
               <template #tooltip>Delete Account<div class='subtext'>shift + double-click</div></template>
               <i class='mdi mdi-trash-can-outline delete-account' style='margin-left:auto;'
@@ -42,8 +42,7 @@
 
 <script setup>
   import {ref, watchEffect} from 'vue'
-  import {CodeEditor, Expandable, Tooltip} from '@/components'
-  import {SortableItem} from '@/components/Sortable'
+  import {CodeEditor, Expandable, SortableItem, Tooltip} from '@/components'
   import JSON5 from 'json5'
 
   const props = defineProps({
@@ -53,13 +52,14 @@
   const expandy = ref(null)                                     // Reference to Expandable component
   const jsonIcon = ref('mdi-check')                             // Icon for JSON validation
   const jsonText = ref('Valid JSON')                            // Text for JSON validation
-  const importRules = ref(props.account.import_rules || '{}')   // Import rules for the account
+  const accountName = ref(props.account.name)                   // Name of the account
+  const accountRules = ref(props.account.import_rules || '{}')  // Import rules for the account
 
-  // ValidJson
+  // Watch Account Rules
+  // Validate the JSON text
   watchEffect(function() {
-    console.log('validJson', importRules.value)
     try {
-      JSON5.parse(importRules.value)
+      JSON5.parse(accountRules.value)
       jsonIcon.value = 'mdi-check'
       jsonText.value = 'Valid JSON'
     } catch (e) {
@@ -68,11 +68,18 @@
     }
   })
 
+  // Save Account
+  // Save the account configuration
+  const saveAccount = async function() {
+    var rules = JSON5.parse(accountRules.value)
+    console.log('TODO Save account', accountName.value, rules)
+  }
+
   // Delete Account
   // Delete the specified account
   const deleteAccount = async function(event, accountid) {
     if (event.shiftKey) {
-      console.log('Delete acocunt', accountid)
+      console.log('TODO Delete acocunt', accountid)
     }
   }
 
@@ -83,4 +90,14 @@
     close: function() { expandy.value.close() },
   })
 </script>
+
+<style>
+  .budgetsettingsaccount {
+    .codeeditor {
+      height: 150px;
+      width: 100%;
+      font-size: 12px;
+    }
+  }
+</style>
 
