@@ -33,26 +33,26 @@ async function get(url, config) {
 // Api Endpoints
 // Endpoints defined in the Django application
 export const Main = {
-  getGlobalVars(signal) { return get(`/main/global_vars`, {signal}) },
-  login(data, signal) { return axios.post(`/main/login`, data, {signal}) },
-  logout(signal) { return axios.post(`/main/logout`, null, {signal}) },
+  getGlobalVars(signal) { return get(`/api/main/global_vars`, {signal}) },
+  login(data, signal) { return axios.post(`/api/main/login`, data, {signal}) },
+  logout(signal) { return axios.post(`/api/main/logout`, null, {signal}) },
 }
 export const Budget = {
-  getAccounts(params, signal) { return get(`/budget/accounts`, {params, signal}) },
-  getAccount(accountid, params, signal) { return get(`/budget/accounts/${accountid}`, {params, signal}) },
-  sortAccounts(data, signal) { return axios.patch(`/budget/sort_accounts`, data, {signal}) },
-  getCategories(params, signal) { return get(`/budget/categories`, {params, signal}) },
-  getCategory(categoryid, params, signal) { return get(`/budget/categories/${categoryid}`, {params, signal}) },
-  sortCategories(data, signal) { return axios.patch(`/budget/sort_categories`, data, {signal}) },
-  getTransactions(params, signal) { return get(`/budget/transactions`, {params, signal}) },
-  getTransaction(transactionid, params, signal) { return get(`/budget/transactions/${transactionid}`, {params, signal}) },
+  getAccounts(params, signal) { return get(`/api/budget/accounts`, {params, signal}) },
+  getAccount(accountid, params, signal) { return get(`/api/budget/accounts/${accountid}`, {params, signal}) },
+  sortAccounts(data, signal) { return axios.patch(`/api/budget/sort_accounts`, data, {signal}) },
+  getCategories(params, signal) { return get(`/api/budget/categories`, {params, signal}) },
+  getCategory(categoryid, params, signal) { return get(`/api/budget/categories/${categoryid}`, {params, signal}) },
+  sortCategories(data, signal) { return axios.patch(`/api/budget/sort_categories`, data, {signal}) },
+  getTransactions(params, signal) { return get(`/api/budget/transactions`, {params, signal}) },
+  getTransaction(transactionid, params, signal) { return get(`/api/budget/transactions/${transactionid}`, {params, signal}) },
 }
 export const Obsidian = {
-  getNote(bucket, path, params, signal) { return get(`/obsidian/notes/${bucket}/${path}`, {params, signal}) },
-  listNotes(params, signal) { return get(`/obsidian/notes`, {params, signal}) },
+  getNote(bucket, path, params, signal) { return get(`/api/obsidian/notes/${bucket}/${path}`, {params, signal}) },
+  listNotes(params, signal) { return get(`/api/obsidian/notes`, {params, signal}) },
 }
 export const Stocks = {
-  getTicker(ticker, params, signal) { return get(`/stocks/tickers/${ticker}`, {params, signal}) },
-  listTickers(params, signal) { return get(`/stocks/tickers`, {params, signal}) },
-  chartRanks(params, signal) { return get(`/stocks/chart_ranks`, {params, signal}) },
+  getTicker(ticker, params, signal) { return get(`/api/stocks/tickers/${ticker}`, {params, signal}) },
+  listTickers(params, signal) { return get(`/api/stocks/tickers`, {params, signal}) },
+  chartRanks(params, signal) { return get(`/api/stocks/chart_ranks`, {params, signal}) },
 }

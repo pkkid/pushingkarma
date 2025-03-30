@@ -21,7 +21,7 @@ def api_root(request):
     paths = schema.get('paths', {})
     endpoints = defaultdict(list)
     for path, methods in paths.items():
-        category = path.split('/')[2]
+        category = path.split('/')[2] or 'root'
         # if not category: continue
         # print(category)
         for method, details in methods.items():

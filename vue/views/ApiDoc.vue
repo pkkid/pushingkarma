@@ -5,16 +5,14 @@
       <template #panel>
         <div v-if='toc' class='menu'>
           <template v-for='[category, endpts] in Object.entries(toc.endpoints)' :key='category'>
-            <template v-if='category.length'>
-              <div class='item'>
-                <i class='mdi' :class='categoryIcon(category)'/>
-                {{utils.title(category)}}
+            <div class='item'>
+              <i class='mdi' :class='getIcon(category)'/>
+              {{utils.title(category)}}
+            </div>
+            <template v-for='endpt in endpts' :key='`${endpt.method} ${endpt.path}`'>
+              <div class='subitem link' :class='{selected:endpoint===endpt}' @click='setPath(endpt)'>
+                <div class='name'>{{endpt.summary}}</div>
               </div>
-              <template v-for='endpt in endpts' :key='`${endpt.method} ${endpt.path}`'>
-                <div class='subitem link' :class='{selected:endpoint===endpt}' @click='setPath(endpt)'>
-                  <div class='name'>{{endpt.summary}}</div>
-                </div>
-              </template>
             </template>
           </template>
         </div>
@@ -67,22 +65,14 @@
 </template>
 
 <script setup>
-  import {computed, inject, nextTick, onBeforeMount, ref, watch, watchEffect} from 'vue'
+  import {computed, inject, nextTick, onBeforeMount, onMounted, ref, watch, watchEffect} from 'vue'
   import {LayoutPaper, LayoutSidePanel} from '@/components/Layout'
   import {ToggleSwitch, Tooltip} from '@/components'
   import {useUrlParams} from '@/composables'
   import {utils} from '@/utils'
   import axios from 'axios'
   
-  // Icon for each API cateogry
-  var categoryIcons = {
-    'budget': 'mdi-piggy-bank-outline',
-    'main': 'mdi-earth',
-    'obsidian': 'mdi-notebook-outline',
-    'stocks': 'mdi-chart-line',
-    'default': 'code',
-  }
-  
+  var APIROOT = '/api/'
   var showheaders = ['allow', 'content-type', 'content-length', 'response-time', 'queries']
   const {countQueries, setCountQueries} = inject('countQueries')  // Count queries on the server
   const {logQueries, setLogQueries} = inject('logQueries')        // Log queries on the server
@@ -102,8 +92,18 @@
     return `${utils.title(endpoint.value.category)} ${endpoint.value.summary}`
   })
 
+  // On Mounted
+  // Set topnav and fetch toc
+  onMounted(async function() {
+    utils.setNavPosition('top')
+    toc.value = (await axios.get(APIROOT)).data
+    if (!path.value || !method.value) {
+      setPath(toc.value.endpoints.root[0])
+    }
+  })
+
   // Watch Path
-  // Return the endpoint details from the path
+  // Sets the current endpoint and alloed methods
   watchEffect(function() {
     if (!toc.value) { return null }
     var allow = []
@@ -122,66 +122,38 @@
     allowed.value = allow.length ? allow : ['GET']
   })
 
-  // On Before Mount
-  // Update to top nav and get the toc
-  onBeforeMount(async function() {
-    utils.setNavPosition('top')
-    method.value = method.value || 'GET'
-    toc.value = (await axios.get('')).data
-  })
-
   // Watch Path
-  // Clean messy view strings
+  // Clean messy or incomplete path
   watchEffect(function() {
-    if (path.value == null) { path.value = '/api/' }
-    else if (path.value.length <= 5) { path.value = '/api/' }
-    else if (!path.value.startsWith('/api/')) {
-      path.value = `/api/${path.value}`.replace(/\/\//g, '/')
+    if (!toc.value) { return null }
+    if (!path.value || !path.value.startsWith(APIROOT)) {
+      setPath(toc.value.endpoints.root[0])
     }
   })
 
-  // Set Path
-  // Update path and method from the endpoint path
-  const setPath = function(endpoint) {
-    path.value = `/api/${endpoint.path.split('/api/')[1]}`
-    method.value = endpoint.method
-  }
-
-  // Category Icon
-  // Icon for the API Category
-  const categoryIcon = function(category) {
-    return categoryIcons[category] || categoryIcons['default']
-  }
-
-  // Send Request
-  // Send the http request!
-  const sendRequest = async function() {
-    if (path.value === null) { return }
-    var endpoint = path.value.replace(/\/api\//g, '')
-    await axios[method.value.toLowerCase()](endpoint)
-      .then(resp => response.value = resp)
-      .catch(err => response.value = err.response)
-    await nextTick()
-    linkAPIURLs()
-  }
-
-  // Watch Path
-  // Auto send request method=GET
-  watch(path, function() {
+  // Watch Path & Method
+  // Check we want to auto send the request
+  watch([path, method], function() {
+    if (!toc.value || !path.value || !method.value) { return }
     response.value = null
-    if (path.value === null) { return }
     if (method.value == 'GET') { sendRequest() }
   }, {immediate:true})
 
-  // Watch Method
-  watch(method, function() {
-    response.value = null
-    if (method.value == 'GET') { sendRequest() }
-  })
+  // Get Icon
+  // Icon for the API Category
+  const getIcon = function(category) {
+    switch (category) {
+      case 'budget': return 'mdi-piggy-bank-outline'
+      case 'main': return 'mdi-earth'
+      case 'obsidian': return 'mdi-notebook-outline'
+      case 'stocks': return 'mdi-chart-line'
+      default: return 'mdi-code-braces'
+    }
+  }
 
-  // Link API URLs
-  // Create links for all api urls
-  const linkAPIURLs = function() {
+  // Link Response URLs
+  // Create links in highlight.js output
+  const linkResponseUrls = function() {
     var spans = document.querySelectorAll('.codearea pre code span.hljs-string')
     spans = Array.from(spans).filter(span => span.textContent.startsWith(`"${axios.defaults.baseURL}`))
     spans.forEach(span => {
@@ -193,6 +165,7 @@
         var newpath = newspan.textContent.slice(1, -1)
         newpath = '/api/' + newpath.replace(axios.defaults.baseURL, '')
         path.value = newpath
+        method.value = 'GET'
       })
       span.replaceWith(newspan)
     })
@@ -205,6 +178,24 @@
     if (pstr.includes('/api/')) { pstr = pstr.split('/api/')[1] }
     var pattern = pstr.replace(/{\w+}/g, '[^/]+').replace(/\//g, '\\/')
     return new RegExp(`^${pattern}$`).test(tmpl)
+  }
+
+  // Set Path
+  // Update path and method from the endpoint path
+  const setPath = function(endpt) {
+    path.value = new URL(endpt.path).pathname
+    method.value = endpt.method
+  }
+
+  // Send Request
+  // Send the http request
+  const sendRequest = async function() {
+    if (path.value === null) { return }
+    await axios[method.value.toLowerCase()](path.value)
+      .then(resp => response.value = resp)
+      .catch(err => response.value = err.response)
+    await nextTick()
+    linkResponseUrls()
   }
 </script>
 
