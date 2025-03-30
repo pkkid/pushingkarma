@@ -11,8 +11,8 @@
                 {{utils.title(category)}}
               </div>
               <template v-for='endpt in endpts' :key='`${endpt.method} ${endpt.path}`'>
-                <div class='subitem link' :class='{selected:endpoint==endpt}' 
-                  @click='view=getView(endpt.path)'>
+                <!-- {{console.log(endpoint===endpt, 'endpoint', endpoint, 'endpt', endpt)}} -->
+                <div class='subitem link' :class='{selected:endpoint===endpt}' @click='setView(endpt)'>
                   <div class='name'>{{endpt.summary}}</div>
                 </div>
               </template>
@@ -41,7 +41,7 @@
               <select v-model='method'>
                 <option v-for='meth in allowed' :key='meth' :value='meth'>{{meth}}</option>
               </select>
-              <input class='urlinput' type='text' v-model='url' spellcheck='false' @keydown.enter='view=url'/>
+              <input class='urlinput' type='text' :value='view' spellcheck='false' @keydown.enter='view=$event.target.value'/>
             </div>
             <div class='description' v-html='endpoint?.description.replace(/\n/g, "<br/>")'></div>
             <div class='headers'>
@@ -82,7 +82,6 @@
     'default': 'code',
   }
   
-  var methods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
   var showheaders = ['allow', 'content-type', 'content-length', 'response-time', 'queries']
   // const countQueries = useStorage('axios.countqueries', false)  
   // const logQueries = useStorage('axios.logqueries', false)      // Log queries on the server
@@ -97,37 +96,6 @@
   var endpoint = ref(null)                        // Current endpoint details
   var response = ref(null)                        // Current get response
   const allowed = ref(null)                       // Allowed methods for current endpoint
-  const url = ref(view.value)                     // Current url to display
-
-  // Endpoint
-  // Return the endpoint details from the view
-  watchEffect(function() {
-    if (!toc.value) { return null }
-    var allow = []
-    var endptset = false
-    const cleanView = view.value.split('?')[0]
-    for (var meth of methods) {
-      for (const [category, endpts] of Object.entries(toc.value.endpoints)) {
-        for (const endpt of endpts) {
-          if (endpt.method !== meth) { continue }
-          var pattern = endpt.path.split(/(?=\/api\/)/)[1]
-          pattern = pattern.replace(/{\w+}/g, '[^/]+')
-          pattern = pattern.replace(/\//g, '\\/')
-          var regex = new RegExp(`^${pattern}$`)
-          if (regex.test(cleanView)) {
-            allow.push(meth)
-            endpt.category = category
-            if (!endptset) {
-              endpoint.value = endpt
-              endptset = true
-            }
-          }
-        }
-      }
-    }
-    allowed.value = allow.length ? allow : ['GET']
-    method.value = allowed.value[0]
-  })
 
   // Endpoint Name
   // Return the endpoint name from the view
@@ -136,35 +104,49 @@
     return `${utils.title(endpoint.value.category)} ${endpoint.value.summary}`
   })
 
-  // Watch View
-  // Keep the url updated when view changed
-  watch(view, function(newval) {
-    checkView()
-    url.value = newval
+  // Endpoint View
+  // Return the endpoint details from the view
+  watchEffect(function() {
+    if (!toc.value) { return null }
+    var allow = []
+    for (const [category, endpts] of Object.entries(toc.value.endpoints)) {
+      for (const endpt of endpts) {
+        if (pathMatches(view.value, endpt.path)) {
+          allow.push(endpt.method)
+          if (endpt.method == method.value) {
+            endpt.category = category
+            endpoint.value = endpt
+            method.value = endpt.method
+          }
+        }
+      }
+    }
+    allowed.value = allow.length ? allow : ['GET']
   })
 
   // On Before Mount
   // Update to top nav and get the toc
   onBeforeMount(async function() {
     utils.setNavPosition('top')
-    checkView()
+    method.value = method.value || 'GET'
     toc.value = (await axios.get('')).data
   })
 
-  // Check View
-  // Make sure view is not null and starts with /api/
-  const checkView = function() {
-    if (view.value == null) {
-      view.value = '/api/'
-    } else if (!view.value.startsWith('/api/')) {
+  // Watch View
+  // Clean messy view strings
+  watchEffect(function() {
+    if (view.value == null) { view.value = '/api/' }
+    else if (view.value.length <= 5) { view.value = '/api/' }
+    else if (!view.value.startsWith('/api/')) {
       view.value = `/api/${view.value}`.replace(/\/\//g, '/')
     }
-  }
+  })
 
   // Get View
   // Returns view name from the endpoint path
-  const getView = function(path) {
-    return `/api/${path.split('/api/')[1]}`
+  const setView = function(endpoint) {
+    view.value = `/api/${endpoint.path.split('/api/')[1]}`
+    method.value = endpoint.method
   }
 
   // Category Icon
@@ -173,17 +155,24 @@
     return categoryIcons[category] || categoryIcons['default']
   }
 
-  // View Options
-  // Return the current view options
+  // Watch View
+  // Auto send request method=GET
   watchEffect(async function() {
     if (view.value === null) { return }
+    if (method.value == 'GET') { sendRequest() }
+  })
+
+  // Send Request
+  // Send the http request!
+  const sendRequest = async function() {
+    if (view.value === null) { return }
     var endpoint = view.value.replace(/\/api\//g, '')
-    await axios.get(endpoint)
+    await axios[method.value.toLowerCase()](endpoint)
       .then(resp => response.value = resp)
       .catch(err => response.value = err.response)
     await nextTick()
     linkAPIURLs()
-  })
+  }
 
   // Link API URLs
   // Create links for all api urls
@@ -202,6 +191,15 @@
       })
       span.replaceWith(newspan)
     })
+  }
+
+  // Paths Match
+  // Check the two paths match
+  const pathMatches = function(tmpl, path) {
+    if (tmpl.includes('/api/')) { tmpl = tmpl.split('/api/')[1] }
+    if (path.includes('/api/')) { path = path.split('/api/')[1] }
+    var pattern = path.replace(/{\w+}/g, '[^/]+').replace(/\//g, '\\/')
+    return new RegExp(`^${pattern}$`).test(tmpl)
   }
 </script>
 

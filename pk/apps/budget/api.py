@@ -53,6 +53,16 @@ def get_account(request, accountid:int):
     return itemdict
 
 
+@router.patch('/accounts/{accountid}', response=AccountSchema, exclude_unset=True)
+def update_account(request, accountid:int, data:AccountSchema):
+    """ Update the specified account.
+        • accountid: Account id
+        • data: Account data to update
+    """
+    log.info(f'update_account({accountid}) {data}')
+    return get_account(request, accountid)
+
+
 @router.get('/accounts', response=PageSchema(AccountSchema), exclude_unset=True)
 def list_accounts(request, search:str='', page:int=1):
     """ List accounts for the logged in user.
@@ -78,13 +88,6 @@ def sort_accounts(request, data:SortSchema):
     items = Account.objects.filter(user=request.user, id__in=data.sortlist)
     if len(items) != len(data.sortlist):
         raise HttpError(409, 'Account ids do not match user accounts')
-    # updates = []
-    # itemsdict = {item.id:item for item in items}
-    # for i in range(len(data.sortlist)):
-    #     item = itemsdict[data.sortlist[i]]
-    #     if item.sortid != i+1:
-    #         item.sortid = i+1
-    #         updates.append(item)
     if updates := _sort_items(items, data.sortlist):
         log.info(f'Sorting {len(updates)} accounts for account {request.user.email}')
         Account.objects.bulk_update(updates, ['sortid'])
