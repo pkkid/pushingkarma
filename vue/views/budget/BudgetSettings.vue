@@ -96,7 +96,6 @@
   // On Account Opened
   // Close all the other account expandies
   const onAccountOpened = function(event) {
-    console.log(event)
     for (var i=0; i < accountExpandies.value.length; i++) {
       var expandy = accountExpandies.value[i]
       if (expandy.itemid == event.itemid) { continue }
@@ -151,9 +150,15 @@
     .delete-category {
       cursor: pointer;
       transition: all 0.3s ease;
-      &:hover { color:var(--lightbg-red0) !important; }
+      font-size: 1.2em;
+      margin-right: 5px;
+      opacity:0.6;
+      &:hover {
+        color: var(--lightbg-red0) !important;
+        opacity: 1 !important;
+      }
     }
-    .delete-category { opacity:0; }
-    .sortableitem:hover .delete-category { opacity:1; }
+    .delete-category { opacity:0; margin-right:0px; position:relative; top:1px; }
+    .sortableitem:hover .delete-category { opacity:0.7; }
   }
 </style>

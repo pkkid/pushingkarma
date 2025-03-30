@@ -49,6 +49,7 @@ button {
   &:focus {
     text-decoration-line: underline;
     text-decoration-style: dotted;
+    border-bottom-width: 0px;
     box-shadow: none;
     outline: none;
     color: var(--lightbg-fg1);
@@ -65,8 +66,4 @@ button {
   justify-content: space-between;
   align-items: center;
   margin-top: 10px;
-  .mdi {
-    font-size: 1.2em;
-    margin-right: 5px;
-  }
 }
