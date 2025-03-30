@@ -1,4 +1,2 @@
-import DataTable from './DataTable.vue'
-import DataTableColumn from './DataTableColumn.vue'
-
-export {DataTable, DataTableColumn}
+export {default as DataTable} from './DataTable.vue'
+export {default as DataTableColumn} from './DataTableColumn.vue'

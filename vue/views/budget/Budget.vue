@@ -50,12 +50,10 @@
 
 <script setup>
   import {onBeforeMount, ref} from 'vue'
+  import {BudgetSettings, BudgetTransactions, BudgetYear} from '@/views/budget'
   import {LayoutSidePanel} from '@/components/Layout'
   import {useUrlParams} from '@/composables'
   import {utils} from '@/utils'
-  import BudgetTransactions from '@/views/budget/BudgetTransactions.vue'
-  import BudgetYear from '@/views/budget/BudgetYear.vue'
-  import BudgetSettings from '@/views/budget/BudgetSettings.vue'
 
   const showSettings = ref(false)
   const {view} = useUrlParams({

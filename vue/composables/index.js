@@ -1,4 +1,2 @@
-import useStorage from './useStorage.js'
-import useUrlParams from './useUrlParams.js'
-
-export {useStorage, useUrlParams}
+export {default as  useStorage} from './useStorage.js'
+export {default as  useUrlParams} from './useUrlParams.js'

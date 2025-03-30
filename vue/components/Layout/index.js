@@ -1,4 +1,2 @@
-import LayoutPaper from './LayoutPaper.vue'
-import LayoutSidePanel from './LayoutSidePanel.vue'
-
-export {LayoutPaper, LayoutSidePanel}
+export {default as LayoutPaper} from './LayoutPaper.vue'
+export {default as LayoutSidePanel} from './LayoutSidePanel.vue'

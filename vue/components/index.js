@@ -1,16 +1,12 @@
-import CodeEditor from './CodeEditor.vue'
-import Expandable from './Expandable.vue'
-import LoadingIcon from './LoadingIcon.vue'
-import Markdown from './Markdown.vue'
-import Modal from './Modal.vue'
-import Quote from './Quote.vue'
-import ToggleSwitch from './ToggleSwitch.vue'
-import Tooltip from './Tooltip.vue'
-import TrendChart from './TrendChart.vue'
-import {DataTable, DataTableColumn} from './DataTable'
-import {LayoutPaper, LayoutSidePanel} from './Layout'
-import {Sortable, SortableItem} from './Sortable'
-
-export {CodeEditor, DataTable, DataTableColumn, Expandable, LayoutPaper,
-  LayoutSidePanel, LoadingIcon, Markdown, Modal, Quote, Sortable, SortableItem,
-  ToggleSwitch, Tooltip, TrendChart}
+export {default as CodeEditor} from './CodeEditor.vue'
+export {default as Expandable} from './Expandable.vue'
+export {default as LoadingIcon} from './LoadingIcon.vue'
+export {default as Markdown} from './Markdown.vue'
+export {default as Modal} from './Modal.vue'
+export {default as Quote} from './Quote.vue'
+export {default as ToggleSwitch} from './ToggleSwitch.vue'
+export {default as Tooltip} from './Tooltip.vue'
+export {default as TrendChart} from './TrendChart.vue'
+export {DataTable, DataTableColumn} from './DataTable'
+export {LayoutPaper, LayoutSidePanel} from './Layout'
+export {Sortable, SortableItem} from './Sortable'

@@ -25,10 +25,9 @@
 
 <script setup>
   import {ref, watchEffect} from 'vue'
+  import {BudgetSettingsAccount, BudgetSettingsCategory} from '.'
   import {Modal, Sortable} from '@/components'
   import {api} from '@/utils'
-  import BudgetSettingsAccount from './BudgetSettingsAccount.vue'
-  import BudgetSettingsCategory from './BudgetSettingsCategory.vue'
   
   const emit = defineEmits(['close'])         // Emit close event
   const accounts = ref(null)                  // Accounts response from server

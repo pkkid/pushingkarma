@@ -2,7 +2,7 @@
   <LayoutPaper width='1200px'>
     <template #content>
       <CodeEditor theme='gruvbox-light-hard' language='javascript' padding='12px'
-        style='height:400px; width:500px;' v-model='code'/>
+        style='height:400px; width:800px;' v-model='code'/>
     </template>
   </LayoutPaper>
 </template>

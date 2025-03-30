@@ -55,12 +55,11 @@
 
 <script setup>
   import {onBeforeMount, provide, ref, watchEffect} from 'vue'
-  import {LayoutPaper, LayoutSidePanel} from '@/components'
+  import {StocksSearch} from '@/views/stocks'
+  import {LayoutPaper, LayoutSidePanel, TrendChart} from '@/components'
   import {DataTable, DataTableColumn as Column} from '@/components'
   import {useUrlParams} from '@/composables'
   import {api, utils} from '@/utils'
-  import StocksSearch from '@/views/stocks/StocksSearch.vue'
-  import TrendChart from '@/components/TrendChart.vue'
   
   var stockgroups = {
     'ETFs & Bonds': 'tags:etfs',

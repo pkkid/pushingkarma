@@ -1,3 +1,2 @@
-import * as api from './api'
-import * as utils from './utils'
-export {api, utils}
+export * as api from './api'
+export * as utils from './utils'

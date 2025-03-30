@@ -33,11 +33,10 @@
 
 <script setup>
   import {inject, onBeforeMount, ref, watchEffect} from 'vue'
+  import {NotesSearch, NotesToc} from '@/views/notes'
   import {LayoutPaper, LayoutSidePanel, Markdown} from '@/components'
   import {useUrlParams} from '@/composables'
   import {api, utils} from '@/utils'
-  import NotesSearch from '@/views/notes/NotesSearch.vue'
-  import NotesToc from '@/views/notes/NotesToc.vue'
 
   var cancelctrl = null           // Cancel controller
   const {user} = inject('user')   // Current User
