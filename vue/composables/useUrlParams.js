@@ -15,8 +15,9 @@ export default function useUrlParams(params) {
   // Has Data
   // Check if a value is empty or falsy
   const hasData = function(key, value) {
-    if (params[key].type === Array) { return value && value.length >= 1 }
-    else if (params[key].type === Set) { return value && value.size >= 1 }
+    const type = params[key].type || String
+    if (type === Array) { return value && value.length >= 1 }
+    else if (type === Set) { return value && value.size >= 1 }
     else if (value) { return true }
     return false
   }
@@ -24,6 +25,7 @@ export default function useUrlParams(params) {
   // String to Value
   // Convert a string to a parameter value
   const strToValue = function(str, type) {
+    type = type || String
     if (str === null || str === undefined) { return null }
     if (type == Number) { return Number(str) }
     if (type === Boolean) { return ['true', 't', '1'].includes(str.toLowerCase()) }
@@ -37,6 +39,7 @@ export default function useUrlParams(params) {
   // Value to String
   // Convert a paramter value to a string
   const valueToStr = function(value, type) {
+    type = type || String
     if (value === null || value === undefined) { return null }
     if (type == Number) { return value.toString() }
     if (type === Boolean) { return value.toString() }

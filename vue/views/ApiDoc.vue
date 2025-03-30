@@ -76,14 +76,11 @@
   var showheaders = ['allow', 'content-type', 'content-length', 'response-time', 'queries']
   const {countQueries, setCountQueries} = inject('countQueries')  // Count queries on the server
   const {logQueries, setLogQueries} = inject('logQueries')        // Log queries on the server
-  const {method, path} = useUrlParams({
-    method: {type:String},                        // Current method to display
-    path: {type:String}                           // Current path to display
-  })
-  var toc = ref(null)                             // Table of contents (api root)
-  var endpoint = ref(null)                        // Current endpoint details
-  var response = ref(null)                        // Current get response
-  const allowed = ref(null)                       // Allowed methods for current endpoint
+  const {method, path} = useUrlParams({method:{}, path:{}})       // Method & path url params
+  var toc = ref(null)                                             // Table of contents (api root)
+  var endpoint = ref(null)                                        // Current endpoint details
+  var response = ref(null)                                        // Current get response
+  const allowed = ref(null)                                       // Allowed methods for current endpoint
 
   // On Mounted
   // Set topnav and fetch toc
