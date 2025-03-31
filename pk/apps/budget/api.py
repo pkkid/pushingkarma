@@ -158,7 +158,9 @@ def list_transactions(request, search:str='', page:int=1):
         • search (str): Query param to filter transactions.
         • page (int): Query param to request page number.
     """
-    items = Transaction.objects.filter(user=request.user).order_by('-date', 'payee')
+    items = Transaction.objects.filter(user=request.user)
+    items = items.select_related('account', 'category')
+    items = items.order_by('-date', 'payee')
     if search: items = Search(TRANSACTIONSEARCHFIELDS).get_queryset(items, search)
     data = paginate(request, items, page=page, perpage=100)
     for i in range(len(data['items'])):
