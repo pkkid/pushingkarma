@@ -2,7 +2,6 @@ ipython
 python-dateutil
 pytz
 requests
-timelib
 tzdata
 django==5.1.7
 django-cors-headers==4.7.0
