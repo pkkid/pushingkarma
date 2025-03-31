@@ -311,7 +311,7 @@
           position: absolute;
           bottom: 4px;
           right: 10px;
-          z-index: 100;
+          z-index: 95;
           .mdi {
             opacity: 0.6;
             cursor: pointer;
