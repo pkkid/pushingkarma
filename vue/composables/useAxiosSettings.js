@@ -48,11 +48,13 @@ export default function useApiSettings() {
     const method = (response.config.method || 'get').toUpperCase()
     const path = response.config.url
     const data = response.config.data
-    const item = {datetime, status, method, path, data}
+    const queries = response.headers?.queries || response.response?.headers?.queries || null
+    const item = {datetime, status, method, path, data, queries}
     // Remove old duplicates with same status, method, path, and data
     if (history.value && history.value.length) {
       history.value = history.value.filter(function(itm) { 
         return !(itm.status == status && itm.method == method && itm.path == path
+          && itm.queries.split('queries')[0] == queries.split('queries')[0]
           && utils.stringify(itm.data) === utils.stringify(data))
       })
     }

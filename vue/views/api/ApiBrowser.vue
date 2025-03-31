@@ -31,13 +31,14 @@
                   @keydown.enter='$event.shiftKey ? sendRequest() : path=$event.target.value'/>
                 <Tooltip v-if='axiosSettings.history.value?.length' ref='historyTooltip' class='request-history' position='bottomleft' width='auto' trigger='click'>
                   <template #tooltip>
-                    <strong style='padding-left:3px;'>Request History</strong>
+                    Request History
                     <div class='tablewrap'><table>
                       <tr v-for='(item, i) in axiosSettings.history.value' :key='i' @click='setPath(item, $event)'>
                         <td>{{item.datetime}}</td>
                         <td>{{item.status}}</td>
                         <td>{{item.method}}</td>
                         <td>{{item.path}}<template v-if='item.data'> - {{item.data}}</template></td>
+                        <td>{{item.queries}}</td>
                       </tr>
                     </table></div>
                   </template>
@@ -275,18 +276,28 @@
           .tablewrap {
             max-height: 300px;
             overflow-y: auto;
+            background-color: #0004;
+            margin: 5px 0px;
+            border-radius: 4px;
+            font-size: 12px;
+            color: #dcaa;
+            table {
+              border-collapse: collapse;
+              border-spacing: 0;
+            }
             tr {
               background-color: transparent;
               cursor: pointer;
-              transition: background-color 0.3s ease;
-              &:hover { background-color: #8883; }
+              transition: all 0.3s ease;
+              &:hover { color: var(--darkbg-fg0); background-color: #8885; }
             }
             td {
               white-space: nowrap;
               overflow: hidden;
               text-overflow: ellipsis;
               user-select: none;
-              padding-right: 5px;
+              padding: 3px 6px;
+              max-width: 250px;
             }
           }
         }
