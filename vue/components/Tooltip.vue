@@ -148,7 +148,7 @@
       padding: 5px 10px;
       position: absolute;
       transition: all 0.4s ease;
-      z-index: 1000;
+      z-index: 98;
       &.loaded { opacity: 1; }
     }
     .tooltip::before {

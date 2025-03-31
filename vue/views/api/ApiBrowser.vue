@@ -276,11 +276,11 @@
           .tablewrap {
             max-height: 300px;
             overflow-y: auto;
-            background-color: #0004;
+            background-color: #1112;
             margin: 5px 0px;
             border-radius: 4px;
-            font-size: 12px;
-            color: #dcaa;
+            font-size: 11px;
+            color: #dcad;
             table {
               border-collapse: collapse;
               border-spacing: 0;
@@ -297,7 +297,7 @@
               text-overflow: ellipsis;
               user-select: none;
               padding: 3px 6px;
-              max-width: 250px;
+              max-width: 300px;
             }
           }
         }

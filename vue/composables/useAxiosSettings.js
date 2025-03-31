@@ -43,13 +43,20 @@ export default function useApiSettings() {
     for (const ignore of HISTORY_IGNORES) {
       if (response.config.url.includes(ignore)) { return }
     }
-    const datetime = utils.formatDate(new Date(), 'MMM DD h:mm:ssa')
-    const status = response.status || response.response?.status || 0
-    const method = (response.config.method || 'get').toUpperCase()
-    const path = response.config.url
-    const data = response.config.data
-    const queries = response.headers?.queries || response.response?.headers?.queries || null
-    const item = {datetime, status, method, path, data, queries}
+    var datetime = utils.formatDate(new Date(), 'MMM DD h:mm:ssa')
+    var status = response.status || response.response?.status || 0
+    var method = (response.config.method || 'get').toUpperCase()
+    var path = response.config.url
+    if (response.config.params) {
+      const queryParams = new URLSearchParams(response.config.params).toString()
+      if (queryParams) {
+        const decodedParams = decodeURIComponent(queryParams)
+        path += (path.includes('?') ? '&' : '?') + decodedParams
+      }
+    }
+    var data = response.config.data
+    var queries = response.headers?.queries || response.response?.headers?.queries || null
+    var item = {datetime, status, method, path, data, queries}
     // Remove old duplicates with same status, method, path, and data
     if (history.value && history.value.length) {
       history.value = history.value.filter(function(itm) { 
