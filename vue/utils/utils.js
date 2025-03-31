@@ -232,57 +232,57 @@ export function sort(value) {
 
 // Stringify
 // A better pretty printer for JSON string.
-// Options: {indent:2, maxLength:80}
+// Options: {indent:2, maxlen:80, json:JSON, replacer:null}
 // https://github.com/lydell/json-stringify-pretty-compact
-export function stringify(passedObj, options={}) {
-  const stringOrChar = /("(?:[^\\"]|\\.)*")|[:,]/g
-  const indent = JSON.stringify([1], undefined,
-    options.indent === undefined ? 2 : options.indent
-  ).slice(2, -3)
-  const maxLength = indent === ""
-    ? Infinity : options.maxLength === undefined
-    ? 80 : options.maxLength
-  let {replacer} = options
-  return (function _stringify(obj, currentIndent, reserved) {
-    if (obj && typeof obj.toJSON === "function") { obj = obj.toJSON() }
-    const string = JSON.stringify(obj, replacer)
+export function stringify(passedobj, opts={}) {
+  opts = {indent:2, maxlen:80, replacer:null, json:JSON, ...opts}
+  const strorchar = /("(?:[^\\"]|\\.)*")|[:,]/g
+  const indent = '    '.slice(0, opts.indent)
+  const maxlen = indent == '' ? Infinity : opts.maxlen == undefined ? 80 : opts.maxlen
+  var {replacer} = opts
+
+  return (function _stringify(obj, curindent, reserved) {
+    if (obj && typeof obj.toJSON === 'function') { obj = obj.toJSON() }
+    const string = opts.json.stringify(obj, replacer)
     if (string === undefined) { return string }
-    const length = maxLength - currentIndent.length - reserved
+    const length = maxlen - curindent.length - reserved
     if (string.length <= length) {
-      const prettified = string.replace(stringOrChar, (match, stringLiteral) => {
-        return stringLiteral || `${match} ` })
-      if (prettified.length <= length) { return prettified }
+      const pretty = string.replace(strorchar, function(match, strliteral) {
+        return strliteral || `${match} `
+      })
+      if (pretty.length <= length) { return pretty }
     }
-    if (replacer != null) {obj = JSON.parse(string); replacer = undefined }
-    if (typeof obj === "object" && obj !== null) {
-      const nextIndent = currentIndent + indent
+    if (replacer !== null) {
+      obj = opts.json.parse(string)
+      replacer = undefined
+    }
+    if (typeof obj == 'object' && obj !== null) {
+      const nextindent = curindent + indent
       const items = []
-      let start, end
+      var start, end
       if (Array.isArray(obj)) {
-        start="[", end="]"
+        start = '[', end = ']'
         const {length} = obj
-        for (let index=0; index < length; index++) {
-          items.push(_stringify(obj[index], nextIndent,
-            index === length - 1 ? 0 : 1) || "null")
+        for (var i=0; i < length; i++) {
+          items.push(_stringify(obj[i], nextindent, i == length-1 ? 0:1) || 'null')
         }
       } else {
-        start="{", end="}"
-        const keys = Object.keys(obj)
+        start = '{', end='}'
+        var keys = Object.keys(obj)
         const {length} = keys
         for (let index=0; index < length; index++) {
           const key = keys[index]
-          const keyPart = `${JSON.stringify(key)}: `
-          const value = _stringify(obj[key], nextIndent,
-            keyPart.length + (index === length - 1 ? 0 : 1))
-          if (value !== undefined) { items.push(keyPart + value) }
+          const keypart = `${opts.json.stringify(key)}: `
+          const value = _stringify(obj[key], nextindent, keypart.length + (index == length-1 ? 0:1))
+          if (value !== undefined) { items.push(keypart + value) }
         }
       }
       if (items.length > 0) {
-        return [start, indent + items.join(`,\n${nextIndent}`), end].join(`\n${currentIndent}`)
+        return [start, indent + items.join(`,\n${nextindent}`), end].join(`\n${curindent}`)
       }
     }
     return string
-  })(passedObj, "", 0)
+  })(passedobj, '', 0)
 }
 
 // Time Ago
