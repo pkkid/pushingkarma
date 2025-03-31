@@ -181,11 +181,12 @@
 
   // Paths Match
   // Check the two paths match
-  const pathMatches = function(tmpl, pstr) {
+  const pathMatches = function(pstr, tmpl) {
     if (tmpl.includes('/api/')) { tmpl = tmpl.split('/api/')[1] }
     if (pstr.includes('/api/')) { pstr = pstr.split('/api/')[1] }
-    var pattern = pstr.replace(/{\w+}/g, '[^/]+').replace(/\//g, '\\/')
-    return new RegExp(`^${pattern}$`).test(tmpl)
+    if (pstr.includes('?')) { pstr = pstr.split('?')[0] }
+    var pattern = tmpl.replace(/{\w+}/g, '[^/]+').replace(/\//g, '\\/')
+    return new RegExp(`^${pattern}$`).test(pstr)
   }
 
   // Set Path
