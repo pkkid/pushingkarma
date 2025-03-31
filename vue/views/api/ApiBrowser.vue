@@ -10,7 +10,7 @@
               {{utils.title(category)}}
             </div>
             <template v-for='endpt in endpts' :key='`${endpt.method} ${endpt.path}`'>
-              <div class='subitem link' :class='{selected:endpoint==endpt}' @click='setPath(endpt)'>
+              <div class='subitem link' :class='{selected:endpoint==endpt}' @click='setPath(endpt, $event)'>
                 <div class='name'>{{endpt.summary}}</div>
               </div>
             </template>
@@ -29,11 +29,11 @@
                 <select v-model='method'><option v-for='meth in allowed' :key='meth' :value='meth'>{{meth}}</option></select>
                 <input class='urlinput' type='text' v-model='path' spellcheck='false'
                   @keydown.enter='$event.shiftKey ? sendRequest() : path=$event.target.value'/>
-                <Tooltip v-if='axiosSettings.history.value?.length' class='request-history' position='bottomleft' width='600px'>
+                <Tooltip v-if='axiosSettings.history.value?.length' ref='historyTooltip' class='request-history' position='bottomleft' width='auto' trigger='click'>
                   <template #tooltip>
                     <strong style='padding-left:3px;'>Request History</strong>
                     <div class='tablewrap'><table>
-                      <tr v-for='(item, i) in axiosSettings.history.value' :key='i' @click='setPath(item)'>
+                      <tr v-for='(item, i) in axiosSettings.history.value' :key='i' @click='setPath(item, $event)'>
                         <td>{{item.datetime}}</td>
                         <td>{{item.status}}</td>
                         <td>{{item.method}}</td>
@@ -93,10 +93,11 @@
   const {method, path} = useUrlParams({method:{}, path:{}})       // Method & path url params
   var toc = ref(null)                                             // Table of contents (api root)
   var endpoint = ref(null)                                        // Current endpoint details
+  var historyTooltip = ref(null)                                  // History tooltip
   var params = ref(null)                                          // Current parameters
   var response = ref(null)                                        // Current get response
   const allowed = ref(null)                                       // Allowed methods for current endpoint
-
+  
   // On Mounted
   // Set topnav and fetch toc
   onMounted(async function() {
@@ -188,11 +189,13 @@
 
   // Set Path
   // Update path and method from the endpoint path
-  const setPath = function(obj) {
+  const setPath = function(obj, event) {
     path.value = !obj.path.startsWith('http') ? obj.path
       : decodeURIComponent(new URL(obj.path).pathname)
     method.value = obj.method
     params.value = obj.data ? utils.stringify(JSON.parse(obj.data), {indent:2}) : null
+    event?.stopPropagation()
+    historyTooltip.value?.close()
   }
 
   // Send Request
@@ -263,7 +266,12 @@
           top: 2px;
           right: 10px;
           font-size: 1.2em;
-          .mdi { opacity: 0.6; }
+          .mdi {
+            opacity: 0.6;
+            cursor: pointer;
+            transition: opacity 0.3s ease;
+            &:hover { opacity:1; }
+          }
           .tablewrap {
             max-height: 300px;
             overflow-y: auto;

@@ -1,5 +1,6 @@
 <template>
-  <div class='tooltip-container' ref='container' @mouseenter='showTooltip' @mouseleave='hideTooltip'>
+  <div class='tooltip-container' ref='container' @mouseenter='onMouseEnter'
+    @mouseleave='onMouseLeave' @click='onClick'>
     <div v-if='visible' class='tooltip' ref='tooltip' :class='position' :style='tstyle'>
       <slot name='tooltip'>{{text}}</slot>
     </div>
@@ -8,7 +9,7 @@
 </template>
 
 <script setup>
-  import {ref, nextTick} from 'vue'
+  import {ref, nextTick, onBeforeUnmount, onMounted} from 'vue'
 
   var timeout_show = null                             // Timeout for showing tooltip
   var timeout_hide = null                             // Timeout for hiding tooltip
@@ -21,18 +22,82 @@
     delay: {type:Number, default:500},                // Delay before showing tooltip
     text: {type:String, default:null},                // Tooltip text (or define #content slow)
     width: {type:String, default:'max-content'},      // Tooltip width
+    trigger: {type:String, default:'hover'},          // Trigger type: {hover, click}
   })
 
-  // Show Tooltip
+  // On Mounted
+  // Setup event listeners
+  onMounted(function() {
+    if (props.trigger == 'click') {
+      document.addEventListener('click', onDocumentClick)
+      document.addEventListener('keydown', onKeyDown)
+    }
+  })
+
+  // On Before Unmount
+  // Remove event listeners
+  onBeforeUnmount(function() {
+    if (props.trigger === 'click') {
+      document.removeEventListener('click', onDocumentClick)
+      document.removeEventListener('keydown', onKeyDown)
+    }
+    clearTimeout(timeout_show)
+    clearTimeout(timeout_hide)
+  })
+
+  // On Click
+  // Show the tooltip
+  const onClick = async function(event) {
+    if (props.trigger != 'click') return
+    event.stopPropagation()
+    clearTimeout(timeout_show)
+    clearTimeout(timeout_hide)
+    if (!visible.value) {
+      visible.value = true
+      await nextTick()
+      updateTooltipStyle()
+    }
+  }
+
+  // On Document Click
+  // Hide the tooltip when clicked outside
+  const onDocumentClick = function(event) {
+    if (props.trigger != 'click' || !visible.value) { return }
+    if (container.value && !container.value.contains(event.target) && 
+        tooltip.value && !tooltip.value.contains(event.target)) {
+      visible.value = false
+    }
+  }
+
+  // On Key Down
+  // Close when pressing escape
+  const onKeyDown = function(event) {
+    if (props.trigger == 'click' && visible.value && event.key == 'Escape') {
+      visible.value = false
+    }
+  }
+
+  // On Mouse Enter
   // Called when moused over tooltip-container. Waits for
   // props.delay then sets tooltip visisbility to true
-  const showTooltip = function() {
+  const onMouseEnter = function() {
+    if (props.trigger != 'hover') { return }
     clearTimeout(timeout_hide)
     timeout_show = setTimeout(async function() {
       visible.value = true
       await nextTick()
       updateTooltipStyle()
     }, props.delay)
+  }
+
+  // On Mouse Leave
+  // Clears timeout and sets tooltip visibility to false
+  const onMouseLeave = function() {
+    if (props.trigger != 'hover') { return }
+    clearTimeout(timeout_show)
+    timeout_hide = setTimeout(function() {
+      visible.value = false
+    }, 200)
   }
 
   // Update Tooltip Style
@@ -60,14 +125,11 @@
     tooltip.value.classList.add('loaded')
   }
 
-  // Hide Tooltip
-  // Clears timeout and sets tooltip visibility to false
-  const hideTooltip = function() {
-    clearTimeout(timeout_show)
-    timeout_hide = setTimeout(function() {
-      visible.value = false
-    }, 200)
-  }
+  // Define Exposed
+  defineExpose({
+    open: function() { visible.value = true },
+    close: function() { visible.value = false },
+  })
 </script>
 
 <style scoped>

@@ -38,6 +38,7 @@ export default function useApiSettings() {
   // Save History Item
   // Saves history item to the history array
   async function saveHistoryItem(response) {
+    // Create the new history item
     if (!axios.defaults.saveHistory) { return }
     for (const ignore of HISTORY_IGNORES) {
       if (response.config.url.includes(ignore)) { return }
@@ -47,8 +48,16 @@ export default function useApiSettings() {
     const method = (response.config.method || 'get').toUpperCase()
     const path = response.config.url
     const data = response.config.data
-    const entry = {datetime, status, method, path, data}
-    history.value.unshift(entry)
+    const item = {datetime, status, method, path, data}
+    // Remove old duplicates with same status, method, path, and data
+    if (history.value && history.value.length) {
+      history.value = history.value.filter(function(itm) { 
+        return !(itm.status == status && itm.method == method && itm.path == path
+          && utils.stringify(itm.data) === utils.stringify(data))
+      })
+    }
+    // Add the new item to the beginning
+    history.value.unshift(item)
     if (history.length > 100) { history.value = history.value.slice(0, 100) }
   }
   axios.interceptors.response.use(
