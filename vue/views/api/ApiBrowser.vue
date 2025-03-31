@@ -29,6 +29,20 @@
                 <select v-model='method'><option v-for='meth in allowed' :key='meth' :value='meth'>{{meth}}</option></select>
                 <input class='urlinput' type='text' v-model='path' spellcheck='false'
                   @keydown.enter='$event.shiftKey ? sendRequest() : path=$event.target.value'/>
+                <Tooltip v-if='axiosSettings.history.value?.length' class='request-history' position='bottomleft' width='600px'>
+                  <template #tooltip>
+                    <strong style='padding-left:3px;'>Request History</strong>
+                    <div class='tablewrap'><table>
+                      <tr v-for='(item, i) in axiosSettings.history.value' :key='i' @click='setPath(item)'>
+                        <td>{{item.datetime}}</td>
+                        <td>{{item.status}}</td>
+                        <td>{{item.method}}</td>
+                        <td>{{item.path}}<template v-if='item.data'> - {{item.data}}</template></td>
+                      </tr>
+                    </table></div>
+                  </template>
+                  <i class='mdi mdi-history' />
+                </Tooltip>
               </div>
               <div v-if='method != "GET"' class='paramwrap'>
                 <CodeEditor  v-model='params' :showLineNums='true' padding='10px'
@@ -66,16 +80,16 @@
 </template>
 
 <script setup>
-  import {computed, inject, nextTick, onBeforeMount, onMounted, ref, watch, watchEffect} from 'vue'
+  import {inject, nextTick, onMounted, ref, watch, watchEffect} from 'vue'
   import {CodeEditor, LayoutPaper, LayoutSidePanel, Tooltip} from '@/components'
   import {ApiSettings} from '@/views/api'
   import {useUrlParams} from '@/composables'
   import {utils} from '@/utils'
   import axios from 'axios'
-  import JSON5 from 'json5'
   
-  var APIROOT = '/api/'
-  var showheaders = ['content-type', 'content-length', 'response-time', 'queries']
+  const APIROOT = '/api/'
+  const showheaders = ['content-type', 'content-length', 'response-time', 'queries']
+  const axiosSettings = inject('axiosSettings')
   const {method, path} = useUrlParams({method:{}, path:{}})       // Method & path url params
   var toc = ref(null)                                             // Table of contents (api root)
   var endpoint = ref(null)                                        // Current endpoint details
@@ -96,7 +110,8 @@
   // Watch Endpoint
   // Set body params by parsing the description
   watchEffect(function() {
-    if (method.value == 'GET') { return '' }
+    if (method.value == 'GET') { return }
+    if (params.value) { return }
     var docstr = endpoint.value?.description || ''
     var pattern = /•\s*(\w+)\s*\((\w+)\)/g
     var matches = Array.from(docstr.matchAll(pattern))
@@ -107,7 +122,7 @@
       newparams[name] = type == 'list' ? [] : type == 'dict' ? {} :
         type == 'int' ? 0 : type == 'bool' ? false : ''
     }
-    params.value = JSON5.stringify(newparams, null, 2)
+    params.value = utils.stringify(newparams, {indent:2})
   })
 
   // Watch Path
@@ -173,16 +188,18 @@
 
   // Set Path
   // Update path and method from the endpoint path
-  const setPath = function(endpt) {
-    path.value = decodeURIComponent(new URL(endpt.path).pathname)
-    method.value = endpt.method
+  const setPath = function(obj) {
+    path.value = !obj.path.startsWith('http') ? obj.path
+      : decodeURIComponent(new URL(obj.path).pathname)
+    method.value = obj.method
+    params.value = obj.data ? utils.stringify(JSON.parse(obj.data), {indent:2}) : null
   }
 
   // Send Request
   // Send the http request
   const sendRequest = async function() {
     if (path.value === null) { return }
-    var payload = (method.value != 'GET') ? JSON5.parse(params.value) || {} : undefined
+    var payload = (method.value != 'GET') ? JSON.parse(params.value) || {} : undefined
     await axios[method.value.toLowerCase()](path.value, payload)
       .then(resp => response.value = resp)
       .catch(err => response.value = err.response)
@@ -209,6 +226,7 @@
 
     /* Input Wrap */
     .inputwrap {
+      position: relative;
       .urlwrap {
         background-color: #00000008; 
         border-radius: 4px;
@@ -240,6 +258,30 @@
           padding: 0px 0px 0px 10px;
           width: calc(100% - 90px);
         }
+        .request-history {
+          position: absolute;
+          top: 2px;
+          right: 10px;
+          font-size: 1.2em;
+          .mdi { opacity: 0.6; }
+          .tablewrap {
+            max-height: 300px;
+            overflow-y: auto;
+            tr {
+              background-color: transparent;
+              cursor: pointer;
+              transition: background-color 0.3s ease;
+              &:hover { background-color: #8883; }
+            }
+            td {
+              white-space: nowrap;
+              overflow: hidden;
+              text-overflow: ellipsis;
+              user-select: none;
+              padding-right: 5px;
+            }
+          }
+        }
       }
       .paramwrap {
         position: relative;
@@ -249,7 +291,7 @@
         .send-request {
           position: absolute;
           bottom: 4px;
-          right: 15px;
+          right: 10px;
           z-index: 100;
           .mdi {
             opacity: 0.6;

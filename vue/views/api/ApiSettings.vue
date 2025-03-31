@@ -1,26 +1,26 @@
 <template>
-  <div class='apioptions'>
-    <Tooltip width='250px' text='An additonal Queries header is added to api requests
-      detailing the count and duration of sql queries.'>
-      <ToggleSwitch :value='countQueries' label='Count Queries' @update='setCountQueries'/>
+  <div id='apisettings'>
+    <Tooltip width='250px' text='An additonal Queries header is added to api requests detailing the count and duration of sql queries.'>
+      <ToggleSwitch label='Count Queries' :value='axiosSettings.countQueries.value' @update='axiosSettings.setCountQueries'/>
     </Tooltip>
     <Tooltip width='250px' text='Enables server side logging of all sql queries and their duration.'>
-      <ToggleSwitch :value='logQueries' label='Log Queries' @update='setLogQueries'/>
+      <ToggleSwitch label='Log Queries' :value='axiosSettings.logQueries.value' @update='axiosSettings.setLogQueries'/>
+    </Tooltip>
+    <Tooltip width='250px' text='Enabled axios history to be saved in the browser. Useful for debugging bad queries.'>
+      <ToggleSwitch label='Save History' :value='axiosSettings.saveHistory.value' @update='axiosSettings.setSaveHistory'/>
     </Tooltip>
   </div>
 </template>
 
 <script setup>
-  import {inject} from 'vue'
+  import {inject, onMounted} from 'vue'
   import {ToggleSwitch, Tooltip} from '@/components'
-  import axios from 'axios'
 
-  const {countQueries, setCountQueries} = inject('countQueries')  // Count queries on the server
-  const {logQueries, setLogQueries} = inject('logQueries')        // Log queries on the server
+  const axiosSettings = inject('axiosSettings')
 </script>
 
 <style>
-  .apioptions {
+  #apisettings {
     float: right;
     display: flex;
     flex-direction: column;
