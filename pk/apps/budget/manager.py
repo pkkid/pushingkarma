@@ -1,12 +1,11 @@
 # encoding: utf-8
-#
 # References:
 #  https://github.com/jseutter/ofxparse
 #  https://console.developers.google.com/
 from functools import cached_property
 import csv, datetime, re, logging
 import hashlib, base64
-from dateutil.relativedelta import relativedelta
+from datetime import timedelta
 from decimal import Decimal
 from django.utils import timezone
 from io import StringIO
@@ -177,7 +176,7 @@ class TransactionManager:
             self.status.append('Error %s: %s' % (filename, err))
 
     def label_transactions(self, transactions):
-        lastyear = datetime.datetime.now() - relativedelta(months=13)
+        lastyear = datetime.datetime.now() - timedelta(days=370)
         labels = Transaction.objects.filter(payee__startswith='<', date__gte=lastyear)
         labels = dict(labels.values_list('payee','amount').order_by('date'))
         lookup = dict((v,k) for k,v in labels.items())
@@ -189,7 +188,7 @@ class TransactionManager:
     def categorize_transactions(self, transactions, save=False):
         # Get all categorized items from the last 24 months
         # All Special chars found: /*,':-`&_.#
-        lastyear = datetime.datetime.now() - relativedelta(months=24)
+        lastyear = datetime.datetime.now() - timedelta(days=740)
         items = Transaction.objects.filter(date__gte=lastyear)
         items = items.exclude(payee='').exclude(category=None)
         items = items.values_list('payee', 'category__id').order_by('date')
