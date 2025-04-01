@@ -22,6 +22,7 @@ export default [
     'semi': ['error', 'never'],
     'vue/comment-directive': 'off',
     'vue/multi-word-component-names': 'off',
+    'vue/use-v-on-exact': 'off',
     'vue/no-reserved-component-names': 'off',
     'vue/valid-v-slot': ['error', {allowModifiers:true}],
   }},
