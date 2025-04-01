@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/use-v-on-exact -->
 <template>
   <div class='codeeditor' ref='codeeditor' :theme='theme' :class='{readOnly, showLineNums, scrollable}'>
     <div class='codewrap hljs'>
@@ -6,9 +7,13 @@
         <div v-if='showLineNums' ref='lineNums' class='linenums'>
           <div v-for='num in numLines' :key='num'>{{num}}</div>
         </div>
-        <textarea ref='textarea' spellcheck='false' :readOnly='readOnly' :autofocus='autoFocus'
-          :value='currentValue' @input='updateContent($event.target.value)' @scroll='onScroll'
-          @keydown.tab.prevent.stop='onTab' @keydown.ctrl.s.prevent='emit("save")'></textarea>
+        <textarea ref='textarea' spellcheck='false' :readOnly='readOnly' :autofocus='autoFocus' :value='currentValue'
+          @input='updateContent($event.target.value)'
+          @scroll='onScroll'
+          @keydown.tab.prevent.stop='onTab'
+          @keydown.enter.prevent='onEnter'
+          @keydown='onClosingBrace'
+          @keydown.ctrl.s.exact.prevent='emit("save")'/>
         <pre><code ref='code' :class='codeClass'></code></pre>
       </div>
     </div>
@@ -21,6 +26,7 @@
   // https://github.com/justcaliturner/simple-code-editor
   // https://github.com/highlightjs/highlight.js
   import {computed, nextTick, onMounted, onUnmounted, ref, watch, watchEffect} from 'vue'
+  import {textedit} from '@/utils'
   import hljs from 'highlight.js'
 
   
@@ -109,16 +115,30 @@
     scrollLeft.value = `${-event.target.scrollLeft}px`
   }
 
+  // On Enter
+  // Inserts new line adding indentation if needed
+  const onEnter = async function() {
+    if (props.readOnly) { return }
+    textedit.indentNewLine(textarea.value, props.tabSpaces)
+    updateContent(textarea.value.value)
+  }
+
   // On Tab
   // Inserts tab or spaces
-  const onTab = async function() {
-    const tab = ' '.repeat(props.tabSpaces)
-    var pos = textarea.value.selectionStart
-    var newval = textarea.value.value
-    newval = newval.substring(0, pos) + tab + newval.substring(pos)
-    updateContent(newval)
-    await nextTick()
-    textarea.value.setSelectionRange(pos+tab.length, pos+tab.length)
+  const onTab = async function(event) {
+    if (props.readOnly) { return }
+    textedit.tabIndent(textarea.value, event.shiftKey, props.tabSpaces)
+    updateContent(textarea.value.value)
+  }
+
+  // On Keydown
+  // Generic Keydown event
+  const onClosingBrace = async function(event) {
+    if (props.readOnly) { return }
+    if ('}])'.includes(event.key)) {
+      textedit.insertClosingBrace(textarea.value, event.key, props.tabSpaces)
+      updateContent(textarea.value.value)
+    }
   }
 
   // Update CSS Variables
@@ -133,7 +153,7 @@
   // Update Content
   // Emits the update or simply updates currentValue.value
   const updateContent = function(newval) {
-    currentValue.value = newval
+    // currentValue.value = newval   /* REMOVE THIS LINE??? */
     emit('update:modelValue', newval)
     emit('update', newval)
   }
