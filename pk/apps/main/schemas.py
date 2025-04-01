@@ -20,4 +20,4 @@ class LoginSchema(Schema):
 
 class GlobalVarsSchema(Schema):
     DEBUG: bool
-    user: UserSchema
+    user: Optional[UserSchema] = None

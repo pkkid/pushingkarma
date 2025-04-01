@@ -41,6 +41,7 @@ def logout(request):
 @router.get('/global_vars', response=GlobalVarsSchema)
 def get_global_vars(request):
     """ Return global variables. """
+    user = request.user if request.user.is_authenticated else None
     result = dict(**settings.GLOBALVARS)
-    result['user'] = request.user
+    result['user'] = user
     return result

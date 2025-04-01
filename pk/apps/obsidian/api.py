@@ -23,8 +23,8 @@ def get_note(request, bucketname:str, path:str):
     if bucketname not in settings.OBSIDIAN_BUCKETS:
         raise HttpError(404, 'Unknown bucket name.')
     bucket = settings.OBSIDIAN_BUCKETS[bucketname]
-    public = bucket.get('public', False)
-    if public or request.user.is_authenticated:
+    check_permission = bucket.get('check_permission', lambda user: True)
+    if check_permission(request.user):
         filepath = join(bucket['path'], path)
         if not exists(filepath):
             raise HttpError(404, 'Unknown note path.')
@@ -37,8 +37,7 @@ def get_note(request, bucketname:str, path:str):
             path = path,
             title = basename(filepath)[:-3],
             content = content,
-            mtime = int(getmtime(filepath)),
-            public = public,
+            mtime = int(getmtime(filepath))
         )
     raise HttpError(403, 'Permission denied.')
 
