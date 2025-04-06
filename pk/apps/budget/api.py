@@ -36,26 +36,26 @@ TRANSACTIONSEARCHFIELDS = {
 }
 
 
-@router.get('/accounts/{accountid}', response=AccountSchema, exclude_unset=True, url_name='account')
-def get_account(request, accountid:int):
+@router.get('/accounts/{pk}', response=AccountSchema, exclude_unset=True, url_name='account')
+def get_account(request, pk:int):
     """ List details for the specified account.
-        • accountid (int): Path param to specify account id.
+        • pk (int): Path param to specify account id.
     """
-    item = get_object_or_404(Account, user=request.user, id=accountid)
+    item = get_object_or_404(Account, user=request.user, id=pk)
     itemdict = model_to_dict(item)
-    itemdict['url'] = reverse(request, 'api:account', accountid=item.id)
+    itemdict['url'] = reverse(request, 'api:account', pk=item.id)
     return itemdict
 
 
-@router.patch('/accounts/{accountid}', response=AccountSchema, exclude_unset=True)
-def update_account(request, accountid:int, data:AccountSchema):
+@router.patch('/accounts/{pk}', response=AccountSchema, exclude_unset=True)
+def update_account(request, pk:int, data:AccountSchema):
     """ Update the specified account.
-        • accountid (int): Path param to specify account id.
+        • pk (int): Path param to specify account id.
         • name (str): Body param containing new account name.
         • import_rules (dict): Body param contianing new import rules.
     """
-    log.info(f'update_account({accountid}) {data}')
-    return get_account(request, accountid)
+    log.info(f'update_account({pk}) {data}')
+    return get_account(request, pk)
 
 
 @router.get('/accounts', response=PageSchema(AccountSchema), exclude_unset=True)
@@ -70,7 +70,7 @@ def list_accounts(request, search:str='', page:int=1):
     for i in range(len(data['items'])):
         item = data['items'][i]
         itemdict = model_to_dict(item)
-        itemdict['url'] = reverse(request, 'api:account', accountid=item.id)
+        itemdict['url'] = reverse(request, 'api:account', pk=item.id)
         data['items'][i] = itemdict
     return data
 
@@ -89,14 +89,14 @@ def sort_accounts(request, data:SortSchema):
     return list_accounts(request)
 
 
-@router.get('/categories/{categoryid}', response=CategorySchema, exclude_unset=True, url_name='category')
-def get_category(request, categoryid:int):
+@router.get('/categories/{pk}', response=CategorySchema, exclude_unset=True, url_name='category')
+def get_category(request, pk:int):
     """ List details for the specified category.
-        • categoryid (int): Path param to specify category id.
+        • pk (int): Path param to specify category id.
     """
-    item = get_object_or_404(Category, user=request.user, id=categoryid)
+    item = get_object_or_404(Category, user=request.user, id=pk)
     itemdict = model_to_dict(item)
-    itemdict['url'] = reverse(request, 'api:category', categoryid=item.id)
+    itemdict['url'] = reverse(request, 'api:category', pk=item.id)
     return itemdict
 
 
@@ -131,14 +131,14 @@ def sort_categories(request, data:SortSchema):
     return list_categories(request)
 
 
-@router.get('/transactions/{transactionid}', response=TransactionSchema, exclude_unset=True, url_name='transaction')
-def get_transaction(request, transactionid:int):
+@router.get('/transactions/{pk}', response=TransactionSchema, exclude_unset=True, url_name='transaction')
+def get_transaction(request, pk:int):
     """ List details for the specified transaction.
-        • transactionid: Path param to specify transaction id.
+        • pk: Path param to specify transaction id.
     """
-    item = get_object_or_404(Transaction, user=request.user, id=transactionid)
+    item = get_object_or_404(Transaction, user=request.user, id=pk)
     itemdict = model_to_dict(item)
-    itemdict['url'] = reverse(request, 'api:transaction', transactionid=item.id)
+    itemdict['url'] = reverse(request, 'api:transaction', pk=item.id)
     itemdict['account'] = dict(
         url = reverse(request, 'api:account', accountid=item.account.id),
         id = item.account.id,
