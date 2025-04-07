@@ -10,7 +10,7 @@
               {{utils.title(category)}}
             </div>
             <template v-for='endpt in endpts' :key='`${endpt.method} ${endpt.path}`'>
-              <div class='subitem link' :class='{selected:endpoint==endpt}' @click='setPath(endpt, $event)'>
+              <div v-if='showTocItem(endpt)' class='subitem link' :class='{selected:endpoint==endpt}' @click='setPath(endpt, $event)'>
                 <div class='name'>{{endpt.summary}}</div>
               </div>
             </template>
@@ -171,7 +171,7 @@
       newspan.className = `${span.className} link`
       newspan.addEventListener('click', () => {
         var newpath = newspan.textContent.slice(1, -1)
-        newpath = '/api/' + newpath.replace(axios.defaults.baseURL, '')
+        newpath = newpath.replace(axios.defaults.baseURL, '')
         path.value = newpath
         method.value = 'GET'
       })
@@ -210,6 +210,14 @@
       .catch(err => response.value = err.response)
     await nextTick()
     linkResponseUrls()
+  }
+
+  // Show TOC Item
+  // Hide non-get requests if the equivelent get request exists
+  const showTocItem = function(endpt) {
+    if (endpt.method == 'GET') { return true }
+    return !toc.value.endpoints[endpt.category].find(
+      e => e.path == endpt.path && e.method == 'GET')
   }
 
   // Watch Path & Method
