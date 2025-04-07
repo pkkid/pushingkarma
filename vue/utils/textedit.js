@@ -27,9 +27,6 @@ export function insertClosingBrace(textarea, brace, tabspaces=2) {
       textarea.setSelectionRange(pos - spacesToRemove, pos)
       document.execCommand('delete')
     }
-  } else {
-    // Just insert the brace at the current position
-    document.execCommand('insertText', false, brace)
   }
 }
 
