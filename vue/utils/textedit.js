@@ -8,9 +8,10 @@ export function indentNewLine(textarea, tabspaces=2) {
   const curline = text.substring(curlinestart, pos)
   var indent = curline.match(/^(\s*)/)[1] || ''
   var lastchar = curline.trim().slice(-1)
-  if ('[{('.includes(lastchar)) {
+  if (lastchar.length && '[{('.includes(lastchar)) {
     indent += ' '.repeat(tabspaces)
   }
+  console.log(`lastchar="${lastchar}"  ${'[{('.includes(lastchar)}  indent="${indent}"`)
   document.execCommand('insertText', false, '\n'+indent)
 }
 
