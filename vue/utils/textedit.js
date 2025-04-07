@@ -11,7 +11,6 @@ export function indentNewLine(textarea, tabspaces=2) {
   if (lastchar.length && '[{('.includes(lastchar)) {
     indent += ' '.repeat(tabspaces)
   }
-  console.log(`lastchar="${lastchar}"  ${'[{('.includes(lastchar)}  indent="${indent}"`)
   document.execCommand('insertText', false, '\n'+indent)
 }
 
