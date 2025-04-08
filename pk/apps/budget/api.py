@@ -2,6 +2,7 @@
 import logging
 from django_searchquery import searchfields as sf
 from django_searchquery.search import Search
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.forms.models import model_to_dict
 from ninja import Router
@@ -9,7 +10,8 @@ from ninja.errors import HttpError
 from pk.utils.django import reverse
 from pk.utils.ninja import PageSchema, paginate
 from .models import Account, Category, Transaction
-from .schemas import AccountSchema, CategorySchema, TransactionSchema
+from .schemas import AccountSchema, PatchAccountSchema
+from .schemas import CategorySchema, TransactionSchema
 from .schemas import SortSchema
 log = logging.getLogger(__name__)
 router = Router()
@@ -48,14 +50,27 @@ def get_account(request, pk:int):
 
 
 @router.patch('/accounts/{pk}', response=AccountSchema, exclude_unset=True)
-def update_account(request, pk:int, data:AccountSchema):
+def update_account(request, pk:int, data:PatchAccountSchema):
     """ Update the specified account.
         • pk (int): Path param to specify account id.
         • name (str): Body param containing new account name.
         • import_rules (dict): Body param contianing new import rules.
     """
-    log.info(f'update_account({pk}) {data}')
+    item = get_object_or_404(Account, user=request.user, id=pk)
+    if data.name: item.name = data.name
+    if data.import_rules: item.import_rules = data.import_rules
+    item.save()
     return get_account(request, pk)
+
+
+@router.delete('/accounts/{pk}', response=None)
+def delete_account(request, pk:int):
+    """ Update the specified account.
+        • pk (int): Path param to specify account id.
+    """
+    item = get_object_or_404(Account, user=request.user, id=pk)
+    item.delete()
+    return HttpResponse(status=204)
 
 
 @router.get('/accounts', response=PageSchema(AccountSchema), exclude_unset=True)

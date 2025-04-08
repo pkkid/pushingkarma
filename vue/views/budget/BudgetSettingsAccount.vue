@@ -31,7 +31,7 @@
             <Tooltip position='left'>
               <template #tooltip>Delete Account<div class='subtext'>shift + double-click</div></template>
               <i class='mdi mdi-trash-can-outline delete-account' style='margin-left:auto;'
-                @dblclick='deleteAccount($event, account.id)'/>
+                @dblclick='deleteAccount($event)'/>
             </Tooltip>
           </div>
         </div>
@@ -43,23 +43,24 @@
 <script setup>
   import {ref, watchEffect} from 'vue'
   import {CodeEditor, Expandable, SortableItem, Tooltip} from '@/components'
-  import JSON5 from 'json5'
+  import {api, utils} from '@/utils'
 
   const props = defineProps({
     account: {required:true},                                   // Account to be displayed
   })
-  const emit = defineEmits(['opened'])                          // Emit opened event
+  const emit = defineEmits(['opened', 'updated', 'deleted'])    // Emit opened event
   const expandy = ref(null)                                     // Reference to Expandable component
   const jsonIcon = ref('mdi-check')                             // Icon for JSON validation
   const jsonText = ref('Valid JSON')                            // Text for JSON validation
   const accountName = ref(props.account.name)                   // Name of the account
-  const accountRules = ref(props.account.import_rules || '{}')  // Import rules for the account
+  const accountRules = ref(utils.stringify(                     // Import rules for the account
+    props.account.import_rules || {}, {indent:2, maxlen:0}))
 
   // Watch Account Rules
   // Validate the JSON text
   watchEffect(function() {
     try {
-      JSON5.parse(accountRules.value)
+      JSON.parse(accountRules.value)
       jsonIcon.value = 'mdi-check'
       jsonText.value = 'Valid JSON'
     } catch (e) {
@@ -71,15 +72,21 @@
   // Save Account
   // Save the account configuration
   const saveAccount = async function() {
-    var rules = JSON5.parse(accountRules.value)
-    console.log('TODO Save account', accountName.value, rules)
+    var name = accountName.value
+    var import_rules = JSON.parse(accountRules.value)
+    var {data} = await api.Budget.updateAccount(props.account.id, {name, import_rules})
+    console.log(data)
+    console.log(`Updated account ${props.account.id}: ${name}`)
+    emit('updated', data)
   }
 
   // Delete Account
   // Delete the specified account
-  const deleteAccount = async function(event, accountid) {
+  const deleteAccount = async function(event) {
     if (event.shiftKey) {
-      console.log('TODO Delete acocunt', accountid)
+      await api.Budget.deleteAccount(props.account.id)
+      console.log(`Deleted account ${props.account.id}: ${props.account.name}`)
+      emit('deleted', props.account.id)
     }
   }
 

@@ -21,12 +21,17 @@ export const Main = {
   logout(signal) { return axios.post(`/api/main/logout`, null, {signal}) },
 }
 export const Budget = {
-  getAccounts(params, signal) { return axios.get(`/api/budget/accounts`, {params, signal}) },
+  // Budget Accounts
+  listAccounts(params, signal) { return axios.get(`/api/budget/accounts`, {params, signal}) },
   getAccount(accountid, params, signal) { return axios.get(`/api/budget/accounts/${accountid}`, {params, signal}) },
+  updateAccount(accountid, data, signal) { return axios.patch(`/api/budget/accounts/${accountid}`, data, {signal}) },
+  deleteAccount(accountid, signal) { return axios.delete(`/api/budget/accounts/${accountid}`, {signal}) },
   sortAccounts(data, signal) { return axios.patch(`/api/budget/sort_accounts`, data, {signal}) },
+  // Budget Categories
   getCategories(params, signal) { return axios.get(`/api/budget/categories`, {params, signal}) },
   getCategory(categoryid, params, signal) { return axios.get(`/api/budget/categories/${categoryid}`, {params, signal}) },
   sortCategories(data, signal) { return axios.patch(`/api/budget/sort_categories`, data, {signal}) },
+  // Budget Transactions
   getTransactions(params, signal) { return axios.get(`/api/budget/transactions`, {params, signal}) },
   getTransaction(transactionid, params, signal) { return axios.get(`/api/budget/transactions/${transactionid}`, {params, signal}) },
 }

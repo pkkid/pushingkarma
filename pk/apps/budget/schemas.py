@@ -15,6 +15,11 @@ class AccountSchema(Schema):
     sortid: Optional[int] = None
 
 
+class PatchAccountSchema(Schema):
+    name: Optional[str] = None
+    import_rules: Optional[dict] = None
+
+
 class CategorySchema(Schema):
     id: Optional[int] = None
     url: str

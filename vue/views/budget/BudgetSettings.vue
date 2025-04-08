@@ -8,8 +8,8 @@
       <div v-if='accounts' class='accounts'>
         <h3 style='margin-top:0px;'>Accounts</h3>
         <Sortable group='accounts' @sort='onSortAccounts'>
-          <BudgetSettingsAccount v-for='account in accounts.items' :key='account.id'
-            ref='accountPanels' :account='account' @opened='onAccountOpened'/>
+          <BudgetSettingsAccount v-for='account in accounts.items' :key='account.id' ref='accountPanels'
+            :account='account' @opened='onAccountOpened' @deleted='updateAccounts'/>
         </Sortable>
       </div>
       <!-- Categories -->
@@ -49,7 +49,7 @@
   // Update Accounts
   // Update the accounts list
   const updateAccounts = async function() {
-    var {data} = await api.Budget.getAccounts()
+    var {data} = await api.Budget.listAccounts()
     accounts.value = data
   }
 
