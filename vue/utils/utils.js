@@ -356,6 +356,7 @@ export function usd(value, opts={}) {
   return result
 }
 
+
 // USD Int
 // Format number to USD display without cents -$99
 export function usdint(value, opts={}) {
