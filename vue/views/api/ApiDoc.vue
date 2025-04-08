@@ -226,7 +226,9 @@
   watch([path, method], function() {
     if (!path.value || !method.value) { return }
     response.value = null
-    if (method.value == 'GET') { sendRequest() }
+    if (method.value == 'GET' && !path.value.includes('{')) {
+      sendRequest()
+    }
   }, {immediate:true})
 </script>
 
