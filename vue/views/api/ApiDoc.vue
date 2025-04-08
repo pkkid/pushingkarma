@@ -10,7 +10,8 @@
               {{utils.title(category)}}
             </div>
             <template v-for='endpt in endpts' :key='`${endpt.method} ${endpt.path}`'>
-              <div v-if='showTocItem(endpt)' class='subitem link' :class='{selected:endpoint==endpt}' @click='setPath(endpt, $event)'>
+              <div v-if='showTocItem(endpt)' class='subitem link' :class='{selected:endpoint==endpt}'
+                @click='setPath(endpt.path, endpt.method)'>
                 <div class='name'>{{endpt.summary}}</div>
               </div>
             </template>
@@ -33,7 +34,7 @@
                   <template #tooltip>
                     Request History
                     <div class='tablewrap'><table>
-                      <tr v-for='(item, i) in axiosSettings.history.value' :key='i' @click='setPath(item, $event)'>
+                      <tr v-for='(item, i) in axiosSettings.history.value' :key='i' @click.stop='setPath(item.path, item.method, item.data)'>
                         <td>{{item.datetime}}</td>
                         <td>{{item.status}}</td>
                         <td>{{item.method}}</td>
@@ -105,7 +106,8 @@
     utils.setNavPosition('top')
     toc.value = (await axios.get(APIROOT)).data
     if (!path.value || !method.value) {
-      setPath(toc.value.endpoints.root[0])
+      var root = toc.value.endpoints.root[0]
+      setPath(root.path, root.method)
     }
   })
 
@@ -143,7 +145,8 @@
   watchEffect(function() {
     if (!toc.value) { return null }
     if (!path.value || !path.value.startsWith(APIROOT)) {
-      setPath(toc.value.endpoints.root[0])
+      var root = toc.value.endpoints.root[0]
+      setPath(root.path, root.method)
     }
   })
 
@@ -191,13 +194,11 @@
 
   // Set Path
   // Update path and method from the endpoint path
-  const setPath = function(obj, event) {
-    path.value = !obj.path.startsWith('http') ? obj.path
-      : decodeURIComponent(new URL(obj.path).pathname)
-    method.value = obj.method
-    params.value = obj.data ? utils.stringify(JSON.parse(obj.data), {indent:2}) : null
-    event?.stopPropagation()
+  const setPath = function(newpath, newmethod, newparams) {
     historyTooltip.value?.close()
+    method.value = newmethod
+    path.value = !newpath.startsWith('http') ? newpath : decodeURIComponent(new URL(newpath).pathname)
+    params.value = newparams ? utils.stringify(JSON.parse(newparams), {indent:2}) : null
   }
 
   // Send Request
