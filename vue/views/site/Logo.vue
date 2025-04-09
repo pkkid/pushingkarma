@@ -11,7 +11,7 @@
   }
   .logoimg {
     position: absolute;
-    z-index: 99;
+    z-index: 9;
     transition: all 0.5s var(--bounce);
   }
   .logotxt {
@@ -24,7 +24,7 @@
     position: absolute;
     text-align: center;
     text-transform: uppercase;
-    z-index: 99;
+    z-index: 9;
     transition: all 0.5s var(--bounce);
   }
 

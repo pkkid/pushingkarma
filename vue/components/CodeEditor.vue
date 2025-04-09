@@ -172,6 +172,7 @@
     font-size: 13px;
     line-height: 1.2;
     position: relative;
+    z-index: 1;
 
     .codewrap, .codearea, .linenums, textarea, pre, code {
       font-family: inherit !important;
@@ -232,7 +233,7 @@
       white-space: pre;
       width: 100%;
       word-wrap: normal;
-      z-index: 1;
+      z-index: 2;
     }
     pre {
       border-width: 0px;

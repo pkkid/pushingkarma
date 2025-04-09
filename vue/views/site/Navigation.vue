@@ -64,6 +64,7 @@
       height: 100vh;
       position: fixed;
       width: var(--navwidth);
+      z-index: 10;
       .sitelinks {
         height: calc(100vh - 250px - 20px);
         margin-top: 250px;
@@ -89,7 +90,7 @@
       box-shadow: 0px 1px 2px #0003;
       position: fixed;
       width: 100vw;
-      z-index: 99;
+      z-index: 10;
       .sitelinks {
         width: calc(100vw - 320px - 20px);
         margin-left: 320px;

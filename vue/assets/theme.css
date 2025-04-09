@@ -2,6 +2,7 @@
  * Theme
  * Main css color variables and themeing not specific to any
  * single component.
+ * z-indexes: content=0, header=10, modalbg=99, modal=100
  *--------------------------------------------------------------- */
 :root {
   /* Website Fonts */

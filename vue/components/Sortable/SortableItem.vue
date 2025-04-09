@@ -134,7 +134,7 @@
       height: 3px;
       position: absolute;
       width: calc(100% - 10px);
-      z-index: 999;
+      z-index: 15;
     }
     &.dropbefore::before { top:-2px; left:5px; }
     &.dropafter::before { bottom:-2px; left:5px; }

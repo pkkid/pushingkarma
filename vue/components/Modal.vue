@@ -63,7 +63,7 @@
     position: fixed;
     top: 0;
     width: 100%;
-    z-index: 1000;
+    z-index: 99;
 
     .modal-wrap {
       border-radius: 8px;
@@ -73,6 +73,7 @@
       box-shadow: 0px 4px 8px #0008, 0px 8px 20px #0004;
       min-width: 500px;
       max-height: 80%;
+      z-index: 100;
 
       .close-button {
         align-items: center;

@@ -323,7 +323,7 @@
           position: absolute;
           bottom: 4px;
           right: 10px;
-          z-index: 95;
+          z-index: 9;
           .mdi {
             opacity: 0.6;
             cursor: pointer;

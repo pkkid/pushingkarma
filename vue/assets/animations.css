@@ -16,7 +16,7 @@
   padding: 5px;
   transition: all 0.2s ease;
   transition-timing-function: steps(10, end);
-  z-index: 1001;
+  z-index: 12;
   &:hover {
     opacity: 1;
     animation: spin90deg 0.8s cubic-bezier(0.68, -0.55, 0.27, 1.55) forwards;
