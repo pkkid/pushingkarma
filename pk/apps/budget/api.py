@@ -11,8 +11,8 @@ from pk.utils.django import reverse
 from pk.utils.ninja import PageSchema, paginate
 from .models import Account, Category, Transaction
 from .schemas import AccountSchema, PatchAccountSchema
-from .schemas import CategorySchema, TransactionSchema
-from .schemas import SortSchema
+from .schemas import CategorySchema, PatchCategorySchema
+from .schemas import TransactionSchema, SortSchema
 log = logging.getLogger(__name__)
 router = Router()
 
@@ -68,8 +68,7 @@ def delete_account(request, pk:int):
     """ Update the specified account.
         • pk (int): Path param to specify account id.
     """
-    item = get_object_or_404(Account, user=request.user, id=pk)
-    item.delete()
+    get_object_or_404(Account, user=request.user, id=pk).delete()
     return HttpResponse(status=204)
 
 
@@ -113,6 +112,29 @@ def get_category(request, pk:int):
     itemdict = model_to_dict(item)
     itemdict['url'] = reverse(request, 'api:category', pk=item.id)
     return itemdict
+
+
+@router.patch('/categories/{pk}', response=CategorySchema, exclude_unset=True)
+def update_category(request, pk:int, data:PatchCategorySchema):
+    """ Update the specified category.
+        • pk (int): Path param to specify category id.
+        • name (str): Body param containing new category name.
+    """
+    print('---')
+    print(data)
+    item = get_object_or_404(Category, user=request.user, id=pk)
+    if data.name: item.name = data.name
+    item.save()
+    return get_category(request, pk)
+
+
+@router.delete('/categories/{pk}', response=None)
+def delete_category(request, pk:int):
+    """ Update the specified category.
+        • pk (int): Path param to specify category id.
+    """
+    get_object_or_404(Category, user=request.user, id=pk).delete()
+    return HttpResponse(status=204)
 
 
 @router.get('/categories', response=PageSchema(CategorySchema), exclude_unset=True)

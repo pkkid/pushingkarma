@@ -72,7 +72,7 @@
     cancelctrl = api.cancel(cancelctrl)
     try {
       var params = {search:search.value}
-      var {data} = await api.Budget.getTransactions(params, cancelctrl.signal)
+      var {data} = await api.Budget.listTransactions(params, cancelctrl.signal)
       transactions.value = data
     } catch (err) {
       if (!api.isCancel(err)) { throw(err) }

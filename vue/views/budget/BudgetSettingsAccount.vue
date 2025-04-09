@@ -75,8 +75,6 @@
     var name = accountName.value
     var import_rules = JSON.parse(accountRules.value)
     var {data} = await api.Budget.updateAccount(props.account.id, {name, import_rules})
-    console.log(data)
-    console.log(`Updated account ${props.account.id}: ${name}`)
     emit('updated', data)
   }
 
@@ -85,7 +83,6 @@
   const deleteAccount = async function(event) {
     if (event.shiftKey) {
       await api.Budget.deleteAccount(props.account.id)
-      console.log(`Deleted account ${props.account.id}: ${props.account.name}`)
       emit('deleted', props.account.id)
     }
   }

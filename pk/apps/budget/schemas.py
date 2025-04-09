@@ -28,6 +28,10 @@ class CategorySchema(Schema):
     sortid: Optional[int] = None
 
 
+class PatchCategorySchema(Schema):
+    name: Optional[str] = None
+
+
 class TransactionSchema(Schema):
     url: str
     trxid: str

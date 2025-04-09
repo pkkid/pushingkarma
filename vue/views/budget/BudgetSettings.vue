@@ -16,7 +16,8 @@
       <div v-if='categories' class='categories'>
         <h3>Categories</h3>
         <Sortable group='categories' @sort='onSortCategories' style='min-height:100px; max-height:300px; overflow-y:auto;'>
-          <BudgetSettingsCategory v-for='category in categories.items' :key='category.id' :category='category'/>
+          <BudgetSettingsCategory v-for='category in categories.items' :key='category.id'
+            :category='category' @deleted='updateCategories'/>
         </Sortable>
       </div>
     </article>
@@ -56,7 +57,7 @@
   // Update Categories
   // Update the categories list
   const updateCategories = async function() {
-    var {data} = await api.Budget.getCategories()
+    var {data} = await api.Budget.listCategories()
     categories.value = data
   }
 

@@ -137,7 +137,6 @@
     --bgcolor: var(--darkbg-bg1);
     position: relative;
     display: inline-block;
-    user-select: normal;
 
     .tooltip {
       background-color: var(--bgcolor);
@@ -149,6 +148,7 @@
       padding: 5px 10px;
       position: absolute;
       transition: all 0.4s ease;
+      user-select: text;
       z-index: 11;
       &.loaded { opacity: 1; }
     }
