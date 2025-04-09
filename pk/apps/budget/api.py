@@ -120,8 +120,6 @@ def update_category(request, pk:int, data:PatchCategorySchema):
         • pk (int): Path param to specify category id.
         • name (str): Body param containing new category name.
     """
-    print('---')
-    print(data)
     item = get_object_or_404(Category, user=request.user, id=pk)
     if data.name: item.name = data.name
     item.save()
