@@ -82,7 +82,9 @@
   // Delete the specified account
   const deleteAccount = async function(event) {
     if (event.shiftKey) {
-      await api.Budget.deleteAccount(props.account.id)
+      if (props.account.id != null) {
+        await api.Budget.deleteAccount(props.account.id)
+      }
       emit('deleted', props.account.id)
     }
   }

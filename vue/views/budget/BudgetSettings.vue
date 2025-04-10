@@ -6,7 +6,12 @@
     <article>
       <!-- Accounts -->
       <div v-if='accounts' class='accounts'>
-        <h3 style='margin-top:0px;'>Accounts</h3>
+        <h3 style='margin-top:0px;'>
+          <Tooltip text='Add Account' position='left' style='float:right; margin-top:3px;'>
+            <i class='mdi mdi-plus add-item' @click.stop='addAccount'/>
+          </Tooltip>
+          Accounts
+        </h3>
         <Sortable group='accounts' @sort='onSortAccounts'>
           <BudgetSettingsAccount v-for='account in accounts.items' :key='account.id' ref='accountPanels'
             :account='account' @opened='onAccountOpened' @deleted='updateAccounts'/>
@@ -14,7 +19,12 @@
       </div>
       <!-- Categories -->
       <div v-if='categories' class='categories'>
-        <h3>Categories</h3>
+        <h3>
+          <Tooltip text='Add Category' position='left' style='float:right; margin-top:3px;'>
+            <i class='mdi mdi-plus add-item' @click.stop='addCategory'/>
+          </Tooltip>
+          Categories
+        </h3>
         <Sortable group='categories' @sort='onSortCategories' style='min-height:100px; max-height:300px; overflow-y:auto;'>
           <BudgetSettingsCategory v-for='category in categories.items' :key='category.id'
             :category='category' @deleted='updateCategories'/>
@@ -27,7 +37,7 @@
 <script setup>
   import {ref, watchEffect} from 'vue'
   import {BudgetSettingsAccount, BudgetSettingsCategory} from '.'
-  import {Modal, Sortable} from '@/components'
+  import {Modal, Sortable, Tooltip} from '@/components'
   import {api} from '@/utils'
   
   const emit = defineEmits(['close'])         // Emit close event
@@ -59,6 +69,22 @@
   const updateCategories = async function() {
     var {data} = await api.Budget.listCategories()
     categories.value = data
+  }
+
+  // Add Account
+  // Create a new account object
+  const addAccount = async function() {
+    if (accounts.value.items[0].name == 'New Account') { return }
+    var newaccount = {id:null, name:'New Account', import_rules:{}}
+    accounts.value.items.unshift(newaccount)
+  }
+
+  // Add Category
+  // Create a new category object
+  const addCategory = async function() {
+    if (categories.value.items[0].name == 'New Category') { return }
+    var newcategory = {id:null, name:'New Category'}
+    categories.value.items.unshift(newcategory)
   }
 
   // On Sort Accounts
@@ -104,6 +130,18 @@
       transition: background-color 0.3s ease;
       &:focus { background-color:#0001; }
     }
+
+    /* Add Account or Category */
+    h3 .add-item {
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 18px;
+      opacity: 0;
+      &:hover { opacity:1 !important; }
+    }
+    h3:hover .add-item { opacity:0.6; }
+
+    /* Delete Account or Category */
     .delete-account,
     .delete-category {
       cursor: pointer;
@@ -111,11 +149,10 @@
       font-size: 1.2em;
       margin-right: 5px;
       opacity:0.6;
-      &:hover {
-        color: var(--lightbg-red0) !important;
-        opacity: 1 !important;
-      }
+      &:hover { opacity:1 !important; color:var(--lightbg-red0) !important; }
     }
+    .delete-account:hover,
+    .delete-category:hover { color: var(--lightbg-red0) !important; }
     .delete-category { opacity:0; margin-right:0px; position:relative; top:1px; }
     .sortableitem:hover .delete-category { opacity:0.7; }
   }
