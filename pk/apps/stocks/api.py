@@ -6,7 +6,7 @@ from django_searchquery.search import Search
 from django.db.models import Max
 from django.forms.models import model_to_dict
 from django.shortcuts import get_object_or_404
-from ninja import Router
+from ninja import Query, Router
 from pk.utils.django import reverse
 from pk.utils.ninja import PageSchema, paginate
 from pk.utils.utils import percent
@@ -22,45 +22,44 @@ TICKERSEARCHFIELDS = [
 ]
 
 
-@router.get('/tickers/{ticker}', response=TickerSchema, exclude_unset=True, url_name='ticker')
-def get_ticker(request, ticker:str):
-    """ List details for the specified ticker.
-        • ticker: Ticker symbol
-    """
-    item = get_object_or_404(Ticker, ticker=ticker)
+@router.get('/tickers/{pk}', response=TickerSchema, exclude_unset=True, url_name='ticker')
+def get_ticker(request,
+      pk: str=Query(None, description='Ticker symbol to get'),):
+    """ List details for the specified ticker. """
+    item = get_object_or_404(Ticker, pk=pk)
     itemdict = model_to_dict(item)
-    itemdict['url'] = reverse(request, 'api:ticker', ticker=item.ticker)
-    itemdict['lastday'] = model_to_dict(item.lastday)
-    del itemdict['lastday']['ticker']
+    itemdict['url'] = reverse(request, 'api:ticker', pk=item.ticker)
+    if item.lastday:
+        itemdict['lastday'] = model_to_dict(item.lastday)
+        del itemdict['lastday']['ticker']
     return itemdict
 
 
 @router.get('/tickers', response=PageSchema(TickerSchema), exclude_unset=True)
-def list_tickers(request, search:str='', page:int=1):
-    """ List tickers and basic information from the database.
-        • search: Filter tickers by search string.
-        • page: Page number of results to return
-    """
+def list_tickers(request,
+      search: str=Query('', description='Search term to filter tickers'),
+      page: int=Query(1, description='Page number of results to return')):
+    """ List tickers and basic information from the database. """
     items = Ticker.objects.select_related('lastday').order_by('ticker')
     if search: items = Search(TICKERSEARCHFIELDS).get_queryset(items, search)
     data = paginate(request, items, page=page, perpage=10)
     for i in range(len(data['items'])):
         item = data['items'][i]
         itemdict = model_to_dict(item)
-        itemdict['url'] = reverse(request, 'api:ticker', ticker=item.ticker)
-        itemdict['lastday'] = model_to_dict(item.lastday)
-        del itemdict['lastday']['ticker']
+        itemdict['url'] = reverse(request, 'api:ticker', pk=item.ticker)
+        if item.lastday:
+            itemdict['lastday'] = model_to_dict(item.lastday)
+            del itemdict['lastday']['ticker']
         data['items'][i] = itemdict
     return data
 
 
 @router.get('/chart_ranks', response=DatasetsSchema, exclude_unset=True)
-def chart_ranks(request, periods:str=None, maxresults:int=10, search:str=''):
-    """ Return datasets to render a the Projected Ranks chart.
-        • periods: Week periods to include in the chart (ie: 12w,10w,8w,6w,4w,2w)
-        • maxresults: Maximum number of results to return (default: 10).
-        • search: Filter tickers by search string.
-    """
+def chart_ranks(request,
+      periods: str=Query(None, description='Week periods to include in the chart (ie: 12w,10w,8w,6w,4w,2w)'),
+      maxresults: int=Query(10, description='Maximum number of results to return (default: 10)'),
+      search: str=Query('', description='Search term to filter tickers')):
+    """ Return datasets to render a the Projected Ranks chart. """
     periods = (periods or '12w,10w,8w,6w,4w,2w').split(',')
     tickers = Ticker.objects.all()
     if search: tickers = Search(TICKERSEARCHFIELDS).get_queryset(tickers, search)

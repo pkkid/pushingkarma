@@ -6,7 +6,7 @@ from django.contrib.auth import login as django_login
 from django.contrib.auth import logout as django_logout
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
-from ninja import Router
+from ninja import Body, Router
 from ninja.errors import HttpError
 from .schemas import GlobalVarsSchema, UserSchema, LoginSchema
 log = logging.getLogger(__name__)
@@ -14,11 +14,8 @@ router = Router()
 
 
 @router.post('/login', response=UserSchema)
-def login(request, data:LoginSchema):
-    """ Allows logging in to the django application.
-        • email (str): Email of the account to log into.
-        • password (str): Password of the account to log into.
-    """
+def login(request, data:LoginSchema=Body(...)):
+    """ Log into to the django application. """
     try:
         username = get_object_or_404(User, email=data.email).username
         user = authenticate(username=username, password=data.password)

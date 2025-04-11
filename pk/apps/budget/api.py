@@ -5,7 +5,7 @@ from django_searchquery.search import Search
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.forms.models import model_to_dict
-from ninja import Router
+from ninja import Body, Query, Router
 from ninja.errors import HttpError
 from pk.utils.django import reverse
 from pk.utils.ninja import PageSchema, paginate
@@ -43,7 +43,8 @@ TRANSACTIONSEARCHFIELDS = {
 # ---------------
 
 @router.get('/accounts/{pk}', response=AccountSchema, exclude_unset=True, url_name='account')
-def get_account(request, pk:int):
+def get_account(request,
+      pk:int=Query(None, description='Primary key of account to get')):
     """ List details for the specified account. """
     item = get_object_or_404(Account, user=request.user, id=pk)
     itemdict = model_to_dict(item)
@@ -52,7 +53,9 @@ def get_account(request, pk:int):
 
 
 @router.patch('/accounts/{pk}', response=AccountSchema, exclude_unset=True)
-def update_account(request, pk:int, data:AccountPatchSchema):
+def update_account(request,
+      pk: int=Query(None, description='Primary key of account to update'),
+      data: AccountPatchSchema=Body(...)):
     """ Update the specified account. """
     item = get_object_or_404(Account, user=request.user, id=pk)
     if data.name: item.name = data.name
@@ -62,14 +65,17 @@ def update_account(request, pk:int, data:AccountPatchSchema):
 
 
 @router.delete('/accounts/{pk}', response=None)
-def delete_account(request, pk:int):
+def delete_account(request,
+      pk: int=Query(None, description='Primary key of account to delete')):
     """ Delete the specified account. """
     get_object_or_404(Account, user=request.user, id=pk).delete()
     return HttpResponse(status=204)
 
 
 @router.get('/accounts', response=PageSchema(AccountSchema), exclude_unset=True)
-def list_accounts(request, search:str='', page:int=1):
+def list_accounts(request,
+      search: str=Query('', description='Search term to filter accounts'),
+      page: int=Query(1, description='Page number of results to return')):
     """ List accounts for the logged in user. """
     items = Account.objects.filter(user=request.user).order_by('sortid')
     if search: items = Search(ACCOUNTSEARCHFIELDS).get_queryset(items, search)

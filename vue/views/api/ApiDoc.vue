@@ -59,8 +59,8 @@
             <div class='description'>
               {{endpoint?.description}}
               <ul style='margin-top:5px; font-size:1em;'>
-                <li>
-                  <strong>foobar</strong>: This is a foobar
+                <li v-for='param in params' :key='param.name'>
+                  <span style='color:#bbb;'>{{param.in}}.</span>{{param.name}} ({{param.type}}): {{param.description}}
                 </li>
               </ul>
             </div>
@@ -123,6 +123,33 @@
           result[category].push({...details, path:epath, method:emethod, category:category})
           break
         }
+      }
+    }
+    return result
+  })
+
+  // Params
+  // Computes paramaters for the current endpoint
+  const params = computed(function() {
+    if (!endpoint.value) { return [] }
+    var result = []
+    // Iterate the path and query parameters
+    for (var param of Object.values(endpoint.value.parameters)) {
+      result.push({name:param.name, type:param.schema.type, in:param.in,
+        required:param.required, description:param.schema.description})
+    }
+    // Iterate the contentBody schema parameters
+    if (endpoint.value.requestBody) {
+      var schema = endpoint.value.requestBody?.content['application/json']?.schema
+      if ('$ref' in schema) {
+        var ref = schema.$ref.split('/').slice(-1)[0]
+        schema = toc.value.components?.schemas[ref]
+      }
+      var required = schema?.required || []
+      for (var [name, meta] of Object.entries(schema?.properties || {})) {
+        var type = meta.type || meta.anyOf[0]?.type
+        result.push({name:name, type:type, in:'body',
+          required:required.includes(name), description:meta.description})
       }
     }
     return result

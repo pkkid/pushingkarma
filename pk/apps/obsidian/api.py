@@ -2,7 +2,7 @@
 import glob, logging, re
 from django.conf import settings
 from django.views.decorators.cache import cache_page
-from ninja import Router
+from ninja import Query, Router
 from ninja.decorators import decorate_view
 from ninja.errors import HttpError
 from os.path import basename, exists, getmtime, join
@@ -14,11 +14,11 @@ router = Router()
 
 
 @router.get('/notes/{bucketname}/{path}', response=NoteSchema, exclude_unset=True, url_name='note')
-def get_note(request, bucketname:str, path:str):
+def get_note(request,
+      bucketname: str=Query(None, description='Name of Obsidian bucket in settings.py'),
+      path: str=Query(None, description='Path of note in the bucket')):
     """ Returns a single note from the obsian vault. The path is relative to the
         vault bucket. The bucketname is the name of the group in settings.py.
-        • bucketname: Name of Obsidian bucket in settings.py (required)
-        • path: Path of note in the bucket vault (required)
     """
     if bucketname not in settings.OBSIDIAN_BUCKETS:
         raise HttpError(404, 'Unknown bucket name.')
@@ -44,13 +44,13 @@ def get_note(request, bucketname:str, path:str):
 
 @router.get('/notes', response=PageSchema(NoteSchema), exclude_unset=True)
 @decorate_view(cache_page(0 if settings.DEBUG else 300))
-def list_notes(request, search:str='', page:int=1):
+def list_notes(request,
+      search: str=Query('', description='Search term to filter notes'),
+      page: int=Query(1, description='Page number of results to return')):
     """ Lists obsidian notes in the defined groups from settings. When searching,
         each word in the search string is counted in the content and title to give
         a score for sorting the results. The results are sorted by count and mtime,
         and returned as a list of dictionaries.
-        • search (str): search query string.
-        • page: Page number of results to return
     """
     items = []
     search = re.sub(r'[^a-zA-Z0-9\s]', '', search[:100])

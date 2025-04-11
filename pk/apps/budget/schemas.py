@@ -1,5 +1,5 @@
 # encoding: utf-8
-from datetime import date, datetime
+import datetime
 from decimal import Decimal
 from ninja import Schema
 from typing import List, Optional
@@ -7,11 +7,11 @@ from pydantic import Field
 
 
 class AccountSchema(Schema):
-    id: Optional[int] = Field(None, description='Account id to display')
+    id: Optional[int] = Field(None, description='Internal account id')
     url: str = Field(..., description='URL for the account resource')
     name: str = Field(..., description='Name of this account')
     balance: Optional[Decimal] = Field(None, description='Current balance on the account')
-    balance_updated: Optional[datetime] = Field(None, description='Datetime balance was updated')
+    balance_updated: Optional[datetime.datetime] = Field(None, description='Datetime balance was updated')
     import_rules: Optional[dict] = Field(None, description='Transacation import rules for this account')
     sortid: Optional[int] = Field(None, description='User sort id when listing accounts')
 
@@ -22,28 +22,28 @@ class AccountPatchSchema(Schema):
 
 
 class CategorySchema(Schema):
-    id: Optional[int] = None
-    url: str
-    name: str
-    exclude: Optional[bool] = None
-    sortid: Optional[int] = None
+    id: Optional[int] = Field(None, description='Internal category id')
+    url: str = Field(..., description='URL for the category resource')
+    name: str = Field(..., description='Name of this cateogry')
+    exclude: Optional[bool] = Field(None, description='Exclude this category from reports')
+    sortid: Optional[int] = Field(None, description='User sort id when listing categories')
 
 
 class CategoryPatchSchema(Schema):
-    name: Optional[str] = None
+    name: Optional[str] = Field(..., description='Name of this category')
 
 
 class TransactionSchema(Schema):
-    url: str
-    trxid: str
-    date: date
-    payee: str
-    amount: Decimal
-    approved: bool
-    comment: Optional[str] = None
-    account: AccountSchema
-    category: Optional[CategorySchema] = None
+    url: str = Field(..., description='URL for the transaction resource')
+    trxid: str = Field(..., description='Financial institution transaction id')
+    date: datetime.date = Field(..., description='Date of transaction')
+    payee: str = Field(..., description='Payee of transaction')
+    amount: Decimal = Field(..., description='Amount of transaction')
+    approved: bool = Field(..., description='True when user approved transaction')
+    comment: Optional[str] = Field(None, description='User comment for transaction')
+    account: AccountSchema = Field(..., description='Financial institution of transaction')
+    category: Optional[CategorySchema] = Field(None, description='User category of transaction')
 
 
 class SortSchema(Schema):
-    sortlist: List[int]
+    sortlist: List[int] = Field(..., description='List of items ids in sorted order')
