@@ -4,14 +4,13 @@
       <!-- Side Panel: API Categorties -->
       <template #panel>
         <div v-if='toc' class='menu'>
-          <template v-for='[category, endpts] in Object.entries(toc.endpoints)' :key='category'>
+          <template v-for='[category, endpts] in Object.entries(categories)' :key='category'>
             <div class='item'>
-              <i class='mdi' :class='getIcon(category)'/>
+              <i class='mdi' :class='ICONS[category] || "mdi-code-braces"'/>
               {{utils.title(category)}}
             </div>
-            <template v-for='endpt in endpts' :key='`${endpt.method} ${endpt.path}`'>
-              <div v-if='showTocItem(endpt)' class='subitem link' :class='{selected:endpoint==endpt}'
-                @click='setPath(endpt.path, endpt.method)'>
+            <template v-for='endpt in endpts' :key='endpt.path'>
+              <div class='subitem link' @click='setPath(endpt.path, endpt.method)'>
                 <div class='name'>{{endpt.summary}}</div>
               </div>
             </template>
@@ -27,9 +26,10 @@
             <h1 v-else>Unknown Endpoint</h1>
             <div class='inputwrap'>
               <div class='urlwrap'>
-                <select v-model='method'><option v-for='meth in allowed' :key='meth' :value='meth'>{{meth}}</option></select>
+                <select v-model='method'><option v-for='meth in allowed' :key='meth' :value='meth'>{{meth.toUpperCase()}}</option></select>
                 <input class='urlinput' type='text' v-model='path' spellcheck='false'
                   @keydown.enter='$event.shiftKey ? sendRequest() : path=$event.target.value'/>
+                <!-- History Tooltip -->
                 <Tooltip v-if='axiosSettings.history.value?.length' ref='historyTooltip' class='request-history' position='bottomleft' width='auto' trigger='click'>
                   <template #tooltip>
                     Request History
@@ -46,21 +46,29 @@
                   <i class='mdi mdi-history' />
                 </Tooltip>
               </div>
-              <div v-if='method != "GET"' class='paramwrap'>
-                <CodeEditor  v-model='params' :showLineNums='true' padding='10px'
-                  @keydown.shift.enter.prevent='sendRequest'/>
+              <!-- Content Body -->
+              <div v-if='method != "get"' class='paramwrap'>
+                <CodeEditor  v-model='params' :showLineNums='true' padding='10px' @keydown.shift.enter.prevent='sendRequest'/>
                 <Tooltip class='send-request' position='lefttop'>
                   <template #tooltip>Send Request<div class='subtext'>shift+enter</div></template>
                   <i class='mdi mdi-send' @click='sendRequest'/>
                 </Tooltip>
               </div>
             </div>
-            <div class='description' v-html='endpoint?.description.replace(/\n/g, "<br/>")'></div>
+            <!-- Endpoint Description & Parameters -->
+            <div class='description'>
+              {{endpoint?.description}}
+              <ul style='margin-top:5px; font-size:1em;'>
+                <li>
+                  <strong>foobar</strong>: This is a foobar
+                </li>
+              </ul>
+            </div>
             <!-- Response Headers and Content -->
             <template v-if='response'>
               <div class='headers'>
                 <span class='label'>HTTP {{response.status}} {{response.statusText}}</span><br/>
-                <template v-for='header in showheaders'>
+                <template v-for='header in Object.keys(response.headers)'>
                   <div v-if='response.headers[header]' :key='header'>
                     <span class='label'>{{utils.title(header)}}:</span>
                     <span class='value'>{{response.headers[header]}}</span><br/>
@@ -82,7 +90,7 @@
 </template>
 
 <script setup>
-  import {inject, nextTick, onMounted, ref, watch, watchEffect} from 'vue'
+  import {computed, inject, nextTick, onMounted, ref, watch, watchEffect} from 'vue'
   import {CodeEditor, LayoutPaper, LayoutSidePanel, Tooltip} from '@/components'
   import {ApiSettings} from '@/views/api'
   import {useUrlParams} from '@/composables'
@@ -90,77 +98,45 @@
   import axios from 'axios'
   
   const APIROOT = '/api/'
-  const showheaders = ['content-type', 'content-length', 'response-time', 'queries']
-  const axiosSettings = inject('axiosSettings')
-  const {method, path} = useUrlParams({method:{}, path:{}})       // Method & path url params
-  var toc = ref(null)                                             // Table of contents (api root)
-  var endpoint = ref(null)                                        // Current endpoint details
-  var historyTooltip = ref(null)                                  // History tooltip
-  var params = ref(null)                                          // Current parameters
-  var response = ref(null)                                        // Current get response
-  const allowed = ref(null)                                       // Allowed methods for current endpoint
+  const ICONS = {'budget':'mdi-piggy-bank-outline', 'main':'mdi-earth',
+    'obsidian':'mdi-notebook-outline', 'stocks':'mdi-chart-line'}
   
+  const axiosSettings = inject('axiosSettings')
+  const {method, path} = useUrlParams({method:{}, path:{}})  // Method & path url params
+  var allowed = ref(null)                 // Allowed methods for current endpoint
+  var endpoint = ref(null)                // Current endpoint details
+  var historyTooltip = ref(null)          // History tooltip
+  var params = ref(null)                  // Current parameters
+  var response = ref(null)                // Current get response
+  var toc = ref(null)                     // Table of contents (api root)
+
+  // Categories
+  // Computes object of {category: [endpoints]} to display in the sidepanel
+  const categories = computed(function() {
+    if (!toc.value) { return [] }
+    var result = {}
+    for (const [epath, endpts] of Object.entries(toc.value.paths)) {
+      var category = epath.replace('/api/', '').split('/')[0] || 'root'
+      if (!(category in result)) { result[category]  = [] }
+      for (const [emethod, details] of Object.entries(endpts)) {
+        if ((category == 'root' && epath == APIROOT) || epath.startsWith(`${APIROOT}${category}/`)) {
+          result[category].push({...details, path:epath, method:emethod, category:category})
+          break
+        }
+      }
+    }
+    return result
+  })
+
   // On Mounted
   // Set topnav and fetch toc
   onMounted(async function() {
     utils.setNavPosition('top')
     toc.value = (await axios.get(APIROOT)).data
-    if (!path.value || !method.value) {
-      var root = toc.value.endpoints.root[0]
-      setPath(root.path, root.method)
-    }
+    path.value = path.value || APIROOT
+    method.value = method.value || 'get'
+    updateEndpoint()
   })
-
-  // Watch Endpoint
-  // Set body params by parsing the description
-  watchEffect(function() {
-    if (method.value == 'GET') { return }
-    if (params.value) { return }
-    var docstr = endpoint.value?.description || ''
-    var pattern = /•\s*(\w+)\s*\((\w+)\)/g
-    var matches = Array.from(docstr.matchAll(pattern))
-    var newparams = {}
-    for (var [_, name, type] of matches) {
-      if (endpoint.value.path.includes(`{${name}}`)) { continue }
-      type = type.toLowerCase()
-      newparams[name] = type == 'list' ? [] : type == 'dict' ? {} :
-        type == 'int' ? 0 : type == 'bool' ? false : ''
-    }
-    params.value = utils.stringify(newparams, {indent:2})
-  })
-
-  // Watch Path
-  // Sets the current endpoint and alloed methods
-  watchEffect(function() {
-    if (!toc.value) { return null }
-    const endpoints = Object.values(toc.value.endpoints).flat()
-    const matches = endpoints.filter(endpt => pathMatches(path.value, endpt.path))
-    allowed.value = matches.length ? matches.map(endpt => endpt.method) : ['GET']
-    endpoint.value = matches.find(endpt => endpt.method === method.value) || null
-    if (endpoint.value) { method.value = endpoint.value.method }
-  })
-
-  // Watch Path
-  // Clean messy or incomplete path
-  watchEffect(function() {
-    if (!toc.value) { return null }
-    if (!path.value || !path.value.startsWith(APIROOT)) {
-      var root = toc.value.endpoints.root[0]
-      setPath(root.path, root.method)
-    }
-  })
-
-  // Get Icon
-  // Icon for the API Category
-  const getIcon = function(category) {
-    switch (category) {
-      case 'budget': return 'mdi-piggy-bank-outline'
-      case 'main': return 'mdi-earth'
-      case 'obsidian': return 'mdi-notebook-outline'
-      case 'stocks': return 'mdi-chart-line'
-      default: return 'mdi-code-braces'
-    }
-  }
 
   // Link Response URLs
   // Create links in highlight.js output
@@ -184,12 +160,24 @@
 
   // Paths Match
   // Check the two paths match
-  const pathMatches = function(pstr, tmpl) {
-    if (tmpl.includes('/api/')) { tmpl = tmpl.split('/api/')[1] }
-    if (pstr.includes('/api/')) { pstr = pstr.split('/api/')[1] }
-    if (pstr.includes('?')) { pstr = pstr.split('?')[0] }
-    var pattern = tmpl.replace(/{\w+}/g, '[^/]+').replace(/\//g, '\\/')
-    return new RegExp(`^${pattern}$`).test(pstr)
+  const pathMatches = function(pathstr, endptstr) {
+    if (endptstr.includes('/api/')) { endptstr = endptstr.split('/api/')[1] }
+    if (pathstr.includes('/api/')) { pathstr = pathstr.split('/api/')[1] }
+    if (pathstr.includes('?')) { pathstr = pathstr.split('?')[0] }
+    var pattern = endptstr.replace(/{\w+}/g, '[^/]+').replace(/\//g, '\\/')
+    return new RegExp(`^${pattern}$`).test(pathstr)
+  }
+
+  // Send Request
+  // Send the http request
+  const sendRequest = async function() {
+    if (!path.value) { return }
+    var payload = (method.value != 'GET') ? JSON.parse(params.value) || {} : undefined
+    await axios[method.value.toLowerCase()](path.value, payload)
+      .then(resp => response.value = resp)
+      .catch(err => response.value = err.response)
+    await nextTick()
+    linkResponseUrls()
   }
 
   // Set Path
@@ -201,24 +189,24 @@
     params.value = newparams ? utils.stringify(JSON.parse(newparams), {indent:2}) : null
   }
 
-  // Send Request
-  // Send the http request
-  const sendRequest = async function() {
-    if (path.value === null) { return }
-    var payload = (method.value != 'GET') ? JSON.parse(params.value) || {} : undefined
-    await axios[method.value.toLowerCase()](path.value, payload)
-      .then(resp => response.value = resp)
-      .catch(err => response.value = err.response)
-    await nextTick()
-    linkResponseUrls()
-  }
-
-  // Show TOC Item
-  // Hide non-get requests if the equivelent get request exists
-  const showTocItem = function(endpt) {
-    if (endpt.method == 'GET') { return true }
-    return !toc.value.endpoints[endpt.category].find(
-      e => e.path == endpt.path && e.method == 'GET')
+  // Update Endpoint & Allowed Methods
+  // Updates the current endpoint and allowed methods
+  const updateEndpoint = function() {
+    var endpt = null
+    var methods = []
+    for (const [epath, endpts] of Object.entries(toc.value.paths)) {
+      for (const [emethod, details] of Object.entries(endpts)) {
+        if (pathMatches(path.value, epath)) {
+          methods.push(emethod)
+          if (method.value == emethod) {
+            var category = epath.replace('/api/', '').split('/')[0] || 'root'
+            endpt = endpt || {...details, path:epath, method:emethod, category:category}
+          }
+        }
+      }
+    }
+    endpoint.value = endpt
+    allowed.value = methods.length ? methods : ['get']
   }
 
   // Watch Path & Method
@@ -226,10 +214,10 @@
   watch([path, method], function() {
     if (!path.value || !method.value) { return }
     response.value = null
-    if (method.value == 'GET' && !path.value.includes('{')) {
-      sendRequest()
-    }
-  }, {immediate:true})
+    updateEndpoint()
+    if (!allowed.value.includes(method.value)) { method.value = allowed.value[0] }
+    if (method.value == 'get' && !path.value.includes('{')) { sendRequest() }
+  })
 </script>
 
 <style>

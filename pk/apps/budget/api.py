@@ -63,7 +63,7 @@ def update_account(request, pk:int, data:PatchAccountSchema):
 
 @router.delete('/accounts/{pk}', response=None)
 def delete_account(request, pk:int):
-    """ Update the specified account. """
+    """ Delete the specified account. """
     get_object_or_404(Account, user=request.user, id=pk).delete()
     return HttpResponse(status=204)
 
