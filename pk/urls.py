@@ -15,7 +15,7 @@ from pk.utils.ninja import root_router
 from pk.utils.django import vue_devserver_running
 log = logging.getLogger(__name__)
 
-api = NinjaAPI(urls_namespace='api')
+api = NinjaAPI(title='PushingKarma API', urls_namespace='api')
 api.add_router('/', root_router)
 api.add_router('/main', main_router)
 api.add_router('/budget', budget_router)
