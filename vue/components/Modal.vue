@@ -99,6 +99,7 @@
       &:has(.modal-header) .modal-content {
         max-height: calc(100% - 70px);
         overflow-y: auto;
+        overscroll-behavior: contain;
       }
       &:not(:has(.modal-header)) .modal-content {
         padding-top:20px;

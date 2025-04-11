@@ -34,6 +34,7 @@
   /* SidePanel Menus */
   .sidepanel-panel:has(.menu) {
     overflow-y: auto;
+    overscroll-behavior: contain;
     .menu {
       color: var(--linkcolor);
       margin-bottom: 30px;

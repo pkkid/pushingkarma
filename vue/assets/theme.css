@@ -80,7 +80,6 @@
   box-sizing: border-box;
   font-weight: normal;
   margin: 0;
-  overscroll-behavior: contain;
 }
 *:focus {
   outline: 0px none transparent;

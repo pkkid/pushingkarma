@@ -25,7 +25,7 @@
           </Tooltip>
           Categories
         </h3>
-        <Sortable group='categories' @sort='onSortCategories' style='min-height:100px; max-height:300px; overflow-y:auto;'>
+        <Sortable group='categories' @sort='onSortCategories' style='min-height:100px; max-height:300px; overflow-y:auto; overscroll-behavior:contain;'>
           <BudgetSettingsCategory v-for='category in categories.items' :key='category.id'
             :category='category' @deleted='updateCategories'/>
         </Sortable>
