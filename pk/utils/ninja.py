@@ -16,7 +16,8 @@ def api_root(request):
 
 def PageSchema(itemschema:Type[Schema]):
     """ Factory to create a PageSchema with items of type itemsschema. """
-    return create_model('PageSchema',
+    modelname = itemschema.__name__.replace('Schema', '')
+    return create_model(f'{modelname}PageSchema',
         count = (int, ...),
         previous = (str, None),
         next = (str, None),

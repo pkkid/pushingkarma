@@ -10,8 +10,8 @@ from ninja.errors import HttpError
 from pk.utils.django import reverse
 from pk.utils.ninja import PageSchema, paginate
 from .models import Account, Category, Transaction
-from .schemas import AccountSchema, PatchAccountSchema
-from .schemas import CategorySchema, PatchCategorySchema
+from .schemas import AccountSchema, AccountPatchSchema
+from .schemas import CategorySchema, CategoryPatchSchema
 from .schemas import TransactionSchema, SortSchema
 log = logging.getLogger(__name__)
 router = Router()
@@ -52,7 +52,7 @@ def get_account(request, pk:int):
 
 
 @router.patch('/accounts/{pk}', response=AccountSchema, exclude_unset=True)
-def update_account(request, pk:int, data:PatchAccountSchema):
+def update_account(request, pk:int, data:AccountPatchSchema):
     """ Update the specified account. """
     item = get_object_or_404(Account, user=request.user, id=pk)
     if data.name: item.name = data.name
@@ -108,7 +108,7 @@ def get_category(request, pk:int):
 
 
 @router.patch('/categories/{pk}', response=CategorySchema, exclude_unset=True)
-def update_category(request, pk:int, data:PatchCategorySchema):
+def update_category(request, pk:int, data:CategoryPatchSchema):
     """ Update the specified category. """
     item = get_object_or_404(Category, user=request.user, id=pk)
     if data.name: item.name = data.name

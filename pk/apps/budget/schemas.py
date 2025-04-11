@@ -16,7 +16,7 @@ class AccountSchema(Schema):
     sortid: Optional[int] = Field(None, description='User sort id when listing accounts')
 
 
-class PatchAccountSchema(Schema):
+class AccountPatchSchema(Schema):
     name: Optional[str] = Field(..., description='Name of this account')
     import_rules: Optional[dict] = Field(None, description='Transacation import rules for this account')
 
@@ -29,7 +29,7 @@ class CategorySchema(Schema):
     sortid: Optional[int] = None
 
 
-class PatchCategorySchema(Schema):
+class CategoryPatchSchema(Schema):
     name: Optional[str] = None
 
 
