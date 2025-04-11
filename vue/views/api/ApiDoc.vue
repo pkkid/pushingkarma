@@ -58,9 +58,9 @@
             <!-- Endpoint Description & Parameters -->
             <div class='description'>
               {{endpoint?.description}}
-              <ul style='margin-top:5px; font-size:1em;'>
+              <ul style='font-size:1em;'>
                 <li v-for='param in params' :key='param.name'>
-                  <span style='color:#bbb;'>{{param.in}}.</span>{{param.name}} ({{param.type}}): {{param.description}}
+                  {{param.name}} ({{param.in}} {{param.type}}): {{param.description}}
                 </li>
               </ul>
             </div>
@@ -251,7 +251,7 @@
   #apidoc {
     /* Header and API Options */
     .description {
-      font-size: 14px;
+      font-size: 13px;
       margin: 20px 0px;
     }
 

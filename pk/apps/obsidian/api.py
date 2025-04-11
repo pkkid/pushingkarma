@@ -2,7 +2,7 @@
 import glob, logging, re
 from django.conf import settings
 from django.views.decorators.cache import cache_page
-from ninja import Query, Router
+from ninja import Path, Query, Router
 from ninja.decorators import decorate_view
 from ninja.errors import HttpError
 from os.path import basename, exists, getmtime, join
@@ -13,16 +13,16 @@ log = logging.getLogger(__name__)
 router = Router()
 
 
-@router.get('/notes/{bucketname}/{path}', response=NoteSchema, exclude_unset=True, url_name='note')
+@router.get('/notes/{bucket}/{path}', response=NoteSchema, exclude_unset=True, url_name='note')
 def get_note(request,
-      bucketname: str=Query(None, description='Name of Obsidian bucket in settings.py'),
-      path: str=Query(None, description='Path of note in the bucket')):
+      bucket: str=Path(None, description='Name of Obsidian bucket in settings.py'),
+      path: str=Path(None, description='Path of note in the bucket')):
     """ Returns a single note from the obsian vault. The path is relative to the
         vault bucket. The bucketname is the name of the group in settings.py.
     """
-    if bucketname not in settings.OBSIDIAN_BUCKETS:
+    if bucket not in settings.OBSIDIAN_BUCKETS:
         raise HttpError(404, 'Unknown bucket name.')
-    bucket = settings.OBSIDIAN_BUCKETS[bucketname]
+    bucket, bucketname = settings.OBSIDIAN_BUCKETS[bucket], bucket
     check_permission = bucket.get('check_permission', lambda user: True)
     if check_permission(request.user):
         filepath = join(bucket['path'], path)
@@ -31,7 +31,7 @@ def get_note(request,
         with open(filepath, 'r', encoding='utf-8') as handle:
             content = handle.read()
         return dict(
-            url = reverse(request, 'api:note', bucketname=bucketname, path=path),
+            url = reverse(request, 'api:note', bucket=bucketname, path=path),
             bucket = bucketname,
             vault = bucket['vault'],
             path = path,
@@ -66,7 +66,7 @@ def list_notes(request,
                 score = sum(title.lower().count(word) for word in words) * 1000
                 score += sum(content.lower().count(word) for word in words)
                 items.append(dict(
-                    url = reverse(request, 'api:note', bucketname=bucketname, path=path),
+                    url = reverse(request, 'api:note', bucket=bucketname, path=path),
                     bucket = bucketname,
                     vault = bucket['vault'],
                     path = path,

@@ -6,7 +6,7 @@ from django_searchquery.search import Search
 from django.db.models import Max
 from django.forms.models import model_to_dict
 from django.shortcuts import get_object_or_404
-from ninja import Query, Router
+from ninja import Path, Query, Router
 from pk.utils.django import reverse
 from pk.utils.ninja import PageSchema, paginate
 from pk.utils.utils import percent
@@ -24,7 +24,7 @@ TICKERSEARCHFIELDS = [
 
 @router.get('/tickers/{pk}', response=TickerSchema, exclude_unset=True, url_name='ticker')
 def get_ticker(request,
-      pk: str=Query(None, description='Ticker symbol to get'),):
+      pk: str=Path(None, description='Ticker symbol to get'),):
     """ List details for the specified ticker. """
     item = get_object_or_404(Ticker, pk=pk)
     itemdict = model_to_dict(item)

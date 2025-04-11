@@ -5,7 +5,7 @@ from django_searchquery.search import Search
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.forms.models import model_to_dict
-from ninja import Body, Query, Router
+from ninja import Body, Path, Query, Router
 from ninja.errors import HttpError
 from pk.utils.django import reverse
 from pk.utils.ninja import PageSchema, paginate
@@ -44,7 +44,7 @@ TRANSACTIONSEARCHFIELDS = {
 
 @router.get('/accounts/{pk}', response=AccountSchema, exclude_unset=True, url_name='account')
 def get_account(request,
-      pk:int=Query(None, description='Primary key of account to get')):
+      pk: int=Path(..., description='Primary key of account to get')):
     """ List details for the specified account. """
     item = get_object_or_404(Account, user=request.user, id=pk)
     itemdict = model_to_dict(item)
@@ -54,7 +54,7 @@ def get_account(request,
 
 @router.patch('/accounts/{pk}', response=AccountSchema, exclude_unset=True)
 def update_account(request,
-      pk: int=Query(None, description='Primary key of account to update'),
+      pk: int=Path(..., description='Primary key of account to update'),
       data: AccountPatchSchema=Body(...)):
     """ Update the specified account. """
     item = get_object_or_404(Account, user=request.user, id=pk)
@@ -66,7 +66,7 @@ def update_account(request,
 
 @router.delete('/accounts/{pk}', response=None)
 def delete_account(request,
-      pk: int=Query(None, description='Primary key of account to delete')):
+      pk: int=Path(..., description='Primary key of account to delete')):
     """ Delete the specified account. """
     get_object_or_404(Account, user=request.user, id=pk).delete()
     return HttpResponse(status=204)
@@ -89,7 +89,7 @@ def list_accounts(request,
 
 
 @router.patch('/sort_accounts', response=PageSchema(AccountSchema), exclude_unset=True)
-def sort_accounts(request, data:SortSchema):
+def sort_accounts(request, data:SortSchema=Body(...)):
     """ Sort accounts for the logged in user. """
     items = Account.objects.filter(user=request.user, id__in=data.sortlist)
     if len(items) != len(data.sortlist):
@@ -105,7 +105,8 @@ def sort_accounts(request, data:SortSchema):
 # ---------------
 
 @router.get('/categories/{pk}', response=CategorySchema, exclude_unset=True, url_name='category')
-def get_category(request, pk:int):
+def get_category(request,
+      pk: int=Path(..., description='Primary key of category to get')):
     """ List details for the specified category. """
     item = get_object_or_404(Category, user=request.user, id=pk)
     itemdict = model_to_dict(item)
@@ -114,7 +115,9 @@ def get_category(request, pk:int):
 
 
 @router.patch('/categories/{pk}', response=CategorySchema, exclude_unset=True)
-def update_category(request, pk:int, data:CategoryPatchSchema):
+def update_category(request,
+      pk: int=Path(..., description='Primary key of category to update'),
+      data: CategoryPatchSchema=Body(...)):  # noqa
     """ Update the specified category. """
     item = get_object_or_404(Category, user=request.user, id=pk)
     if data.name: item.name = data.name
@@ -123,14 +126,17 @@ def update_category(request, pk:int, data:CategoryPatchSchema):
 
 
 @router.delete('/categories/{pk}', response=None)
-def delete_category(request, pk:int):
+def delete_category(request,
+      pk: int=Path(..., description='Primary key of category to delete')):
     """ Update the specified category. """
     get_object_or_404(Category, user=request.user, id=pk).delete()
     return HttpResponse(status=204)
 
 
 @router.get('/categories', response=PageSchema(CategorySchema), exclude_unset=True)
-def list_categories(request, search:str='', page:int=1):
+def list_categories(request,
+      search: str=Query('', description='Search term to filter categories'),
+      page: int=Query(1, description='Page number of results to return')):
     """ List categories for the logged in user. """
     items = Category.objects.filter(user=request.user).order_by('sortid')
     if search: items = Search(CATEGORYSEARCHFIELDS).get_queryset(items, search)
@@ -144,7 +150,7 @@ def list_categories(request, search:str='', page:int=1):
 
 
 @router.patch('/sort_categories', response=PageSchema(CategorySchema), exclude_unset=True)
-def sort_categories(request, data:SortSchema):
+def sort_categories(request, data:SortSchema=Body(...)):
     """ Sort categories for the logged in user. """
     items = Category.objects.filter(user=request.user, id__in=data.sortlist)
     if len(items) != len(data.sortlist):
@@ -160,7 +166,8 @@ def sort_categories(request, data:SortSchema):
 # ---------------
 
 @router.get('/transactions/{pk}', response=TransactionSchema, exclude_unset=True, url_name='transaction')
-def get_transaction(request, pk:int):
+def get_transaction(request,
+      pk: int=Path(..., description='Primary key of transaction to get')):
     """ List details for the specified transaction. """
     item = get_object_or_404(Transaction, user=request.user, id=pk)
     itemdict = model_to_dict(item)
@@ -179,7 +186,9 @@ def get_transaction(request, pk:int):
 
 
 @router.get('/transactions', response=PageSchema(TransactionSchema), exclude_unset=True)
-def list_transactions(request, search:str='', page:int=1):
+def list_transactions(request,
+      search: str=Query('', description='Search term to filter transactions'),
+      page: int=Query(1, description='Page number of results to return')):
     """ List transactions for the logged in user. """
     items = Transaction.objects.filter(user=request.user)
     items = items.select_related('account', 'category')
@@ -204,10 +213,10 @@ def list_transactions(request, search:str='', page:int=1):
 
 def _sort_items(items, sortlist, itemid='id', sortkey='sortid'):
     """ Sort items in the order specified by sortlist.
-         itemsdict: Dictionary of items to sort
-         sortlist: List of item ids in the desired order
-         itemid: Item id field to use for sorting
-         sortkey: Item sort field to update
+        itemsdict: Dictionary of items to sort
+        sortlist: List of item ids in the desired order
+        itemid: Item id field to use for sorting
+        sortkey: Item sort field to update
     """
     updates = []
     itemsdict = {getattr(item, itemid):item for item in items}
