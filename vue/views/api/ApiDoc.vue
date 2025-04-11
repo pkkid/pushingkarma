@@ -48,7 +48,7 @@
               </div>
               <!-- Content Body -->
               <div v-if='method != "get"' class='paramwrap'>
-                <CodeEditor  v-model='params' :showLineNums='true' padding='10px' @keydown.shift.enter.prevent='sendRequest'/>
+                <CodeEditor v-model='payload' :showLineNums='true' padding='10px' @keydown.shift.enter.prevent='sendRequest'/>
                 <Tooltip class='send-request' position='lefttop'>
                   <template #tooltip>Send Request<div class='subtext'>shift+enter</div></template>
                   <i class='mdi mdi-send' @click='sendRequest'/>
@@ -106,7 +106,7 @@
   var allowed = ref(null)                 // Allowed methods for current endpoint
   var endpoint = ref(null)                // Current endpoint details
   var historyTooltip = ref(null)          // History tooltip
-  var params = ref(null)                  // Current parameters
+  var payload = ref(null)                 // Current body payload
   var response = ref(null)                // Current get response
   var toc = ref(null)                     // Table of contents (api root)
 
@@ -172,8 +172,8 @@
   // Send the http request
   const sendRequest = async function() {
     if (!path.value) { return }
-    var payload = (method.value != 'GET') ? JSON.parse(params.value) || {} : undefined
-    await axios[method.value.toLowerCase()](path.value, payload)
+    var data = (method.value != 'GET') ? JSON.parse(payload.value) || {} : undefined
+    await axios[method.value.toLowerCase()](path.value, data)
       .then(resp => response.value = resp)
       .catch(err => response.value = err.response)
     await nextTick()
@@ -182,11 +182,11 @@
 
   // Set Path
   // Update path and method from the endpoint path
-  const setPath = function(newpath, newmethod, newparams) {
+  const setPath = function(newpath, newmethod, newpayload) {
     historyTooltip.value?.close()
     method.value = newmethod
     path.value = !newpath.startsWith('http') ? newpath : decodeURIComponent(new URL(newpath).pathname)
-    params.value = newparams ? utils.stringify(JSON.parse(newparams), {indent:2}) : null
+    payload.value = newpayload ? utils.stringify(JSON.parse(newpayload), {indent:2}) : null
   }
 
   // Update Endpoint & Allowed Methods
