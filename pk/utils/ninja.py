@@ -22,8 +22,6 @@ def api_root(request):
     endpoints = defaultdict(list)
     for path, methods in paths.items():
         category = path.split('/')[2] or 'root'
-        # if not category: continue
-        # print(category)
         for method, details in methods.items():
             endpoints[category].append({
                 'method': method.upper(),
@@ -59,7 +57,6 @@ def summarize_params(details, fullschema):
             properties = schema.get('properties', {})
             reqfields = schema.get('required', [])
             for fname, fprops in properties.items():
-                print(fprops)
                 params[fname] = dict(
                     type = fprops.get('anyOf',[{}])[0].get('type', fprops.get('type', 'object')),
                     description = fprops.get('description', '').strip(),
