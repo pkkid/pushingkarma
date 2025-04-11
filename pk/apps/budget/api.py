@@ -38,11 +38,13 @@ TRANSACTIONSEARCHFIELDS = {
 }
 
 
+# ---------------
+# Accounts
+# ---------------
+
 @router.get('/accounts/{pk}', response=AccountSchema, exclude_unset=True, url_name='account')
 def get_account(request, pk:int):
-    """ List details for the specified account.
-        • pk (int): Path param to specify account id.
-    """
+    """ List details for the specified account. """
     item = get_object_or_404(Account, user=request.user, id=pk)
     itemdict = model_to_dict(item)
     itemdict['url'] = reverse(request, 'api:account', pk=item.id)
@@ -51,11 +53,7 @@ def get_account(request, pk:int):
 
 @router.patch('/accounts/{pk}', response=AccountSchema, exclude_unset=True)
 def update_account(request, pk:int, data:PatchAccountSchema):
-    """ Update the specified account.
-        • pk (int): Path param to specify account id.
-        • name (str): Body param containing new account name.
-        • import_rules (dict): Body param contianing new import rules.
-    """
+    """ Update the specified account. """
     item = get_object_or_404(Account, user=request.user, id=pk)
     if data.name: item.name = data.name
     if data.import_rules: item.import_rules = data.import_rules
@@ -65,19 +63,14 @@ def update_account(request, pk:int, data:PatchAccountSchema):
 
 @router.delete('/accounts/{pk}', response=None)
 def delete_account(request, pk:int):
-    """ Update the specified account.
-        • pk (int): Path param to specify account id.
-    """
+    """ Update the specified account. """
     get_object_or_404(Account, user=request.user, id=pk).delete()
     return HttpResponse(status=204)
 
 
 @router.get('/accounts', response=PageSchema(AccountSchema), exclude_unset=True)
 def list_accounts(request, search:str='', page:int=1):
-    """ List accounts for the logged in user.
-        • search (str): Query param to filter accounts.
-        • page (int): Query param to request page number.
-    """
+    """ List accounts for the logged in user. """
     items = Account.objects.filter(user=request.user).order_by('sortid')
     if search: items = Search(ACCOUNTSEARCHFIELDS).get_queryset(items, search)
     data = paginate(request, items, page=page, perpage=100)
@@ -91,9 +84,7 @@ def list_accounts(request, search:str='', page:int=1):
 
 @router.patch('/sort_accounts', response=PageSchema(AccountSchema), exclude_unset=True)
 def sort_accounts(request, data:SortSchema):
-    """ Sort accounts for the logged in user.
-        • sort (list): Body param containing account ids in sorted order.
-    """
+    """ Sort accounts for the logged in user. """
     items = Account.objects.filter(user=request.user, id__in=data.sortlist)
     if len(items) != len(data.sortlist):
         raise HttpError(409, 'Account ids do not match user accounts')
@@ -103,11 +94,13 @@ def sort_accounts(request, data:SortSchema):
     return list_accounts(request)
 
 
+# ---------------
+# Categories
+# ---------------
+
 @router.get('/categories/{pk}', response=CategorySchema, exclude_unset=True, url_name='category')
 def get_category(request, pk:int):
-    """ List details for the specified category.
-        • pk (int): Path param to specify category id.
-    """
+    """ List details for the specified category. """
     item = get_object_or_404(Category, user=request.user, id=pk)
     itemdict = model_to_dict(item)
     itemdict['url'] = reverse(request, 'api:category', pk=item.id)
@@ -116,10 +109,7 @@ def get_category(request, pk:int):
 
 @router.patch('/categories/{pk}', response=CategorySchema, exclude_unset=True)
 def update_category(request, pk:int, data:PatchCategorySchema):
-    """ Update the specified category.
-        • pk (int): Path param to specify category id.
-        • name (str): Body param containing new category name.
-    """
+    """ Update the specified category. """
     item = get_object_or_404(Category, user=request.user, id=pk)
     if data.name: item.name = data.name
     item.save()
@@ -128,19 +118,14 @@ def update_category(request, pk:int, data:PatchCategorySchema):
 
 @router.delete('/categories/{pk}', response=None)
 def delete_category(request, pk:int):
-    """ Update the specified category.
-        • pk (int): Path param to specify category id.
-    """
+    """ Update the specified category. """
     get_object_or_404(Category, user=request.user, id=pk).delete()
     return HttpResponse(status=204)
 
 
 @router.get('/categories', response=PageSchema(CategorySchema), exclude_unset=True)
 def list_categories(request, search:str='', page:int=1):
-    """ List categories for the logged in user.
-        • search (str): Query param to filter categories.
-        • page (int): Query param to request page number.
-    """
+    """ List categories for the logged in user. """
     items = Category.objects.filter(user=request.user).order_by('sortid')
     if search: items = Search(CATEGORYSEARCHFIELDS).get_queryset(items, search)
     data = paginate(request, items, page=page, perpage=100)
@@ -154,9 +139,7 @@ def list_categories(request, search:str='', page:int=1):
 
 @router.patch('/sort_categories', response=PageSchema(CategorySchema), exclude_unset=True)
 def sort_categories(request, data:SortSchema):
-    """ Sort categories for the logged in user.
-        • sort (list): Body param containing category ids in sorted order.
-    """
+    """ Sort categories for the logged in user. """
     items = Category.objects.filter(user=request.user, id__in=data.sortlist)
     if len(items) != len(data.sortlist):
         raise HttpError(409, 'Category ids do not match user categories')
@@ -166,11 +149,13 @@ def sort_categories(request, data:SortSchema):
     return list_categories(request)
 
 
+# ---------------
+# Transactions
+# ---------------
+
 @router.get('/transactions/{pk}', response=TransactionSchema, exclude_unset=True, url_name='transaction')
 def get_transaction(request, pk:int):
-    """ List details for the specified transaction.
-        • pk: Path param to specify transaction id.
-    """
+    """ List details for the specified transaction. """
     item = get_object_or_404(Transaction, user=request.user, id=pk)
     itemdict = model_to_dict(item)
     itemdict['url'] = reverse(request, 'api:transaction', pk=item.id)
@@ -189,10 +174,7 @@ def get_transaction(request, pk:int):
 
 @router.get('/transactions', response=PageSchema(TransactionSchema), exclude_unset=True)
 def list_transactions(request, search:str='', page:int=1):
-    """ List transactions for the logged in user.
-        • search (str): Query param to filter transactions.
-        • page (int): Query param to request page number.
-    """
+    """ List transactions for the logged in user. """
     items = Transaction.objects.filter(user=request.user)
     items = items.select_related('account', 'category')
     items = items.order_by('-date', 'payee')
@@ -216,10 +198,10 @@ def list_transactions(request, search:str='', page:int=1):
 
 def _sort_items(items, sortlist, itemid='id', sortkey='sortid'):
     """ Sort items in the order specified by sortlist.
-        • itemsdict: Dictionary of items to sort
-        • sortlist: List of item ids in the desired order
-        • itemid: Item id field to use for sorting
-        • sortkey: Item sort field to update
+         itemsdict: Dictionary of items to sort
+         sortlist: List of item ids in the desired order
+         itemid: Item id field to use for sorting
+         sortkey: Item sort field to update
     """
     updates = []
     itemsdict = {getattr(item, itemid):item for item in items}

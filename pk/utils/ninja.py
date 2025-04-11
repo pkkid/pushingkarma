@@ -31,9 +31,42 @@ def api_root(request):
                 'description': details.get('description', '').strip(),
                 'path': f'{baseurl}{path}',
                 'category': category,
+                'parameters': summarize_params(details, schema),
             })
     response['endpoints'] = endpoints
     return response
+
+
+def summarize_params(details, fullschema):
+    params = {}
+    # Extract path and query parameters
+    for param in details.get('parameters', []):
+        params[param.get('name')] = dict(
+            type = param.get('schema',{})['type'],
+            description = param.get('description', '').strip(),
+            required = param.get('required', False),
+            location = param.get('in')
+        )
+    # Extract request body schema if available
+    if 'requestBody' in details:
+        content = details.get('requestBody', {}).get('content', {})
+        if 'application/json' in content:
+            schema = content.get('application/json', {}).get('schema', {})
+            if '$ref' in schema:
+                refpath = schema['$ref']
+                schemaname = refpath.split('/')[-1]
+                schema = fullschema.get('components', {}).get('schemas', {}).get(schemaname, {})
+            properties = schema.get('properties', {})
+            reqfields = schema.get('required', [])
+            for fname, fprops in properties.items():
+                print(fprops)
+                params[fname] = dict(
+                    type = fprops.get('anyOf',[{}])[0].get('type', fprops.get('type', 'object')),
+                    description = fprops.get('description', '').strip(),
+                    required = fname in reqfields,
+                    location = 'body'
+                )
+    return params
 
 
 def PageSchema(itemschema:Type[Schema]):
