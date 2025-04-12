@@ -10,7 +10,7 @@
               {{utils.title(category)}}
             </div>
             <template v-for='endpt in endpts' :key='endpt.path'>
-              <div class='subitem link' @click='setPath(endpt.path, endpt.method)'>
+              <div class='subitem link' :class='{selected: endpt.path==endpoint.path}' @click='setPath(endpt.path, endpt.method)'>
                 <div class='name'>{{endpt.summary}}</div>
               </div>
             </template>

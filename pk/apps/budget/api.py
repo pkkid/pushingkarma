@@ -78,7 +78,8 @@ def list_accounts(request,
       page: int=Query(1, description='Page number of results to return')):
     """ List accounts for the logged in user. """
     items = Account.objects.filter(user=request.user).order_by('sortid')
-    if search: items = Search(ACCOUNTSEARCHFIELDS).get_queryset(items, search)
+    if search:
+        items = Search(ACCOUNTSEARCHFIELDS).get_queryset(items, search)
     data = paginate(request, items, page=page, perpage=100)
     for i in range(len(data['items'])):
         item = data['items'][i]
@@ -97,7 +98,7 @@ def sort_accounts(request, data:SortSchema=Body(...)):
     if updates := _sort_items(items, data.sortlist):
         log.info(f'Sorting {len(updates)} accounts for account {request.user.email}')
         Account.objects.bulk_update(updates, ['sortid'])
-    return list_accounts(request)
+    return list_accounts(request, '', 1)
 
 
 # ---------------
@@ -158,7 +159,7 @@ def sort_categories(request, data:SortSchema=Body(...)):
     if updates := _sort_items(items, data.sortlist):
         log.info(f'Sorting {len(updates)} categories for account {request.user.email}')
         Category.objects.bulk_update(updates, ['sortid'])
-    return list_categories(request)
+    return list_categories(request, '', 1)
 
 
 # ---------------
