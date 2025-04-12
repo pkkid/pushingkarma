@@ -234,6 +234,26 @@
     }
     endpoint.value = endpt
     allowed.value = methods.length ? methods : ['get']
+    // Check we need a payload and its not already set
+    if (!payload.value && ['post', 'patch'].includes(method.value)) {
+      var schema = endpoint.value.requestBody?.content['application/json']?.schema || {}
+      payload.value = utils.stringify(createExampleSchema(schema))
+    }
+  }
+
+  const createExampleSchema = function(schema) {
+    if ('$ref' in schema) {
+      var ref = schema.$ref.split('/').slice(-1)[0]
+      schema = toc.value.components?.schemas[ref]
+    }
+    var result = {}
+    for (var [pname, properties] of Object.entries(schema.properties)) {
+      var ptype = properties.type || properties.anyOf[0]?.type
+      var pvalue = {'string':'string', 'number':1, 'boolean':true, 'object':{}, 'array':[]}[ptype]
+      console.log('pname', pname, 'ptype', ptype, 'pvalue', pvalue)
+      result[pname] = pvalue
+    }
+    return result
   }
 
   // Watch Path & Method
