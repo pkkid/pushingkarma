@@ -40,8 +40,10 @@
       </template>
       <!-- Content -->
       <template #content>
-        <BudgetYear v-if="view=='year'" />
-        <BudgetTransactions v-else />
+        <Dropzone>
+          <BudgetYear v-if="view=='year'" />
+          <BudgetTransactions v-else />
+        </Dropzone>
       </template>
     </LayoutSidePanel>
   </div>
@@ -52,6 +54,7 @@
   import {onBeforeMount, ref} from 'vue'
   import {BudgetSettings, BudgetTransactions, BudgetYear} from '@/views/budget'
   import {LayoutSidePanel} from '@/components/Layout'
+  import {Dropzone} from '@/components'
   import {useUrlParams} from '@/composables'
   import {utils} from '@/utils'
 

@@ -1,4 +1,5 @@
 export {default as CodeEditor} from './CodeEditor.vue'
+export {default as Dropzone} from './Dropzone.vue'
 export {default as Expandable} from './Expandable.vue'
 export {default as LoadingIcon} from './LoadingIcon.vue'
 export {default as Markdown} from './Markdown.vue'
