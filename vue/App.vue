@@ -1,4 +1,5 @@
 <template>
+  <Notifications ref='notifications' style='top:80px; right:20px;'/>
   <Navigation />
   <div id='content' class='gridbgx'>
     <router-view></router-view>
@@ -7,42 +8,28 @@
 </template>
 
 <script setup>
-  import {onBeforeMount, provide, ref} from 'vue'
+  import {onBeforeMount, provide, ref, useTemplateRef} from 'vue'
+  import {Notifications} from '@/components'
   import {Footer, Navigation} from '@/views/site'
-  import {useAxiosSettings, useStorage} from '@/composables'
+  import {useAxiosSettings} from '@/composables'
   import {api, utils} from '@/utils'
-  import axios from 'axios'
 
-  const user = ref(null)                                        // currently logged in user details
-  const globalvars = ref(null)                                  // global variables fetched from the server
-  const axiosSettings = useAxiosSettings()                      // API settings using our composable
-  // const countQueries = useStorage('axios.countqueries', false)  // Count queries on the server
-  // const logQueries = useStorage('axios.logqueries', false)      // Log queries on the server
-  // const saveHistory = useStorage('axios.saveHistory', false)    // Log queries on the server
+  const user = ref(null)                                    // currently logged in user details
+  const globalvars = ref(null)                              // global variables fetched from the server
+  const notifications = useTemplateRef('notifications')     // reference to the notifications component
+  const axiosSettings = useAxiosSettings()                  // API settings using our composable
   
-  provide('axiosSettings', axiosSettings)
-  provide('globalvars', {globalvars})
-  provide('user', {user, setUser:function(data) { user.value = data }})
-  // provide('countQueries', {countQueries,
-  //   setCountQueries:function(newval) {
-  //     countQueries.value = newval
-  //     api.setCountQueries(newval)
-  //   }
-  // })
-  // provide('logQueries', {logQueries,
-  //   setLogQueries:function(newval) {
-  //     logQueries.value = newval
-  //     api.setLogQueries(newval)
-  //   }
-  // })
+  provide('axiosSettings', axiosSettings)                   // Axios settings
+  provide('globalvars', {globalvars})                       // Global variables
+  provide('user', {user, setUser:function(data) { user.value = data }})   // Current user
+  provide('notify', {notify: function(...args) {                          // Send notification
+    notifications.value.notify.apply(notifications.value, args)
+  }})  
   
   // On Mounted
   // Setup environment before mounting
   onBeforeMount(async function() {
-    // Initialize the axios settings
-    // api.setCountQueries(countQueries.value)
-    // api.setLogQueries(logQueries.value)
-    // Add browser to the body for easier css
+    // Add browser name to the body for easier css
     var useragent = navigator.userAgent.toLowerCase()
     if (useragent.indexOf('chrome') > -1) { document.body.classList.add('chrome') }
     if (useragent.indexOf('firefox') > -1) { document.body.classList.add('firefox') }
