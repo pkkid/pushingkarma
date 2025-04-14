@@ -15,7 +15,6 @@
   // Add Notification
   // Display a new notification
   const notify = function(message, duration=5000, icon=null) {
-    console.log('Notification recieved!')
     const notification = {message, duration, icon}
     notifications.push(notification)
     if (duration > 0) {
