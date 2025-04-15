@@ -99,10 +99,7 @@
 
 <style>
   .budgetsettingsaccount {
-    .codeeditor {
-      width: 100%;
-      font-size: 12px;
-    }
+    .codeeditor { width:100%; font-size:12px; }
   }
 </style>
 
