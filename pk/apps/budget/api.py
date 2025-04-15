@@ -212,6 +212,22 @@ def list_transactions(request,
     return data
 
 
+@router.post('/upload', response=dict, exclude_unset=True)
+def upload(request):
+    """ Upload new transactions to the budget app. """
+    for fileobj in request.FILES.values():
+        log.info(fileobj.name)
+        log.info(fileobj.file)
+    return {}
+    # trxmanager = TransactionManager()
+    # for fileobj in request.FILES.values():
+    #     if fileobj.name.lower().endswith('.qfx'):
+    #         trxmanager.import_qfx(request.user, fileobj.name, fileobj.file)
+    #     elif fileobj.name.lower().endswith('.csv'):
+    #         trxmanager.import_csv(request.user, fileobj.name, fileobj.file)
+    # return Response(trxmanager.get_status())
+
+
 def _sort_items(items, sortlist, itemid='id', sortkey='sortid'):
     """ Sort items in the order specified by sortlist.
         itemsdict: Dictionary of items to sort

@@ -21,21 +21,19 @@ export const Main = {
   logout(signal) { return axios.post(`/api/main/logout`, null, {signal}) },
 }
 export const Budget = {
-  // Budget Accounts
-  listAccounts(params, signal) { return axios.get(`/api/budget/accounts`, {params, signal}) },
-  getAccount(pk, params, signal) { return axios.get(`/api/budget/accounts/${pk}`, {params, signal}) },
-  updateAccount(pk, data, signal) { return axios.patch(`/api/budget/accounts/${pk}`, data, {signal}) },
   deleteAccount(pk, signal) { return axios.delete(`/api/budget/accounts/${pk}`, {signal}) },
-  sortAccounts(data, signal) { return axios.patch(`/api/budget/sort_accounts`, data, {signal}) },
-  // Budget Categories
-  listCategories(params, signal) { return axios.get(`/api/budget/categories`, {params, signal}) },
-  getCategory(pk, params, signal) { return axios.get(`/api/budget/categories/${pk}`, {params, signal}) },
-  updateCategory(pk, data, signal) { return axios.patch(`/api/budget/categories/${pk}`, data, {signal}) },
   deleteCategory(pk, signal) { return axios.delete(`/api/budget/categories/${pk}`, {signal}) },
-  sortCategories(data, signal) { return axios.patch(`/api/budget/sort_categories`, data, {signal}) },
-  // Budget Transactions
-  listTransactions(params, signal) { return axios.get(`/api/budget/transactions`, {params, signal}) },
+  getAccount(pk, params, signal) { return axios.get(`/api/budget/accounts/${pk}`, {params, signal}) },
+  getCategory(pk, params, signal) { return axios.get(`/api/budget/categories/${pk}`, {params, signal}) },
   getTransaction(pk, params, signal) { return axios.get(`/api/budget/transactions/${pk}`, {params, signal}) },
+  listAccounts(params, signal) { return axios.get(`/api/budget/accounts`, {params, signal}) },
+  listCategories(params, signal) { return axios.get(`/api/budget/categories`, {params, signal}) },
+  listTransactions(params, signal) { return axios.get(`/api/budget/transactions`, {params, signal}) },
+  sortAccounts(data, signal) { return axios.patch(`/api/budget/sort_accounts`, data, {signal}) },
+  sortCategories(data, signal) { return axios.patch(`/api/budget/sort_categories`, data, {signal}) },
+  updateAccount(pk, data, signal) { return axios.patch(`/api/budget/accounts/${pk}`, data, {signal}) },
+  updateCategory(pk, data, signal) { return axios.patch(`/api/budget/categories/${pk}`, data, {signal}) },
+  upload(data, signal) { return axios.post(`/api/budget/upload`, data, {signal}) },
 }
 export const Obsidian = {
   getNote(bucket, path, params, signal) { return axios.get(`/api/obsidian/notes/${bucket}/${path}`, {params, signal}) },
@@ -46,7 +44,6 @@ export const Stocks = {
   listTickers(params, signal) { return axios.get(`/api/stocks/tickers`, {params, signal}) },
   chartRanks(params, signal) { return axios.get(`/api/stocks/chart_ranks`, {params, signal}) },
 }
-
 
 // Cancel
 // Cancel a previously started request
