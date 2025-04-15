@@ -25,6 +25,7 @@
   // On Drag Start
   // Save the dragitem and tell the browser were moving it
   const onDragStart = function(event) {
+    if (dragType(event) != 'element') { return }
     sortableState.group = self.value.closest('.sortable').dataset.group
     sortableState.itemid = props.itemid.toString()
     event.dataTransfer.effectAllowed = 'move'
@@ -33,6 +34,7 @@
   // On Drag Over
   // Highlight the top or bottom border of the item we are hovering
   const onDragOver = function(event) {
+    if (dragType(event) != 'element') { return }
     event.preventDefault()
     event.dataTransfer.dropEffect = 'move'
     var item = event.target.closest('.sortableitem')
@@ -53,6 +55,7 @@
   // On Drop
   // Emit an event telling Sortable we have a new drag order
   const onDrop = function(event) {
+    if (dragType(event) != 'element') { return }
     event.preventDefault()
     var item = event.target.closest('.sortableitem')
     if (isSameGroup(item)) {
@@ -74,7 +77,8 @@
 
   // On Drag End
   // Clear the dragitem and remove the dragover class
-  const onDragEnd = function() {
+  const onDragEnd = function(event) {
+    if (dragType(event) != 'element') { return }
     sortableState.group = null
     sortableState.itemid = null
     clearDropIndicators()
@@ -98,6 +102,15 @@
   const clearDropIndicators = function() {
     var items = document.querySelector('.dropbefore, .dropafter')
     if (items) { items.classList.remove('dropbefore', 'dropafter') }
+  }
+
+  // Drag Type
+  // Returns the type of drag event
+  const dragType = function(event) {
+    if (!event.dataTransfer) { return }
+    var dt = event.dataTransfer
+    var hasFiles = dt.types?.indexOf ? dt.types.indexOf('Files') != -1 : dt.types.contains('Files')
+    return hasFiles ? 'file' : 'element'
   }
 </script>
 
