@@ -31,15 +31,22 @@ def rget(obj, attrstr, default=None, delim='.'):
         parts = attrstr.split(delim, 1)
         attr = parts[0]
         attrstr = parts[1] if len(parts) == 2 else None
+        attrint = toint(attr)
         if isinstance(obj, dict): value = obj[attr]
-        elif isinstance(obj, list): value = obj[int(attr)]
-        elif isinstance(obj, tuple): value = obj[int(attr)]
+        elif isinstance(obj, list) and attrint is not None: value = obj[attrint]
+        elif isinstance(obj, tuple) and attrint is not None: value = obj[attrint]
         elif isinstance(obj, object): value = getattr(obj, attr)
         if attrstr: return rget(value, attrstr, default, delim)
         return value
     except Exception:
         return default
 
+
+def toint(value):
+    try:
+        return int(value)
+    except ValueError:
+        return None
 
 def rset(obj, attrstr, value, delim='.'):
     parts = attrstr.split(delim, 1)

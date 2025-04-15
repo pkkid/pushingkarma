@@ -9,6 +9,7 @@ from ninja import Body, Path, Query, Router
 from ninja.errors import HttpError
 from pk.utils.django import reverse
 from pk.utils.ninja import PageSchema, paginate
+from .manager import TransactionManager
 from .models import Account, Category, Transaction
 from .schemas import AccountSchema, AccountPatchSchema
 from .schemas import CategorySchema, CategoryPatchSchema
@@ -216,16 +217,10 @@ def list_transactions(request,
 def upload(request):
     """ Upload new transactions to the budget app. """
     for fileobj in request.FILES.values():
-        log.info(fileobj.name)
-        log.info(fileobj.file)
+        trxmanager = TransactionManager(request.user)
+        transactions = trxmanager.import_file(fileobj.name, fileobj.file)
+        print(transactions)
     return {}
-    # trxmanager = TransactionManager()
-    # for fileobj in request.FILES.values():
-    #     if fileobj.name.lower().endswith('.qfx'):
-    #         trxmanager.import_qfx(request.user, fileobj.name, fileobj.file)
-    #     elif fileobj.name.lower().endswith('.csv'):
-    #         trxmanager.import_csv(request.user, fileobj.name, fileobj.file)
-    # return Response(trxmanager.get_status())
 
 
 def _sort_items(items, sortlist, itemid='id', sortkey='sortid'):

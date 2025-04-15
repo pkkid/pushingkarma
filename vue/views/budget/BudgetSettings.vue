@@ -14,7 +14,7 @@
         </h3>
         <Sortable group='accounts' @sort='onSortAccounts'>
           <BudgetSettingsAccount v-for='account in accounts.items' :key='account.id' ref='accountPanels'
-            :account='account' @opened='onAccountOpened' @deleted='updateAccounts'/>
+            :account='account' @opened='onAccountOpened' @updated='updateAccounts' @deleted='updateAccounts'/>
         </Sortable>
       </div>
       <!-- Categories -->
@@ -27,7 +27,7 @@
         </h3>
         <Sortable group='categories' @sort='onSortCategories' style='min-height:100px; max-height:300px; overflow-y:auto; overscroll-behavior:contain;'>
           <BudgetSettingsCategory v-for='category in categories.items' :key='category.id'
-            :category='category' @deleted='updateCategories'/>
+            :category='category' @updated='updateCategories'  @deleted='updateCategories'/>
         </Sortable>
       </div>
     </article>
