@@ -216,11 +216,12 @@ def list_transactions(request,
 @router.post('/upload', response=dict, exclude_unset=True)
 def upload(request):
     """ Upload new transactions to the budget app. """
+    response = {}
     for fileobj in request.FILES.values():
-        trxmanager = TransactionManager(request.user)
-        transactions = trxmanager.import_file(fileobj.name, fileobj.file)
-        print(transactions)
-    return {}
+        trxmanager = TransactionManager(request.user, test=True)
+        metrics = trxmanager.import_file(fileobj.name, fileobj.file)
+        response[fileobj.name] = metrics
+    return response
 
 
 def _sort_items(items, sortlist, itemid='id', sortkey='sortid'):

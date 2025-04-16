@@ -16,7 +16,7 @@ class Account(TimeStampedModel):
 
     def __str__(self):
         name = self.name.lower().replace(' ', '_')[:20]
-        return f'{self.id}:{name}'
+        return f'<Account {self.id}:{name}>'
 
 
 class Category(TimeStampedModel):
@@ -27,7 +27,7 @@ class Category(TimeStampedModel):
 
     def __str__(self):
         name = self.name.lower().replace(' ', '_')[:20]
-        return f'{self.id}:{name}'
+        return f'<Category {self.id}:{name}>'
 
 
 class Transaction(TimeStampedModel):
@@ -49,4 +49,4 @@ class Transaction(TimeStampedModel):
 
     def __str__(self):
         payee = self.payee.lower().replace(' ', '_')[:10]
-        return f'{self.id}:{self.trxid}:{payee}'
+        return f'<Transaction {self.id}:{self.trxid}:{payee}>'
