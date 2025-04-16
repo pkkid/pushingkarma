@@ -47,7 +47,7 @@
                 </Tooltip>
               </div>
               <!-- Content Body -->
-              <div v-if='method != "get"' class='paramwrap'>
+              <div v-if='showPayload' class='payloadwrap'>
                 <CodeEditor v-model='payload' :showLineNums='true' padding='10px' @keydown.shift.enter.prevent='sendRequest'/>
                 <Tooltip class='send-request' position='lefttop'>
                   <template #tooltip>Send Request<div class='subtext'>shift+enter</div></template>
@@ -128,6 +128,14 @@
     return result
   })
 
+  // Show Payload
+  // True if we want to show the payload editor
+  const showPayload = computed(function() {
+    if (method.value == 'get') { return false }
+    if (endpoint.value?.requestBody?.content['multipart/form-data']) { return false }
+    return true
+  })
+
   // Params
   // Computes paramaters for the current endpoint
   const params = computed(function() {
@@ -140,7 +148,8 @@
     }
     // Iterate the contentBody schema parameters
     if (endpoint.value.requestBody) {
-      var schema = endpoint.value.requestBody?.content['application/json']?.schema
+      var content = endpoint.value.requestBody?.content
+      var schema = content['application/json']?.schema || content['multipart/form-data']?.schema
       if ('$ref' in schema) {
         var ref = schema.$ref.split('/').slice(-1)[0]
         schema = toc.value.components?.schemas[ref]
@@ -350,7 +359,7 @@
           }
         }
       }
-      .paramwrap {
+      .payloadwrap {
         position: relative;
         .codeeditor {
           font-size: 12px;

@@ -5,7 +5,8 @@ from django_searchquery.search import Search
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from django.forms.models import model_to_dict
-from ninja import Body, Path, Query, Router
+from ninja import Body, File, Path, Query, Router
+from ninja.files import UploadedFile
 from ninja.errors import HttpError
 from pk.utils.django import reverse
 from pk.utils.ninja import PageSchema, paginate
@@ -215,12 +216,13 @@ def list_transactions(request,
 
 
 @router.post('/import_transactions', response=List[ImportResponseSchema], exclude_unset=True)
-def import_transactions(request):
-    """ Upload new transactions to the budget app. This endpoint requires we pass in
-        the file name and file handle.
+def import_transactions(request,
+      files:List[UploadedFile]=File(..., description='List of transaction files to import (.csv or .qfx)')):
+    """ Upload new transactions to the budget app.
+        This is a file upload (multipart/form-data) endpoint.
     """
     response = []
-    for fileobj in request.FILES.values():
+    for fileobj in files:
         trxmanager = TransactionManager(request, test=True)
         metrics = trxmanager.import_file(fileobj.name, fileobj.file)
         response.append(metrics)

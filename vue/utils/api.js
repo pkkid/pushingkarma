@@ -26,7 +26,7 @@ export const Budget = {
   getAccount(pk, params, signal) { return axios.get(`/api/budget/accounts/${pk}`, {params, signal}) },
   getCategory(pk, params, signal) { return axios.get(`/api/budget/categories/${pk}`, {params, signal}) },
   getTransaction(pk, params, signal) { return axios.get(`/api/budget/transactions/${pk}`, {params, signal}) },
-  importTransactions(data, signal) { return axios.post(`/api/budget/import_transactions`, data, {signal}) },
+  importTransactions(formdata, signal) { return axios.post(`/api/budget/import_transactions`, formdata, {signal}) },
   listAccounts(params, signal) { return axios.get(`/api/budget/accounts`, {params, signal}) },
   listCategories(params, signal) { return axios.get(`/api/budget/categories`, {params, signal}) },
   listTransactions(params, signal) { return axios.get(`/api/budget/transactions`, {params, signal}) },
