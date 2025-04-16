@@ -9,11 +9,12 @@ from ninja import Body, Path, Query, Router
 from ninja.errors import HttpError
 from pk.utils.django import reverse
 from pk.utils.ninja import PageSchema, paginate
+from typing import List
 from .manager import TransactionManager
 from .models import Account, Category, Transaction
 from .schemas import AccountSchema, AccountPatchSchema
 from .schemas import CategorySchema, CategoryPatchSchema
-from .schemas import TransactionSchema, SortSchema
+from .schemas import TransactionSchema, SortSchema, ImportResponseSchema
 log = logging.getLogger(__name__)
 router = Router()
 
@@ -213,14 +214,16 @@ def list_transactions(request,
     return data
 
 
-@router.post('/upload', response=dict, exclude_unset=True)
-def upload(request):
-    """ Upload new transactions to the budget app. """
-    response = {}
+@router.post('/import_transactions', response=List[ImportResponseSchema], exclude_unset=True)
+def import_transactions(request):
+    """ Upload new transactions to the budget app. This endpoint requires we pass in
+        the file name and file handle.
+    """
+    response = []
     for fileobj in request.FILES.values():
-        trxmanager = TransactionManager(request.user, test=True)
+        trxmanager = TransactionManager(request, test=True)
         metrics = trxmanager.import_file(fileobj.name, fileobj.file)
-        response[fileobj.name] = metrics
+        response.append(metrics)
     return response
 
 

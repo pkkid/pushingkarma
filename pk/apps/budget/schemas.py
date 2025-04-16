@@ -47,3 +47,12 @@ class TransactionSchema(Schema):
 
 class SortSchema(Schema):
     sortlist: List[int] = Field(..., description='List of items ids in sorted order')
+
+
+class ImportResponseSchema(Schema):
+    filename: str = Field(..., description='Filename of imported transactions')
+    created: int = Field(..., description='Number of transactions created')
+    categorized: int = Field(..., description='Number of transactions categorized')
+    mindate: Optional[datetime.date] = Field(None, description='Earliest transaction date')
+    maxdate: Optional[datetime.date] = Field(None, description='Latest transaction date')
+    account: AccountSchema = Field(..., description='Financial institution of transaction')

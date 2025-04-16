@@ -247,7 +247,8 @@
       schema = toc.value.components?.schemas[ref]
     }
     var result = {}
-    for (var [pname, properties] of Object.entries(schema.properties)) {
+
+    for (var [pname, properties] of Object.entries(schema.properties || {})) {
       var ptype = properties.type || properties.anyOf[0]?.type
       var pvalue = {'string':'string', 'number':1, 'boolean':true, 'object':{}, 'array':[]}[ptype]
       console.log('pname', pname, 'ptype', ptype, 'pvalue', pvalue)

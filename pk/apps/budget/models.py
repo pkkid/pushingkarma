@@ -2,7 +2,7 @@
 import logging
 from django.conf import settings
 from django.db import models
-from pk.utils.django import TimeStampedModel
+from pk.utils.django import TimeStampedModel, reverse
 log = logging.getLogger(__name__)
 
 
@@ -17,6 +17,9 @@ class Account(TimeStampedModel):
     def __str__(self):
         name = self.name.lower().replace(' ', '_')[:20]
         return f'<Account {self.id}:{name}>'
+    
+    def url(self, request):
+        return reverse(request, 'api:account', pk=self.id)
 
 
 class Category(TimeStampedModel):

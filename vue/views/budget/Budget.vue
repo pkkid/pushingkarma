@@ -68,7 +68,7 @@
   // Import new transactions to the database
   const upload = async function(formdata) {
     console.log('formdata', formdata)
-    var {data} = await api.Budget.upload(formdata)
+    var {data} = await api.Budget.importTransactions(formdata)
     // var title = `${data.account} Import`
     // var message = 'No new transactions found.'
     // if (data.transactions > 0) {

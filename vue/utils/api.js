@@ -26,6 +26,7 @@ export const Budget = {
   getAccount(pk, params, signal) { return axios.get(`/api/budget/accounts/${pk}`, {params, signal}) },
   getCategory(pk, params, signal) { return axios.get(`/api/budget/categories/${pk}`, {params, signal}) },
   getTransaction(pk, params, signal) { return axios.get(`/api/budget/transactions/${pk}`, {params, signal}) },
+  importTransactions(data, signal) { return axios.post(`/api/budget/import_transactions`, data, {signal}) },
   listAccounts(params, signal) { return axios.get(`/api/budget/accounts`, {params, signal}) },
   listCategories(params, signal) { return axios.get(`/api/budget/categories`, {params, signal}) },
   listTransactions(params, signal) { return axios.get(`/api/budget/transactions`, {params, signal}) },
@@ -33,7 +34,6 @@ export const Budget = {
   sortCategories(data, signal) { return axios.patch(`/api/budget/sort_categories`, data, {signal}) },
   updateAccount(pk, data, signal) { return axios.patch(`/api/budget/accounts/${pk}`, data, {signal}) },
   updateCategory(pk, data, signal) { return axios.patch(`/api/budget/categories/${pk}`, data, {signal}) },
-  upload(data, signal) { return axios.post(`/api/budget/upload`, data, {signal}) },
 }
 export const Obsidian = {
   getNote(bucket, path, params, signal) { return axios.get(`/api/obsidian/notes/${bucket}/${path}`, {params, signal}) },

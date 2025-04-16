@@ -13,9 +13,10 @@ log = logging.getLogger(__name__)
 
 class TransactionManager:
   
-    def __init__(self, user, test=False):
-        self.user = user    # User transactions belong to
-        self.test = test    # Test mode, no db changes
+    def __init__(self, request, test=False):
+        self.request = request      # Request object for reverse url
+        self.user = request.user    # User transactions belong to
+        self.test = test            # Test mode, no db changes
     
     def import_file(self, filename, filehandle):
         """ Main entrypoint for importing transactions. """
@@ -37,7 +38,7 @@ class TransactionManager:
                 if not self.test:
                     account.save()
                     trxs = Transaction.objects.bulk_create(trxs)
-                return self._summarize(account, trxs)
+                return self._summarize(filename, account, trxs)
         raise Exception(f'No matching account for {filename}')
 
     def _read_csv(self, account, rules, filehandle):
@@ -84,16 +85,17 @@ class TransactionManager:
         last_date = self._clean_date(rget(rows[-1], rget(rules, 'columns.date')), dateformat)
         return reversed(rows) if first_date > last_date else rows
 
-    def _summarize(self, account, trxs):
+    def _summarize(self, filename, account, trxs):
         """ Summarize the transactions created. """
         metrics = dict(
-            account = account.name,
+            filename = filename,
             created = len(trxs),
             categorized = len([trx for trx in trxs if trx.category_id]),
             mindate = min([trx.date for trx in trxs]) if len(trxs) else None,
             maxdate = max([trx.date for trx in trxs]) if len(trxs) else None,
+            account = dict(url=account.url(self.request), name=account.name),
         )
-        log.info(f'Imported metrics: {metrics}')
+        log.info(f'Imported {metrics["created"]} transactions to account {account.name}')
         return metrics
     
     def _categories(self, account):
