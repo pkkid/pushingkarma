@@ -40,7 +40,7 @@
       </template>
       <!-- Content -->
       <template #content>
-        <Dropzone @filesDropped='upload'>
+        <Dropzone @filesDropped='upload' text='Drop Transactions' subtext='Hold shift for safe import'>
           <BudgetYear v-if="view=='year'" />
           <BudgetTransactions v-else />
         </Dropzone>
@@ -66,7 +66,8 @@
 
   // Upload
   // Import new transactions to the database
-  const upload = async function(formdata) {
+  const upload = async function(event, formdata) {
+    if (event.shiftKey) { formdata.append('safeimport', true) }
     console.log('formdata', formdata)
     var {data} = await api.Budget.importTransactions(formdata)
     // var title = `${data.account} Import`

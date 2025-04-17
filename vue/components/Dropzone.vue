@@ -3,7 +3,9 @@
     <Transition name='fade'>
       <div id='dropoverlay' v-if='show'>
         <div class='outline' >
-          {{droptext}}<br/><span class='mdi mdi-file-upload-outline'/>
+          <div>{{text}}</div>
+          <div v-if='subtext' class='subtext'>{{subtext}}</div>
+          <span :class='icon'/>
         </div>
       </div>
     </Transition>
@@ -16,7 +18,9 @@
   
   var timer = null
   const props = defineProps({
-    droptext: {default:'Drop Transactions'},
+    text: {default:'Drop Files'},
+    subtext: {default:null},
+    icon: {default:'mdi mdi-file-upload-outline'},
   })
   const emit = defineEmits(['filesDropped'])
   const show = ref(false)
@@ -51,7 +55,7 @@
       console.log(`Dropped ${files[i].name}`)
       formdata.append('files', files[i])
     }
-    emit('filesDropped', formdata)
+    emit('filesDropped', event, formdata)
   }
 
   // Drag Type
@@ -72,7 +76,7 @@
       position: absolute;
       top: 0px; left: 0px;
       width: 100%; height: 100%;
-      z-index: 10;
+      z-index: 9;
       * { pointer-events: none; }
       .outline {
         border-radius: 20px;
@@ -86,6 +90,7 @@
         position: fixed;
         text-align: center;
         width: 800px;
+        .subtext { font-size:25px; margin-bottom:10px; }
         .mdi { font-size: 80px; }
       }
     }
