@@ -13,9 +13,8 @@ log = logging.getLogger(__name__)
 
 class TransactionManager:
   
-    def __init__(self, request, safeimport=False, test=False):
-        self.request = request          # Request object for reverse url
-        self.user = request.user        # User transactions belong to
+    def __init__(self, user, safeimport=False, test=False):
+        self.user = user                # User transactions belong to
         self.safeimport = safeimport    # unique trxs based on date, payee and amount
         self.test = test                # Test mode, no db changes
     
@@ -95,9 +94,10 @@ class TransactionManager:
             categorized = len([trx for trx in trxs if trx.category_id]),
             mindate = min([trx.date for trx in trxs]) if len(trxs) else None,
             maxdate = max([trx.date for trx in trxs]) if len(trxs) else None,
+            safeimport = self.safeimport,
             account = dict(url=account.url, name=account.name),
         )
-        log.info(f'Imported {metrics["created"]} transactions to account {account.name}')
+        log.info(f'Imported {metrics["created"]} transactions to account {account.name} for {self.user.email}')
         return metrics
     
     def _categories(self, account):

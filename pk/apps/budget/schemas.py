@@ -55,4 +55,5 @@ class ImportResponseSchema(Schema):
     categorized: int = Field(..., description='Number of transactions categorized')
     mindate: Optional[datetime.date] = Field(None, description='Earliest transaction date')
     maxdate: Optional[datetime.date] = Field(None, description='Latest transaction date')
+    safeimport: bool = Field(..., description='True if using safe import method')
     account: AccountSchema = Field(..., description='Financial institution of transaction')

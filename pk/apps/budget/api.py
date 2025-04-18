@@ -207,10 +207,9 @@ def import_transactions(request,
       files: List[UploadedFile]=File(..., description='List of transaction files to import (.csv or .qfx)'),
       safeimport: bool=Body(False, description='Safe import, unique transactions based on date, payee and amount.')):
     """ Upload new transactions to the budget app. This is a file upload (multipart/form-data) endpoint. """
-    log.info(f'{safeimport=}')
     response = []
     for fileobj in files:
-        trxmanager = TransactionManager(request, safeimport, test=True)
+        trxmanager = TransactionManager(request.user, safeimport, test=True)
         metrics = trxmanager.import_file(fileobj.name, fileobj.file)
         response.append(metrics)
     return response
