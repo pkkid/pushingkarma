@@ -15,14 +15,14 @@ class ColoredFormatter(logging.Formatter):
         self._formatters = {}
         substr = re.findall(self.RELVL, fmt)[0]
         for lvl, color in self.COLORS.items():
-            newfmt = fmt.replace(substr, self.rgb(substr, color))
+            newfmt = fmt.replace(substr, self._rgb(substr, color))
             self._formatters[lvl] = logging.Formatter(newfmt)
 
     def format(self, record):
         formatter = self._formatters.get(record.levelno, super())
         return formatter.format(record)
     
-    def rgb(self, text, color='#aaa', reset=True):
+    def _rgb(self, text, color='#aaa', reset=True):
         r,g,b = tuple(int(x * 2, 16) for x in color.lstrip('#'))
         rgbstr = f'\033[38;2;{r};{g};{b}m{text}'
         rgbstr += '\033[00m' if reset else ''

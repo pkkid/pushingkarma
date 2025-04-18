@@ -6,24 +6,33 @@ from django.conf import settings
 from django.core.exceptions import EmptyResultSet
 from django.db import connection, connections
 from django.db.models.query import QuerySet
-from django.db.models import Model, DateTimeField
+from django.db.models import Aggregate, CharField, DateTimeField, Model
 from django.urls import reverse as django_reverse
-from urllib.parse import unquote
 log = logging.getLogger(__name__)
 
 
-def rgb(text, color='#aaa', reset=True):
+def _rgb(text, color='#aaa', reset=True):
     r,g,b = tuple(int(x * 2, 16) for x in color.lstrip('#'))
     rgbstr = f'\033[38;2;{r};{g};{b}m{text}'
     rgbstr += '\033[00m' if reset else ''
     return rgbstr
 
 
+class GroupConcat(Aggregate):
+    function = 'GROUP_CONCAT'
+    template = '%(function)s(%(distinct)s%(expressions)s)'
+
+    def __init__(self, expression, distinct=False, **extra):
+        distinct = 'DISTINCT ' if distinct else ''
+        super(GroupConcat, self).__init__(expression, distinct=distinct,
+            output_field=CharField(), **extra)
+
+
 class QueryCounterMiddleware:
     DATACOLOR, REQCOLOR, SQLCOLOR = '#d93', '#b68', '#488'
-    FIRST, LAST = rgb('  ┌ ', REQCOLOR), rgb('  └ ', REQCOLOR)
-    BULLET, PIPE = rgb('  ├ ', REQCOLOR), rgb('  │ ', REQCOLOR)
-    INDENTSTR = PIPE + rgb('   ', '#488', reset=False)
+    FIRST, LAST = _rgb('  ┌ ', REQCOLOR), _rgb('  └ ', REQCOLOR)
+    BULLET, PIPE = _rgb('  ├ ', REQCOLOR), _rgb('  │ ', REQCOLOR)
+    INDENTSTR = PIPE + _rgb('   ', '#488', reset=False)
     REGEX_WHERE = re.compile(r'(\s+WHERE\s+)(.*)(\s+(?:GROUP|ORDER|HAVING)\s+)*')
     REGEX_VALUE = re.compile(r'(\s*[a-zA-Z_."]+?(?:_id|\."id)"\s*=\s*)\d+(\s*)')
 
@@ -93,16 +102,16 @@ class QueryCounterMiddleware:
     def _log_summary(self, request, resptime, summary, summarystr):
         """ Logs the queries to the logger. """
         logmsg = f'QueryCounter tracked {summary["count"]} sql statements\n'
-        logmsg += self.FIRST + rgb(f'{request.method} {request.get_full_path()}', self.REQCOLOR) + '\n'
+        logmsg += self.FIRST + _rgb(f'{request.method} {request.get_full_path()}', self.REQCOLOR) + '\n'
         for sql, sqldata in summary['queries'].items():
-            sqlstr = self.BULLET + rgb(f'[{sqldata["sqltime"]:.3f}s] ', self.DATACOLOR)
+            sqlstr = self.BULLET + _rgb(f'[{sqldata["sqltime"]:.3f}s] ', self.DATACOLOR)
             if sqldata['count'] > 1:
-                sqlstr = self.BULLET + rgb(f'[{sqldata["count"]}x {sqldata["avgtime"]:.3f}s] ', self.DATACOLOR)
-            sqlstr += rgb(sql, self.SQLCOLOR)
+                sqlstr = self.BULLET + _rgb(f'[{sqldata["count"]}x {sqldata["avgtime"]:.3f}s] ', self.DATACOLOR)
+            sqlstr += _rgb(sql, self.SQLCOLOR)
             logmsg += textwrap.fill(sqlstr, width=160, subsequent_indent=self.INDENTSTR) + '\n'
         proctime = resptime - summary['sqltime']
-        logmsg += self.BULLET + rgb(f'Request took {resptime:.3f}s ({proctime:.3f}s processing)', self.DATACOLOR) + '\n'
-        logmsg += self.LAST + rgb(summarystr, self.DATACOLOR)
+        logmsg += self.BULLET + _rgb(f'Request took {resptime:.3f}s ({proctime:.3f}s processing)', self.DATACOLOR) + '\n'
+        logmsg += self.LAST + _rgb(summarystr, self.DATACOLOR)
         log.info(logmsg)
 
 
