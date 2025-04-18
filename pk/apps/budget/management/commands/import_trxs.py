@@ -30,5 +30,6 @@ class Command(BaseCommand):
             filename = os.path.basename(filepath)
             with open(filepath, 'rb') as handle:
                 metrics = trxmanager.import_file(filename, handle)
-            log.info(metrics)
+            for key, value in metrics.items():
+                log.info(f'  {key}: {value}')
         log.info('Done')
