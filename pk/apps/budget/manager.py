@@ -27,7 +27,7 @@ class TransactionManager:
                 log.info(f'Importing transactions for {self.user.email} {account.name}')
                 ext = filename.split('.')[-1].lower()
                 account, trxs = getattr(self, f'_read_{ext}')(account, rules, filehandle)
-                categories = self._categories(account)
+                categories = self.categories(self.user, account)
                 for trx in trxs:
                     trx.user = self.user
                     trx.account_id = account.id
@@ -47,11 +47,11 @@ class TransactionManager:
         transactions = []
         rows = list(csv.DictReader(StringIO(filehandle.read().decode())))
         dateformat = rget(account, 'import_rules.date_format')
-        for row in self._sorted(rows, rules):
-            date = self._clean_date(rget(row, rget(rules, 'columns.date')), dateformat)
-            payee = self._clean_payee(rget(row, rget(rules, 'columns.payee'))) or ''
-            amount = self._clean_amount(rget(row, rget(rules, 'columns.amount')))
-            balance = self._clean_amount(rget(row, rget(rules, 'columns.balance')))
+        for row in self.sort(rows, rules):
+            date = self.clean_date(rget(row, rget(rules, 'columns.date')), dateformat)
+            payee = self.clean_payee(rget(row, rget(rules, 'columns.payee'))) or ''
+            amount = self.clean_amount(rget(row, rget(rules, 'columns.amount')))
+            balance = self.clean_amount(rget(row, rget(rules, 'columns.balance')))
             trxid = rget(row, rget(rules, 'columns.trxid')) or \
                 md5(f'{date}{payee}{amount}{balance}'.encode()).hexdigest()
             transactions.append(Transaction(trxid=trxid, date=date, payee=payee, amount=amount))
@@ -67,24 +67,16 @@ class TransactionManager:
         ofx = parser.convert()
         rows = list(rget(ofx, rget(rules, 'transactions')))
         dateformat = rget(account, 'import_rules.date_format')
-        for row in self._sorted(rows, rules):
-            date = self._clean_date(rget(row, rget(rules, 'columns.date')), dateformat)
-            payee = self._clean_payee(rget(row, rget(rules, 'columns.payee'))) or ''
-            amount = self._clean_amount(rget(row, rget(rules, 'columns.amount')))
+        for row in self.sort(rows, rules):
+            date = self.clean_date(rget(row, rget(rules, 'columns.date')), dateformat)
+            payee = self.clean_payee(rget(row, rget(rules, 'columns.payee'))) or ''
+            amount = self.clean_amount(rget(row, rget(rules, 'columns.amount')))
             trxid = rget(row, rget(rules, 'columns.trxid')) or \
                 md5(f'{date}{payee}{amount}'.encode()).hexdigest()
             transactions.append(Transaction(trxid=trxid, date=date, payee=payee, amount=amount))
         account.balance = rget(ofx, rget(rules, 'balance'))
         account.balance_updated = rget(ofx, rget(rules, 'balance_date'))
         return account, transactions
-    
-    def _sorted(self, rows, rules):
-        """ Returns the rows in sorted order. """
-        if len(rows) < 2: return rows
-        dateformat = rget(rules, 'date_format')
-        first_date = self._clean_date(rget(rows[0], rget(rules, 'columns.date')), dateformat)
-        last_date = self._clean_date(rget(rows[-1], rget(rules, 'columns.date')), dateformat)
-        return reversed(rows) if first_date > last_date else rows
 
     def _summarize(self, filename, account, trxs):
         """ Summarize the transactions created. """
@@ -100,15 +92,26 @@ class TransactionManager:
         log.info(f'Imported {metrics["created"]} transactions to account {account.name} for {self.user.email}')
         return metrics
     
-    def _categories(self, account):
+    @classmethod
+    def sort(cls, rows, rules):
+        """ Returns the rows in sorted order. """
+        if len(rows) < 2: return rows
+        dateformat = rget(rules, 'date_format')
+        first_date = cls.clean_date(rget(rows[0], rget(rules, 'columns.date')), dateformat)
+        last_date = cls.clean_date(rget(rows[-1], rget(rules, 'columns.date')), dateformat)
+        return reversed(rows) if first_date > last_date else rows
+    
+    @classmethod
+    def categories(cls, user, account, daysback=730):
         """ Returns a dict of existing payee -> category """
-        mindate = datetime.datetime.now() - datetime.timedelta(days=730)
-        trxs = Transaction.objects.filter(user=self.user, account=account, category__isnull=False, date__gte=mindate)
+        mindate = datetime.datetime.now() - datetime.timedelta(days=daysback)
+        trxs = Transaction.objects.filter(user=user, account=account, category__isnull=False, date__gte=mindate)
         trxs = trxs.values('payee', 'category_id')
-        categories = {self._scrub_payee(trx['payee']):trx['category_id'] for trx in trxs}
+        categories = {cls.scrub_payee(trx['payee']):trx['category_id'] for trx in trxs}
         return {payee:catid for payee,catid in categories.items() if len(payee) > 2}
     
-    def _clean_date(self, date, dateformat=None):
+    @classmethod
+    def clean_date(cls, date, dateformat=None):
         """ Clean the date value. """
         if isinstance(date, str):
             return datetime.datetime.strptime(date, dateformat).date()
@@ -116,7 +119,8 @@ class TransactionManager:
             return date.date()
         return date
     
-    def _clean_amount(self, amount):
+    @classmethod
+    def clean_amount(cls, amount):
         """ Clean amount value and return a decimal. """
         if isinstance(amount, Decimal):
             return amount
@@ -124,7 +128,8 @@ class TransactionManager:
             amount = Decimal(re.sub(r'[^\-*\d.]', '', amount))
         return amount
     
-    def _clean_payee(self, payee):
+    @classmethod
+    def clean_payee(cls, payee):
         """ Clean payee string. """
         payee = payee.replace('ELECTRONIC WITHDRAWAL', '')
         payee = payee.replace('ELECTRONIC DEPOSIT', '')
@@ -132,7 +137,8 @@ class TransactionManager:
         payee = ' '.join([word for word in payee.split()])
         return payee
     
-    def _scrub_payee(self, payee):
+    @classmethod
+    def scrub_payee(cls, payee):
         """ Scrub unique details from payee when trying to match categories. """
         payee = re.sub(r'[^a-z\. ]', '', payee.lower())             # Remove specical chars
         payee = ' '.join([w for w in payee.split() if len(w) > 1])  # Remove multi-spaces and 1 char words
