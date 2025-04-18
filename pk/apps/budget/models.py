@@ -18,7 +18,8 @@ class Account(TimeStampedModel):
         name = self.name.lower().replace(' ', '_')[:20]
         return f'<Account {self.id}:{name}>'
     
-    def url(self, request):
+    @property
+    def url(self):
         return reverse('api:account', pk=self.id)
 
 
@@ -31,6 +32,10 @@ class Category(TimeStampedModel):
     def __str__(self):
         name = self.name.lower().replace(' ', '_')[:20]
         return f'<Category {self.id}:{name}>'
+    
+    @property
+    def url(self):
+        return reverse('api:category', pk=self.id)
 
 
 class Transaction(TimeStampedModel):
@@ -53,3 +58,7 @@ class Transaction(TimeStampedModel):
     def __str__(self):
         payee = self.payee.lower().replace(' ', '_')[:10]
         return f'<Transaction {self.id}:{self.trxid}:{payee}>'
+    
+    @property
+    def url(self):
+        return reverse('api:transaction', pk=self.id)

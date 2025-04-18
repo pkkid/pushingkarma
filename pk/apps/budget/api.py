@@ -8,7 +8,6 @@ from django.forms.models import model_to_dict
 from ninja import Body, File, Path, Query, Router
 from ninja.files import UploadedFile
 from ninja.errors import HttpError
-from pk.utils.django import reverse
 from pk.utils.ninja import PageSchema, paginate
 from typing import List
 from .manager import TransactionManager
@@ -51,7 +50,7 @@ def get_account(request,
     """ List details for the specified account. """
     item = get_object_or_404(Account, user=request.user, id=pk)
     itemdict = model_to_dict(item)
-    itemdict['url'] = reverse('api:account', pk=item.id)
+    itemdict['url'] = item.url
     return itemdict
 
 
@@ -87,7 +86,7 @@ def list_accounts(request,
     for i in range(len(data['items'])):
         item = data['items'][i]
         itemdict = model_to_dict(item)
-        itemdict['url'] = reverse('api:account', pk=item.id)
+        itemdict['url'] = item.url
         data['items'][i] = itemdict
     return data
 
@@ -114,7 +113,7 @@ def get_category(request,
     """ List details for the specified category. """
     item = get_object_or_404(Category, user=request.user, id=pk)
     itemdict = model_to_dict(item)
-    itemdict['url'] = reverse('api:category', pk=item.id)
+    itemdict['url'] = item.url
     return itemdict
 
 
@@ -148,7 +147,7 @@ def list_categories(request,
     for i in range(len(data['items'])):
         item = data['items'][i]
         itemdict = model_to_dict(item)
-        itemdict['url'] = reverse('api:category', pk=item.id)
+        itemdict['url'] = item.url
         data['items'][i] = itemdict
     return data
 
@@ -175,17 +174,10 @@ def get_transaction(request,
     """ List details for the specified transaction. """
     item = get_object_or_404(Transaction, user=request.user, id=pk)
     itemdict = model_to_dict(item)
-    itemdict['url'] = reverse('api:transaction', pk=item.id)
-    itemdict['account'] = dict(
-        url = reverse('api:account', pk=item.account.id),
-        id = item.account.id,
-        name = item.account.name,
-    )
-    itemdict['category'] = dict(
-        url = reverse('api:category', pk=item.category.id),
-        id = item.category.id,
-        name = item.category.name,
-    ) if item.category else None
+    itemdict['url'] = item.url
+    itemdict['account'] = dict(url=item.account.url, id=item.account.id, name=item.account.name)
+    itemdict['category'] = dict(url=item.category.url, id=item.category.id, name=item.category.name) \
+        if item.category else None
     return itemdict
 
 
@@ -202,15 +194,10 @@ def list_transactions(request,
     for i in range(len(data['items'])):
         item = data['items'][i]
         itemdict = model_to_dict(item)
-        itemdict['url'] = reverse('api:transaction', pk=item.id)
-        itemdict['account'] = dict(
-            url = reverse('api:account', pk=item.account.id),
-            name = item.account.name,
-        )
-        itemdict['category'] = dict(
-            url = reverse('api:category', pk=item.category.id),
-            name = item.category.name,
-        ) if item.category else None
+        itemdict['url'] = item.url
+        itemdict['account'] = dict(url=item.account.url, name=item.account.name)
+        itemdict['category'] = dict(url=item.category.url, name=item.category.name) \
+            if item.category else None
         data['items'][i] = itemdict
     return data
 
