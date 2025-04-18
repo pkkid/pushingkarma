@@ -1,6 +1,6 @@
 # encoding: utf-8
 import logging
-from pk.utils.django import TimeStampedModel
+from pk.utils.django import TimeStampedModel, reverse
 from django.core.management import call_command
 from django.db import models
 from django.dispatch import receiver
@@ -16,6 +16,10 @@ class Ticker(TimeStampedModel):
 
     def __str__(self):
         return f'<Ticker:{self.ticker}:{self.tags.replace(' ',',')}>'
+    
+    @property
+    def url(self):
+        return reverse('api:ticker', pk=self.ticker)
 
 
 class TickerHistory(models.Model):

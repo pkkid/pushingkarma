@@ -7,7 +7,6 @@ from django.db.models import Max
 from django.forms.models import model_to_dict
 from django.shortcuts import get_object_or_404
 from ninja import Path, Query, Router
-from pk.utils.django import reverse
 from pk.utils.ninja import PageSchema, paginate
 from pk.utils.utils import percent
 from .models import Ticker, TickerHistory
@@ -28,7 +27,7 @@ def get_ticker(request,
     """ List details for the specified ticker. """
     item = get_object_or_404(Ticker, pk=pk)
     itemdict = model_to_dict(item)
-    itemdict['url'] = reverse('api:ticker', pk=item.ticker)
+    itemdict['url'] = item.url
     if item.lastday:
         itemdict['lastday'] = model_to_dict(item.lastday)
         del itemdict['lastday']['ticker']
@@ -46,7 +45,7 @@ def list_tickers(request,
     for i in range(len(data['items'])):
         item = data['items'][i]
         itemdict = model_to_dict(item)
-        itemdict['url'] = reverse('api:ticker', pk=item.ticker)
+        itemdict['url'] = item.url
         if item.lastday:
             itemdict['lastday'] = model_to_dict(item.lastday)
             del itemdict['lastday']['ticker']
