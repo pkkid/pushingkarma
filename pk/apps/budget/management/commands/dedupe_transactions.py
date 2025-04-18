@@ -24,7 +24,6 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('user', help='Email address of user to remove duplicates for.')
-        parser.add_argument('accountid', type=int, help='Account id to remove duplicates for.')
         parser.add_argument('--update-trxids', type=bool, default=False, help='Update trxids for this account.')
 
     def _count_duplicates(self, user, account):

@@ -223,7 +223,7 @@ def import_transactions(request,
     log.info(f'{safeimport=}')
     response = []
     for fileobj in files:
-        trxmanager = TransactionManager(request, test=True)
+        trxmanager = TransactionManager(request, safeimport, test=True)
         metrics = trxmanager.import_file(fileobj.name, fileobj.file)
         response.append(metrics)
     return response
