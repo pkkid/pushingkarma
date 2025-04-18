@@ -19,7 +19,7 @@ class Account(TimeStampedModel):
         return f'<Account {self.id}:{name}>'
     
     def url(self, request):
-        return reverse(request, 'api:account', pk=self.id)
+        return reverse('api:account', pk=self.id)
 
 
 class Category(TimeStampedModel):

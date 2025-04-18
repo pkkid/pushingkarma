@@ -31,3 +31,4 @@ class Command(BaseCommand):
             with open(filepath) as handle:
                 metrics = trxmanager.import_file(filename, handle)
             log.info(metrics)
+        log.info('Done')

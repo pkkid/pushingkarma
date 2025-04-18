@@ -31,7 +31,7 @@ def get_note(request,
         with open(filepath, 'r', encoding='utf-8') as handle:
             content = handle.read()
         return dict(
-            url = reverse(request, 'api:note', bucket=bucketname, path=path),
+            url = reverse('api:note', bucket=bucketname, path=path),
             bucket = bucketname,
             vault = bucket['vault'],
             path = path,
@@ -66,7 +66,7 @@ def list_notes(request,
                 score = sum(title.lower().count(word) for word in words) * 1000
                 score += sum(content.lower().count(word) for word in words)
                 items.append(dict(
-                    url = reverse(request, 'api:note', bucket=bucketname, path=path),
+                    url = reverse('api:note', bucket=bucketname, path=path),
                     bucket = bucketname,
                     vault = bucket['vault'],
                     path = path,

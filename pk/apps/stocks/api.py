@@ -28,7 +28,7 @@ def get_ticker(request,
     """ List details for the specified ticker. """
     item = get_object_or_404(Ticker, pk=pk)
     itemdict = model_to_dict(item)
-    itemdict['url'] = reverse(request, 'api:ticker', pk=item.ticker)
+    itemdict['url'] = reverse('api:ticker', pk=item.ticker)
     if item.lastday:
         itemdict['lastday'] = model_to_dict(item.lastday)
         del itemdict['lastday']['ticker']
@@ -46,7 +46,7 @@ def list_tickers(request,
     for i in range(len(data['items'])):
         item = data['items'][i]
         itemdict = model_to_dict(item)
-        itemdict['url'] = reverse(request, 'api:ticker', pk=item.ticker)
+        itemdict['url'] = reverse('api:ticker', pk=item.ticker)
         if item.lastday:
             itemdict['lastday'] = model_to_dict(item.lastday)
             del itemdict['lastday']['ticker']

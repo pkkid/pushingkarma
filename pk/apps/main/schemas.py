@@ -21,4 +21,5 @@ class LoginSchema(Schema):
 
 class GlobalVarsSchema(Schema):
     DEBUG: bool = Field(..., description='True if site running in debug mode')
+    DOMAIN: str = Field(..., description='Domain the Django app is configured for')
     user: Optional[UserSchema] = Field(None, description='Currently logged in user')

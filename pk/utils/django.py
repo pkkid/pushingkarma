@@ -153,8 +153,8 @@ def queryset_str(sql_or_queryset):
         return 'EmptyResultSet'
 
 
-def reverse(request, viewname, **kwargs):
-    return unquote(request.build_absolute_uri(django_reverse(viewname, kwargs=kwargs)))
+def reverse(viewname, **kwargs):
+    return f'{settings.DOMAIN}{django_reverse(viewname, kwargs=kwargs)}'
 
 
 def update_logging_filepath(filepath, handler_name='default'):
