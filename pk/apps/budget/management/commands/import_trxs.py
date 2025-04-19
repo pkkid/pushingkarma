@@ -16,6 +16,7 @@ class Command(BaseCommand):
         parser.add_argument('user', help='Email address of user to import for.')
         parser.add_argument('filepath', nargs='+', help='Transaction file(s) to import (.csv or .qfx)')
         parser.add_argument('safe', default=False, action='store_true', help='Unique trxs based on date, payee and amount.')
+        parser.add_argument('save', default=False, action='store_true', help='Save db changes.')
         parser.add_argument('--loglevel', default='INFO', help='Console log level')
 
     def handle(self, *args, **opts):
@@ -25,11 +26,11 @@ class Command(BaseCommand):
         update_logging_filepath(f'{settings.LOGDIR}/{basename}.log')
         # Run the script
         user = User.objects.get(email=opts['user'])
-        trxmanager = TransactionManager(user, opts['safe'], save=False)
+        trxmanager = TransactionManager(user, safe=opts['safe'], save=opts['safe'])
         for filepath in opts['filepath']:
             filename = os.path.basename(filepath)
             with open(filepath, 'rb') as handle:
                 metrics = trxmanager.import_file(filename, handle)
             for key, value in metrics.items():
                 log.info(f'  {key}: {value}')
-        log.info('Done')
+        log.info(f'Done {"" if opts["save"] else "(without saving!)"}')
