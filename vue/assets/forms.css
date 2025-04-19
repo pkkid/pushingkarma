@@ -3,12 +3,12 @@
  *------------------------------------------- */
 label {
   margin-top: 10px;
-  font-family: 'Merriweather', sans-serif;
+  font-family: var(--fontfamily-title);
   font-size: 12px;
   color: var(--lightbg-fg3);
 }
 input,textarea,select {
-  font-family: 'Merriweather', sans-serif;
+  font-family: var(--fontfamily-title);
   font-weight: 400;
   font-size: 15px;
   color: var(--lightbg-fg1);
@@ -38,7 +38,7 @@ button {
   color: var(--lightbg-fg3);
   display: inline-block;
   width: auto;
-  font-family: 'Merriweather', sans-serif;
+  font-family: var(--fontfamily-title);
   font-weight: 400;
   font-size: 12px;
   justify-content: center;

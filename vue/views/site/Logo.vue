@@ -16,7 +16,7 @@
   }
   .logotxt {
     color: #fbf1c7;
-    font-family: 'Merriweather';
+    font-family: var(--fontfamily-title);
     font-size: 15px;
     font-weight: 700;
     letter-spacing: 3px;

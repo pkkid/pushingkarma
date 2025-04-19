@@ -168,7 +168,7 @@
     /* look bad when they were present with a border-radius. By applying the
     /* border-radius to .codewrap which doesn't contain overflow:hidden, things
     /* render correctly (but scrollbars may appear outside the border-radius). */
-    font-family: Consolas, Monaco, monospace; 
+    font-family: var(--fontfamily-code);
     font-size: 13px;
     line-height: 1.2;
     position: relative;

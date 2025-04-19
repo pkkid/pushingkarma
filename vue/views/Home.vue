@@ -122,7 +122,7 @@
         text-align: center;
         text-transform: uppercase;
         font-size: 3rem;
-        font-family: "Merriweather", sans-serif;
+        font-family: var(--fontfamily-title);
         font-weight: 300;
         margin-bottom: 100px;
         color: #ebdbb2;

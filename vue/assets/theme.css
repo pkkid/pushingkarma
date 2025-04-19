@@ -87,7 +87,7 @@
 }
 html,body {
   color: var(--lightbg-text);
-  font-family: "Merriweather", sans-serif;
+  font-family: var(--fontfamily-title);
   font-size: 15px;
   font-weight: 400;
   line-height: 1.6;
