@@ -51,7 +51,7 @@
 </template>
 
 <script setup>
-  import {inject, onBeforeMount, ref} from 'vue'
+  import {inject, onBeforeMount, onMounted, ref} from 'vue'
   import {BudgetSettings, BudgetTransactions, BudgetYear} from '@/views/budget'
   import {LayoutSidePanel} from '@/components/Layout'
   import {Dropzone} from '@/components'
@@ -68,17 +68,13 @@
   // Import new transactions to the database
   const upload = async function(event, formdata) {
     if (event.shiftKey) { formdata.append('safeimport', true) }
-    console.log('formdata', formdata)
     var {data} = await api.Budget.importTransactions(formdata)
-    // var title = `${data.account} Import`
-    // var message = 'No new transactions found.'
-    // if (data.transactions > 0) {
-    //   message = `${data.transactions} transactions imported.`
-    //   if (data.categorized > 0) { message += ` ${data.categorized} have been categorized.` }
-    //   if (data.labeled > 0) { message += ` ${data.labeled} have been labeled.` }
-    // }
-    console.log('Sending notification..')
-    notify('Hi Mom!')
+    for (var item of data) {
+      var title = `${item.account.name} Transactions imported`
+      var message = `${item.created} transactions imported from ${item.mindate} to ${item.maxdate}.`
+      message += ` ${item.categorized} transactions categorized.`
+      notify(title, message, 'mdi-check')
+    }
   }
 </script>
 

@@ -1,10 +1,13 @@
 <template>
   <div id='notifications'>
-    <div v-for='(notification, index) in notifications' :key='index' class='notification darkbg'>
-      <i v-if='notification.icon' :class='notification.icon' />
-      <div class='message'>{{ notification.message }}</div>
-      <button class='close' @click='removeNotification(index)'>x</button>
-    </div>
+    <TransitionGroup name='fade' tag='div'>
+      <div v-for='(notification, index) in notifications' :key='index' class='notification darkbg'>
+        <i class='close mdi mdi-close' @click='removeNotification(index)'/>
+        <i v-if='notification.icon' class='icon mdi' :class='notification.icon' />
+        <div class='title'>{{ notification.title }}</div>
+        <div class='message'>{{ notification.message }}</div>
+      </div>
+    </TransitionGroup>
   </div>
 </template>
 
@@ -14,13 +17,15 @@
 
   // Add Notification
   // Display a new notification
-  const notify = function(message, duration=5000, icon=null) {
-    const notification = {message, duration, icon}
-    notifications.push(notification)
+  const notify = function(title, message, icon=null, duration=5000) {
+    const id = Math.random().toString(36).substring(2, 15)
+    const notification = {title, message, icon, id}
+    // Add new notification to the first position
+    notifications.unshift(notification)
     if (duration > 0) {
       setTimeout(function() {
-        const index = notifications.indexOf(notification)
-        if (index !== -1) notifications.splice(index, 1)
+        const index = notifications.findIndex(n => n.id == id)
+        if (index != -1) { notifications.splice(index, 1) }
       }, duration)
     }
   }
@@ -37,32 +42,41 @@
 
 <style scoped>
   #notifications {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
+    
     position: fixed;
-    top: 20px; right: 20px;
+    top: 20px;
+    right: 20px;
     z-index: 98;
+    width: 400px;
+    & > div {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
 
     .notification {
-      background: var(--bgcolor);
-      color: var(--fgcolor);
-      padding: 1rem;
-      border-radius: 0.5rem;
+      border-radius: 6px;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
+      font-size: 13px;
+      padding: 20px;
+      position: relative;
+      width: 100%;
+      .icon { font-size:20px; float:left; }
+      .title {
+        margin: 0px 30px 0px 30px;
+        font-family: var(--fontfamily-title);
+        font-weight: bold;
+      }
+      .message {
+        margin: 0px 20px 0px 30px;
+        font-family: var(--fontfamily-article);
+      }
     }
     .close {
-      background: none;
-      border: none;
-      color: var(--fgcolor);
-      font-size: 1.2rem;
-      cursor: pointer;
-    }
-    .notification i {
-      font-size: 1.5rem;
+      position: absolute;
+      right: 15px;
+      top: 15px;
+      font-size: 16px;
     }
   }
 </style>

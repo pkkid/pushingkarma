@@ -7,7 +7,7 @@
 :root {
   /* Website Fonts */
   --fontfamily-title: 'Merriweather', sans-serif;
-  --fontfamily-article: 'Merriweather', sans-serif;
+  --fontfamily-article: 'Inter', sans-serif;
   --fontfamily-subtext: 'Open Sans', sans-serif;
   --fontfamily-artsy: 'Merriweather', sans-serif;
   --fontfamily-code: 'Roboto Mono', monospace;
