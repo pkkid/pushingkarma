@@ -10,7 +10,7 @@ from ninja.files import UploadedFile
 from ninja.errors import HttpError
 from pk.utils.ninja import PageSchema, paginate
 from typing import List
-from .manager import TransactionManager
+from .trxmanager import TransactionManager
 from .models import Account, Category, Transaction
 from .schemas import AccountSchema, AccountPatchSchema
 from .schemas import CategorySchema, CategoryPatchSchema
@@ -209,7 +209,7 @@ def import_transactions(request,
     """ Upload new transactions to the budget app. This is a file upload (multipart/form-data) endpoint. """
     response = []
     for fileobj in files:
-        trxmanager = TransactionManager(request.user, safe, save=False)
+        trxmanager = TransactionManager(request.user, safe, save=True)
         metrics = trxmanager.import_file(fileobj.name, fileobj.file)
         response.append(metrics)
     return response

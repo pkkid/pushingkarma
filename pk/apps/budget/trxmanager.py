@@ -86,7 +86,7 @@ class TransactionManager:
             categorized = len([trx for trx in trxs if trx.category_id]),
             mindate = min([trx.date for trx in trxs]) if len(trxs) else None,
             maxdate = max([trx.date for trx in trxs]) if len(trxs) else None,
-            safeimport = self.safeimport,
+            safe = self.safe,
             account = dict(url=account.url, name=account.name),
         )
         log.info(f'Imported {metrics["created"]} transactions to account {account.name} for {self.user.email}')

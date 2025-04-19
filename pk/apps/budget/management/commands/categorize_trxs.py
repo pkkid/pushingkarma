@@ -5,7 +5,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.management.base import BaseCommand
 from pk.utils.django import update_logging_filepath
-from ...manager import TransactionManager
+from ...trxmanager import TransactionManager
 from ...models import Account, Transaction
 log = logging.getLogger(__name__)
 
