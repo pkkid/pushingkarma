@@ -51,7 +51,7 @@
 </template>
 
 <script setup>
-  import {inject, onBeforeMount, onMounted, ref} from 'vue'
+  import {inject, onBeforeMount, ref} from 'vue'
   import {BudgetSettings, BudgetTransactions, BudgetYear} from '@/views/budget'
   import {LayoutSidePanel} from '@/components/Layout'
   import {Dropzone} from '@/components'
@@ -70,9 +70,10 @@
     if (event.shiftKey) { formdata.append('safe', true) }
     var {data} = await api.Budget.importTransactions(formdata)
     for (var item of data) {
-      var title = `${item.account.name} Transactions imported`
-      var message = `${item.created} transactions imported from ${item.mindate} to ${item.maxdate}.`
-      message += ` ${item.categorized} transactions categorized.`
+      var title = `${item.account.name} Transactions Imported`
+      var message = item.created == 0 ? 'No transactions imported.' :
+        `${item.created} transactions imported from ${item.mindate} to ${item.maxdate}.
+         ${item.categorized} transactions categorized.`
       notify(title, message, 'mdi-check')
     }
   }

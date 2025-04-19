@@ -37,8 +37,7 @@ class TransactionManager:
                     trx.category_id = payee_categoryids.get(trx.payee.lower())
                 if self.save is True:
                     account.save()
-                    unique_fields = ['date','payee','amount'] if self.safe else ['trxid']
-                    trxs = Transaction.objects.bulk_create(trxs, unique_fields=unique_fields)
+                    trxs = self._bulk_create(account, trxs)
                 return self._summarize(filename, account, trxs)
         raise Exception(f'No matching account for {filename}')
 
@@ -77,6 +76,19 @@ class TransactionManager:
         account.balance = rget(ofx, rget(rules, 'balance'))
         account.balance_updated = rget(ofx, rget(rules, 'balance_date'))
         return account, transactions
+    
+    def _bulk_create(self, account, trxs):
+        """ Bulk create transactions in the database. Made a custom function
+            here so we can properly track the newly created items.
+        """
+        newtrxs = []
+        unique_fields = ['date', 'payee', 'amount'] if self.safe else ['trxid']
+        existing = set(Transaction.objects.filter(user=self.user, account=account).values_list(*unique_fields))
+        for trx in trxs:
+            key = tuple(getattr(trx, field) for field in unique_fields)
+            if key not in existing: newtrxs.append(trx)
+        Transaction.objects.bulk_create(newtrxs, unique_fields=unique_fields)
+        return newtrxs
 
     def _summarize(self, filename, account, trxs):
         """ Summarize the transactions created. """

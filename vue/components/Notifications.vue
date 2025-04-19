@@ -17,7 +17,7 @@
 
   // Add Notification
   // Display a new notification
-  const notify = function(title, message, icon=null, duration=5000) {
+  const notify = function(title, message, icon=null, duration=30000) {
     const id = Math.random().toString(36).substring(2, 15)
     const notification = {title, message, icon, id}
     // Add new notification to the first position
