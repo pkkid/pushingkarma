@@ -10,6 +10,8 @@ from pk.utils import utils
 from ...models import Transaction
 log = logging.getLogger(__name__)
 
+DUPE_OK = 'dupe-ok'  # Comment to keep duplicates
+
 
 class Command(BaseCommand):
     help = __doc__
@@ -19,7 +21,7 @@ class Command(BaseCommand):
         trxs = Transaction.objects.filter(user=user)
         if account_name:
             trxs = trxs.filter(account__name__iexact=account_name)
-        trxs = trxs.exclude(comment__icontains='dupe-ok')
+        trxs = trxs.exclude(comment__icontains=DUPE_OK)
         trxs = trxs.values('account', 'date', 'payee', 'amount')
         trxs = trxs.annotate(count=Count('*'), ids=GroupConcat('id'), trxids=GroupConcat('trxid'))
         trxs = trxs.filter(count__gte=2)
@@ -45,7 +47,7 @@ class Command(BaseCommand):
         ids = dupe['ids'].split(',')
         log.info(f'Commenting dupe-ok for transactions: {", ".join(ids)}')
         for trx in Transaction.objects.filter(id__in=ids):
-            trx.comment = f'{trx.comment} dupe-ok' if trx.comment else 'dupe-ok'
+            trx.comment = f'{trx.comment} {DUPE_OK}' if trx.comment else DUPE_OK
             trx.save()
 
     def add_arguments(self, parser):
