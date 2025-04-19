@@ -205,11 +205,11 @@ def list_transactions(request,
 @router.post('/import_transactions', response=List[ImportResponseSchema], exclude_unset=True)
 def import_transactions(request,
       files: List[UploadedFile]=File(..., description='List of transaction files to import (.csv or .qfx)'),
-      safeimport: bool=Body(False, description='Safe import, unique transactions based on date, payee and amount.')):
+      safe: bool=Body(False, description='Safe import, unique transactions based on date, payee and amount.')):
     """ Upload new transactions to the budget app. This is a file upload (multipart/form-data) endpoint. """
     response = []
     for fileobj in files:
-        trxmanager = TransactionManager(request.user, safeimport, test=True)
+        trxmanager = TransactionManager(request.user, safe, save=False)
         metrics = trxmanager.import_file(fileobj.name, fileobj.file)
         response.append(metrics)
     return response

@@ -13,10 +13,10 @@ log = logging.getLogger(__name__)
 
 class TransactionManager:
   
-    def __init__(self, user, safeimport=False, test=False):
-        self.user = user                # User transactions belong to
-        self.safeimport = safeimport    # unique trxs based on date, payee and amount
-        self.test = test                # Test mode, no db changes
+    def __init__(self, user, safe=False, save=False):
+        self.user = user        # User transactions belong to
+        self.safe = safe        # unique trxs based on date, payee and amount
+        self.save = save        # Save db changes
     
     def import_file(self, filename, filehandle):
         """ Main entrypoint for importing transactions. """
@@ -35,9 +35,9 @@ class TransactionManager:
                     trx.original_payee = trx.payee
                     trx.original_amount = trx.amount
                     trx.category_id = payee_categoryids.get(trx.payee.lower())
-                if not self.test:
+                if self.save is True:
                     account.save()
-                    unique_fields = ['date','payee','amount'] if self.safeimport else ['trxid']
+                    unique_fields = ['date','payee','amount'] if self.safe else ['trxid']
                     trxs = Transaction.objects.bulk_create(trxs, unique_fields=unique_fields)
                 return self._summarize(filename, account, trxs)
         raise Exception(f'No matching account for {filename}')

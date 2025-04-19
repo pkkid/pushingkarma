@@ -5,6 +5,7 @@ export var history = []
 
 // Configure Axios CSRF Token and baseURL
 // https://axios-http.com/docs/req_config
+axios.defaults.delayQueries = 0
 axios.defaults.saveHistory = false
 axios.defaults.withCredentials = true
 axios.defaults.withXSRFToken = true
@@ -51,3 +52,12 @@ export function cancel(controller) {
   if (controller) { controller.abort('Cancelled request') }
   return new AbortController()
 }
+
+// Slow Queries
+// Artificial delay interceptor (30 seconds)
+axios.interceptors.request.use(async function(config) {
+  if (axios.defaults.delayQueries > 0) {
+    await new Promise(resolve => setTimeout(resolve, axios.defaults.delayQueries))
+  }
+  return config
+})

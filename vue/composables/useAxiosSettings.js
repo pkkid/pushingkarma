@@ -8,6 +8,7 @@ export default function useApiSettings() {
   const logQueries = useStorage('axios.logqueries', false)
   const saveHistory = useStorage('axios.saveHistory', false)
   const history = useStorage('axios.history', null)
+  const slowQueries = useStorage('axios.slowQueries', false)
   var HISTORY_IGNORES = ['/login']
 
   // Set Count Queries
@@ -33,6 +34,13 @@ export default function useApiSettings() {
     axios.defaults.saveHistory = newval
     if (newval) { history.value = history.value || [] }
     else { history.value = null } 
+  }
+
+  // Set Slow Queries
+  // Enable slow queries in the axios interceptor
+  function setSlowQueries(newval) {
+    slowQueries.value = newval
+    axios.defaults.delayQueries = newval ? 5000 : 0
   }
 
   // Save History Item
@@ -78,6 +86,7 @@ export default function useApiSettings() {
   setCountQueries(countQueries.value)
   setLogQueries(logQueries.value)
   setSaveHistory(saveHistory.value)
+  setSlowQueries(slowQueries.value)
 
   // Return reactive values and methods
   return {
@@ -85,8 +94,10 @@ export default function useApiSettings() {
     logQueries: readonly(logQueries),
     saveHistory: readonly(saveHistory),
     history: readonly(history),
+    slowQueries: readonly(slowQueries),
     setCountQueries,
     setLogQueries,
-    setSaveHistory
+    setSaveHistory,
+    setSlowQueries,
   }
 }

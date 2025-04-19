@@ -67,7 +67,7 @@
   // Upload
   // Import new transactions to the database
   const upload = async function(event, formdata) {
-    if (event.shiftKey) { formdata.append('safeimport', true) }
+    if (event.shiftKey) { formdata.append('safe', true) }
     var {data} = await api.Budget.importTransactions(formdata)
     for (var item of data) {
       var title = `${item.account.name} Transactions imported`

@@ -14,8 +14,6 @@
     modelValue: {type:Boolean, default:undefined},          // Two-way binding
     value: {type:Boolean, default:undefined},               // One-way binding
     label: {type:String, default:''},                       // Toggle label
-    width: {type:String, default:'28px'},                   // Width of the toggle
-    height: {type:String, default:'16px'},                  // Height of the toggle
   })
   const emit = defineEmits(['update:modelValue', 'update']) // Emit update event
   const currentValue = ref(null)                            // Current value of the toggle
@@ -40,8 +38,8 @@
 
 <style>
 .toggle-switch {
-  --toggle-width: v-bind(width);
-  --toggle-height: v-bind(height);
+  --height: 1.2em;
+  --width: 2.2em;
 
   align-items: center;
   cursor: pointer;
@@ -53,20 +51,21 @@
   .toggle-track {
     background-color: var(--lightbg-bg4);
     border-radius: 20px;
-    height: var(--toggle-height);
+    height: var(--height);
     position: relative;
     transition: background-color 0.3s;
-    width: var(--toggle-width);
+    width: var(--width);
   }
 
   .toggle-thumb {
     background-color: var(--lightbg-bg0);
     border-radius: 50%;
-    height: calc(var(--toggle-height) - 4px);
+    height: calc(var(--height) - 4px);
     position: absolute;
-    top: 2px; left: 2px;
+    top: 2px;
+    left: 2px;
     transition: transform 0.3s;
-    width: calc(var(--toggle-height) - 4px);
+    width: calc(var(--height) - 4px);
   }
 
   label {
@@ -75,7 +74,7 @@
 
   &.active {
     .toggle-track { background-color: var(--lightbg-blue1); }
-    .toggle-thumb { transform: translateX(calc(var(--toggle-width) - var(--toggle-height))); }
+    .toggle-thumb { transform: translateX(calc(var(--width) - var(--height))); }
     .toggle-label { color: var(--lightbg-blue1); }
   }
 }
