@@ -58,11 +58,22 @@
   import {useUrlParams} from '@/composables'
   import {api, utils} from '@/utils'
 
-  const showSettings = ref(false)
   const {view} = useUrlParams({view:{}})
   const {notify} = inject('notify')
+  const accounts = ref(null)
+  const showSettings = ref(false)
 
-  onBeforeMount(function() { utils.setNavPosition('top') })
+  onBeforeMount(function() {
+    utils.setNavPosition('top')
+    updateAccounts()
+  })
+
+  // Update Accounts
+  // Update the account list in the side panel
+  const updateAccounts = async function() {
+    var {data} = await api.Budget.listAccounts()
+    accounts.value = data.items
+  }
 
   // Upload
   // Import new transactions to the database
