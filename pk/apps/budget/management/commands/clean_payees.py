@@ -13,6 +13,7 @@ class Command(BaseCommand):
     help = __doc__
 
     def add_arguments(self, parser):
+        parser.add_argument('--save', default=False, action='store_true', help='Save changes')
         parser.add_argument('--loglevel', default='INFO', help='Console log level')
 
     def handle(self, *args, **opts):
@@ -29,4 +30,6 @@ class Command(BaseCommand):
                 trx.payee = newpayee
                 updated.append(trx)
         log.info(f'Cleaning payee for {len(updated)} transactions')
-        log.info('Done')
+        if opts['save']:
+            Transaction.objects.bulk_update(updated, ['payee'])
+        log.info(f'Done {"" if opts["save"] else "(without saving!)"}')

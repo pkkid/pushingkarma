@@ -27,14 +27,14 @@ class TransactionManager:
                 log.info(f'Importing transactions for {self.user.email} {account.name}')
                 ext = filename.split('.')[-1].lower()
                 account, trxs = getattr(self, f'_read_{ext}')(account, rules, filehandle)
-                categories = self.categories(self.user, account)
+                payee_categoryids = self.payee_categoryids(self.user, account)
                 for trx in trxs:
                     trx.user = self.user
                     trx.account_id = account.id
                     trx.original_date = trx.date
                     trx.original_payee = trx.payee
                     trx.original_amount = trx.amount
-                    trx.category_id = categories.get(trx.payee.lower())
+                    trx.category_id = payee_categoryids.get(trx.payee.lower())
                 if not self.test:
                     account.save()
                     unique_fields = ['date','payee','amount'] if self.safeimport else ['trxid']
@@ -102,7 +102,7 @@ class TransactionManager:
         return reversed(rows) if first_date > last_date else rows
     
     @classmethod
-    def categories(cls, user, account, daysback=730):
+    def payee_categoryids(cls, user, account, daysback=730):
         """ Returns a dict of existing payee -> category """
         mindate = datetime.datetime.now() - datetime.timedelta(days=daysback)
         trxs = Transaction.objects.filter(user=user, account=account, category__isnull=False, date__gte=mindate)
@@ -133,8 +133,8 @@ class TransactionManager:
         """ Clean payee string. """
         payee = payee.replace('ELECTRONIC WITHDRAWAL', '')
         payee = payee.replace('ELECTRONIC DEPOSIT', '')
-        payee = payee.strip(' -')
         payee = ' '.join([word for word in payee.split()])
+        payee = payee.strip(' -')
         return payee
     
     @classmethod

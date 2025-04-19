@@ -15,6 +15,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         parser.add_argument('user', help='Email address of user to categorize transactions.')
+        parser.add_argument('--save', default=False, action='store_true', help='Save changes')
         parser.add_argument('--loglevel', default='INFO', help='Console log level')
 
     def handle(self, *args, **opts):
@@ -26,11 +27,14 @@ class Command(BaseCommand):
         user = User.objects.get(email=opts['user'])
         updated = []
         for account in Account.objects.filter(user=user):
-            categories = TransactionManager.categories(account.user, account)
+            payee_categoryids = TransactionManager.payee_categoryids(account.user, account)
             for trx in Transaction.objects.filter(user=user, account=account, category=None):
-                newcategoryid = categories.get(trx.payee.lower())
+                newcategoryid = payee_categoryids.get(trx.payee.lower())
                 if newcategoryid:
+                    log.info(f'  {trx.payee} -> {newcategoryid}')
                     trx.category_id = newcategoryid
                     updated.append(trx)
         log.info(f'Updating category for {len(updated)} transactions')
-        log.info('Done')
+        if opts['save']:
+            Transaction.objects.bulk_update(updated, ['category'])
+        log.info(f'Done {"" if opts["save"] else "(without saving!)"}')
