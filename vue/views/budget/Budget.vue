@@ -4,20 +4,19 @@
       <!-- Side Panel (Navigation) -->
       <template #panel>
         <div class='menu'>
+          <!-- Transactions -->
           <div class='item link' @click="view=''">
             <i class='mdi mdi-credit-card-outline'/>
             Transactions
           </div>
-          <div class='subitem account'>
-            <div class='name'>Bank 2 Balance</div>
-            <div class='balance'>$1</div>
-            <div class='lastupdate'>Updated 1 week ago</div>
-          </div>
-          <div class='subitem account'>
-            <div class='name'>Bank 1 Balance</div>
-            <div class='balance'>$2</div>
-            <div class='lastupdate'>Updated 3 days ago</div>
-          </div>
+          <template v-for='account in accounts' :key='account.id'>
+            <div v-if='!account.import_rules?.hidden' class='subitem account'>
+              <div class='name'>{{account.name}} Balance</div>
+              <div class='balance'>{{utils.usd(account.balance, places=0)}}</div>
+              <div class='lastupdate'>Updated {{utils.formatDate(account.balance_updated, '')}}</div>
+            </div>
+          </template>
+          <!-- Year Overview -->
           <div class='item link' @click="view='year'">
             <i class='mdi mdi-checkbook'/>
             Year Overview
@@ -58,10 +57,10 @@
   import {useUrlParams} from '@/composables'
   import {api, utils} from '@/utils'
 
-  const {view} = useUrlParams({view:{}})
-  const {notify} = inject('notify')
-  const accounts = ref(null)
-  const showSettings = ref(false)
+  const {view} = useUrlParams({view:{}})    // Current view
+  const {notify} = inject('notify')         // Notification callback
+  const accounts = ref(null)                // List of accounts 
+  const showSettings = ref(false)           // True if showing settings dialog
 
   onBeforeMount(function() {
     utils.setNavPosition('top')

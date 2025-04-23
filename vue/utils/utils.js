@@ -334,12 +334,10 @@ export function title(str) {
 
 // USD
 // Format number to USD display -$99.99 with cents.
-export function usd(value, opts={}) {
+export function usd(value, places=2, symbol='$', colorize=false) {
   value = value || 0
   var result
-  var places = opts.places !== undefined ? opts.places : 2
   var valuestr = Math.abs(value).toFixed(places)
-  var symbol = opts.symbol === null ? '' : '$'
   if (value < 0) { result = `-${symbol}${intComma(valuestr)}` }
   else { result = `${symbol}${intComma(valuestr)}` }
   if (places == 2) {
@@ -347,10 +345,8 @@ export function usd(value, opts={}) {
     if (!result.match(/\./)) { return result +'.00' }
   }
   // Apply the color styles
-  if (opts.color) {
-    var cls = 'zero'
-    cls = value > 0 ? 'gtzero' : cls
-    cls = value < 0 ? 'ltzero' : cls
+  if (colorize) {
+    var cls = value > 0 ? 'gtzero' : value < 0 ? 'ltzero' : 'zero'
     result = `<span class='${cls}'>${result}</span>`
   }
   return result
