@@ -50,6 +50,7 @@ class TransactionManager:
             date = self.clean_date(rget(row, rget(rules, 'columns.date')), dateformat)
             payee = self.clean_payee(rget(row, rget(rules, 'columns.payee'))) or ''
             amount = self.clean_amount(rget(row, rget(rules, 'columns.amount')))
+            amount = -amount if rules.get('inverse_amounts') is True else amount
             balance = self.clean_amount(rget(row, rget(rules, 'columns.balance')))
             trxid = rget(row, rget(rules, 'columns.trxid')) or \
                 md5(f'{date}{payee}{amount}{balance}'.encode()).hexdigest()
@@ -70,6 +71,7 @@ class TransactionManager:
             date = self.clean_date(rget(row, rget(rules, 'columns.date')), dateformat)
             payee = self.clean_payee(rget(row, rget(rules, 'columns.payee'))) or ''
             amount = self.clean_amount(rget(row, rget(rules, 'columns.amount')))
+            amount = -amount if rules.get('inverse_amounts') is True else amount
             trxid = rget(row, rget(rules, 'columns.trxid')) or \
                 md5(f'{date}{payee}{amount}'.encode()).hexdigest()
             transactions.append(Transaction(trxid=trxid, date=date, payee=payee, amount=amount))
