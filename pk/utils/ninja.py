@@ -1,4 +1,5 @@
 # encoding: utf-8
+from django.conf import settings
 from django.core.paginator import Paginator
 from ninja import Router
 from ninja import Schema
@@ -7,8 +8,15 @@ from typing import List, Type
 from urllib.parse import urlencode
 root_router = Router()
 
+ROOT_DESCRIPTION = """
+    Returns a list of all available endpoints in the API.<br/>
+    • Root endpoint: <a href='{domain}/api/'>{domain}/api/</a><br/>
+    • OpenAPI Spec: <a href='{domain}/api/openapi.json'>{domain}/api/openapi.json</a><br/>
+    • Swagger Docs: <a href='{domain}/api/docs'>{domain}/api/docs</a>
+""".format(domain=settings.DOMAIN)
 
-@root_router.get('/')
+
+@root_router.get('/', description=ROOT_DESCRIPTION)
 def api_root(request):
     """ Returns a list of all available endpoints in the API. """
     return root_router.api.get_openapi_schema()

@@ -57,7 +57,7 @@
             </div>
             <!-- Endpoint Description & Parameters -->
             <div class='description'>
-              {{endpoint?.description}}
+              <div v-html='endpoint?.description'/>
               <ul style='font-size:1em;'>
                 <li v-for='param in params' :key='param.name'>
                   {{param.name}} ({{param.in}} {{param.type}}): {{param.description}}

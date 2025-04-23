@@ -6,6 +6,24 @@ from typing import List, Optional
 from pydantic import Field
 
 
+class AccountRulesSchema(Schema):
+    class ColumnsSchema(Schema):
+        trxid: str = Field(None, description='Column name for transaction id')
+        date: str = Field(..., description='Column name for transaction date')
+        payee: str = Field(..., description='Column name for transaction payee')
+        amount: str = Field(..., description='Column name for transaction amount')
+        balance: Optional[str] = Field(None, description='Column name for current balance')
+
+    file_pattern: Optional[str] = Field(None, description='File name pattern to match')
+    date_format: Optional[str] = Field(None, description='Date format used in imported file')
+    hidden: Optional[bool] = Field(None, description='Set true to hide this account in the UI')
+    transactions: Optional[str] = Field(None, description='XPath to transactions in qfx file')
+    balance: Optional[str] = Field(None, description='XPath to account balance in qfx file')
+    balance_updated: Optional[str] = Field(None, description='XPath to account balance date in qfx file')
+    inverse_amounts: Optional[bool] = Field(None, description='Set true to inverse amounts from imported file')
+    columns: Optional[ColumnsSchema] = Field(None, description='Column names for transactions')
+
+
 class AccountSchema(Schema):
     id: Optional[int] = Field(None, description='Internal account id')
     url: str = Field(..., description='URL for the account resource')
@@ -18,7 +36,7 @@ class AccountSchema(Schema):
 
 class AccountPatchSchema(Schema):
     name: Optional[str] = Field(..., description='Name of this account')
-    import_rules: Optional[dict] = Field(None, description='Transacation import rules for this account')
+    import_rules: Optional[AccountRulesSchema] = Field(None, description='Transacation import rules for this account')
 
 
 class CategorySchema(Schema):
