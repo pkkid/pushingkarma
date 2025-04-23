@@ -7,7 +7,7 @@ from pydantic import Field
 
 
 class AccountRulesSchema(Schema):
-    class ColumnsSchema(Schema):
+    class AccountRulesColumnsSchema(Schema):
         trxid: str = Field(None, description='Column name for transaction id')
         date: str = Field(..., description='Column name for transaction date')
         payee: str = Field(..., description='Column name for transaction payee')
@@ -21,7 +21,7 @@ class AccountRulesSchema(Schema):
     balance_updated: Optional[str] = Field(None, description='XPath to account balance date in qfx file')
     inverse_amounts: Optional[bool] = Field(None, description='Set true to inverse amounts from imported file')
     hidden: Optional[bool] = Field(None, description='Set true to hide this account in the UI')
-    columns: Optional[ColumnsSchema] = Field(None, description='Column names for transactions')
+    columns: Optional[AccountRulesColumnsSchema] = Field(None, description='Column names for transactions')
 
 
 class AccountSchema(Schema):
