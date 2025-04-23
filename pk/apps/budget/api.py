@@ -61,7 +61,7 @@ def update_account(request,
     """ Update the specified account. """
     item = get_object_or_404(Account, user=request.user, id=pk)
     if data.name: item.name = data.name
-    if data.import_rules: item.import_rules = data.import_rules.dict(exclude_none=True)
+    if data.rules: item.rules = data.rules.dict(exclude_none=True)
     item.save()
     return get_account(request, pk)
 

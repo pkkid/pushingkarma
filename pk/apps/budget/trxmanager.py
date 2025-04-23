@@ -21,7 +21,7 @@ class TransactionManager:
     def import_file(self, filename, filehandle):
         """ Main entrypoint for importing transactions. """
         for account in Account.objects.filter(user=self.user):
-            rules = account.import_rules or {}
+            rules = account.rules or {}
             pattern = rules.get('file_pattern')
             if pattern and fnmatch.fnmatch(filename, pattern):
                 log.info(f'Importing transactions for {self.user.email} {account.name}')
@@ -45,7 +45,7 @@ class TransactionManager:
         """ Returns an updated account and list of transactions from the csv file. """
         transactions = []
         rows = list(csv.DictReader(StringIO(filehandle.read().decode())))
-        dateformat = rget(account, 'import_rules.date_format')
+        dateformat = rget(account, 'rules.date_format')
         for row in self.sort(rows, rules):
             date = self.clean_date(rget(row, rget(rules, 'columns.date')), dateformat)
             payee = self.clean_payee(rget(row, rget(rules, 'columns.payee'))) or ''
@@ -66,7 +66,7 @@ class TransactionManager:
         parser.parse(filehandle)
         ofx = parser.convert()
         rows = list(rget(ofx, rget(rules, 'transactions')))
-        dateformat = rget(account, 'import_rules.date_format')
+        dateformat = rget(account, 'rules.date_format')
         for row in self.sort(rows, rules):
             date = self.clean_date(rget(row, rget(rules, 'columns.date')), dateformat)
             payee = self.clean_payee(rget(row, rget(rules, 'columns.payee'))) or ''

@@ -8,15 +8,21 @@
       <template #content>
         <div style='padding:5px 0px 15px 0px'>
           <!-- Help Tooltip -->
-          <Tooltip width='400px' position='leftbottom' style='float:right; margin-right:5px;'>
+          <Tooltip width='450px' position='leftbottom' style='float:right; margin-right:5px;'>
             <template #tooltip>
-              Configuration for importing bank transactions.
-              <ul>
-                <li><strong>file_pattern:</strong> Regex pattern to match the file name.</li>
-                <li><strong>fid:</strong> Financial Institution ID (when importing qfx files).</li>
-                <li><strong>columns:</strong> Dict of {dbcol: trxcol} pairs to map transactions in
-                  the database. Database columns are: {trxid, date, payee, amount}.</li>
-              </ul>
+              Configuration for importing bank transactions. All fields are optional.
+              Database columns are: {trxid, date, payee, amount, balance}.
+              <pre><code>{{utils.dedent(`
+                {
+                  "file_pattern": "Fnmatch file name pattern to match",
+                  "date_format": "Date format used in the imported file.",
+                  "transactions": "XPath to transactions in qfx file.",
+                  "balance": "XPath to account balance in qfx file.",
+                  "balance_updated": "XPath to account balance date in qfx file.",
+                  "inverse_amounts": "Set true to inverse amounts from imported file.",
+                  "hidden": "Set true to hide this account in the UI.",
+                  "columns": "{dbcol: trxcol} pairs to map transactions.",
+                }`)}}</code></pre>
             </template>
             <i class='mdi mdi-information-outline'/>
           </Tooltip>
@@ -53,8 +59,8 @@
   const jsonIcon = ref('mdi-check')                             // Icon for JSON validation
   const jsonText = ref('Valid JSON')                            // Text for JSON validation
   const accountName = ref(props.account.name)                   // Name of the account
-  const accountRules = ref(utils.stringify(                     // Import rules for the account
-    props.account.import_rules || {}, {indent:2, maxlen:0}))
+  const accountRules = ref(utils.stringify(                     // Rules for the account
+    props.account.rules || {}, {indent:2, maxlen:0}))
 
   // Watch Account Rules
   // Validate the JSON text
@@ -73,8 +79,8 @@
   // Save the account configuration
   const saveAccount = async function() {
     var name = accountName.value
-    var import_rules = JSON.parse(accountRules.value)
-    var {data} = await api.Budget.updateAccount(props.account.id, {name, import_rules})
+    var rules = JSON.parse(accountRules.value)
+    var {data} = await api.Budget.updateAccount(props.account.id, {name, rules})
     emit('updated', data)
   }
 
@@ -100,6 +106,13 @@
 <style>
   .budgetsettingsaccount {
     .codeeditor { width:100%; font-size:12px; }
+    .tooltip pre {
+      background-color: #0002;
+      border-radius: 4px;
+      line-height: 12px;
+      padding: 5px;
+      code { padding: 0px; }
+    }
   }
 </style>
 

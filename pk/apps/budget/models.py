@@ -11,7 +11,7 @@ class Account(TimeStampedModel):
     name = models.CharField(max_length=255, db_index=True)
     balance = models.DecimalField(max_digits=9, decimal_places=2, null=True, default=None)
     balance_updated = models.DateTimeField(null=True, default=None)
-    import_rules = models.JSONField(null=True, default=None)
+    rules = models.JSONField(null=True, default=None)
     sortid = models.IntegerField(default=999)
 
     def __str__(self):

@@ -48,6 +48,17 @@ export function debounce(func, wait=500) {
   }
 }
 
+// Dedent
+// Remove the common leading whitespace from each line in a string
+export function dedent(str) {
+  const lines = str.replace(/^\n/, '').split('\n')
+  const indent = lines.filter(l => l.trim()).reduce((min, line) => {
+    const match = line.match(/^(\s*)/)
+    return match ? Math.min(min, match[1].length) : min
+  }, Infinity)
+  return lines.map(line => line.slice(indent)).join('\n')
+}
+
 // Format Date
 // Format a date using various format strings:
 export function formatDate(value, format) {
@@ -161,6 +172,7 @@ export function pop(obj, key) {
   }
   return null
 }
+
 
 // Round
 // Round the number to the specified decimal places

@@ -14,13 +14,13 @@ class AccountRulesSchema(Schema):
         amount: str = Field(..., description='Column name for transaction amount')
         balance: Optional[str] = Field(None, description='Column name for current balance')
 
-    file_pattern: Optional[str] = Field(None, description='File name pattern to match')
+    file_pattern: Optional[str] = Field(None, description='Fnmatch file name pattern to match')
     date_format: Optional[str] = Field(None, description='Date format used in imported file')
-    hidden: Optional[bool] = Field(None, description='Set true to hide this account in the UI')
     transactions: Optional[str] = Field(None, description='XPath to transactions in qfx file')
     balance: Optional[str] = Field(None, description='XPath to account balance in qfx file')
     balance_updated: Optional[str] = Field(None, description='XPath to account balance date in qfx file')
     inverse_amounts: Optional[bool] = Field(None, description='Set true to inverse amounts from imported file')
+    hidden: Optional[bool] = Field(None, description='Set true to hide this account in the UI')
     columns: Optional[ColumnsSchema] = Field(None, description='Column names for transactions')
 
 
@@ -30,13 +30,13 @@ class AccountSchema(Schema):
     name: str = Field(..., description='Name of this account')
     balance: Optional[Decimal] = Field(None, description='Current balance on the account')
     balance_updated: Optional[datetime.datetime] = Field(None, description='Datetime balance was updated')
-    import_rules: Optional[dict] = Field(None, description='Transacation import rules for this account')
+    rules: Optional[dict] = Field(None, description='Transacation rules for this account')
     sortid: Optional[int] = Field(None, description='User sort id when listing accounts')
 
 
 class AccountPatchSchema(Schema):
     name: Optional[str] = Field(..., description='Name of this account')
-    import_rules: Optional[AccountRulesSchema] = Field(None, description='Transacation import rules for this account')
+    rules: Optional[AccountRulesSchema] = Field(None, description='Transacation rules for this account')
 
 
 class CategorySchema(Schema):

@@ -10,7 +10,7 @@
             Transactions
           </div>
           <template v-for='account in accounts' :key='account.id'>
-            <div v-if='!account.import_rules?.hidden' class='subitem account'>
+            <div v-if='!account.rules?.hidden' class='subitem account'>
               <div class='name'>{{account.name}} Balance</div>
               <div class='balance'>{{utils.usd(account.balance, places=0)}}</div>
               <div class='lastupdate'>Updated {{utils.formatDate(account.balance_updated, '')}}</div>

@@ -75,7 +75,7 @@
   // Create a new account object
   const addAccount = async function() {
     if (accounts.value.items[0].name == 'New Account') { return }
-    var newaccount = {id:null, name:'New Account', import_rules:{}}
+    var newaccount = {id:null, name:'New Account', rules:{}}
     accounts.value.items.unshift(newaccount)
   }
 
