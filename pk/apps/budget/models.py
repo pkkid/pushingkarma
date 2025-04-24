@@ -2,7 +2,8 @@
 import logging
 from django.conf import settings
 from django.db import models
-from pk.utils.django import TimeStampedModel, reverse
+from pk.utils.django import TimeStampedModel, ViewModelMixin
+from pk.utils.django import reverse
 log = logging.getLogger(__name__)
 
 
@@ -21,6 +22,54 @@ class Account(TimeStampedModel):
     @property
     def url(self):
         return reverse('api:account', pk=self.id)
+
+
+class AccountSummary(models.Model, ViewModelMixin):
+    """ DB View aggregates PipeRun pass/fail counts. """
+    account = models.OneToOneField(Account, related_name='summary',
+        primary_key=True, on_delete=models.DO_NOTHING)
+    total_spend = models.IntegerField()
+    total_income = models.IntegerField()
+    avg_spend_per_month = models.IntegerField()
+    avg_income_per_month = models.IntegerField()
+    transactions_this_year = models.IntegerField()
+    spend_this_year = models.IntegerField()
+    income_this_year = models.IntegerField()
+    avg_transactions_per_month_this_year = models.IntegerField()
+    avg_spend_per_month_this_year = models.IntegerField()
+    avg_income_per_month_this_year = models.IntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'budget_account_summary'
+
+    @classmethod
+    def create_sql(cls):
+        """ Create the PipeRunSummary view. """
+        return f"""--sql
+          CREATE VIEW {cls._meta.db_table} AS
+          SELECT a.id as account_id,
+            -- Totals
+            COUNT(t.id) AS total_transactions,
+            ROUND(SUM(CASE WHEN t.amount < 0 THEN t.amount END)) AS total_spend,
+            ROUND(SUM(CASE WHEN t.amount > 0 THEN t.amount END)) AS total_income,
+            -- Per Month
+            ROUND(COUNT(t.id) / 12.0) AS avg_transactions_per_month,
+            ROUND(SUM(CASE WHEN t.amount < 0 THEN t.amount END) / 12.0) AS avg_spend_per_month,
+            ROUND(SUM(CASE WHEN t.amount > 0 THEN t.amount END) / 12.0) AS avg_income_per_month,
+            -- This Year
+            COUNT(CASE WHEN t.date >= date('now', 'start of year') THEN 1 END) AS transactions_this_year,
+            ROUND(SUM(CASE WHEN t.date >= date('now', 'start of year') AND t.amount < 0 THEN t.amount END)) AS spend_this_year,
+            ROUND(SUM(CASE WHEN t.date >= date('now', 'start of year') AND t.amount > 0 THEN t.amount END)) AS income_this_year,
+            -- This Year Per Month
+            ROUND(COUNT(CASE WHEN t.date >= date('now', 'start of year') THEN 1 END) / (strftime('%m', 'now'))) AS avg_transactions_per_month_this_year,
+            ROUND(SUM(CASE WHEN t.date >= date('now', 'start of year') AND t.amount < 0 THEN t.amount END) / (strftime('%m', 'now'))) AS avg_spend_per_month_this_year,
+            ROUND(SUM(CASE WHEN t.date >= date('now', 'start of year') AND t.amount > 0 THEN t.amount END) / (strftime('%m', 'now'))) AS avg_income_per_month_this_year
+          FROM budget_account a
+          JOIN budget_transaction t ON a.id = t.account_id
+          WHERE t.date > date('now', '-1 year')
+          GROUP BY a.id, a.name;
+        """
 
 
 class Category(TimeStampedModel):

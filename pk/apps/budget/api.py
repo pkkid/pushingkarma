@@ -48,10 +48,9 @@ TRANSACTIONSEARCHFIELDS = {
 def get_account(request,
       pk: int=Path(..., description='Primary key of account to get')):
     """ List details for the specified account. """
-    item = get_object_or_404(Account, user=request.user, id=pk)
-    itemdict = model_to_dict(item)
-    itemdict['url'] = item.url
-    return itemdict
+    account = get_object_or_404(Account, user=request.user, id=pk)
+    response = AccountSchema.from_orm(account)
+    return response
 
 
 @router.patch('/accounts/{pk}', response=AccountSchema, exclude_unset=True)
@@ -79,15 +78,11 @@ def list_accounts(request,
       search: str=Query('', description='Search term to filter accounts'),
       page: int=Query(1, description='Page number of results to return')):
     """ List accounts for the logged in user. """
-    items = Account.objects.filter(user=request.user).order_by('sortid')
+    accounts = Account.objects.filter(user=request.user).order_by('sortid')
+    accounts = accounts.select_related('summary')
     if search:
-        items = Search(ACCOUNTSEARCHFIELDS).get_queryset(items, search)
-    data = paginate(request, items, page=page, perpage=100)
-    for i in range(len(data['items'])):
-        item = data['items'][i]
-        itemdict = model_to_dict(item)
-        itemdict['url'] = item.url
-        data['items'][i] = itemdict
+        accounts = Search(ACCOUNTSEARCHFIELDS).get_queryset(accounts, search)
+    data = paginate(request, accounts, page=page, perpage=100)
     return data
 
 
@@ -111,10 +106,9 @@ def sort_accounts(request, data:SortSchema=Body(...)):
 def get_category(request,
       pk: int=Path(..., description='Primary key of category to get')):
     """ List details for the specified category. """
-    item = get_object_or_404(Category, user=request.user, id=pk)
-    itemdict = model_to_dict(item)
-    itemdict['url'] = item.url
-    return itemdict
+    category = get_object_or_404(Category, user=request.user, id=pk)
+    response = CategorySchema.from_orm(category)
+    return response
 
 
 @router.patch('/categories/{pk}', response=CategorySchema, exclude_unset=True)
@@ -141,14 +135,10 @@ def list_categories(request,
       search: str=Query('', description='Search term to filter categories'),
       page: int=Query(1, description='Page number of results to return')):
     """ List categories for the logged in user. """
-    items = Category.objects.filter(user=request.user).order_by('sortid')
-    if search: items = Search(CATEGORYSEARCHFIELDS).get_queryset(items, search)
-    data = paginate(request, items, page=page, perpage=100)
-    for i in range(len(data['items'])):
-        item = data['items'][i]
-        itemdict = model_to_dict(item)
-        itemdict['url'] = item.url
-        data['items'][i] = itemdict
+    categories = Category.objects.filter(user=request.user).order_by('sortid')
+    if search:
+        categories = Search(CATEGORYSEARCHFIELDS).get_queryset(categories, search)
+    data = paginate(request, categories, page=page, perpage=100)
     return data
 
 
@@ -172,13 +162,11 @@ def sort_categories(request, data:SortSchema=Body(...)):
 def get_transaction(request,
       pk: int=Path(..., description='Primary key of transaction to get')):
     """ List details for the specified transaction. """
-    item = get_object_or_404(Transaction, user=request.user, id=pk)
-    itemdict = model_to_dict(item)
-    itemdict['url'] = item.url
-    itemdict['account'] = dict(url=item.account.url, id=item.account.id, name=item.account.name)
-    itemdict['category'] = dict(url=item.category.url, id=item.category.id, name=item.category.name) \
-        if item.category else None
-    return itemdict
+    trx = get_object_or_404(Transaction, user=request.user, id=pk)
+    response = TransactionSchema.from_orm(trx)
+    response.account = dict(url=trx.account.url, id=trx.account.id, name=trx.account.name)
+    response.category = dict(url=trx.category.url, id=trx.category.id, name=trx.category.name) if trx.category else None
+    return response
 
 
 @router.get('/transactions', response=PageSchema(TransactionSchema), exclude_unset=True)
@@ -186,20 +174,18 @@ def list_transactions(request,
       search: str=Query('', description='Search term to filter transactions'),
       page: int=Query(1, description='Page number of results to return')):
     """ List transactions for the logged in user. """
-    items = Transaction.objects.filter(user=request.user)
-    items = items.select_related('account', 'category')
-    items = items.order_by('-date', 'payee')
-    if search: items = Search(TRANSACTIONSEARCHFIELDS).get_queryset(items, search)
-    data = paginate(request, items, page=page, perpage=100)
-    for i in range(len(data['items'])):
-        item = data['items'][i]
-        itemdict = model_to_dict(item)
-        itemdict['url'] = item.url
-        itemdict['account'] = dict(url=item.account.url, name=item.account.name)
-        itemdict['category'] = dict(url=item.category.url, name=item.category.name) \
-            if item.category else None
-        data['items'][i] = itemdict
-    return data
+    trxs = Transaction.objects.filter(user=request.user)
+    trxs = trxs.select_related('account', 'category')
+    trxs = trxs.order_by('-date', 'payee')
+    if search:
+        trxs = Search(TRANSACTIONSEARCHFIELDS).get_queryset(trxs, search)
+    response = paginate(request, trxs, page=page, perpage=100)
+    for i in range(len(response['items'])):
+        trx = TransactionSchema.from_orm(response['items'][i])
+        trx.account = dict(url=trx.account.url, name=trx.account.name)
+        trx.category = dict(url=trx.category.url, name=trx.category.name) if trx.category else None
+        response['items'][i] = trx
+    return response
 
 
 @router.post('/import_transactions', response=List[ImportResponseSchema], exclude_unset=True)

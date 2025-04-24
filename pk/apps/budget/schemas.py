@@ -24,14 +24,28 @@ class AccountRulesSchema(Schema):
     columns: Optional[AccountRulesColumnsSchema] = Field(None, description='Column names for transactions')
 
 
+class AccountSummarySchema(Schema):
+    total_spend: Optional[int] = Field(None, description='Total spend in the last year')
+    total_income: Optional[int] = Field(None, description='Total income in the last year')
+    avg_spend_per_month: Optional[int] = Field(None, description='Average spend per month in the last year')
+    avg_income_per_month: Optional[int] = Field(None, description='Average income per month in the last year')
+    transactions_this_year: Optional[int] = Field(None, description='Total transactions this year')
+    spend_this_year: Optional[int] = Field(None, description='Total spend this year')
+    income_this_year: Optional[int] = Field(None, description='Total income this year')
+    avg_transactions_per_month_this_year: Optional[int] = Field(None, description='Average transactions per month this year')
+    avg_spend_per_month_this_year: Optional[int] = Field(None, description='Average spend per month this year')
+    avg_income_per_month_this_year: Optional[int] = Field(None, description='Average income per month this year')
+
+
 class AccountSchema(Schema):
     id: Optional[int] = Field(None, description='Internal account id')
     url: str = Field(..., description='URL for the account resource')
     name: str = Field(..., description='Name of this account')
     balance: Optional[Decimal] = Field(None, description='Current balance on the account')
     balance_updated: Optional[datetime.datetime] = Field(None, description='Datetime balance was updated')
-    rules: Optional[dict] = Field(None, description='Transacation rules for this account')
     sortid: Optional[int] = Field(None, description='User sort id when listing accounts')
+    summary: Optional[AccountSummarySchema] = Field(None, description='Summary of transactions for this account')
+    rules: Optional[dict] = Field(None, description='Transacation rules for this account')    
 
 
 class AccountPatchSchema(Schema):

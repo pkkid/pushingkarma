@@ -2,6 +2,7 @@
 import logging, re, requests
 import sqlparse, textwrap, time
 from collections import defaultdict
+from django.apps import apps
 from django.conf import settings
 from django.core.exceptions import EmptyResultSet
 from django.db import connection, connections
@@ -126,6 +127,46 @@ class TimeStampedModel(Model):
     class Meta:
         get_latest_by = 'modified'
         abstract = True
+
+
+class ViewModelMixin:
+    """ Base class for createing a ViewModel. Django migrations will sometimes
+        fail integrity checks if the views are not dropped before tables are modified.
+        This class helps consolidate these views as well as allow us to bulk drop
+        and create these views in the database during migrations:
+
+        from pk.utils.django import create_views_sql, drop_views_sql
+        operations = [
+            migrations.RunSQL(create_views_sql()),
+            ...  # other operations
+            migrations.RunSQL(drop_views_sql()),
+        ]
+    """
+    @classmethod
+    def create_sql(cls):
+        raise Exception(f'create_sql not implemented for model {cls._meta.db_table}.')
+
+    @classmethod
+    def drop_sql(cls):
+        return f'DROP VIEW IF EXISTS {cls._meta.db_table};'
+
+
+def create_views_sql():
+    """ Returns the SQL to create all views in the DB. """
+    sql = []
+    for model in apps.get_models():
+        if issubclass(model, ViewModelMixin):
+            sql.append(model.create_sql())
+    return '\n'.join(sql)
+
+
+def drop_views_sql():
+    """ Returns the SQL to drop all views in the DB. """
+    sql = []
+    for model in apps.get_models():
+        if issubclass(model, ViewModelMixin):
+            sql.append(model.drop_sql())
+    return '\n'.join(sql)
 
 
 def get_object_or_none(cls, *args, **kwargs):
