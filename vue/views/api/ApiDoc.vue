@@ -172,7 +172,34 @@
     path.value = path.value || APIROOT
     method.value = method.value || 'get'
     updateEndpoint()
+    checkAutoRequest()
   })
+
+  // Check Auto Request
+  // Check if we want to auto send the request
+  const checkAutoRequest = function() {
+    if (!path.value || !method.value) { return }
+    if (method.value == 'get' && !path.value.includes('{')) {
+      sendRequest()
+    }
+  }
+
+  // Create Example Schema
+  // Creates an example schema from the schema object
+  const createExampleSchema = function(schema) {
+    if ('$ref' in schema) {
+      var ref = schema.$ref.split('/').slice(-1)[0]
+      schema = toc.value.components?.schemas[ref]
+    }
+    var result = {}
+    for (var [pname, properties] of Object.entries(schema.properties || {})) {
+      var ptype = properties.type || properties.anyOf[0]?.type
+      var pvalue = {'string':'string', 'number':1, 'boolean':true, 'object':{}, 'array':[]}[ptype]
+      console.log('pname', pname, 'ptype', ptype, 'pvalue', pvalue)
+      result[pname] = pvalue
+    }
+    return result
+  }
 
   // Link Response URLs
   // Create links in highlight.js output
@@ -250,30 +277,16 @@
     }
   }
 
-  const createExampleSchema = function(schema) {
-    if ('$ref' in schema) {
-      var ref = schema.$ref.split('/').slice(-1)[0]
-      schema = toc.value.components?.schemas[ref]
-    }
-    var result = {}
-
-    for (var [pname, properties] of Object.entries(schema.properties || {})) {
-      var ptype = properties.type || properties.anyOf[0]?.type
-      var pvalue = {'string':'string', 'number':1, 'boolean':true, 'object':{}, 'array':[]}[ptype]
-      console.log('pname', pname, 'ptype', ptype, 'pvalue', pvalue)
-      result[pname] = pvalue
-    }
-    return result
-  }
-
   // Watch Path & Method
   // Check we want to auto send the request
   watch([path, method], function() {
     if (!path.value || !method.value) { return }
     response.value = null
     updateEndpoint()
-    if (!allowed.value.includes(method.value)) { method.value = allowed.value[0] }
-    if (method.value == 'get' && !path.value.includes('{')) { sendRequest() }
+    if (!allowed.value.includes(method.value)) {
+      method.value = allowed.value[0]
+    }
+    checkAutoRequest()
   })
 </script>
 
