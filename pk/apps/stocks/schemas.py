@@ -15,7 +15,7 @@ class TickerSchema(Schema):
 
 
 class TickerHistory(Schema):
-    ticker: Optional[TickerSchema] = Field(None, description='Ticker symbol for this stock')
+    # ticker_id: Optional[str] = Field(None, description='Ticker symbol for this stock')
     date: datetime.date = Field(..., description='Date of this ticker history')
     close: Decimal = Field(..., description='Closing price of this ticker and date')
     high: Decimal = Field(..., description='High price of this ticker and date')

@@ -4,7 +4,6 @@ from datetime import timedelta
 from django_searchquery import searchfields as sf
 from django_searchquery.search import Search
 from django.db.models import Max
-from django.forms.models import model_to_dict
 from django.shortcuts import get_object_or_404
 from ninja import Path, Query, Router
 from pk.utils.ninja import PageSchema, paginate
@@ -25,13 +24,8 @@ TICKERSEARCHFIELDS = [
 def get_ticker(request,
       pk: str=Path(None, description='Ticker symbol to get'),):
     """ List details for the specified ticker. """
-    item = get_object_or_404(Ticker, pk=pk)
-    itemdict = model_to_dict(item)
-    itemdict['url'] = item.url
-    if item.lastday:
-        itemdict['lastday'] = model_to_dict(item.lastday)
-        del itemdict['lastday']['ticker']
-    return itemdict
+    ticker = get_object_or_404(Ticker, pk=pk)
+    return TickerSchema.from_orm(ticker)
 
 
 @router.get('/tickers', response=PageSchema(TickerSchema), exclude_unset=True)
@@ -39,17 +33,10 @@ def list_tickers(request,
       search: str=Query('', description='Search term to filter tickers'),
       page: int=Query(1, description='Page number of results to return')):
     """ List tickers and basic information from the database. """
-    items = Ticker.objects.select_related('lastday').order_by('ticker')
-    if search: items = Search(TICKERSEARCHFIELDS).get_queryset(items, search)
-    data = paginate(request, items, page=page, perpage=10)
-    for i in range(len(data['items'])):
-        item = data['items'][i]
-        itemdict = model_to_dict(item)
-        itemdict['url'] = item.url
-        if item.lastday:
-            itemdict['lastday'] = model_to_dict(item.lastday)
-            del itemdict['lastday']['ticker']
-        data['items'][i] = itemdict
+    tickers = Ticker.objects.select_related('lastday').order_by('ticker')
+    if search:
+        tickers = Search(TICKERSEARCHFIELDS).get_queryset(tickers, search)
+    data = paginate(request, tickers, page=page, perpage=10)
     return data
 
 

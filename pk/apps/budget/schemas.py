@@ -45,7 +45,7 @@ class AccountSchema(Schema):
     balance_updated: Optional[datetime.datetime] = Field(None, description='Datetime balance was updated')
     sortid: Optional[int] = Field(None, description='User sort id when listing accounts')
     summary: Optional[AccountSummarySchema] = Field(None, description='Summary of transactions for this account')
-    rules: Optional[dict] = Field(None, description='Transacation rules for this account')    
+    rules: Optional[dict] = Field(None, description='Transacation rules for this account')
 
 
 class AccountPatchSchema(Schema):
