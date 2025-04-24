@@ -8,18 +8,18 @@ log = logging.getLogger(__name__)
 
 
 class Ticker(TimeStampedModel):
-    ticker = models.CharField(max_length=5, primary_key=True)
+    id = models.CharField(max_length=5, primary_key=True)
     tags = models.CharField(max_length=255, null=True)
     info = models.JSONField(null=True)
     lastday = models.ForeignKey('TickerHistory', null=True, blank=True,
         on_delete=models.SET_NULL, related_name='+')
 
     def __str__(self):
-        return f'<Ticker:{self.ticker}:{self.tags.replace(' ',',')}>'
+        return f'<Ticker:{self.id}:{self.tags.replace(' ',',')}>'
     
     @property
     def url(self):
-        return reverse('api:ticker', pk=self.ticker)
+        return reverse('api:ticker', pk=self.id)
 
 
 class TickerHistory(models.Model):

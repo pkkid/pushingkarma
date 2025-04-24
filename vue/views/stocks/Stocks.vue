@@ -19,7 +19,7 @@
               <template #columns="{item}">
                 <!-- Ticker -->
                 <Column title='Ticker'>
-                  {{item.ticker}}
+                  {{item.id}}
                 </Column>
                 <!-- Name -->
                 <Column title='Name'>

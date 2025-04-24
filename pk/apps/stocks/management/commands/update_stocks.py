@@ -53,7 +53,7 @@ class Command(BaseCommand):
         log.info('Creating Ticker and TickerHistory objects.')
         tickers, histories = [], []
         for symbol, data in ydata.items():
-            ticker = Ticker(ticker=symbol, info=data.info)
+            ticker = Ticker(id=symbol, info=data.info)
             for date, row in data.history.iterrows():
                 if isnan(row['Close']): continue
                 history = TickerHistory(

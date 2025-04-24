@@ -8,14 +8,13 @@ from pydantic import Field
 
 class TickerSchema(Schema):
     url: str = Field(..., description='URL for the ticker resource')
-    ticker: str = Field(..., description='Ticker symbol for this stock')
+    id: str = Field(..., description='Ticker symbol for this stock')
     tags: Optional[str] = Field(None, description='User tags for this ticker')
     info: Optional[dict] = Field(None, description='Yahoo finance info for this ticker')
     lastday: Optional['TickerHistory'] = Field(None, description='Last day ticker history')
 
 
 class TickerHistory(Schema):
-    # ticker_id: Optional[str] = Field(None, description='Ticker symbol for this stock')
     date: datetime.date = Field(..., description='Date of this ticker history')
     close: Decimal = Field(..., description='Closing price of this ticker and date')
     high: Decimal = Field(..., description='High price of this ticker and date')

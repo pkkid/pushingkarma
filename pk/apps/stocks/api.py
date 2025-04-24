@@ -33,7 +33,7 @@ def list_tickers(request,
       search: str=Query('', description='Search term to filter tickers'),
       page: int=Query(1, description='Page number of results to return')):
     """ List tickers and basic information from the database. """
-    tickers = Ticker.objects.select_related('lastday').order_by('ticker')
+    tickers = Ticker.objects.select_related('lastday').order_by('id')
     if search:
         tickers = Search(TICKERSEARCHFIELDS).get_queryset(tickers, search)
     data = paginate(request, tickers, page=page, perpage=10)
@@ -57,18 +57,18 @@ def chart_ranks(request,
     datasets = {}
     for ticker in tickers:
         change = []
-        history = histories[ticker.ticker]
-        maxdate_close = stock_utils.value_for_date(history, maxdate, ticker.ticker)
+        history = histories[ticker.id]
+        maxdate_close = stock_utils.value_for_date(history, maxdate, ticker.id)
         for period in periods:
             pdate = maxdate - timedelta(weeks=int(period.rstrip('w')))
-            pdate_close = stock_utils.value_for_date(history, pdate, ticker.ticker)
+            pdate_close = stock_utils.value_for_date(history, pdate, ticker.id)
             pdate_change = float(percent(maxdate_close, pdate_close) - 100)
             change.append(pdate_change)
-        datasets[ticker.ticker] = {}
-        datasets[ticker.ticker]['label'] = ticker.ticker
-        datasets[ticker.ticker]['change'] = change
-        datasets[ticker.ticker]['rank'] = []
-    print(datasets[ticker.ticker]['change'])
+        datasets[ticker.id] = {}
+        datasets[ticker.id]['label'] = ticker.id
+        datasets[ticker.id]['change'] = change
+        datasets[ticker.id]['rank'] = []
+    print(datasets[ticker.id]['change'])
     # Limit datasets to maxresults
     datasets = sorted(datasets.values(), key=lambda x: x['change'][-1], reverse=True)[:maxresults]
     # Pass 2: For each period, rank the tickers by the percent change
