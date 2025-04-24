@@ -25,16 +25,14 @@ class AccountRulesSchema(Schema):
 
 
 class AccountSummarySchema(Schema):
-    total_spend: Optional[int] = Field(None, description='Total spend in the last year')
-    total_income: Optional[int] = Field(None, description='Total income in the last year')
-    avg_spend_per_month: Optional[int] = Field(None, description='Average spend per month in the last year')
-    avg_income_per_month: Optional[int] = Field(None, description='Average income per month in the last year')
-    transactions_this_year: Optional[int] = Field(None, description='Total transactions this year')
-    spend_this_year: Optional[int] = Field(None, description='Total spend this year')
-    income_this_year: Optional[int] = Field(None, description='Total income this year')
-    avg_transactions_per_month_this_year: Optional[int] = Field(None, description='Average transactions per month this year')
-    avg_spend_per_month_this_year: Optional[int] = Field(None, description='Average spend per month this year')
-    avg_income_per_month_this_year: Optional[int] = Field(None, description='Average income per month this year')
+    last_year_transactions: Optional[int] = Field(None, description='Total transactions in the last year')
+    last_year_spend: Optional[int] = Field(None, description='Total spend in the last year')
+    last_year_income: Optional[int] = Field(None, description='Total income in the last year')
+    last_year_saved: Optional[int] = Field(None, description='Total saved in the last year')
+    this_year_transactions: Optional[int] = Field(None, description='Total transactions this year')
+    this_year_spend: Optional[int] = Field(None, description='Total spend this year')
+    this_year_income: Optional[int] = Field(None, description='Total income this year')
+    this_year_saved: Optional[int] = Field(None, description='Total saved this year')
 
 
 class AccountSchema(Schema):

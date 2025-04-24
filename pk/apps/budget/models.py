@@ -28,16 +28,14 @@ class AccountSummary(models.Model, ViewModelMixin):
     """ DB View aggregates PipeRun pass/fail counts. """
     account = models.OneToOneField(Account, related_name='summary',
         primary_key=True, on_delete=models.DO_NOTHING)
-    total_spend = models.IntegerField()
-    total_income = models.IntegerField()
-    avg_spend_per_month = models.IntegerField()
-    avg_income_per_month = models.IntegerField()
-    transactions_this_year = models.IntegerField()
-    spend_this_year = models.IntegerField()
-    income_this_year = models.IntegerField()
-    avg_transactions_per_month_this_year = models.IntegerField()
-    avg_spend_per_month_this_year = models.IntegerField()
-    avg_income_per_month_this_year = models.IntegerField()
+    last_year_transactions = models.IntegerField()
+    last_year_spend = models.IntegerField()
+    last_year_income = models.IntegerField()
+    last_year_saved = models.IntegerField()
+    this_year_transactions = models.IntegerField()
+    this_year_spend = models.IntegerField()
+    this_year_income = models.IntegerField()
+    this_year_saved = models.IntegerField()
 
     class Meta:
         managed = False
@@ -46,29 +44,24 @@ class AccountSummary(models.Model, ViewModelMixin):
     @classmethod
     def create_sql(cls):
         """ Create the PipeRunSummary view. """
-        return f"""--sql
+        return f"""
           CREATE VIEW {cls._meta.db_table} AS
           SELECT a.id as account_id,
-            -- Totals
-            COUNT(t.id) AS total_transactions,
-            ROUND(SUM(CASE WHEN t.amount < 0 THEN t.amount END)) AS total_spend,
-            ROUND(SUM(CASE WHEN t.amount > 0 THEN t.amount END)) AS total_income,
-            -- Per Month
-            ROUND(COUNT(t.id) / 12.0) AS avg_transactions_per_month,
-            ROUND(SUM(CASE WHEN t.amount < 0 THEN t.amount END) / 12.0) AS avg_spend_per_month,
-            ROUND(SUM(CASE WHEN t.amount > 0 THEN t.amount END) / 12.0) AS avg_income_per_month,
-            -- This Year
-            COUNT(CASE WHEN t.date >= date('now', 'start of year') THEN 1 END) AS transactions_this_year,
-            ROUND(SUM(CASE WHEN t.date >= date('now', 'start of year') AND t.amount < 0 THEN t.amount END)) AS spend_this_year,
-            ROUND(SUM(CASE WHEN t.date >= date('now', 'start of year') AND t.amount > 0 THEN t.amount END)) AS income_this_year,
-            -- This Year Per Month
-            ROUND(COUNT(CASE WHEN t.date >= date('now', 'start of year') THEN 1 END) / (strftime('%m', 'now'))) AS avg_transactions_per_month_this_year,
-            ROUND(SUM(CASE WHEN t.date >= date('now', 'start of year') AND t.amount < 0 THEN t.amount END) / (strftime('%m', 'now'))) AS avg_spend_per_month_this_year,
-            ROUND(SUM(CASE WHEN t.date >= date('now', 'start of year') AND t.amount > 0 THEN t.amount END) / (strftime('%m', 'now'))) AS avg_income_per_month_this_year
+            COALESCE(COUNT(CASE WHEN t.date >= date('now', 'start of year', '-1 year')
+              AND t.date <= date('now', 'start of year') THEN 1 END), 0) AS last_year_transactions,
+            COALESCE(ROUND(SUM(CASE WHEN t.date >= date('now', 'start of year', '-1 year')
+              AND t.date < date('now', 'start of year') AND t.amount < 0 THEN t.amount END)), 0) AS last_year_spend,
+            COALESCE(ROUND(SUM(CASE WHEN t.date >= date('now', 'start of year', '-1 year')
+              AND t.date < date('now', 'start of year') AND t.amount > 0 THEN t.amount END)), 0) AS last_year_income,
+            COALESCE(ROUND(SUM(CASE WHEN t.date >= date('now', 'start of year', '-1 year')
+              AND t.date < date('now', 'start of year') THEN t.amount END)), 0) AS last_year_saved,
+            COALESCE(COUNT(CASE WHEN t.date >= date('now', 'start of year') THEN 1 END), 0) AS this_year_transactions,
+            COALESCE(ROUND(SUM(CASE WHEN t.date >= date('now', 'start of year') AND t.amount < 0 THEN t.amount END)), 0) AS this_year_spend,
+            COALESCE(ROUND(SUM(CASE WHEN t.date >= date('now', 'start of year') AND t.amount > 0 THEN t.amount END)), 0) AS this_year_income,
+            COALESCE(ROUND(SUM(CASE WHEN t.date >= date('now', 'start of year') THEN t.amount END)), 0) AS this_year_saved
           FROM budget_account a
-          JOIN budget_transaction t ON a.id = t.account_id
-          WHERE t.date > date('now', '-1 year')
-          GROUP BY a.id, a.name;
+          JOIN budget_transaction t ON t.account_id = a.id
+          GROUP BY a.id;
         """
 
 
