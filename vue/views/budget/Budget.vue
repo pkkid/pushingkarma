@@ -22,14 +22,14 @@
             Year Overview
           </div>
           <div class='subitem account'>
-            <div class='name'>Total Spent 2025</div>
-            <div class='balance'>$2</div>
-            <div class='lastupdate'>Average $123 / month</div>
+            <div class='name'>Total Spent {{utils.formatDate(new Date(), 'YYYY')}}</div>
+            <div class='balance'>{{utils.usd(totalspent, places=0)}}</div>
+            <div class='lastupdate'>Average {{utils.usd(averagespent, places=0)}} / month</div>
           </div>
           <div class='subitem account'>
-            <div class='name'>Total Saved 2025</div>
-            <div class='balance'>$2</div>
-            <div class='lastupdate'>Average $124 / month</div>
+            <div class='name'>Total Saved {{utils.formatDate(new Date(), 'YYYY')}}</div>
+            <div class='balance'>{{utils.usd(totalsaved, places=0)}}</div>
+            <div class='lastupdate'>Average {{utils.usd(averagesaved, places=0)}} / month</div>
           </div>
           <div class='item link' @click='showSettings=true'>
             <i class='mdi mdi-cog'/>
@@ -50,7 +50,7 @@
 </template>
 
 <script setup>
-  import {inject, onBeforeMount, ref} from 'vue'
+  import {computed, inject, onBeforeMount, ref} from 'vue'
   import {BudgetSettings, BudgetTransactions, BudgetYear} from '@/views/budget'
   import {LayoutSidePanel} from '@/components/Layout'
   import {Dropzone} from '@/components'
@@ -67,6 +67,48 @@
     updateAccounts()
   })
 
+  // Total Spent
+  // Computes total amount spent this year across all accounts
+  const totalspent = computed(function() {
+    if (!accounts.value) return 0
+    return accounts.value.reduce(function(total, account) {
+      var spent = account.summary?.spend_this_year || 0
+      return total + spent
+    }, 0)
+  })
+
+  // Total Saved
+  // Computes total saved spent this year across all accounts
+  const totalsaved = computed(function() {
+    if (!accounts.value) return 0
+    return accounts.value.reduce(function(total, account) {
+      var income = account.summary?.income_this_year || 0
+      var spent = account.summary?.spend_this_year || 0
+      return total + spent + income
+    }, 0)
+  })
+
+  // Average Spent
+  // Computes total amount spent this year across all accounts
+  const averagespent = computed(function() {
+    if (!accounts.value) return 0
+    return accounts.value.reduce(function(total, account) {
+      var spent = account.summary?.avg_spend_per_month_this_year || 0
+      return total + spent
+    }, 0)
+  })
+
+  // Average Saved
+  // Computes total saved spent this year across all accounts
+  const averagesaved = computed(function() {
+    if (!accounts.value) return 0
+    return accounts.value.reduce(function(total, account) {
+      var income = account.summary?.avg_income_per_month_this_year || 0
+      var spent = account.summary?.avg_spend_per_month_this_year || 0
+      return total + spent + income
+    }, 0)
+  })
+  
   // Update Accounts
   // Update the account list in the side panel
   const updateAccounts = async function() {
