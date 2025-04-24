@@ -14,29 +14,18 @@
         Budget Transactions
         <div class='subtext'>Showing X of Y Transactions</div>
       </h1>
-      
       <!-- Transactions Table -->
       <DataTable v-if='transactions' :items='transactions?.items' keyattr='id'>
         <template #columns='{item}'>
-          <Column title='Act'>{{item.account.name}}</Column>
-          <Column title='Date'>
-            {{utils.formatDate(item.date, 'MMM DD, YYYY')}}
+          <Column title='Act'>
+            <i class='icon' :style='`--img:url(/static/img/icons/${item.account.name.toLowerCase()}.svg)`' />
           </Column>
-          <Column title='Category'>
-            {{item.category?.name}}
-          </Column>
-          <Column title='Payee'>
-            {{item.payee}}
-          </Column>
-          <Column title='Amount'>
-            {{utils.usd(item.amount)}}
-          </Column>
-          <Column title='X'>
-            {{item.approved}}
-          </Column>
-          <Column title='Comment'>
-            {{item.comment}}
-          </Column>
+          <Column title='Date'>{{utils.formatDate(item.date, 'MMM DD, YYYY')}}</Column>
+          <Column title='Category'>{{item.category?.name}}</Column>
+          <Column title='Payee'>{{item.payee}}</Column>
+          <Column title='Amount'>{{utils.usd(item.amount)}}</Column>
+          <Column title='X'>{{item.approved}}</Column>
+          <Column title='Comment'>{{item.comment}}</Column>
         </template>
       </DataTable>
     </template>
@@ -113,13 +102,23 @@
         overflow: hidden;
         line-height: 26px;
       }
-      .act { width:15px; }
+      .act { width:16px; }
       .date { width:90px; }
       .category { width:120px; }
       .payee { width:280px; }
       .amount { width:80px; text-align:right; }
       .x { width:15px; text-align:center; }
       .comment { width:252px; }
+
+      .act .icon {
+        background-color: var(--lightbg-fg4);
+        display: inline-block;
+        height: 16px;
+        mask: var(--img) no-repeat center / contain;
+        position: relative;
+        top: 3px;
+        width: 16px;
+      }
     }
   }
 </style>
