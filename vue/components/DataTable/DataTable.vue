@@ -9,8 +9,8 @@
       </tr></thead>
       <tbody>
         <!-- Body Rows -->
-        <tr v-for='item in items' :key='item[keyattr]'>
-          <slot name='columns' :item="item"></slot>
+        <tr v-for='(item, rownum) in items' :key='item[keyattr]'>
+          <slot name='columns' :item="item" :rownum="rownum"></slot>
         </tr>
       </tbody>
     </table>

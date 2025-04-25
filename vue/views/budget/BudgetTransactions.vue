@@ -16,16 +16,14 @@
       </h1>
       <!-- Transactions Table -->
       <DataTable v-if='transactions' :items='transactions?.items' keyattr='id'>
-        <template #columns='{item}'>
-          <Column title='Act'>
-            <i class='icon' :style='`--img:url(/static/img/icons/${item.account.name.toLowerCase()}.svg)`' />
-          </Column>
-          <Column title='Date'>{{utils.formatDate(item.date, 'MMM DD, YYYY')}}</Column>
-          <Column title='Category'>{{item.category?.name}}</Column>
-          <Column title='Payee'>{{item.payee}}</Column>
-          <Column title='Amount'>{{utils.usd(item.amount)}}</Column>
-          <Column title='X'>{{item.approved}}</Column>
-          <Column title='Comment'>{{item.comment}}</Column>
+        <template #columns='{item, rownum}'>
+          <template v-for='(col, colnum) in COLUMNS' :key='colnum'>
+            <Column :title='col.title' :data-rownum='rownum' :data-colnum='colnum'>
+              <span v-if='col.html' v-html='col.html(item)'/>
+              <span v-else-if='col.text'>{{col.text(item)}}</span>
+              <span v-else>{{item[col.name]}}</span>
+            </Column>
+          </template>
         </template>
       </DataTable>
     </template>
@@ -38,20 +36,32 @@
   import {DataTable, DataTableColumn as Column} from '@/components'
   import {api, utils} from '@/utils'
 
+  var COLUMNS = [
+    {name:'account', title:'Act', editable:false, html:trx => `<i class='icon' style='--img:url(${iconpath(trx.account)})'/>`},
+    {name:'date', title:'Date', editable:true, text:trx => utils.formatDate(trx.date, 'MMM DD, YYYY')},
+    {name:'category', title:'Category', editable:true, text:trx => trx.category?.name},
+    {name:'payee', title:'Payee', editable:true},
+    {name:'amount', title:'Amount', editable:true, text:trx => utils.usd(trx.amount)},
+    {name:'approved', title:'X', editable:true, html:trx => `<i class='mdi mdi-check'/>`},
+    {name:'comment', title:'Comment', editable:true},
+  ]
+
   var cancelctrl = null                 // Cancel controller
   const loading = ref(false)            // True to show loading indicator
   const search = ref('')                // Search string
   const _search = ref(search.value)     // Temp search before enter
   const transactions = ref(null)        // Transactions list
+  const selected = ref({rownum:null, colnum:null, editing:false})   // Selected cell and edit mode
 
-  onBeforeMount(async function() {
-    updateTransactions()
-  })
-  watchEffect(() => _search.value = search.value)
-
-  // Watch Search
-  // Fetches new transactions list
+  onBeforeMount(async function() { updateTransactions()})
   watch(search, function() { updateTransactions() })
+  watchEffect(() => _search.value = search.value)
+  
+  // Icon Path
+  // Return icon path for the given account
+  const iconpath = function(account) {
+    return `/static/img/icons/${account.name.toLowerCase()}.svg`
+  }
 
   // Update Transactions
   // Fetch transactions from the server
