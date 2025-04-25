@@ -2,6 +2,7 @@
 import logging
 from django_searchquery import searchfields as sf
 from django_searchquery.search import Search
+from django.forms.models import model_to_dict
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from ninja import Body, File, Path, Query, Router
@@ -180,10 +181,12 @@ def list_transactions(request,
         trxs = Search(TRANSACTIONSEARCHFIELDS).get_queryset(trxs, search)
     response = paginate(request, trxs, page=page, perpage=100)
     for i in range(len(response['items'])):
-        trx = TransactionSchema.from_orm(response['items'][i])
-        trx.account = dict(url=trx.account.url, name=trx.account.name)
-        trx.category = dict(url=trx.category.url, name=trx.category.name) if trx.category else None
-        response['items'][i] = trx
+        trx = response['items'][i]
+        item = model_to_dict(response['items'][i])
+        item['url'] = trx.url
+        item['account'] = dict(id=trx.account.id, url=trx.account.url, name=trx.account.name)
+        item['category'] = dict(id=trx.category.id, url=trx.category.url, name=trx.category.name) if trx.category else None
+        response['items'][i] = item
     return response
 
 
