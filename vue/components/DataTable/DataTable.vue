@@ -9,8 +9,8 @@
       </tr></thead>
       <tbody>
         <!-- Body Rows -->
-        <tr v-for='(item, rownum) in items' :key='item[keyattr]'>
-          <slot name='columns' :item="item" :rownum="rownum"></slot>
+        <tr v-for='(item, row) in items' :key='item[keyattr]'>
+          <slot name='columns' :item="item" :row="row"></slot>
         </tr>
       </tbody>
     </table>
@@ -54,15 +54,17 @@
       border-spacing: 0;
       width: 100%;
     }
-    th, td { padding: 1px 6px; }
+    /* th, td { padding: 1px 6px; } */
     th { background-color: var(--lightbg-bg2); }
     td { border-top: 1px solid var(--lightbg-bg3); } 
     .thwrap {
+      padding: 1px 6px;
       font-family: var(--fontfamily-title);
       font-size: 12px;
       font-weight: bold;
       color: var(--lightbg-fg2);
       text-align: left;
+      width: 100%;
     }
     .tdwrap {
       font-size: 13px;
