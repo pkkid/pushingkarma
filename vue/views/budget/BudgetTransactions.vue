@@ -12,7 +12,9 @@
       <!-- Header -->
       <h1>
         Budget Transactions
-        <div class='subtext'>Showing X of Y Transactions</div>
+        <div v-if='trxs' class='subtext'>Showing {{utils.intComma(trxs.items.length)}}
+          of {{utils.intComma(trxs.count)}} transactions</div>
+        <div v-else class='subtext'>Loading transactions..</div>
       </h1>
       <!-- Transactions Table -->
       <DataTable v-if='trxs' ref='trxstable' :items='trxs?.items' keyattr='id'>
