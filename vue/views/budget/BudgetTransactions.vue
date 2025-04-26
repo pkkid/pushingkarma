@@ -18,7 +18,7 @@
       <DataTable v-if='trxs' ref='trxstable' :items='trxs?.items' keyattr='id'>
         <template #columns='{item, row}'>
           <template v-for='(column, col) in COLUMNS' :key='col'>
-            <!-- Editable -->
+            <!-- Editable Column -->
             <Column v-if='column.editable' :name='column.name' :title='column.title' :data-row='row' :data-colnum='col'
               class='editable' :class='{selected:isSelected(row, col), editing:isEditing(row, col)}'
               @click='onItemClick(row, col)' @dblclick='onItemDblClick(row, col)'>
@@ -31,7 +31,7 @@
                 <span v-else class='fakeinput'>{{column.text(item)}}</span>
               </template>
             </Column>
-            <!-- Non-editable -->
+            <!-- Non-Editable Column -->
             <Column v-else :name='column.name' :title='column.title' :data-row='row' :data-col='col'>
               <span v-if='column.html' class='fakeinput' v-html='column.html(item)'/>
               <span v-else class='fakeinput'>{{column.text(item)}}</span>
