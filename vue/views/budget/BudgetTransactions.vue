@@ -56,7 +56,8 @@
     {name:'category', title:'Category', editable:true, text:trx => trx.category?.name},
     {name:'payee', title:'Payee', editable:true, text:trx => trx.payee},
     {name:'amount', title:'Amount', editable:true, text:trx => utils.usd(trx.amount)},
-    {name:'approved', title:'X', editable:true, type:Boolean, html:trx => `<i class='mdi mdi-check'/>`},
+    {name:'approved', title:'X', editable:true, html:trx => `<i class='mdi mdi-check'/>`,
+      onEdit:(event, row) => editApproved(event, row)},
     {name:'comment', title:'Comment', editable:true, text:trx => trx.comment},
   ]
 
@@ -94,6 +95,12 @@
 
   watch(search, function() { updateTransactions() })
   watchEffect(() => _search.value = search.value)
+
+  const editApproved = function(event, row) {
+    console.debug(`editApproved(event, ${row})`)
+    event.preventDefault()
+    var trx = trxs.value.items[row]
+  }
 
   // Icon Path
   // Return icon path for the given account
@@ -144,7 +151,7 @@
     var index = editable.indexOf(col)
     if (index > 0) {
       var newcol = editable[index-1]
-      editing = COLUMNS[newcol].type == Boolean ? false : editing
+      editing = COLUMNS[newcol].text ? editing : false
       setSelected(row, newcol, editing)
     }
   }
@@ -162,7 +169,7 @@
     var index = editable.indexOf(col)
     if (index < editable.length-1) {
       var newcol = editable[index+1]
-      editing = COLUMNS[newcol].type == Boolean ? false : editing
+      editing = COLUMNS[newcol].text ? editing : false
       setSelected(row, newcol, editing)
     }
   }
@@ -179,7 +186,7 @@
   // Set Selected
   // Set the selected cell and focus the input element
   const setSelected = async function(row, col, editing) {
-    console.log(`setSelected(${row}, ${col}, ${editing})`)
+    console.debug(`setSelected(${row}, ${col}, ${editing})`)
     selected.value = {row:row, col:col, editing:editing}
     await nextTick()
     const input = trxstable.value.$el.querySelector('input')
@@ -195,6 +202,8 @@
   const startEditing = function(event) {
     if (selected.value.row == null) { return }
     event.preventDefault()
+    var column = COLUMNS[selected.value.col]
+    if (column.onEdit) { return column.onEdit(event, selected.value.row) }
     selected.value.editing = true
   }
 
@@ -202,14 +211,14 @@
   // Select the current cell
   const onItemClick = function(row, col) {
     if (isEditing(row, col)) { return }
-    console.log(`onItemClick(${row}, ${col})`)
+    console.debug(`onItemClick(${row}, ${col})`)
     selected.value = {row:row, col:col, editing:false}
   }
 
   // On Item DblClick
   // Start editing the current cell
   const onItemDblClick = async function(row, col) {
-    console.log(`onItemClick(${row}, ${col})`)
+    console.debug(`onItemClick(${row}, ${col})`)
     selected.value = {row:row, col:col, editing:true}
     await nextTick()
     document.querySelector(`.datatable input`).focus()
@@ -218,7 +227,7 @@
   // On Item KeyDown
   // Handle key events when cell is selected or editing
   const onItemKeyDown = function(event, row, col) {
-    console.log(`onItemClick(event, ${row}, ${col})`)
+    console.debug(`onItemClick(event, ${row}, ${col})`)
     if (event.key == 'ArrowDown') { selectDown(event) }
     else if (event.key == 'ArrowUp') { selectUp(event) }
     else if (event.key == 'Tab' && event.shiftKey) { selectLeft(event) }
