@@ -14,24 +14,63 @@
         </tr>
       </tbody>
     </table>
+    <div v-if='infinite' ref='scrollwatch'/>
   </div>
 </template>
 
 <script setup>
-  import {ref, nextTick, onMounted, watch} from 'vue'
+  import {ref, nextTick, onBeforeUnmount, onMounted, watch} from 'vue'
 
-  const datatable = ref(null)
-  const headers = ref(null)
+  var observer = null                         // Observer for infinite scroll
+  var lastemitlen = 0                         // Length of items when last emitted
+  const datatable = ref(null)                 // Reference to datatable element
+  const headers = ref(null)                   // Headers for the table
+  const scrollwatch = ref(null)               // Reference to scrollwatch element
   const props = defineProps({
-    items: {type:Array, required:true},
-    keyattr: {type:String, required:true},
+    items: {type:Array, required:true},       // Array of items to display
+    keyattr: {type:String, required:true},    // Attribute to use as key
+    infinite: {type:Boolean, default:false},  // Enable infinite scroll
   })
+  const emit = defineEmits(['getNextPage'])
 
   // Watch Items
   // Update the headers from the data attributes of the first row
-  onMounted(function() { updateHeaders() })
-  watch(() => props.items, function() { updateHeaders() })
+  watch(() => props.items, function() {
+    updateHeaders()
+    lastemitlen = 0
+  })
 
+  // On Mounted
+  // Update headers and initalize infinity scroll observer
+  onMounted(function() {
+    updateHeaders()
+    if (props.infinite) { initObserver() }
+  })
+
+  // On Before Unmount
+  // Disconnect the observer
+  onBeforeUnmount(() => {
+    if (observer) { observer.disconnect() }
+  })
+  
+  // Init Observer
+  // Create an observer to detect when the last row is visible
+  const initObserver = async function() {
+    if (observer) { observer.disconnect() }
+    observer = new IntersectionObserver(function(entries) {
+      if (entries[0].isIntersecting && props.items.length !== lastemitlen) {
+        lastemitlen = props.items.length
+        emit('getNextPage')
+      }
+    }, {root:null, rootMargin:'200px', threshold:0})
+    await nextTick()
+    if (scrollwatch.value) {
+      observer.observe(scrollwatch.value)
+    }
+  }
+
+  // Update Headers
+  // Read header names from the first row of the table
   const updateHeaders = async function() {
     if (props.items?.length == 0) { return }
     await nextTick()

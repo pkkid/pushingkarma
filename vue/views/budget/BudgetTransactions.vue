@@ -17,7 +17,7 @@
         <div v-else class='subtext'>Loading transactions..</div>
       </h1>
       <!-- Transactions Table -->
-      <DataTable v-if='trxs' ref='trxstable' :items='trxs?.items' keyattr='id'>
+      <DataTable v-if='trxs' ref='trxstable' :items='trxs?.items' keyattr='id' :infinite='true' @getNextPage='getNextPage'>
         <template #columns='{item, row}'>
           <template v-for='(column, col) in COLUMNS' :key='col'>
             <!-- Editable Column -->
@@ -50,6 +50,7 @@
   import {LayoutPaper} from '@/components'
   import {DataTable, DataTableColumn as Column} from '@/components'
   import {api, utils} from '@/utils'
+  import axios from 'axios'
   import hotkeys from 'hotkeys-js'
 
   var COLUMNS = [
@@ -97,6 +98,21 @@
 
   watch(search, function() { updateTransactions() })
   watchEffect(() => _search.value = search.value)
+
+  // Get Next Page
+  // Fetch next page of transactions
+  const getNextPage = async function() {
+    if (!trxs.value?.next) { return }
+    console.log('Loading Next Page')
+    cancelctrl = api.cancel(cancelctrl)
+    try {
+      var {data} = await axios.get(trxs.value.next, {signal:cancelctrl.signal})
+      data.items = trxs.value.items.concat(data.items)
+      trxs.value = data
+    } catch (err) {
+      if (!api.isCancel(err)) { throw(err) }
+    }
+  }
 
   // Edit Approved
   // Handle editing approved column
