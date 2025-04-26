@@ -5,7 +5,7 @@
       <template #panel>
         <div class='menu'>
           <!-- Transactions -->
-          <div class='item link' @click="view=''">
+          <div class='item link' :class='{selected:view==null && !showSettings}' @click="view=null">
             <i class='mdi mdi-credit-card-outline'/>
             Transactions
           </div>
@@ -17,7 +17,7 @@
             </div>
           </template>
           <!-- Year Overview -->
-          <div class='item link' @click="view='year'">
+          <div class='item link' :class='{selected:view=="year" && !showSettings}' @click="view='year'">
             <i class='mdi mdi-checkbook'/>
             Year Overview
           </div>
@@ -32,7 +32,7 @@
             <div class='lastupdate'>Average {{utils.usd(avgAccounts('this_year_saved'), places=0)}} / month</div>
           </div>
           <!-- Settings -->
-          <div class='item link' @click='showSettings=true'>
+          <div class='item link' :class='{selected:showSettings}' @click='showSettings=true'>
             <i class='mdi mdi-cog'/>
             Settings
           </div>

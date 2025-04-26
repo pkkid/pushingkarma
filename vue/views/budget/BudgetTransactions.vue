@@ -312,9 +312,10 @@
             }
             input { color: #111; }
           }
-          &.editable .tdwrap:hover { background-color: #8882; }
+          &.editable .tdwrap:hover { background-color: #ddd8; }
           &.selected .tdwrap {
             border: 2px solid var(--accent);
+            background-color: var(--lightbg-bg1);
             height: calc(100% + 1px);
             left: 0px;
             line-height: calc(var(--lineheight) + 1px);
