@@ -96,6 +96,8 @@
   watch(search, function() { updateTransactions() })
   watchEffect(() => _search.value = search.value)
 
+  // Edit Approved
+  // Handle editing approved column
   const editApproved = function(event, row) {
     console.debug(`editApproved(event, ${row})`)
     event.preventDefault()
@@ -192,8 +194,7 @@
     const input = trxstable.value.$el.querySelector('input')
     if (input) {
       input.focus()
-      const len = input.value.length
-      input.setSelectionRange(len, len)
+      input.setSelectionRange(input.value.length, input.value.length)
     }
   }
 
@@ -204,7 +205,7 @@
     event.preventDefault()
     var column = COLUMNS[selected.value.col]
     if (column.onEdit) { return column.onEdit(event, selected.value.row) }
-    selected.value.editing = true
+    setSelected(selected.value.row, selected.value.col, true)
   }
 
   // On Item Click
