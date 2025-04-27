@@ -9,7 +9,7 @@
 </template>
 
 <script setup>
-  import {ref, nextTick, onBeforeUnmount, onMounted} from 'vue'
+  import {ref, nextTick, onBeforeUnmount, onMounted, useSlots} from 'vue'
 
   var timeout_show = null                             // Timeout for showing tooltip
   var timeout_hide = null                             // Timeout for hiding tooltip
@@ -17,6 +17,7 @@
   const tooltip = ref(null)                           // Reference to tooltip element
   const tstyle = ref({})                              // Dynamic style for tooltip
   const visible = ref(false)                          // Tooltip visibility
+  const slots = useSlots()                            // Slots for tooltip content
   const props = defineProps({
     position: {type:String, default:'top'},           // Tooltip position {topleft,top,topright,righttop,right,rightbottom,etc.}
     delay: {type:Number, default:500},                // Delay before showing tooltip
@@ -82,6 +83,7 @@
   // props.delay then sets tooltip visisbility to true
   const onMouseEnter = function() {
     if (props.trigger != 'hover') { return }
+    if (!props.text && !slots.tooltip) { return }
     clearTimeout(timeout_hide)
     timeout_show = setTimeout(async function() {
       visible.value = true
