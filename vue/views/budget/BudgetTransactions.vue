@@ -59,7 +59,7 @@
   const categories = ref(null)                // Categories list
   const trxs = ref(null)                      // Transactions list
   const trxstable = ref(null)                 // Ref to transactions table
-  const cells = ref([])                      // Ref of cells; 2d-array colrefs[row][col]
+  const cells = ref([])                       // Ref of cells; 2d-array colrefs[row][col]
   const selected = ref({row:null, col:null, editing:false})   // Selected cell and edit mode
 
   // On Mounted
