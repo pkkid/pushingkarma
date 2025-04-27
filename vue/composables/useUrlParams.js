@@ -6,7 +6,8 @@ import {useRoute, useRouter} from 'vue-router'
 // Creates reactive refs that sync with URL query parameters. I had to combine
 // all values into a single object so that I could watch the entire object
 // and update the URL only once when any number of the values change.
-// params: an Object of {key:type} pairs
+// params: Object of parameter options
+// params.type: String, Number, Boolean, Array, or Set
 export default function useUrlParams(params) {
   const route = useRoute()
   const router = useRouter()

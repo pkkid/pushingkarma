@@ -31,14 +31,18 @@
                   @keydown='onItemKeyDown($event, row, col)'/>
               </template>
               <template v-else>
-                <span v-if='column.html' class='fakeinput' v-html='column.html(item)'/>
-                <span v-else class='fakeinput'>{{column.text(item)}}</span>
+                <Tooltip :text='tooltipText(row, col)' :width='tooltipWidth(row, col)' style='height:100%; width:100%; line-height:16px;'>
+                  <span v-if='column.html' class='fakeinput' v-html='column.html(item)'/>
+                  <span v-else class='fakeinput'>{{column.text(item)}}</span>
+                </Tooltip>
               </template>
             </Column>
             <!-- Non-Editable Column -->
             <Column v-else :name='column.name' :title='column.title' :data-row='row' :data-col='col'>
-              <span v-if='column.html' class='fakeinput' v-html='column.html(item)'/>
-              <span v-else class='fakeinput'>{{column.text(item)}}</span>
+              <Tooltip :text='tooltipText(row, col)' :width='tooltipWidth(row, col)' style='height:100%; width:100%; line-height:16px;'>
+                <span v-if='column.html' class='fakeinput' v-html='column.html(item)'/>
+                <span v-else class='fakeinput'>{{column.text(item)}}</span>
+              </Tooltip>
             </Column>
           </template>
         </template>
@@ -49,8 +53,9 @@
 
 <script setup>
   import {nextTick, onBeforeUnmount, onMounted, ref, watch, watchEffect} from 'vue'
-  import {FilterSelect, LayoutPaper} from '@/components'
+  import {FilterSelect, LayoutPaper, Tooltip} from '@/components'
   import {DataTable, DataTableColumn as Column} from '@/components'
+  import {useUrlParams} from '@/composables'
   import {api, utils} from '@/utils'
   import axios from 'axios'
   import hotkeys from 'hotkeys-js'
@@ -69,7 +74,8 @@
   var cancelctrl = null                 // Cancel controller
   var prevscope = null                  // Previous hotkeys-js scope
   const loading = ref(false)            // True to show loading indicator
-  const search = ref('')                // Search string
+  // const search = ref('')                // Search string
+  const {search} = useUrlParams({search:{}})  // Method & path url params
   const _search = ref(search.value)     // Temp search before enter
   const categories = ref(null)          // Categories list
   const trxs = ref(null)                // Transactions list
@@ -125,6 +131,24 @@
     } catch (err) {
       if (!api.isCancel(err)) { throw(err) }
     }
+  }
+
+  // Tooltip Text
+  // Return tooltip text for the given row and column
+  const tooltipText = function(row, col) {
+    var trx = trxs.value.items[row]
+    var column = COLUMNS[col]
+    if (column.name == 'account') { return trx.account.name }
+    if (column.name == 'payee' && trx.payee.length > 35) { return trx.payee }
+    return null
+  }
+
+  // Tooltip Width
+  // Return tooltip width for the given row and column
+  const tooltipWidth = function(row, col) {
+    var column = COLUMNS[col]
+    if (column.name == 'payee') { return '350px' }
+    return null
   }
 
   // Edit Approved
@@ -281,7 +305,6 @@
   // Update Transactions
   // Fetch transactions from the server
   const updateTransactions = async function() {
-    if (search.value == null) { return }
     loading.value = true
     cancelctrl = api.cancel(cancelctrl)
     try {
@@ -331,9 +354,8 @@
             border: 2px solid #f000;
             cursor: default;
             line-height: 28px;
-            min-height: 32px;
+            height: 32px;
             padding: 0px;
-            white-space: nowrap;
             z-index: 2;
             user-select: none;
             &::before {
@@ -360,6 +382,12 @@
               width: 100%;
               text-align: inherit;
             }
+            .fakeinput {
+              display: inline-block;
+              overflow: hidden;
+              white-space: nowrap;
+              text-overflow: ellipsis;
+            }
             input { color: #111; }
           }
           &.editable .tdwrap:hover { background-color: #ddd8; }
@@ -384,8 +412,8 @@
       .tdwrap.category { width:140px; }
       .tdwrap.payee { width:290px; }
       .tdwrap.amount { width:90px; text-align:right; }
-      .tdwrap.approved { width:28px; text-align:center; }
-      .tdwrap.comment { width:255px; }
+      .tdwrap.approved { width:30px; text-align:center; }
+      .tdwrap.comment { width:253px; }
       .tdwrap.account {
         display: flex;
         align-items: center;
