@@ -25,7 +25,9 @@
               class='editable' :class='{selected:isSelected(row, col), editing:isEditing(row, col)}'
               @click='onItemClick(row, col)' @dblclick='onItemDblClick(row, col)'>
               <template v-if='isEditing(row, col)'>
-                <input :value='column.text(item)' spellcheck='false' autocomplete='off' autocorrect='off' autocapitalize='off'
+                <FilterSelect v-if='column.choices' :choices='column.choices()' :value='column.text(item)'
+                  @keydown='onItemKeyDown($event, row, col)'/>
+                <input v-else :value='column.text(item)' spellcheck='false' autocomplete='off'
                   @keydown='onItemKeyDown($event, row, col)'/>
               </template>
               <template v-else>
@@ -47,7 +49,7 @@
 
 <script setup>
   import {nextTick, onBeforeUnmount, onMounted, ref, watch, watchEffect} from 'vue'
-  import {LayoutPaper} from '@/components'
+  import {FilterSelect, LayoutPaper} from '@/components'
   import {DataTable, DataTableColumn as Column} from '@/components'
   import {api, utils} from '@/utils'
   import axios from 'axios'
@@ -56,7 +58,7 @@
   var COLUMNS = [
     {name:'account', title:'Act', editable:false, html:trx => `<i class='icon' style='--mask:url(${iconpath(trx.account)})'/>`},
     {name:'date', title:'Date', editable:true, text:trx => utils.formatDate(trx.date, 'MMM DD, YYYY')},
-    {name:'category', title:'Category', editable:true, text:trx => trx.category?.name},
+    {name:'category', title:'Category', editable:true, text:trx => trx.category?.name, choices:() => categoryChoices() },
     {name:'payee', title:'Payee', editable:true, text:trx => trx.payee},
     {name:'amount', title:'Amount', editable:true, text:trx => utils.usd(trx.amount)},
     {name:'approved', title:'X', editable:true, html:trx => `<i class='mdi mdi-check'/>`,
@@ -69,6 +71,7 @@
   const loading = ref(false)            // True to show loading indicator
   const search = ref('')                // Search string
   const _search = ref(search.value)     // Temp search before enter
+  const categories = ref(null)          // Categories list
   const trxs = ref(null)                // Transactions list
   const trxstable = ref(null)           // Ref to transactions table
   const selected = ref({row:null, colnum:null, editing:false})   // Selected cell and edit mode
@@ -77,6 +80,7 @@
   // Update transactions and initialize hotkeys
   onMounted(function() {
     updateTransactions()
+    updateCategories()
     prevscope = hotkeys.getScope()
     hotkeys('esc', 'trxs', function(event) { deselect(event) })
     hotkeys('up', 'trxs', function(event) { selectUp(event) })
@@ -96,8 +100,17 @@
     hotkeys.deleteScope('trxs')
   })
 
+  // Watch Search
+  // Update transactions and _search.value
   watch(search, function() { updateTransactions() })
   watchEffect(() => _search.value = search.value)
+
+  // Category Choices
+  // Return a list of category choices for FilterSelect
+  const categoryChoices = function(value) {
+    if (!categories.value) { return [] }
+    return categories.value.map(cat => ({id:cat.id, name:cat.name}))
+  }
 
   // Get Next Page
   // Fetch next page of transactions
@@ -252,7 +265,17 @@
     else if (event.key == 'Tab' && event.shiftKey) { selectLeft(event) }
     else if (event.key == 'Tab' && !event.shiftKey) { selectRight(event) }
     else if (event.key == 'Escape' && !event.shiftKey) { deselect(event) }
-    else if (event.key == 'Enter') { event.preventDefault() }
+    else if (event.key == 'Enter') {
+      console.log('Save trx!')
+      event.preventDefault()
+    }
+  }
+
+  // Update Categories
+  // Fetch categories from the server
+  const updateCategories = async function() {
+    var {data} = await api.Budget.listCategories()
+    categories.value = data.items
   }
 
   // Update Transactions
@@ -309,7 +332,6 @@
             cursor: default;
             line-height: 28px;
             min-height: 32px;
-            overflow: hidden;
             padding: 0px;
             white-space: nowrap;
             z-index: 2;
@@ -379,6 +401,12 @@
           width: 16px;
         }
       }
+    }
+    /* Update fsdropdown to account for 2px borders */
+    .fsdropdown {
+      left: -2px;
+      top: calc(100% + 3px);
+      width: calc(100% + 4px);
     }
   }
 </style>
