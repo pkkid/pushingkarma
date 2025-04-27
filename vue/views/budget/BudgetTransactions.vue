@@ -20,10 +20,8 @@
       <DataTable v-if='trxs' ref='trxstable' :items='trxs?.items' keyattr='id' :infinite='true' @getNextPage='getNextPage'>
         <template #columns='{item, row}'>
           <template v-for='(column, col) in COLUMNS' :key='col'>
-            <!-- Editable Column -->
-            <Column v-if='column.editable' :name='column.name' :title='column.title' :data-row='row' :data-colnum='col'
-              class='editable' :class='{selected:isSelected(row, col), editing:isEditing(row, col)}'
-              @click='onItemClick(row, col)' @dblclick='onItemDblClick(row, col)'>
+            <Column :name='column.name' :title='column.title' :ref='el => settdref(el, row, col)' :data-row='row' :data-col='col'
+              :class='{editable:column.editable}' @click='onItemClick(row, col)' @dblclick='onItemDblClick(row, col)'>
               <template v-if='isEditing(row, col)'>
                 <FilterSelect v-if='column.choices' :choices='column.choices()' :value='column.text(item)'
                   @keydown='onItemKeyDown($event, row, col)'/>
@@ -31,18 +29,11 @@
                   @keydown='onItemKeyDown($event, row, col)'/>
               </template>
               <template v-else>
-                <Tooltip :text='tooltipText(row, col)' :width='tooltipWidth(row, col)' style='height:100%; width:100%; line-height:16px;'>
+                <Tooltip :text='tooltipText(row, col)' :width='tooltipWidth(row, col)'>
                   <span v-if='column.html' class='fakeinput' v-html='column.html(item)'/>
                   <span v-else class='fakeinput'>{{column.text(item)}}</span>
                 </Tooltip>
               </template>
-            </Column>
-            <!-- Non-Editable Column -->
-            <Column v-else :name='column.name' :title='column.title' :data-row='row' :data-col='col'>
-              <Tooltip :text='tooltipText(row, col)' :width='tooltipWidth(row, col)' style='height:100%; width:100%; line-height:16px;'>
-                <span v-if='column.html' class='fakeinput' v-html='column.html(item)'/>
-                <span v-else class='fakeinput'>{{column.text(item)}}</span>
-              </Tooltip>
             </Column>
           </template>
         </template>
@@ -71,16 +62,16 @@
     {name:'comment', title:'Comment', editable:true, text:trx => trx.comment},
   ]
 
-  var cancelctrl = null                 // Cancel controller
-  var prevscope = null                  // Previous hotkeys-js scope
-  const loading = ref(false)            // True to show loading indicator
-  // const search = ref('')                // Search string
+  var cancelctrl = null                       // Cancel controller
+  var prevscope = null                        // Previous hotkeys-js scope
+  const loading = ref(false)                  // True to show loading indicator
   const {search} = useUrlParams({search:{}})  // Method & path url params
-  const _search = ref(search.value)     // Temp search before enter
-  const categories = ref(null)          // Categories list
-  const trxs = ref(null)                // Transactions list
-  const trxstable = ref(null)           // Ref to transactions table
-  const selected = ref({row:null, colnum:null, editing:false})   // Selected cell and edit mode
+  const _search = ref(search.value)           // Temp search before enter
+  const categories = ref(null)                // Categories list
+  const trxs = ref(null)                      // Transactions list
+  const trxstable = ref(null)                 // Ref to transactions table
+  const tdrefs = ref([])                      // Ref of cells; 2d-array colrefs[row][col]
+  const selected = ref({row:null, col:null, editing:false})   // Selected cell and edit mode
 
   // On Mounted
   // Update transactions and initialize hotkeys
@@ -154,7 +145,6 @@
   // Edit Approved
   // Handle editing approved column
   const editApproved = function(event, row) {
-    console.debug(`editApproved(event, ${row})`)
     event.preventDefault()
     var trx = trxs.value.items[row]
   }
@@ -237,20 +227,39 @@
     event.preventDefault()
     if (selected.value.row == null) { return }
     if (selected.value.editing) { selected.value.editing = false }
-    else { selected.value = {row:null, colnum:null, editing:false} }
+    else { selected.value = {row:null, col:null, editing:false} }
+    trxstable.value.$el.querySelectorAll('td.selected, td.editing').forEach(td => {
+      td.classList.remove('selected', 'editing')
+    })
   }
 
   // Set Selected
   // Set the selected cell and focus the input element
   const setSelected = async function(row, col, editing) {
-    console.debug(`setSelected(${row}, ${col}, ${editing})`)
+    // Remove selected and editing class on the old cell
+    var oldtd = tdrefs.value[selected.value.row]?.[selected.value.col]?.$el
+    if (oldtd) { oldtd.classList.remove('selected', 'editing') }
+    // Update the currently selected value
     selected.value = {row:row, col:col, editing:editing}
-    await nextTick()
-    const input = trxstable.value.$el.querySelector('input')
-    if (input) {
-      input.focus()
-      input.setSelectionRange(input.value.length, input.value.length)
+    // Add the selected (and editing) class to the new cell
+    var newtd = tdrefs.value[row][col].$el
+    newtd.classList.add('selected')
+    if (editing) {
+      newtd.classList.add('editing')
+      await nextTick()
+      const input = trxstable.value.$el.querySelector('input')
+      if (input) {
+        input.focus()
+        input.setSelectionRange(input.value.length, input.value.length)
+      }
     }
+  }
+
+  // Set Td Ref
+  // Saves reference to td element
+  function settdref(el, row, col) {
+    if (!tdrefs.value[row]) { tdrefs.value[row] = [] }
+    tdrefs.value[row][col] = el
   }
 
   // Start Editing
@@ -267,15 +276,13 @@
   // Select the current cell
   const onItemClick = function(row, col) {
     if (isEditing(row, col)) { return }
-    console.debug(`onItemClick(${row}, ${col})`)
-    selected.value = {row:row, col:col, editing:false}
+    setSelected(row, col, false)
   }
 
   // On Item DblClick
   // Start editing the current cell
   const onItemDblClick = async function(row, col) {
-    console.debug(`onItemClick(${row}, ${col})`)
-    selected.value = {row:row, col:col, editing:true}
+    setSelected(row, col, true)
     await nextTick()
     document.querySelector(`.datatable input`).focus()
   }
@@ -283,7 +290,6 @@
   // On Item KeyDown
   // Handle key events when cell is selected or editing
   const onItemKeyDown = function(event, row, col) {
-    console.debug(`onItemClick(event, ${row}, ${col})`)
     if (event.key == 'ArrowDown') { selectDown(event) }
     else if (event.key == 'ArrowUp') { selectUp(event) }
     else if (event.key == 'Tab' && event.shiftKey) { selectLeft(event) }
@@ -429,6 +435,12 @@
           width: 16px;
         }
       }
+    }
+    /* Tooltip container style */
+    .tooltip-container {
+      height: 100%;
+      width: 100%;
+      line-height: 16px;
     }
     /* Update fsdropdown to account for 2px borders */
     .fsdropdown {
