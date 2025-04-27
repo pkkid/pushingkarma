@@ -20,21 +20,10 @@
       <DataTable v-if='trxs' ref='trxstable' :items='trxs?.items' keyattr='id' :infinite='true' @getNextPage='getNextPage'>
         <template #columns='{item, row}'>
           <template v-for='(column, col) in COLUMNS' :key='col'>
-            <Column :name='column.name' :title='column.title' :ref='el => settdref(el, row, col)' :data-row='row' :data-col='col'
-              :class='{editable:column.editable}' @click='onItemClick(row, col)' @dblclick='onItemDblClick(row, col)'>
-              <template v-if='isEditing(row, col)'>
-                <FilterSelect v-if='column.choices' :choices='column.choices()' :value='column.text(item)'
-                  @keydown='onItemKeyDown($event, row, col)'/>
-                <input v-else :value='column.text(item)' spellcheck='false' autocomplete='off'
-                  @keydown='onItemKeyDown($event, row, col)'/>
-              </template>
-              <template v-else>
-                <Tooltip :text='tooltipText(row, col)' :width='tooltipWidth(row, col)'>
-                  <span v-if='column.html' class='fakeinput' v-html='column.html(item)'/>
-                  <span v-else class='fakeinput'>{{column.text(item)}}</span>
-                </Tooltip>
-              </template>
-            </Column>
+            <BudgetTransactionsColumn :ref='elem => settdref(elem, row, col)' :column='column' :trx='item'
+              :tooltip='tooltipText(row, col)' :tooltipWidth='tooltipWidth(row, col)'
+              @click='onItemClick(row, col)' @dblclick='onItemDblClick(row, col)'
+              @keydown='onItemKeyDown($event, row, col)'/>
           </template>
         </template>
       </DataTable>
@@ -43,9 +32,9 @@
 </template>
 
 <script setup>
-  import {nextTick, onBeforeUnmount, onMounted, ref, watch, watchEffect} from 'vue'
-  import {FilterSelect, LayoutPaper, Tooltip} from '@/components'
-  import {DataTable, DataTableColumn as Column} from '@/components'
+  import {onBeforeUnmount, onMounted, ref, watch, watchEffect} from 'vue'
+  import {DataTable, LayoutPaper} from '@/components'
+  import {BudgetTransactionsColumn} from '@/views/budget'
   import {useUrlParams} from '@/composables'
   import {api, utils} from '@/utils'
   import axios from 'axios'
@@ -70,7 +59,7 @@
   const categories = ref(null)                // Categories list
   const trxs = ref(null)                      // Transactions list
   const trxstable = ref(null)                 // Ref to transactions table
-  const tdrefs = ref([])                      // Ref of cells; 2d-array colrefs[row][col]
+  const cells = ref([])                      // Ref of cells; 2d-array colrefs[row][col]
   const selected = ref({row:null, col:null, editing:false})   // Selected cell and edit mode
 
   // On Mounted
@@ -155,18 +144,6 @@
     return `/static/img/icons/${account.name.toLowerCase()}.svg`
   }
 
-  // Is Editing
-  // Return true if the given row and column is currently being edited
-  const isEditing = function(row, col) {
-    return selected.value.row == row && selected.value.col == col && selected.value.editing
-  }
-
-  // Is Selected
-  // Return true if the given row and column is currently selected
-  const isSelected = function(row, col) {
-    return selected.value.row == row && selected.value.col == col
-  }
-
   // Select Up
   // Select the cell above the current cell
   const selectUp = async function(event) {
@@ -225,41 +202,24 @@
   // Deselect the current cell
   const deselect = function(event) {
     event.preventDefault()
-    if (selected.value.row == null) { return }
-    if (selected.value.editing) { selected.value.editing = false }
-    else { selected.value = {row:null, col:null, editing:false} }
-    trxstable.value.$el.querySelectorAll('td.selected, td.editing').forEach(td => {
-      td.classList.remove('selected', 'editing')
-    })
+    setSelected(null, null, false)
   }
 
   // Set Selected
   // Set the selected cell and focus the input element
   const setSelected = async function(row, col, editing) {
-    // Remove selected and editing class on the old cell
-    var oldtd = tdrefs.value[selected.value.row]?.[selected.value.col]?.$el
-    if (oldtd) { oldtd.classList.remove('selected', 'editing') }
-    // Update the currently selected value
+    cells.value[selected.value.row]?.[selected.value.col]?.setSelected(false)
+    cells.value[selected.value.row]?.[selected.value.col]?.setEditing(false)
     selected.value = {row:row, col:col, editing:editing}
-    // Add the selected (and editing) class to the new cell
-    var newtd = tdrefs.value[row][col].$el
-    newtd.classList.add('selected')
-    if (editing) {
-      newtd.classList.add('editing')
-      await nextTick()
-      const input = trxstable.value.$el.querySelector('input')
-      if (input) {
-        input.focus()
-        input.setSelectionRange(input.value.length, input.value.length)
-      }
-    }
+    cells.value[row]?.[col].setSelected(row !== null ? true : false)
+    cells.value[row]?.[col].setEditing(editing)
   }
 
   // Set Td Ref
   // Saves reference to td element
   function settdref(el, row, col) {
-    if (!tdrefs.value[row]) { tdrefs.value[row] = [] }
-    tdrefs.value[row][col] = el
+    if (!cells.value[row]) { cells.value[row] = [] }
+    cells.value[row][col] = el
   }
 
   // Start Editing
@@ -275,16 +235,16 @@
   // On Item Click
   // Select the current cell
   const onItemClick = function(row, col) {
-    if (isEditing(row, col)) { return }
+    if (!COLUMNS[col].editable) { return }
+    if (cells[row]?.[col]?.isEditing()) { return }
     setSelected(row, col, false)
   }
 
   // On Item DblClick
   // Start editing the current cell
   const onItemDblClick = async function(row, col) {
+    if (!COLUMNS[col].editable) { return }
     setSelected(row, col, true)
-    await nextTick()
-    document.querySelector(`.datatable input`).focus()
   }
 
   // On Item KeyDown
