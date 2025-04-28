@@ -1,5 +1,5 @@
 <template>
-  <DataTable ref='root' :items='items' :keyattr='keyattr' :infinite='infinite' @getNextPage='emit("getNextPage")'>
+  <DataTable class='edittable' :items='items' :keyattr='keyattr' :infinite='infinite' @getNextPage='emit("getNextPage")'>
     <template #columns='{item, row}'>
       <template v-for='(column, col) in columns' :key='col'>
         <EditTableCell :ref='elem => setCellRef(elem, row, col)' :column='column' :trx='item'
@@ -23,10 +23,13 @@
     keyattr: {type:String, default:'id'},         // Key attribute for items
     infinite: {type:Boolean, default:false},      // Infinite scroll
   })
-  const root = ref(null)                          // Ref to root component
   const cells = ref([])                           // Ref of cells; 2d-array colrefs[row][col]
   const selected = ref({row:null, col:null, editing:false})  // Selected cell and edit mode
-  const emit = defineEmits(['getNextPage'])       // Emit when closing the modal
+  const emit = defineEmits([
+    'getNextPage',    // When requesting next page of items
+    'itemUpdated',    // When item is updated (args: row, col, newval)
+    'selected',       // When cell is selected or deselected (args: row, col)
+  ])
 
   // On Mounted
   // Update transactions and initialize hotkeys
@@ -63,7 +66,7 @@
   // Select the cell below the current cell
   const selectDown = function(event) {
     if (selected.value.row == null) { return }
-    event.preventDefault()
+    event?.preventDefault()
     var {row, col, editing} = selected.value
     if (row < props.items.length-1) { setSelected(row+1, col, editing) }
   }
@@ -104,7 +107,22 @@
     }
   }
 
-  // Select None
+  // Set Selected
+  // Set the selected cell and focus the input element
+  // NOTE: We don't allow editing if column.text is not defined, but the
+  // event is still emitted in case you want to handle it upstream.
+  const setSelected = async function(row, col, editing) {
+    if (row == selected.value.row && col == selected.value.col && editing == selected.value.editing) { return }
+    var column = props.columns[col]
+    cells.value[selected.value.row]?.[selected.value.col]?.setSelected(false)
+    cells.value[selected.value.row]?.[selected.value.col]?.setEditing(false)
+    selected.value = {row:row, col:col, editing:column?.text ? editing : false}
+    cells.value[row]?.[col].setSelected(row !== null ? true : false)
+    cells.value[row]?.[col].setEditing(column?.text ? editing : false)
+    emit('selected', row, col, editing)
+  }
+
+  // Deselect
   // Deselect the current cell
   const deselect = function(event) {
     event.preventDefault()
@@ -112,16 +130,6 @@
       return setSelected(selected.value.row, selected.value.col, false)
     }
     setSelected(null, null, false)
-  }
-
-  // Set Selected
-  // Set the selected cell and focus the input element
-  const setSelected = async function(row, col, editing) {
-    cells.value[selected.value.row]?.[selected.value.col]?.setSelected(false)
-    cells.value[selected.value.row]?.[selected.value.col]?.setEditing(false)
-    selected.value = {row:row, col:col, editing:editing}
-    cells.value[row]?.[col].setSelected(row !== null ? true : false)
-    cells.value[row]?.[col].setEditing(editing)
   }
 
   // Set Td Ref
@@ -136,8 +144,6 @@
   const startEditing = function(event) {
     if (selected.value.row == null) { return }
     event.preventDefault()
-    var column = props.columns[selected.value.col]
-    if (column.onEdit) { return column.onEdit(event, selected.value.row) }
     setSelected(selected.value.row, selected.value.col, true)
   }
 
@@ -165,8 +171,98 @@
     else if (event.key == 'Tab' && !event.shiftKey) { selectRight(event) }
     else if (event.key == 'Escape' && !event.shiftKey) { deselect(event) }
     else if (event.key == 'Enter') {
-      console.log('Save item!')
       event.preventDefault()
+      var newval = cells.value[row][col].$el.querySelector('input').value
+      emit('itemUpdated', row, col, newval)
     }
   }
+
+  // Define Exposed
+  // Expose this function to the parent
+  defineExpose({selectUp, selectDown, selectLeft, selectRight, setSelected, deselect})
 </script>
+
+<style>
+  .edittable {
+    table {
+      --lineheight: 28px;
+      width: 100%;
+      td {
+        position: relative;
+        padding: 0px;
+        border-top: 0px solid var(--lightbg-bg3);
+        .tdwrap {
+          border: 2px solid #f000;
+          cursor: default;
+          line-height: 28px;
+          height: 32px;
+          padding: 0px;
+          z-index: 2;
+          user-select: none;
+          &::before {
+            border-top: 1px solid var(--lightbg-bg3);
+            content: ' ';
+            display: block;
+            left: 0px;
+            position: absolute;
+            top: 0px;
+            width: 100%;
+            z-index: 1;
+          }
+          input, .fakeinput {
+            background-color: transparent;
+            border-radius: 0px;
+            border-width: 0px;
+            box-shadow: none;
+            font-family: inherit;
+            font-size: inherit;
+            height: calc(var(--lineheight) + 2px);
+            line-height: calc(var(--lineheight) + 2px);
+            outline: none;
+            padding: 0px 6px;
+            width: 100%;
+            text-align: inherit;
+          }
+          .fakeinput {
+            display: inline-block;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+          }
+          input { color: #111; }
+        }
+        &.editable .tdwrap:hover { background-color: #ddd8; }
+        &.selected .tdwrap {
+          border: 2px solid var(--accent);
+          background-color: var(--lightbg-bg1);
+          height: calc(100% + 1px);
+          left: 0px;
+          line-height: calc(var(--lineheight) + 1px);
+          position: absolute;
+          top: 0px;
+          width: 100%;
+          &::before { border-top: 0px solid #fff0; }
+        }
+        &.editing .tdwrap {
+          background-color: #f812 !important;
+          box-shadow: inset 0px 1px 2px #0005;
+        }
+      }
+    }
+
+    /* Tooltip container */
+    .tooltip-container {
+      height: 100%;
+      width: 100%;
+      line-height: 16px;
+    }
+
+    /* FilterSelect */
+    /* account for 2px borders */
+    .selectinput-dropdown {
+      left: -2px;
+      top: calc(100% + 3px);
+      width: calc(100% + 4px);
+    }
+  }
+</style>

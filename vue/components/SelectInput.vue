@@ -1,8 +1,8 @@
 <template>
-  <div class='filterselect'>
+  <div class='selectinput'>
     <input v-model='_value' spellcheck='false' autocomplete='off' @keydown='onKeyDown'/>
-    <div v-if='fchoices' class='fsdropdown lightbg'>
-      <div v-for='(choice, i) in fchoices' :key='choice.id' :ref='el => choicerefs[i]=el' class='fschoice' 
+    <div v-if='fchoices' class='selectinput-dropdown lightbg'>
+      <div v-for='(choice, i) in fchoices' :key='choice.id' :ref='el => choicerefs[i]=el' class='selectinput-choice' 
         :class='{focused:focused?.name == choice.name}'>
         {{choice.name}}
       </div>
@@ -59,31 +59,44 @@
   // On Keydown
   // Handle input key events
   const onKeyDown = function(event) {
-    // Propagate keydown event to parent not using it here
     var keys = ['ArrowUp', 'ArrowDown', 'Enter']
     if (!fchoices.value || !keys.includes(event.key)) { return emit('keydown', event) }
-    // Handle key events
-    if (event.key == 'ArrowUp' && focused.value) {
-      event.preventDefault()
-      const index = fchoices.value.findIndex(choice => choice.name === focused.value.name)
-      if (index > 0) { focused.value = fchoices.value[index - 1] }
-    } else if (event.key === 'ArrowDown' && focused.value) {
-      event.preventDefault()
-      const index = fchoices.value.findIndex(choice => choice.name === focused.value.name)
-      if (index < fchoices.value.length - 1) { focused.value = fchoices.value[index + 1] }
-    } else if (event.key === 'Enter' && focused.value) {
-      event.preventDefault()
-      _value.value = focused.value.name
-      emit('keydown', event)
-    }
+    if (event.key == 'ArrowUp' && focused.value) { onArrowUp(event) }
+    else if (event.key === 'ArrowDown' && focused.value) { onArrowDown(event) }
+    else if (event.key === 'Enter' && focused.value && fchoices.value) { onEnter(event) }
+  }
+
+  // On Arrow Up
+  // Handle arrow up key event
+  const onArrowUp = function(event) {
+    event.preventDefault()
+    const index = fchoices.value.findIndex(choice => choice.name === focused.value.name)
+    if (index > 0) { focused.value = fchoices.value[index - 1] }
+  }
+
+  // On Arrow Down
+  // Handle arrow down key event
+  const onArrowDown = function(event) {
+    event.preventDefault()
+    const index = fchoices.value.findIndex(choice => choice.name === focused.value.name)
+    if (index < fchoices.value.length - 1) { focused.value = fchoices.value[index + 1] }
+  }
+
+  // On Enter
+  // Handle enter key event
+  const onEnter = async function(event) {
+    event.preventDefault()
+    _value.value = focused.value.name
+    await nextTick()
+    emit('keydown', event)
   }
 </script>
 
 <style>
-  .filterselect {
+  .selectinput {
     position: relative;
     overflow: visible;
-    .fsdropdown {
+    .selectinput-dropdown {
       border-color: #bbb;
       border-radius: 0px 0px 6px 6px;
       border-style: solid;
@@ -98,7 +111,7 @@
       position: absolute;
       top: 100%;
       width: 100%;
-      .fschoice {
+      .selectinput-choice {
         cursor: default;
         padding: 0px 8px;
         &.focused, &:hover {

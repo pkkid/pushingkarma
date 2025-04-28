@@ -17,7 +17,8 @@
         <div v-else class='subtext'>Loading transactions..</div>
       </h1>
       <!-- Transactions Table -->
-      <EditTable v-if='trxs?.items' :columns='COLUMNS' :items='trxs?.items' @getNextPage='getNextPage'/>
+      <EditTable ref='edittable' v-if='trxs?.items' :columns='COLUMNS' :items='trxs?.items'
+        @getNextPage='getNextPage' @selected='onSelected' @itemUpdated='onItemUpdated'/>
     </template>
   </LayoutPaper>
 </template>
@@ -51,7 +52,6 @@
     },{
       name:'approved', title:'X', editable:true,
       html:trx => `<i class='mdi mdi-check'/>`,
-      onEdit:(event, row) => editApproved(event, row),
     },{
       name:'comment', title:'Comment', editable:true,
       text:trx => trx.comment,
@@ -63,6 +63,7 @@
   const _search = ref(search.value)           // Temp search before enter
   const categories = ref(null)                // Categories list
   const trxs = ref(null)                      // Transactions list
+  const edittable = ref(null)                 // Ref to EditTable component
 
   // On Mounted
   // Update transactions and initialize hotkeys
@@ -77,7 +78,7 @@
   watchEffect(() => _search.value = search.value)
 
   // Category Choices
-  // Return a list of category choices for FilterSelect
+  // Return a list of category choices for SelectInput
   const categoryChoices = function(value) {
     if (!categories.value) { return [] }
     return categories.value.map(cat => ({id:cat.id, name:cat.name}))
@@ -109,6 +110,20 @@
   // Return icon path for the given account
   const iconpath = function(account) {
     return `/static/img/icons/${account.name.toLowerCase()}.svg`
+  }
+
+  // On Selected
+  // Handle item selected event
+  const onSelected = function(row, col, editing) {
+    console.log('onSelected', row, col, editing)
+    var column = COLUMNS[col]
+    if (column?.name == 'approved' && editing) { edittable.value.selectDown() }
+  }
+
+  // On Item Updated
+  // Handle item updated event
+  const onItemUpdated = function(row, col, newval) {
+    console.log('onItemUpdated', row, col, newval)
   }
 
   // Update Categories
@@ -158,72 +173,7 @@
       }
     }
 
-    .datatable {
-      table {
-        --lineheight: 28px;
-        width: 100%;
-        td {
-          position: relative;
-          padding: 0px;
-          border-top: 0px solid var(--lightbg-bg3);
-          .tdwrap {
-            border: 2px solid #f000;
-            cursor: default;
-            line-height: 28px;
-            height: 32px;
-            padding: 0px;
-            z-index: 2;
-            user-select: none;
-            &::before {
-              border-top: 1px solid var(--lightbg-bg3);
-              content: ' ';
-              display: block;
-              left: 0px;
-              position: absolute;
-              top: 0px;
-              width: 100%;
-              z-index: 1;
-            }
-            input, .fakeinput {
-              background-color: transparent;
-              border-radius: 0px;
-              border-width: 0px;
-              box-shadow: none;
-              font-family: inherit;
-              font-size: inherit;
-              height: calc(var(--lineheight) + 2px);
-              line-height: calc(var(--lineheight) + 2px);
-              outline: none;
-              padding: 0px 6px;
-              width: 100%;
-              text-align: inherit;
-            }
-            .fakeinput {
-              display: inline-block;
-              overflow: hidden;
-              white-space: nowrap;
-              text-overflow: ellipsis;
-            }
-            input { color: #111; }
-          }
-          &.editable .tdwrap:hover { background-color: #ddd8; }
-          &.selected .tdwrap {
-            border: 2px solid var(--accent);
-            background-color: var(--lightbg-bg1);
-            height: calc(100% + 1px);
-            left: 0px;
-            line-height: calc(var(--lineheight) + 1px);
-            position: absolute;
-            top: 0px;
-            width: 100%;
-            &::before { border-top: 0px solid #fff0; }
-          }
-          &.editing .tdwrap {
-            background-color: #f812 !important;
-            box-shadow: inset 0px 1px 2px #0005;
-          }
-        }
-      }
+    .edittable {
       .tdwrap.date { width:100px; }
       .tdwrap.category { width:140px; }
       .tdwrap.payee { width:290px; }
@@ -245,18 +195,6 @@
           width: 16px;
         }
       }
-    }
-    /* Tooltip container style */
-    .tooltip-container {
-      height: 100%;
-      width: 100%;
-      line-height: 16px;
-    }
-    /* Update fsdropdown to account for 2px borders */
-    .fsdropdown {
-      left: -2px;
-      top: calc(100% + 3px);
-      width: calc(100% + 4px);
     }
   }
 </style>

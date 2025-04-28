@@ -2,7 +2,7 @@
   <Column ref='root' :name='column.name' :title='column.title' :class='{selected, editing, editable:column.editable}'>
     <!-- Editing -->
     <template v-if='editing'>
-      <FilterSelect v-if='column.choices' :choices='column.choices()'
+      <SelectInput v-if='column.choices' :choices='column.choices()'
         :value='column.text(trx)' @keydown='emit("keydown", $event, row, col)'/>
       <input v-else :value='column.text(trx)' spellcheck='false' autocomplete='off'
         @keydown='emit("keydown", $event)'/>
@@ -20,7 +20,7 @@
 <script setup>
   import {nextTick, ref, watch} from 'vue'
   import {DataTableColumn as Column} from '@/components'
-  import {FilterSelect, Tooltip} from '@/components'
+  import {SelectInput, Tooltip} from '@/components'
 
   const props = defineProps({
     column: {type:Object},                  // Column object
