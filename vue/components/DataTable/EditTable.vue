@@ -29,22 +29,22 @@
   // Update transactions and initialize hotkeys
   onMounted(function() {
     prevscope = hotkeys.getScope()
-    hotkeys('esc', 'trxs', function(event) { deselect(event) })
-    hotkeys('up', 'trxs', function(event) { selectUp(event) })
-    hotkeys('down', 'trxs', function(event) { selectDown(event) })
-    hotkeys('left', 'trxs', function(event) { selectLeft(event) })
-    hotkeys('shift+tab', 'trxs', function(event) { selectLeft(event) })
-    hotkeys('right', 'trxs', function(event) { selectRight(event) })
-    hotkeys('tab', 'trxs', function(event) { selectRight(event) })
-    hotkeys('enter', 'trxs', function(event) { startEditing(event) })
-    hotkeys.setScope('trxs')
+    hotkeys('esc', 'edittable', function(event) { deselect(event) })
+    hotkeys('up', 'edittable', function(event) { selectUp(event) })
+    hotkeys('down', 'edittable', function(event) { selectDown(event) })
+    hotkeys('left', 'edittable', function(event) { selectLeft(event) })
+    hotkeys('shift+tab', 'edittable', function(event) { selectLeft(event) })
+    hotkeys('right', 'edittable', function(event) { selectRight(event) })
+    hotkeys('tab', 'edittable', function(event) { selectRight(event) })
+    hotkeys('enter', 'edittable', function(event) { startEditing(event) })
+    hotkeys.setScope('edittable')
   })
 
   // On Before Unmount
   // Stop watching hotkeys and reset scope
   onBeforeUnmount(function() {
     hotkeys.setScope(prevscope)
-    hotkeys.deleteScope('trxs')
+    hotkeys.deleteScope('edittable')
   })
 
   // Select Up
