@@ -17,73 +17,58 @@
         <div v-else class='subtext'>Loading transactions..</div>
       </h1>
       <!-- Transactions Table -->
-      <DataTable v-if='trxs' ref='trxstable' :items='trxs?.items' keyattr='id' :infinite='true' @getNextPage='getNextPage'>
-        <template #columns='{item, row}'>
-          <template v-for='(column, col) in COLUMNS' :key='col'>
-            <BudgetTransactionsColumn :ref='elem => settdref(elem, row, col)' :column='column' :trx='item'
-              :tooltip='tooltipText(row, col)' :tooltipWidth='tooltipWidth(row, col)'
-              @click='onItemClick(row, col)' @dblclick='onItemDblClick(row, col)'
-              @keydown='onItemKeyDown($event, row, col)'/>
-          </template>
-        </template>
-      </DataTable>
+      <EditTable v-if='trxs?.items' :columns='COLUMNS' :items='trxs?.items' @getNextPage='getNextPage'/>
     </template>
   </LayoutPaper>
 </template>
 
 <script setup>
-  import {onBeforeUnmount, onMounted, ref, watch, watchEffect} from 'vue'
-  import {DataTable, LayoutPaper} from '@/components'
-  import {BudgetTransactionsColumn} from '@/views/budget'
+  import {onMounted, ref, watch, watchEffect} from 'vue'
+  import {EditTable, LayoutPaper} from '@/components'
   import {useUrlParams} from '@/composables'
   import {api, utils} from '@/utils'
   import axios from 'axios'
-  import hotkeys from 'hotkeys-js'
 
-  var COLUMNS = [
-    {name:'account', title:'Act', editable:false, html:trx => `<i class='icon' style='--mask:url(${iconpath(trx.account)})'/>`},
-    {name:'date', title:'Date', editable:true, text:trx => utils.formatDate(trx.date, 'MMM DD, YYYY')},
-    {name:'category', title:'Category', editable:true, text:trx => trx.category?.name, choices:() => categoryChoices() },
-    {name:'payee', title:'Payee', editable:true, text:trx => trx.payee},
-    {name:'amount', title:'Amount', editable:true, text:trx => utils.usd(trx.amount)},
-    {name:'approved', title:'X', editable:true, html:trx => `<i class='mdi mdi-check'/>`,
-      onEdit:(event, row) => editApproved(event, row)},
-    {name:'comment', title:'Comment', editable:true, text:trx => trx.comment},
-  ]
+  var COLUMNS = [{
+      name:'account', title:'Act', editable:false,
+      html: trx => `<i class='icon' style='--mask:url(${iconpath(trx.account)})'/>`,
+      tooltip: trx => trx.account.name,
+    },{
+      name:'date', title:'Date', editable:true,
+      text:trx => utils.formatDate(trx.date, 'MMM DD, YYYY'),
+    },{
+      name:'category', title:'Category', editable:true,
+      text:trx => trx.category?.name,
+      choices:() => categoryChoices(),
+    },{
+      name:'payee', title:'Payee', editable:true,
+      text:trx => trx.payee,
+      tooltip: trx => trx.payee.length > 35 ? trx.payee : null,
+      tooltipWidth: '350px',
+    },{
+      name:'amount', title:'Amount', editable:true,
+      text:trx => utils.usd(trx.amount),
+    },{
+      name:'approved', title:'X', editable:true,
+      html:trx => `<i class='mdi mdi-check'/>`,
+      onEdit:(event, row) => editApproved(event, row),
+    },{
+      name:'comment', title:'Comment', editable:true,
+      text:trx => trx.comment,
+  }]
 
   var cancelctrl = null                       // Cancel controller
-  var prevscope = null                        // Previous hotkeys-js scope
   const loading = ref(false)                  // True to show loading indicator
   const {search} = useUrlParams({search:{}})  // Method & path url params
   const _search = ref(search.value)           // Temp search before enter
   const categories = ref(null)                // Categories list
   const trxs = ref(null)                      // Transactions list
-  const trxstable = ref(null)                 // Ref to transactions table
-  const cells = ref([])                       // Ref of cells; 2d-array colrefs[row][col]
-  const selected = ref({row:null, col:null, editing:false})   // Selected cell and edit mode
 
   // On Mounted
   // Update transactions and initialize hotkeys
   onMounted(function() {
     updateTransactions()
     updateCategories()
-    prevscope = hotkeys.getScope()
-    hotkeys('esc', 'trxs', function(event) { deselect(event) })
-    hotkeys('up', 'trxs', function(event) { selectUp(event) })
-    hotkeys('down', 'trxs', function(event) { selectDown(event) })
-    hotkeys('left', 'trxs', function(event) { selectLeft(event) })
-    hotkeys('shift+tab', 'trxs', function(event) { selectLeft(event) })
-    hotkeys('right', 'trxs', function(event) { selectRight(event) })
-    hotkeys('tab', 'trxs', function(event) { selectRight(event) })
-    hotkeys('enter', 'trxs', function(event) { startEditing(event) })
-    hotkeys.setScope('trxs')
-  })
-
-  // On Before Unmount
-  // Stop watching hotkeys and reset scope
-  onBeforeUnmount(function() {
-    hotkeys.setScope(prevscope)
-    hotkeys.deleteScope('trxs')
   })
 
   // Watch Search
@@ -113,24 +98,6 @@
     }
   }
 
-  // Tooltip Text
-  // Return tooltip text for the given row and column
-  const tooltipText = function(row, col) {
-    var trx = trxs.value.items[row]
-    var column = COLUMNS[col]
-    if (column.name == 'account') { return trx.account.name }
-    if (column.name == 'payee' && trx.payee.length > 35) { return trx.payee }
-    return null
-  }
-
-  // Tooltip Width
-  // Return tooltip width for the given row and column
-  const tooltipWidth = function(row, col) {
-    var column = COLUMNS[col]
-    if (column.name == 'payee') { return '350px' }
-    return null
-  }
-
   // Edit Approved
   // Handle editing approved column
   const editApproved = function(event, row) {
@@ -142,123 +109,6 @@
   // Return icon path for the given account
   const iconpath = function(account) {
     return `/static/img/icons/${account.name.toLowerCase()}.svg`
-  }
-
-  // Select Up
-  // Select the cell above the current cell
-  const selectUp = async function(event) {
-    if (selected.value.row == null) { return }
-    event.preventDefault()
-    var {row, col, editing} = selected.value
-    if (row > 0) { setSelected(row-1, col, editing) }
-  }
-
-  // Select Down
-  // Select the cell below the current cell
-  const selectDown = function(event) {
-    if (selected.value.row == null) { return }
-    event.preventDefault()
-    var {row, col, editing} = selected.value
-    if (row < trxs.value.items.length-1) { setSelected(row+1, col, editing) }
-  }
-
-  // Select Left
-  // Select the cell to the left of the current cell
-  const selectLeft = function(event) {
-    if (selected.value.row == null) { return }
-    event.preventDefault()
-    var editable = []
-    for (var i=0; i<COLUMNS.length; i++) {
-      if (COLUMNS[i].editable) { editable.push(i) }
-    }
-    var {row, col, editing} = selected.value
-    var index = editable.indexOf(col)
-    if (index > 0) {
-      var newcol = editable[index-1]
-      editing = COLUMNS[newcol].text ? editing : false
-      setSelected(row, newcol, editing)
-    }
-  }
-
-  // Select Right
-  // Select the cell to the right of the current cell
-  const selectRight = function(event) {
-    if (selected.value.row == null) { return }
-    event.preventDefault()
-    var editable = []
-    for (var i=0; i<COLUMNS.length; i++) {
-      if (COLUMNS[i].editable) { editable.push(i) }
-    }
-    var {row, col, editing} = selected.value
-    var index = editable.indexOf(col)
-    if (index < editable.length-1) {
-      var newcol = editable[index+1]
-      editing = COLUMNS[newcol].text ? editing : false
-      setSelected(row, newcol, editing)
-    }
-  }
-
-  // Select None
-  // Deselect the current cell
-  const deselect = function(event) {
-    event.preventDefault()
-    setSelected(null, null, false)
-  }
-
-  // Set Selected
-  // Set the selected cell and focus the input element
-  const setSelected = async function(row, col, editing) {
-    cells.value[selected.value.row]?.[selected.value.col]?.setSelected(false)
-    cells.value[selected.value.row]?.[selected.value.col]?.setEditing(false)
-    selected.value = {row:row, col:col, editing:editing}
-    cells.value[row]?.[col].setSelected(row !== null ? true : false)
-    cells.value[row]?.[col].setEditing(editing)
-  }
-
-  // Set Td Ref
-  // Saves reference to td element
-  function settdref(el, row, col) {
-    if (!cells.value[row]) { cells.value[row] = [] }
-    cells.value[row][col] = el
-  }
-
-  // Start Editing
-  // Start editing the current cell
-  const startEditing = function(event) {
-    if (selected.value.row == null) { return }
-    event.preventDefault()
-    var column = COLUMNS[selected.value.col]
-    if (column.onEdit) { return column.onEdit(event, selected.value.row) }
-    setSelected(selected.value.row, selected.value.col, true)
-  }
-
-  // On Item Click
-  // Select the current cell
-  const onItemClick = function(row, col) {
-    if (!COLUMNS[col].editable) { return }
-    if (cells[row]?.[col]?.isEditing()) { return }
-    setSelected(row, col, false)
-  }
-
-  // On Item DblClick
-  // Start editing the current cell
-  const onItemDblClick = async function(row, col) {
-    if (!COLUMNS[col].editable) { return }
-    setSelected(row, col, true)
-  }
-
-  // On Item KeyDown
-  // Handle key events when cell is selected or editing
-  const onItemKeyDown = function(event, row, col) {
-    if (event.key == 'ArrowDown') { selectDown(event) }
-    else if (event.key == 'ArrowUp') { selectUp(event) }
-    else if (event.key == 'Tab' && event.shiftKey) { selectLeft(event) }
-    else if (event.key == 'Tab' && !event.shiftKey) { selectRight(event) }
-    else if (event.key == 'Escape' && !event.shiftKey) { deselect(event) }
-    else if (event.key == 'Enter') {
-      console.log('Save trx!')
-      event.preventDefault()
-    }
   }
 
   // Update Categories

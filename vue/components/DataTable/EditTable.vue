@@ -1,9 +1,9 @@
 <template>
-  <DataTable v-if='trxs' ref='root' :items='trxs?.items' keyattr='id' :infinite='true' @getNextPage='getNextPage'>
+  <DataTable ref='root' :items='items' :keyattr='keyattr' :infinite='infinite' @getNextPage='emit("getNextPage")'>
     <template #columns='{item, row}'>
       <template v-for='(column, col) in columns' :key='col'>
-        <BudgetTransactionsColumn :ref='elem => settdref(elem, row, col)' :column='column' :trx='item'
-          :tooltip='tooltipText(row, col)' :tooltipWidth='tooltipWidth(row, col)'
+        <EditTableCell :ref='elem => setCellRef(elem, row, col)' :column='column' :trx='item'
+          :tooltip='column.tooltip?.(item)' :tooltipWidth='column.tooltipWidth'
           @click='onItemClick(row, col)' @dblclick='onItemDblClick(row, col)'
           @keydown='onItemKeyDown($event, row, col)'/>
       </template>
@@ -12,18 +12,21 @@
 </template>
 
 <script setup>
-  import {onBeforeUnmount, onMounted, ref, watch} from 'vue'
+  import {onBeforeUnmount, onMounted, ref} from 'vue'
+  import {DataTable, EditTableCell} from '@/components'
   import hotkeys from 'hotkeys-js'
 
-  var prevscope = null                      // Previous hotkeys-js scope
+  var prevscope = null                            // Previous hotkeys-js scope
   const props = defineProps({
-    columns: {type:Array},                  // List of columns to display
-    items: {type:Array},                    // List of items to display
+    columns: {type:Array},                        // List of columns to display
+    items: {type:Array},                          // List of items to display
+    keyattr: {type:String, default:'id'},         // Key attribute for items
+    infinite: {type:Boolean, default:false},      // Infinite scroll
   })
-  const root = ref(null)                    // Ref to root component
-  const cells = ref([])                     // Ref of cells; 2d-array colrefs[row][col]
-  const selected = ref({row:null, col:null, editing:false})   // Selected cell and edit mode
-
+  const root = ref(null)                          // Ref to root component
+  const cells = ref([])                           // Ref of cells; 2d-array colrefs[row][col]
+  const selected = ref({row:null, col:null, editing:false})  // Selected cell and edit mode
+  const emit = defineEmits(['getNextPage'])       // Emit when closing the modal
 
   // On Mounted
   // Update transactions and initialize hotkeys
@@ -105,6 +108,9 @@
   // Deselect the current cell
   const deselect = function(event) {
     event.preventDefault()
+    if (selected.value.editing) {
+      return setSelected(selected.value.row, selected.value.col, false)
+    }
     setSelected(null, null, false)
   }
 
@@ -120,9 +126,9 @@
 
   // Set Td Ref
   // Saves reference to td element
-  function settdref(el, row, col) {
+  function setCellRef(elem, row, col) {
     if (!cells.value[row]) { cells.value[row] = [] }
-    cells.value[row][col] = el
+    cells.value[row][col] = elem
   }
 
   // Start Editing
@@ -159,7 +165,7 @@
     else if (event.key == 'Tab' && !event.shiftKey) { selectRight(event) }
     else if (event.key == 'Escape' && !event.shiftKey) { deselect(event) }
     else if (event.key == 'Enter') {
-      console.log('Save trx!')
+      console.log('Save item!')
       event.preventDefault()
     }
   }

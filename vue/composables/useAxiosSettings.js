@@ -69,7 +69,7 @@ export default function useApiSettings() {
     if (history.value && history.value.length) {
       history.value = history.value.filter(function(itm) { 
         return !(itm.status == status && itm.method == method && itm.path == path
-          && itm.queries.split('queries')[0] == queries.split('queries')[0]
+          && itm.queries?.split('queries')[0] == queries?.split('queries')[0]
           && utils.stringify(itm.data) === utils.stringify(data))
       })
     }
