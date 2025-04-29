@@ -43,6 +43,7 @@
     },{
       name:'payee', title:'Payee', editable:true,
       text: trx => trx.payee,
+      class: trx => trx.payee != trx.original_payee ? 'modified' : '',
       tooltip: trx => trx.payee.length > 35 ? trx.payee : null,
       tooltipWidth: '350px',
     },{
@@ -96,13 +97,6 @@
     } catch (err) {
       if (!api.isCancel(err)) { throw(err) }
     }
-  }
-
-  // Edit Approved
-  // Handle editing approved column
-  const editApproved = function(event, row) {
-    event.preventDefault()
-    var trx = trxs.value.items[row]
   }
 
   // Icon Path

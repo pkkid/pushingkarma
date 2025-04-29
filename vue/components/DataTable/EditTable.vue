@@ -4,6 +4,7 @@
       <template v-for='(column, col) in columns' :key='col'>
         <slot name='cell' :row='row' :col='col' :column='column' :item='item'>
           <EditTableCell :ref='elem => setCellRef(elem, row, col)' :column='column' :item='item'
+            :class='column.class?.(item)'
             :tooltip='column.tooltip?.(item)' :tooltipWidth='column.tooltipWidth'
             @click='onItemClick(row, col)' @dblclick='onItemDblClick(row, col)'
             @keydown='onItemKeyDown($event, row, col)'/>
@@ -248,6 +249,15 @@
         &.editing .tdwrap {
           background-color: #f812 !important;
           box-shadow: inset 0px 1px 2px #0005;
+        }
+        &.modified::before {
+          content: '';
+          position: absolute;
+          top: 2px; left: 2px;
+          width: 0px; height: 0px;
+          border-top: 7px solid #5558;
+          border-right: 7px solid transparent;
+          z-index: 10;
         }
       }
     }

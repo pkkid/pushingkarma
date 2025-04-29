@@ -31,18 +31,6 @@ class AccountYearSummarySchema(Schema):
     income: Decimal = Field(..., description='Total income in the year')
     saved: Decimal = Field(..., description='Total saved in the year')
 
-    # summary['spend'] = round(summary['spend'] or 0, 2)
-    # summary['income'] = round(summary['income'] or 0, 2)
-    # summary['saved'] = round(summary['saved'] or 0, 2)
-    # last_year_transactions: Optional[int] = Field(None, description='Total transactions in the last year')
-    # last_year_spend: Optional[int] = Field(None, description='Total spend in the last year')
-    # last_year_income: Optional[int] = Field(None, description='Total income in the last year')
-    # last_year_saved: Optional[int] = Field(None, description='Total saved in the last year')
-    # this_year_transactions: Optional[int] = Field(None, description='Total transactions this year')
-    # this_year_spend: Optional[int] = Field(None, description='Total spend this year')
-    # this_year_income: Optional[int] = Field(None, description='Total income this year')
-    # this_year_saved: Optional[int] = Field(None, description='Total saved this year')
-
 
 class AccountSchema(Schema):
     id: Optional[int] = Field(None, description='Internal account id')
@@ -78,6 +66,9 @@ class TransactionSchema(Schema):
     date: datetime.date = Field(..., description='Date of transaction')
     payee: str = Field(..., description='Payee of transaction')
     amount: Decimal = Field(..., description='Amount of transaction')
+    original_date: Optional[datetime.date] = Field(None, description='Original date of transaction')
+    original_payee: Optional[str] = Field(None, description='Original payee of transaction')
+    original_amount: Optional[Decimal] = Field(None, description='Original amount of transaction')
     approved: bool = Field(..., description='True when user approved transaction')
     comment: Optional[str] = Field(None, description='User comment for transaction')
     account: AccountSchema = Field(..., description='Financial institution of transaction')
