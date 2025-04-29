@@ -2,10 +2,12 @@
   <DataTable class='edittable' :items='items' :keyattr='keyattr' :infinite='infinite' @getNextPage='emit("getNextPage")'>
     <template #columns='{item, row}'>
       <template v-for='(column, col) in columns' :key='col'>
-        <EditTableCell :ref='elem => setCellRef(elem, row, col)' :column='column' :trx='item'
-          :tooltip='column.tooltip?.(item)' :tooltipWidth='column.tooltipWidth'
-          @click='onItemClick(row, col)' @dblclick='onItemDblClick(row, col)'
-          @keydown='onItemKeyDown($event, row, col)'/>
+        <slot name='cell' :row='row' :col='col' :column='column' :item='item'>
+          <EditTableCell :ref='elem => setCellRef(elem, row, col)' :column='column' :item='item'
+            :tooltip='column.tooltip?.(item)' :tooltipWidth='column.tooltipWidth'
+            @click='onItemClick(row, col)' @dblclick='onItemDblClick(row, col)'
+            @keydown='onItemKeyDown($event, row, col)'/>
+        </slot>
       </template>
     </template>
   </DataTable>

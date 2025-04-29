@@ -2,17 +2,21 @@
   <Column ref='root' :name='column.name' :title='column.title' :class='{selected, editing, editable:column.editable}'>
     <!-- Editing -->
     <template v-if='editing'>
-      <SelectInput v-if='column.choices' :choices='column.choices()'
-        :value='column.text(trx)' @keydown='emit("keydown", $event, row, col)'/>
-      <input v-else :value='column.text(trx)' spellcheck='false' autocomplete='off'
-        @keydown='emit("keydown", $event)'/>
+      <slot name='editing' :column='column' :item='item'>
+        <SelectInput v-if='column.choices' :choices='column.choices()'
+          :value='column.text(item)' @keydown='emit("keydown", $event, row, col)'/>
+        <input v-else :value='column.text(item)' spellcheck='false' autocomplete='off'
+          @keydown='emit("keydown", $event)'/>
+      </slot>
     </template>
     <!-- Not Editing -->
     <template v-else>
-      <Tooltip :text='tooltip' :width='tooltipWidth'>
-        <span v-if='column.html' class='fakeinput' v-html='column.html(trx)'/>
-        <span v-else class='fakeinput'>{{column.text(trx)}}</span>
-      </Tooltip>
+      <slot name='viewing' :column='column' :item='item'>
+        <Tooltip :text='tooltip' :width='tooltipWidth'>
+          <span v-if='column.html' class='fakeinput' v-html='column.html(item)'/>
+          <span v-else class='fakeinput'>{{column.text(item)}}</span>
+        </Tooltip>
+      </slot>
     </template>
   </Column>
 </template>
@@ -24,7 +28,7 @@
 
   const props = defineProps({
     column: {type:Object},                  // Column object
-    trx: {type:Object},                     // Transaction object
+    item: {type:Object},                    // Transaction object
     tooltip: {type:String},                 // Tooltip text
     tooltipWidth: {type:String},            // Tooltip width
   })
