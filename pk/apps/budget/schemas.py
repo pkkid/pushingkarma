@@ -24,15 +24,24 @@ class AccountRulesSchema(Schema):
     columns: Optional[AccountRulesColumnsSchema] = Field(None, description='Column names for transactions')
 
 
-class AccountSummarySchema(Schema):
-    last_year_transactions: Optional[int] = Field(None, description='Total transactions in the last year')
-    last_year_spend: Optional[int] = Field(None, description='Total spend in the last year')
-    last_year_income: Optional[int] = Field(None, description='Total income in the last year')
-    last_year_saved: Optional[int] = Field(None, description='Total saved in the last year')
-    this_year_transactions: Optional[int] = Field(None, description='Total transactions this year')
-    this_year_spend: Optional[int] = Field(None, description='Total spend this year')
-    this_year_income: Optional[int] = Field(None, description='Total income this year')
-    this_year_saved: Optional[int] = Field(None, description='Total saved this year')
+class AccountYearSummarySchema(Schema):
+    year: int = Field(..., description='Year of the summary')
+    transactions: int = Field(..., description='Total transactions in the year')
+    spent: Decimal = Field(..., description='Total spent in the year')
+    income: Decimal = Field(..., description='Total income in the year')
+    saved: Decimal = Field(..., description='Total saved in the year')
+
+    # summary['spend'] = round(summary['spend'] or 0, 2)
+    # summary['income'] = round(summary['income'] or 0, 2)
+    # summary['saved'] = round(summary['saved'] or 0, 2)
+    # last_year_transactions: Optional[int] = Field(None, description='Total transactions in the last year')
+    # last_year_spend: Optional[int] = Field(None, description='Total spend in the last year')
+    # last_year_income: Optional[int] = Field(None, description='Total income in the last year')
+    # last_year_saved: Optional[int] = Field(None, description='Total saved in the last year')
+    # this_year_transactions: Optional[int] = Field(None, description='Total transactions this year')
+    # this_year_spend: Optional[int] = Field(None, description='Total spend this year')
+    # this_year_income: Optional[int] = Field(None, description='Total income this year')
+    # this_year_saved: Optional[int] = Field(None, description='Total saved this year')
 
 
 class AccountSchema(Schema):
@@ -42,7 +51,7 @@ class AccountSchema(Schema):
     balance: Optional[Decimal] = Field(None, description='Current balance on the account')
     balance_updated: Optional[datetime.datetime] = Field(None, description='Datetime balance was updated')
     sortid: Optional[int] = Field(None, description='User sort id when listing accounts')
-    summary: Optional[AccountSummarySchema] = Field(None, description='Summary of transactions for this account')
+    summary: Optional[AccountYearSummarySchema] = Field(None, description='Summary of transactions this year')
     rules: Optional[dict] = Field(None, description='Transacation rules for this account')
 
 

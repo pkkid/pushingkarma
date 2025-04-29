@@ -1,8 +1,10 @@
 # encoding: utf-8
 import logging
+from datetime import date
 from django.conf import settings
 from django.db import models
-from pk.utils.django import TimeStampedModel, ViewModelMixin
+from django.db.models import Sum, Count, Case, When
+from pk.utils.django import TimeStampedModel
 from pk.utils.django import reverse
 log = logging.getLogger(__name__)
 
@@ -22,47 +24,23 @@ class Account(TimeStampedModel):
     @property
     def url(self):
         return reverse('api:account', pk=self.id)
-
-
-class AccountSummary(models.Model, ViewModelMixin):
-    """ DB View aggregates PipeRun pass/fail counts. """
-    account = models.OneToOneField(Account, related_name='summary',
-        primary_key=True, on_delete=models.DO_NOTHING)
-    last_year_transactions = models.IntegerField()
-    last_year_spend = models.IntegerField()
-    last_year_income = models.IntegerField()
-    last_year_saved = models.IntegerField()
-    this_year_transactions = models.IntegerField()
-    this_year_spend = models.IntegerField()
-    this_year_income = models.IntegerField()
-    this_year_saved = models.IntegerField()
-
-    class Meta:
-        managed = False
-        db_table = 'budget_account_summary'
-
-    @classmethod
-    def create_sql(cls):
-        """ Create the PipeRunSummary view. """
-        return f"""
-          CREATE VIEW {cls._meta.db_table} AS
-          SELECT a.id as account_id,
-            COALESCE(COUNT(CASE WHEN t.date >= date('now', 'start of year', '-1 year')
-              AND t.date <= date('now', 'start of year') THEN 1 END), 0) AS last_year_transactions,
-            COALESCE(ROUND(SUM(CASE WHEN t.date >= date('now', 'start of year', '-1 year')
-              AND t.date < date('now', 'start of year') AND t.amount < 0 THEN t.amount END)), 0) AS last_year_spend,
-            COALESCE(ROUND(SUM(CASE WHEN t.date >= date('now', 'start of year', '-1 year')
-              AND t.date < date('now', 'start of year') AND t.amount > 0 THEN t.amount END)), 0) AS last_year_income,
-            COALESCE(ROUND(SUM(CASE WHEN t.date >= date('now', 'start of year', '-1 year')
-              AND t.date < date('now', 'start of year') THEN t.amount END)), 0) AS last_year_saved,
-            COALESCE(COUNT(CASE WHEN t.date >= date('now', 'start of year') THEN 1 END), 0) AS this_year_transactions,
-            COALESCE(ROUND(SUM(CASE WHEN t.date >= date('now', 'start of year') AND t.amount < 0 THEN t.amount END)), 0) AS this_year_spend,
-            COALESCE(ROUND(SUM(CASE WHEN t.date >= date('now', 'start of year') AND t.amount > 0 THEN t.amount END)), 0) AS this_year_income,
-            COALESCE(ROUND(SUM(CASE WHEN t.date >= date('now', 'start of year') THEN t.amount END)), 0) AS this_year_saved
-          FROM budget_account a
-          JOIN budget_transaction t ON t.account_id = a.id
-          GROUP BY a.id;
-        """
+    
+    def get_year_summary(self, year=None):
+        """ Get the summary for the given year. """
+        year = year or date.today().year
+        mindate = date(year, 1, 1)
+        maxdate = date(year+1, 1, 1)
+        summary = Transaction.objects.filter(account=self, date__gte=mindate, date__lt=maxdate).aggregate(
+            transactions = Count('id'),
+            spent = Sum(Case(When(amount__lt=0, then='amount'), default=0, output_field=models.DecimalField())),
+            income = Sum(Case(When(amount__gt=0, then='amount'), default=0, output_field=models.DecimalField())),
+            saved = Sum('amount')
+        )
+        summary['year'] = year
+        summary['spent'] = round(summary['spent'] or 0, 2)
+        summary['income'] = round(summary['income'] or 0, 2)
+        summary['saved'] = round(summary['saved'] or 0, 2)
+        return summary
 
 
 class Category(TimeStampedModel):

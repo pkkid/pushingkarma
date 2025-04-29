@@ -79,11 +79,16 @@ def list_accounts(request,
       page: int=Query(1, description='Page number of results to return')):
     """ List accounts for the logged in user. """
     accounts = Account.objects.filter(user=request.user).order_by('sortid')
-    accounts = accounts.select_related('summary')
     if search:
         accounts = Search(ACCOUNTSEARCHFIELDS).get_queryset(accounts, search)
-    data = paginate(request, accounts, page=page, perpage=100)
-    return data
+    response = paginate(request, accounts, page=page, perpage=100)
+    for i in range(len(response['items'])):
+        account = response['items'][i]
+        item = model_to_dict(account)
+        item['url'] = account.url
+        item['summary'] = account.get_year_summary()
+        response['items'][i] = item
+    return response
 
 
 @router.patch('/sort_accounts', response=PageSchema(AccountSchema), exclude_unset=True)
@@ -182,7 +187,7 @@ def list_transactions(request,
     response = paginate(request, trxs, page=page, perpage=100)
     for i in range(len(response['items'])):
         trx = response['items'][i]
-        item = model_to_dict(response['items'][i])
+        item = model_to_dict(trx)
         item['url'] = trx.url
         item['account'] = dict(id=trx.account.id, url=trx.account.url, name=trx.account.name)
         item['category'] = dict(id=trx.category.id, url=trx.category.url, name=trx.category.name) if trx.category else None

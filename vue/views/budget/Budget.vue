@@ -23,13 +23,13 @@
           </div>
           <div class='subitem account'>
             <div class='name'>Total Spent {{utils.formatDate(new Date(), 'YYYY')}}</div>
-            <div class='balance'>{{utils.usd(sumAccounts('this_year_spend'), places=0)}}</div>
-            <div class='lastupdate'>Average {{utils.usd(avgAccounts('this_year_spend'), places=0)}} / month</div>
+            <div class='balance'>{{utils.usd(sumAccounts('spent'), places=0)}}</div>
+            <div class='lastupdate'>Average {{utils.usd(avgAccounts('spent'), places=0)}} / month</div>
           </div>
           <div class='subitem account'>
             <div class='name'>Total Saved {{utils.formatDate(new Date(), 'YYYY')}}</div>
-            <div class='balance'>{{utils.usd(sumAccounts('this_year_saved'), places=0)}}</div>
-            <div class='lastupdate'>Average {{utils.usd(avgAccounts('this_year_saved'), places=0)}} / month</div>
+            <div class='balance'>{{utils.usd(sumAccounts('saved'), places=0)}}</div>
+            <div class='lastupdate'>Average {{utils.usd(avgAccounts('saved'), places=0)}} / month</div>
           </div>
           <!-- Settings -->
           <div class='item link' :class='{selected:showSettings}' @click='showSettings=true'>
@@ -80,7 +80,7 @@
   const sumAccounts = function(key) {
     if (!accounts.value) { return 0 }
     return accounts.value.reduce(function(total, account) {
-      return total + (account.summary[key] || 0)
+      return total + parseFloat(account.summary[key] || 0)
     }, 0)
   }
   
