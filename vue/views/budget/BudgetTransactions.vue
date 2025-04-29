@@ -10,8 +10,7 @@
         </transition>
       </div>
       <!-- Header -->
-      <h1>
-        Budget Transactions
+      <h1>Budget Transactions
         <div v-if='trxs' class='subtext'>Showing {{utils.intComma(trxs.items.length)}}
           of {{utils.intComma(trxs.count)}} transactions</div>
         <div v-else class='subtext'>Loading transactions..</div>
@@ -36,25 +35,25 @@
       tooltip: trx => trx.account.name,
     },{
       name:'date', title:'Date', editable:true,
-      text:trx => utils.formatDate(trx.date, 'MMM DD, YYYY'),
+      text: trx => utils.formatDate(trx.date, 'MMM DD, YYYY'),
     },{
       name:'category', title:'Category', editable:true,
-      text:trx => trx.category?.name,
-      choices:() => categoryChoices(),
+      text: trx => trx.category?.name,
+      choices: () => categoryChoices(),
     },{
       name:'payee', title:'Payee', editable:true,
-      text:trx => trx.payee,
+      text: trx => trx.payee,
       tooltip: trx => trx.payee.length > 35 ? trx.payee : null,
       tooltipWidth: '350px',
     },{
       name:'amount', title:'Amount', editable:true,
-      text:trx => utils.usd(trx.amount),
+      text: trx => utils.usd(trx.amount),
     },{
       name:'approved', title:'X', editable:true,
-      html:trx => `<i class='mdi mdi-check'/>`,
+      html: trx => `<i class='mdi mdi-check'/>`,
     },{
       name:'comment', title:'Comment', editable:true,
-      text:trx => trx.comment,
+      text: trx => trx.comment,
   }]
 
   var cancelctrl = null                       // Cancel controller
