@@ -36,6 +36,7 @@
     },{
       name:'date', title:'Date', editable:true,
       text: trx => utils.formatDate(trx.date, 'MMM DD, YYYY'),
+      class: trx => trx.date != trx.original_date ? 'modified' : '',
     },{
       name:'category', title:'Category', editable:true,
       text: trx => trx.category?.name,
@@ -49,6 +50,7 @@
     },{
       name:'amount', title:'Amount', editable:true,
       text: trx => utils.usd(trx.amount),
+      class: trx => trx.amount != trx.original_amount ? 'modified' : '',
     },{
       name:'approved', title:'X', editable:true,
       html: trx => `<i class='mdi mdi-check'/>`,
