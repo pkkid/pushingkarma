@@ -13,6 +13,7 @@ class Command(BaseCommand):
     help = __doc__
 
     def add_arguments(self, parser):
+        parser.add_argument('--original', default=False, action='store_true', help='Save changes')
         parser.add_argument('--save', default=False, action='store_true', help='Save changes')
         parser.add_argument('--loglevel', default='INFO', help='Console log level')
 
@@ -24,12 +25,20 @@ class Command(BaseCommand):
         # Run the script
         updated = []
         for trx in Transaction.objects.all():
-            newpayee = TransactionManager.clean_payee(trx.payee)
-            if trx.payee != newpayee:
-                log.info(f'  "{trx.payee}" -> "{newpayee}"')
-                trx.payee = newpayee
-                updated.append(trx)
-        log.info(f'Cleaning payee for {len(updated)} transactions')
-        if opts['save']:
-            Transaction.objects.bulk_update(updated, ['payee'])
+            if opts['original']:
+                neworiginal = TransactionManager.clean_payee(trx.original_payee)
+                if trx.original_payee != neworiginal:
+                    log.info(f'  "{trx.original_payee}" -> "{neworiginal}"')
+                    trx.original_payee = neworiginal
+                    updated.append(trx)
+            else:
+                newpayee = TransactionManager.clean_payee(trx.payee)
+                if trx.payee != newpayee:
+                    log.info(f'  "{trx.payee}" -> "{newpayee}"')
+                    trx.payee = newpayee
+                    updated.append(trx)
+        origtext = "original" if opts["original"] else ""
+        log.info(f'Cleaning {origtext} payee for {len(updated)} transactions')
+        if opts['original'] and opts['save']:
+            Transaction.objects.bulk_update(updated, ['payee', 'original_payee'])
         log.info(f'Done {"" if opts["save"] else "(without saving!)"}')
