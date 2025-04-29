@@ -174,17 +174,17 @@
     }
 
     .edittable {
-      .tdwrap.date { width:100px; }
-      .tdwrap.category { width:140px; }
-      .tdwrap.payee { width:290px; }
-      .tdwrap.amount { width:90px; text-align:right; }
-      .tdwrap.approved { width:30px; text-align:center; }
-      .tdwrap.comment { width:253px; }
+      .account { width:33px; }
+      .date { width:100px; }
+      .category { width:140px; }
+      .payee { width:290px; }
+      .amount { width:90px; text-align:right; }
+      .approved { width:30px; text-align:center; }
+      .comment { width:253px; }
       .tdwrap.account {
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 33px;
         .icon {
           background-color: var(--lightbg-fg4);
           display: inline-block;
