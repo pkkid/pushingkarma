@@ -153,7 +153,7 @@
   // Select the current cell
   const onItemClick = function(row, col) {
     if (!props.columns[col].editable) { return }
-    if (cells[row]?.[col]?.isEditing()) { return }
+    if (cells.value[row]?.[col]?.isEditing()) { return }
     setSelected(row, col, false)
   }
 
@@ -187,7 +187,7 @@
 <style>
   .edittable {
     table {
-      --lineheight: 28px;
+      --lineheight: 27px;
       width: 100%;
       td {
         position: relative;
