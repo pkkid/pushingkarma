@@ -17,7 +17,7 @@
       </h1>
       <!-- Transactions Table -->
       <EditTable ref='edittable' v-if='trxs?.items' :columns='COLUMNS' :items='trxs?.items'
-        @getNextPage='getNextPage' @selected='onSelected' @itemUpdated='onItemUpdated'/>
+        @getNextPage='getNextPage' @itemSelected='onItemSelected' @itemUpdated='onItemUpdated'/>
     </template>
   </LayoutPaper>
 </template>
@@ -109,8 +109,8 @@
 
   // On Selected
   // Handle item selected event
-  const onSelected = function(row, col, editing) {
-    console.log('onSelected', row, col, editing)
+  const onItemSelected = function(row, col, editing) {
+    console.log('onItemSelected', row, col, editing)
     var column = COLUMNS[col]
     if (column?.name == 'approved' && editing) { edittable.value.selectDown() }
   }

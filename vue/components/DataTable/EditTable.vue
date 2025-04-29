@@ -30,8 +30,8 @@
   const selected = ref({row:null, col:null, editing:false})  // Selected cell and edit mode
   const emit = defineEmits([
     'getNextPage',    // When requesting next page of items
+    'itemSelected',       // When cell is selected or deselected (args: row, col)
     'itemUpdated',    // When item is updated (args: row, col, newval)
-    'selected',       // When cell is selected or deselected (args: row, col)
   ])
 
   // On Mounted
@@ -122,7 +122,7 @@
     selected.value = {row:row, col:col, editing:column?.text ? editing : false}
     cells.value[row]?.[col].setSelected(row !== null ? true : false)
     cells.value[row]?.[col].setEditing(column?.text ? editing : false)
-    emit('selected', row, col, editing)
+    emit('itemSelected', row, col, editing)
   }
 
   // Deselect
