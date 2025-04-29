@@ -61,6 +61,7 @@ class CategoryPatchSchema(Schema):
 
 
 class TransactionSchema(Schema):
+    id: Optional[int] = Field(None, description='Transaction id')
     url: str = Field(..., description='URL for the transaction resource')
     trxid: str = Field(..., description='Financial institution transaction id')
     date: datetime.date = Field(..., description='Date of transaction')

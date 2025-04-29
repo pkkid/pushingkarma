@@ -53,7 +53,7 @@
       class: trx => trx.amount != trx.original_amount ? 'modified' : '',
     },{
       name:'approved', title:'X', editable:true,
-      html: trx => `<i class='mdi mdi-check'/>`,
+      html: trx => trx.approved ? `<i class='mdi mdi-check'/>` : '',
     },{
       name:'comment', title:'Comment', editable:true,
       text: trx => trx.comment,
@@ -112,13 +112,18 @@
   const onItemSelected = function(event, row, col, editing) {
     console.log('onItemSelected', row, col, editing)
     var column = COLUMNS[col]
-    if (column?.name == 'approved' && editing) { edittable.value.selectDown() }
+    if (editing && column?.name == 'approved') {
+      var trx = trxs.value.items[row]
+      onItemUpdated(event, row, col, !trx.approved)
+    }
   }
 
   // On Item Updated
   // Handle item updated event
   const onItemUpdated = function(event, row, col, newval) {
-    console.log('onItemUpdated', row, col, newval)
+    var column = COLUMNS[col]
+    var trx = trxs.value.items[row]
+    console.log(`onItemUpdated row=${row} col=${col} id=${trx.id} name=${column.name} newval=${newval}`)
   }
 
   // Update Categories
