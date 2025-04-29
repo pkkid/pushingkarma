@@ -1,12 +1,12 @@
 <template>
-  <DataTable class='edittable' :items='items' :keyattr='keyattr' :infinite='infinite' @getNextPage='emit("getNextPage")'>
+  <DataTable class='edittable' :items='items' :keyattr='keyattr' :infinite='infinite'
+    @getNextPage='emit("getNextPage", $event)'>
     <template #columns='{item, row}'>
       <template v-for='(column, col) in columns' :key='col'>
         <slot name='cell' :row='row' :col='col' :column='column' :item='item'>
           <EditTableCell :ref='elem => setCellRef(elem, row, col)' :column='column' :item='item'
-            :class='column.class?.(item)'
-            :tooltip='column.tooltip?.(item)' :tooltipWidth='column.tooltipWidth'
-            @click='onItemClick(row, col)' @dblclick='onItemDblClick(row, col)'
+            :class='column.class?.(item)' :tooltip='column.tooltip?.(item)' :tooltipWidth='column.tooltipWidth'
+            @click='onItemClick($event, row, col)' @dblclick='onItemDblClick($event, row, col)'
             @keydown='onItemKeyDown($event, row, col)'/>
         </slot>
       </template>
@@ -62,7 +62,7 @@
     if (selected.value.row == null) { return }
     event.preventDefault()
     var {row, col, editing} = selected.value
-    if (row > 0) { setSelected(row-1, col, editing) }
+    if (row > 0) { setSelected(event, row-1, col, editing) }
   }
 
   // Select Down
@@ -71,7 +71,7 @@
     if (selected.value.row == null) { return }
     event?.preventDefault()
     var {row, col, editing} = selected.value
-    if (row < props.items.length-1) { setSelected(row+1, col, editing) }
+    if (row < props.items.length-1) { setSelected(event, row+1, col, editing) }
   }
 
   // Select Left
@@ -88,7 +88,7 @@
     if (index > 0) {
       var newcol = editable[index-1]
       editing = props.columns[newcol].text ? editing : false
-      setSelected(row, newcol, editing)
+      setSelected(event, row, newcol, editing)
     }
   }
 
@@ -106,7 +106,7 @@
     if (index < editable.length-1) {
       var newcol = editable[index+1]
       editing = props.columns[newcol].text ? editing : false
-      setSelected(row, newcol, editing)
+      setSelected(event, row, newcol, editing)
     }
   }
 
@@ -114,7 +114,7 @@
   // Set the selected cell and focus the input element
   // NOTE: We don't allow editing if column.text is not defined, but the
   // event is still emitted in case you want to handle it upstream.
-  const setSelected = async function(row, col, editing) {
+  const setSelected = async function(event, row, col, editing) {
     if (row == selected.value.row && col == selected.value.col && editing == selected.value.editing) { return }
     var column = props.columns[col]
     cells.value[selected.value.row]?.[selected.value.col]?.setSelected(false)
@@ -122,17 +122,16 @@
     selected.value = {row:row, col:col, editing:column?.text ? editing : false}
     cells.value[row]?.[col].setSelected(row !== null ? true : false)
     cells.value[row]?.[col].setEditing(column?.text ? editing : false)
-    emit('itemSelected', row, col, editing)
+    emit('itemSelected', event, row, col, editing)
   }
 
   // Deselect
   // Deselect the current cell
   const deselect = function(event) {
     event.preventDefault()
-    if (selected.value.editing) {
-      return setSelected(selected.value.row, selected.value.col, false)
-    }
-    setSelected(null, null, false)
+    var newrow = selected.value.editing ? selected.value.row : null
+    var newcol = selected.value.editing ? selected.value.col : null
+    setSelected(event, newrow, newcol, false)
   }
 
   // Set Td Ref
@@ -147,22 +146,22 @@
   const startEditing = function(event) {
     if (selected.value.row == null) { return }
     event.preventDefault()
-    setSelected(selected.value.row, selected.value.col, true)
+    setSelected(event, selected.value.row, selected.value.col, true)
   }
 
   // On Item Click
   // Select the current cell
-  const onItemClick = function(row, col) {
+  const onItemClick = function(event, row, col) {
     if (!props.columns[col].editable) { return }
     if (cells.value[row]?.[col]?.isEditing()) { return }
-    setSelected(row, col, false)
+    setSelected(event, row, col, false)
   }
 
   // On Item DblClick
   // Start editing the current cell
-  const onItemDblClick = async function(row, col) {
+  const onItemDblClick = async function(event, row, col) {
     if (!props.columns[col].editable) { return }
-    setSelected(row, col, true)
+    setSelected(event, row, col, true)
   }
 
   // On Item KeyDown
@@ -176,7 +175,7 @@
     else if (event.key == 'Enter') {
       event.preventDefault()
       var newval = cells.value[row][col].$el.querySelector('input').value
-      emit('itemUpdated', row, col, newval)
+      emit('itemUpdated', event, row, col, newval)
     }
   }
 

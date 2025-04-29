@@ -88,7 +88,7 @@
 
   // Get Next Page
   // Fetch next page of transactions
-  const getNextPage = async function() {
+  const getNextPage = async function(event) {
     if (!trxs.value?.next) { return }
     console.log('Loading Next Page')
     cancelctrl = api.cancel(cancelctrl)
@@ -109,7 +109,7 @@
 
   // On Selected
   // Handle item selected event
-  const onItemSelected = function(row, col, editing) {
+  const onItemSelected = function(event, row, col, editing) {
     console.log('onItemSelected', row, col, editing)
     var column = COLUMNS[col]
     if (column?.name == 'approved' && editing) { edittable.value.selectDown() }
@@ -117,7 +117,7 @@
 
   // On Item Updated
   // Handle item updated event
-  const onItemUpdated = function(row, col, newval) {
+  const onItemUpdated = function(event, row, col, newval) {
     console.log('onItemUpdated', row, col, newval)
   }
 
