@@ -8,13 +8,15 @@ from django.shortcuts import get_object_or_404
 from ninja import Body, File, Path, Query, Router
 from ninja.files import UploadedFile
 from ninja.errors import HttpError
+from pk.utils.django import get_object_or_none
 from pk.utils.ninja import PageSchema, paginate
 from typing import List
 from .trxmanager import TransactionManager
 from .models import Account, Category, Transaction
 from .schemas import AccountSchema, AccountPatchSchema
 from .schemas import CategorySchema, CategoryPatchSchema
-from .schemas import TransactionSchema, SortSchema, ImportResponseSchema
+from .schemas import TransactionSchema, TransactionPatchSchema
+from .schemas import SortSchema, ImportResponseSchema
 log = logging.getLogger(__name__)
 router = Router()
 
@@ -59,8 +61,9 @@ def update_account(request,
       data: AccountPatchSchema=Body(...)):
     """ Update the specified account. """
     item = get_object_or_404(Account, user=request.user, id=pk)
-    if data.name: item.name = data.name
-    if data.rules: item.rules = data.rules.dict(exclude_none=True)
+    fields = data.dict(exclude_unset=True)
+    if 'name' in fields: item.name = fields['name']
+    if 'rules' in fields: item.rules = fields['rules']
     item.save()
     return get_account(request, pk)
 
@@ -122,7 +125,8 @@ def update_category(request,
       data: CategoryPatchSchema=Body(...)):  # noqa
     """ Update the specified category. """
     item = get_object_or_404(Category, user=request.user, id=pk)
-    if data.name: item.name = data.name
+    fields = data.dict(exclude_unset=True)
+    if 'name' in fields: item.name = fields['name']
     item.save()
     return get_category(request, pk)
 
@@ -172,6 +176,27 @@ def get_transaction(request,
     response.account = dict(url=trx.account.url, id=trx.account.id, name=trx.account.name)
     response.category = dict(url=trx.category.url, id=trx.category.id, name=trx.category.name) if trx.category else None
     return response
+
+
+@router.patch('/transactions/{pk}', response=TransactionSchema, exclude_unset=True)
+def update_transaction(request,
+      pk: int=Path(..., description='Primary key of transaction to update'),
+      data: TransactionPatchSchema=Body(...)):  # noqa
+    """ Update the specified transaction. """
+    item = get_object_or_404(Transaction, user=request.user, id=pk)
+    fields = data.dict(exclude_unset=True)
+    print(fields)
+    if 'date' in fields: item.date = fields['date']
+    if 'payee' in fields: item.payee = fields['payee']
+    if 'amount' in fields: item.amount = fields['amount']
+    if 'approved' in fields: item.approved = fields['approved']
+    if 'comment' in fields: item.comment = fields['comment']
+    if 'category' in fields:
+        category = get_object_or_none(Category, user=request.user, name=fields['category'])
+        if not category: raise HttpError(409, f'Category "{fields['category']}" not found')
+        item.category = category
+    item.save()
+    return get_transaction(request, pk)
 
 
 @router.get('/transactions', response=PageSchema(TransactionSchema), exclude_unset=True)
