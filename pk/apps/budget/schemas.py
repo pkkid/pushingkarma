@@ -76,6 +76,15 @@ class TransactionSchema(Schema):
     category: Optional[CategorySchema] = Field(None, description='User category of transaction')
 
 
+class TransactionPatchSchema(Schema):
+    date: Optional[datetime.date] = Field(None, description='Date of transaction')
+    payee: Optional[str] = Field(None, description='Payee of transaction')
+    amount: Optional[Decimal] = Field(None, description='Amount of transaction')
+    approved: Optional[bool] = Field(None, description='True when user approved transaction')
+    comment: Optional[str] = Field(None, description='User comment for transaction')
+    category: Optional[str] = Field(None, description='Category name of transaction')
+
+
 class SortSchema(Schema):
     sortlist: List[int] = Field(..., description='List of items ids in sorted order')
 
