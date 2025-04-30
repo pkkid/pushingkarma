@@ -17,7 +17,8 @@
       </h1>
       <!-- Transactions Table -->
       <EditTable ref='edittable' v-if='trxs?.items' :columns='COLUMNS' :items='trxs?.items'
-        @getNextPage='getNextPage' @itemSelected='onItemSelected' @itemUpdated='onItemUpdated'/>
+        @getNextPage='getNextPage' @itemSelected='onItemSelected' @itemUpdated='onItemUpdated'
+        @undo='undo' @redo='redo'/>
     </template>
   </LayoutPaper>
 </template>
@@ -60,6 +61,8 @@
   }]
 
   var cancelctrl = null                       // Cancel controller
+  var undoStack = []                          // Undo stack {row, col, oldValue, newValue}
+  var redoStack = []                          // Redo stack {row, col, oldValue, newValue}
   const loading = ref(false)                  // True to show loading indicator
   const {search} = useUrlParams({search:{}})  // Method & path url params
   const _search = ref(search.value)           // Temp search before enter
@@ -110,7 +113,6 @@
   // On Selected
   // Handle item selected event
   const onItemSelected = function(event, row, col, editing) {
-    console.log('onItemSelected', row, col, editing)
     var column = COLUMNS[col]
     if (editing && column?.name == 'approved') {
       var trx = trxs.value.items[row]
@@ -120,11 +122,48 @@
 
   // On Item Updated
   // Handle item updated event
-  const onItemUpdated = function(event, row, col, newval) {
+  const onItemUpdated = async function(event, row, col, newval) {
     var column = COLUMNS[col]
     var trx = trxs.value.items[row]
     console.log(`onItemUpdated row=${row} col=${col} id=${trx.id} name=${column.name} newval=${newval}`)
+    if (column.name == 'date') { newval = utils.formatDate(new Date(newval), 'YYYY-MM-DD') }
+    if (column.name == 'amount') { newval = newval.replace('$', '') }
+    var params = {[column.name]: newval}
+    console.log('------')
+    console.log(params)
+    try {
+      var {data} = await api.Budget.updateTransaction(trx.id, params)
+      console.log('SUCCESS', data)
+      trxs.value.items[row] = data
+    } catch (err) {
+      console.error('ERROR', err)
+    }
   }
+
+  // Undo
+  // Undo the last action
+  const undo = function(event) {
+    // if (undoStack.value.length === 0) return
+    // const {row, col, key, oldValue, newValue} = undoStack.value.pop()
+    // redoStack.value.push({row, col, key, oldValue, newValue})
+    // if (redoStack.value.length > 100) redoStack.value.shift()
+    // props.items[row][key] = oldValue
+    // emit('itemUpdated', row, col, oldValue)
+    // setSelected(row, col, false)
+  }
+
+  // Redo
+  // Redo the previous action
+  const redo = function(event) {
+    // if (redoStack.value.length === 0) return
+    // const {row, col, key, oldValue, newValue} = redoStack.value.pop()
+    // undoStack.value.push({row, col, key, oldValue, newValue})
+    // if (undoStack.value.length > 100) undoStack.value.shift()
+    // props.items[row][key] = newValue
+    // emit('itemUpdated', row, col, newValue)
+    // setSelected(row, col, false)
+  }
+
 
   // Update Categories
   // Fetch categories from the server
