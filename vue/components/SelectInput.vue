@@ -14,13 +14,21 @@
   import {computed, nextTick, ref, watch} from 'vue'
 
   const props = defineProps({
-    choices: {required:true},               // List of [{id, name}] for all choices
-    value: {required:true},                 // Initial value for the input
+    choices: {required:true},                 // List of [{id, name}] for all choices
+    modelValue: {required:true},              // Initial value for the input
   })
-  const _value = ref(props.value || '')     // Current input value
-  const choicerefs = ref([])                // Track choice DOM elements
-  const focused = ref(null)                 // Track focused choice
-  const emit = defineEmits(['keydown'])     // Emit keydown event to parent
+  const _value = ref(props.modelValue || '')  // Current input value
+  const choicerefs = ref([])                  // Track choice DOM elements
+  const focused = ref(null)                   // Track focused choice
+  const emit = defineEmits([
+    'update:modelValue',                      // Emit updated value to parent  
+    'keydown'                                 // Emit keydown event to parent
+  ])     
+
+  // Watch Value
+  // Update local _value or pass new modelValue to parent
+  watch(() => props.modelValue, (newval) => { if (newval !== _value.value) { _value.value = newval } })
+  watch(_value, (newval) => { emit('update:modelValue', newval) })
 
   // Filtered Choices
   // Filter the choices based on the input value
