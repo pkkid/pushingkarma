@@ -130,8 +130,8 @@
     getCell(selected.value.row, selected.value.col)?.setSelected(false)
     getCell(selected.value.row, selected.value.col)?.setEditing(false)
     selected.value = {row:row, col:col, editing:column?.text ? editing : false}
-    getCell(row, col).setSelected(row !== null ? true : false)
-    getCell(row, col).setEditing(column?.text ? editing : false)
+    getCell(row, col)?.setSelected(row !== null ? true : false)
+    getCell(row, col)?.setEditing(column?.text ? editing : false)
     emit('itemSelected', event, row, col, editing)
   }
 
