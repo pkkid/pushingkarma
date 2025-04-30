@@ -35,6 +35,7 @@ export const Budget = {
   sortCategories(data, signal) { return axios.patch(`/api/budget/sort_categories`, data, {signal}) },
   updateAccount(pk, data, signal) { return axios.patch(`/api/budget/accounts/${pk}`, data, {signal}) },
   updateCategory(pk, data, signal) { return axios.patch(`/api/budget/categories/${pk}`, data, {signal}) },
+  updateTransaction(pk, data, signal) { return axios.patch(`/api/budget/transactions/${pk}`, data, {signal}) },
 }
 export const Obsidian = {
   getNote(bucket, path, params, signal) { return axios.get(`/api/obsidian/notes/${bucket}/${path}`, {params, signal}) },
