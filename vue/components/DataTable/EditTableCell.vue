@@ -45,11 +45,14 @@
 
   // Watch Editing
   // focus the input and select its text
-  watch(editing, async function() {
+  watch(editing, async function(newval) {
+    if (!newval) { return }
     await nextTick()
     const input = root.value.$el.querySelector('input')
+    const select_start = props.column.selectall ? 0 : input.value.length
+    const select_end = input.value.length
     input?.focus()
-    input?.setSelectionRange(input.value.length, input.value.length)
+    input?.setSelectionRange(select_start, select_end)
   })
 
   // Set Success

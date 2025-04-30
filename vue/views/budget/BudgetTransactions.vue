@@ -42,6 +42,7 @@
       name:'category', title:'Category', editable:true,
       text: trx => trx.category?.name,
       choices: () => categoryChoices(),
+      selectall: true,
     },{
       name:'payee', title:'Payee', editable:true,
       text: trx => trx.payee,
@@ -125,17 +126,17 @@
   const onItemUpdated = async function(event, row, col, newval) {
     var column = COLUMNS[col]
     var trx = trxs.value.items[row]
-    console.log(`onItemUpdated row=${row} col=${col} id=${trx.id} name=${column.name} newval=${newval}`)
     if (column.name == 'date') { newval = utils.formatDate(new Date(newval), 'YYYY-MM-DD') }
     if (column.name == 'amount') { newval = newval.replace('$', '') }
     var params = {[column.name]: newval}
-    console.log('------')
-    console.log(params)
     try {
       var {data} = await api.Budget.updateTransaction(trx.id, params)
       console.log('SUCCESS', data)
       trxs.value.items[row] = data
       edittable.value.getCell(row, col).setSuccess()
+      if (event?.type === 'keydown' && event.key === 'Enter') {
+        edittable.value.selectDown()
+      }
     } catch (err) {
       console.error('ERROR', err)
     }
