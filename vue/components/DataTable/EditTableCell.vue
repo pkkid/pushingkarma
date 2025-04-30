@@ -1,11 +1,12 @@
 <template>
-  <Column ref='root' :name='column.name' :title='column.title' :class='{selected, editing, editable:column.editable}'>
+  <Column ref='root' :name='column.name' :title='column.title'
+    :class='{selected, editing, editable:column.editable}'>
     <!-- Editing -->
     <template v-if='editing'>
       <slot name='editing' :column='column' :item='item'>
         <SelectInput v-if='column.choices' :choices='column.choices()'
-          :value='column.text(item)' @keydown='emit("keydown", $event, row, col)'/>
-        <input v-else :value='column.text(item)' spellcheck='false' autocomplete='off'
+          v-model='value' @keydown='emit("keydown", $event, row, col)'/>
+        <input v-else v-model='value' spellcheck='false' autocomplete='off'
           @keydown='emit("keydown", $event)'/>
       </slot>
     </template>
@@ -14,7 +15,7 @@
       <slot name='viewing' :column='column' :item='item'>
         <Tooltip :text='tooltip' :width='tooltipWidth'>
           <span v-if='column.html' class='fakeinput' v-html='column.html(item)'/>
-          <span v-else class='fakeinput'>{{column.text(item)}}</span>
+          <span v-else class='fakeinput'>{{value}}</span>
         </Tooltip>
       </slot>
     </template>
@@ -35,6 +36,8 @@
   const root = ref(null)                    // Reference to root elem
   const selected = ref(false)               // True if cell is selected
   const editing = ref(false)                // True if editing this cell
+  const value = ref(props.column.text?.(props.item))  // Value of the cell
+  const errmsg = ref(null)                  // Error message for this cell
   const emit = defineEmits(['keydown'])     // Emit when closing the modal
 
   // Watch Editing
@@ -53,5 +56,7 @@
     isEditing: () => editing.value,
     setSelected: (newval) => selected.value = newval,
     setEditing: (newval) => editing.value = newval,
+    setValue: (newval) => value.value = newval,
+    setErrMsg: (errmsg) => errmsg.value = errmsg,
   })
 </script>
