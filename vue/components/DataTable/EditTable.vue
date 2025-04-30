@@ -30,8 +30,10 @@
   const selected = ref({row:null, col:null, editing:false})  // Selected cell and edit mode
   const emit = defineEmits([
     'getNextPage',    // When requesting next page of items
-    'itemSelected',       // When cell is selected or deselected (args: row, col)
+    'itemSelected',   // When cell is selected or deselected (args: row, col)
     'itemUpdated',    // When item is updated (args: row, col, newval)
+    'undo',           // When undo is requested
+    'redo',           // When redo is requested
   ])
 
   // On Mounted
@@ -46,6 +48,8 @@
     hotkeys('right', 'edittable', function(event) { selectRight(event) })
     hotkeys('tab', 'edittable', function(event) { selectRight(event) })
     hotkeys('enter', 'edittable', function(event) { startEditing(event) })
+    hotkeys('ctrl+z', 'edittable', function(event) { event.preventDefault(); emit('undo', event) })
+    hotkeys('ctrl+y', 'edittable', function(event) { event.preventDefault(); emit('redo', event) })
     hotkeys.setScope('edittable')
   })
 
