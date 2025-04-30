@@ -135,6 +135,7 @@
       var {data} = await api.Budget.updateTransaction(trx.id, params)
       console.log('SUCCESS', data)
       trxs.value.items[row] = data
+      edittable.value.getCell(row, col).setSuccess()
     } catch (err) {
       console.error('ERROR', err)
     }

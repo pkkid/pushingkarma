@@ -60,6 +60,12 @@
     hotkeys.deleteScope('edittable')
   })
 
+  // Get Cell
+  // Get cell ref for the given row and column
+  const getCell = function(row, col) {
+    return cells.value[row]?.[col]
+  }
+
   // Select Up
   // Select the cell above the current cell
   const selectUp = async function(event) {
@@ -121,11 +127,11 @@
   const setSelected = async function(event, row, col, editing) {
     if (row == selected.value.row && col == selected.value.col && editing == selected.value.editing) { return }
     var column = props.columns[col]
-    cells.value[selected.value.row]?.[selected.value.col]?.setSelected(false)
-    cells.value[selected.value.row]?.[selected.value.col]?.setEditing(false)
+    getCell(selected.value.row, selected.value.col)?.setSelected(false)
+    getCell(selected.value.row, selected.value.col)?.setEditing(false)
     selected.value = {row:row, col:col, editing:column?.text ? editing : false}
-    cells.value[row]?.[col].setSelected(row !== null ? true : false)
-    cells.value[row]?.[col].setEditing(column?.text ? editing : false)
+    getCell(row, col).setSelected(row !== null ? true : false)
+    getCell(row, col).setEditing(column?.text ? editing : false)
     emit('itemSelected', event, row, col, editing)
   }
 
@@ -157,7 +163,7 @@
   // Select the current cell
   const onItemClick = function(event, row, col) {
     if (!props.columns[col].editable) { return }
-    if (cells.value[row]?.[col]?.isEditing()) { return }
+    if (getCell(row, col)?.isEditing()) { return }
     setSelected(event, row, col, false)
   }
 
@@ -178,14 +184,14 @@
     else if (event.key == 'Escape' && !event.shiftKey) { deselect(event) }
     else if (event.key == 'Enter') {
       event.preventDefault()
-      var newval = cells.value[row][col].$el.querySelector('input').value
+      var newval = getCell(row, col).$el.querySelector('input').value
       emit('itemUpdated', event, row, col, newval)
     }
   }
 
   // Define Exposed
   // Expose this function to the parent
-  defineExpose({selectUp, selectDown, selectLeft, selectRight, setSelected, deselect})
+  defineExpose({getCell, selectUp, selectDown, selectLeft, selectRight, setSelected, deselect})
 </script>
 
 <style>
@@ -193,76 +199,6 @@
     table {
       --lineheight: 27px;
       width: 100%;
-      td {
-        position: relative;
-        padding: 0px;
-        border-top: 0px solid var(--lightbg-bg3);
-        .tdwrap {
-          border: 2px solid #f000;
-          cursor: default;
-          line-height: 28px;
-          height: 32px;
-          padding: 0px;
-          z-index: 2;
-          user-select: none;
-          &::before {
-            border-top: 1px solid var(--lightbg-bg3);
-            content: ' ';
-            display: block;
-            left: 0px;
-            position: absolute;
-            top: 0px;
-            width: 100%;
-            z-index: 1;
-          }
-          input, .fakeinput {
-            background-color: transparent;
-            border-radius: 0px;
-            border-width: 0px;
-            box-shadow: none;
-            font-family: inherit;
-            font-size: inherit;
-            height: calc(var(--lineheight) + 2px);
-            line-height: calc(var(--lineheight) + 2px);
-            outline: none;
-            padding: 0px 6px;
-            width: 100%;
-            text-align: inherit;
-          }
-          .fakeinput {
-            display: inline-block;
-            overflow: hidden;
-            white-space: nowrap;
-            text-overflow: ellipsis;
-          }
-          input { color: #111; }
-        }
-        &.editable .tdwrap:hover { background-color: #ddd8; }
-        &.selected .tdwrap {
-          border: 2px solid var(--accent);
-          background-color: var(--lightbg-bg1);
-          height: calc(100% + 1px);
-          left: 0px;
-          line-height: calc(var(--lineheight) + 1px);
-          position: absolute;
-          top: 0px;
-          width: 100%;
-          &::before { border-top: 0px solid #fff0; }
-        }
-        &.editing .tdwrap {
-          background-color: #f812 !important;
-          box-shadow: inset 0px 1px 2px #0005;
-        }
-        &.modified::before {
-          content: '';
-          position: absolute;
-          top: 2px; left: 2px;
-          width: 0px; height: 0px;
-          border-top: 7px solid #5558;
-          border-right: 7px solid transparent;
-          z-index: 10;
-        }
-      }
     }
 
     /* Tooltip container */
