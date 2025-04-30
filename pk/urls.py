@@ -6,7 +6,7 @@ from django.views.decorators.clickjacking import xframe_options_exempt
 from django.views.decorators.csrf import ensure_csrf_cookie
 from http import HTTPStatus
 from ninja import NinjaAPI
-from ninja.errors import HttpError
+from ninja.errors import HttpError, ValidationError
 from pk.apps.main.api import router as main_router
 from pk.apps.budget.api import router as budget_router
 from pk.apps.obsidian.api import router as obsidian_router
@@ -40,7 +40,14 @@ def api_exception(request, err):
     return api.create_response(request, data, status=status)
 
 
-def api_404(request, exc=None):
+@api.exception_handler(ValidationError)
+def api_validation_error(request, err):
+    data = dict(status=422, message='Validation error')
+    data['errors'] = {e['loc'][-1]:e['msg'] for e in err.errors}
+    return api.create_response(request, data, status=422)
+
+
+def api_404(request, err=None):
     return api_exception(request, HttpError(404, 'API endpoint not found.'))
 
 
