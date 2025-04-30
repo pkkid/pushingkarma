@@ -47,7 +47,7 @@
     hotkeys('shift+tab', 'edittable', function(event) { selectLeft(event) })
     hotkeys('right', 'edittable', function(event) { selectRight(event) })
     hotkeys('tab', 'edittable', function(event) { selectRight(event) })
-    hotkeys('enter', 'edittable', function(event) { startEditing(event) })
+    hotkeys('enter,shift+enter', 'edittable', function(event) { startEditing(event) })
     hotkeys('ctrl+z', 'edittable', function(event) { event.preventDefault(); emit('undo', event) })
     hotkeys('ctrl+y', 'edittable', function(event) { event.preventDefault(); emit('redo', event) })
     hotkeys.setScope('edittable')
@@ -70,7 +70,7 @@
   // Select the cell above the current cell
   const selectUp = async function(event) {
     if (selected.value.row == null) { return }
-    event.preventDefault()
+    event?.preventDefault()
     var {row, col, editing} = selected.value
     if (row > 0) { setSelected(event, row-1, col, editing) }
   }
@@ -88,7 +88,7 @@
   // Select the cell to the left of the current cell
   const selectLeft = function(event) {
     if (selected.value.row == null) { return }
-    event.preventDefault()
+    event?.preventDefault()
     var editable = []
     for (var i=0; i<props.columns.length; i++) {
       if (props.columns[i].editable) { editable.push(i) }
@@ -106,7 +106,7 @@
   // Select the cell to the right of the current cell
   const selectRight = function(event) {
     if (selected.value.row == null) { return }
-    event.preventDefault()
+    event?.preventDefault()
     var editable = []
     for (var i=0; i<props.columns.length; i++) {
       if (props.columns[i].editable) { editable.push(i) }

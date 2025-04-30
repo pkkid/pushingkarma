@@ -135,7 +135,8 @@
       trxs.value.items[row] = data
       edittable.value.getCell(row, col).setSuccess()
       if (event?.type === 'keydown' && event.key === 'Enter') {
-        edittable.value.selectDown()
+        if (event.shiftKey) { edittable.value.selectUp(event) }
+        else { edittable.value.selectDown(event) }
       }
     } catch (err) {
       console.error('ERROR', err)
