@@ -133,7 +133,7 @@
       var {data} = await api.Budget.updateTransaction(trx.id, params)
       console.log('SUCCESS', data)
       trxs.value.items[row] = data
-      edittable.value.getCell(row, col).setSuccess()
+      edittable.value.getCell(row, col).animateSuccess()
       if (event?.type === 'keydown' && event.key === 'Enter') {
         if (event.shiftKey) { edittable.value.selectUp(event) }
         else { edittable.value.selectDown(event) }

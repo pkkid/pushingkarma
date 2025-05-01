@@ -1,6 +1,6 @@
 <template>
-  <Column ref='root' :name='column.name' :title='column.title' :key='successKey'
-    :class='{selected, editing, editable:column.editable, success}'>
+  <Column ref='root' :name='column.name' :title='column.title' :key='animateBgKey'
+    :class='{selected, editing, editable:column.editable, animatebg:animateBgColor}'>
     <!-- Editing -->
     <template v-if='editing'>
       <slot name='editing' :column='column' :item='item'>
@@ -27,19 +27,20 @@
   import {DataTableColumn as Column} from '@/components'
   import {SelectInput, Tooltip} from '@/components'
 
-  var successTimeout = null                 // Timeout for success animation
+  
   const props = defineProps({
     column: {type:Object},                  // Column object
     item: {type:Object},                    // Transaction object
     tooltip: {type:String},                 // Tooltip text
     tooltipWidth: {type:String},            // Tooltip width
   })
+  var animateBgTimeout = null               // Timeout for success animation
+  const animateBgColor = ref(null)          // True if cell successfully edited
+  const animateBgKey = ref(0)               // Incrementing key to force re-render
   const root = ref(null)                    // Reference to root elem
   const selected = ref(false)               // True if cell is selected
   const editing = ref(false)                // True if editing this cell
   const value = ref(props.column.text?.(props.item))  // Value of the cell
-  const success = ref(false)                // True if cell successfully edited
-  const successKey = ref(0)                 // Incrementing key to force re-render
   const errmsg = ref(null)                  // Error message for this cell
   const emit = defineEmits(['keydown'])     // Emit when closing the modal
 
@@ -57,27 +58,28 @@
 
   // Set Success
   // Set green background that fades out
-  const setSuccess = async function() {
-    clearTimeout(successTimeout)
-    success.value = false
-    successKey.value += 1
+  const animateBg = async function(color='#0a48') {
+    clearTimeout(animateBgTimeout)
+    animateBgColor.value = null
+    animateBgKey.value += 1
     await nextTick()
-    success.value = true
-    successTimeout = setTimeout(() => {
-      success.value = false
+    animateBgColor.value = color
+    animateBgTimeout = setTimeout(() => {
+      animateBgColor.value = null
     }, 2000)
   }
   
   // Define Exposed
   // Expose this function to the parent
   defineExpose({
-    isSelected: () => selected.value,
+    animateSuccess: () => animateBg('#0a48'),
+    animateUndoRedo: () => animateBg('#8408'),
     isEditing: () => editing.value,
-    setSelected: (newval) => selected.value = newval,
+    isSelected: () => selected.value,
     setEditing: (newval) => editing.value = newval,
-    setValue: (newval) => value.value = newval,
-    setSuccess: setSuccess,
     setError: (errmsg) => errmsg.value = errmsg,
+    setSelected: (newval) => selected.value = newval,
+    setValue: (newval) => value.value = newval,
   })
 </script>
 
@@ -138,12 +140,13 @@
       width: 100%;
       &::before { border-top: 0px solid #fff0; }
     }
-    &.success .tdwrap {
-      --success-fade-target: transparent;
-      animation: success-fade 2s forwards;
+    &.animatebg .tdwrap {
+      --animatebg-start: v-bind(animateBgColor);
+      --animatebg-end: transparent;
+      animation: animatebg-fade 2s forwards;
     }
     &.editing .tdwrap {
-      --success-fade-target: #f812;
+      --animatebg-end: #f812;
       background-color: #f812;
       box-shadow: inset 0px 1px 2px #0005;
     }
@@ -158,9 +161,9 @@
     }
   }
 
-  @keyframes success-fade {
-    0% { background-color: #0a48; }
-    20% { background-color: #0a48; }
-    100% { background-color: var(--success-fade-target); }
+  @keyframes animatebg-fade {
+    0% { background-color: var(--animatebg-start); }
+    20% { background-color: var(--animatebg-start); }
+    100% { background-color: var(--animatebg-end); }
   }
 </style>
