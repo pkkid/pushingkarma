@@ -20,6 +20,8 @@
   import hotkeys from 'hotkeys-js'
 
   var prevscope = null                            // Previous hotkeys-js scope
+  var undostack = []                              // Undo stack {row, col, oldval, newval}
+  var redostack = []                              // Redo stack {row, col, oldval, newval}
   const props = defineProps({
     columns: {type:Array},                        // List of columns to display
     items: {type:Array},                          // List of items to display
@@ -32,8 +34,6 @@
     'getNextPage',    // When requesting next page of items
     'itemSelected',   // When cell is selected or deselected (args: row, col)
     'itemUpdated',    // When item is updated (args: row, col, newval)
-    'undo',           // When undo is requested
-    'redo',           // When redo is requested
   ])
 
   // On Mounted
@@ -47,9 +47,10 @@
     hotkeys('shift+tab', 'edittable', function(event) { selectLeft(event) })
     hotkeys('right', 'edittable', function(event) { selectRight(event) })
     hotkeys('tab', 'edittable', function(event) { selectRight(event) })
-    hotkeys('enter,shift+enter', 'edittable', function(event) { startEditing(event) })
-    hotkeys('ctrl+z', 'edittable', function(event) { event.preventDefault(); emit('undo', event) })
-    hotkeys('ctrl+y', 'edittable', function(event) { event.preventDefault(); emit('redo', event) })
+    hotkeys('enter, shift+enter', 'edittable', function(event) { startEditing(event) })
+    hotkeys('ctrl+z', 'edittable', function(event) { undo(event) })
+    hotkeys('ctrl+y', 'edittable', function(event) { redo(event) })
+    hotkeys('ctrl+backspace', 'edittable', function(event) { resetToDefault(event) })
     hotkeys.setScope('edittable')
   })
 
@@ -179,19 +180,79 @@
   const onItemKeyDown = function(event, row, col) {
     if (event.key == 'ArrowDown') { selectDown(event) }
     else if (event.key == 'ArrowUp') { selectUp(event) }
+    else if (event.key == 'Escape') { deselect(event) }
     else if (event.key == 'Tab' && event.shiftKey) { selectLeft(event) }
     else if (event.key == 'Tab' && !event.shiftKey) { selectRight(event) }
-    else if (event.key == 'Escape' && !event.shiftKey) { deselect(event) }
+    else if (event.key == 'z' && event.ctrlKey) { undo(event) }
+    else if (event.key == 'y' && event.ctrlKey) { redo(event) }
     else if (event.key == 'Enter') {
       event.preventDefault()
+      var column = props.columns[col]
+      var oldval = column.text(props.items[row])
       var newval = getCell(row, col).$el.querySelector('input').value
-      emit('itemUpdated', event, row, col, newval)
+      if (oldval != newval) {
+        emit('itemUpdated', event, row, col, newval)
+        addUndo(row, col, oldval, newval)
+      }
     }
   }
 
+  // Add Undo
+  // Add an item to the undo stack
+  const addUndo = function(row, col, oldval, newval) {
+    undostack.push({row, col, oldval, newval})
+    redostack = []
+  }
+
+  // Undo
+  // Undo the last action
+  const undo = function(event) {
+    event.preventDefault()
+    if (undostack.length == 0) { return }
+    const {row, col, oldval, newval} = undostack.pop()
+    redostack.push({row, col, oldval, newval})
+    emit('itemUpdated', event, row, col, oldval, true)
+    setSelected(event, row, col, false)
+  }
+
+  // Redo
+  // Redo the previous action
+  const redo = function(event) {
+    event.preventDefault()
+    if (redostack.length == 0) { return }
+    const {row, col, oldval, newval} = redostack.pop()
+    undostack.push({row, col, oldval, newval})
+    emit('itemUpdated', event, row, col, newval, true)
+    setSelected(event, row, col, false)
+  }
+
+  // Reset to Default
+  // Reset the current cell to its default value
+  const resetToDefault = function(event) {
+    event.preventDefault()
+    if (selected.value.row == null) { return }
+    var {row, col} = selected.value
+    var column = props.columns[col]
+    if (!column.default) { return }
+    var oldval = column.text(props.items[row])
+    var newval = column.default(props.items[row])
+    if (oldval != newval) {
+      emit('itemUpdated', event, row, col, newval)
+      addUndo(row, col, oldval, newval)
+    }
+  }
+
+  // Clear Undo Redo Stack
+  // Resets the undo and redo stacks
+  const clearUndoRedoStack = function() {
+    undostack = []
+    redostack = []
+  } 
+
   // Define Exposed
   // Expose this function to the parent
-  defineExpose({getCell, selectUp, selectDown, selectLeft, selectRight, setSelected, deselect})
+  defineExpose({getCell, selectUp, selectDown, selectLeft, selectRight,
+    setSelected, deselect, addUndo, clearUndoRedoStack})
 </script>
 
 <style>

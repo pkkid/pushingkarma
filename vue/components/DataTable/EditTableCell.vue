@@ -44,6 +44,12 @@
   const errmsg = ref(null)                  // Error message for this cell
   const emit = defineEmits(['keydown'])     // Emit when closing the modal
 
+  // Watch Item
+  // Update the value when the item changes
+  watch(() => props.item, function(newval) {
+    value.value = props.column.text?.(newval)
+  })
+
   // Watch Editing
   // focus the input and select its text
   watch(editing, async function(newval) {
@@ -72,8 +78,7 @@
   // Define Exposed
   // Expose this function to the parent
   defineExpose({
-    animateSuccess: () => animateBg('#0a48'),
-    animateUndoRedo: () => animateBg('#8408'),
+    animateBg: animateBg,
     isEditing: () => editing.value,
     isSelected: () => selected.value,
     setEditing: (newval) => editing.value = newval,

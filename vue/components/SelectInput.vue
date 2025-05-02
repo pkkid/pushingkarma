@@ -27,8 +27,12 @@
 
   // Watch Value
   // Update local _value or pass new modelValue to parent
-  watch(() => props.modelValue, (newval) => { if (newval !== _value.value) { _value.value = newval } })
-  watch(_value, (newval) => { emit('update:modelValue', newval) })
+  watch(() => props.modelValue, function(newval) {
+    if (newval != _value.value) { _value.value = newval }
+  })
+  watch(_value, function(newval) {
+    emit('update:modelValue', newval)
+  })
 
   // Filtered Choices
   // Filter the choices based on the input value

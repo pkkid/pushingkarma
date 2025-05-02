@@ -2,7 +2,7 @@
   <div class='tooltip-container' ref='container' @mouseenter='onMouseEnter'
     @mouseleave='onMouseLeave' @click='onClick'>
     <div v-if='visible' class='tooltip' ref='tooltip' :class='position' :style='tstyle'>
-      <slot name='tooltip'>{{text}}</slot>
+      <slot name='tooltip'><div v-html='text'/></slot>
     </div>
     <slot></slot>
   </div>

@@ -17,14 +17,13 @@
       </h1>
       <!-- Transactions Table -->
       <EditTable ref='edittable' v-if='trxs?.items' :columns='COLUMNS' :items='trxs?.items' :infinite='true'
-        @getNextPage='getNextPage' @itemSelected='onItemSelected' @itemUpdated='onItemUpdated'
-        @undo='undo' @redo='redo'/>
+        @getNextPage='getNextPage' @itemSelected='onItemSelected' @itemUpdated='onItemUpdated'/>
     </template>
   </LayoutPaper>
 </template>
 
 <script setup>
-  import {onMounted, ref, watch, watchEffect} from 'vue'
+  import {onMounted, reactive, ref, watch, watchEffect} from 'vue'
   import {EditTable, LayoutPaper} from '@/components'
   import {useUrlParams} from '@/composables'
   import {api, utils} from '@/utils'
@@ -32,12 +31,13 @@
 
   var COLUMNS = [{
       name:'account', title:'Act', editable:false,
-      html: trx => `<i class='icon' style='--mask:url(${iconpath(trx.account)})'/>`,
-      tooltip: trx => trx.account.name,
+      html: trx => accountIcon(trx),
+      tooltip: trx => utils.tmpl(`{{account.name}}<div class='subtext'>ID: {{id}}</div>`, trx),
     },{
       name:'date', title:'Date', editable:true,
       text: trx => utils.formatDate(trx.date, 'MMM DD, YYYY'),
       class: trx => trx.date != trx.original_date ? 'modified' : '',
+      default: trx => trx.original_date,
     },{
       name:'category', title:'Category', editable:true,
       text: trx => trx.category?.name,
@@ -49,10 +49,12 @@
       class: trx => trx.payee != trx.original_payee ? 'modified' : '',
       tooltip: trx => trx.payee.length > 35 ? trx.payee : null,
       tooltipWidth: '350px',
+      default: trx => trx.original_payee,
     },{
       name:'amount', title:'Amount', editable:true,
       text: trx => utils.usd(trx.amount),
       class: trx => trx.amount != trx.original_amount ? 'modified' : '',
+      default: trx => trx.original_amount,
     },{
       name:'approved', title:'X', editable:true,
       html: trx => trx.approved ? `<i class='mdi mdi-check'/>` : '',
@@ -62,8 +64,6 @@
   }]
 
   var cancelctrl = null                       // Cancel controller
-  var undoStack = []                          // Undo stack {row, col, oldValue, newValue}
-  var redoStack = []                          // Redo stack {row, col, oldValue, newValue}
   const loading = ref(false)                  // True to show loading indicator
   const {search} = useUrlParams({search:{}})  // Method & path url params
   const _search = ref(search.value)           // Temp search before enter
@@ -105,10 +105,12 @@
     }
   }
 
-  // Icon Path
-  // Return icon path for the given account
-  const iconpath = function(account) {
-    return `/static/img/icons/${account.name.toLowerCase()}.svg`
+  // Account Icon
+  // Return html to display account icon
+  const accountIcon = function(trx) {
+    var actname = trx.account.name.toLowerCase()
+    var path = `/static/img/icons/${actname}.svg`
+    return utils.tmpl(`<i class='icon' style='--mask:url(${path})'/>`, {path})
   }
 
   // On Selected
@@ -118,22 +120,25 @@
     if (editing && column?.name == 'approved') {
       var trx = trxs.value.items[row]
       onItemUpdated(event, row, col, !trx.approved)
+      edittable.value.addUndo(row, col, trx.approved, !trx.approved)
     }
   }
 
   // On Item Updated
   // Handle item updated event
-  const onItemUpdated = async function(event, row, col, newval) {
+  const onItemUpdated = async function(event, row, col, newval, isundo=false) {
     var column = COLUMNS[col]
     var trx = trxs.value.items[row]
     if (column.name == 'date') { newval = utils.formatDate(new Date(newval), 'YYYY-MM-DD') }
     if (column.name == 'amount') { newval = newval.replace('$', '') }
     var params = {[column.name]: newval}
     try {
-      var {data} = await api.Budget.updateTransaction(trx.id, params)
-      console.log('SUCCESS', data)
-      trxs.value.items[row] = data
-      edittable.value.getCell(row, col).animateSuccess()
+      var oldval = trx[column.name]
+      if (newval != oldval) {
+        var {data} = await api.Budget.updateTransaction(trx.id, params)
+        trxs.value.items[row] = data
+        edittable.value.getCell(row, col).animateBg(isundo ? '#8404':'#0a48')
+      }
       if (event?.type === 'keydown' && event.key === 'Enter') {
         if (event.shiftKey) { edittable.value.selectUp(event) }
         else { edittable.value.selectDown(event) }
@@ -142,31 +147,6 @@
       console.error('ERROR', err)
     }
   }
-
-  // Undo
-  // Undo the last action
-  const undo = function(event) {
-    // if (undoStack.value.length === 0) return
-    // const {row, col, key, oldValue, newValue} = undoStack.value.pop()
-    // redoStack.value.push({row, col, key, oldValue, newValue})
-    // if (redoStack.value.length > 100) redoStack.value.shift()
-    // props.items[row][key] = oldValue
-    // emit('itemUpdated', row, col, oldValue)
-    // setSelected(row, col, false)
-  }
-
-  // Redo
-  // Redo the previous action
-  const redo = function(event) {
-    // if (redoStack.value.length === 0) return
-    // const {row, col, key, oldValue, newValue} = redoStack.value.pop()
-    // undoStack.value.push({row, col, key, oldValue, newValue})
-    // if (undoStack.value.length > 100) undoStack.value.shift()
-    // props.items[row][key] = newValue
-    // emit('itemUpdated', row, col, newValue)
-    // setSelected(row, col, false)
-  }
-
 
   // Update Categories
   // Fetch categories from the server
@@ -184,6 +164,7 @@
       var params = {search:search.value}
       var {data} = await api.Budget.listTransactions(params, cancelctrl.signal)
       trxs.value = data
+      edittable.value?.clearUndoRedoStack()
     } catch (err) {
       if (!api.isCancel(err)) { throw(err) }
     } finally {

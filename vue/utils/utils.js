@@ -59,6 +59,14 @@ export function dedent(str) {
   return lines.map(line => line.slice(indent)).join('\n')
 }
 
+// Escape HTML
+// Escape HTML special characters
+export function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, match => ({
+    '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;',
+  }[match]))
+}
+
 // Format Date
 // Format a date using various format strings:
 export function formatDate(value, format, local=true) {
@@ -177,7 +185,6 @@ export function pop(obj, key) {
   }
   return null
 }
-
 
 // Round
 // Round the number to the specified decimal places
@@ -348,6 +355,14 @@ export function title(str) {
   return str.join(' ')
 }
 
+// Template
+// Replace {{context.key}} with the value from the context object
+export function tmpl(str, context) {
+  return str.replace(/{{\s*([\w.$]+)\s*}}/g, (_, path) => {
+    const value = rget(context, path)
+    return value != null ? escapeHtml(value) : ''
+  })
+}
 
 // USD
 // Format number to USD display -$99.99 with cents.
