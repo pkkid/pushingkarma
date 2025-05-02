@@ -1,11 +1,17 @@
 <template>
   <Column ref='root' :name='column.name' :title='column.title' :key='animateBgKey'
-    :class='{selected, editing, editable:column.editable, animatebg:animateBgColor}'>
+    :class='{selected, editing, editable:column.editable, error:errmsg, animatebg:animateBgColor}'>
     <!-- Editing -->
     <template v-if='editing'>
       <slot name='editing' :column='column' :item='item'>
-        <SelectInput v-if='column.choices' :choices='column.choices()' v-model='value' @keydown='emit("keydown", $event, row, col)'/>
-        <input v-else v-model='value' spellcheck='false' autocomplete='off' @keydown='emit("keydown", $event)'/>
+        <Tooltip v-if='errmsg' :text='errmsg' trigger='always'>
+          <SelectInput v-if='column.choices' :choices='column.choices()' v-model='value' @keydown='emit("keydown", $event, row, col)'/>
+          <input v-else v-model='value' spellcheck='false' autocomplete='off' @keydown='emit("keydown", $event)'/>
+        </Tooltip>
+        <template v-else>
+          <SelectInput v-if='column.choices' :choices='column.choices()' v-model='value' @keydown='emit("keydown", $event, row, col)'/>
+          <input v-else v-model='value' spellcheck='false' autocomplete='off' @keydown='emit("keydown", $event)'/>
+        </template>
       </slot>
     </template>
     <!-- Not Editing -->
@@ -39,12 +45,11 @@
   var animateBgTimeout = null                 // Timeout for success animation
   const animateBgColor = ref(null)            // True if cell successfully edited
   const animateBgKey = ref(0)                 // Incrementing key to force re-render
+  const editing = ref(false)                  // True if editing this cell
+  const emit = defineEmits(['keydown'])       // Emit when closing the modal
+  const errmsg = ref(null)                    // Error message for this cell
   const root = ref(null)                      // Reference to root elem
   const selected = ref(false)                 // True if cell is selected
-  const editing = ref(false)                  // True if editing this cell
-  // const value = ref(props.column.text?.(props.item))  // Value of the cell
-  const errmsg = ref(null)                    // Error message for this cell
-  const emit = defineEmits(['keydown'])       // Emit when closing the modal
   const value = ref(null)                     // Value of the cell
 
   // On Before Mount
@@ -72,6 +77,7 @@
       input?.setSelectionRange(select_start, select_end)
     } else {
       value.value = utils.getItemValue(props.item, props.column)
+      errmsg.value = null
     }
   })
 
@@ -95,7 +101,7 @@
     isEditing: () => editing.value,
     isSelected: () => selected.value,
     setEditing: (newval) => editing.value = newval,
-    setError: (errmsg) => errmsg.value = errmsg,
+    setError: (msg) => errmsg.value = msg,
     setSelected: (newval) => selected.value = newval,
     setValue: (newval) => value.value = newval,
   })
@@ -167,6 +173,10 @@
       --animatebg-end: #f812;
       background-color: #f812;
       box-shadow: inset 0px 1px 2px #0005;
+    }
+    &.error .tdwrap {
+      border: 2px solid var(--darkbg-red0);
+      background-color: #c212;
     }
     &.modified::before {
       content: '';

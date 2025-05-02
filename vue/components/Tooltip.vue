@@ -27,15 +27,19 @@
     text: {type:String, default:null},                // Tooltip text (or define #content slow)
     html: {type:String, default:null},                // Tooltip html (or define #content slow)
     width: {type:String, default:'max-content'},      // Tooltip width
-    trigger: {type:String, default:'hover'},          // Trigger type: {hover, click}
+    trigger: {type:String, default:'hover'},          // Trigger type: {hover, click, always}
   })
 
   // On Mounted
   // Setup event listeners
-  onMounted(function() {
+  onMounted(async function() {
     if (props.trigger == 'click') {
       document.addEventListener('click', onDocumentClick)
       document.addEventListener('keydown', onKeyDown)
+    } else if (props.trigger == 'always') {
+      visible.value = true
+      await nextTick()
+      updateTooltipStyle()
     }
   })
 
@@ -53,7 +57,7 @@
   // On Click
   // Show the tooltip
   const onClick = async function(event) {
-    if (props.trigger != 'click') return
+    if (props.trigger != 'click') { return }
     event.stopPropagation()
     clearTimeout(timeout_show)
     clearTimeout(timeout_hide)

@@ -205,6 +205,7 @@
       var oldval = utils.getItemValue(props.items[row], column)
       var newval = getCell(row, col).$el.querySelector('input').value
       if (oldval != newval) {
+        getCell(row, col).setError(null)
         emit('itemUpdated', event, row, col, newval)
         addUndo(row, col, oldval, newval)
       } else {

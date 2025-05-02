@@ -23,7 +23,7 @@
 </template>
 
 <script setup>
-  import {onMounted, ref, watch, watchEffect} from 'vue'
+  import {nextTick, onMounted, ref, watch, watchEffect} from 'vue'
   import {EditTable, LayoutPaper} from '@/components'
   import {useUrlParams} from '@/composables'
   import {api, utils} from '@/utils'
@@ -152,18 +152,24 @@
     newval = column.clean?.(newval) ?? newval
     var params = {[column.name]: newval}
     try {
+      // Update server if value changed
       var oldval = trx[column.name]
       if (newval != oldval) {
         var {data} = await api.Budget.updateTransaction(trx.id, params)
         trxs.value.items[row] = data
         edittable.value.getCell(row, col).animateBg(isundo ? '#8404':'#0a48')
       }
+      // If saved from input enter key, select the next item
       if (event?.type === 'keydown' && event.key === 'Enter') {
         if (event.shiftKey) { edittable.value.selectUp(event) }
         else { edittable.value.selectDown(event) }
       }
     } catch (err) {
-      console.error('ERROR', err)
+      // Set an error message on the cell
+      var message = err.response?.data?.errors?.[column.name]
+      edittable.value.getCell(row, col).setError(message)
+      await nextTick()
+      edittable.value.getCell(row, col).$el.querySelector('input').focus()
     }
   }
 
