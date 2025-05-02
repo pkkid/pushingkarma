@@ -11,10 +11,14 @@
     <!-- Not Editing -->
     <template v-else>
       <slot name='viewing' :column='column' :item='item'>
-        <Tooltip :html='tooltip' :width='tooltipWidth'>
+        <Tooltip v-if='tooltip' :html='tooltip' :width='tooltipWidth'>
           <span v-if='column.html' class='fakeinput' v-html='column.html(item)'/>
           <span v-else class='fakeinput'>{{value}}</span>
         </Tooltip>
+        <template v-else>
+          <span v-if='column.html' class='fakeinput' v-html='column.html(item)'/>
+          <span v-else class='fakeinput'>{{value}}</span>
+        </template>
       </slot>
     </template>
   </Column>
@@ -56,15 +60,19 @@
   })
 
   // Watch Editing
-  // focus the input and select its text
+  // If editing: focus the input and select its text
+  // Otherwise: reset the value back
   watch(editing, async function(newval) {
-    if (!newval) { return }
-    await nextTick()
-    const input = root.value.$el.querySelector('input')
-    const select_start = props.column.selectall ? 0 : input.value.length
-    const select_end = input.value.length
-    input?.focus()
-    input?.setSelectionRange(select_start, select_end)
+    if (newval) {
+      await nextTick()
+      const input = root.value.$el.querySelector('input')
+      const select_start = props.column.selectall ? 0 : input.value.length
+      const select_end = input.value.length
+      input?.focus()
+      input?.setSelectionRange(select_start, select_end)
+    } else {
+      value.value = utils.getItemValue(props.item, props.column)
+    }
   })
 
   // Set Success
