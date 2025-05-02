@@ -220,9 +220,9 @@
       .date { width:105px; }
       .category { width:150px; }
       .payee { width:290px; }
-      .amount { width:90px; text-align:right; }
+      .amount { width:100px; text-align:right; }
       .approved { width:32px; text-align:center; }
-      .comment { width:223px; }
+      .comment { width:213px; }
       .tdwrap.account {
         display: flex;
         align-items: center;

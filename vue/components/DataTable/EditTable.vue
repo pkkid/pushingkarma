@@ -140,7 +140,6 @@
   // NOTE: We don't allow editing if column.text is not defined, but the
   // event is still emitted in case you want to handle it upstream.
   const setSelected = async function(event, row, col, editing) {
-    if (!props.columns[col].editable) { return }
     if (row == selected.value.row && col == selected.value.col && editing == selected.value.editing) { return }
     var column = props.columns[col]
     getCell(selected.value.row, selected.value.col)?.setSelected(false)
@@ -178,6 +177,7 @@
   // On Item Click
   // Select the current cell
   const onItemClick = function(event, row, col) {
+    if (!props.columns[col].editable) { return }
     if (getCell(row, col)?.isEditing()) { return }
     setSelected(event, row, col, false)
   }
@@ -185,6 +185,7 @@
   // On Item DblClick
   // Start editing the current cell
   const onItemDblClick = async function(event, row, col) {
+    if (!props.columns[col].editable) { return }
     setSelected(event, row, col, true)
   }
 
@@ -206,6 +207,8 @@
       if (oldval != newval) {
         emit('itemUpdated', event, row, col, newval)
         addUndo(row, col, oldval, newval)
+      } else {
+        selectDown(event)
       }
     }
   }
