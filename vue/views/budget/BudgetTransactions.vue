@@ -23,7 +23,7 @@
 </template>
 
 <script setup>
-  import {onMounted, reactive, ref, watch, watchEffect} from 'vue'
+  import {onMounted, ref, watch, watchEffect} from 'vue'
   import {EditTable, LayoutPaper} from '@/components'
   import {useUrlParams} from '@/composables'
   import {api, utils} from '@/utils'
@@ -38,10 +38,11 @@
       text: trx => utils.formatDate(trx.date, 'MMM DD, YYYY'),
       class: trx => trx.date != trx.original_date ? 'modified' : '',
       default: trx => trx.original_date,
+      clean: newval => utils.formatDate(newval, 'YYYY-MM-DD'),
     },{
       name:'category', title:'Category', editable:true,
       text: trx => trx.category?.name,
-      choices: () => categoryChoices(),
+      choices: (trx) => categoryChoices(),
       selectall: true,
     },{
       name:'payee', title:'Payee', editable:true,
@@ -55,6 +56,7 @@
       text: trx => utils.usd(trx.amount),
       class: trx => trx.amount != trx.original_amount ? 'modified' : '',
       default: trx => trx.original_amount,
+      clean: newval => newval.replace('$','').replace(',',''),
     },{
       name:'approved', title:'X', editable:true,
       html: trx => trx.approved ? `<i class='mdi mdi-check'/>` : '',
@@ -113,6 +115,13 @@
     return utils.tmpl(`<i class='icon' style='--mask:url(${path})'/>`, {path})
   }
 
+  // Original Tooltip
+  // Tooltip shows the original value of the cell
+  const origTooltip = function(trx, column) {
+    var origval = column.text(trx)
+    return utils.tmpl(`{{val}}<div class='subtext'>Originally {{origval}}</div>`, {origval})
+  }
+
   // On Selected
   // Handle item selected event
   const onItemSelected = function(event, row, col, editing) {
@@ -129,8 +138,7 @@
   const onItemUpdated = async function(event, row, col, newval, isundo=false) {
     var column = COLUMNS[col]
     var trx = trxs.value.items[row]
-    if (column.name == 'date') { newval = utils.formatDate(new Date(newval), 'YYYY-MM-DD') }
-    if (column.name == 'amount') { newval = newval.replace('$', '') }
+    newval = column.clean?.(newval) ?? newval
     var params = {[column.name]: newval}
     try {
       var oldval = trx[column.name]

@@ -69,16 +69,18 @@ export function escapeHtml(str) {
 
 // Format Date
 // Format a date using various format strings:
-export function formatDate(value, format, local=true) {
+export function formatDate(value, format) {
   format = format || 'MMM DD, YYYY'
-  if (!value) return ''
-  // This crazy check is to properly handle timezones when
-  // the date is a string in the format YYYY-MM-DD.
-  var date = local && typeof value == 'string'
-    && /^\d{4}-\d{2}-\d{2}$/.test(value)
-    ? new Date(value + 'T00:00:00')
-    : new Date(value)
-  if (isNaN(date)) return ''
+  if (!value) { return '' }
+  // Always parse as local time
+  var date
+  if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    const [year, month, day] = value.split('-').map(Number)
+    date = new Date(year, month-1, day)
+  } else {
+    date = new Date(value)
+  }
+  if (isNaN(date)) { return '' }
   // Get the date components
   const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
   const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August',

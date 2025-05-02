@@ -19,6 +19,17 @@
   import {DataTable, EditTableCell} from '@/components'
   import hotkeys from 'hotkeys-js'
 
+  // Columns is an array of column objects containing the following properties:
+  //  name:         Column name (used as key in items)
+  //  text:         Func(item) to get text to display  
+  //  html:         Func(item) Optionally specify html to display instead of text (editing will be disabled)
+  //  clean:        Func(newval) to clean user value before sending to server
+  //  choices:      Func(item) should return all available choices for column (for select dropdown)
+  //  class:        Func(item) to add additional classes to tr of the table
+  //  default:      Func(item) to get default value for item (ctrl+backspace sets this value)
+  //  selectall:    If true, select all input text when editing starts
+  //  tooltip:      Func(item) to get tooltip html (if not defined, no tooltip is shown)
+  //  tooltipWidth: (str) Set a static width for the tooltip (ex: 350px)
   var prevscope = null                            // Previous hotkeys-js scope
   var undostack = []                              // Undo stack {row, col, oldval, newval}
   var redostack = []                              // Redo stack {row, col, oldval, newval}
