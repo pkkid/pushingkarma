@@ -4,10 +4,8 @@
     <!-- Editing -->
     <template v-if='editing'>
       <slot name='editing' :column='column' :item='item'>
-        <SelectInput v-if='column.choices' :choices='column.choices()'
-          v-model='value' @keydown='emit("keydown", $event, row, col)'/>
-        <input v-else v-model='value' spellcheck='false' autocomplete='off'
-          @keydown='emit("keydown", $event)'/>
+        <SelectInput v-if='column.choices' :choices='column.choices()' v-model='value' @keydown='emit("keydown", $event, row, col)'/>
+        <input v-else v-model='value' spellcheck='false' autocomplete='off' @keydown='emit("keydown", $event)'/>
       </slot>
     </template>
     <!-- Not Editing -->
@@ -23,31 +21,38 @@
 </template>
 
 <script setup>
-  import {nextTick, ref, watch} from 'vue'
+  import {nextTick, onBeforeMount, ref, watch} from 'vue'
   import {DataTableColumn as Column} from '@/components'
   import {SelectInput, Tooltip} from '@/components'
+  import {utils} from '@/utils'
 
-  
   const props = defineProps({
-    column: {type:Object},                  // Column object
-    item: {type:Object},                    // Transaction object
-    tooltip: {type:String},                 // Tooltip text
-    tooltipWidth: {type:String},            // Tooltip width
+    item: {type:Object},                      // Transaction object
+    column: {type:Object},                    // Column object
+    tooltip: {type:String},                   // Tooltip text
+    tooltipWidth: {type:String},              // Tooltip width
   })
-  var animateBgTimeout = null               // Timeout for success animation
-  const animateBgColor = ref(null)          // True if cell successfully edited
-  const animateBgKey = ref(0)               // Incrementing key to force re-render
-  const root = ref(null)                    // Reference to root elem
-  const selected = ref(false)               // True if cell is selected
-  const editing = ref(false)                // True if editing this cell
-  const value = ref(props.column.text?.(props.item))  // Value of the cell
-  const errmsg = ref(null)                  // Error message for this cell
-  const emit = defineEmits(['keydown'])     // Emit when closing the modal
+  var animateBgTimeout = null                 // Timeout for success animation
+  const animateBgColor = ref(null)            // True if cell successfully edited
+  const animateBgKey = ref(0)                 // Incrementing key to force re-render
+  const root = ref(null)                      // Reference to root elem
+  const selected = ref(false)                 // True if cell is selected
+  const editing = ref(false)                  // True if editing this cell
+  // const value = ref(props.column.text?.(props.item))  // Value of the cell
+  const errmsg = ref(null)                    // Error message for this cell
+  const emit = defineEmits(['keydown'])       // Emit when closing the modal
+  const value = ref(null)                     // Value of the cell
+
+  // On Before Mount
+  // Set the initial value
+  onBeforeMount(function() {
+    value.value = utils.getItemValue(props.item, props.column)
+  })
 
   // Watch Item
   // Update the value when the item changes
   watch(() => props.item, function(newval) {
-    value.value = props.column.text?.(newval)
+    value.value = utils.getItemValue(newval, props.column)
   })
 
   // Watch Editing

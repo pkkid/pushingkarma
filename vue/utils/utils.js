@@ -162,6 +162,13 @@ export function formatDate(value, format) {
   return result
 }
 
+// Get Value
+// Get value of the cell in EditTable.vue
+export function getItemValue(item, column, text=null) {
+  text = text || column.text?.(item) || item[column.name]
+  return column.format?.(text) || text
+}
+
 // Insert Commas
 // Add commas to the specified number.
 export function intComma(value) {

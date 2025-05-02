@@ -35,10 +35,11 @@
       tooltip: trx => utils.tmpl(`{{account.name}}<div class='subtext'>ID: {{id}}</div>`, trx),
     },{
       name:'date', title:'Date', editable:true,
-      text: trx => utils.formatDate(trx.date, 'MMM DD, YYYY'),
+      format: text => utils.formatDate(text, 'YYYY-MM-DD'),
       class: trx => trx.date != trx.original_date ? 'modified' : '',
       default: trx => trx.original_date,
       clean: newval => utils.formatDate(newval, 'YYYY-MM-DD'),
+      tooltip: trx => origTooltip(trx, 'date'),
     },{
       name:'category', title:'Category', editable:true,
       text: trx => trx.category?.name,
@@ -46,23 +47,22 @@
       selectall: true,
     },{
       name:'payee', title:'Payee', editable:true,
-      text: trx => trx.payee,
       class: trx => trx.payee != trx.original_payee ? 'modified' : '',
-      tooltip: trx => trx.payee.length > 35 ? trx.payee : null,
+      tooltip: trx => payeeTooltip(trx),
       tooltipWidth: '350px',
       default: trx => trx.original_payee,
     },{
       name:'amount', title:'Amount', editable:true,
-      text: trx => utils.usd(trx.amount),
+      format: text => utils.usd(text),
       class: trx => trx.amount != trx.original_amount ? 'modified' : '',
       default: trx => trx.original_amount,
       clean: newval => newval.replace('$','').replace(',',''),
+      tooltip: trx => origTooltip(trx, 'amount'),
     },{
       name:'approved', title:'X', editable:true,
       html: trx => trx.approved ? `<i class='mdi mdi-check'/>` : '',
     },{
       name:'comment', title:'Comment', editable:true,
-      text: trx => trx.comment,
   }]
 
   var cancelctrl = null                       // Cancel controller
@@ -96,7 +96,6 @@
   // Fetch next page of transactions
   const getNextPage = async function(event) {
     if (!trxs.value?.next) { return }
-    console.log('Loading Next Page')
     cancelctrl = api.cancel(cancelctrl)
     try {
       var {data} = await axios.get(trxs.value.next, {signal:cancelctrl.signal})
@@ -117,9 +116,21 @@
 
   // Original Tooltip
   // Tooltip shows the original value of the cell
-  const origTooltip = function(trx, column) {
-    var origval = column.text(trx)
-    return utils.tmpl(`{{val}}<div class='subtext'>Originally {{origval}}</div>`, {origval})
+  const origTooltip = function(trx, colname) {
+    var column = COLUMNS.find(c => c.name == colname)
+    var origval = utils.getItemValue(trx, column, trx[`original_${colname}`])
+    var curval = utils.getItemValue(trx, column)
+    if (origval == curval) { return null }
+    return utils.tmpl(`Originally: {{origval}}<div class='subtext'>alt+backspace to reset</div>`, {origval})
+  }
+
+  // Payee Tooltip
+  // Tooltip shows the original value of the cell
+  const payeeTooltip = function(trx) {
+    var tooltip = origTooltip(trx, 'payee')
+    if (tooltip) { return tooltip }
+    if (trx.payee.length > 35) { return utils.tmpl(`{{payee}}`, trx) }
+    return null
   }
 
   // On Selected

@@ -17,11 +17,14 @@
 <script setup>
   import {onBeforeUnmount, onMounted, ref} from 'vue'
   import {DataTable, EditTableCell} from '@/components'
+  import {utils} from '@/utils'
   import hotkeys from 'hotkeys-js'
 
   // Columns is an array of column objects containing the following properties:
-  //  name:         Column name (used as key in items)
-  //  text:         Func(item) to get text to display  
+  //  name (req):   Column name (used as key in items)
+  //  title (req):  Column title (displayed in header)
+  //  editable:     If true, cell is editable (no input if using html option)
+  //  text:         Func(item) to get text to display
   //  html:         Func(item) Optionally specify html to display instead of text (editing will be disabled)
   //  clean:        Func(newval) to clean user value before sending to server
   //  choices:      Func(item) should return all available choices for column (for select dropdown)
@@ -61,7 +64,7 @@
     hotkeys('enter, shift+enter', 'edittable', function(event) { startEditing(event) })
     hotkeys('ctrl+z', 'edittable', function(event) { undo(event) })
     hotkeys('ctrl+y', 'edittable', function(event) { redo(event) })
-    hotkeys('ctrl+backspace', 'edittable', function(event) { resetToDefault(event) })
+    hotkeys('alt+backspace', 'edittable', function(event) { resetToDefault(event) })
     hotkeys.setScope('edittable')
   })
 
@@ -109,7 +112,7 @@
     var index = editable.indexOf(col)
     if (index > 0) {
       var newcol = editable[index-1]
-      editing = props.columns[newcol].text ? editing : false
+      editing = props.columns[newcol].html ? false : editing
       setSelected(event, row, newcol, editing)
     }
   }
@@ -137,13 +140,14 @@
   // NOTE: We don't allow editing if column.text is not defined, but the
   // event is still emitted in case you want to handle it upstream.
   const setSelected = async function(event, row, col, editing) {
+    if (!props.columns[col].editable) { return }
     if (row == selected.value.row && col == selected.value.col && editing == selected.value.editing) { return }
     var column = props.columns[col]
     getCell(selected.value.row, selected.value.col)?.setSelected(false)
     getCell(selected.value.row, selected.value.col)?.setEditing(false)
-    selected.value = {row:row, col:col, editing:column?.text ? editing : false}
+    selected.value = {row:row, col:col, editing:column?.html ? false : editing}
     getCell(row, col)?.setSelected(row !== null ? true : false)
-    getCell(row, col)?.setEditing(column?.text ? editing : false)
+    getCell(row, col)?.setEditing(column?.html ? false : editing)
     emit('itemSelected', event, row, col, editing)
   }
 
@@ -174,7 +178,6 @@
   // On Item Click
   // Select the current cell
   const onItemClick = function(event, row, col) {
-    if (!props.columns[col].editable) { return }
     if (getCell(row, col)?.isEditing()) { return }
     setSelected(event, row, col, false)
   }
@@ -182,7 +185,6 @@
   // On Item DblClick
   // Start editing the current cell
   const onItemDblClick = async function(event, row, col) {
-    if (!props.columns[col].editable) { return }
     setSelected(event, row, col, true)
   }
 
@@ -199,7 +201,7 @@
     else if (event.key == 'Enter') {
       event.preventDefault()
       var column = props.columns[col]
-      var oldval = column.text(props.items[row])
+      var oldval = utils.getItemValue(props.items[row], column)
       var newval = getCell(row, col).$el.querySelector('input').value
       if (oldval != newval) {
         emit('itemUpdated', event, row, col, newval)
@@ -245,7 +247,7 @@
     var {row, col} = selected.value
     var column = props.columns[col]
     if (!column.default) { return }
-    var oldval = column.text(props.items[row])
+    var oldval = utils.getItemValue(props.items[row], column)
     var newval = column.default(props.items[row])
     if (oldval != newval) {
       emit('itemUpdated', event, row, col, newval)

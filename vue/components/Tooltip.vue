@@ -155,6 +155,7 @@
       position: absolute;
       transition: all 0.4s ease;
       user-select: text;
+      text-align: left;
       z-index: 11;
       &.loaded { opacity: 1; }
     }
