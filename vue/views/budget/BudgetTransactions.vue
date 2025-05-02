@@ -189,6 +189,7 @@
       var params = {search:search.value}
       var {data} = await api.Budget.listTransactions(params, cancelctrl.signal)
       trxs.value = data
+      edittable.value?.deselect(null, false)
       edittable.value?.clearUndoRedoStack()
     } catch (err) {
       if (!api.isCancel(err)) { throw(err) }

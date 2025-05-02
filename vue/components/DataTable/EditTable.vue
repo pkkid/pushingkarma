@@ -152,10 +152,11 @@
 
   // Deselect
   // Deselect the current cell
-  const deselect = function(event) {
-    event.preventDefault()
-    var newrow = selected.value.editing ? selected.value.row : null
-    var newcol = selected.value.editing ? selected.value.col : null
+  const deselect = function(event, editing=null) {
+    event?.preventDefault()
+    editing = editing ?? selected.value.editing
+    var newrow = editing ? selected.value.row : null
+    var newcol = editing ? selected.value.col : null
     setSelected(event, newrow, newcol, false)
   }
 
