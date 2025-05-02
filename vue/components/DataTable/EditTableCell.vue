@@ -13,7 +13,7 @@
     <!-- Not Editing -->
     <template v-else>
       <slot name='viewing' :column='column' :item='item'>
-        <Tooltip :text='tooltip' :width='tooltipWidth'>
+        <Tooltip :html='tooltip' :width='tooltipWidth'>
           <span v-if='column.html' class='fakeinput' v-html='column.html(item)'/>
           <span v-else class='fakeinput'>{{value}}</span>
         </Tooltip>

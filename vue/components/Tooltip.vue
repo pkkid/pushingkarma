@@ -2,7 +2,10 @@
   <div class='tooltip-container' ref='container' @mouseenter='onMouseEnter'
     @mouseleave='onMouseLeave' @click='onClick'>
     <div v-if='visible' class='tooltip' ref='tooltip' :class='position' :style='tstyle'>
-      <slot name='tooltip'><div v-html='text'/></slot>
+      <slot name='tooltip'>
+        <template v-if='html'><div v-html='html'/></template>
+        <template v-else>{{text}}</template>
+      </slot>
     </div>
     <slot></slot>
   </div>
@@ -22,6 +25,7 @@
     position: {type:String, default:'top'},           // Tooltip position {topleft,top,topright,righttop,right,rightbottom,etc.}
     delay: {type:Number, default:500},                // Delay before showing tooltip
     text: {type:String, default:null},                // Tooltip text (or define #content slow)
+    html: {type:String, default:null},                // Tooltip html (or define #content slow)
     width: {type:String, default:'max-content'},      // Tooltip width
     trigger: {type:String, default:'hover'},          // Trigger type: {hover, click}
   })
@@ -83,7 +87,7 @@
   // props.delay then sets tooltip visisbility to true
   const onMouseEnter = function() {
     if (props.trigger != 'hover') { return }
-    if (!props.text && !slots.tooltip) { return }
+    if (!props.text && !props.html && !slots.tooltip) { return }
     clearTimeout(timeout_hide)
     timeout_show = setTimeout(async function() {
       visible.value = true
