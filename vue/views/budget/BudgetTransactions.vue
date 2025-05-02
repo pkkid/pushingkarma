@@ -66,6 +66,7 @@
   }]
 
   var cancelctrl = null                       // Cancel controller
+  var updating = false                        // True if updating a transaction
   const loading = ref(false)                  // True to show loading indicator
   const {search} = useUrlParams({search:{}})  // Method & path url params
   const _search = ref(search.value)           // Temp search before enter
@@ -147,6 +148,7 @@
   // On Item Updated
   // Handle item updated event
   const onItemUpdated = async function(event, row, col, newval, isundo=false) {
+    if (updating) { return } else { updating = true } 
     var column = COLUMNS[col]
     var trx = trxs.value.items[row]
     newval = column.clean?.(newval) ?? newval
@@ -170,6 +172,8 @@
       edittable.value.getCell(row, col).setError(message)
       await nextTick()
       edittable.value.getCell(row, col).$el.querySelector('input').focus()
+    } finally {
+      updating = false
     }
   }
 
