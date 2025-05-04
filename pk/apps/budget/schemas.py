@@ -2,7 +2,7 @@
 import datetime
 from decimal import Decimal
 from ninja import Schema
-from typing import List, Optional
+from typing import Dict, List, Optional
 from pydantic import Field
 
 
@@ -13,7 +13,6 @@ class AccountRulesSchema(Schema):
         payee: str = Field(..., description='Column name for transaction payee')
         amount: str = Field(..., description='Column name for transaction amount')
         balance: Optional[str] = Field(None, description='Column name for current balance')
-
     file_pattern: Optional[str] = Field(None, description='Fnmatch file name pattern to match')
     date_format: Optional[str] = Field(None, description='Date format used in imported file')
     transactions: Optional[str] = Field(None, description='XPath to transactions in qfx file')
@@ -50,7 +49,7 @@ class AccountPatchSchema(Schema):
 
 class CategorySchema(Schema):
     id: Optional[int] = Field(None, description='Internal category id')
-    url: str = Field(..., description='URL for the category resource')
+    url: Optional[str] = Field(None, description='URL for the category resource')
     name: str = Field(..., description='Name of this cateogry')
     exclude: Optional[bool] = Field(None, description='Exclude this category from reports')
     sortid: Optional[int] = Field(None, description='User sort id when listing categories')
@@ -87,6 +86,12 @@ class TransactionPatchSchema(Schema):
 
 class SortSchema(Schema):
     sortlist: List[int] = Field(..., description='List of items ids in sorted order')
+
+
+class SummarizeCategoriesByMonthSchema(Schema):
+    class SummarizeCategoryMonths(CategorySchema):
+        months: Dict[str, Decimal] = Field(..., description='Dict of {month: total} for the category')
+    items: List[SummarizeCategoryMonths] = Field(..., description='List of categories containing month summaries.')
 
 
 class ImportResponseSchema(Schema):

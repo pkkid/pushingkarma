@@ -1,22 +1,23 @@
 # encoding: utf-8
 import logging
+from datetime import datetime
 from django_searchquery import searchfields as sf
 from django_searchquery.search import Search
+from django.db.models import Sum
+from django.db.models.functions import TruncMonth
 from django.forms.models import model_to_dict
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
+from itertools import groupby
 from ninja import Body, File, Path, Query, Router
-from ninja.files import UploadedFile
 from ninja.errors import HttpError
+from ninja.files import UploadedFile
 from pk.utils.django import get_object_or_none
 from pk.utils.ninja import PageSchema, paginate
 from typing import List
-from .trxmanager import TransactionManager
+from . import schemas
 from .models import Account, Category, Transaction
-from .schemas import AccountSchema, AccountPatchSchema
-from .schemas import CategorySchema, CategoryPatchSchema
-from .schemas import TransactionSchema, TransactionPatchSchema
-from .schemas import SortSchema, ImportResponseSchema
+from .trxmanager import TransactionManager
 log = logging.getLogger(__name__)
 router = Router()
 
@@ -46,19 +47,19 @@ TRANSACTIONSEARCHFIELDS = {
 # Accounts
 # ---------------
 
-@router.get('/accounts/{pk}', response=AccountSchema, exclude_unset=True, url_name='account')
+@router.get('/accounts/{pk}', response=schemas.AccountSchema, exclude_unset=True, url_name='account')
 def get_account(request,
       pk: int=Path(..., description='Primary key of account to get')):
     """ List details for the specified account. """
     account = get_object_or_404(Account, user=request.user, id=pk)
-    response = AccountSchema.from_orm(account)
+    response = schemas.AccountSchema.from_orm(account)
     return response
 
 
-@router.patch('/accounts/{pk}', response=AccountSchema, exclude_unset=True)
+@router.patch('/accounts/{pk}', response=schemas.AccountSchema, exclude_unset=True)
 def update_account(request,
       pk: int=Path(..., description='Primary key of account to update'),
-      data: AccountPatchSchema=Body(...)):
+      data: schemas.AccountPatchSchema=Body(...)):
     """ Update the specified account. """
     item = get_object_or_404(Account, user=request.user, id=pk)
     fields = data.dict(exclude_unset=True)
@@ -76,7 +77,7 @@ def delete_account(request,
     return HttpResponse(status=204)
 
 
-@router.get('/accounts', response=PageSchema(AccountSchema), exclude_unset=True)
+@router.get('/accounts', response=PageSchema(schemas.AccountSchema), exclude_unset=True)
 def list_accounts(request,
       search: str=Query('', description='Search term to filter accounts'),
       page: int=Query(1, description='Page number of results to return')):
@@ -94,8 +95,8 @@ def list_accounts(request,
     return response
 
 
-@router.patch('/sort_accounts', response=PageSchema(AccountSchema), exclude_unset=True)
-def sort_accounts(request, data:SortSchema=Body(...)):
+@router.patch('/sort_accounts', response=PageSchema(schemas.AccountSchema), exclude_unset=True)
+def sort_accounts(request, data:schemas.SortSchema=Body(...)):
     """ Sort accounts for the logged in user. """
     items = Account.objects.filter(user=request.user, id__in=data.sortlist)
     if len(items) != len(data.sortlist):
@@ -110,19 +111,19 @@ def sort_accounts(request, data:SortSchema=Body(...)):
 # Categories
 # ---------------
 
-@router.get('/categories/{pk}', response=CategorySchema, exclude_unset=True, url_name='category')
+@router.get('/categories/{pk}', response=schemas.CategorySchema, exclude_unset=True, url_name='category')
 def get_category(request,
       pk: int=Path(..., description='Primary key of category to get')):
     """ List details for the specified category. """
     category = get_object_or_404(Category, user=request.user, id=pk)
-    response = CategorySchema.from_orm(category)
+    response = schemas.CategorySchema.from_orm(category)
     return response
 
 
-@router.patch('/categories/{pk}', response=CategorySchema, exclude_unset=True)
+@router.patch('/categories/{pk}', response=schemas.CategorySchema, exclude_unset=True)
 def update_category(request,
       pk: int=Path(..., description='Primary key of category to update'),
-      data: CategoryPatchSchema=Body(...)):  # noqa
+      data: schemas.CategoryPatchSchema=Body(...)):  # noqa
     """ Update the specified category. """
     item = get_object_or_404(Category, user=request.user, id=pk)
     fields = data.dict(exclude_unset=True)
@@ -139,7 +140,7 @@ def delete_category(request,
     return HttpResponse(status=204)
 
 
-@router.get('/categories', response=PageSchema(CategorySchema), exclude_unset=True)
+@router.get('/categories', response=PageSchema(schemas.CategorySchema), exclude_unset=True)
 def list_categories(request,
       search: str=Query('', description='Search term to filter categories'),
       page: int=Query(1, description='Page number of results to return')):
@@ -151,8 +152,8 @@ def list_categories(request,
     return data
 
 
-@router.patch('/sort_categories', response=PageSchema(CategorySchema), exclude_unset=True)
-def sort_categories(request, data:SortSchema=Body(...)):
+@router.patch('/sort_categories', response=PageSchema(schemas.CategorySchema), exclude_unset=True)
+def sort_categories(request, data:schemas.SortSchema=Body(...)):
     """ Sort categories for the logged in user. """
     items = Category.objects.filter(user=request.user, id__in=data.sortlist)
     if len(items) != len(data.sortlist):
@@ -167,21 +168,21 @@ def sort_categories(request, data:SortSchema=Body(...)):
 # Transactions
 # ---------------
 
-@router.get('/transactions/{pk}', response=TransactionSchema, exclude_unset=True, url_name='transaction')
+@router.get('/transactions/{pk}', response=schemas.TransactionSchema, exclude_unset=True, url_name='transaction')
 def get_transaction(request,
       pk: int=Path(..., description='Primary key of transaction to get')):
     """ List details for the specified transaction. """
     trx = get_object_or_404(Transaction, user=request.user, id=pk)
-    response = TransactionSchema.from_orm(trx)
+    response = schemas.TransactionSchema.from_orm(trx)
     response.account = dict(url=trx.account.url, id=trx.account.id, name=trx.account.name)
     response.category = dict(url=trx.category.url, id=trx.category.id, name=trx.category.name) if trx.category else None
     return response
 
 
-@router.patch('/transactions/{pk}', response=TransactionSchema, exclude_unset=True)
+@router.patch('/transactions/{pk}', response=schemas.TransactionSchema, exclude_unset=True)
 def update_transaction(request,
       pk: int=Path(..., description='Primary key of transaction to update'),
-      data: TransactionPatchSchema=Body(...)):  # noqa
+      data: schemas.TransactionPatchSchema=Body(...)):  # noqa
     """ Update the specified transaction. """
     item = get_object_or_404(Transaction, user=request.user, id=pk)
     fields = data.dict(exclude_unset=True)
@@ -199,7 +200,7 @@ def update_transaction(request,
     return get_transaction(request, pk)
 
 
-@router.get('/transactions', response=PageSchema(TransactionSchema), exclude_unset=True)
+@router.get('/transactions', response=PageSchema(schemas.TransactionSchema), exclude_unset=True)
 def list_transactions(request,
       search: str=Query('', description='Search term to filter transactions'),
       page: int=Query(1, description='Page number of results to return')):
@@ -220,7 +221,7 @@ def list_transactions(request,
     return response
 
 
-@router.post('/import_transactions', response=List[ImportResponseSchema], exclude_unset=True)
+@router.post('/import_transactions', response=List[schemas.ImportResponseSchema], exclude_unset=True)
 def import_transactions(request,
       files: List[UploadedFile]=File(..., description='List of transaction files to import (.csv or .qfx)'),
       safe: bool=Body(False, description='Safe import, unique transactions based on date, payee and amount.')):
@@ -230,6 +231,35 @@ def import_transactions(request,
         trxmanager = TransactionManager(request.user, safe, save=True)
         metrics = trxmanager.import_file(fileobj.name, fileobj.file)
         response.append(metrics)
+    return response
+
+
+# ---------------
+# Summaries
+# ---------------
+
+@router.get('/summarize_months', response=schemas.SummarizeCategoriesByMonthSchema, exclude_unset=True)
+def summarize_months(request,
+      search: str=Query('', description='Search term to filter transactions')):
+    """ Summarize spending by category and month. """
+    categories = {c.id:c for c in Category.objects.filter(user=request.user)}
+    if not search:
+        now = datetime.now()
+        search = search or f'date>"{now.strftime(r'%b')} {now.year-1}"'
+    trxs = Transaction.objects.filter(user=request.user)
+    trxs = Search(TRANSACTIONSEARCHFIELDS).get_queryset(trxs, search)
+    summary = trxs.values('category__id').annotate(month=TruncMonth('date'), saved=Sum('amount'))
+    summary = summary.order_by('category__sortid', 'month')
+    # Build the response object from the django summary
+    response = dict(items=[])
+    for catid, group in groupby(summary, key=lambda x: x['category__id']):
+        cat = categories.get(catid)
+        response['items'].append({
+            'id': cat.id if cat else None,
+            'url': cat.url if cat else None,
+            'name': cat.name if cat else 'Uncategorized',
+            'months': {str(row['month']): round(row['saved'] or 0, 2) for row in group}
+        })
     return response
 
 
