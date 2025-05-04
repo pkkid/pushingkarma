@@ -3,7 +3,7 @@ import logging
 from datetime import datetime
 from django_searchquery import searchfields as sf
 from django_searchquery.search import Search
-from django.db.models import Sum
+from django.db.models import Max, Min, Sum
 from django.db.models.functions import TruncMonth
 from django.forms.models import model_to_dict
 from django.http import HttpResponse
@@ -250,8 +250,9 @@ def summarize_months(request,
     trxs = Search(TRANSACTIONSEARCHFIELDS).get_queryset(trxs, search)
     summary = trxs.values('category__id').annotate(month=TruncMonth('date'), saved=Sum('amount'))
     summary = summary.order_by('category__sortid', 'month')
+    dates = trxs.aggregate(mindate=Min('date'), maxdate=Max('date'))
     # Build the response object from the django summary
-    response = dict(items=[])
+    response = dict(minmonth=dates['mindate'], maxmonth=dates['maxdate'], items=[])
     for catid, group in groupby(summary, key=lambda x: x['category__id']):
         cat = categories.get(catid)
         response['items'].append({

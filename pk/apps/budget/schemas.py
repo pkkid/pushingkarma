@@ -91,6 +91,8 @@ class SortSchema(Schema):
 class SummarizeCategoriesByMonthSchema(Schema):
     class SummarizeCategoryMonths(CategorySchema):
         months: Dict[str, Decimal] = Field(..., description='Dict of {month: total} for the category')
+    minmonth: datetime.date = Field(..., description='Earliest month displayed')
+    maxmonth: datetime.date = Field(..., description='Latest month displayed')
     items: List[SummarizeCategoryMonths] = Field(..., description='List of categories containing month summaries.')
 
 
