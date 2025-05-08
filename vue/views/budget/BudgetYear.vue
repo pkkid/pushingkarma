@@ -48,52 +48,41 @@
   // Update columns when summary changes
   const columns = computed(function() {
     if (!summary.value?.items) { return null }
-    var cols = []
-    // Category Column
-    cols.push({
-      name:'category', title:'Category', editable:false,
-      html: cat => cat.name,
-    })
-    // Month Columns
-    var month = utils.newDate(summary.value.minmonth)
-    for (var i=0; i<12; i++) {
-      var key = utils.formatDate(month, 'YYYY-MM-DD')
-      cols.push((function(mon, key) {
+    return [{
+        name:'category', title:'Category', editable:false,
+        html: cat => cat.name,
+      }, ...Array.from({length:12}, (_, i) => {
+        var month = utils.newDate(summary.value.minmonth)
+        month.setMonth(month.getMonth() + i)
+        var key = utils.formatDate(month, 'YYYY-MM-DD')
+        var name = `month month-${utils.formatDate(month, 'YYYYMMDD')}`
+        var title = utils.formatDate(month, 'MMM')
         return {
-          name: `month month-${utils.formatDate(mon, 'YYYYMMDD')}`,
-          title: utils.formatDate(mon, 'MMM'),
-          editable: true,
+          name, title, editable: true,
           html: cat => utils.usd(cat.months[key], 0),
         }
-      })(month, key))
-      month.setMonth(month.getMonth() + 1)
-    }
-    // Average and Total Columns
-    cols.push({
-      name:'average', title:'Average', editable:false,
-      html: cat => utils.usd(averageValues(cat.months), 0),
-    })
-    cols.push({
-      name:'total', title:'Total', editable:false,
-      html: cat => utils.usd(sumValues(cat.months), 0),
-    })
-    return cols
+      }),{
+        name:'average', title:'Average', editable:false,
+        html: cat => utils.usd(averageValues(cat.months), 0),
+      },{
+        name:'total', title:'Total', editable:false,
+        html: cat => utils.usd(sumValues(cat.months), 0),
+      }
+    ]
   })
 
   // Average Values
   // Calculate the average of the values in the object
   const averageValues = function(obj) {
-    var vals = Object.values(obj).map(v => parseFloat(v)).filter(v => Number.isFinite(v))
-    if (!vals.length) { return 0 }
-    return Math.round(vals.reduce((a, b) => a + b, 0) / vals.length)
+    var vals = Object.values(obj).map(Number).filter(Number.isFinite)
+    return vals.length ? Math.round(vals.reduce((a, b) => a + b, 0) / vals.length) : 0
   }
 
   // Sum Values
   // Calculate the sum of the values in the object
   const sumValues = function(obj) {
-    var vals = Object.values(obj).map(v => parseFloat(v)).filter(v => Number.isFinite(v))
-    if (!vals.length) { return 0 }
-    return Math.round(vals.reduce((a, b) => a + b, 0))
+    var vals = Object.values(obj).map(Number).filter(Number.isFinite)
+    return vals.length ? Math.round(vals.reduce((a, b) => a + b, 0)) : 0
   }
 
   // On Selected

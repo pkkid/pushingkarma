@@ -1,14 +1,14 @@
 <template>
   <div class='datatable' ref='datatable'>
     <table v-if='items !== null'>
-      <!-- Header Row (dynamically created) -->
+      <!-- Header (dynamically created) -->
       <thead><tr>
         <th v-for='head in headers' :key='head.name' :data-name='head.name'>
           <div class='thwrap' :class='head.name'>{{head.title}}</div>
         </th>
       </tr></thead>
+      <!-- Body -->
       <tbody>
-        <!-- Body Rows -->
         <tr v-for='(item, row) in items' :key='item[keyattr]'>
           <slot name='columns' :item="item" :row="row"></slot>
         </tr>
