@@ -3,12 +3,10 @@
     @getNextPage='emit("getNextPage", $event)'>
     <template #columns='{item, row}'>
       <template v-for='(column, col) in columns' :key='col'>
-        <slot name='cell' :row='row' :col='col' :column='column' :item='item'>
-          <EditTableCell :ref='elem => setCellRef(elem, row, col)' :column='column' :item='item'
-            :class='column.class?.(item)' :tooltip='column.tooltip?.(item)' :tooltipWidth='column.tooltipWidth'
-            @click='onItemClick($event, row, col)' @dblclick='onItemDblClick($event, row, col)'
-            @keydown='onItemKeyDown($event, row, col)'/>
-        </slot>
+        <EditTableCell :ref='elem => setCellRef(elem, row, col)' :column='column' :item='item'
+          :class='column.class?.(item)' :tooltip='column.tooltip?.(item)' :tooltipWidth='column.tooltipWidth'
+          @click='onItemClick($event, row, col)' @dblclick='onItemDblClick($event, row, col)'
+          @keydown='onItemKeyDown($event, row, col)'/>
       </template>
     </template>
   </DataTable>
