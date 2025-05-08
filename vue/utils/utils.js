@@ -37,6 +37,21 @@ export function copyText(text, event) {
   }
 }
 
+// New Date
+// Convert str to a date object. This will return the local datetime even if the
+// date is in the format YYYY-MM-DD. If the date is already a date object, a new
+// date of the save value is returned.
+export function newDate(value) {
+  if (value == null || value == undefined) { return null }
+  if (value instanceof Date) { return new Date(value) }
+  if (typeof value == 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    const [year, month, day] = value.split('-').map(Number)
+    return new Date(year, month-1, day)
+  } else {
+    return new Date(value)
+  }
+}
+
 // Debounce
 // Useful to debounce ajax calls
 export function debounce(func, wait=500) {
@@ -72,14 +87,7 @@ export function escapeHtml(str) {
 export function formatDate(value, format) {
   format = format || 'MMM DD, YYYY'
   if (!value) { return '' }
-  // Always parse as local time
-  var date
-  if (typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
-    const [year, month, day] = value.split('-').map(Number)
-    date = new Date(year, month-1, day)
-  } else {
-    date = new Date(value)
-  }
+  var date = newDate(value)
   if (isNaN(date)) { return '' }
   // Get the date components
   const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']

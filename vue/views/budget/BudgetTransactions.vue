@@ -13,7 +13,7 @@
       <h1>Budget Transactions
         <div v-if='trxs' class='subtext'>Showing {{utils.intComma(trxs.items.length)}}
           of {{utils.intComma(trxs.count)}} transactions</div>
-        <div v-else class='subtext'>Loading transactions..</div>
+        <div v-else class='subtext'>Loading transactions...</div>
       </h1>
       <!-- Transactions Table -->
       <EditTable ref='edittable' v-if='trxs?.items' :columns='COLUMNS' :items='trxs?.items' :infinite='true'
