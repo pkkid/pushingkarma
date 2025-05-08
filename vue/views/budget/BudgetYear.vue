@@ -135,15 +135,11 @@
     }
 
     .edittable {
-      .tdwrap { font-size: 12px; }
-      .category { width:132px; }
-      .month { width:72px; text-align:right;  }
-      .average { width:80px; text-align:right;  }
-      .total { width:80px; text-align:right;  }
-      td .category { background-color:#bbb2; }
-      td .month { font-family:var(--fontfamily-code); font-size:11px; }
-      td .average { font-family:var(--fontfamily-code); font-size:11px; background-color:#bbb2;  }
-      td .total { font-family:var(--fontfamily-code); font-size:11px; background-color:#bbb2;  }
+      .tdwrap { font-size:12px; }
+      .category { width:150px; text-align:left; .tdwrap { background-color:#bbb2; }}
+      .month { width:75px; text-align:right; .tdwrap { width:75px; font-family:var(--fontfamily-code); font-size:11px; }}
+      .average { width:80px; text-align:right; .tdwrap { font-family:var(--fontfamily-code); font-size:11px; background-color:#bbb2; }}
+      .total { width:80px; text-align:right; .tdwrap { font-family:var(--fontfamily-code); font-size:11px; background-color:#bbb2; }}
     }
   }
 </style>

@@ -3,8 +3,8 @@
     <table v-if='items !== null'>
       <!-- Header (dynamically created) -->
       <thead><tr>
-        <th v-for='head in headers' :key='head.name' :data-name='head.name'>
-          <div class='thwrap' :class='head.name'>{{head.title}}</div>
+        <th v-for='head in headers' :key='head.name' :class='head.name'>
+          <div class='thwrap'>{{head.title}}</div>
         </th>
       </tr></thead>
       <!-- Body -->
@@ -102,12 +102,14 @@
       font-size: 12px;
       font-weight: bold;
       color: var(--lightbg-fg2);
-      text-align: left;
+      text-align: inherit;
       width: 100%;
     }
     .tdwrap {
       font-size: 13px;
       color: var(--lightbg-fg2);
+      text-align: inherit;
+      width: 100%;
     }
   }
 </style>

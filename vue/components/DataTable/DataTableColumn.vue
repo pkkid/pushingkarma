@@ -1,6 +1,6 @@
 <template>
-  <td :data-title='title' :data-name='name'>
-    <div class='tdwrap' :class='name'>
+  <td :data-title='title' :data-name='name' :class='name'>
+    <div class='tdwrap'>
       <slot></slot>
     </div>
   </td>

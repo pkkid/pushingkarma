@@ -113,13 +113,17 @@
     padding: 0px;
     border-top: 0px solid var(--lightbg-bg3);
     .tdwrap {
-      border: 2px solid #f000;
+      border-top: 2px solid #f000;
+      border-right: 0px solid #f000;
+      border-bottom: 2px solid #f000;
+      border-left: 0px solid #f000;
       cursor: default;
       line-height: 28px;
       height: 32px;
-      padding: 0px;
+      padding: 0px 2px;
       z-index: 2;
       user-select: none;
+      width: 100%;
       &::before {
         border-top: 1px solid var(--lightbg-bg3);
         content: ' ';
@@ -159,6 +163,7 @@
       height: calc(100% + 1px);
       left: 0px;
       line-height: calc(var(--lineheight) + 1px);
+      padding: 0px;
       position: absolute;
       top: 0px;
       width: 100%;

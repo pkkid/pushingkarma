@@ -227,14 +227,15 @@
     }
 
     .edittable {
-      .account { width:32px; }
-      .date { width:105px; }
-      .category { width:150px; }
-      .payee { width:290px; }
-      .amount { width:100px; text-align:right; }
-      .approved { width:32px; text-align:center; }
-      .comment { width:213px; }
-      .tdwrap.account {
+      .account { width:36px; text-align:center; }
+      .date { width:110px; text-align:left; }
+      .category { width:155px; text-align:left; }
+      .payee { width:300px; text-align:left; .tdwrap { max-width:300px; }}
+      .amount { width:110px; text-align:right; }
+      .approved { width:36px; text-align:center; }
+      .comment { width:300px; text-align:left; }
+      
+      .account .tdwrap {
         display: flex;
         align-items: center;
         justify-content: center;
