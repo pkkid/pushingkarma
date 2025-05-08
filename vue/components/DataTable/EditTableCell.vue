@@ -108,89 +108,92 @@
 </script>
 
 <style>
-  .edittable table td {
-    position: relative;
-    padding: 0px;
-    border-top: 0px solid var(--lightbg-bg3);
-    .tdwrap {
-      border-top: 2px solid #f000;
-      border-right: 0px solid #f000;
-      border-bottom: 2px solid #f000;
-      border-left: 0px solid #f000;
-      cursor: default;
-      line-height: 28px;
-      height: 32px;
-      padding: 0px 2px;
-      z-index: 2;
-      user-select: none;
-      width: 100%;
-      &::before {
-        border-top: 1px solid var(--lightbg-bg3);
-        content: ' ';
-        display: block;
+  .edittable table {
+    .thwrap { padding:2px 7px; }
+    td {
+      position: relative;
+      padding: 0px;
+      border-top: 0px solid var(--lightbg-bg3);
+      .tdwrap {
+        border-top: 2px solid #f000;
+        border-right: 0px solid #f000;
+        border-bottom: 2px solid #f000;
+        border-left: 0px solid #f000;
+        cursor: default;
+        line-height: 28px;
+        height: 32px;
+        padding: 0px 2px;
+        z-index: 2;
+        user-select: none;
+        width: 100%;
+        &::before {
+          border-top: 1px solid var(--lightbg-bg3);
+          content: ' ';
+          display: block;
+          left: 0px;
+          position: absolute;
+          top: 0px;
+          width: 100%;
+          z-index: 1;
+        }
+        input, .fakeinput {
+          background-color: transparent;
+          border-radius: 0px;
+          border-width: 0px;
+          box-shadow: none;
+          font-family: inherit;
+          font-size: inherit;
+          height: calc(var(--lineheight) + 2px);
+          line-height: calc(var(--lineheight) + 2px);
+          outline: none;
+          padding: 0px 6px;
+          width: 100%;
+          text-align: inherit;
+        }
+        .fakeinput {
+          display: inline-block;
+          overflow: hidden;
+          white-space: nowrap;
+          text-overflow: ellipsis;
+        }
+        input { color: #111; }
+      }
+      &.editable:not(.editing) .tdwrap:hover { background-color: #ddd8; }
+      &.selected .tdwrap {
+        border: 2px solid var(--accent);
+        background-color: var(--lightbg-bg1);
+        height: calc(100% + 1px);
         left: 0px;
+        line-height: calc(var(--lineheight) + 1px);
+        padding: 0px;
         position: absolute;
         top: 0px;
         width: 100%;
-        z-index: 1;
+        &::before { border-top: 0px solid #fff0; }
       }
-      input, .fakeinput {
-        background-color: transparent;
-        border-radius: 0px;
-        border-width: 0px;
-        box-shadow: none;
-        font-family: inherit;
-        font-size: inherit;
-        height: calc(var(--lineheight) + 2px);
-        line-height: calc(var(--lineheight) + 2px);
-        outline: none;
-        padding: 0px 6px;
-        width: 100%;
-        text-align: inherit;
+      &.animatebg .tdwrap {
+        --animatebg-start: v-bind(animateBgColor);
+        --animatebg-end: transparent;
+        animation: animatebg-fade 2s forwards;
       }
-      .fakeinput {
-        display: inline-block;
-        overflow: hidden;
-        white-space: nowrap;
-        text-overflow: ellipsis;
+      &.editing .tdwrap {
+        --animatebg-end: #f812;
+        background-color: #f812;
+        box-shadow: inset 0px 1px 2px #0005;
       }
-      input { color: #111; }
-    }
-    &.editable:not(.editing) .tdwrap:hover { background-color: #ddd8; }
-    &.selected .tdwrap {
-      border: 2px solid var(--accent);
-      background-color: var(--lightbg-bg1);
-      height: calc(100% + 1px);
-      left: 0px;
-      line-height: calc(var(--lineheight) + 1px);
-      padding: 0px;
-      position: absolute;
-      top: 0px;
-      width: 100%;
-      &::before { border-top: 0px solid #fff0; }
-    }
-    &.animatebg .tdwrap {
-      --animatebg-start: v-bind(animateBgColor);
-      --animatebg-end: transparent;
-      animation: animatebg-fade 2s forwards;
-    }
-    &.editing .tdwrap {
-      --animatebg-end: #f812;
-      background-color: #f812;
-      box-shadow: inset 0px 1px 2px #0005;
-    }
-    &.error .tdwrap {
-      border: 2px solid var(--darkbg-red0);
-      background-color: #c212;
-    }
-    &.modified::before {
-      content: '';
-      position: absolute;
-      top: 2px; left: 2px;
-      width: 0px; height: 0px;
-      border-top: 7px solid #5558;
-      border-right: 7px solid transparent;
-      z-index: 10;
+      &.error .tdwrap {
+        border: 2px solid var(--darkbg-red0);
+        background-color: #c212;
+      }
+      &.modified::before {
+        content: '';
+        position: absolute;
+        top: 2px; left: 2px;
+        width: 0px; height: 0px;
+        border-top: 7px solid #5558;
+        border-right: 7px solid transparent;
+        z-index: 10;
+      }
     }
   }
 

@@ -109,9 +109,13 @@
       }
     }
     .datatable {
-      .thwrap, .tdwrap { line-height:1.3; padding:5px 10px; text-align:center;}
-      .thwrap { font-size:10px; }
-      tr [data-name='name'] > div { text-align:left; }
+      .thwrap, .tdwrap { line-height:1.3; padding:5px 10px; }
+      .ticker > div { text-align:left; }
+      .name > div { text-align:left; }
+      .close { text-align:center; }
+      .change200d { text-align:center; }
+      .change25d { text-align:center; }
+      .beta { text-align:center; }
     }
   }
 </style>
