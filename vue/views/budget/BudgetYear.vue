@@ -154,7 +154,7 @@
       .month { width:75px; text-align:right; .tdwrap { width:75px; font-family:var(--fontfamily-code); font-size:11px; }}
       .average { width:80px; text-align:right; .tdwrap { font-family:var(--fontfamily-code); font-size:11px; background-color: #ddd8; }}
       .total { width:80px; text-align:right; .tdwrap { font-family:var(--fontfamily-code); font-size:11px; background-color: #ddd8; }}
-      tfoot .tdwrap { background-color: #ddd8; &::before { border-top:1px solid var(--lightbg-bg5); }}
+      tfoot .tdwrap { background-color: #ddd8; }
     }
   }
 </style>
