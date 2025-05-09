@@ -16,7 +16,7 @@
       </h1>
       <!-- Year Overview -->
       <EditTable ref='edittable' v-if='summary?.items && columns' :columns='columns'
-        :items='summary?.items' @itemSelected='onItemSelected' />
+        :items='summary?.items' :footer='footer' @itemSelected='onItemSelected' />
     </template>
   </LayoutPaper>
 </template>
@@ -69,6 +69,20 @@
         html: cat => utils.usd(sumValues(cat.months), 0),
       }
     ]
+  })
+
+  // Footer
+  // Create the table footer item object
+  const footer = computed(function() {
+    if (!summary.value?.items) { return null }
+    var item = {name:'Total', months:{}}
+    var months = new Set(summary.value.items.flatMap(cat => Object.keys(cat.months)))
+    months.forEach(month => {
+      item.months[month] = summary.value.items.reduce(
+        (sum, cat) => sum + (Number(cat.months[month]) || 0), 0)
+    })
+    console.log(item)
+    return item
   })
 
   // Average Values
@@ -140,6 +154,7 @@
       .month { width:75px; text-align:right; .tdwrap { width:75px; font-family:var(--fontfamily-code); font-size:11px; }}
       .average { width:80px; text-align:right; .tdwrap { font-family:var(--fontfamily-code); font-size:11px; background-color: #ddd8; }}
       .total { width:80px; text-align:right; .tdwrap { font-family:var(--fontfamily-code); font-size:11px; background-color: #ddd8; }}
+      tfoot .tdwrap { background-color: #ddd8; &::before { border-top:1px solid var(--lightbg-bg5); }}
     }
   }
 </style>

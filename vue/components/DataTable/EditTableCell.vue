@@ -108,6 +108,9 @@
 </script>
 
 <style>
+  .edittable table tbody td.editable:not(.editing) .tdwrap:hover {
+    background-color: #ddd8;
+  }
   .edittable table {
     .thwrap { padding:2px 7px; }
     td {
@@ -158,7 +161,6 @@
         }
         input { color: #111; }
       }
-      &.editable:not(.editing) .tdwrap:hover { background-color: #ddd8; }
       &.selected .tdwrap {
         border: 2px solid var(--accent);
         background-color: var(--lightbg-bg1);

@@ -10,13 +10,13 @@
       <!-- Body -->
       <tbody>
         <tr v-for='(item, row) in items' :key='item[keyattr]'>
-          <slot name='columns' :item="item" :row="row"></slot>
+          <slot name='columns' :item='item' :row='row'></slot>
         </tr>
       </tbody>
       <!-- Footer -->
-      <tfooter v-if='footer'>
+      <tfoot v-if='footer'>
         <tr><slot name='footer' :item='footer'></slot></tr>
-      </tfooter>
+      </tfoot>
     </table>
     <div v-if='infinite' ref='scrollwatch'/>
   </div>

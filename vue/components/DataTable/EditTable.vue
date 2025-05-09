@@ -1,12 +1,20 @@
 <template>
-  <DataTable class='edittable' :items='items' :keyattr='keyattr' :infinite='infinite'
-    @getNextPage='emit("getNextPage", $event)'>
+  <DataTable class='edittable' :items='items' :footer='footer' :keyattr='keyattr'
+    :infinite='infinite' @getNextPage='emit("getNextPage", $event)'>
+    <!-- Body -->
     <template #columns='{item, row}'>
       <template v-for='(column, col) in columns' :key='col'>
         <EditTableCell :ref='elem => setCellRef(elem, row, col)' :column='column' :item='item'
           :class='column.class?.(item)' :tooltip='column.tooltip?.(item)' :tooltipWidth='column.tooltipWidth'
           @click='onItemClick($event, row, col)' @dblclick='onItemDblClick($event, row, col)'
           @keydown='onItemKeyDown($event, row, col)'/>
+      </template>
+    </template>
+    <!-- Footer -->
+    <template v-if='footer' #footer='{item}'>
+      <template v-for='(column, col) in columns' :key='col'>
+        <EditTableCell :column='column' :item='item' :class='column.class?.(item)'
+          :tooltip='column.tooltip?.(item)' :tooltipWidth='column.tooltipWidth'/>
       </template>
     </template>
   </DataTable>
@@ -36,6 +44,7 @@
   var redostack = []                              // Redo stack {row, col, oldval, newval}
   const props = defineProps({
     columns: {type:Array},                        // List of columns to display
+    footer: {type:Object, default:null},          // Footer item object
     items: {type:Array},                          // List of items to display
     keyattr: {type:String, default:'id'},         // Key attribute for items
     infinite: {type:Boolean, default:false},      // Infinite scroll
