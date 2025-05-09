@@ -136,10 +136,10 @@
 
     .edittable {
       .tdwrap { font-size:12px; }
-      .category { width:150px; text-align:left; .tdwrap { background-color:#bbb2; }}
+      .category { width:150px; text-align:left; .tdwrap { background-color: #ddd8; }}
       .month { width:75px; text-align:right; .tdwrap { width:75px; font-family:var(--fontfamily-code); font-size:11px; }}
-      .average { width:80px; text-align:right; .tdwrap { font-family:var(--fontfamily-code); font-size:11px; background-color:#bbb2; }}
-      .total { width:80px; text-align:right; .tdwrap { font-family:var(--fontfamily-code); font-size:11px; background-color:#bbb2; }}
+      .average { width:80px; text-align:right; .tdwrap { font-family:var(--fontfamily-code); font-size:11px; background-color: #ddd8; }}
+      .total { width:80px; text-align:right; .tdwrap { font-family:var(--fontfamily-code); font-size:11px; background-color: #ddd8; }}
     }
   }
 </style>

@@ -13,6 +13,10 @@
           <slot name='columns' :item="item" :row="row"></slot>
         </tr>
       </tbody>
+      <!-- Footer -->
+      <tfooter v-if='footer'>
+        <tr><slot name='footer' :item='footer'></slot></tr>
+      </tfooter>
     </table>
     <div v-if='infinite' ref='scrollwatch'/>
   </div>
@@ -28,6 +32,7 @@
   const scrollwatch = ref(null)               // Reference to scrollwatch element
   const props = defineProps({
     items: {type:Array, required:true},       // Array of items to display
+    footer: {type:Object, default:null},      // Footer item object
     keyattr: {type:String, required:true},    // Attribute to use as key
     infinite: {type:Boolean, default:false},  // Enable infinite scroll
   })
