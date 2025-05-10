@@ -383,20 +383,27 @@ export function tmpl(str, context) {
 
 // USD
 // Format number to USD display -$99.99 with cents.
-export function usd(value, places=2, symbol='$', colorize=false) {
-  value = value || 0
-  var result
-  var valuestr = Math.abs(value).toFixed(places)
-  if (value < 0) { result = `-${symbol}${intComma(valuestr)}` }
-  else { result = `${symbol}${intComma(valuestr)}` }
-  if (places == 2) {
-    if (result.match(/\.\d{1}$/)) { return result +'0' }
-    if (!result.match(/\./)) { return result +'.00' }
+export function usd(value, places=2, symbol='$', sigdigs=null) {
+  const absval = Math.abs(value || 0)
+  if (sigdigs && absval >= 10000) {
+    const units = [{size:1e6, unit:'M'}, {size:1e3, unit:'K'}]
+    for (var {size,unit} of units) {
+      if (absval >= size) {
+        let n = (absval / size).toPrecision(sigdigs)
+        var [intPart, decPart] = n.split('.')
+        if (decPart !== undefined) {
+          n = intPart + '.' + decPart.padEnd(sigdigs - intPart.length, '0')
+          n = n.replace(/(\.\d*?[1-9])0+$/, '$1')
+        }
+        return `${value < 0 ? '-' : ''}${symbol}${n}${unit}`
+      }
+    }
   }
-  // Apply the color styles
-  if (colorize) {
-    var cls = value > 0 ? 'gtzero' : value < 0 ? 'ltzero' : 'zero'
-    result = `<span class='${cls}'>${result}</span>`
+  let result = `${symbol}${intComma(absval.toFixed(places))}`
+  if (value < 0) result = `-${result}`
+  if (places === 2) {
+    if (result.match(/\.\d{1}$/)) return result + '0'
+    if (!result.includes('.')) return result + '.00'
   }
   return result
 }

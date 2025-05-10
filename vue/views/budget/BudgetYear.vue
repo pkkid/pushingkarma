@@ -60,15 +60,15 @@
         return {
           name, title, editable: true,
           subtext: utils.formatDate(month, 'YYYY'),
-          html: cat => utils.usd(cat.months[key], 0),
+          html: cat => utils.usd(cat.months[key], 0, '$', 3),
           class: cat => [clsSign(cat, key), clsLowest(cat, key)].join(' '),
         }
       }),{
         name:'average', title:'Average', editable:false,
-        html: cat => utils.usd(averageValues(cat.months), 0),
+        html: cat => utils.usd(averageValues(cat.months), 0, '$', 3),
       },{
         name:'total', title:'Total', editable:false,
-        html: cat => utils.usd(sumValues(cat.months), 0),
+        html: cat => utils.usd(sumValues(cat.months), 0, '$', 3),
       }
     ]
   })
