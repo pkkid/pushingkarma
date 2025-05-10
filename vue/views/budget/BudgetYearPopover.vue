@@ -6,6 +6,7 @@
 
 <script setup>
   import {nextTick, onMounted, ref} from 'vue'
+  import {LoadingIcon} from '@/components'
   import {api, utils} from '@/utils'
 
   var cancelctrl = null             // Cancel controller
@@ -15,15 +16,10 @@
   const trxs = ref(null)            // Transactions to show
   const category = ref(null)        // Category to show
 
-  // On Mounted
-  onMounted(function() {
-    console.log('Popover mounted')
-  })
-
   // Show Popover
   // Show the popover with the given category and month
   const show = async function(cell, category, month, search) {
-    console.log(`show(${category.name}, ${utils.formatDate(month, 'YYYY-MM-DD')}, "${search}")`)
+    // console.log(`show(${category.name}, ${utils.formatDate(month, 'YYYY-MM-DD')}, "${search}")`)
     showing.value = true
     await nextTick()
     // Set the top position of the popover
@@ -63,7 +59,7 @@
     } catch (err) {
       if (!api.isCancel(err)) { throw(err) }
     } finally {
-      setTimeout(() => loading.value = false, 500)
+      loading.value = false
     }
   }
 
@@ -82,9 +78,19 @@
     width: 150px;
     min-height: 50px;
     max-height: 300px;
-    border: 2px solid red;
     top: 0px;
     left: 0px;
     z-index: 99;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px 0 #3c40434d, 0 4px 8px 3px #3c404326;
+    border: 1px solid var(--lightbg-bg4);
+
+    .loading {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 50px;
+    }
+
   }
 </style>
