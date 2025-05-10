@@ -15,14 +15,16 @@
         <div v-else class='subtext'>Loading summary...</div>
       </h1>
       <!-- Year Overview -->
-      <EditTable ref='edittable' v-if='summary?.items && columns' :columns='columns'
-        :items='summary?.items' :footer='footer' @itemSelected='onItemSelected' />
+      <EditTable ref='edittable' v-if='summary?.items && columns' :columns='columns' :items='summary?.items'
+        :footer='footer' :onRequestDeselect='onRequestDeselect' @itemSelected='onItemSelected' />
+      <BudgetYearPopover ref='popover' />
     </template>
   </LayoutPaper>
 </template>
 
 <script setup>
   import {computed, onMounted, ref, watch, watchEffect} from 'vue'
+  import {BudgetYearPopover} from '@/views/budget'
   import {EditTable, LayoutPaper} from '@/components'
   import {useUrlParams} from '@/composables'
   import {api, utils} from '@/utils'
@@ -32,23 +34,24 @@
   const {search} = useUrlParams({search:{}})  // Method & path url params
   const _search = ref(search.value)           // Temp search before enter
   const summary = ref(null)                   // Summary of transactions
+  const columns = ref(null)                   // EditTable columns
+  const edittable = ref(null)                 // Ref to EditTable component
+  const popover = ref(null)                   // Ref to popover component
 
   // On Mounted
   // Update transactions and initialize hotkeys
-  onMounted(function() {
-    updateSummary()
-  })
+  onMounted(function() { updateSummary() })
 
   // Watch Search
   // Update transactions and _search.value
   watch(search, function() { updateSummary() })
   watchEffect(() => _search.value = search.value)
 
-  // Computed Columns
+  // Watch Summary
   // Update columns when summary changes
-  const columns = computed(function() {
-    if (!summary.value?.items) { return null }
-    return [{
+  watch(summary, function() {
+    if (!summary.value?.items) { columns.value = null; return }
+    columns.value = [{
         name:'category', title:'Category', editable:false,
         html: cat => cat.name,
       }, ...Array.from({length:12}, (_, i) => {
@@ -58,10 +61,12 @@
         var name = `month month-${utils.formatDate(month, 'YYYYMMDD')}`
         var title = utils.formatDate(month, 'MMM')
         return {
-          name, title, editable: true,
+          name, title,
+          editable: true,
           subtext: utils.formatDate(month, 'YYYY'),
           html: cat => utils.usd(cat.months[key], 0, '$', 3),
           class: cat => [clsSign(cat, key), clsLowest(cat, key)].join(' '),
+          _month: month,
         }
       }),{
         name:'average', title:'Average', editable:false,
@@ -83,7 +88,6 @@
       item.months[month] = summary.value.items.reduce(
         (sum, cat) => sum + (Number(cat.months[month]) || 0), 0)
     })
-    console.log(item)
     return item
   })
 
@@ -123,7 +127,22 @@
   // On Selected
   // Handle item selected event
   const onItemSelected = function(event, row, col, editing) {
-    console.log(`onItemSelected(event, row=${row}, col=${col}, editing=${editing})`)
+    if (editing || (popover.value.showing() && event.key?.includes('Arrow'))) {
+      var month = columns.value[col]._month
+      var {id, name} = summary.value.items[row]
+      var category = {id, name}
+      var cell = edittable.value.getCell(row, col)
+      popover.value.show(cell, category, month, search.value)
+    } else {
+      popover.value.hide()
+    }
+  }
+
+  // On Deselected
+  // Handle item deselected event. Will capture the edittable esc
+  // keyevent and not deselect the cell if the popover is showing.
+  const onRequestDeselect = function(event, row, col, editing) {
+    if (popover.value.showing()) { popover.value.hide(); return false }
   }
 
   // Update Summary
@@ -148,6 +167,8 @@
 
 <style>
   #yearoverview {
+    position: relative;
+
     .searchwrap {
       text-align: right;
       display: flex;

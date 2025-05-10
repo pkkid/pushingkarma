@@ -4,4 +4,4 @@ export {default as BudgetSettingsAccount} from '@/views/budget/BudgetSettingsAcc
 export {default as BudgetSettingsCategory} from '@/views/budget/BudgetSettingsCategory.vue'
 export {default as BudgetTransactions} from '@/views/budget/BudgetTransactions.vue'
 export {default as BudgetYear} from '@/views/budget/BudgetYear.vue'
-
+export {default as BudgetYearPopover} from '@/views/budget/BudgetYearPopover.vue'

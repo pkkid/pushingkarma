@@ -40,22 +40,24 @@
   //  selectall:    If true, select all input text when editing starts
   //  tooltip:      Func(item) to get tooltip html (if not defined, no tooltip is shown)
   //  tooltipWidth: (str) Set a static width for the tooltip (ex: 350px)
-  var prevscope = null                            // Previous hotkeys-js scope
-  var undostack = []                              // Undo stack {row, col, oldval, newval}
-  var redostack = []                              // Redo stack {row, col, oldval, newval}
+  var prevscope = null                                // Previous hotkeys-js scope
+  var undostack = []                                  // Undo stack {row, col, oldval, newval}
+  var redostack = []                                  // Redo stack {row, col, oldval, newval}
   const props = defineProps({
-    columns: {type:Array},                        // List of columns to display
-    footer: {type:Object, default:null},          // Footer item object
-    items: {type:Array},                          // List of items to display
-    keyattr: {type:String, default:'id'},         // Key attribute for items
-    infinite: {type:Boolean, default:false},      // Infinite scroll
+    columns: {type:Array},                            // List of columns to display
+    footer: {type:Object, default:null},              // Footer item object
+    items: {type:Array},                              // List of items to display
+    keyattr: {type:String, default:'id'},             // Key attribute for items
+    infinite: {type:Boolean, default:false},          // Infinite scroll
+    onRequestDeselect: {type:Function, default:null}, // Request deselect
   })
   const cells = ref([])                           // Ref of cells; 2d-array colrefs[row][col]
   const selected = ref({row:null, col:null, editing:false})  // Selected cell and edit mode
   const emit = defineEmits([
-    'getNextPage',    // When requesting next page of items
-    'itemSelected',   // When cell is selected or deselected (args: row, col)
-    'itemUpdated',    // When item is updated (args: row, col, newval)
+    'getNextPage',      // When requesting next page of items
+    'itemSelected',     // When cell is selected or deselected (args: row, col)
+    'itemUpdated',      // When item is updated (args: row, col, newval)
+    'itemDeselected',   // When item is deslected
   ])
 
   // On Mounted
@@ -162,6 +164,8 @@
   // Deselect the current cell
   const deselect = function(event, editing=null) {
     event?.preventDefault()
+    var {_row, _col, _editing} = selected.value
+    if (props.onRequestDeselect?.(event, _row, _col, _editing) === false) { return}
     editing = editing ?? selected.value.editing
     var newrow = editing ? selected.value.row : null
     var newcol = editing ? selected.value.col : null

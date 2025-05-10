@@ -209,6 +209,7 @@ def list_transactions(request,
     trxs = trxs.select_related('account', 'category')
     trxs = trxs.order_by('-date', 'payee')
     if search:
+        log.info(search)
         trxs = Search(TRANSACTIONSEARCHFIELDS).get_queryset(trxs, search)
     response = paginate(request, trxs, page=page, perpage=100)
     for i in range(len(response['items'])):
