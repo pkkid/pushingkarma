@@ -1,5 +1,5 @@
 <template>
-  <Column ref='root' :name='column.name' :title='column.title' :key='animateBgKey'
+  <Column ref='root' :name='column.name' :title='column.title' :subtext='column.subtext' :key='animateBgKey'
     :class='{selected, editing, editable:column.editable, error:errmsg, animatebg:animateBgColor}'>
     <!-- Editing -->
     <template v-if='editing'>
@@ -112,7 +112,11 @@
     background-color: #ddd8;
   }
   .edittable table {
-    .thwrap { padding:2px 7px; }
+    th {
+      vertical-align: top;
+      .thwrap { padding:2px 7px; }
+      .subtext { font-size: 8px; }
+    }
     td {
       position: relative;
       padding: 0px;
@@ -145,6 +149,7 @@
           border-width: 0px;
           box-shadow: none;
           font-family: inherit;
+          font-weight: inherit;
           font-size: inherit;
           height: calc(var(--lineheight) + 2px);
           line-height: calc(var(--lineheight) + 2px);

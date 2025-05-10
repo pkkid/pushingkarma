@@ -59,7 +59,9 @@
         var title = utils.formatDate(month, 'MMM')
         return {
           name, title, editable: true,
+          subtext: utils.formatDate(month, 'YYYY'),
           html: cat => utils.usd(cat.months[key], 0),
+          class: cat => [clsSign(cat, key), clsLowest(cat, key)].join(' '),
         }
       }),{
         name:'average', title:'Average', editable:false,
@@ -85,6 +87,25 @@
     return item
   })
 
+  // Class Sign Determination
+  // returns positive, zero, or negative depending on the value
+  const clsSign = function(cat, key) {
+    var val = Number(cat.months[key]) || 0
+    return val == 0 ? 'zero' : val < 0 ? 'negative' : 'positive'
+  }
+
+  // Class Lowest
+  // returns 'lowest' if this is the lowest value in this category
+  // and there are no other values 
+  const clsLowest = function(cat, key) {
+    var val = Number(cat.months[key]) || 0
+    if (val >= 0) { return '' }
+    var vals = Object.values(cat.months).map(Number).filter(Number.isFinite)
+    var lowest = Math.min(...vals)
+    var lowestCount = vals.filter(v => v == lowest).length
+    return lowestCount == 1 && lowest == val ? 'lowest' : ''
+  }
+  
   // Average Values
   // Calculate the average of the values in the object
   const averageValues = function(obj) {
@@ -155,6 +176,9 @@
       .average { width:80px; text-align:right; .tdwrap { font-family:var(--fontfamily-code); font-size:11px; background-color: #ddd8; }}
       .total { width:80px; text-align:right; .tdwrap { font-family:var(--fontfamily-code); font-size:11px; background-color: #ddd8; }}
       tfoot .tdwrap { background-color: #ddd8; }
+      td.positive .tdwrap { color: var(--lightbg-green2); font-weight:bold !important; }
+      td.zero .tdwrap { color: #8889; }
+      td.lowest .tdwrap { color: var(--lightbg-red1); }
     }
   }
 </style>

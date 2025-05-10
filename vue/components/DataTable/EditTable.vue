@@ -29,6 +29,7 @@
   // Columns is an array of column objects containing the following properties:
   //  name (req):   Column name (used as key in items)
   //  title (req):  Column title (displayed in header)
+  //  subtext:      Column title subtext (displayed in header)
   //  editable:     If true, cell is editable (no input if using html option)
   //  text:         Func(item) to get text to display
   //  html:         Func(item) Optionally specify html to display instead of text (editing will be disabled)

@@ -4,7 +4,9 @@
       <!-- Header (dynamically created) -->
       <thead><tr>
         <th v-for='head in headers' :key='head.name' :class='head.name'>
-          <div class='thwrap'>{{head.title}}</div>
+          <div class='thwrap'>{{head.title}}
+            <div v-if='head.subtext' class='subtext'>{{head.subtext}}</div>
+          </div>
         </th>
       </tr></thead>
       <!-- Body -->
@@ -81,8 +83,9 @@
     await nextTick()
     var tds = datatable.value.querySelectorAll('tbody tr:first-child td')
     headers.value = Array.from(tds).map(td => ({
-      title: td.dataset.title,
       name: td.dataset.name,
+      title: td.dataset.title,
+      subtext: td.dataset.subtext,
     }))
   }
 </script>

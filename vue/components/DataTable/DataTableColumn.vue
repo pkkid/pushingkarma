@@ -1,5 +1,5 @@
 <template>
-  <td :data-title='title' :data-name='name' :class='name'>
+  <td :data-name='name' :data-title='title' :data-subtext='subtext' :class='name'>
     <div class='tdwrap'>
       <slot></slot>
     </div>
@@ -12,6 +12,7 @@
 
   const props = defineProps({
     title: {type:String, required:true},    // Required column title
+    subtext: {type:String},                 // Column title subtext
     name: {type:String},                    // Column name, defaults to camelCase title
   })
 
