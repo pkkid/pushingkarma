@@ -22,6 +22,7 @@ export function cancel(request) {
   if (request) { request.cancel() }
 }
 
+
 // Copy To Clipboard
 // If event is passed, try to animate the element
 export function copyText(text, event) {
@@ -34,21 +35,6 @@ export function copyText(text, event) {
     button.offsetHeight
     button.style.transition = 'background-color 0.6s ease'
     button.style.backgroundColor = ''
-  }
-}
-
-// New Date
-// Convert str to a date object. This will return the local datetime even if the
-// date is in the format YYYY-MM-DD. If the date is already a date object, a new
-// date of the save value is returned.
-export function newDate(value) {
-  if (value == null || value == undefined) { return null }
-  if (value instanceof Date) { return new Date(value) }
-  if (typeof value == 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
-    const [year, month, day] = value.split('-').map(Number)
-    return new Date(year, month-1, day)
-  } else {
-    return new Date(value)
   }
 }
 
@@ -177,6 +163,12 @@ export function getItemValue(item, column, text=null) {
   return column.format?.(text) || text
 }
 
+// Get Sign
+// returns positive, zero, or negative depending on the value
+export function getSign(value) {
+  return value == 0 ? 'zero' : value < 0 ? 'negative' : 'positive'
+}
+
 // Insert Commas
 // Add commas to the specified number.
 export function intComma(value) {
@@ -190,6 +182,21 @@ export function intComma(value) {
 // Wrapper around parseInt
 export function int(value) {
   return parseInt(value, 10)
+}
+
+// New Date
+// Convert str to a date object. This will return the local datetime even if the
+// date is in the format YYYY-MM-DD. If the date is already a date object, a new
+// date of the save value is returned.
+export function newDate(value) {
+  if (value == null || value == undefined) { return null }
+  if (value instanceof Date) { return new Date(value) }
+  if (typeof value == 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)) {
+    const [year, month, day] = value.split('-').map(Number)
+    return new Date(year, month-1, day)
+  } else {
+    return new Date(value)
+  }
 }
 
 // Pop
@@ -399,9 +406,10 @@ export function usd(value, places=2, symbol='$', sigdigs=null) {
       }
     }
   }
+  places = places == 0 && value < 1 && value > -1 && value != 0 ? 2 : places
   let result = `${symbol}${intComma(absval.toFixed(places))}`
   if (value < 0) result = `-${result}`
-  if (places === 2) {
+  if (places == 2) {
     if (result.match(/\.\d{1}$/)) return result + '0'
     if (!result.includes('.')) return result + '.00'
   }

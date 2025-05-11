@@ -1,25 +1,23 @@
 <template>
   <div v-if='showing' ref='root' id='budgetyearpopover' class='lightbg'>
-    {{category?.name}}
-    <div class='subtext'>{{utils.formatDate(month, 'MMMM YYYY')}}</div>
-    <table v-if='trxs'>
-      <tbody>
+    <h3>{{category?.name}}
+      <div class='subtext'>{{utils.formatDate(month, 'MMMM YYYY')}}</div>
+    </h3>
+    <div class='trxs' :class='{scroll}'>
+      <table v-if='trxs'>
         <tr v-for='(trx, index) in trxs?.items' :key='index'>
-          <td class='date'>{{utils.formatDate(trx.date, 'M/D') }}</td>
-          <td class='payee'>{{trx.payee}}</td>
-          <td class='amount'>{{trx.amount}}</td>
+          <td class='date'><div class='tdwrap'>{{utils.formatDate(trx.date, 'M/D') }}</div></td>
+          <td class='payee'><div class='tdwrap'>{{trx.payee}}</div></td>
+          <td class='amount'><div class='tdwrap'>{{utils.usd(trx.amount, 0)}}</div></td>
         </tr>
-      </tbody><tfoot><tr>
-        <td colspan='2'></td>
-        <td class='total'>total</td>
-      </tr></tfoot>
-    </table>
+      </table>
+    </div>
+    <div class='total' :class='utils.getSign(total)'>{{utils.usd(total, 0)}}</div>
   </div>
 </template>
 
 <script setup>
-  import {nextTick, onMounted, ref} from 'vue'
-  import {LoadingIcon} from '@/components'
+  import {computed, nextTick, onMounted, ref} from 'vue'
   import {api, utils} from '@/utils'
 
   var cancelctrl = null             // Cancel controller
@@ -29,24 +27,39 @@
   const trxs = ref(null)            // Transactions to show
   const category = ref(null)        // Category to show
   const month = ref(null)           // Month to show
+  const scroll = ref(false)         // True if .trxs has scrollbar
+
+  // Total
+  // Sum the values in the object
+  const total = computed(function() {
+    if (!trxs.value?.items) { return 0 }
+    return trxs.value.items.reduce((sum, trx) => sum + Number(trx.amount), 0)
+  })
+
+  // Set Position
+  // Set the position of the popover
+  const setPosition = async function(cell) {
+    if (!showing.value) { return }
+    await nextTick()
+    var prect = cell.$el.closest('#yearoverview article').getBoundingClientRect()
+    var crect = cell.$el.getBoundingClientRect()
+    var left = crect.left - prect.left
+    var top = crect.top - prect.top + crect.height + 5
+    root.value.style.left = `${left}px`
+    root.value.style.top = `${top}px`
+    // Set the scroll attribute (so .total has right position)
+    const elem = root.value?.querySelector('.trxs')
+    scroll.value = elem?.scrollHeight > elem?.clientHeight
+  }
 
   // Show Popover
   // Show the popover with the given category and month
   const show = async function(cell, cat, mon, search) {
-    // console.log(`show(${category.name}, ${utils.formatDate(month, 'YYYY-MM-DD')}, "${search}")`)
     category.value = cat
     month.value = mon
     showing.value = true
-    await nextTick()
-    // Set the top position of the popover
-    var winheight = document.documentElement.clientHeight
-    var cellrect = cell.$el.getBoundingClientRect()
-    var top = cellrect.top - 55
-    var left = cellrect.right - 150
-    root.value.style.top = `${top}px`
-    root.value.style.left = `${left}px`
-    // Populate the popover contents
-    updateTransactions(cat, mon, search)
+    await updateTransactions(cat, mon, search)
+    setPosition(cell)
   }
 
   // Hide Popover
@@ -89,21 +102,70 @@
 
 <style>
   #budgetyearpopover {
-    position: fixed;
-    width: 300px;
-    min-height: 50px;
-    max-height: 300px;
-    top: 0px;
-    left: 0px;
-    z-index: 99;
     border-radius: 4px;
-    box-shadow: 0 1px 3px 0 #3c40434d, 0 4px 8px 3px #3c404326;
     border: 1px solid var(--lightbg-bg4);
+    box-shadow: 0 1px 3px 0 #3c40434d, 0 4px 8px 3px #3c404326;
+    max-height: 300px;
+    min-height: 50px;
     overflow: hidden;
+    padding: 10px;
+    position: absolute;
+    width: 300px;
+    z-index: 99;
+
+    h3 {
+      margin-top: 0px;
+      position: relative;
+      .subtext { margin-top: -7px; }
+      &::before {
+        background-color: #d65d0e;
+        bottom: -3px;
+        content: ' ';
+        display: block;
+        height: 1px;
+        position: absolute;
+        width: 70px;
+      }
+    }
+
+    .trxs {
+      max-height: 150px;
+      overflow-y: auto;
+    }
 
     table {
-      width: 100%;
+      border-collapse: collapse;
+      border-spacing: 0;
       font-size: 10px;
+      width: 100%;
+      table-layout: fixed;
+
+      .tdwrap {
+        width: 100%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        line-height: 1.2;
+      }
+      .date { width: 30px;  }
+      .payee { padding:0px 8px; }
+      .amount, .total { width:55px; text-align:right; font-family:var(--fontfamily-code); padding-right:5px; }
+    }
+
+    .total {
+      border-top: 1px solid color-mix(in srgb, var(--lightbg-fg4), #0000 50%);
+      text-align: right;
+      float: right;
+      margin: 3px 5px 0px 0px;
+      font-size: 10px;
+      font-weight: bold;
+      line-height: 1.8;
+      font-family:var(--fontfamily-code);
+      &.negative { color: var(--lightbg-red1); }
+      &.positive { color: var(--lightbg-green2); }
+    }
+    .trxs.scroll + .total {
+      margin-right: 11px;
     }
 
     .loading {

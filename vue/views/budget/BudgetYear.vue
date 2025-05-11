@@ -65,7 +65,7 @@
           editable: true,
           subtext: utils.formatDate(month, 'YYYY'),
           html: cat => utils.usd(cat.months[key], 0, '$', 3),
-          class: cat => [clsSign(cat, key), clsLowest(cat, key)].join(' '),
+          class: cat => [getSign(cat, key), clsLowest(cat, key)].join(' '),
           _month: month,
         }
       }),{
@@ -93,9 +93,8 @@
 
   // Class Sign Determination
   // returns positive, zero, or negative depending on the value
-  const clsSign = function(cat, key) {
-    var val = Number(cat.months[key]) || 0
-    return val == 0 ? 'zero' : val < 0 ? 'negative' : 'positive'
+  const getSign = function(cat, key) {
+    return utils.getSign(Number(cat.months[key]) || 0)
   }
 
   // Class Lowest
@@ -197,9 +196,6 @@
       .average { width:80px; text-align:right; .tdwrap { font-family:var(--fontfamily-code); font-size:11px; background-color: #ddd8; }}
       .total { width:80px; text-align:right; .tdwrap { font-family:var(--fontfamily-code); font-size:11px; background-color: #ddd8; }}
       tfoot .tdwrap { background-color: #ddd8; }
-      td.positive .tdwrap { color: var(--lightbg-green2); font-weight:bold !important; }
-      td.zero .tdwrap { color: #8889; }
-      td.lowest .tdwrap { color: var(--lightbg-red1); }
     }
   }
 </style>

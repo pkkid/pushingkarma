@@ -93,9 +93,10 @@
 <style>
   .datatable {
     background-color: var(--lightbg-bg0);
-    border: 1px solid var(--lightbg-bg3);
     border-radius: 6px;
+    border: 1px solid var(--lightbg-bg3);
     padding: 1px;
+
     table {
       border-collapse: collapse;
       border-spacing: 0;

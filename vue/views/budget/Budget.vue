@@ -107,9 +107,15 @@
 </script>
 
 <style>
-  .sidepanel-panel .subitem {
-    .name { float: left; }
-    .balance { text-align: right; }
-    .lastupdate { font-size:9px; color:var(--fgcolor40);}
+  #budget {
+    .sidepanel-panel .subitem {
+      .name { float: left; }
+      .balance { text-align: right; }
+      .lastupdate { font-size:9px; color:var(--fgcolor40);}
+    }
+
+    td.positive .tdwrap { color: var(--lightbg-green2); font-weight:bold !important; }
+    td.zero .tdwrap { color: #8889; }
+    td.lowest .tdwrap { color: var(--lightbg-red1); }
   }
 </style>
