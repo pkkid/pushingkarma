@@ -8,11 +8,11 @@
         <tr v-for='(trx, index) in trxs?.items' :key='index'>
           <td class='date'><div class='tdwrap'>{{utils.formatDate(trx.date, 'M/D') }}</div></td>
           <td class='payee'><div class='tdwrap'>{{trx.payee}}</div></td>
-          <td class='amount'><div class='tdwrap'>{{utils.usd(trx.amount, 0)}}</div></td>
+          <td class='amount'><div class='tdwrap'>{{utils.usd(trx.amount, 0, '$', 3)}}</div></td>
         </tr>
       </table>
     </div>
-    <div class='total' :class='utils.getSign(total)'>{{utils.usd(total, 0)}}</div>
+    <div class='total' :class='utils.getSign(total)'>{{utils.usd(total, 0, '$', 3)}}</div>
   </div>
 </template>
 
