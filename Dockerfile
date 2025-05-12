@@ -7,7 +7,7 @@ RUN apt-get install -y build-essential cron nginx supervisor
 RUN rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-COPY pyproject.toml
+COPY pyproject.toml .
 COPY docker/nginx.conf /etc/nginx/sites-enabled/pushingkarma
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY docker/crontab.conf /etc/cron.d/pushingkarma
