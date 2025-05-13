@@ -8,8 +8,8 @@ RUN rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 COPY pyproject.toml .
-COPY docker/nginx.conf /etc/nginx/sites-enabled/pushingkarma
-COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+COPY docker/nginx.conf /etc/nginx/sites-enabled/pushingkarma.conf
+COPY docker/supervisord.conf /etc/supervisor/conf.d/pushingkarma.conf
 COPY docker/crontab.conf /etc/cron.d/pushingkarma
 
 RUN pip install uv

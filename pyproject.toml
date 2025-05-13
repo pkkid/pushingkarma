@@ -8,13 +8,14 @@ description = 'Code that runs pushingkarma.com'
 requires-python = '>=3.12'
 
 dependencies = [
+    'daphne',
+    'ofxtools',
     'pytz',
     'requests',
-    'ofxtools',
+    'yfinance',
     'django==5.2',
     'django-cors-headers==4.7.0',
     'django-ninja==1.4.0',
-    'yfinance==0.2.54',
     'django_searchquery @ git+https://github.com/pkkid/django-searchquery.git',
 ]
 

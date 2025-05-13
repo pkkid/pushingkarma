@@ -1,7 +1,7 @@
 # Deploy code to server
 # https://docs.fabfile.org/en/latest/
 # https://www.pyinvoke.org/
-import getpass, invoke
+import getpass, invoke, os
 from fabric import Connection
 from os.path import abspath, dirname
 
@@ -50,14 +50,15 @@ class MyConnection(Connection):
         r,g,b = tuple(int(x * 2, 16) for x in color.lstrip('#'))
         print(f'\n==> \033[38;2;{r};{g};{b}m{msg}\033[00m')
     
-    def sudo(self, *args, **kwargs):
+    def sudo(self, cmd, logcmd=False, **kwargs):
         """ Run a sudo command on the remote machine. """
         if not self.sudopw:
             self.sudopw = getpass.getpass('[sudo] remote password: ')
             self.validate_sudopw()
         responder = invoke.Responder(pattern=r'\[sudo\] password:', response=f'{self.sudopw}\n')
         kwargs.setdefault('watchers', []).append(responder)
-        super().sudo(*args, **kwargs)
+        if logcmd is True: print(f'> {cmd}')
+        super().sudo(cmd, **kwargs)
     
     def validate_sudopw(self):
         """ Validate and save the sudo password of the remote machine. """
@@ -65,6 +66,12 @@ class MyConnection(Connection):
             self.sudo('whoami', hide='both')
         except invoke.exceptions.Failure:
             raise SystemExit('Remote sudo password is incorrect.')
+
+
+def check_settings_exists(conn):
+    """ Ensure private directory is mounted. """
+    if not os.path.exists(f'{LOCALDIR}/pk/settings.py'):
+        raise SystemExit('Settings file does not exist.')
 
 
 def build_vue(conn):
@@ -85,6 +92,8 @@ def setup_log_directory(conn):
     """ Make sure the logs directory exists and has the right permissions. """
     conn.step(f'Setup Logs Directory {REMOTEHOST}:{REMOTEDIR}/_logs')
     conn.mkdir(f'{REMOTEDIR}/_logs', chmod='775')
+    conn.mkdir(f'{REMOTEDIR}/_logs/nginx', chmod='775')
+    conn.mkdir(f'{REMOTEDIR}/_logs/supervisor', chmod='775')
 
 
 def initialize_django(conn):
@@ -99,14 +108,23 @@ def initialize_django(conn):
 
 def build_docker_image(conn, start=True):
     """ Build the docker image and start it. """
+    # Create the new docker image
     conn.step(f'Building Docker Image: {REMOTEDIR} {DOCKERNAME}')
-    print(f'{DOCKER} build -t {DOCKERNAME} -f {REMOTEDIR}/Dockerfile {REMOTEDIR}')
-    conn.sudo(f'{DOCKER} build -t {DOCKERNAME} -f {REMOTEDIR}/Dockerfile {REMOTEDIR}')
-    # if start:
-    #     print(f'Starting Docker Image: {DOCKERNAME}')
-    #     cmd = f'cd {REMOTEDIR} && {DOCKER} run {DOCKERNAME} --name {DOCKERNAME}'
-    #     cmd += f' -d -p 8080:80/tcp -v {REMOTEDIR}:/app:rw'
-    #     conn.sudo(cmd)
+    conn.sudo(f'{DOCKER} build -t {DOCKERNAME} -f {REMOTEDIR}/Dockerfile {REMOTEDIR}', logcmd=True)
+    if start:
+        # Remove the old docker image
+        print(f'Remove Old Docker Image: {DOCKERNAME}')
+        conn.sudo(f'{DOCKER} stop {DOCKERNAME} || true', logcmd=True)
+        conn.sudo(f'{DOCKER} rm {DOCKERNAME} || true', logcmd=True)
+        # Start the new docker image
+        print(f'Starting Docker Image: {DOCKERNAME}')
+        cmd = f'{DOCKER} run --name {DOCKERNAME} -d'
+        cmd += f' -p 8080:80/tcp'
+        cmd += f' -v {REMOTEDIR}:/app:rw'
+        cmd += f' -v {REMOTEDIR}/_logs/nginx:/var/log/nginx:rw'
+        cmd += f' -v {REMOTEDIR}/_logs/supervisor:/var/log/supervisor:rw'
+        cmd += f' {DOCKERNAME}'
+        conn.sudo(cmd, logcmd=True)
 
 
 def restart_docker_image(conn):
@@ -118,6 +136,7 @@ def restart_docker_image(conn):
 @invoke.task
 def deploy(ctx, full=False):
     conn = MyConnection(host=REMOTEHOST, user=REMOTEUSER)
+    check_settings_exists(conn)
     conn.validate_sudopw()
     build_vue(conn)
     rsync_to_remote(conn)

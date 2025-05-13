@@ -26,6 +26,7 @@
     "start": "npm-run-all -p vue django",
     "django": "uv run python pk/manage.py runserver",
     "vue": "scripts/build-hljsthemes.py && vite",
-    "build": "scripts/build-hljsthemes.py && vite build"
+    "build": "scripts/build-hljsthemes.py && vite build",
+    "uvlock": "rm uv.lock && uv pip lock"
   }
 }
