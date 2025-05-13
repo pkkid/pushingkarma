@@ -1,6 +1,6 @@
 # Dockerfile
-# sudo docker build -t pushingkarma -f Dockerfile .
-# sudo docker run pushingkarma --name pushingkarma -d -p 8080:80/tcp -v /volume1/docker/pushingkarma:/app:rw
+# Docker container used to run the website with
+# daphne, nginx, and cron via supervisord 
 FROM python:3.12-slim
 RUN apt-get update
 RUN apt-get install -y build-essential cron git nginx supervisor
@@ -14,7 +14,7 @@ COPY docker/crontab.conf /etc/cron.d/pushingkarma
 
 RUN pip install uv
 RUN uv venv --python=3.12
-RUN uv pip install -r pyproject.toml
+RUN uv pip sync pyproject.toml
 RUN echo 'daemon off;' >> /etc/nginx/nginx.conf
 CMD supervisord
 

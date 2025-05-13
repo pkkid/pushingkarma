@@ -27,6 +27,6 @@
     "django": "uv run python pk/manage.py runserver",
     "vue": "scripts/build-hljsthemes.py && vite",
     "build": "scripts/build-hljsthemes.py && vite build",
-    "uvlock": "rm uv.lock && uv pip lock"
+    "uvlock": "rm uv.lock; uv lock"
   }
 }

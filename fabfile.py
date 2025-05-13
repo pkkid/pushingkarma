@@ -77,14 +77,18 @@ def check_settings_exists(conn):
 def build_vue(conn):
     """ Sync project files and set the right permissions. """
     conn.step(f'Building Vue Project to {LOCALDIR}/pk/_dist')
+    conn.local(f'rm -rf {LOCALDIR}/_static')
+    conn.local(f'uv run {LOCALDIR}/pk/manage.py collectstatic --noinput')
+    conn.local(f'rm -rf {LOCALDIR}/_dist')
     conn.local('npm run build')
+    conn.local(f'rm -rf {LOCALDIR}/_static')
 
 
 def rsync_to_remote(conn):
     """ Sync project files and set the right permissions. """
     conn.step(f'Rsyncing Project to {RSYNCDEST}')
     excludes = ['__pycache__', '*.bak', '*.sqlite3*', '*/_logs/', '*/_static/',
-        '*/.git/', '*/.venv/', '*/.vscode/', '*/daphne.sock', '*/node_modules/']
+        '*/.git/', '*/.venv/', '*/.vscode/', '*/node_modules/']
     conn.rsync(LOCALDIR, RSYNCDEST, excludes=excludes)
 
 
@@ -101,9 +105,8 @@ def initialize_django(conn):
     conn.step('Initilizing Django Application')
     with conn.cd(REMOTEDIR):
         conn.run(f'{UV} venv --python={UVPYTHON}')
-        conn.run(f'{ENV} {UV} pip install -r pyproject.toml')
+        conn.run(f'{ENV} {UV} pip sync pyproject.toml')
         conn.run(f'{UV} run {REMOTEDIR}/pk/manage.py migrate')
-        conn.run(f'{UV} run {REMOTEDIR}/pk/manage.py collectstatic --noinput')
 
 
 def build_docker_image(conn, start=True):
