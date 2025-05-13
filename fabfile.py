@@ -84,7 +84,7 @@ def rsync_to_remote(conn):
     """ Sync project files and set the right permissions. """
     conn.step(f'Rsyncing Project to {RSYNCDEST}')
     excludes = ['__pycache__', '*.bak', '*.sqlite3*', '*/_logs/', '*/_static/',
-        '*/.git/', '*/.venv/', '*/.vscode/', '*/node_modules/']
+        '*/.git/', '*/.venv/', '*/.vscode/', '*/daphne.sock', '*/node_modules/']
     conn.rsync(LOCALDIR, RSYNCDEST, excludes=excludes)
 
 
@@ -130,7 +130,7 @@ def build_docker_image(conn, start=True):
 def restart_docker_image(conn):
     """ Restart the docker image. """
     conn.step(f'Restarting Docker image: {DOCKERNAME}')
-    conn.sudo(f'cd {REMOTEDIR} && {DOCKER} restart {DOCKERNAME}')
+    conn.sudo(f'{DOCKER} restart {DOCKERNAME}')
 
 
 @invoke.task

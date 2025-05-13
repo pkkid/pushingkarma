@@ -1,6 +1,8 @@
 # encoding: utf-8
 import logging
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect
+from django.http import FileResponse
+from django.conf import settings
 from django.urls import re_path
 from django.views.decorators.clickjacking import xframe_options_exempt
 from django.views.decorators.csrf import ensure_csrf_cookie
@@ -25,10 +27,11 @@ api.add_router('/stocks', stocks_router)
 
 @xframe_options_exempt
 @ensure_csrf_cookie
-def index(request, tmpl='index.html'):
+def index(request):
     if url := vue_devserver_running(request):
         return redirect(url)
-    return render(request, tmpl, {})
+    filepath = f'{settings.BASE_DIR}/_dist/index.html'
+    return FileResponse(open(filepath, 'rb'), content_type='text/html')
 
 
 @api.exception_handler(Exception)
