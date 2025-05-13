@@ -9,7 +9,7 @@ export default defineConfig({
   ],
   build: {
     assetsDir: 'static',
-    outDir: 'pk/_dist',
+    outDir: '_dist',
     chunkSizeWarningLimit: 1000,  // KB
   },
   resolve: {

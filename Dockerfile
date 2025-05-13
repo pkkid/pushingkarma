@@ -3,7 +3,7 @@
 # sudo docker run pushingkarma --name pushingkarma -d -p 8080:80/tcp -v /volume1/docker/pushingkarma:/app:rw
 FROM python:3.12-slim
 RUN apt-get update
-RUN apt-get install -y build-essential cron nginx supervisor
+RUN apt-get install -y build-essential cron git nginx supervisor
 RUN rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
@@ -13,7 +13,7 @@ COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 COPY docker/crontab.conf /etc/cron.d/pushingkarma
 
 RUN pip install uv
-# This should be `uv pip sync`?
+RUN uv venv --python=3.12
 RUN uv pip install -r pyproject.toml
 RUN echo 'daemon off;' >> /etc/nginx/nginx.conf
 CMD supervisord
