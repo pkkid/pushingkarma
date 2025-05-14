@@ -1,5 +1,4 @@
 import axios from 'axios'
-import * as utils from '@/utils/utils'
 export const isCancel = axios.isCancel
 export var history = []
 
@@ -11,8 +10,10 @@ axios.defaults.withCredentials = true
 axios.defaults.withXSRFToken = true
 axios.defaults.xsrfCookieName = 'csrftoken'
 axios.defaults.xsrfHeaderName = 'X-CSRFToken'
-axios.defaults.baseURL = utils.apibase
-console.debug(`Axios.defaults.baseURL: ${axios.defaults.baseURL}`)
+axios.defaults.baseURL = process.env.NODE_ENV === 'development'
+  ? `${window.location.protocol}//${window.location.hostname}:8000`
+  : `${window.location.protocol}//${window.location.hostname}`
+console.log(`Axios.defaults.baseURL: ${axios.defaults.baseURL}`)
 
 // API Endpoints
 // Endpoints defined in the Django application
