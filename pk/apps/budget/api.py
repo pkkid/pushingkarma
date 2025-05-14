@@ -1,6 +1,6 @@
 # encoding: utf-8
 import logging
-from datetime import datetime, timedelta
+from datetime import datetime
 from django_searchquery import searchfields as sf
 from django_searchquery.search import Search
 from django.db.models import Max, Min, Sum
