@@ -140,7 +140,6 @@ def restart_services(conn):
     conn.sudo(f'{DOCKER} exec {DOCKERNAME} nginx -s reload', logcmd=True)
 
 
-
 @invoke.task
 def deploy(ctx, full=False):
     conn = MyConnection(host=REMOTEHOST, user=REMOTEUSER)
