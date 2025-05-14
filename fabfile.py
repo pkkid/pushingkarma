@@ -133,6 +133,14 @@ def restart_docker_image(conn):
     conn.sudo(f'{DOCKER} restart {DOCKERNAME}')
 
 
+def restart_services(conn):
+    """ Restart the web services. """
+    conn.step(f'Restarting Daphne and Nginx in container: {DOCKERNAME}')
+    conn.sudo(f'{DOCKER} exec {DOCKERNAME} supervisorctl restart daphne', logcmd=True)
+    conn.sudo(f'{DOCKER} exec {DOCKERNAME} nginx -s reload', logcmd=True)
+
+
+
 @invoke.task
 def deploy(ctx, full=False):
     conn = MyConnection(host=REMOTEHOST, user=REMOTEUSER)
@@ -143,5 +151,5 @@ def deploy(ctx, full=False):
     setup_log_directory(conn) if full else None
     initialize_django(conn) if full else None
     build_docker_image(conn) if full else None
-    restart_docker_image(conn) if not full else None
+    restart_services(conn) if not full else None
     print('\nDone.')
