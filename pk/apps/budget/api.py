@@ -1,6 +1,6 @@
 # encoding: utf-8
 import logging
-from datetime import datetime
+from datetime import datetime, timedelta
 from django_searchquery import searchfields as sf
 from django_searchquery.search import Search
 from django.db.models import Max, Min, Sum
@@ -209,8 +209,8 @@ def list_transactions(request,
     trxs = trxs.select_related('account', 'category')
     trxs = trxs.order_by('-date', 'payee')
     if search:
-        log.info(search)
-        trxs = Search(TRANSACTIONSEARCHFIELDS).get_queryset(trxs, search)
+        searchobj = Search(TRANSACTIONSEARCHFIELDS)
+        trxs = searchobj.get_queryset(trxs, search)
     response = paginate(request, trxs, page=page, perpage=100)
     for i in range(len(response['items'])):
         trx = response['items'][i]
@@ -244,11 +244,15 @@ def summarize_months(request,
       search: str=Query('', description='Search term to filter transactions')):
     """ Summarize spending by category and month. """
     categories = {c.id:c for c in Category.objects.filter(user=request.user)}
-    if not search:
-        now = datetime.now()
-        search = search or f'date>"{now.strftime(r'%b')} {now.year-1}"'
+    # Only look at 12 months of data
+    year, month = datetime.now().timetuple()[:2]
+    search = search or ''
+    search += f' date>="{year-1:04}-{month:02}-01"'
+    search += f' date<"{year:04}-{month+1:02}-01"'.strip()
+    searchobj = Search(TRANSACTIONSEARCHFIELDS)
+    # Filter the transactions
     trxs = Transaction.objects.filter(user=request.user)
-    trxs = Search(TRANSACTIONSEARCHFIELDS).get_queryset(trxs, search)
+    trxs = searchobj.get_queryset(trxs, search)
     summary = trxs.values('category__id').annotate(month=TruncMonth('date'), saved=Sum('amount'))
     summary = summary.order_by('category__sortid', 'month')
     dates = trxs.aggregate(mindate=Min('date'), maxdate=Max('date'))
