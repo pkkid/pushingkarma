@@ -104,8 +104,6 @@ def initialize_django(conn):
     """ Run the Django migrations and collect static files. """
     conn.step('Initilizing Django Application')
     with conn.cd(REMOTEDIR):
-        conn.run(f'{UV} venv --python={UVPYTHON}')
-        conn.run(f'{ENV} {UV} pip sync pyproject.toml')
         conn.run(f'{UV} run {REMOTEDIR}/pk/manage.py migrate')
 
 
@@ -121,8 +119,7 @@ def build_docker_image(conn, start=True):
         conn.sudo(f'{DOCKER} rm {DOCKERNAME} || true', logcmd=True)
         # Start the new docker image
         print(f'Starting Docker Image: {DOCKERNAME}')
-        cmd = f'{DOCKER} run --name {DOCKERNAME} -d'
-        cmd += f' -p 8080:80/tcp'
+        cmd = f'{DOCKER} run --name {DOCKERNAME} -d -p 8080:80/tcp'
         cmd += f' -v {REMOTEDIR}:/app:rw'
         cmd += f' -v {REMOTEDIR}/_logs/nginx:/var/log/nginx:rw'
         cmd += f' -v {REMOTEDIR}/_logs/supervisor:/var/log/supervisor:rw'
@@ -143,7 +140,7 @@ def deploy(ctx, full=False):
     conn.validate_sudopw()
     build_vue(conn)
     rsync_to_remote(conn)
-    setup_log_directory(conn)
+    setup_log_directory(conn) if full else None
     initialize_django(conn) if full else None
     build_docker_image(conn) if full else None
     restart_docker_image(conn) if not full else None

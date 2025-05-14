@@ -13,8 +13,8 @@ COPY docker/supervisord.conf /etc/supervisor/conf.d/pushingkarma.conf
 COPY docker/crontab.conf /etc/cron.d/pushingkarma
 
 RUN pip install uv
-RUN uv venv --python=3.12
-RUN uv pip sync pyproject.toml
+# RUN uv venv --python=3.12
+# RUN uv pip sync pyproject.toml
 RUN echo 'daemon off;' >> /etc/nginx/nginx.conf
 CMD supervisord
 

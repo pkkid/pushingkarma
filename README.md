@@ -8,9 +8,8 @@ for your own site. If you find anything useful, by all means let me know.
 git git@github.com:pkkid/pushingkarma.git
 cd pushingkarma
 
-# Create Python virtualenv & install requirements
-uv venv --python 3.12
-uv pip install -r pk/requirements.txt
+# Install uv
+curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Install node v20.11 (lts)
 nvm install 20.11

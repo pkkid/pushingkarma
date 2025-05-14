@@ -4,8 +4,8 @@
 // Set apibase URL to port 8000 if running in development mode.
 // This is the port that the Django runserver uses.
 export const apibase = process.env.NODE_ENV === 'development' ?
-  `${window.location.protocol}://${window.location.hostname}:8000` :
-  `${window.location.protocol}://${window.location.hostname}`
+  `${window.location.protocol}:8000` :
+  `${window.location.protocol}`
 
 // Animate
 // animate the specified element
