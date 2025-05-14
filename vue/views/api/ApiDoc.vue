@@ -68,8 +68,8 @@
             <template v-if='response'>
               <div class='headers'>
                 <span class='label'>HTTP {{response.status}} {{response.statusText}}</span><br/>
-                <template v-for='header in Object.keys(response.headers)'>
-                  <div v-if='response.headers[header]' :key='header'>
+                <template v-for='header in HEADERS' :key='header'>
+                  <div v-if='response.headers[header]'>
                     <span class='label'>{{utils.title(header)}}:</span>
                     <span class='value'>{{response.headers[header]}}</span><br/>
                   </div>
@@ -100,7 +100,8 @@
   const APIROOT = '/api/'
   const ICONS = {'budget':'mdi-piggy-bank-outline', 'main':'mdi-earth',
     'obsidian':'mdi-notebook-outline', 'stocks':'mdi-chart-line'}
-  
+  const HEADERS = ['content-length', 'content-type', 'queries', 'response-time']
+
   const axiosSettings = inject('axiosSettings')
   const {method, path} = useUrlParams({method:{}, path:{}})  // Method & path url params
   var allowed = ref(null)                 // Allowed methods for current endpoint
