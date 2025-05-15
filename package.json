@@ -27,6 +27,7 @@
     "django": "uv run python pk/manage.py runserver",
     "vue": "scripts/build-hljsthemes.py && vite",
     "build": "scripts/build-hljsthemes.py && vite build",
-    "uvlock": "rm uv.lock; uv lock"
+    "uvlock": "rm uv.lock; uv lock",
+    "watch": "ssh synology.local -C 'tail -F ~/pushingkarma/_logs/django.log'"
   }
 }

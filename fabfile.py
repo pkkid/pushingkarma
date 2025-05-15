@@ -1,7 +1,7 @@
 # Deploy code to server
 # https://docs.fabfile.org/en/latest/
 # https://www.pyinvoke.org/
-import getpass, invoke, os
+import getpass, invoke, keyring, os
 from fabric import Connection
 from os.path import abspath, dirname
 
@@ -52,8 +52,10 @@ class MyConnection(Connection):
     
     def sudo(self, cmd, logcmd=False, **kwargs):
         """ Run a sudo command on the remote machine. """
+        self.sudopw = keyring.get_password('pk', 'synologypw')
         if not self.sudopw:
             self.sudopw = getpass.getpass('[sudo] remote password: ')
+            keyring.set_password('pk', 'synologypw', self.sudopw)
             self.validate_sudopw()
         responder = invoke.Responder(pattern=r'\[sudo\] password:', response=f'{self.sudopw}\n')
         kwargs.setdefault('watchers', []).append(responder)
