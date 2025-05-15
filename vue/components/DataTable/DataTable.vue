@@ -20,7 +20,9 @@
         <tr><slot name='footer' :item='footer'></slot></tr>
       </tfoot>
     </table>
-    <div v-if='infinite' ref='scrollwatch'/>
+  </div>
+  <div v-if='infinite' ref='scrollwatch'>
+    <slot name='scrollwatch'></slot>
   </div>
 </template>
 

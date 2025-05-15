@@ -17,6 +17,10 @@
           :tooltip='column.tooltip?.(item)' :tooltipWidth='column.tooltipWidth'/>
       </template>
     </template>
+    <!-- Scrollwatch -->
+    <template #scrollwatch>
+      <slot name='scrollwatch'></slot>
+    </template>
   </DataTable>
 </template>
 

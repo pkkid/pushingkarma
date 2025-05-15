@@ -17,14 +17,18 @@
       </h1>
       <!-- Transactions Table -->
       <EditTable ref='edittable' v-if='trxs?.items' :columns='COLUMNS' :items='trxs?.items' :infinite='true'
-        @getNextPage='getNextPage' @itemSelected='onItemSelected' @itemUpdated='onItemUpdated'/>
+        @getNextPage='getNextPage' @itemSelected='onItemSelected' @itemUpdated='onItemUpdated'>
+        <template #scrollwatch>
+          <LoadingIcon width='100%' height='100px' size='40px'/>
+        </template>
+      </EditTable>
     </template>
   </LayoutPaper>
 </template>
 
 <script setup>
   import {nextTick, onMounted, ref, watch, watchEffect} from 'vue'
-  import {EditTable, LayoutPaper} from '@/components'
+  import {EditTable, LayoutPaper, LoadingIcon} from '@/components'
   import {useUrlParams} from '@/composables'
   import {api, utils} from '@/utils'
   import axios from 'axios'
