@@ -121,6 +121,7 @@ def build_docker_image(conn, start=True):
         print(f'Starting Docker Image: {DOCKERNAME}')
         cmd = f'{DOCKER} run --name {DOCKERNAME} -d -p 8080:80/tcp'
         cmd += f' -v {REMOTEDIR}:/app:rw'
+        cmd += '  -v /volume1/homes/pkkid/Sync/Notes:/notes:ro'
         cmd += f' -v {REMOTEDIR}/_logs/nginx:/var/log/nginx:rw'
         cmd += f' -v {REMOTEDIR}/_logs/supervisor:/var/log/supervisor:rw'
         cmd += f' {DOCKERNAME}'
