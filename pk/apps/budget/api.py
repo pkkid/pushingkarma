@@ -12,6 +12,7 @@ from itertools import groupby
 from ninja import Body, File, Path, Query, Router
 from ninja.errors import HttpError
 from ninja.files import UploadedFile
+from pk.utils.utils import add_months, first_of_month
 from pk.utils.django import get_object_or_none
 from pk.utils.ninja import PageSchema, paginate
 from typing import List
@@ -244,15 +245,16 @@ def summarize_months(request,
       search: str=Query('', description='Search term to filter transactions')):
     """ Summarize spending by category and month. """
     categories = {c.id:c for c in Category.objects.filter(user=request.user)}
-    # Only look at 12 months of data
-    year, month = datetime.now().timetuple()[:2]
-    search = search or ''
-    search += f' date>="{year-1:04}-{month:02}-01"'
-    search += f' date<"{year:04}-{month+1:02}-01"'.strip()
+    # Only look at 13 months of data
+    mindate = first_of_month(add_months(datetime.now(), -12))
+    maxdate = add_months(mindate, 13)
+    search = ' '.join([search or '',
+        f'date>={mindate.strftime("%Y-%m-%d")}',
+        f'date<{maxdate.strftime("%Y-%m-%d")}'])
     searchobj = Search(TRANSACTIONSEARCHFIELDS)
     # Filter the transactions
     trxs = Transaction.objects.filter(user=request.user)
-    trxs = searchobj.get_queryset(trxs, search)
+    trxs = searchobj.get_queryset(trxs, search.strip())
     summary = trxs.values('category__id').annotate(month=TruncMonth('date'), saved=Sum('amount'))
     summary = summary.order_by('category__sortid', 'month')
     dates = trxs.aggregate(mindate=Min('date'), maxdate=Max('date'))
