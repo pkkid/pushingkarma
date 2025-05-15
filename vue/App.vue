@@ -36,7 +36,7 @@
     // Fetch and save global variables
     var {data} = await api.Main.getGlobalVars()
     var userdata = utils.pop(data, 'user')
-    user.value = userdata.id ? userdata : null
+    user.value = userdata?.id ? userdata : null
     globalvars.value = data
     // Set the development favicon
     if (globalvars.value.DEBUG) {

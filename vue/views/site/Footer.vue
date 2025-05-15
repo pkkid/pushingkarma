@@ -48,8 +48,9 @@
     font-size: 0.85rem;
     font-weight: 400;
     line-height: 1.7;
-    text-align: left;
     padding-left: 300px;
+    position: relative;
+    text-align: left;
 
     .footerwrap {
       margin: 0px auto;

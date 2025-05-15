@@ -13,7 +13,7 @@ log = logging.getLogger(__name__)
 router = Router()
 
 
-@router.get('/notes/{bucket}/{path}', response=NoteSchema, exclude_unset=True, url_name='note')
+@router.get('/notes/{bucket}/{path:path}', response=NoteSchema, exclude_unset=True, url_name='note')
 def get_note(request,
       bucket: str=Path(None, description='Name of Obsidian bucket in settings.py'),
       path: str=Path(None, description='Path of note in the bucket')):

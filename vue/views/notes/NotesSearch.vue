@@ -65,7 +65,7 @@
       var searchstr = search.value.length < 3 ? '' : search.value
       var {data} = await api.Obsidian.listNotes({search:searchstr}, cancelctrl.signal)
       notes.value = data.items
-      emit('results', data.results)
+      emit('results', data.items)
     } catch (err) {
       if (!api.isCancel(err)) { throw(err) }
     } finally {
