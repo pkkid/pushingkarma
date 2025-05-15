@@ -1,4 +1,5 @@
 # encoding: utf-8
+import logging
 from django.conf import settings
 from django.core.paginator import Paginator
 from ninja import Router
@@ -6,6 +7,7 @@ from ninja import Schema
 from pydantic import create_model
 from typing import List, Type
 from urllib.parse import urlencode
+log = logging.getLogger(__name__)
 root_router = Router()
 
 ROOT_DESCRIPTION = """
@@ -49,6 +51,6 @@ def _pageurl(request, pagenum):
     """ Create URL for the specified page number. """
     query_params = request.GET.copy()
     query_params['page'] = pagenum
-    url = f'{request.scheme}://{request.get_host()}{request.path}'
+    url = f'{settings.DOMAIN}{request.path}'
     if query_params: url += f'?{urlencode(query_params)}'
     return url
