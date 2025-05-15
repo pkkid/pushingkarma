@@ -1,28 +1,30 @@
 <template>
   <div class='datatable' ref='datatable'>
-    <table v-if='items !== null'>
-      <!-- Header (dynamically created) -->
-      <thead><tr>
-        <th v-for='head in headers' :key='head.name' :class='head.name'>
-          <div class='thwrap'>{{head.title}}
-            <div v-if='head.subtext' class='subtext'>{{head.subtext}}</div>
-          </div>
-        </th>
-      </tr></thead>
-      <!-- Body -->
-      <tbody>
-        <tr v-for='(item, row) in items' :key='item[keyattr]'>
-          <slot name='columns' :item='item' :row='row'></slot>
-        </tr>
-      </tbody>
-      <!-- Footer -->
-      <tfoot v-if='footer'>
-        <tr><slot name='footer' :item='footer'></slot></tr>
-      </tfoot>
-    </table>
-  </div>
-  <div v-if='infinite' ref='scrollwatch'>
-    <slot name='scrollwatch'></slot>
+    <div class='datatable-wrap'>
+      <table v-if='items !== null'>
+        <!-- Header (dynamically created) -->
+        <thead><tr>
+          <th v-for='head in headers' :key='head.name' :class='head.name'>
+            <div class='thwrap'>{{head.title}}
+              <div v-if='head.subtext' class='subtext'>{{head.subtext}}</div>
+            </div>
+          </th>
+        </tr></thead>
+        <!-- Body -->
+        <tbody>
+          <tr v-for='(item, row) in items' :key='item[keyattr]'>
+            <slot name='columns' :item='item' :row='row'></slot>
+          </tr>
+        </tbody>
+        <!-- Footer -->
+        <tfoot v-if='footer'>
+          <tr><slot name='footer' :item='footer'></slot></tr>
+        </tfoot>
+      </table>
+    </div>
+    <div v-if='infinite' ref='scrollwatch'>
+      <slot name='scrollwatch'></slot>
+    </div>
   </div>
 </template>
 
@@ -93,7 +95,7 @@
 </script>
 
 <style>
-  .datatable {
+  .datatable-wrap {
     background-color: var(--lightbg-bg0);
     border-radius: 6px;
     border: 1px solid var(--lightbg-bg3);

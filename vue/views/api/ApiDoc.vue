@@ -91,7 +91,7 @@
                 <span class='label'>HTTP {{method.toUpperCase()}} Request Not Initiated</span>
               </div>
               <div v-if='loading' theme='gruvbox-light-hard' class='codearea'>
-                <pre><code class='hljs'><LoadingIcon height='200px'/></code></pre>
+                <pre><code class='hljs'><LoadingIcon height='200px' text='Fetching Response'/></code></pre>
               </div>
             </template>
           </template>

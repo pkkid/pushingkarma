@@ -19,7 +19,7 @@
       <EditTable ref='edittable' v-if='trxs?.items' :columns='COLUMNS' :items='trxs?.items' :infinite='true'
         @getNextPage='getNextPage' @itemSelected='onItemSelected' @itemUpdated='onItemUpdated'>
         <template #scrollwatch>
-          <LoadingIcon width='100%' height='100px' size='40px'/>
+          <LoadingIcon width='100%' height='150px' size='40px' text='Loading More Transactions'/>
         </template>
       </EditTable>
     </template>
