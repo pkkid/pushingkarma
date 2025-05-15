@@ -4,7 +4,7 @@
       <!-- Search -->
       <div class='searchwrap'>
         <input type='text' v-model='_search' placeholder='Search Transactions'
-          class='searchinput' @keydown.enter='search=_search'>
+          class='searchinput' @keydown.enter='search=_search || null'>
         <transition name='fade'>
           <i v-if='_search?.length' class='mdi mdi-close' @click='search=""; _search=""'/>
         </transition>
@@ -44,8 +44,10 @@
 
   // Watch Search
   // Update transactions and _search.value
-  watch(search, function() { updateSummary() })
-  watchEffect(() => _search.value = search.value)
+  watch(search, function() {
+    _search.value = search.value
+    updateSummary()
+  })
 
   // Watch Summary
   // Update columns when summary changes
