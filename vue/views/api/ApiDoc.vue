@@ -85,7 +85,7 @@
                 <highlightjs :code='utils.stringify(response?.data || "", {indent:2})' language='json' :autodetect='false'/>
               </div>
             </template>
-            <!-- No Response or Loading -->
+            <!-- No Response and Loading -->
             <template v-else>
               <div class='headers'>
                 <span class='label'>HTTP {{method.toUpperCase()}} Request Not Initiated</span>
