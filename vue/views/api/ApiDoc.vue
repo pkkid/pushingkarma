@@ -85,9 +85,15 @@
                 <highlightjs :code='utils.stringify(response?.data || "", {indent:2})' language='json' :autodetect='false'/>
               </div>
             </template>
-            <div v-else class='headers'>
-              <span class='label'>HTTP {{method.toUpperCase()}} Request Not Initiated</span>
-            </div>
+            <!-- No Response or Loading -->
+            <template v-else>
+              <div class='headers'>
+                <span class='label'>HTTP {{method.toUpperCase()}} Request Not Initiated</span>
+              </div>
+              <div v-if='loading' theme='gruvbox-light-hard' class='codearea'>
+                <pre><code class='hljs'><LoadingIcon height='200px'/></code></pre>
+              </div>
+            </template>
           </template>
         </LayoutPaper>
       </template>
@@ -97,7 +103,7 @@
 
 <script setup>
   import {computed, inject, nextTick, onMounted, ref, watch, watchEffect} from 'vue'
-  import {CodeEditor, LayoutPaper, LayoutSidePanel, Tooltip} from '@/components'
+  import {CodeEditor, LayoutPaper, LayoutSidePanel, LoadingIcon, Tooltip} from '@/components'
   import {ApiSettings} from '@/views/api'
   import {useUrlParams} from '@/composables'
   import {utils} from '@/utils'
@@ -113,6 +119,7 @@
   var allowed = ref(null)                 // Allowed methods for current endpoint
   var endpoint = ref(null)                // Current endpoint details
   var historyTooltip = ref(null)          // History tooltip
+  var loading = ref(false)                // True when loading a request
   var payload = ref(null)                 // Current body payload
   var response = ref(null)                // Current get response
   var toc = ref(null)                     // Table of contents (api root)
@@ -264,10 +271,12 @@
   // Send the http request
   const sendRequest = async function() {
     if (!path.value) { return }
+    loading.value = true
     var data = (method.value != 'get') ? JSON.parse(payload.value) || {} : undefined
     await axios[method.value.toLowerCase()](path.value, data)
       .then(resp => response.value = resp)
       .catch(err => response.value = err.response)
+      .finally(() => loading.value = false)
     await nextTick()
     linkResponseUrls()
   }
