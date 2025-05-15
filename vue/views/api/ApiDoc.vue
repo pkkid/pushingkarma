@@ -10,7 +10,8 @@
               {{utils.title(category)}}
             </div>
             <template v-for='endpt in endpts' :key='endpt.path'>
-              <div class='subitem link' :class='{selected: endpt.path==endpoint?.path}' @click='setPath(endpt.path, endpt.method)'>
+              <div class='subitem link' :class='{selected: endpt.path==endpoint?.path}'
+                @click='setupRequest(endpt.path, endpt.method)'>
                 <div class='name'>{{endpt.summary}}</div>
               </div>
             </template>
@@ -26,15 +27,20 @@
             <h1 v-else>Unknown Endpoint</h1>
             <div class='inputwrap'>
               <div class='urlwrap'>
-                <select v-model='method'><option v-for='meth in allowed' :key='meth' :value='meth'>{{meth.toUpperCase()}}</option></select>
-                <input class='urlinput' type='text' v-model='path' spellcheck='false'
-                  @keydown.enter='$event.shiftKey ? sendRequest() : path=$event.target.value'/>
+                <select v-model='method'>
+                  <option v-for='meth in allowed' :key='meth' :value='meth'>{{meth.toUpperCase()}}</option>
+                </select>
+                <input class='urlinput' type='text' v-model='_path' spellcheck='false'
+                  @change='setupRequest(_path, method.value, null, false)'
+                  @keydown.enter.stop='sendRequest'/>
                 <!-- History Tooltip -->
-                <Tooltip v-if='axiosSettings.history.value?.length' ref='historyTooltip' class='request-history' position='bottomleft' width='auto' trigger='click'>
+                <Tooltip v-if='axiosSettings.history.value?.length' ref='historyTooltip'
+                  class='request-history' position='bottomleft' width='auto' trigger='click'>
                   <template #tooltip>
                     Request History
                     <div class='tablewrap'><table>
-                      <tr v-for='(item, i) in axiosSettings.history.value' :key='i' @click.stop='setPath(item.path, item.method, item.data)'>
+                      <tr v-for='(item, i) in axiosSettings.history.value' :key='i'
+                        @click.stop='setupRequest(item.path, item.method, item.data)'>
                         <td>{{item.datetime}}</td>
                         <td>{{item.status}}</td>
                         <td>{{item.method}}</td>
@@ -80,7 +86,7 @@
               </div>
             </template>
             <div v-else class='headers'>
-              <span class='label'>{{method}} request not initiated</span>
+              <span class='label'>HTTP {{method.toUpperCase()}} Request Not Initiated</span>
             </div>
           </template>
         </LayoutPaper>
@@ -110,6 +116,7 @@
   var payload = ref(null)                 // Current body payload
   var response = ref(null)                // Current get response
   var toc = ref(null)                     // Table of contents (api root)
+  var _path = ref(null)                   // Current input value
 
   // Categories
   // Computes object of {category: [endpoints]} to display in the sidepanel
@@ -170,20 +177,8 @@
   onMounted(async function() {
     utils.setNavPosition('top')
     toc.value = (await axios.get(APIROOT)).data
-    path.value = path.value || APIROOT
-    method.value = method.value || 'get'
-    updateEndpoint()
-    checkAutoRequest()
+    setupRequest(path.value || APIROOT, method.value || 'get')
   })
-
-  // Check Auto Request
-  // Check if we want to auto send the request
-  const checkAutoRequest = function() {
-    if (!path.value || !method.value) { return }
-    if (method.value == 'get' && !path.value.includes('{')) {
-      sendRequest()
-    }
-  }
 
   // Create Example Schema
   // Creates an example schema from the schema object
@@ -215,12 +210,17 @@
       newspan.addEventListener('click', () => {
         var newpath = newspan.textContent.slice(1, -1)
         newpath = newpath.replace(axios.defaults.baseURL, '')
-        path.value = newpath
-        method.value = 'GET'
+        setupRequest(newpath, 'get', null, true)
       })
       span.replaceWith(newspan)
     })
   }
+
+  // Watch _Path
+  // Watch the _path value and update the request
+  watch(_path, function(newpath) {
+    setupRequest(newpath, method.value, null, false)
+  })
 
   // Paths Match
   // Check the two paths match
@@ -232,25 +232,44 @@
     return new RegExp(`^${pattern}$`).test(pathstr)
   }
 
+  // Set Path
+  // Update path and method from the endpoint path
+  const setupRequest = function(newpath, newmethod, newpayload=null, autoRequest=true) {
+    console.log(`setupRequest(${newpath}, ${newmethod}, <payload>, ${autoRequest})`)
+    // Close any tooltips and clear the response
+    historyTooltip.value?.close()
+    response.value = null
+    // Update method, path, and payload
+    method.value = newmethod
+    path.value = newpath.startsWith('http') ? decodeURIComponent(new URL(newpath).pathname) : newpath
+    payload.value = newpayload ? utils.stringify(JSON.parse(newpayload), {indent:2}) : null
+    _path.value = path.value
+    // Update the endpoint, check current method allowed, check send request
+    updateEndpoint()
+    // console.log('endpoint:', endpoint.value)
+    if (!allowed.value.includes(method.value)) { method.value = allowed.value[0] }
+    if (autoRequest) { checkSendRequest() }
+  }
+
+  // Check Auto Request
+  // Check if we want to auto send the request
+  const checkSendRequest = function() {
+    // if (response.value) { return }
+    if (!path.value || !method.value || !endpoint.value) { return }
+    if (method.value != 'get' || path.value.includes('{')) { return }
+    sendRequest()
+  }
+
   // Send Request
   // Send the http request
   const sendRequest = async function() {
     if (!path.value) { return }
-    var data = (method.value != 'GET') ? JSON.parse(payload.value) || {} : undefined
+    var data = (method.value != 'get') ? JSON.parse(payload.value) || {} : undefined
     await axios[method.value.toLowerCase()](path.value, data)
       .then(resp => response.value = resp)
       .catch(err => response.value = err.response)
     await nextTick()
     linkResponseUrls()
-  }
-
-  // Set Path
-  // Update path and method from the endpoint path
-  const setPath = function(newpath, newmethod, newpayload) {
-    historyTooltip.value?.close()
-    method.value = newmethod
-    path.value = !newpath.startsWith('http') ? newpath : decodeURIComponent(new URL(newpath).pathname)
-    payload.value = newpayload ? utils.stringify(JSON.parse(newpayload), {indent:2}) : null
   }
 
   // Update Endpoint & Allowed Methods
@@ -277,18 +296,6 @@
       payload.value = utils.stringify(createExampleSchema(schema))
     }
   }
-
-  // Watch Path & Method
-  // Check we want to auto send the request
-  watch([path, method], function() {
-    if (!path.value || !method.value) { return }
-    response.value = null
-    updateEndpoint()
-    if (!allowed.value.includes(method.value)) {
-      method.value = allowed.value[0]
-    }
-    checkAutoRequest()
-  })
 </script>
 
 <style>
