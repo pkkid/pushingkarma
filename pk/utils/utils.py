@@ -17,9 +17,7 @@ def add_months(dt, months):
 def clean_amount(value):
     """ Clean a USD string such as -$99.99 to a Decimal value. """
     if isinstance(value, str):
-        value = value.replace('$', '')
-        value = value.replace(',', '')
-        return Decimal(value)
+        return Decimal(value.replace('$', '').replace(',', ''))
     if isinstance(value, (int, float)):
         return Decimal(value)
     return value
@@ -36,9 +34,8 @@ def first_of_month(dt):
 
 def percent(numerator, demoniator, precision=2):
     """ Calculate the percentage of a number. """
-    if not demoniator:
-        return 0
-    return round(numerator / demoniator * 100, precision) if demoniator else 0
+    if not demoniator: return 0
+    return round(numerator / demoniator * 100, precision)
 
 
 def rgb(text, color='#aaa', reset=True):
@@ -78,7 +75,4 @@ def rset(obj, attrstr, value, delim='.'):
 
 def to_int(value):
     """ Convert a string to an int. """
-    try:
-        return int(value)
-    except ValueError:
-        return None
+    return int(value) if str(value).isdigit() else None
