@@ -15,7 +15,7 @@
       </div>
       <div class='total' :class='utils.getSign(total)'>{{utils.usd(total, 0, '$', 3)}}</div>
     </div>
-    <div v-else>
+    <div v-else style='margin-bottom:20px;'>
       No transactions to display.
     </div>
   </div>
