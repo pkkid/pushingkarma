@@ -23,6 +23,8 @@ export const Main = {
   logout(signal) { return axios.post(`/api/main/logout`, null, {signal}) },
 }
 export const Budget = {
+  createAccount(data, signal) { return axios.post(`/api/budget/accounts`, data, {signal}) },
+  createCategory(data, signal) { return axios.post(`/api/budget/categories`, data, {signal}) },
   deleteAccount(pk, signal) { return axios.delete(`/api/budget/accounts/${pk}`, {signal}) },
   deleteCategory(pk, signal) { return axios.delete(`/api/budget/categories/${pk}`, {signal}) },
   getAccount(pk, params, signal) { return axios.get(`/api/budget/accounts/${pk}`, {params, signal}) },

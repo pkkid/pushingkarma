@@ -57,6 +57,14 @@ def get_account(request,
     return response
 
 
+@router.post('/accounts', response=schemas.AccountSchema, exclude_unset=True)
+def create_account(request, data: schemas.AccountPatchSchema=Body(...)):
+    """ Create a new account for the logged in user. """
+    item = Account(user=request.user, **data.dict(exclude_unset=True))
+    item.save()
+    return get_account(request, item.id)
+
+
 @router.patch('/accounts/{pk}', response=schemas.AccountSchema, exclude_unset=True)
 def update_account(request,
       pk: int=Path(..., description='Primary key of account to update'),
@@ -119,6 +127,14 @@ def get_category(request,
     category = get_object_or_404(Category, user=request.user, id=pk)
     response = schemas.CategorySchema.from_orm(category)
     return response
+
+
+@router.post('/categories', response=schemas.CategorySchema, exclude_unset=True)
+def create_category(request, data: schemas.CategoryPatchSchema=Body(...)):
+    """ Create a new category for the logged in user. """
+    item = Category(user=request.user, **data.dict(exclude_unset=True))
+    item.save()
+    return get_category(request, item.id)
 
 
 @router.patch('/categories/{pk}', response=schemas.CategorySchema, exclude_unset=True)
