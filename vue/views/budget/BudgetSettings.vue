@@ -7,10 +7,8 @@
       <!-- Accounts -->
       <div v-if='accounts' class='accounts'>
         <h3 style='margin-top:0px;'>
-          <Tooltip text='Add Account' position='left' style='float:right; margin-top:3px;'>
-            <i class='mdi mdi-plus add-item' @click.stop='addAccount'/>
-          </Tooltip>
           Accounts
+          <div class='add-item' @click.stop='addAccount' style='float:right;'>Add New Account</div>
         </h3>
         <Sortable group='accounts' @sort='onSortAccounts'>
           <BudgetSettingsAccount v-for='account in accounts.items' :key='account.id' ref='accountPanels'
@@ -20,12 +18,10 @@
       <!-- Categories -->
       <div v-if='categories' class='categories'>
         <h3>
-          <Tooltip text='Add Category' position='left' style='float:right; margin-top:3px;'>
-            <i class='mdi mdi-plus add-item' @click.stop='addCategory'/>
-          </Tooltip>
           Categories
+          <div class='add-item' @click.stop='addCategory' style='float:right;'>Add New Category</div>
         </h3>
-        <Sortable group='categories' @sort='onSortCategories' style='min-height:100px; max-height:300px; overflow-y:auto; overscroll-behavior:contain;'>
+        <Sortable group='categories' @sort='onSortCategories' style='min-height:100px; max-height:300px; overflow-y:auto;'>
           <BudgetSettingsCategory v-for='category in categories.items' :key='category.id'
             :category='category' @updated='updateCategories'  @deleted='updateCategories'/>
         </Sortable>
@@ -118,26 +114,35 @@
 
     .sortable input[type=text] {
       background-color: transparent;
-      /* border-radius: 0px; */
+      border-radius: 0px;
       border-width: 0px;
       box-shadow: none;
       font-family: inherit;
       font-size: inherit;
-      line-height: 22px;
+      line-height: 30px;
       padding: 1px 6px 0px 6px;
       width: 200px;
-      margin-left: -6px;
+      margin-left: 0px;
       transition: background-color 0.3s ease;
-      &:focus { background-color:#0001; }
+      &:focus {
+        background-color:#8884;
+        color: #000;
+        background: linear-gradient(to right, #8884 0%, #0001 90%, transparent 100%);
+      }
     }
 
     /* Add Account or Category */
-    h3 .add-item {
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-size: 18px;
-      opacity: 0;
-      &:hover { opacity:1 !important; }
+    h3 {
+      margin-bottom: 5px;
+      .add-item {
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 12px;
+        opacity: 0;
+        position: relative;
+        top: 6px;
+        &:hover { opacity:1 !important; }
+      }
     }
     h3:hover .add-item { opacity:0.6; }
 
@@ -153,7 +158,12 @@
     }
     .delete-account:hover,
     .delete-category:hover { color: var(--lightbg-red0) !important; }
-    .delete-category { opacity:0; margin-right:0px; position:relative; top:1px; }
+    .delete-category {
+      opacity: 0;
+      margin-right: 0px;
+      position: relative;
+      top: 5px;
+    }
     .sortableitem:hover .delete-category { opacity:0.7; }
   }
 </style>

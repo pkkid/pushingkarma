@@ -120,9 +120,9 @@
     position: relative;
 
     &:first-child { border-top:none; }
-    .content:not(:has(.expandable)) { padding:5px 10px 5px 25px; }
-    .content:has(.expandable) .expandable-header { padding:5px 10px 5px 25px; }
-    .content:has(.expandable) .expandable-content { padding:0px 10px 5px 25px; }
+    .content:not(:has(.expandable)) { padding:1px 10px 1px 25px; }
+    .content:has(.expandable) .expandable-header { padding:1px 10px 1px 25px; }
+    .content:has(.expandable) .expandable-content { padding:0px 10px 1px 25px; }
 
     .grip {
       color: var(--lightbg-fg3);
@@ -132,7 +132,8 @@
       justify-content: center;
       line-height: 20px;
       position: absolute;
-      top: 5px; left: 3px;
+      top: 5px;
+      left: 6px;
       width: 18px; height:22px;
       opacity: 0.5;
       transition: opacity 0.3s ease;

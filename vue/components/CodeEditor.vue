@@ -170,7 +170,7 @@
     /* render correctly (but scrollbars may appear outside the border-radius). */
     font-family: var(--fontfamily-code);
     font-size: 13px;
-    line-height: 1.2;
+    line-height: 1.3;
     position: relative;
     z-index: 1;
 
@@ -181,7 +181,7 @@
       height: 100%;
     }
     .codewrap.hljs {
-      border-radius: 6px;
+      border-radius: 4px;
       padding: 0px;
       height: 100%;
     }

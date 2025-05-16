@@ -31,7 +31,8 @@
             <i class='mdi' :class='jsonIcon'/>
           </Tooltip>
           <label>Import Configuration</label>
-          <CodeEditor v-model='accountRules' :showLineNums='true' language='json' padding='8px' height='150px' @save='saveAccount'/>
+          <CodeEditor v-model='accountRules' :showLineNums='true' language='json'
+            padding='8px' height='150px' @save='saveAccount'/>
           <div class='button-row' style='margin-top:5px;'>
             <button @click='saveAccount'>Save Account</button>
             <Tooltip position='left'>
@@ -105,7 +106,11 @@
 
 <style>
   .budgetsettingsaccount {
-    .codeeditor { width:100%; font-size:12px; }
+    .codeeditor {
+      width: 100%;
+      font-size: 12px;
+      .codewrap { background-color:#efefed !important; }
+    }
     .tooltip pre {
       background-color: #0002;
       border-radius: 4px;
