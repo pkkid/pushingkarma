@@ -217,7 +217,7 @@
       newspan.addEventListener('click', () => {
         var newpath = newspan.textContent.slice(1, -1)
         newpath = newpath.replace(axios.defaults.baseURL, '')
-        setupRequest(newpath, 'get', null, true)
+        setupRequest(newpath, 'get')
       })
       span.replaceWith(newspan)
     })
@@ -247,7 +247,7 @@
     historyTooltip.value?.close()
     response.value = null
     // Update method, path, and payload
-    method.value = newmethod
+    method.value = newmethod.toLowerCase()
     path.value = newpath.startsWith('http') ? decodeURIComponent(new URL(newpath).pathname) : newpath
     payload.value = newpayload ? utils.stringify(JSON.parse(newpayload), {indent:2}) : null
     _path.value = path.value
