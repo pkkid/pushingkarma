@@ -56,9 +56,9 @@
     columns.value = [{
         name:'category', title:'Category', editable:false,
         html: cat => cat.name,
-      }, ...Array.from({length:12}, (_, i) => {
+      }, ...Array.from({length:13}, (_, i) => {
         var month = utils.newDate(summary.value.minmonth)
-        month.setMonth(month.getMonth() + i)
+        month.setMonth(month.getMonth() + 12 - i)
         var key = utils.formatDate(month, 'YYYY-MM-DD')
         var name = `month month-${utils.formatDate(month, 'YYYYMMDD')}`
         var title = utils.formatDate(month, 'MMM')
@@ -193,11 +193,10 @@
 
     .edittable {
       .tdwrap { font-size:12px; }
-      .category { width:150px; text-align:left; .tdwrap { background-color: #ddd8; }}
-      .month { width:75px; text-align:right; .tdwrap { width:75px; font-family:var(--fontfamily-code); font-size:11px; }}
-      .average { width:80px; text-align:right; .tdwrap { font-family:var(--fontfamily-code); font-size:11px; background-color: #ddd8; }}
-      .total { width:80px; text-align:right; .tdwrap { font-family:var(--fontfamily-code); font-size:11px; background-color: #ddd8; }}
-      tfoot .tdwrap { background-color: #ddd8; }
+      .category { width:140px; text-align:left; .tdwrap { background-color: #ddd8; }}
+      .month { width:70px; text-align:right; .tdwrap { width:70px; font-family:var(--fontfamily-code); font-size:11px; }}
+      .average { width:70px; text-align:right; .tdwrap { font-family:var(--fontfamily-code); font-size:11px; background-color: #ddd8; }}
+      .total { width:70px; text-align:right; .tdwrap { font-family:var(--fontfamily-code); font-size:11px; background-color: #ddd8; }}
     }
   }
 </style>

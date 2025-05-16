@@ -107,7 +107,11 @@
       width: 100%;
     }
     /* th, td { padding: 1px 6px; } */
-    th { background-color: var(--lightbg-bg2); }
+    thead th {
+      background-color: var(--lightbg-bg2);
+      &:first-child { border-top-left-radius: 4px; }
+      &:last-child { border-top-right-radius: 4px; }
+    }
     td { border-top: 1px solid var(--lightbg-bg3); } 
     .thwrap {
       padding: 1px 6px;
@@ -123,6 +127,11 @@
       color: var(--lightbg-fg2);
       text-align: inherit;
       width: 100%;
+    }
+    tfoot td {
+      background-color: var(--lightbg-bg2);
+      &:first-child { border-bottom-left-radius: 4px; }
+      &:last-child { border-bottom-right-radius: 4px; }
     }
   }
 </style>
