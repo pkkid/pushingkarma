@@ -39,11 +39,10 @@
     tabSpaces: {type:Number, default:2},            // Number of spaces for tab
     theme: {type:String, default:'gruvbox-light-hard'},  // Highlight.js theme to apply
     value: {type:String, default:'Hello World!'},   // Static value if not using v-model
-    // These styles are needed to calculate the size of things so we need to define them as
-    // attributes on the component. Everything else should be set as normal css styles on
+    // Height is needed to calculate the size of things so we need to define it as
+    // an attribute on the component. Everything else should be set as normal css styles on
     // the CodeEditor element. 
     height: {type:String, default:'auto'},          // Height of the editor
-    padding: {type:String, default:'20px'},         // Padding around the editor
   })
 
   var lineNumsObserver = null                       // ResizeObserver for lineNums
@@ -168,9 +167,11 @@
     /* look bad when they were present with a border-radius. By applying the
     /* border-radius to .codewrap which doesn't contain overflow:hidden, things
     /* render correctly (but scrollbars may appear outside the border-radius). */
+    --padding: 8px;
+    --lineheight: 1.3em;
     font-family: var(--fontfamily-code);
     font-size: 13px;
-    line-height: 1.3;
+    line-height: var(--lineheight);
     position: relative;
     z-index: 1;
 
@@ -195,10 +196,10 @@
     .linenums {
       box-sizing: border-box;
       min-width: 36px;
-      padding-bottom: v-bind(padding);
+      padding-bottom: var(--padding);
       padding-left: 8px;
       padding-right: 8px;
-      padding-top: v-bind(padding);
+      padding-top: var(--padding);
       position: absolute;
       text-align: right;
       top: v-bind(scrollTop); left: 0;
@@ -226,7 +227,7 @@
       margin-left: 0px;
       outline: none;
       overflow-y: hidden;
-      padding: v-bind(padding) v-bind(padding) v-bind(padding);
+      padding: var(--padding);
       position: absolute;
       resize: none;
       top: 0; left: 0;
@@ -252,11 +253,11 @@
       border-radius: 0;
       box-sizing: border-box;
       display: block;
-      height: calc(v-bind(numLines) * 1.2em + v-bind(padding) * 2);
+      height: calc(v-bind(numLines) * var(--lineheight) + var(--padding) * 2);
       left: v-bind(scrollLeft);
       margin: 0px;
       overflow-x: visible !important;
-      padding: v-bind(padding) v-bind(padding) !important;
+      padding: var(--padding) !important;
       position: relative;
       top: v-bind(scrollTop);
     }

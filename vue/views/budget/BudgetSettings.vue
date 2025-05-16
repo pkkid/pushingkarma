@@ -121,7 +121,7 @@
       font-size: inherit;
       line-height: 30px;
       padding: 1px 6px 0px 6px;
-      width: 200px;
+      width: 250px;
       margin-left: 0px;
       transition: background-color 0.3s ease;
       &:focus {
