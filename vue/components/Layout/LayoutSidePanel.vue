@@ -43,6 +43,7 @@
       .item {
         border-bottom: 0px solid #0000;
         border-left: 3px solid transparent;
+        display: block;
         font-size: 16px;
         margin-top: 20px;
         overflow: hidden;
@@ -53,9 +54,10 @@
       }
       .subitem {
         border-left: 3px solid transparent;
+        color: var(--fgcolor60);
+        display: block;
         font-size: 12px;
         min-height: 27px;
-        color: var(--fgcolor60);
         padding: 3px 20px 3px 57px;
         transition: all 0.3s ease;
       }

@@ -3,16 +3,21 @@
     <h3>{{category?.name}}
       <div class='subtext'>{{utils.formatDate(month, 'MMMM YYYY')}}</div>
     </h3>
-    <div class='trxs' :class='{scroll}'>
-      <table v-if='trxs'>
-        <tr v-for='(trx, index) in trxs?.items' :key='index'>
-          <td class='date'><div class='tdwrap'>{{utils.formatDate(trx.date, 'M/D') }}</div></td>
-          <td class='payee'><div class='tdwrap'>{{trx.payee}}</div></td>
-          <td class='amount'><div class='tdwrap'>{{utils.usd(trx.amount, 0, '$', 3)}}</div></td>
-        </tr>
-      </table>
+    <div v-if='trxs?.items?.length'>
+      <div class='trxs' :class='{scroll}'>
+        <table>
+          <tr v-for='(trx, index) in trxs?.items' :key='index'>
+            <td class='date'><div class='tdwrap'>{{utils.formatDate(trx.date, 'M/D') }}</div></td>
+            <td class='payee'><div class='tdwrap'>{{trx.payee}}</div></td>
+            <td class='amount'><div class='tdwrap'>{{utils.usd(trx.amount, 0, '$', 3)}}</div></td>
+          </tr>
+        </table>
+      </div>
+      <div class='total' :class='utils.getSign(total)'>{{utils.usd(total, 0, '$', 3)}}</div>
     </div>
-    <div class='total' :class='utils.getSign(total)'>{{utils.usd(total, 0, '$', 3)}}</div>
+    <div v-else>
+      No transactions to display.
+    </div>
   </div>
 </template>
 
@@ -107,6 +112,7 @@
     box-shadow: 0 1px 3px 0 #3c40434d, 0 4px 8px 3px #3c404326;
     max-height: 300px;
     min-height: 50px;
+    font-size: 12px;
     overflow: hidden;
     padding: 10px;
     position: absolute;

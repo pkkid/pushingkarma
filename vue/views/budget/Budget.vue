@@ -5,10 +5,11 @@
       <template #panel>
         <div class='menu'>
           <!-- Transactions -->
-          <div class='item link' :class='{selected:view==null && !showSettings}' @click="view=null">
+          <a href='/budget' class='item link' @click.prevent="view=null"
+            :class='{selected:view==null && !showSettings}'>
             <i class='mdi mdi-credit-card-outline'/>
             Transactions
-          </div>
+          </a>
           <template v-for='account in accounts' :key='account.id'>
             <div v-if='!account.rules?.hidden' class='subitem account'>
               <div class='name'>{{account.name}} Balance</div>
@@ -17,10 +18,11 @@
             </div>
           </template>
           <!-- Year Overview -->
-          <div class='item link' :class='{selected:view=="year" && !showSettings}' @click="view='year'">
+          <a href='/budget?view=year' class='item link' @click.prevent="view='year'"
+            :class='{selected:view=="year" && !showSettings}'>
             <i class='mdi mdi-checkbook'/>
             Year Overview
-          </div>
+          </a>
           <div class='subitem account'>
             <div class='name'>Total Spent {{utils.formatDate(new Date(), 'YYYY')}}</div>
             <div class='balance'>{{utils.usd(sumAccounts('spent'), places=0)}}</div>

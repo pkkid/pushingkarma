@@ -15,10 +15,11 @@
         <i class='mdi mdi-checkbook'/>
         Stock Groups
       </div>
-      <div v-for='(gsrch, name) in stockgroups' :key='name' class='subitem link'
-        :class='{selected:search == gsrch}' @click='updateSearch(gsrch)'>
+      <a v-for='(gsrch, name) in stockgroups' :key='name'
+        class='subitem link' :class='{selected:search == gsrch}'
+        :href='`/stocks?search=${gsrch}`' @click.prevent='updateSearch(gsrch)'>
         <div class='name'>{{name}}</div>
-      </div>
+      </a>
     </div>
   </div>
 </template>
