@@ -211,7 +211,8 @@ def update_transaction(request,
     if 'comment' in fields: item.comment = fields['comment']
     if 'category' in fields:
         category = get_object_or_none(Category, user=request.user, name__iexact=fields['category'])
-        if not category: raise HttpError(409, f'Category "{fields['category']}" not found')
+        if not category and fields['category'] != '':
+            raise HttpError(409, f'Category "{fields['category']}" not found')
         item.category = category
     item.save()
     return get_transaction(request, pk)

@@ -49,6 +49,7 @@
       name:'category', title:'Category', editable:true,
       text: trx => trx.category?.name,
       choices: (trx) => categoryChoices(),
+      clean: newval => newval == '<clear>' ? '' : newval,
       selectall: true,
     },{
       name:'payee', title:'Payee', editable:true,
@@ -97,7 +98,9 @@
   // Return a list of category choices for SelectInput
   const categoryChoices = function(value) {
     if (!categories.value) { return [] }
-    return categories.value.map(cat => ({id:cat.id, name:cat.name}))
+    return [{id:-1, name:'<clear>'}].concat(
+      categories.value.map(cat => ({id:cat.id, name:cat.name}))
+    )
   }
 
   // Get Next Page

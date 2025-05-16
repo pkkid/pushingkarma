@@ -1,7 +1,7 @@
 <template>
   <div class='selectinput'>
     <input v-model='_value' spellcheck='false' autocomplete='off' @keydown='onKeyDown'/>
-    <div v-if='fchoices' class='selectinput-dropdown lightbg'>
+    <div v-if='fchoices.length > 0' class='selectinput-dropdown lightbg'>
       <div v-for='(choice, i) in fchoices' :key='choice.id' :ref='el => choicerefs[i]=el' class='selectinput-choice' 
         :class='{focused:focused?.name == choice.name}'>
         {{choice.name}}
@@ -46,7 +46,6 @@
       else if (choice.name.toLowerCase().includes(query)) { contains.push(choice) }
     }
     var filtered = [...startswith, ...contains]
-    if (filtered.length == 0) { return sorted }
     return filtered
   })
 
