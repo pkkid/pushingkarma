@@ -1,6 +1,6 @@
 <template>
   <DataTable class='edittable' :items='items' :footer='footer' :keyattr='keyattr'
-    :infinite='infinite' @getNextPage='emit("getNextPage", $event)'>
+    :infinite='infinite' :nextpage='nextpage' @getNextPage='emit("getNextPage", $event)'>
     <!-- Body -->
     <template #columns='{item, row}'>
       <template v-for='(column, col) in columns' :key='col'>
@@ -52,7 +52,8 @@
     footer: {type:Object, default:null},              // Footer item object
     items: {type:Array},                              // List of items to display
     keyattr: {type:String, default:'id'},             // Key attribute for items
-    infinite: {type:Boolean, default:false},          // Infinite scroll
+    infinite: {type:Boolean, default:false},          // Enable infinite scroll
+    nextpage: {type:String, default:null},            // Next page URL for infinite scroll
     onRequestDeselect: {type:Function, default:null}, // Request deselect
   })
   const cells = ref([])                           // Ref of cells; 2d-array colrefs[row][col]

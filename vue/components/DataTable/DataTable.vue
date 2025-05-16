@@ -22,7 +22,7 @@
         </tfoot>
       </table>
     </div>
-    <div v-if='infinite' ref='scrollwatch'>
+    <div v-if='nextpage' ref='scrollwatch'>
       <slot name='scrollwatch'></slot>
     </div>
   </div>
@@ -41,6 +41,7 @@
     footer: {type:Object, default:null},      // Footer item object
     keyattr: {type:String, required:true},    // Attribute to use as key
     infinite: {type:Boolean, default:false},  // Enable infinite scroll
+    nextpage: {type:String, default:null},    // Next page URL for infinite scroll
   })
   const emit = defineEmits(['getNextPage'])
 
@@ -69,9 +70,10 @@
   const initObserver = async function() {
     if (observer) { observer.disconnect() }
     observer = new IntersectionObserver(function(entries) {
-      if (entries[0].isIntersecting && props.items.length !== lastemitlen) {
+      if (entries[0].isIntersecting && props.items.length !== lastemitlen && props.nextpage) {
         lastemitlen = props.items.length
-        emit('getNextPage')
+        console.log('Sending getNextPage')
+        emit('getNextPage', props.nextpage)
       }
     }, {root:null, rootMargin:'200px', threshold:0})
     await nextTick()

@@ -16,10 +16,11 @@
         <div v-else class='subtext'>Loading transactions...</div>
       </h1>
       <!-- Transactions Table -->
-      <EditTable ref='edittable' v-if='trxs?.items' :columns='COLUMNS' :items='trxs?.items' :infinite='true'
-        @getNextPage='getNextPage' @itemSelected='onItemSelected' @itemUpdated='onItemUpdated'>
+      <EditTable ref='edittable' v-if='trxs?.items' :columns='COLUMNS' :items='trxs?.items'
+        infinite :nextpage='trxs?.next' @getNextPage='getNextPage' @itemSelected='onItemSelected'
+        @itemUpdated='onItemUpdated'>
         <template #scrollwatch>
-          <LoadingIcon width='100%' height='150px' size='40px' text='Loading More Transactions'/>
+          <LoadingIcon width='100%' height='150px' size='40px' text='Loading more transactions'/>
         </template>
       </EditTable>
     </template>
@@ -101,11 +102,11 @@
 
   // Get Next Page
   // Fetch next page of transactions
-  const getNextPage = async function(event) {
+  const getNextPage = async function(url) {
     if (!trxs.value?.next) { return }
     cancelctrl = api.cancel(cancelctrl)
     try {
-      var {data} = await axios.get(trxs.value.next, {signal:cancelctrl.signal})
+      var {data} = await axios.get(url, {signal:cancelctrl.signal})
       data.items = trxs.value.items.concat(data.items)
       trxs.value = data
     } catch (err) {

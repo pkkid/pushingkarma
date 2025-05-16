@@ -16,7 +16,7 @@
 <script setup>
   const props = defineProps({
     animation: {type:String, default:'gelatine'},             // Image animation to use
-    color: {type:String, default:'#928374'},                  // Color of the icon and text
+    color: {type:String, default:'var(--lightbg-fg3)'},       // Color of the icon and text
     fontsize: {type:String, default:'12px'},                  // Font size of the text
     height: {type:String, default:'auto'},                    // Height of surrounding div
     icon: {type:String, default:'url(/static/img/pk.svg)'},   // Icon to use
