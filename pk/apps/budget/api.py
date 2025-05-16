@@ -259,7 +259,9 @@ def summarize_months(request,
     summary = summary.order_by('category__sortid', 'month')
     dates = trxs.aggregate(mindate=Min('date'), maxdate=Max('date'))
     # Build the response object from the django summary
-    response = dict(minmonth=dates['mindate'], maxmonth=dates['maxdate'], items=[])
+    response = dict(items=[],
+        minmonth=first_of_month(dates['mindate']),
+        maxmonth=first_of_month(dates['maxdate']))
     for catid, group in groupby(summary, key=lambda x: x['category__id']):
         cat = categories.get(catid)
         response['items'].append({
