@@ -27,7 +27,7 @@
   const onDragStart = function(event) {
     if (dragType(event) != 'element') { return }
     sortableState.group = self.value.closest('.sortable').dataset.group
-    sortableState.itemid = props.itemid.toString()
+    sortableState.itemid = props.itemid?.toString()
     event.dataTransfer.effectAllowed = 'move'
   }
 

@@ -24,7 +24,9 @@
   // Save the category configuration
   const saveCategory = async function() {
     var name = categoryName.value
-    var {data} = await api.Budget.updateCategory(props.category.id, {name})
+    var {data} = props.category.indent
+      ? await api.Budget.updateCategory(props.account.id, {name})
+      : await api.Budget.createCategory({name})
     emit('updated', data)
   }
 

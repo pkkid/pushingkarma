@@ -80,7 +80,9 @@
   const saveAccount = async function() {
     var name = accountName.value
     var rules = JSON.parse(accountRules.value)
-    var {data} = await api.Budget.updateAccount(props.account.id, {name, rules})
+    var {data} = props.account.indent
+      ? await api.Budget.updateAccount(props.account.id, {name, rules})
+      : await api.Budget.createAccount({name, rules})
     emit('updated', data)
   }
 
