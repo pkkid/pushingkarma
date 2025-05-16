@@ -33,7 +33,7 @@
 <script setup>
   import {ref, watchEffect} from 'vue'
   import {BudgetSettingsAccount, BudgetSettingsCategory} from '.'
-  import {Modal, Sortable, Tooltip} from '@/components'
+  import {Modal, Sortable} from '@/components'
   import {api} from '@/utils'
   
   const emit = defineEmits(['close'])         // Emit close event
