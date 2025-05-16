@@ -123,6 +123,7 @@
       position: absolute;
       top: 100%;
       width: 100%;
+      z-index: 4;
       .selectinput-choice {
         cursor: default;
         padding: 0px 8px;

@@ -122,10 +122,6 @@
       padding: 0px;
       border-top: 0px solid var(--lightbg-bg3);
       .tdwrap {
-        /* border-top: 2px solid #f000;
-        border-right: 0px solid #f000;
-        border-bottom: 2px solid #f000;
-        border-left: 0px solid #f000; */
         cursor: default;
         line-height: 28px;
         height: 32px;
@@ -167,15 +163,7 @@
         input { color: #111; }
       }
       &.selected .tdwrap {
-        /* border: 2px solid var(--accent); */
         background-color: var(--lightbg-bg1);
-        /* height: calc(100% + 1px);
-        left: 0px;
-        line-height: calc(var(--lineheight) + 1px);
-        padding: 0px;
-        position: absolute;
-        top: 0px;
-        width: 100%; */
         &::before {
           border-top: 0px solid #fff0;
           border: 2px solid var(--accent);
