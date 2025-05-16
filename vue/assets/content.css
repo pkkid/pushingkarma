@@ -31,9 +31,17 @@
  * Empty banner when there is no content to display.
  */
 .empty {
-  padding: 30px 0px;
-  text-align: center;
-  font-size: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 200px;
+  font-family: var(--fontfamily-title);
+  color: var(--lightbg-fg3);
+  i {
+    font-size: 4em;
+  }
 }
 
 /*

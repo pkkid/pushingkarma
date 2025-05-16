@@ -14,10 +14,17 @@
         <div v-if='summary?.items' class='subtext'>Showing {{summary?.items.length}} categories</div>
         <div v-else class='subtext'>Loading summary...</div>
       </h1>
-      <!-- Year Overview -->
-      <EditTable ref='edittable' v-if='summary?.items && columns' :columns='columns' :items='summary?.items'
-        :footer='footer' :onRequestDeselect='onRequestDeselect' @itemSelected='onItemSelected' />
-      <BudgetYearPopover ref='popover' />
+      <!-- Year Overview Table -->
+      <div v-if='summary?.items?.length > 0'>
+        <EditTable ref='edittable' v-if='summary?.items && columns' :columns='columns' :items='summary?.items'
+          :footer='footer' :onRequestDeselect='onRequestDeselect' @itemSelected='onItemSelected' />
+        <BudgetYearPopover ref='popover' />
+      </div>
+      <!-- Empty State -->
+      <div v-else class='empty'>
+        <i class='mdi mdi-table-search'/>
+        No transactions found.
+      </div>
     </template>
   </LayoutPaper>
 </template>
@@ -52,7 +59,7 @@
   // Watch Summary
   // Update columns when summary changes
   watch(summary, function() {
-    if (!summary.value?.items) { columns.value = null; return }
+    if (summary.value?.items == 0) { columns.value = null; return }
     columns.value = [{
         name:'category', title:'Category', editable:false,
         html: cat => cat.name,

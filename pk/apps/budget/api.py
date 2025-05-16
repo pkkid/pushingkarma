@@ -260,8 +260,8 @@ def summarize_months(request,
     dates = trxs.aggregate(mindate=Min('date'), maxdate=Max('date'))
     # Build the response object from the django summary
     response = dict(items=[],
-        minmonth=first_of_month(dates['mindate']),
-        maxmonth=first_of_month(dates['maxdate']))
+        minmonth=first_of_month(dates['mindate']) if dates['mindate'] else None,
+        maxmonth=first_of_month(dates['maxdate']) if dates['maxdate'] else None)
     for catid, group in groupby(summary, key=lambda x: x['category__id']):
         cat = categories.get(catid)
         response['items'].append({
