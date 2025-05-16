@@ -25,7 +25,7 @@
   // Even simpler implementation of Simple-Code-Editor
   // https://github.com/justcaliturner/simple-code-editor
   // https://github.com/highlightjs/highlight.js
-  import {computed, nextTick, onMounted, onUnmounted, ref, watch, watchEffect} from 'vue'
+  import {computed, onMounted, onUnmounted, ref, watch, watchEffect} from 'vue'
   import {textedit} from '@/utils'
   import hljs from 'highlight.js'
 
