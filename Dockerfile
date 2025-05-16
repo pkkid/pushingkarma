@@ -13,6 +13,10 @@ COPY docker/supervisord.conf /etc/supervisor/conf.d/pushingkarma.conf
 COPY docker/crontab.conf /etc/cron.d/pushingkarma
 
 RUN pip install uv
+RUN uv venv /opt/venv
+RUN /opt/venv/bin/python -m ensurepip
+RUN VIRTUAL_ENV=/opt/venv uv pip install -r pyproject.toml
+
 RUN echo 'daemon off;' >> /etc/nginx/nginx.conf
 CMD rm -f /tmp/daphne.sock.lock && supervisord
 
