@@ -46,8 +46,7 @@
       else if (choice.name.toLowerCase().includes(query)) { contains.push(choice) }
     }
     var filtered = [...startswith, ...contains]
-    if (filtered.length == 1 && filtered[0].name.toLowerCase() === query) { return null }
-    if (filtered.length == 0) { return sorted }  // maybe this is weird?
+    if (filtered.length == 0) { return sorted }
     return filtered
   })
 
