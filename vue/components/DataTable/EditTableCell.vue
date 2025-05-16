@@ -122,14 +122,14 @@
       padding: 0px;
       border-top: 0px solid var(--lightbg-bg3);
       .tdwrap {
-        border-top: 2px solid #f000;
+        /* border-top: 2px solid #f000;
         border-right: 0px solid #f000;
         border-bottom: 2px solid #f000;
-        border-left: 0px solid #f000;
+        border-left: 0px solid #f000; */
         cursor: default;
         line-height: 28px;
         height: 32px;
-        padding: 0px 2px;
+        padding: 2px 2px;
         z-index: 2;
         user-select: none;
         width: 100%;
@@ -167,16 +167,21 @@
         input { color: #111; }
       }
       &.selected .tdwrap {
-        border: 2px solid var(--accent);
+        /* border: 2px solid var(--accent); */
         background-color: var(--lightbg-bg1);
-        height: calc(100% + 1px);
+        /* height: calc(100% + 1px);
         left: 0px;
         line-height: calc(var(--lineheight) + 1px);
         padding: 0px;
         position: absolute;
         top: 0px;
-        width: 100%;
-        &::before { border-top: 0px solid #fff0; }
+        width: 100%; */
+        &::before {
+          border-top: 0px solid #fff0;
+          border: 2px solid var(--accent);
+          height: calc(100% + 1px);
+          z-index: 3;
+        }
       }
       &.animatebg .tdwrap {
         --animatebg-start: v-bind(animateBgColor);
@@ -186,7 +191,7 @@
       &.editing .tdwrap {
         --animatebg-end: #f812;
         background-color: #f812;
-        box-shadow: inset 0px 1px 2px #0005;
+        box-shadow: inset 0px 1px 4px #000f;
       }
       &.error .tdwrap {
         border: 2px solid var(--darkbg-red0);

@@ -291,10 +291,7 @@
 
 <style>
   .edittable {
-    table {
-      --lineheight: 27px;
-      width: 100%;
-    }
+    table { --lineheight: 27px; }
 
     /* Tooltip container */
     .tooltip-container {

@@ -200,10 +200,10 @@
 
     .edittable {
       .tdwrap { font-size:12px; }
-      .category { width:140px; text-align:left; .tdwrap { background-color: #ddd8; }}
-      .month { width:70px; text-align:right; .tdwrap { width:70px; font-family:var(--fontfamily-code); font-size:11px; }}
-      .average { width:70px; text-align:right; .tdwrap { font-family:var(--fontfamily-code); font-size:11px; background-color: #ddd8; }}
-      .total { width:70px; text-align:right; .tdwrap { font-family:var(--fontfamily-code); font-size:11px; background-color: #ddd8; }}
+      .category { width:151px; text-align:left; .tdwrap { background-color: #ddd8; }}
+      .month { width:69px; text-align:right; .tdwrap { font-family:var(--fontfamily-code); font-size:11px; }}
+      .average { width:69px; text-align:right; .tdwrap { font-family:var(--fontfamily-code); font-size:11px; background-color: #ddd8; }}
+      .total { width:69px; text-align:right; .tdwrap { font-family:var(--fontfamily-code); font-size:11px; background-color: #ddd8; }}
     }
   }
 </style>

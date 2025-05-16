@@ -109,6 +109,7 @@
       }
     }
     .datatable {
+      table { width: 100%; }
       .thwrap { line-height:1.3; padding:2px 10px; }
       .tdwrap { line-height:1.3; padding:5px 10px; }
       .ticker { text-align:left; }

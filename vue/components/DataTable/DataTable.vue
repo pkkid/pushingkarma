@@ -104,7 +104,7 @@
     table {
       border-collapse: collapse;
       border-spacing: 0;
-      width: 100%;
+      max-width: 100%;
     }
     /* th, td { padding: 1px 6px; } */
     thead th {
