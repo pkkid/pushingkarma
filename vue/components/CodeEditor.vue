@@ -1,20 +1,21 @@
 <!-- eslint-disable vue/use-v-on-exact -->
 <template>
-  <div class='codeeditor' ref='codeeditor' :theme='theme' :class='{readOnly, showLineNums, scrollable}'>
+  <div class='codeeditor' ref='codeeditor' :theme='theme' :class='{readonly, showlinenums, scrollable}'>
     <div class='codewrap hljs'>
       <div ref='codearea' class='codearea'>
-        <div v-if='showLineNums' class='linenumsbar'></div>
-        <div v-if='showLineNums' ref='lineNums' class='linenums'>
-          <div v-for='num in numLines' :key='num'>{{num}}</div>
+        <div v-if='showlinenums' class='linenumsbar'></div>
+        <div v-if='showlinenums' ref='linenums' class='linenums'>
+          <div v-for='num in numlines' :key='num'>{{num}}</div>
         </div>
-        <textarea ref='textarea' spellcheck='false' :readOnly='readOnly' :autofocus='autoFocus' :value='currentValue'
+        <textarea v-if='!readonly' ref='textarea' spellcheck='false'
+          :autofocus='autofocus' :value='currentvalue'
           @input='updateContent($event.target.value)'
           @scroll='onScroll'
           @keydown.tab.prevent.stop='onTab'
           @keydown.enter.prevent='onEnter'
           @keydown='onClosingBrace'
           @keydown.ctrl.s.exact.prevent='emit("save")'/>
-        <pre><code ref='code' :class='codeClass'></code></pre>
+        <pre><code ref='code' :class='langcls'></code></pre>
       </div>
     </div>
   </div>
@@ -29,47 +30,46 @@
   import {textedit} from '@/utils'
   import hljs from 'highlight.js'
 
-  
   const props = defineProps({
-    autoFocus: {type:Boolean, default:false},       // Autofocus on the editor
-    language: {type:String, default:'javascript'},  // Language of the editor
-    modelValue: {type:String},                      // v-model; varied value
-    readOnly: {type:Boolean, default:false},        // Enable editable or not
-    showLineNums: {type:Boolean, default:false},    // Show line numbers
-    tabSpaces: {type:Number, default:2},            // Number of spaces for tab
-    theme: {type:String, default:'gruvbox-light-hard'},  // Highlight.js theme to apply
-    value: {type:String, default:'Hello World!'},   // Static value if not using v-model
-    // Height is needed to calculate the size of things so we need to define it as
-    // an attribute on the component. Everything else should be set as normal css styles on
-    // the CodeEditor element. 
-    height: {type:String, default:'auto'},          // Height of the editor
+    // Basic Properties
+    height: {type:String, default:'auto'},                // Height of the editor
+    maxheight: {type:String, default:'100%'},             // Max height of the editor
+    language: {type:String, default:'javascript'},        // Language of the editor
+    readonly: {type:Boolean, default:false},              // Enable editable or not
+    theme: {type:String, default:'gruvbox-light-hard'},   // Highlight.js theme to apply
+    // Editor Properties
+    autofocus: {type:Boolean, default:false},             // Autofocus on the editor
+    modelValue: {type:String},                            // v-model; varied value
+    showlinenums: {type:Boolean, default:false},          // Show line numbers
+    tabspaces: {type:Number, default:2},                  // Number of spaces for tab
+    value: {type:String, default:'Hello World!'},         // Static value if not using v-model
   })
 
-  var lineNumsObserver = null                       // ResizeObserver for lineNums
+  var linenumsObserver = null                       // ResizeObserver for linenums
   var textareaObserver = null                       // ResizeObserver for textarea
   const emit = defineEmits(['save', 'update:modelValue', 'update'])
-  const backgroundColor = ref('transparent')        // Background color of current theme
+  const backgroundcolor = ref('transparent')        // Background color of current theme
   const code = ref(null)                            // Reference to code element
   const codearea = ref(null)                        // Reference to codearea div
-  const lineNums = ref(null)                        // Reference to linenums div
-  const lineNumsWidth = ref('0px')                  // Width of lineNums div
-  const scrollbarHeight = ref('0px')                // Height of textarea scrollbar
-  const scrollbarWidth = ref('0px')                 // Width of textarea scrollbar
-  const scrollLeft = ref('0px')                     // Amount scrolled right
-  const scrollTop = ref('0px')                      // Amount scrolled down
-  const codeeditor = ref(null)
+  const linenums = ref(null)                        // Reference to linenums div
+  const linenumswidth = ref('0px')                  // Width of linenums div
+  const scrollbarheight = ref('0px')                // Height of textarea scrollbar
+  const scrollbarwidth = ref('0px')                 // Width of textarea scrollbar
+  const scrollleft = ref('0px')                     // Amount scrolled right
+  const scrolltop = ref('0px')                      // Amount scrolled down
+  const codeeditor = ref(null)                      // Reference to codeeditor
   const textarea = ref(null)                        // Reference to textarea
-  const currentValue = ref(null)                    // Current value of the editor
+  const currentvalue = ref(null)                    // Current value of the editor
   
-  const codeClass = computed(function() { return `language-${props.language}` })
-  const numLines = computed(function() { return Math.max(currentValue.value?.split('\n').length || 1, 1) })
+  const langcls = computed(function() { return `language-${props.language}` })
+  const numlines = computed(function() { return Math.max(currentvalue.value?.split('\n').length || 1, 1) })
   const scrollable = computed(function() { return props.height == 'auto' ? false : true })
 
   // Watch Model Value
-  // Update currentValue when modelValue changes
+  // Update currentvalue when modelValue changes
   watch(() => props.modelValue, (newval) => {
-    if (newval !== currentValue.value) {
-      currentValue.value = newval ?? props.value
+    if (newval !== currentvalue.value) {
+      currentvalue.value = newval ?? props.value
     }
   }, {immediate: true})
 
@@ -82,11 +82,13 @@
   // On Mounted
   // Watch textarea and lineNum resizing
   onMounted(function() {
-    textareaObserver = new ResizeObserver(updateCssVarables)
-    textareaObserver.observe(textarea.value)
-    if (props.showLineNums) {
-      lineNumsObserver = new ResizeObserver(updateCssVarables)
-      lineNumsObserver.observe(lineNums.value)
+    if (!props.readonly) {
+      textareaObserver = new ResizeObserver(updateCssVarables)
+      textareaObserver.observe(textarea.value)
+    }
+    if (props.showlinenums) {
+      linenumsObserver = new ResizeObserver(updateCssVarables)
+      linenumsObserver.observe(linenums.value)
     }
   })
 
@@ -94,15 +96,16 @@
   // Disconnect ResizeObservers
   onUnmounted(function() {
     if (textareaObserver) { textareaObserver.disconnect() }
-    if (lineNumsObserver) { lineNumsObserver.disconnect() }
+    if (linenumsObserver) { linenumsObserver.disconnect() }
   })
 
   // Watch Code Value
   // Calls highlight.js
   watchEffect(function() {
     if (code.value == null) { return }
-    code.value.textContent = currentValue.value
+    code.value.textContent = currentvalue.value
     delete code.value.dataset.highlighted
+    console.log('Highlighting!')
     hljs.highlightElement(code.value)
     code.value.classList.remove('hljs')
   })
@@ -110,32 +113,33 @@
   // On Scroll
   // Updates saved scolling state
   const onScroll = function(event) {
-    scrollTop.value = `${-event.target.scrollTop}px`
-    scrollLeft.value = `${-event.target.scrollLeft}px`
+    console.log('Scrolling!!!')
+    scrolltop.value = `${-event.target.scrollTop}px`
+    scrollleft.value = `${-event.target.scrollLeft}px`
   }
 
   // On Enter
   // Inserts new line adding indentation if needed
   const onEnter = async function() {
-    if (props.readOnly) { return }
-    textedit.indentNewLine(textarea.value, props.tabSpaces)
+    if (props.readonly) { return }
+    textedit.indentNewLine(textarea.value, props.tabspaces)
     updateContent(textarea.value.value)
   }
 
   // On Tab
   // Inserts tab or spaces
   const onTab = async function(event) {
-    if (props.readOnly) { return }
-    textedit.tabIndent(textarea.value, event.shiftKey, props.tabSpaces)
+    if (props.readonly) { return }
+    textedit.tabIndent(textarea.value, event.shiftKey, props.tabspaces)
     updateContent(textarea.value.value)
   }
 
   // On Keydown
   // Generic Keydown event
   const onClosingBrace = async function(event) {
-    if (props.readOnly) { return }
+    if (props.readonly) { return }
     if ('}])'.includes(event.key)) {
-      textedit.insertClosingBrace(textarea.value, event.key, props.tabSpaces)
+      textedit.insertClosingBrace(textarea.value, event.key, props.tabspaces)
       updateContent(textarea.value.value)
     }
   }
@@ -143,16 +147,16 @@
   // Update CSS Variables
   // Variables passed to css for dynamic styling
   const updateCssVarables = function() {
-    lineNumsWidth.value = `${lineNums.value?.offsetWidth}px`
-    scrollbarWidth.value = `${textarea.value.offsetWidth - textarea.value.clientWidth}px`
-    scrollbarHeight.value = `${textarea.value.offsetHeight - textarea.value.clientHeight}px`
-    backgroundColor.value = window.getComputedStyle(codearea.value).backgroundColor
+    linenumswidth.value = `${linenums.value?.offsetWidth}px`
+    scrollbarwidth.value = props.readonly ? '0px' : `${textarea.value.offsetWidth - textarea.value.clientWidth}px`
+    scrollbarheight.value = props.readonly ? '0px' : `${textarea.value.offsetHeight - textarea.value.clientHeight}px`
+    backgroundcolor.value = window.getComputedStyle(codearea.value).backgroundColor
   }
 
   // Update Content
-  // Emits the update or simply updates currentValue.value
+  // Emits the update or simply updates currentvalue.value
   const updateContent = function(newval) {
-    // currentValue.value = newval   /* REMOVE THIS LINE??? */
+    // currentvalue.value = newval   /* REMOVE THIS LINE??? */
     emit('update:modelValue', newval)
     emit('update', newval)
   }
@@ -169,8 +173,10 @@
     /* render correctly (but scrollbars may appear outside the border-radius). */
     --padding: 8px;
     --lineheight: 1.3em;
+
     font-family: var(--fontfamily-code);
     font-size: 13px;
+    height: v-bind(height);
     line-height: var(--lineheight);
     position: relative;
     z-index: 1;
@@ -202,7 +208,9 @@
       padding-top: var(--padding);
       position: absolute;
       text-align: right;
-      top: v-bind(scrollTop); left: 0;
+      top: v-bind(scrolltop);
+      left: 0;
+      user-select: none;
       & > div { opacity:0.3; }
     }
     .linenumsbar {
@@ -210,7 +218,7 @@
       content: ' ';
       display: block;
       height: 100%;
-      left: calc(v-bind(lineNumsWidth) - 1px);
+      left: calc(v-bind(linenumswidth) - 1px);
       opacity: 0.1;
       position: absolute;
       top: 0px;
@@ -226,7 +234,7 @@
       height: 100%;
       margin-left: 0px;
       outline: none;
-      overflow-y: hidden;
+      overflow: auto;
       padding: var(--padding);
       position: absolute;
       resize: none;
@@ -242,37 +250,33 @@
       margin-left: 0px;
       margin: 0;
       overflow: hidden;
-      padding-bottom: v-bind(scrollbarHeight);
+      padding-bottom: v-bind(scrollbarheight);
       padding-left: 0px;
-      padding-right: v-bind(scrollbarWidth);
+      padding-right: v-bind(scrollbarwidth);
       padding-top: 0px;
       position: relative;
       width: 100%;
+      height: 100%;
     }
     code {
       border-radius: 0;
       box-sizing: border-box;
       display: block;
-      height: calc(v-bind(numLines) * var(--lineheight) + var(--padding) * 2);
-      left: v-bind(scrollLeft);
+      height: calc(v-bind(numlines) * var(--lineheight) + var(--padding) * 2);
+      left: v-bind(scrollleft);
       margin: 0px;
       overflow-x: visible !important;
       padding: var(--padding) !important;
       position: relative;
-      top: v-bind(scrollTop);
+      top: v-bind(scrolltop);
     }
     /* Show Line Numbers */
-    &.showLineNums {
-      textarea, pre {
-        margin-left: v-bind(lineNumsWidth);
-        width: calc(100% - v-bind(lineNumsWidth));
-      }
+    &.showlinenums textarea,
+    &.showlinenums pre {
+      margin-left: v-bind(linenumswidth);
+      width: calc(100% - v-bind(linenumswidth));
     }
-    /* Scroll */
-    &.scrollable {
-      height: v-bind(height);
-      textarea { overflow:auto; }
-      pre { width:100%; height:100%; overflow:hidden; }
-    }
+    /* Readonly, allow scrolling pre */
+    &.readonly pre { overflow: auto; }
   }
 </style>

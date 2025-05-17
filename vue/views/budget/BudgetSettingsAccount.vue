@@ -31,7 +31,7 @@
             <i class='mdi' :class='jsonIcon'/>
           </Tooltip>
           <label>Import Configuration</label>
-          <CodeEditor v-model='accountRules' :showLineNums='true' language='json' height='150px' @save='saveAccount'/>
+          <CodeEditor v-model='accountRules' :showlinenums='true' language='json' height='150px' @save='saveAccount'/>
           <div class='button-row' style='margin-top:5px;'>
             <button @click='saveAccount'>Save Account</button>
             <Tooltip position='left'>

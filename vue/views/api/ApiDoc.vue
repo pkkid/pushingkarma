@@ -55,7 +55,7 @@
                 </div>
                 <!-- Content Body -->
                 <div v-if='showPayload' class='payloadwrap'>
-                  <CodeEditor v-model='payload' :showLineNums='true' padding='10px' @keydown.shift.enter.prevent='sendRequest'/>
+                  <CodeEditor v-model='payload' :showlinenums='true' padding='10px' @keydown.shift.enter.prevent='sendRequest'/>
                   <Tooltip class='send-request' position='lefttop'>
                     <template #tooltip>Send Request<div class='subtext'>shift+enter</div></template>
                     <i class='mdi mdi-send' @click='sendRequest'/>
@@ -82,9 +82,7 @@
                     </div>
                   </template>
                 </div>
-                <div theme='gruvbox-light-hard' class='codearea'>
-                  <highlightjs :code='utils.stringify(response?.data || "", {indent:2})' language='json' :autodetect='false'/>
-                </div>
+                <CodeEditor :value='content' showlinenums language='json' readonly/>
               </template>
               <!-- No Response and Loading -->
               <template v-else>
@@ -130,6 +128,8 @@
   var response = ref(null)                // Current get response
   var toc = ref(null)                     // Table of contents (api root)
   var _path = ref(null)                   // Current input value
+
+  var content = computed(() => utils.stringify(response.value?.data || "", {indent:2}))
 
   // Categories
   // Computes object of {category: [endpoints]} to display in the sidepanel
@@ -423,9 +423,10 @@
       .label { font-weight:bold; margin-right:5px; }
       .value { color:var(--lightbg-blue1) }
     }
-    pre, code {
+
+    /* Code Editor */
+    .codeeditor {
       font-size: 11px;
-      line-height: 1.3;
       .link {
         cursor: pointer;
         transition: color 0.3s;
