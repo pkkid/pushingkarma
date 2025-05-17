@@ -1,6 +1,6 @@
 <!-- eslint-disable vue/use-v-on-exact -->
 <template>
-  <div class='codeeditor' ref='codeeditor' :theme='theme' :class='{readonly, showlinenums, scrollable}'>
+  <div class='codeeditor' ref='codeeditor' :theme='theme' :class='{readonly, showlinenums}'>
     <div class='codewrap hljs'>
       <div ref='codearea' class='codearea'>
         <div v-if='showlinenums' class='linenumsbar'></div>
@@ -31,17 +31,15 @@
   import hljs from 'highlight.js'
 
   const props = defineProps({
-    // Basic Properties
-    height: {type:String, default:'auto'},                // Height of the editor
-    maxheight: {type:String, default:'100%'},             // Max height of the editor
-    language: {type:String, default:'javascript'},        // Language of the editor
-    readonly: {type:Boolean, default:false},              // Enable editable or not
-    theme: {type:String, default:'gruvbox-light-hard'},   // Highlight.js theme to apply
-    // Editor Properties
     autofocus: {type:Boolean, default:false},             // Autofocus on the editor
+    height: {type:String, default:'auto'},                // Height of the editor
+    language: {type:String, default:'javascript'},        // Language of the editor
+    maxheight: {type:String, default:'100%'},             // Max height of the editor
     modelValue: {type:String},                            // v-model; varied value
+    readonly: {type:Boolean, default:false},              // Enable editable or not
     showlinenums: {type:Boolean, default:false},          // Show line numbers
     tabspaces: {type:Number, default:2},                  // Number of spaces for tab
+    theme: {type:String, default:'gruvbox-light-hard'},   // Highlight.js theme to apply
     value: {type:String, default:'Hello World!'},         // Static value if not using v-model
   })
 
@@ -61,9 +59,8 @@
   const textarea = ref(null)                        // Reference to textarea
   const currentvalue = ref(null)                    // Current value of the editor
   
-  const langcls = computed(function() { return `language-${props.language}` })
+  const langcls = computed(function() { return `language-${props.language.toLowerCase()}` })
   const numlines = computed(function() { return Math.max(currentvalue.value?.split('\n').length || 1, 1) })
-  const scrollable = computed(function() { return props.height == 'auto' ? false : true })
 
   // Watch Model Value
   // Update currentvalue when modelValue changes
@@ -105,7 +102,6 @@
     if (code.value == null) { return }
     code.value.textContent = currentvalue.value
     delete code.value.dataset.highlighted
-    console.log('Highlighting!')
     hljs.highlightElement(code.value)
     code.value.classList.remove('hljs')
   })
@@ -113,7 +109,6 @@
   // On Scroll
   // Updates saved scolling state
   const onScroll = function(event) {
-    console.log('Scrolling!!!')
     scrolltop.value = `${-event.target.scrollTop}px`
     scrollleft.value = `${-event.target.scrollLeft}px`
   }
