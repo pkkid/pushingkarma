@@ -151,7 +151,6 @@
   // Update Content
   // Emits the update or simply updates currentvalue.value
   const updateContent = function(newval) {
-    // currentvalue.value = newval   /* REMOVE THIS LINE??? */
     emit('update:modelValue', newval)
     emit('update', newval)
   }
