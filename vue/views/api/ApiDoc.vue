@@ -89,16 +89,12 @@
                 <div class='headers'>
                   <span class='label'>HTTP {{method.toUpperCase()}} Request Not Initiated</span>
                 </div>
-                <div v-if='loading' theme='gruvbox-light-hard' class='codearea'>
-                  <pre><code class='hljs'>
-                    <IconMessage height='200px' icon='pk' animation='gelatine' text='Fetching Response' ellipsis/>
-                  </code></pre>
-                </div>
+                <IconMessage v-if='loading' height='200px' icon='pk' animation='gelatine'
+                  text='Fetching Response' ellipsis style='background-color:#ddddd9;'/>
               </template>
             </div>
             <IconMessage v-else icon='pk' animation='gelatine' text='Loading API root' ellipsis/>
           </template>
-          
         </LayoutPaper>
       </template>
     </LayoutSidePanel>
