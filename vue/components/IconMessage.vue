@@ -39,12 +39,13 @@
 
 <style>
   .iconmessage {
-    width: v-bind(width);
-    height: v-bind(height);
-    display: flex;
-    justify-content: center;
     align-items: center;
+    border-radius: 4px;
+    display: flex;
     flex-direction: column;
+    height: v-bind(height);
+    justify-content: center;
+    width: v-bind(width);
 
     .iconimg, .mdi {
       height: v-bind(iconsize);
