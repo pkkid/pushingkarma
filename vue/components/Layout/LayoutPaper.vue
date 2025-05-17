@@ -1,11 +1,11 @@
 <template>
   <div class='layoutpaper'>
     <article class='paper lightbg'>
-      <slot name='content'>paper article</slot>
+      <slot name='content'></slot>
     </article>
     <div class='controls' v-if='$slots.controls'>
       <div class='controls-fixed'>
-        <slot name='controls'>controls</slot>
+        <slot name='controls'></slot>
       </div>
     </div>
   </div>

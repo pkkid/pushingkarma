@@ -1,10 +1,10 @@
 <template>
   <div class='layoutsidepanel'>
     <div class='sidepanel-panel darkbg'>
-      <slot name='panel'>SidePanel #panel</slot>
+      <slot name='panel'></slot>
     </div>
     <div class='sidepanel-content lightbg'>
-      <slot name='content'>SidePanel #content</slot>
+      <slot name='content'></slot>
     </div>
   </div>
 </template>
