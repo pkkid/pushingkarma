@@ -20,81 +20,87 @@
       </template>
       <template #content>
         <LayoutPaper>
-          <template #content v-if='toc'>
-            <ApiSettings/>
-            <!-- Request Method, URL and Description -->
-            <h1 v-if='endpoint'>{{utils.title(endpoint.category)}} {{endpoint.summary}}</h1>
-            <h1 v-else>Unknown Endpoint</h1>
-            <div class='inputwrap'>
-              <div class='urlwrap'>
-                <select v-model='method'>
-                  <option v-for='meth in allowed' :key='meth' :value='meth'>{{meth.toUpperCase()}}</option>
-                </select>
-                <input class='urlinput' type='text' v-model='_path' spellcheck='false'
-                  @change='setupRequest(_path, method.value, null, false)'
-                  @keydown.enter.stop='sendRequest'/>
-                <!-- History Tooltip -->
-                <Tooltip v-if='axiosSettings.history.value?.length' ref='historyTooltip'
-                  class='request-history' position='bottomleft' width='auto' trigger='click'>
-                  <template #tooltip>
-                    Request History
-                    <div class='tablewrap'><table>
-                      <tr v-for='(item, i) in axiosSettings.history.value' :key='i'
-                        @click.stop='setupRequest(item.path, item.method, item.data)'>
-                        <td>{{item.datetime}}</td>
-                        <td>{{item.status}}</td>
-                        <td>{{item.method}}</td>
-                        <td>{{item.path}}<template v-if='item.data'> - {{item.data}}</template></td>
-                        <td>{{item.queries}}</td>
-                      </tr>
-                    </table></div>
+          <template #content >
+            <div v-if='toc'>
+              <ApiSettings/>
+              <!-- Request Method, URL and Description -->
+              <h1 v-if='endpoint'>{{utils.title(endpoint.category)}} {{endpoint.summary}}</h1>
+              <h1 v-else>Unknown Endpoint</h1>
+              <div class='inputwrap'>
+                <div class='urlwrap'>
+                  <select v-model='method'>
+                    <option v-for='meth in allowed' :key='meth' :value='meth'>{{meth.toUpperCase()}}</option>
+                  </select>
+                  <input class='urlinput' type='text' v-model='_path' spellcheck='false'
+                    @change='setupRequest(_path, method.value, null, false)'
+                    @keydown.enter.stop='sendRequest'/>
+                  <!-- History Tooltip -->
+                  <Tooltip v-if='axiosSettings.history.value?.length' ref='historyTooltip'
+                    class='request-history' position='bottomleft' width='auto' trigger='click'>
+                    <template #tooltip>
+                      Request History
+                      <div class='tablewrap'><table>
+                        <tr v-for='(item, i) in axiosSettings.history.value' :key='i'
+                          @click.stop='setupRequest(item.path, item.method, item.data)'>
+                          <td>{{item.datetime}}</td>
+                          <td>{{item.status}}</td>
+                          <td>{{item.method}}</td>
+                          <td>{{item.path}}<template v-if='item.data'> - {{item.data}}</template></td>
+                          <td>{{item.queries}}</td>
+                        </tr>
+                      </table></div>
+                    </template>
+                    <i class='mdi mdi-history' />
+                  </Tooltip>
+                </div>
+                <!-- Content Body -->
+                <div v-if='showPayload' class='payloadwrap'>
+                  <CodeEditor v-model='payload' :showLineNums='true' padding='10px' @keydown.shift.enter.prevent='sendRequest'/>
+                  <Tooltip class='send-request' position='lefttop'>
+                    <template #tooltip>Send Request<div class='subtext'>shift+enter</div></template>
+                    <i class='mdi mdi-send' @click='sendRequest'/>
+                  </Tooltip>
+                </div>
+              </div>
+              <!-- Endpoint Description & Parameters -->
+              <div class='description'>
+                <div v-html='endpoint?.description'/>
+                <ul style='font-size:1em;'>
+                  <li v-for='param in params' :key='param.name'>
+                    {{param.name}} ({{param.in}} {{param.type}}): {{param.description}}
+                  </li>
+                </ul>
+              </div>
+              <!-- Response Headers and Content -->
+              <template v-if='response'>
+                <div class='headers'>
+                  <span class='label'>HTTP {{response.status}} {{response.statusText}}</span><br/>
+                  <template v-for='header in HEADERS' :key='header'>
+                    <div v-if='response.headers[header]'>
+                      <span class='label'>{{utils.title(header)}}:</span>
+                      <span class='value'>{{response.headers[header]}}</span><br/>
+                    </div>
                   </template>
-                  <i class='mdi mdi-history' />
-                </Tooltip>
-              </div>
-              <!-- Content Body -->
-              <div v-if='showPayload' class='payloadwrap'>
-                <CodeEditor v-model='payload' :showLineNums='true' padding='10px' @keydown.shift.enter.prevent='sendRequest'/>
-                <Tooltip class='send-request' position='lefttop'>
-                  <template #tooltip>Send Request<div class='subtext'>shift+enter</div></template>
-                  <i class='mdi mdi-send' @click='sendRequest'/>
-                </Tooltip>
-              </div>
+                </div>
+                <div theme='gruvbox-light-hard' class='codearea'>
+                  <highlightjs :code='utils.stringify(response?.data || "", {indent:2})' language='json' :autodetect='false'/>
+                </div>
+              </template>
+              <!-- No Response and Loading -->
+              <template v-else>
+                <div class='headers'>
+                  <span class='label'>HTTP {{method.toUpperCase()}} Request Not Initiated</span>
+                </div>
+                <div v-if='loading' theme='gruvbox-light-hard' class='codearea'>
+                  <pre><code class='hljs'>
+                    <IconMessage height='200px' icon='pk' animation='gelatine' text='Fetching Response' ellipsis/>
+                  </code></pre>
+                </div>
+              </template>
             </div>
-            <!-- Endpoint Description & Parameters -->
-            <div class='description'>
-              <div v-html='endpoint?.description'/>
-              <ul style='font-size:1em;'>
-                <li v-for='param in params' :key='param.name'>
-                  {{param.name}} ({{param.in}} {{param.type}}): {{param.description}}
-                </li>
-              </ul>
-            </div>
-            <!-- Response Headers and Content -->
-            <template v-if='response'>
-              <div class='headers'>
-                <span class='label'>HTTP {{response.status}} {{response.statusText}}</span><br/>
-                <template v-for='header in HEADERS' :key='header'>
-                  <div v-if='response.headers[header]'>
-                    <span class='label'>{{utils.title(header)}}:</span>
-                    <span class='value'>{{response.headers[header]}}</span><br/>
-                  </div>
-                </template>
-              </div>
-              <div theme='gruvbox-light-hard' class='codearea'>
-                <highlightjs :code='utils.stringify(response?.data || "", {indent:2})' language='json' :autodetect='false'/>
-              </div>
-            </template>
-            <!-- No Response and Loading -->
-            <template v-else>
-              <div class='headers'>
-                <span class='label'>HTTP {{method.toUpperCase()}} Request Not Initiated</span>
-              </div>
-              <div v-if='loading' theme='gruvbox-light-hard' class='codearea'>
-                <pre><code class='hljs'><LoadingIcon height='200px' text='Fetching Response'/></code></pre>
-              </div>
-            </template>
+            <IconMessage v-else icon='pk' animation='gelatine' text='Loading API root' ellipsis/>
           </template>
+          
         </LayoutPaper>
       </template>
     </LayoutSidePanel>
@@ -102,8 +108,8 @@
 </template>
 
 <script setup>
-  import {computed, inject, nextTick, onMounted, ref, watch, watchEffect} from 'vue'
-  import {CodeEditor, LayoutPaper, LayoutSidePanel, LoadingIcon, Tooltip} from '@/components'
+  import {computed, inject, nextTick, onMounted, ref, watch} from 'vue'
+  import {CodeEditor, IconMessage, LayoutPaper, LayoutSidePanel, Tooltip} from '@/components'
   import {ApiSettings} from '@/views/api'
   import {useUrlParams} from '@/composables'
   import {utils} from '@/utils'

@@ -20,19 +20,17 @@
           :footer='footer' :onRequestDeselect='onRequestDeselect' @itemSelected='onItemSelected' />
         <BudgetYearPopover ref='popover' />
       </div>
-      <!-- Empty State -->
-      <div v-else class='empty'>
-        <i class='mdi mdi-table-search'/>
-        No transactions found.
-      </div>
+      <!-- Loading & Empty -->
+      <IconMessage v-else-if='loading' icon='pk' iconsize='40px' animation='gelatine' text='Loading transactions' ellipsis/>
+      <IconMessage v-else icon='mdi-robot-angry-outline' iconsize='40px' text='No transactions found.' />
     </template>
   </LayoutPaper>
 </template>
 
 <script setup>
-  import {computed, onMounted, ref, watch, watchEffect} from 'vue'
+  import {computed, onMounted, ref, watch} from 'vue'
   import {BudgetYearPopover} from '@/views/budget'
-  import {EditTable, LayoutPaper} from '@/components'
+  import {EditTable, IconMessage, LayoutPaper} from '@/components'
   import {useUrlParams} from '@/composables'
   import {api, utils} from '@/utils'
 

@@ -20,7 +20,7 @@
         infinite :nextpage='trxs?.next' @getNextPage='getNextPage' @itemSelected='onItemSelected'
         @itemUpdated='onItemUpdated'>
         <template #scrollwatch>
-          <LoadingIcon width='100%' height='150px' size='40px' text='Loading more transactions'/>
+          <IconMessage icon='pk' animation='gelatine' text='Loading more transactions' ellipsis/>
         </template>
       </EditTable>
     </template>
@@ -28,8 +28,8 @@
 </template>
 
 <script setup>
-  import {nextTick, onMounted, ref, watch, watchEffect} from 'vue'
-  import {EditTable, LayoutPaper, LoadingIcon} from '@/components'
+  import {nextTick, onMounted, ref, watch} from 'vue'
+  import {EditTable, IconMessage, LayoutPaper} from '@/components'
   import {useUrlParams} from '@/composables'
   import {api, utils} from '@/utils'
   import axios from 'axios'

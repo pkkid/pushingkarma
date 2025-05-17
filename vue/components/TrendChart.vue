@@ -1,17 +1,19 @@
-<template>
-  <div v-if='nodata' class='nodata empty'>Data not available</div>
-  <div v-else-if='datasets==null' class='loading'><LoadingIcon /></div>
-  <div v-else><Transition name='fade' appear>
-    <Line :options='options' :data='datasets'/>
-  </Transition></div>
+<template>  
+  <IconMessage v-if='nodata' icon='mdi-robot-angry-outline' text='Data not available' height='100%'/>
+  <IconMessage v-else-if='loading' icon='pk' animation='gelatine' height='100%'/>
+  <div v-else class='chartwrap'>
+    <Transition name='fade' appear>
+      <Line :options='options' :data='datasets'/>
+    </Transition>
+  </div>
 </template>
 
 <script setup>
   import {computed} from 'vue'
-  import {utils} from '@/utils'
-  import {Line} from 'vue-chartjs'
   import {Chart, registerables} from 'chart.js'
-  import LoadingIcon from '@/components/LoadingIcon.vue'
+  import {Line} from 'vue-chartjs'
+  import {IconMessage} from '@/components'
+  import {utils} from '@/utils'
   Chart.register(...registerables)
 
   var chartColors = ['#cc241d','#98971a','#d79921','#458588','#b16286','#689d6a','#d65d0e']
@@ -33,6 +35,10 @@
       return acc
     }, {})
   })
+
+  // Loading
+  // Check if the data is still loading
+  const loading = computed(() => !datasets.value)
 
   // No Data
   // Check there is data to display
@@ -189,14 +195,3 @@
   }
   Chart.register(annotateProjectedChange)
 </script>
-
-<style>
-  .nodata,
-  .loading {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-</style>
-
-
