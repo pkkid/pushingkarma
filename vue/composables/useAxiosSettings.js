@@ -40,7 +40,7 @@ export default function useApiSettings() {
   // Enable slow queries in the axios interceptor
   function setSlowQueries(newval) {
     slowQueries.value = newval
-    axios.defaults.delayQueries = newval ? 2000 : 0
+    axios.defaults.delayQueries = newval ? 3000 : 0
   }
 
   // Save History Item
