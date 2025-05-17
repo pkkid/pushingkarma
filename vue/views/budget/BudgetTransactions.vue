@@ -16,13 +16,16 @@
         <div v-else class='subtext'>Loading transactions...</div>
       </h1>
       <!-- Transactions Table -->
-      <EditTable ref='edittable' v-if='trxs?.items' :columns='COLUMNS' :items='trxs?.items'
+      <EditTable v-if='trxs?.items?.length' ref='edittable' :columns='COLUMNS' :items='trxs?.items'
         infinite :nextpage='trxs?.next' @getNextPage='getNextPage' @itemSelected='onItemSelected'
         @itemUpdated='onItemUpdated'>
         <template #scrollwatch>
           <IconMessage icon='pk' animation='gelatine' text='Loading more transactions' ellipsis/>
         </template>
       </EditTable>
+      <!-- Loading & Empty -->
+      <IconMessage v-else-if='loading' icon='pk' iconsize='40px' animation='gelatine' text='Loading transactions' ellipsis/>
+      <IconMessage v-else icon='mdi-robot-angry-outline' iconsize='40px' text='No transactions found.' />
     </template>
   </LayoutPaper>
 </template>

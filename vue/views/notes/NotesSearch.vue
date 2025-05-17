@@ -11,13 +11,20 @@
       </transition>
     </div>
     <!-- Search Results -->
-    <div ref='resultsdiv' class='results'>
+    <div v-if='notes?.length > 0' ref='resultsdiv' class='results'>
       <a href='#' class='result' v-for='note in notes' :key='note.title' :class='{selected:note.path==selected?.path}'
         @click.prevent @click='$emit("select", note)' @keydown.enter='$emit("select", note)' 
         @keydown.down='focusNext' @keydown.up='focusPrev'>
         {{note.title}}
         <div class='subtext'>{{utils.formatDate(note.mtime, 'MMM DD, YYYY')}}</div>
       </a>
+    </div>
+    <!-- Loading -->
+    <div v-else>
+      <div v-for='i in 3' :key='i' style='padding:20px 20px 0px 20px;'>
+        <div class='empty-row'/>
+        <div class='empty-row small short'/>
+      </div>
     </div>
   </div>
 </template>

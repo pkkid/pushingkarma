@@ -6,23 +6,35 @@
         <NotesSearch :selected='selected' @select='selected=$event' @results='onResults'/>
       </template>
       <template #content>
-        <LayoutPaper v-if='note'>
-            <!-- Note Content-->
-            <template #content>
-            <h1>{{note.title}}
-              <div class='subtext'>{{utils.formatDate(note.mtime * 1000, 'MMM DD, YYYY')}}</div>
-            </h1>
-            <Markdown :source='note.content' @headings='headings=$event'/>
+        <LayoutPaper>
+          <!-- Note Content-->
+          <template #content>
+            <div v-if='note'>
+              <h1>{{note.title}}
+                <div class='subtext'>{{utils.formatDate(note.mtime * 1000, 'MMM DD, YYYY')}}</div>
+              </h1>
+              <Markdown :source='note.content' @headings='headings=$event'/>
+            </div>
+            <!-- Loading Content -->
+            <IconMessage v-else icon='pk' iconsize='40px' animation='gelatine' text='Loading note' ellipsis/>
           </template>
           <!-- Table of Contents & Controls-->
           <template #controls>
-            <NotesToc :title='note.title' :headings='headings' />
-            <div v-if='user?.id'>
-              <h2>Obsidian Options</h2>
-              <div class='submenu'>
-                <div><a class='h1' :href='`obsidian://open?vault=${note.vault}&file=${note.path}`'>Edit Note</a></div>
-                <div><a class='h1' :href='`obsidian://new?vault=${note.vault}&file=My New Note.md`'>Create New Note</a></div>
+            <div v-if='note'>
+              <NotesToc :title='note.title' :headings='headings' />
+              <div v-if='user?.id'>
+                <h2>Obsidian Options</h2>
+                <div class='submenu'>
+                  <div><a class='h1' :href='`obsidian://open?vault=${note.vault}&file=${note.path}`'>Edit Note</a></div>
+                  <div><a class='h1' :href='`obsidian://new?vault=${note.vault}&file=My New Note.md`'>Create New Note</a></div>
+                </div>
               </div>
+            </div>
+            <!-- Loading TOC -->
+            <div v-else>
+              <div class='empty-row big' style='margin-top:40px;'/>
+              <div class='empty-row short'/>
+              <div class='empty-row short'/>
             </div>
           </template>
         </LayoutPaper>
@@ -34,7 +46,7 @@
 <script setup>
   import {inject, onBeforeMount, ref, watchEffect} from 'vue'
   import {NotesSearch, NotesToc} from '@/views/notes'
-  import {LayoutPaper, LayoutSidePanel, Markdown} from '@/components'
+  import {IconMessage, LayoutPaper, LayoutSidePanel, Markdown} from '@/components'
   import {useUrlParams} from '@/composables'
   import {api, utils} from '@/utils'
 
@@ -83,3 +95,9 @@
   }
 </script>
 
+<style>
+  #notes {
+
+
+  }
+</style>

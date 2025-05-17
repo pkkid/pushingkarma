@@ -4,28 +4,32 @@
       <article><h2 style='margin:0px;'>Budget Settings</h2></article>
     </template>
     <article>
-      <!-- Accounts -->
-      <div v-if='accounts' class='accounts'>
-        <h3 style='margin-top:0px;'>
-          Accounts
-          <div class='add-item' @click.stop='addAccount' style='float:right;'>Add New Account</div>
-        </h3>
-        <Sortable group='accounts' @sort='onSortAccounts'>
-          <BudgetSettingsAccount v-for='account in accounts.items' :key='account.id' ref='accountPanels'
-            :account='account' @opened='onAccountOpened' @updated='updateAccounts' @deleted='updateAccounts'/>
-        </Sortable>
-      </div>
-      <!-- Categories -->
-      <div v-if='categories' class='categories'>
-        <h3>
-          Categories
-          <div class='add-item' @click.stop='addCategory' style='float:right;'>Add New Category</div>
-        </h3>
-        <Sortable group='categories' @sort='onSortCategories' style='min-height:100px; max-height:300px; overflow-y:auto;'>
-          <BudgetSettingsCategory v-for='category in categories.items' :key='category.id'
-            :category='category' @updated='updateCategories'  @deleted='updateCategories'/>
-        </Sortable>
-      </div>
+      <template v-if='accounts && categories'>
+        <!-- Accounts -->
+        <div class='accounts'>
+          <h3 style='margin-top:0px;'>
+            Accounts
+            <div class='add-item' @click.stop='addAccount' style='float:right;'>Add New Account</div>
+          </h3>
+          <Sortable group='accounts' @sort='onSortAccounts'>
+            <BudgetSettingsAccount v-for='account in accounts.items' :key='account.id' ref='accountPanels'
+              :account='account' @opened='onAccountOpened' @updated='updateAccounts' @deleted='updateAccounts'/>
+          </Sortable>
+        </div>
+        <!-- Categories -->
+        <div class='categories'>
+          <h3>
+            Categories
+            <div class='add-item' @click.stop='addCategory' style='float:right;'>Add New Category</div>
+          </h3>
+          <Sortable group='categories' @sort='onSortCategories' style='min-height:100px; max-height:300px; overflow-y:auto;'>
+            <BudgetSettingsCategory v-for='category in categories.items' :key='category.id'
+              :category='category' @updated='updateCategories'  @deleted='updateCategories'/>
+          </Sortable>
+        </div>
+      </template>
+      <!-- Loading -->
+      <IconMessage v-else icon='pk' iconsize='40px' animation='gelatine' text='Loading data' ellipsis/>
     </article>
   </Modal>
 </template>
@@ -33,7 +37,7 @@
 <script setup>
   import {ref, watchEffect} from 'vue'
   import {BudgetSettingsAccount, BudgetSettingsCategory} from '.'
-  import {Modal, Sortable} from '@/components'
+  import {IconMessage, Modal, Sortable} from '@/components'
   import {api} from '@/utils'
   
   const emit = defineEmits(['close'])         // Emit close event
