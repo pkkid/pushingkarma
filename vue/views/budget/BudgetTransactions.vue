@@ -31,7 +31,7 @@
 </template>
 
 <script setup>
-  import {nextTick, onMounted, ref, watch} from 'vue'
+  import {computed, nextTick, onMounted, ref, watch} from 'vue'
   import {EditTable, IconMessage, LayoutPaper} from '@/components'
   import {useUrlParams} from '@/composables'
   import {api, utils} from '@/utils'
@@ -74,6 +74,9 @@
       name:'comment', title:'Comment', editable:true,
   }]
 
+  const props = defineProps({
+    demo: {type:Boolean},                     // Enables demo mode
+  })
   var cancelctrl = null                       // Cancel controller
   var updating = false                        // True if updating a transaction
   const loading = ref(false)                  // True to show loading indicator
@@ -82,6 +85,14 @@
   const categories = ref(null)                // Categories list
   const trxs = ref(null)                      // Transactions list
   const edittable = ref(null)                 // Ref to EditTable component
+
+  // Search String
+  // Search string for the transactions
+  const searchstr = computed(function() {
+    var str = search.value || ''
+    str += props.demo ? ` amount<100 AND amount>-100` : ''
+    return str.trim()
+  })
 
   // On Mounted
   // Update transactions and initialize hotkeys
@@ -203,7 +214,7 @@
     loading.value = true
     cancelctrl = api.cancel(cancelctrl)
     try {
-      var params = {search:search.value}
+      var params = {search:searchstr.value}
       var {data} = await api.Budget.listTransactions(params, cancelctrl.signal)
       trxs.value = data
       edittable.value?.deselect(null, false)

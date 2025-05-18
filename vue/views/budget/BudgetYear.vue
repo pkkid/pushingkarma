@@ -34,6 +34,9 @@
   import {useUrlParams} from '@/composables'
   import {api, utils} from '@/utils'
 
+  const props = defineProps({
+    demo: {type:Boolean},                     // Enables demo mode
+  })
   var cancelctrl = null                       // Cancel controller
   const loading = ref(false)                  // True to show loading indicator
   const {search} = useUrlParams({search:{}})  // Method & path url params
@@ -100,6 +103,14 @@
     return item
   })
 
+  // Search String
+  // Search string for the transactions
+  const searchstr = computed(function() {
+    var str = search.value || ''
+    str += props.demo ? ` amount<100 AND amount>-100` : ''
+    return str.trim()
+  })
+
   // Class Sign Determination
   // returns positive, zero, or negative depending on the value
   const getSign = function(cat, key) {
@@ -140,7 +151,7 @@
       var {id, name, exclude} = summary.value.items[row]
       var category = {id, name, exclude}
       var cell = edittable.value.getCell(row, col)
-      popover.value.show(cell, category, month, search.value)
+      popover.value.show(cell, category, month, searchstr.value)
     } else {
       popover.value.hide()
     }
@@ -159,7 +170,7 @@
     loading.value = true
     cancelctrl = api.cancel(cancelctrl)
     try {
-      var params = {search:search.value}
+      var params = {search:searchstr.value}
       var {data} = await api.Budget.summarizeMonths(params, cancelctrl.signal)
       summary.value = data
       // edittable.value?.deselect(null, false)

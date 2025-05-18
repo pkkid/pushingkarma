@@ -50,8 +50,8 @@
       <!-- Content -->
       <template #content>
         <Dropzone @filesDropped='upload' text='Drop Transactions' subtext='Hold shift for safe import'>
-          <BudgetYear v-if="view=='year'" />
-          <BudgetTransactions v-else />
+          <BudgetYear v-if="view=='year'" :demo='demo'/>
+          <BudgetTransactions v-else :demo='demo'/>
         </Dropzone>
       </template>
     </LayoutSidePanel>
@@ -67,7 +67,7 @@
   import {useUrlParams} from '@/composables'
   import {api, utils} from '@/utils'
 
-  const {view} = useUrlParams({view:{}})    // Current view
+  const {demo, view} = useUrlParams({demo:{type:Boolean}, view:{}})  // Current view
   const {notify} = inject('notify')         // Notification callback
   const accounts = ref(null)                // List of accounts 
   const showSettings = ref(false)           // True if showing settings dialog

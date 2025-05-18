@@ -49,11 +49,11 @@
     var catname = category.value?.name == 'Uncategorized' ? 'None' : category.value?.name
     var maxdate = new Date(month.value)
     maxdate.setMonth(maxdate.getMonth() + 1)
-    var searchstr = search.value || ''
-    searchstr += ` category="${catname}"`
-    searchstr += ` date>=${utils.formatDate(month.value, 'YYYY-MM-DD')}`
-    searchstr += ` date<${utils.formatDate(maxdate, 'YYYY-MM-DD')}`
-    return searchstr.trim()
+    var str = search.value || ''
+    str += ` category="${catname}"`
+    str += ` date>=${utils.formatDate(month.value, 'YYYY-MM-DD')}`
+    str += ` date<${utils.formatDate(maxdate, 'YYYY-MM-DD')}`
+    return str.trim()
   })
   
   // Total
