@@ -46,7 +46,7 @@
     position: fixed;
     top: 20px;
     right: 20px;
-    z-index: 98;
+    z-index: 110;
     width: 400px;
     & > div {
       display: flex;

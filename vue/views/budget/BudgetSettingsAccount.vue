@@ -47,7 +47,7 @@
 </template>
 
 <script setup>
-  import {ref, watchEffect} from 'vue'
+  import {inject, ref, watchEffect} from 'vue'
   import {CodeEditor, Expandable, SortableItem, Tooltip} from '@/components'
   import {api, utils} from '@/utils'
 
@@ -55,6 +55,7 @@
     account: {required:true},                                   // Account to be displayed
   })
   const emit = defineEmits(['opened', 'updated', 'deleted'])    // Emit opened event
+  const {notify} = inject('notify')                             // Notification callback
   const expandy = ref(null)                                     // Reference to Expandable component
   const jsonIcon = ref('mdi-check')                             // Icon for JSON validation
   const jsonText = ref('Valid JSON')                            // Text for JSON validation
@@ -80,10 +81,15 @@
   const saveAccount = async function() {
     var name = accountName.value
     var rules = JSON.parse(accountRules.value)
-    var {data} = props.account.indent
+    var {data} = props.account.id
       ? await api.Budget.updateAccount(props.account.id, {name, rules})
       : await api.Budget.createAccount({name, rules})
     emit('updated', data)
+    // Create notification
+    var action = props.account.id ? 'updated' : 'created'
+    var title = `${data.name} Account ${utils.title(action)}`
+    var message = `Successfully ${action} the account ${data.name}.`
+    notify(title, message, 'mdi-check', 5000)
   }
 
   // Delete Account
@@ -110,7 +116,7 @@
     .codeeditor {
       --padding: 8px;
       width: 100%;
-      font-size: 12px;
+      font-size: 10px;
       .codewrap { background-color:#efefed !important; }
     }
     .tooltip pre {

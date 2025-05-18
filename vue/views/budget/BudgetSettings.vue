@@ -131,7 +131,6 @@
       &:focus {
         background-color:#8884;
         color: #000;
-        background: linear-gradient(to right, #8884 0%, #0001 90%, transparent 100%);
       }
     }
 
