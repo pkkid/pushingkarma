@@ -236,6 +236,7 @@ def list_transactions(request,
         item['url'] = trx.url
         item['account'] = dict(id=trx.account.id, url=trx.account.url, name=trx.account.name)
         item['category'] = dict(id=trx.category.id, url=trx.category.url, name=trx.category.name) if trx.category else None
+        if trx.category and trx.category.exclude: item['category']['exclude'] = True
         response['items'][i] = item
     return response
 
@@ -285,6 +286,7 @@ def summarize_months(request,
             'id': cat.id if cat else None,
             'url': cat.url if cat else None,
             'name': cat.name if cat else 'Uncategorized',
+            'exclude': cat.exclude if cat else False,
             'months': {str(row['month']): round(row['saved'] or 0, 2) for row in group}
         })
     return response

@@ -1,5 +1,9 @@
 <template>
   <div v-if='showing' ref='root' id='budgetyearpopover' class='lightbg'>
+    {{console.log(category)}}
+    <Tooltip text='Transactions excluded from totals' position='left' class='exclude-icon'>
+      <i v-if='category?.exclude' class='mdi mdi-tag-off-outline'/>
+    </Tooltip>
     <h3>{{category?.name}}
       <div class='subtext'>{{utils.formatDate(month, 'MMMM YYYY')}}</div>
     </h3>
@@ -26,7 +30,7 @@
 
 <script setup>
   import {computed, nextTick, ref} from 'vue'
-  import {useRouter, useRoute} from 'vue-router'
+  import {Tooltip} from '@/components'
   import {api, utils} from '@/utils'
 
   var cancelctrl = null             // Cancel controller
@@ -38,17 +42,15 @@
   const month = ref(null)           // Month to show
   const search = ref(null)          // Search string
   const scroll = ref(false)         // True if .trxs has scrollbar
-  const router = useRouter()
-  const route = useRoute()
-
 
   // Search String
   // Search string for the transactions
   const searchstr = computed(function() {
+    var catname = category.value?.name == 'Uncategorized' ? 'None' : category.value?.name
     var maxdate = new Date(month.value)
     maxdate.setMonth(maxdate.getMonth() + 1)
     var searchstr = search.value || ''
-    searchstr += ` category="${category.value.name}"`
+    searchstr += ` category="${catname}"`
     searchstr += ` date>=${utils.formatDate(month.value, 'YYYY-MM-DD')}`
     searchstr += ` date<${utils.formatDate(maxdate, 'YYYY-MM-DD')}`
     return searchstr.trim()
@@ -58,7 +60,9 @@
   // Sum the values in the object
   const total = computed(function() {
     if (!trxs.value?.items) { return 0 }
-    return trxs.value.items.reduce((sum, trx) => sum + Number(trx.amount), 0)
+    return trxs.value.items.reduce(function(sum, trx) {
+      return sum + Number(trx.amount)
+    }, 0)
   })
 
   // Set Position
@@ -133,11 +137,18 @@
     padding: 10px;
     position: absolute;
     width: 300px;
-    z-index: 99;
+    z-index: 1;
+
+    .exclude-icon {
+      float: right;
+      font-size: 22px;
+      color: var(--lightbg-fg2)
+    }
 
     h3 {
       margin-top: 0px;
       position: relative;
+      margin-right: 25px;
       .subtext { margin-top: -7px; }
       &::before {
         background-color: #d65d0e;

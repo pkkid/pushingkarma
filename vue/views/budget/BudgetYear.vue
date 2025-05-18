@@ -92,8 +92,10 @@
     var item = {name:'Total', months:{}}
     var months = new Set(summary.value.items.flatMap(cat => Object.keys(cat.months)))
     months.forEach(month => {
-      item.months[month] = summary.value.items.reduce(
-        (sum, cat) => sum + (Number(cat.months[month]) || 0), 0)
+      item.months[month] = summary.value.items.reduce(function(sum, cat) {
+        if (cat.exclude) { return sum }
+        return sum + (Number(cat.months[month]) || 0)
+      }, 0)
     })
     return item
   })
@@ -135,8 +137,8 @@
   const onItemSelected = function(event, row, col, editing) {
     if (editing || (popover.value.showing() && event.key?.includes('Arrow'))) {
       var month = columns.value[col]._month
-      var {id, name} = summary.value.items[row]
-      var category = {id, name}
+      var {id, name, exclude} = summary.value.items[row]
+      var category = {id, name, exclude}
       var cell = edittable.value.getCell(row, col)
       popover.value.show(cell, category, month, search.value)
     } else {
