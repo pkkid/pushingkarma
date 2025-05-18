@@ -157,6 +157,21 @@ export function getItemValue(item, column, text=null) {
   return column.format?.(text) || text
 }
 
+// Get Scrollable Parent
+// Get the first scrollable parent of the specified element\
+export function getScrollableParent(elem) {
+  elem = elem.parentElement
+  while (elem) {
+    const oflow = getComputedStyle(elem).overflowY
+    if ((oflow == 'auto' || oflow == 'scroll') && elem.scrollHeight > elem.clientHeight) {
+      return elem
+    }
+    elem = elem.parentElement
+  }
+  return null
+}
+
+
 // Get Sign
 // returns positive, zero, or negative depending on the value
 export function getSign(value) {
@@ -240,6 +255,29 @@ export function rset(object, property, value) {
   pointer[current] = value
   return object
 }
+
+// Scroll Into View
+// Scroll the specified element into view
+export function scrollIntoView(elem, offset=200, behavior='smooth') {
+  const ebox = elem.getBoundingClientRect()
+  const container = getScrollableParent(elem)
+  if (container) {
+    const cbox = container.getBoundingClientRect()
+    if (ebox.top < cbox.top + offset) {
+      container.scrollBy({top:ebox.top - cbox.top - offset, behavior})
+    } else if (ebox.bottom > cbox.bottom - offset) {
+      container.scrollBy({top:ebox.bottom - cbox.bottom + offset, behavior})
+    }
+  } else {
+    const winheight = window.innerHeight
+    if (ebox.top < offset) {
+      window.scrollBy({top:ebox.top - offset, behavior:behavior})
+    } else if (ebox.bottom > winheight - offset) {
+      window.scrollBy({top:ebox.bottom - winheight + offset, behavior:behavior})
+    }
+  }
+}
+
 
 // Set Nav Position
 // set the main site nav position to top or left.

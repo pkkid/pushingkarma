@@ -98,11 +98,12 @@
 
   // Select Up
   // Select the cell above the current cell
-  const selectUp = async function(event) {
+  const selectUp = function(event) {
     if (selected.value.row == null) { return }
     event?.preventDefault()
     var {row, col, editing} = selected.value
     if (row > 0) { setSelected(event, row-1, col, editing) }
+    utils.scrollIntoView(getCell(row-1, col)?.$el, 200, 'instant')
   }
 
   // Select Down
@@ -112,6 +113,7 @@
     event?.preventDefault()
     var {row, col, editing} = selected.value
     if (row < props.items.length-1) { setSelected(event, row+1, col, editing) }
+    utils.scrollIntoView(getCell(row+1, col)?.$el, 200, 'instant')
   }
 
   // Select Left
