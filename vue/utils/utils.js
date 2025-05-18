@@ -259,6 +259,7 @@ export function rset(object, property, value) {
 // Scroll Into View
 // Scroll the specified element into view
 export function scrollIntoView(elem, offset=200, behavior='smooth') {
+  if (!elem) { return }
   const ebox = elem.getBoundingClientRect()
   const container = getScrollableParent(elem)
   if (container) {
