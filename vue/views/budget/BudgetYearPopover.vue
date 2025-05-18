@@ -13,7 +13,10 @@
           </tr>
         </table>
       </div>
-      <div class='total' :class='utils.getSign(total)'>{{utils.usd(total, 0, '$', 3)}}</div>
+      <div class='budgetyearpopover-footer'>
+        <a v-if='trxs.items?.length' href='#' @click='loadTrasnactions'>{{trxs.items?.length}} transactions</a>
+        <div class='total' :class='utils.getSign(total)'>{{utils.usd(total, 0, '$', 3)}}</div>
+      </div>
     </div>
     <div v-else style='margin-bottom:20px;'>
       No transactions to display.
@@ -22,7 +25,8 @@
 </template>
 
 <script setup>
-  import {computed, nextTick, onMounted, ref} from 'vue'
+  import {computed, nextTick, ref} from 'vue'
+  import {useRouter, useRoute} from 'vue-router'
   import {api, utils} from '@/utils'
 
   var cancelctrl = null             // Cancel controller
@@ -32,8 +36,24 @@
   const trxs = ref(null)            // Transactions to show
   const category = ref(null)        // Category to show
   const month = ref(null)           // Month to show
+  const search = ref(null)          // Search string
   const scroll = ref(false)         // True if .trxs has scrollbar
+  const router = useRouter()
+  const route = useRoute()
 
+
+  // Search String
+  // Search string for the transactions
+  const searchstr = computed(function() {
+    var maxdate = new Date(month.value)
+    maxdate.setMonth(maxdate.getMonth() + 1)
+    var searchstr = search.value || ''
+    searchstr += ` category="${category.value.name}"`
+    searchstr += ` date>=${utils.formatDate(month.value, 'YYYY-MM-DD')}`
+    searchstr += ` date<${utils.formatDate(maxdate, 'YYYY-MM-DD')}`
+    return searchstr.trim()
+  })
+  
   // Total
   // Sum the values in the object
   const total = computed(function() {
@@ -59,11 +79,12 @@
 
   // Show Popover
   // Show the popover with the given category and month
-  const show = async function(cell, cat, mon, search) {
-    category.value = cat
-    month.value = mon
+  const show = async function(cell, _category, _month, _search) {
+    category.value = _category
+    month.value = _month
+    search.value = _search
     showing.value = true
-    await updateTransactions(cat, mon, search)
+    await updateTransactions()
     setPosition(cell)
   }
 
@@ -75,19 +96,24 @@
     category.value = null
   }
 
+  // Load Transactions
+  // Load transactions for the given category and month
+  const loadTrasnactions = async function() {
+    if (!trxs.value?.items) { return }
+    router.push({
+      path: route.path,
+      query: {...route.query, view:undefined, search:searchstr.value}
+    })
+  }
+
   // Update Transactions
   // Fetch transactions from the server
-  const updateTransactions = async function(cat, mon, search) {
+  const updateTransactions = async function() {
     loading.value = true
     cancelctrl = api.cancel(cancelctrl)
     try {
-      var maxdate = new Date(mon)
-      maxdate.setMonth(maxdate.getMonth() + 1)
-      search = search || ''
-      search += ` category="${cat.name}"`
-      search += ` date>=${utils.formatDate(mon, 'YYYY-MM-DD')}`
-      search += ` date<${utils.formatDate(maxdate, 'YYYY-MM-DD')}`
-      var {data} = await api.Budget.listTransactions({search:search.trim()}, cancelctrl.signal)
+      var params = {search:searchstr.value}
+      var {data} = await api.Budget.listTransactions(params, cancelctrl.signal)
       trxs.value = data
     } catch (err) {
       if (!api.isCancel(err)) { throw(err) }
@@ -179,6 +205,12 @@
       align-items: center;
       justify-content: center;
       height: 50px;
+    }
+
+    .budgetyearpopover-footer {
+      font-size: 10px;
+      margin-top: 5px;
+      margin-left: 2px;
     }
 
   }

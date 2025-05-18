@@ -24,7 +24,7 @@
   provide('user', {user, setUser:function(data) { user.value = data }})   // Current user
   provide('notify', {notify: function(...args) {                          // Send notification
     notifications.value.notify.apply(notifications.value, args)
-  }})  
+  }})
   
   // On Mounted
   // Setup environment before mounting
