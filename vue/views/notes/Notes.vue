@@ -32,9 +32,11 @@
             </div>
             <!-- Loading TOC -->
             <div v-else>
-              <div class='empty-row big' style='margin-top:40px;'/>
-              <div class='empty-row short'/>
-              <div class='empty-row short'/>
+              <div v-for='i in 3' :key='i'>
+                <div class='empty-row big' style='margin-top:40px;'/>
+                <div class='empty-row short'/>
+                <div class='empty-row short'/>
+              </div>
             </div>
           </template>
         </LayoutPaper>

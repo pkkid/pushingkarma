@@ -3,7 +3,7 @@
     <LayoutSidePanel>
       <!-- Side Panel (Navigation) -->
       <template #panel>
-        <div class='menu'>
+        <div v-if='accounts' class='menu'>
           <!-- Transactions -->
           <a href='/budget' class='item link' @click.prevent="view=null"
             :class='{selected:view==null && !showSettings}'>
@@ -37,6 +37,13 @@
           <div class='item link' :class='{selected:showSettings}' @click='showSettings=true'>
             <i class='mdi mdi-cog'/>
             Settings
+          </div>
+        </div>
+        <div v-else style='padding:0px 20px;'>
+          <div v-for='i in 2' :key='i'>
+            <div class='empty-row big' style='margin-top:40px;'/>
+            <div class='empty-row short'/>
+            <div class='empty-row small short'/>
           </div>
         </div>
       </template>
