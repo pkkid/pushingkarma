@@ -14,7 +14,7 @@
         </table>
       </div>
       <div class='budgetyearpopover-footer'>
-        <a v-if='trxs.items?.length' href='#' @click='loadTrasnactions'>{{trxs.items?.length}} transactions</a>
+        <router-link :to='`/budget?search=${searchstr}`'>{{trxs.items?.length}} transactions</router-link>
         <div class='total' :class='utils.getSign(total)'>{{utils.usd(total, 0, '$', 3)}}</div>
       </div>
     </div>
@@ -94,16 +94,6 @@
     showing.value = false
     trxs.value = null
     category.value = null
-  }
-
-  // Load Transactions
-  // Load transactions for the given category and month
-  const loadTrasnactions = async function() {
-    if (!trxs.value?.items) { return }
-    router.push({
-      path: route.path,
-      query: {...route.query, view:undefined, search:searchstr.value}
-    })
   }
 
   // Update Transactions
