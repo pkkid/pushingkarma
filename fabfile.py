@@ -5,18 +5,13 @@ import getpass, invoke, keyring, os
 from fabric import Connection
 from os.path import abspath, dirname
 
-LOCALDIR = abspath(dirname(__file__))
 DOCKER = '/usr/local/bin/docker'
 DOCKERNAME = 'pushingkarma'
-
+LOCALDIR = abspath(dirname(__file__))
 REMOTEUSER = 'pkkid'
-REMOTEHOST = 'synology.local'
-REMOTEDIR = '/volume1/docker/pushingkarma'
-RSYNCDEST = f'rsync://{REMOTEHOST}/docker/'
-
-ENV = 'PATH=/usr/local/bin:$PATH'
+REMOTEHOST = 'pushingkarma.com'
+REMOTEDIR = '~/pushingkarma'
 UV = '/var/services/homes/pkkid/.local/bin/uv'
-UVPYTHON = '3.12'
 
 
 class MyConnection(Connection):
@@ -37,14 +32,30 @@ class MyConnection(Connection):
             print(f'Setting permissions {chmod} {path}')
             self.run(f'chmod {chmod} {path}')
 
-    def rsync(self, localdir, rsyncdest, excludes=None):
-        """ Rsync the local directory to the remote directory. """
-        cmd = 'rsync --recursive --links --copy-links --checksum '
-        cmd += '--times --omit-dir-times --delete --verbose '
-        cmd += ' '.join(f'--exclude={x}' for x in excludes)
-        cmd += f' {localdir} {rsyncdest}'
-        responder = invoke.Responder(pattern=r'Password:', response=f'{self.sudopw}\n')
-        invoke.run(cmd, pty=True, watchers=[responder])
+    def rsync(self, localdir, remotredir, excludes=None):
+        """ Rsync the local directory to the remote directory.
+            -r  recurse into directories
+            -l  copy symlinks as symlinks
+            -t  preserve modification times
+            -v  increase verbosity
+            -O  omit directories from --times
+            --copy-links  transform symlink into referent file/dir
+            --checksum  skip based on checksum, not mod-time & size
+            --delete  delete extraneous files from dest dirs
+        """
+        cmd = f'rsync -r {localdir} {REMOTEUSER}@{REMOTEHOST}:{remotredir} '
+        cmd += '-rltvO --copy-links --checksum --delete '
+        cmd += '--rsync-path="/usr/bin/rsync" '
+        cmd += ' '.join([f'--exclude={x}' for x in excludes])
+        print(cmd)
+        self.local(cmd)
+        # cmd = 'rsync --recursive --links --copy-links --checksum --times '
+        # cmd += '--omit-dir-times --delete --verbose --rsh="ssh -p 131" '
+        # cmd += ' '.join(f'--exclude={x}' for x in excludes)
+        # cmd += f' {localdir} {rsyncdest}'
+        # print(cmd)
+        # responder = invoke.Responder(pattern=r'Password:', response=f'{self.sudopw}\n')
+        # invoke.run(cmd, pty=True, watchers=[responder])
     
     def step(self, msg, color='#ff0'):
         r,g,b = tuple(int(x * 2, 16) for x in color.lstrip('#'))
@@ -88,10 +99,10 @@ def build_vue(conn):
 
 def rsync_to_remote(conn):
     """ Sync project files and set the right permissions. """
-    conn.step(f'Rsyncing Project to {RSYNCDEST}')
+    conn.step(f'Rsyncing Project to {REMOTEDIR}')
     excludes = ['__pycache__', '*.bak', '*.sqlite3*', '*/_logs/', '*/_static/',
         '*/.git/', '*/.venv/', '*/.vscode/', '*/node_modules/']
-    conn.rsync(LOCALDIR, RSYNCDEST, excludes=excludes)
+    conn.rsync(LOCALDIR, '~', excludes=excludes)
 
 
 def setup_log_directory(conn):

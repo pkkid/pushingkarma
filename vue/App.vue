@@ -55,7 +55,7 @@
 </script>
 
 <style>
-  body { min-height:100vh; overflow-x:hidden; }
+  body { overflow-x:hidden; }
   #notifications { top:80px; right:20px; }
   #content { min-height:100vh; }
 </style>
