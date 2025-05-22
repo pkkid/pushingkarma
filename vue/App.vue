@@ -1,11 +1,13 @@
 <template>
-  <router-view v-if='route.name == "newtab"'/>
-  <template v-else>
-    <Notifications ref='notifications'/>
-    <Navigation/>
-    <div id='content' class='gridbgx'><router-view/></div>
-    <Footer/>
-  </template>
+  <div v-if='ready'>
+    <router-view v-if='route.name == "newtab"'/>
+    <template v-else>
+      <Notifications ref='notifications'/>
+      <Navigation/>
+      <div id='content' class='gridbgx'><router-view/></div>
+      <Footer/>
+    </template>
+  </div>
 </template>
 
 <script setup>
@@ -13,11 +15,13 @@
   import {Notifications} from '@/components'
   import {Footer, Navigation} from '@/views/site'
   import {useAxiosSettings} from '@/composables'
-  import {useRoute} from 'vue-router'
+  import {useRoute, useRouter} from 'vue-router'
   import {api, utils} from '@/utils'
 
   const user = ref(null)                                    // currently logged in user details
-  const route = useRoute()                                  // current route
+  const route = useRoute()                                  // Vue route object
+  const router = useRouter()                                // Vue router object
+  const ready = ref(false)                                  // True when router is ready  
   const globalvars = ref(null)                              // global variables fetched from the server
   const notifications = useTemplateRef('notifications')     // reference to the notifications component
   const axiosSettings = useAxiosSettings()                  // API settings using our composable
@@ -28,6 +32,7 @@
   provide('notify', {notify: function(...args) {                          // Send notification
     notifications.value.notify.apply(notifications.value, args)
   }})
+  router.isReady().then(() => { ready.value = true })
   
   // On Mounted
   // Setup environment before mounting
