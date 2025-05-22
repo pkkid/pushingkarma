@@ -91,15 +91,14 @@
   // On Results Loaded
   // If no note selected, load the first note
   const onResults = function(results) {
-    if (!selected.value && results?.length >= 1) {
-      selected.value = results[0]
-    }
+    // if (!selected.value && results?.length >= 1) {
+    //   selected.value = results[0]
+    // }
   }
 </script>
 
 <style>
   #notes {
-
 
   }
 </style>
