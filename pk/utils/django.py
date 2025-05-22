@@ -8,6 +8,7 @@ from django.db import connection, connections
 from django.db.models.query import QuerySet
 from django.db.models import Aggregate, CharField, DateTimeField, Model
 from django.urls import reverse as django_reverse
+from urllib.parse import urlencode
 log = logging.getLogger(__name__)
 
 
@@ -183,7 +184,10 @@ def vue_devserver_running(request):
     try:
         if not settings.DEBUG: return None
         servername = request.environ.get('SERVER_NAME', 'localhost')
+        querystr = urlencode(request.GET)
         serverurl = f'http://{servername}:5173'
+        serverurl += request.path if request.path else ''
+        serverurl += f'{querystr}' if querystr else ''
         requests.head(serverurl)
         return serverurl
     except Exception as err:
