@@ -91,14 +91,12 @@
   // On Results Loaded
   // If no note selected, load the first note
   const onResults = function(results) {
-    // if (!selected.value && results?.length >= 1) {
-    //   selected.value = results[0]
-    // }
+    if (!bucket.value && !path.value) {
+      bucket.value = results[0].bucket
+      path.value = results[0].path
+    }
   }
 </script>
 
 <style>
-  #notes {
-
-  }
 </style>

@@ -5,18 +5,20 @@
 </template>
 
 <script setup>
-  import {computed, watchEffect} from 'vue'
+  import {ref, nextTick, onMounted, watch, watchEffect} from 'vue'
+  import {createApp, h} from 'vue'
+  import {markdownCode, codeComponents} from '@/utils/markdown'
+  import {markdownProps, propComponents} from '@/utils/markdown'
+  import {markdownToc, markdownHeadings} from '@/utils/markdown'
   import markdownIt from 'markdown-it'
-  import markdownHighlightJs from '@/utils/markdown/markdown-hljs'
-  import markdownToc, {markdownHeadings} from '@/utils/markdown/markdown-toc'
 
   // Init MarkdownIt
   // create the markdown-it object
   const md = new markdownIt()
-    .use(markdownHighlightJs)
+    .use(markdownProps)
+    .use(markdownCode)
     .use(markdownToc)
-
-  const emit = defineEmits(['headings'])            // Emit when new headings calculated
+  
   const props = defineProps({
     source: {type:String, required:true},           // Source markdown content
     html: {type:Boolean, default:true},             // Enable HTML tags in source
@@ -27,16 +29,42 @@
     typographer: {type:Boolean, default:false},     // Enable language-neutral replacement + quotes beautification
     quotes: {type:String, default:'“”‘’'},          // Quotes replacement pairs when typographer enabled
   })
-  const outhtml = computed(function() {
-    var result = md.render(props.source)
-    emit('headings', markdownHeadings)
-    return result
-  })
+  const emit = defineEmits(['headings'])            // Emit when new headings calculated
+  const outhtml = ref(null)                         // Rendered HTML output
 
-  // Options 
-  // Pass through markdown-it options
-  const options = computed(function() {
-    return {
+  // Watch Source
+  // Update the markdown html when the source changes
+  onMounted(function() { updateView() })
+  watch(() => props.source, function() { updateView() })
+
+  // Apply Vue Components
+  // Inject components to the markdown html
+  const applyVueComponents = async function() {
+    await nextTick()
+    const components = codeComponents
+    document.querySelectorAll('.vue-component').forEach(function(elem) {
+      const id = elem.dataset.id
+      const cdata = components[id]
+      if (!cdata) { return console.log(`Unknown component id: ${id}`) }
+      const app = createApp({
+        render: () => h(cdata.component, cdata.props)
+      })
+      app.mount(elem)
+    })
+  }
+
+  // Update View
+  // Update the markdown html when the source changes
+  const updateView = function() {
+    outhtml.value = md.render(props.source)
+    applyVueComponents()
+    emit('headings', markdownHeadings)
+  }
+
+  // Watch Options
+  // updates markdown-it options
+  watchEffect(function() {
+    md.set({
       html: props.html,
       xhtmlOut: props.xhtmlOut,
       breaks: props.breaks,
@@ -44,12 +72,6 @@
       typographer: props.typographer,
       langPrefix: props.langPrefix,
       quotes: props.quotes,
-    }
-  })
-
-  // Watch Options
-  // updates markdown-it options
-  watchEffect(function() {
-    md.set(options.value)
+    })
   })
 </script>

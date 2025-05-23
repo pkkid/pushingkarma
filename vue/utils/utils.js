@@ -1,5 +1,3 @@
-// Utils.js
-// Collection of utility functions
 
 // Animate
 // animate the specified element
@@ -171,11 +169,24 @@ export function getScrollableParent(elem) {
   return null
 }
 
-
 // Get Sign
 // returns positive, zero, or negative depending on the value
 export function getSign(value) {
   return value == 0 ? 'zero' : value < 0 ? 'negative' : 'positive'
+}
+
+// Hash Object (djb2 hash)
+// Generate a unique id from an object of key, values
+export function hashObject(obj) {
+  if (obj == null || obj == undefined) { return '' }
+  const keys = Object.keys(obj).sort()
+  const hashstr = keys.map(key => `${key}:${obj[key]};`).join('')
+  var hash = 5381
+  for (let i = 0; i < hashstr.length; i++) {
+    hash = ((hash << 5) + hash) + hashstr.charCodeAt(i)
+    hash = hash & 0xffffffff  // ensure 32bit integer
+  }
+  return Math.abs(hash).toString(16).padStart(8, '0').slice(0, 8)
 }
 
 // Insert Commas
