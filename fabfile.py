@@ -100,8 +100,10 @@ def build_vue(conn):
 def rsync_to_remote(conn):
     """ Sync project files and set the right permissions. """
     conn.step(f'Rsyncing Project to {REMOTEDIR}')
-    excludes = ['__pycache__', '*.bak', '*.sqlite3*', '*/_logs/', '*/_static/',
-        '*/.git/', '*/.venv/', '*/.vscode/', '*/node_modules/']
+    excludes = [
+        '__pycache__', '*/.git/', '*/.venv/', '*/.vscode/',
+        '*/node_modules/', '*/_logs/', '*/_static/',
+        '*/static/notes/', '*.bak', '*.sqlite3*']
     conn.rsync(LOCALDIR, '~', excludes=excludes)
 
 

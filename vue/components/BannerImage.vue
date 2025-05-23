@@ -31,7 +31,7 @@
     left: 5px;
     width: calc(100% - 10px);
     border-radius: 2px;
-    box-shadow: 0px 0px 2px #0005;
+    box-shadow: inset 0px 0px 50px #0006;
     height: 170px;
   }
 </style>
