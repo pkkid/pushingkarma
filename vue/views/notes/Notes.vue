@@ -100,6 +100,6 @@
 
 <style>
   #notes {
-    article:has(#bannerimage) h1 { margin-top: 200px; }
+    article:has(#bannerimage) h1 { margin-top: 170px; }
   }
 </style>

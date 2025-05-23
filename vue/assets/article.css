@@ -74,4 +74,7 @@ article {
     margin: 0px 1px;
     padding: 2px 4px;
   }
+  img {
+    max-width: 100%;
+  }
 }
