@@ -35,7 +35,7 @@ const createBannerImage = function(params, state) {
   }
   const id = utils.hashObject(component.props)
   components[id] = component
-  return `<div class='vue-component' data-id='${id}'></div>`
+  state.src = `<div class='mdvuecomponent' data-id='${id}'></div>\n\n${state.src}`
 }
 
 

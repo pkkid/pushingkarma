@@ -1,5 +1,6 @@
 <template>
   <div id='bannerimage'>
+    Banner Image!
   </div>
 </template>
 
@@ -13,5 +14,10 @@
 <style>
   #bannerimage {
     border: 1px solid red;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 200px;
   }
 </style>

@@ -1,7 +1,5 @@
 <template>
-  <div class='markdown-content'>
-    <div v-html='outhtml' />
-  </div>
+  <div class='markdown-content' v-html='outhtml'/>
 </template>
 
 <script setup>
@@ -41,8 +39,8 @@
   // Inject components to the markdown html
   const applyVueComponents = async function() {
     await nextTick()
-    const components = codeComponents
-    document.querySelectorAll('.vue-component').forEach(function(elem) {
+    const components = {...codeComponents, ...propComponents}
+    document.querySelectorAll('.mdvuecomponent').forEach(function(elem) {
       const id = elem.dataset.id
       const cdata = components[id]
       if (!cdata) { return console.log(`Unknown component id: ${id}`) }

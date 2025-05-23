@@ -19,7 +19,7 @@ const wrapCodeRenderer = function(renderer) {
     }
     const id = utils.hashObject(component.props)
     components[id] = component
-    return `<div class='vue-component' data-id='${id}'></div>`
+    return `<div class='mdvuecomponent' data-id='${id}'></div>`
   }
 }
 

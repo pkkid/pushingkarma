@@ -9,12 +9,12 @@
         <LayoutPaper>
           <!-- Note Content-->
           <template #content>
-            <div v-if='note'>
+            <template v-if='note'>
               <h1>{{note.title}}
                 <div class='subtext'>{{utils.formatDate(note.mtime * 1000, 'MMM DD, YYYY')}}</div>
               </h1>
               <Markdown :source='note.content' @headings='headings=$event'/>
-            </div>
+            </template>
             <!-- Loading Content -->
             <IconMessage v-else icon='pk' iconsize='40px' animation='gelatine' text='Loading note' ellipsis/>
           </template>
@@ -99,4 +99,7 @@
 </script>
 
 <style>
+  #notes {
+    article:has(#bannerimage) h1 { margin-top: 200px; }
+  }
 </style>
