@@ -1,22 +1,25 @@
 <template>
-  <div v-if='bannerurl' id='bannerimage'></div>
+  <div id='bannerimage'></div>
 </template>
 
 <script setup>
   import {computed} from 'vue'
 
   const props = defineProps({
-    banner: {default:null},
+    banner: {required:true},
     y: {default:0},
   })
 
+  // Banner URL
+  // Converts the banner property to a URL str
   const bannerurl = computed(function() {
-    if (!props.banner) { return null }
     var url = props.banner.replace(/^\[+/, '').replace(/\]+$/, '')
     if (url.startsWith('/')) { return `url(${url})` }
     return `url(/static/notes/PushingKarma/banners/${url})`
   })
 
+  // Y Position
+  // The background image yposition
   const yposition = computed(function() { return `${props.y * 100}%` })
 </script>
 
@@ -32,7 +35,6 @@
     left: 5px;
     position: absolute;
     top: 5px;
-    transition: background-position 30s ease;
     width: calc(100% - 10px);
   }
 </style>

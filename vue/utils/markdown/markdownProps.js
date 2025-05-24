@@ -35,7 +35,6 @@ const createBannerImage = function(params, state) {
   }
   const id = utils.hashObject(component.props)
   components[id] = component
-  components['banner'] = component
   state.src = `<div class='mdvuecomponent' data-id='${id}'></div>\n\n${state.src}`
 }
 
@@ -47,7 +46,6 @@ export default function(md, opts) {
     components = {}  // reset for each render
     const properties = parseProperties(state)
     for (const key in properties) {
-      console.log(`${key}: ${properties[key]}`)
       if (key == 'banner') { createBannerImage(properties, state) }
     }
   })

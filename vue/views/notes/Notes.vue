@@ -10,7 +10,6 @@
           <!-- Note Content-->
           <template #content>
             <template v-if='note'>
-              <BannerImage :banner='"foo"' :y='0'/>
               <h1>{{note.title}}
                 <div class='subtext'>{{utils.formatDate(note.mtime * 1000, 'MMM DD, YYYY')}}</div>
               </h1>
