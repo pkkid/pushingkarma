@@ -1,4 +1,5 @@
 <template>
+  <BannerImage :banner='banner' :y='banner_y'/>
   <div class='markdown-content' v-html='outhtml'/>
 </template>
 
@@ -8,6 +9,7 @@
   import {markdownCode, codeComponents} from '@/utils/markdown'
   import {markdownProps, propComponents} from '@/utils/markdown'
   import {markdownToc, markdownHeadings} from '@/utils/markdown'
+  import {BannerImage} from '@/components'
   import markdownIt from 'markdown-it'
 
   // Init MarkdownIt
@@ -27,6 +29,8 @@
     typographer: {type:Boolean, default:false},     // Enable language-neutral replacement + quotes beautification
     quotes: {type:String, default:'“”‘’'},          // Quotes replacement pairs when typographer enabled
   })
+  const banner = ref(null)
+  const banner_y = ref(null)
   const emit = defineEmits(['headings'])            // Emit when new headings calculated
   const outhtml = ref(null)                         // Rendered HTML output
 
@@ -39,7 +43,7 @@
   // Inject components to the markdown html
   const applyVueComponents = async function() {
     await nextTick()
-    const components = {...codeComponents, ...propComponents}
+    const components = {...codeComponents}
     document.querySelectorAll('.mdvuecomponent').forEach(function(elem) {
       const id = elem.dataset.id
       const cdata = components[id]
@@ -55,6 +59,8 @@
   // Update the markdown html when the source changes
   const updateView = function() {
     outhtml.value = md.render(props.source)
+    banner.value = propComponents?.banner?.props.banner || null
+    banner_y.value = propComponents?.banner?.props.y || 0
     applyVueComponents()
     emit('headings', markdownHeadings)
   }

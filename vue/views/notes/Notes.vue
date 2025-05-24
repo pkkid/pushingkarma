@@ -10,6 +10,7 @@
           <!-- Note Content-->
           <template #content>
             <template v-if='note'>
+              <BannerImage :banner='"foo"' :y='0'/>
               <h1>{{note.title}}
                 <div class='subtext'>{{utils.formatDate(note.mtime * 1000, 'MMM DD, YYYY')}}</div>
               </h1>
@@ -48,7 +49,8 @@
 <script setup>
   import {inject, onBeforeMount, ref, watchEffect} from 'vue'
   import {NotesSearch, NotesToc} from '@/views/notes'
-  import {IconMessage, LayoutPaper, LayoutSidePanel, Markdown} from '@/components'
+  import {LayoutPaper, LayoutSidePanel} from '@/components'
+  import {IconMessage, Markdown} from '@/components'
   import {useUrlParams} from '@/composables'
   import {api, utils} from '@/utils'
 
