@@ -14,8 +14,8 @@
   // Converts the banner property to a URL str
   const bannerurl = computed(function() {
     var url = props.banner.replace(/^\[+/, '').replace(/\]+$/, '')
-    if (url.startsWith('/')) { return `url(${url})` }
-    return `url(/static/notes/PushingKarma/banners/${url})`
+    var [vault, path] = url.split('/_static/')
+    return `url(/static/notes/${vault}/${path})`
   })
 
   // Y Position
