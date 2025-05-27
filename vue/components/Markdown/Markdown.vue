@@ -5,9 +5,9 @@
 <script setup>
   import {ref, nextTick, onMounted, watch, watchEffect} from 'vue'
   import {createApp, h} from 'vue'
-  import {markdownCode, codeComponents} from '@/utils/markdown'
-  import {markdownProps, propComponents} from '@/utils/markdown'
-  import {markdownToc, markdownHeadings} from '@/utils/markdown'
+  import {markdownCode, codeComponents} from '@/components/Markdown'
+  import {markdownProps, propComponents} from '@/components/Markdown'
+  import {markdownToc, markdownHeadings} from '@/components/Markdown'
   import markdownIt from 'markdown-it'
 
   // Init MarkdownIt
