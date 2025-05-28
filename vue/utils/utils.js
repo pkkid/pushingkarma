@@ -219,6 +219,13 @@ export function newDate(value) {
   }
 }
 
+// Obsidian Static URL
+// Convert a static URL to a full URL with the current site URL
+export function obsidianStaticUrl(url) {
+  var [vault, path] = url.split('/_static/')
+  return `/static/notes/${vault}/${path}`
+}
+
 // Pop
 // Remove and return an item from an object
 export function pop(obj, key) {

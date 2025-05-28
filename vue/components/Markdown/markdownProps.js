@@ -26,12 +26,12 @@ const parseProperties = function(state) {
 // Create Banner Image
 // Creates the BannerImage component placeholder
 const createBannerImage = function(params, state) {
+  var banner = params.banner.replace(/^\[+/, '').replace(/\]+$/, '')
+  banner = utils.obsidianStaticUrl(banner)
+  var y = Number(params.banner_y || 0)
   const component = {
     component: BannerImage,
-    props: {
-      banner: params.banner,
-      y: Number(params.banner_y || 0),
-    },
+    props: {banner, y}
   }
   const id = utils.hashObject(component.props)
   components[id] = component
@@ -42,7 +42,7 @@ const createBannerImage = function(params, state) {
 // Markdown Plugin
 // Reads paramters from the front of the markdown file
 export default function(md, opts) {
-  md.core.ruler.before('normalize', 'parse_params', function(state) {
+  md.core.ruler.before('normalize', 'markdownProps', function(state) {
     components = {}  // reset for each render
     const properties = parseProperties(state)
     for (const key in properties) {

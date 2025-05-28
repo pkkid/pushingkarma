@@ -4,22 +4,11 @@
 
 <script setup>
   import {computed} from 'vue'
-
   const props = defineProps({
-    banner: {required:true},
-    y: {default:0},
+    banner: {required:true},    // Url to the banner image
+    y: {default:0},             // Vertical offset of banner image (0-1)  
   })
-
-  // Banner URL
-  // Converts the banner property to a URL str
-  const bannerurl = computed(function() {
-    var url = props.banner.replace(/^\[+/, '').replace(/\]+$/, '')
-    var [vault, path] = url.split('/_static/')
-    return `url(/static/notes/${vault}/${path})`
-  })
-
-  // Y Position
-  // The background image yposition
+  const bannerurl = computed(function() { return `url(${props.banner})` })
   const yposition = computed(function() { return `${props.y * 100}%` })
 </script>
 

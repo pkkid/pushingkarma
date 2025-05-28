@@ -5,6 +5,7 @@
 <script setup>
   import {ref, nextTick, onMounted, watch, watchEffect} from 'vue'
   import {createApp, h} from 'vue'
+  import {markdownImage} from '@/components/Markdown'
   import {markdownCode, codeComponents} from '@/components/Markdown'
   import {markdownProps, propComponents} from '@/components/Markdown'
   import {markdownToc, markdownHeadings} from '@/components/Markdown'
@@ -13,8 +14,9 @@
   // Init MarkdownIt
   // create the markdown-it object
   const md = new markdownIt()
-    .use(markdownProps)
     .use(markdownCode)
+    .use(markdownImage)
+    .use(markdownProps)
     .use(markdownToc)
   
   const props = defineProps({
