@@ -1,5 +1,5 @@
 <template>
-  <div id='home'>
+  <div id='home' class='lightbg'>
     <!-- Splash -->
     <div id='splash'>
       <div class='bgimg'/>
