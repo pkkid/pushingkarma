@@ -16,7 +16,7 @@
         @click.prevent @click='$emit("select", note)' @keydown.enter='$emit("select", note)' 
         @keydown.down='focusNext' @keydown.up='focusPrev'>
         {{note.title}}
-        <div class='subtext'>{{utils.formatDate(note.mtime, 'MMM DD, YYYY')}}</div>
+        <!-- <div class='subtext'>{{utils.formatDate(note.mtime, 'MMM DD, YYYY')}}</div> -->
       </a>
     </div>
     <!-- Loading -->
@@ -122,7 +122,7 @@
       cursor: pointer;
       font-size: 12px;
       overflow: hidden;
-      padding: 13px 15px 13px 12px;
+      padding: 7px 15px;
       text-overflow: ellipsis;
       user-select: none;
       white-space: nowrap;
