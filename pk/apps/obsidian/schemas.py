@@ -11,6 +11,7 @@ class NoteSchema(Schema):
     vault: str = Field(..., description='Name of vault this note belongs to')
     path: str = Field(..., description='Path to note file in the bucket')
     title: str = Field(..., description='Title of the note')
+    icon: Optional[str] = Field(None, description='Icon for this note')
     content: Optional[str] = Field(None, description='Markdown content of the note')
     mtime: datetime = Field(..., description='Datetime note was last modified')
     score: Optional[int] = Field(None, description='Search score for this note')

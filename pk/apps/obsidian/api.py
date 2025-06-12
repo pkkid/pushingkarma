@@ -1,5 +1,5 @@
 # encoding: utf-8
-import glob, logging, re
+import json, glob, logging, re
 from django.conf import settings
 from django.views.decorators.cache import cache_page
 from ninja import Path, Query, Router
@@ -25,6 +25,7 @@ def get_note(request,
     bucket, bucketname = settings.OBSIDIAN_BUCKETS[bucket], bucket
     check_permission = bucket.get('check_permission', lambda user: True)
     if check_permission(request.user):
+        icons = _get_bucket_icons(bucket)
         filepath = join(bucket['path'], path)
         if not exists(filepath):
             raise HttpError(404, 'Unknown note path.')
@@ -36,6 +37,7 @@ def get_note(request,
             vault = bucket['vault'],
             path = path,
             title = basename(filepath)[:-3],
+            icon = icons.get(filepath),
             content = content,
             mtime = int(getmtime(filepath))
         )
@@ -53,6 +55,7 @@ def list_notes(request,
         and returned as a list of dictionaries.
     """
     items = []
+    icons = _get_all_icons()
     search = re.sub(r'[^a-zA-Z0-9\s]', '', search[:100])
     words = search.lower().split()
     for bucketname, bucket in settings.OBSIDIAN_BUCKETS.items():
@@ -64,6 +67,7 @@ def list_notes(request,
                 path = filepath.replace(bucket['path'], '').lstrip('/')
                 title = basename(filepath)[:-3]
                 score = sum(title.lower().count(word) for word in words) * 1000
+                score = sum(filepath.lower().count(word) for word in words) * 100
                 score += sum(content.lower().count(word) for word in words)
                 items.append(dict(
                     url = reverse('api:note', bucket=bucketname, path=path),
@@ -71,10 +75,32 @@ def list_notes(request,
                     vault = bucket['vault'],
                     path = path,
                     title = title,
+                    icon = icons.get(bucketname, {}).get(filepath),
                     mtime = int(getmtime(filepath)),
                     score = score,
                 ))
     items = [r for r in items if r['score'] > 0] if search != '' else items
-    items = sorted(items, key=lambda r: (-r['score'],-r['mtime']))
+    items = sorted(items, key=lambda r: (-r['score'],r['title']))
     data = paginate(request, items, page=page, perpage=50)
     return data
+
+
+def _get_all_icons():
+    """ Returns a dict of {path: icon} for all notes in all buckets. """
+    icons = {}
+    for bucketname, bucket in settings.OBSIDIAN_BUCKETS.items():
+        icons[bucketname] = _get_bucket_icons(bucket)
+    return icons
+
+
+def _get_bucket_icons(bucket):
+    """ Returns a dict of {path: icon} for all notes in the bucket. """
+    icons = {}
+    datapath = f'{bucket['root']}/.obsidian/plugins/obsidian-icon-folder/data.json'
+    with open(datapath, 'r', encoding='utf-8') as handle:
+        data = json.load(handle)
+    for path, icon in data.items():
+        filepath = f'{bucket['root']}/{path}'
+        if filepath.startswith(bucket['path']):
+            icons[filepath] = re.sub(r'([A-Z])', r'-\1', icon).lower().strip('-')
+    return icons

@@ -15,7 +15,9 @@
       <a href='#' class='result' v-for='note in notes' :key='note.title' :class='{selected:note.path==selected?.path}'
         @click.prevent @click='$emit("select", note)' @keydown.enter='$emit("select", note)' 
         @keydown.down='focusNext' @keydown.up='focusPrev'>
+        <i v-if='note.icon' class='icon mdi' :class='note.icon'/>
         {{note.title}}
+        <i v-if='note.bucket=="private"' class='mdi mdi-lock' style='margin-left:5px'/>
         <!-- <div class='subtext'>{{utils.formatDate(note.mtime, 'MMM DD, YYYY')}}</div> -->
       </a>
     </div>
@@ -117,27 +119,30 @@
       &:hover, &:has(:focus) { opacity: 1; }
     }
     a.result {
-      display: block;
+      border-bottom: 0px solid #0000;
       border-left: 3px solid transparent;
+      color: var(--darkbg-fg3);
       cursor: pointer;
+      display: block;
       font-size: 12px;
+      font-family: var(--fontfamily-article);
       overflow: hidden;
       padding: 7px 15px;
       text-overflow: ellipsis;
+      transition: all 0.3s ease;
       user-select: none;
       white-space: nowrap;
-      transition: all 0.3s ease;
-      border-bottom: 0px solid #0000;
       &:hover, &:focus, &.selected {
         color: var(--fgcolor);
         border-left: 3px solid var(--accent);
         background-color: #fff1;
       }
-      .subtext {
-        font-size: 10px;
-        font-weight: 400;
-        color: var(--dim);
-        padding-top: 2px;
+      .icon {
+        font-size: 1.3em;
+        color: var(--darkbg-fg1);
+        margin-right: 5px;
+        position: relative;
+        top: 2px;
       }
     }
   }
