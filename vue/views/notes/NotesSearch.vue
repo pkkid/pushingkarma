@@ -7,7 +7,7 @@
         @keydown.down='focusNext' @keydown.up='focusPrev'/>
       <i class='mdi mdi-magnify'/>
       <transition name='fade'>
-        <i v-if='search.length' class='mdi mdi-close' @click='search=""' />
+        <i v-if='search.length' class='mdi mdi-close' @click='search=""; updateNotes()' />
       </transition>
     </div>
     <!-- Search Results -->
