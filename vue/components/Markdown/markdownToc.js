@@ -1,22 +1,18 @@
 import {utils} from '@/utils'
-var headings = []
 
 // Markdown TOC plugin
-// markdownIt plugin to add heading ids
-export default function(md, options) {
-  md.core.ruler.push('add_heading_ids', function (state) {
-    headings = []
-    state.tokens.forEach((token, index) => {
+// Adds IDs to headings and collects them for a table of contents
+export default function(md, opts) {
+  md.core.ruler.push('add_heading_ids', function(state) {
+    state.tokens.forEach(function(token, idx) {
+      state.env.headings = state.env.headings || []
       if (token.type === 'heading_open') {
-        const text = state.tokens[index+1].content
+        const text = state.tokens[idx+1].content
         const id = utils.slug(text)
         token.attrs = token.attrs || []
         token.attrs.push(['id', id])
-        headings.push({id:`#${id}`, text:text, tag:token.tag})
+        state.env.headings.push({id:`#${id}`, text:text, tag:token.tag})
       }
     })
   })
 }
-
-// Export the saved headings
-export {headings}

@@ -1,34 +1,33 @@
 import {utils} from '@/utils'
 
-// Image Style
-// Returns the image style string based on matched width and height
-const getImageStyle = function(width, height) {
-  var style = ''
-  if (width) { style += `width:${width}px;` }
-  if (height) { style += `height:${height}px;` }
-  return style ? ` style='${style}'` : ''
+// Inline Image
+// ![AltText](image/url.png)
+// ![AltText|100x200](image/url.png)
+// ![AltText|100](image/url.png)
+// https://help.obsidian.md/syntax#External+images
+function inlineImage(md, state, silent) {
+  const regex = /!\[([^\]|]*)(?:\|(\d+)(?:x(\d+))?)?\]\(([^)]+)\)/y
+  regex.lastIndex = state.pos
+  const match = regex.exec(state.src)
+  if (!match) { return false }
+  if (!silent) {
+    const alt = md.utils.escapeHtml(match[1].trim())
+    const width = match[2].trim()
+    const height = match[3].trim()
+    const src = utils.obsidianStaticUrl(match[4].trim())
+    const style = (width ? `width:${width}px;` : '')
+      + (height ? `height:${height}px;` : '')
+    const html = `<img src='${src}' alt='${alt}' style='${style}' />`
+    state.push('html_inline', '', 0).content = html
+  }
+  state.pos += match[0].length
+  return true  // rule successfully matched
 }
 
 // Markdown Image Plugin
-// markdownIt plugin to render images in one of the formats:
-//  ![AltText](image/url.png)
-//  ![AltText|100x200](image/url.png)
-//  ![AltText|100](image/url.png)
-// https://help.obsidian.md/syntax#External+images
+// Adds support for Obsidian-style images with optional size in Markdown
 export default function markdownImage(md) {
-  const regex = /!\[([^\]|]*)(?:\|(\d+)(?:x(\d+))?)?\]\(([^)]+)\)/y
   md.inline.ruler.before('emphasis', 'markdownImage', function(state, silent) {
-    regex.lastIndex = state.pos
-    const match = regex.exec(state.src)
-    if (!match) { return false }
-    if (!silent) {
-      const alt = md.utils.escapeHtml(match[1].trim())
-      const style = getImageStyle(match[2], match[3])
-      const src = utils.obsidianStaticUrl(match[4].trim())
-      const html = `<img src='${src}' alt='${alt}' ${style} />`
-      state.push('html_inline', '', 0).content = html
-    }
-    state.pos += match[0].length
-    return true
+    return inlineImage(md, state, silent)
   })
 }

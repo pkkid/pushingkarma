@@ -6,19 +6,22 @@
   import {ref, nextTick, onMounted, watch, watchEffect} from 'vue'
   import {createApp, h} from 'vue'
   import {markdownImage} from '@/components/Markdown'
-  import {markdownCode, codeComponents} from '@/components/Markdown'
-  import {markdownProps, propComponents} from '@/components/Markdown'
-  import {markdownToc, markdownHeadings} from '@/components/Markdown'
+  import {markdownCallout} from '@/components/Markdown'
+  import {markdownCode} from '@/components/Markdown'
+  import {markdownProps} from '@/components/Markdown'
+  import {markdownToc} from '@/components/Markdown'
   import markdownIt from 'markdown-it'
 
   // Init MarkdownIt
   // create the markdown-it object
   const md = new markdownIt()
+    .use(markdownCallout)
     .use(markdownCode)
     .use(markdownImage)
     .use(markdownProps)
     .use(markdownToc)
   
+  var env = {}
   const props = defineProps({
     source: {type:String, required:true},           // Source markdown content
     html: {type:Boolean, default:true},             // Enable HTML tags in source
@@ -41,10 +44,10 @@
   // Inject components to the markdown html
   const applyVueComponents = async function() {
     await nextTick()
-    const components = {...codeComponents, ...propComponents}
+    // const components = {...calloutComponents, ...codeComponents, ...propComponents}
     document.querySelectorAll('.mdvuecomponent').forEach(function(elem) {
       const id = elem.dataset.id
-      const cdata = components[id]
+      const cdata = env.components[id]
       if (!cdata) { return console.log(`Unknown component id: ${id}`) }
       const app = createApp({
         render: () => h(cdata.component, cdata.props)
@@ -56,9 +59,9 @@
   // Update View
   // Update the markdown html when the source changes
   const updateView = function() {
-    outhtml.value = md.render(props.source)
+    outhtml.value = md.render(props.source, env)
     applyVueComponents()
-    emit('headings', markdownHeadings)
+    emit('headings', env.headings)
   }
 
   // Watch Options

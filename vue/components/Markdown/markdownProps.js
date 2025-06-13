@@ -1,6 +1,5 @@
 import {BannerImage} from '@/components'
 import {utils} from '@/utils'
-export var components = {}
 
 // Parse Params
 // Parses params block state.src
@@ -25,16 +24,17 @@ const parseProperties = function(state) {
 
 // Create Banner Image
 // Creates the BannerImage component placeholder
-const createBannerImage = function(params, state) {
-  var banner = params.banner.replace(/^\[+/, '').replace(/\]+$/, '')
+const createBannerImage = function(state, props) {
+  var banner = props.banner.replace(/^\[+/, '').replace(/\]+$/, '')
   banner = utils.obsidianStaticUrl(banner)
-  var y = Number(params.banner_y || 0)
+  var y = Number(props.banner_y || 0)
   const component = {
     component: BannerImage,
     props: {banner, y}
   }
   const id = utils.hashObject(component.props)
-  components[id] = component
+  state.env.components = state.env.components || {}
+  state.env.components[id] = component
   state.src = `<div class='mdvuecomponent' data-id='${id}'></div>\n\n${state.src}`
 }
 
@@ -43,10 +43,10 @@ const createBannerImage = function(params, state) {
 // Reads paramters from the front of the markdown file
 export default function(md, opts) {
   md.core.ruler.before('normalize', 'markdownProps', function(state) {
-    components = {}  // reset for each render
-    const properties = parseProperties(state)
-    for (const key in properties) {
-      if (key == 'banner') { createBannerImage(properties, state) }
+    state.env.components = {}
+    const props = parseProperties(state)
+    for (const key in props) {
+      if (key == 'banner') { createBannerImage(state, props) }
     }
   })
 }

@@ -1,12 +1,15 @@
 <template>
   <div class='expandable' :class='{expanded}'>
     <div class='expandable-header' @click='expanded=!expanded'>
-      <slot name='header' :expanded='expanded'></slot>
+      <slot name='header' :expanded='expanded'>{{title}}</slot>
       <i class='mdi mdi-chevron-right expand-icon'/>
     </div>
     <Transition name='slide-fade' :style='`--maxheight:${maxheight};`'>
       <div class='expandable-content' :class='{expanded}' v-show='expanded'>
-        <slot name='content'></slot>
+        <slot name='content'>
+          <div v-if='!markdown'>{{content}}</div>
+          <Markdown v-else :source='content'/>
+        </slot>
       </div>
     </Transition>
   </div>
@@ -14,14 +17,18 @@
 
 <script setup>
   import {ref, watchEffect} from 'vue'
+  import {Markdown} from '@/components'
 
   const props = defineProps({
-    initexpanded: {default:false},                // Initial expanded state
-    maxheight: {default:'250px'},                 // Estimated height of the content
-    itemid: {},                                   // Optional itemid included in events
+    content: {type:String, default:''},             // Optional content for the body
+    initexpanded: {type:Boolean, default:false},    // Initial expanded state
+    itemid: {type:null, default:null},              // Optional itemid included in events
+    markdown: {type:Boolean, default:false},        // Render content as markdown
+    maxheight: {type:String, default:'250px'},      // Estimated height of the content
+    title: {type:String, default:''},               // Optional title for the header
   })
-  const expanded = ref(props.initexpanded)        // True when this is expanded
-  const emit = defineEmits(['opened', 'closed'])  // Emit expanded event
+  const expanded = ref(props.initexpanded)          // True when this is expanded
+  const emit = defineEmits(['opened', 'closed'])    // Emit expanded event
 
   // Watch Expanded
   // Emit expanded event when expanded changes

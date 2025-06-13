@@ -1,12 +1,10 @@
 import {CodeEditor} from '@/components'
 import {utils} from '@/utils'
-export var components = {}
 
 // Wrap Code Renderer
 // wraps code with div for styling
 const wrapCodeRenderer = function(renderer) {
-  return function wrappedRenderer(...args) {
-    const [tokens, idx] = args
+  return function wrappedRenderer(tokens, idx, opts, env) {
     const token = tokens[idx]
     const component = {
       component: CodeEditor,
@@ -18,15 +16,15 @@ const wrapCodeRenderer = function(renderer) {
       },
     }
     const id = utils.hashObject(component.props)
-    components[id] = component
+    env.components = env.components || {}
+    env.components[id] = component
     return `<div class='mdvuecomponent' data-id='${id}'></div>`
   }
 }
 
-// Markdown HLJS plugin
-// markdownIt plugin to add hljs styles
+// Markdown Code Plugin
+// Overrides the default fence and code_block renderers
 export default function(md, opts) {
-  components = {}  // reset for each render
   md.renderer.rules.fence = wrapCodeRenderer(md.renderer.rules.fence)
   md.renderer.rules.code_block = wrapCodeRenderer(md.renderer.rules.code_block)
 }
