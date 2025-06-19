@@ -81,9 +81,8 @@ article {
 
   /* Expandable */
   .expandable {
-    background-color: var(--lightbg-bg2);
+    background-color: #ddddd9;
     border-radius: 4px;
-    border: 1px solid var(--lightbg-bg3);
     margin: 10px 0px;
 
     .expandable-header {
