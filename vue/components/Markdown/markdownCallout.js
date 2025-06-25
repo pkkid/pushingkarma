@@ -7,7 +7,7 @@ function blockCallout(state, startline, endline, silent) {
   const line = state.src.slice(start, max)
 
   // Match Obsidian callout: > [!type] optional-title
-  const match = /^>\s*\[!([a-zA-Z0-9_-]+)\](.*)/.exec(line)
+  const match = /^>\s*\[!([a-zA-Z0-9_-]+)\]([+-]?)\s*(.*)/.exec(line)
   if (!match) { return false }
 
   // Collect following lines that start with '>'
@@ -27,7 +27,9 @@ function blockCallout(state, startline, endline, silent) {
   const token = state.push('callout', 'div', 0)
   token.block = true
   token.info = match[1].toLowerCase()
-  token.title = match[2].trim()
+  token.expandable = match[2].length > 0
+  token.expanded = match[2] == '+'
+  token.title = match[3].trim()
   token.content = content.join('\n')
   token.map = [startline, nextline]
   state.line = nextline

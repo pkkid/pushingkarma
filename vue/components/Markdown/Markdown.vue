@@ -48,7 +48,7 @@
     document.querySelectorAll('.mdvuecomponent').forEach(function(elem) {
       const id = elem.dataset.id
       const cdata = env.components[id]
-      if (!cdata) { return console.log(`Unknown component id: ${id}`) }
+      if (!cdata) { return console.debug(`Unknown component id: ${id}`) }
       const app = createApp({
         render: () => h(cdata.component, cdata.props)
       })
