@@ -91,10 +91,13 @@ article {
     }
     .expandable-content {
       background-color: transparent;
-      padding: 5px 15px 10px 15px;
+      transition: all 0.2s ease;
+      padding: 0px 15px 0px 15px;
+      overflow-y: hidden;
     }
     &.expanded {
       .expandable-header { background-color: #0001; }
+      .expandable-content { padding: 5px 15px 10px 15px; }
     }
   }
 
