@@ -2,12 +2,14 @@
 import logging, re, requests
 import sqlparse, textwrap, time
 from collections import defaultdict
+from datetime import date, datetime
 from django.conf import settings
 from django.core.exceptions import EmptyResultSet
 from django.db import connection, connections
 from django.db.models.query import QuerySet
 from django.db.models import Aggregate, CharField, DateTimeField, Model
 from django.urls import reverse as django_reverse
+from django.utils import timezone
 from urllib.parse import urlencode
 log = logging.getLogger(__name__)
 
@@ -134,6 +136,18 @@ def get_object_or_none(cls, *args, **kwargs):
         return cls._default_manager.get(*args, **kwargs)
     except cls.DoesNotExist:
         return None
+    
+
+def make_aware(dt):
+    """ Returns a timezone aware datetime object. """
+    if not dt: return None
+    if isinstance(dt, datetime):
+        if dt.tzinfo: return dt
+        tz = timezone.get_default_timezone()
+        return timezone.make_aware(dt, tz)
+    elif isinstance(dt, date):
+        return timezone.make_aware(datetime.combine(dt, datetime.min.time()))
+    raise TypeError('dt must be a datetime.date or datetime.datetime object')
 
 
 def queryset_str(sql_or_queryset):
