@@ -387,6 +387,15 @@ wheels = [
 ]
 
 [[package]]
+name = "exifread"
+version = "3.3.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/5f/d4/6aabccc3da60e7c47f235002d4e15844f24dadaf862dd4f3b0fe2c142538/exifread-3.3.1.tar.gz", hash = "sha256:320d8596c1f674a1da2c10cf30408bb9675262c4c0181bebbd3570679d2f1340", size = 51928 }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/60/2c/44ecdb24b6b9e895470ba793a37442f4593ca1d54a3a786f72d7d6fdbdd6/exifread-3.3.1-py3-none-any.whl", hash = "sha256:b7405f890738dbca9992f74a326a4ac3d51512cd129353950d69e774dc5a1767", size = 54322 },
+]
+
+[[package]]
 name = "fabric"
 version = "3.2.2"
 source = { registry = "https://pypi.org/simple" }
@@ -770,6 +779,7 @@ dependencies = [
     { name = "django-cors-headers" },
     { name = "django-ninja" },
     { name = "django-searchquery" },
+    { name = "exifread" },
     { name = "ofxtools" },
     { name = "pytz" },
     { name = "requests" },
@@ -790,6 +800,7 @@ requires-dist = [
     { name = "django-cors-headers", specifier = "==4.7.0" },
     { name = "django-ninja", specifier = "==1.4.0" },
     { name = "django-searchquery", git = "https://github.com/pkkid/django-searchquery.git" },
+    { name = "exifread" },
     { name = "fabric", marker = "extra == 'dev'" },
     { name = "ipython", marker = "extra == 'dev'" },
     { name = "keyring", marker = "extra == 'dev'" },
