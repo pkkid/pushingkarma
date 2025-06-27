@@ -5,10 +5,12 @@ from django.views.decorators.cache import cache_page
 from ninja import Path, Query, Router
 from ninja.decorators import decorate_view
 from ninja.errors import HttpError
-from os.path import basename, exists, getmtime, join
+from os import listdir
+from os.path import basename, exists, getctime, getmtime, join
+from os.path import getsize, isdir, isfile, normpath
 from pk.utils.django import reverse
 from pk.utils.ninja import PageSchema, paginate
-from .schemas import NoteSchema
+from .schemas import NoteSchema, StaticSchema
 log = logging.getLogger(__name__)
 router = Router()
 
@@ -83,6 +85,54 @@ def list_notes(request,
     items = sorted(items, key=lambda r: (-r['score'],r['title']))
     data = paginate(request, items, page=page, perpage=50)
     return data
+
+
+@router.get('/static/{bucket}/{path:path}', response=StaticSchema, exclude_unset=True)
+@decorate_view(cache_page(0 if settings.DEBUG else 300))
+def list_static(request,
+      bucket: str=Path(..., description='Name of Obsidian bucket in settings.py'),
+      path: str=Path(..., description='Path of static resources in the bucket'),
+      filetype: str=Query(None, description='Filetype to filter by. ex: png or jpg'),
+      sortby: str=Query('ctime', description='Sort by field (ctime, mtime, name)'),
+      sort: str=Query('desc', description='Sort order (desc, asc)')):
+    """ Lists static resources for the specified path. Not recursive. """
+    if bucket not in settings.OBSIDIAN_BUCKETS:
+        raise HttpError(404, 'Unknown bucket name.')
+    bucket, bucketname = settings.OBSIDIAN_BUCKETS[bucket], bucket
+    check_permission = bucket.get('check_permission', lambda user: True)
+    staticroot = f'{bucket['path']}/_static'
+    fullpath = normpath(join(staticroot, path))
+    # Check permissions and path
+    if not check_permission(request.user):
+        log.warning(f'check_permission failed for user {request.user}')
+        raise HttpError(403, 'Permission denied.')
+    if not fullpath.startswith(staticroot):
+        log.warning(f'fullpath does not start with staticroot {fullpath}')
+        raise HttpError(403, 'Permission denied.')
+    if not exists(fullpath) or not isdir(fullpath):
+        log.warning(f'path doesnt exist or is not a directory {fullpath}')
+        raise HttpError(403, 'Permission denied.')
+    # List files in the requested path
+    items = []
+    ext = f'.{filetype.lower()}' if filetype else ''
+    for entry in listdir(fullpath):
+        entrypath = join(fullpath, entry)
+        if not isfile(entrypath): continue
+        if ext and not entry.lower().endswith(ext): continue
+        items.append({
+            'name': entry,
+            'size': getsize(entrypath),
+            'mtime': int(getmtime(entrypath)),
+            'ctime': int(getctime(entrypath)),
+        })
+    # Sort items and return the response
+    reverse = sort == 'desc'
+    return dict(
+        bucket = bucketname,
+        vault = bucket['vault'],
+        count = len(items),
+        items = sorted(items, key=lambda r:r[sortby], reverse=reverse),
+    )
 
 
 def _get_all_icons():

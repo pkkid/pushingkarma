@@ -1,7 +1,7 @@
 # encoding: utf-8
 from datetime import datetime
 from ninja import Schema
-from typing import Optional
+from typing import List, Optional
 from pydantic import Field
 
 
@@ -15,3 +15,15 @@ class NoteSchema(Schema):
     content: Optional[str] = Field(None, description='Markdown content of the note')
     mtime: datetime = Field(..., description='Datetime note was last modified')
     score: Optional[int] = Field(None, description='Search score for this note')
+
+
+class StaticSchema(Schema):
+    class StaticItemSchema(Schema):
+        name: str = Field(..., description='File name of the static item')
+        size: int = Field(None, description='File size of the static item in bytes')
+        mtime: datetime = Field(None, description='Last modified time of the static item')
+        ctime: datetime = Field(None, description='Creation time of the static item')
+    bucket: str = Field(..., description='Name of bucket for static resources')
+    vault: str = Field(..., description='Name of vault for static resources')
+    count: int = Field(None, description='Count of static resources in the bucket')
+    items: List[StaticItemSchema] = Field(..., description='List of static items')

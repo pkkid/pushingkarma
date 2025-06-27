@@ -44,6 +44,7 @@ export const Budget = {
 export const Obsidian = {
   getNote(bucket, path, params, signal) { return axios.get(`/api/obsidian/notes/${bucket}/${path}`, {params, signal}) },
   listNotes(params, signal) { return axios.get(`/api/obsidian/notes`, {params, signal}) },
+  // listStatic(params, signal) { return axios.get(`/api/obsidian/static`, {params, signal}) },
 }
 export const Stocks = {
   getTicker(ticker, params, signal) { return axios.get(`/api/stocks/tickers/${ticker}`, {params, signal}) },
