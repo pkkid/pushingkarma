@@ -1,5 +1,6 @@
 # encoding: utf-8
 import json, glob, logging, re
+from datetime import datetime
 from django.conf import settings
 from django.views.decorators.cache import cache_page
 from ninja import Path, Query, Router
@@ -8,7 +9,8 @@ from ninja.errors import HttpError
 from os import listdir
 from os.path import basename, exists, getctime, getmtime, join
 from os.path import getsize, isdir, isfile, normpath
-from pk.utils.django import reverse
+from pk.utils import utils
+from pk.utils.django import make_aware, reverse
 from pk.utils.ninja import PageSchema, paginate
 from .schemas import NoteSchema, StaticSchema
 log = logging.getLogger(__name__)
@@ -92,7 +94,7 @@ def list_notes(request,
 def list_static(request,
       bucket: str=Path(..., description='Name of Obsidian bucket in settings.py'),
       path: str=Path(..., description='Path of static resources in the bucket'),
-      filetype: str=Query(None, description='Filetype to filter by. ex: png or jpg'),
+      exts: str=Query('jpeg,jpg,gif,png,webp,tiff,tif', description='CSV list of extentions to filter.'),
       sortby: str=Query('ctime', description='Sort by field (ctime, mtime, name)'),
       sort: str=Query('desc', description='Sort order (desc, asc)')):
     """ Lists static resources for the specified path. Not recursive. """
@@ -101,29 +103,33 @@ def list_static(request,
     bucket, bucketname = settings.OBSIDIAN_BUCKETS[bucket], bucket
     check_permission = bucket.get('check_permission', lambda user: True)
     staticroot = f'{bucket['path']}/_static'
-    fullpath = normpath(join(staticroot, path))
+    dirpath = normpath(join(staticroot, path))
     # Check permissions and path
     if not check_permission(request.user):
         log.warning(f'check_permission failed for user {request.user}')
         raise HttpError(403, 'Permission denied.')
-    if not fullpath.startswith(staticroot):
-        log.warning(f'fullpath does not start with staticroot {fullpath}')
+    if not dirpath.startswith(staticroot):
+        log.warning(f'dirpath does not start with staticroot {dirpath}')
         raise HttpError(403, 'Permission denied.')
-    if not exists(fullpath) or not isdir(fullpath):
-        log.warning(f'path doesnt exist or is not a directory {fullpath}')
+    if not exists(dirpath) or not isdir(dirpath):
+        log.warning(f'path doesnt exist or is not a directory {dirpath}')
         raise HttpError(403, 'Permission denied.')
+    # List extenstions to filter by
+    exts = (exts or '').split(',')
+    exts = [f'.{e.strip().lower()}' for e in exts if e.strip()]
     # List files in the requested path
     items = []
-    ext = f'.{filetype.lower()}' if filetype else ''
-    for entry in listdir(fullpath):
-        entrypath = join(fullpath, entry)
-        if not isfile(entrypath): continue
-        if ext and not entry.lower().endswith(ext): continue
+    staticpath = f'{settings.DOMAIN}/static/notes'
+    for entry in listdir(dirpath):
+        fullpath = join(dirpath, entry)
+        if not isfile(fullpath): continue
+        if exts and not any(entry.lower().endswith(ext) for ext in exts): continue
         items.append({
-            'name': entry,
-            'size': getsize(entrypath),
-            'mtime': int(getmtime(entrypath)),
-            'ctime': int(getctime(entrypath)),
+            'url': f'{staticpath}/{basename(bucket['path'])}/{path}/{entry}',
+            'size': getsize(fullpath),
+            'mtime': make_aware(datetime.fromtimestamp(getmtime(fullpath))),
+            'ctime': make_aware(datetime.fromtimestamp(getctime(fullpath))),
+            'ptime': utils.get_photo_datetime(fullpath),
         })
     # Sort items and return the response
     reverse = sort == 'desc'

@@ -19,10 +19,11 @@ class NoteSchema(Schema):
 
 class StaticSchema(Schema):
     class StaticItemSchema(Schema):
-        name: str = Field(..., description='File name of the static item')
+        url: str = Field(..., description='Url of the static item')
         size: int = Field(None, description='File size of the static item in bytes')
         mtime: datetime = Field(None, description='Last modified time of the static item')
         ctime: datetime = Field(None, description='Creation time of the static item')
+        ptime: datetime = Field(None, description='Original date of the image, if applicable')
     bucket: str = Field(..., description='Name of bucket for static resources')
     vault: str = Field(..., description='Name of vault for static resources')
     count: int = Field(None, description='Count of static resources in the bucket')
