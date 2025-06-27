@@ -219,7 +219,8 @@
       newspan.addEventListener('click', () => {
         var newpath = newspan.textContent.slice(1, -1)
         newpath = newpath.replace(axios.defaults.baseURL, '')
-        setupRequest(newpath, 'get')
+        if (newpath.startsWith('/api/')) { setupRequest(newpath, 'get') }
+        else { window.open(newpath, '_blank') }
       })
       span.replaceWith(newspan)
     })
