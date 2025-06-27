@@ -1,20 +1,7 @@
 import {CodeEditor} from '@/components'
 import {Gallery} from '@/components/Gallery'
 import {utils} from '@/utils'
-
-// Parse Props
-// Reads parameters from the content of a code block
-const parseProps = function(content) {
-  const params = {}
-  const lines = content.split('\n')
-  for (const line of lines) {
-    const match = line.match(/^\s*([a-zA-Z0-9_-]+):\s*(.*)$/)
-    if (match) {
-      params[match[1].toLowerCase()] = match[2].trim()
-    }
-  }
-  return params
-}
+import yaml from 'js-yaml'
 
 // Wrap Code Renderer
 // wraps code with div for styling
@@ -27,7 +14,7 @@ const wrapCodeRenderer = function(renderer) {
     if (language == 'img-gallery') {
       // Gallery Component
       component.component = Gallery
-      component.props = parseProps(content)
+      component.props = yaml.load(content)
     } else {
       // CodeEditor Component
       component.component = CodeEditor
