@@ -1,7 +1,10 @@
 # encoding: utf-8
-import datetime
+import exifread
 from calendar import monthrange
+from datetime import date, datetime
 from decimal import Decimal
+from os.path import getctime
+from pk.utils.django import make_aware
 
 
 def add_months(dt, months):
@@ -23,11 +26,21 @@ def clean_amount(value):
     return value
 
 
+def get_photo_datetime(filepath):
+    with open(filepath, 'rb') as f:
+        tags = exifread.process_file(f, stop_tag='EXIF DateTimeOriginal')
+        if dt := tags.get('EXIF DateTimeOriginal'):
+            dt = datetime.strptime(str(dt), '%Y:%m:%d %H:%M:%S')
+            return make_aware(dt)
+    dt = datetime.fromtimestamp(getctime(filepath))
+    return make_aware(dt)
+
+
 def first_of_month(dt):
     """ Get the first day of the month for a given date. """
-    if isinstance(dt, datetime.datetime):
+    if isinstance(dt, datetime):
         return dt.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-    elif isinstance(dt, datetime.date):
+    elif isinstance(dt, date):
         return dt.replace(day=1)
     raise TypeError('dt must be a datetime.date or datetime.datetime object')
 
