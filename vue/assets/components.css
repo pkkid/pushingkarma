@@ -43,8 +43,6 @@ hr.fancy {
   position: relative;
   &::after {
     background: radial-gradient(circle, transparent, #0008);
-    border-bottom-right-radius: 8px;
-    border-top-right-radius: 8px;
     content: '';
     height: 100%; width: 100%;
     position: absolute;
