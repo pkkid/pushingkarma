@@ -4,8 +4,8 @@ import {utils} from '@/utils'
 // Adds IDs to headings and collects them for a table of contents
 export default function(md, opts) {
   md.core.ruler.push('add_heading_ids', function(state) {
+    state.env.headings = []
     state.tokens.forEach(function(token, idx) {
-      state.env.headings = state.env.headings || []
       if (token.type === 'heading_open') {
         const text = state.tokens[idx+1].content
         const id = utils.slug(text)
