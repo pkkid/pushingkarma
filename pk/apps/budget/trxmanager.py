@@ -29,12 +29,13 @@ class TransactionManager:
                 account, trxs = getattr(self, f'_read_{ext}')(account, rules, filehandle)
                 payee_categoryids = self.payee_categoryids(self.user, account)
                 for trx in trxs:
+                    catpayee = TransactionManager.scrub_payee(trx.payee)
                     trx.user = self.user
                     trx.account_id = account.id
                     trx.original_date = trx.date
                     trx.original_payee = trx.payee
                     trx.original_amount = trx.amount
-                    trx.category_id = payee_categoryids.get(trx.payee.lower())
+                    trx.category_id = payee_categoryids.get(catpayee)
                 if self.save is True:
                     account.save()
                     trxs = self._bulk_create(account, trxs)
@@ -144,7 +145,7 @@ class TransactionManager:
     
     @classmethod
     def clean_payee(cls, payee):
-        """ Clean payee string. """
+        """ Clean payee string when saving new trxs to the db. """
         payee = payee.replace('ELECTRONIC WITHDRAWAL', '')
         payee = payee.replace('ELECTRONIC DEPOSIT', '')
         payee = ' '.join([word for word in payee.split()])
@@ -156,4 +157,6 @@ class TransactionManager:
         """ Scrub unique details from payee when trying to match categories. """
         payee = re.sub(r'[^a-z\. ]', '', payee.lower())             # Remove specical chars
         payee = ' '.join([w for w in payee.split() if len(w) > 1])  # Remove multi-spaces and 1 char words
+        if payee.startswith('amazon mktpl'): payee = 'amazon mktpl'
+        if payee.startswith('amazon reta'): payee = 'amazon reta'
         return payee.strip()

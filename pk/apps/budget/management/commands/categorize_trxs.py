@@ -24,12 +24,13 @@ class Command(BaseCommand):
         basename = os.path.basename(__file__).replace('.py', '')
         update_logging_filepath(f'{settings.LOGDIR}/{basename}.log')
         # Run the script
-        user = User.objects.get(email=opts['user'])
         updated = []
+        user = User.objects.get(email=opts['user'])
         for account in Account.objects.filter(user=user):
             payee_categoryids = TransactionManager.payee_categoryids(account.user, account)
             for trx in Transaction.objects.filter(user=user, account=account, category=None):
-                newcategoryid = payee_categoryids.get(trx.payee.lower())
+                catpayee = TransactionManager.scrub_payee(trx.payee)
+                newcategoryid = payee_categoryids.get(catpayee)
                 if newcategoryid:
                     log.info(f'  {trx.payee} -> {newcategoryid}')
                     trx.category_id = newcategoryid
