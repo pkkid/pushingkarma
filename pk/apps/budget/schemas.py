@@ -104,3 +104,20 @@ class ImportResponseSchema(Schema):
     maxdate: Optional[datetime.date] = Field(None, description='Latest transaction date')
     safe: bool = Field(..., description='True if using safe import method')
     account: AccountSchema = Field(..., description='Financial institution of transaction')
+
+
+class CommentSummarySchema(Schema):
+    comment: str = Field(..., description='Transaction comment')
+    amount: Decimal = Field(..., description='Total amount for this comment')
+    count: int = Field(..., description='Number of transactions with this comment')
+
+
+class TransactionSummarySchema(Schema):
+    top_comments: List[CommentSummarySchema] = Field(..., description='Top comments with total amounts')
+    total_spent: Decimal = Field(..., description='Total amount spent (negative amounts)')
+    total_income: Decimal = Field(..., description='Total amount earned (positive amounts)')
+    total_amount: Decimal = Field(..., description='Net total amount')
+    uncategorized_count: int = Field(..., description='Number of uncategorized transactions')
+    uncategorized_amount: Decimal = Field(..., description='Total amount of uncategorized transactions')
+    unapproved_count: int = Field(..., description='Number of unapproved transactions')
+    unapproved_amount: Decimal = Field(..., description='Total amount of unapproved transactions')

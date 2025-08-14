@@ -3,7 +3,7 @@ import logging
 from datetime import datetime
 from django_searchquery import searchfields as sf
 from django_searchquery.search import Search
-from django.db.models import Max, Min, Sum
+from django.db.models import Count, Case, When, Max, Min, Sum, DecimalField, IntegerField
 from django.db.models.functions import TruncMonth
 from django.forms.models import model_to_dict
 from django.http import HttpResponse
@@ -239,6 +239,44 @@ def list_transactions(request,
         if trx.category and trx.category.exclude: item['category']['exclude'] = True
         response['items'][i] = item
     return response
+
+
+@router.get('/transactions_summary', response=schemas.TransactionSummarySchema)
+def summarize_transactions(request,
+      search: str=Query('', description='Search term to filter transactions')):
+    """ Summarizes transactions for the logged in user. """
+    # Get base queryset and apply search filter
+    trxs = Transaction.objects.filter(user=request.user)
+    if search:
+        searchobj = Search(TRANSACTIONSEARCHFIELDS)
+        trxs = searchobj.get_queryset(trxs, search)
+    # Calculate aggregated totals
+    totals = trxs.aggregate(
+        total_spent=Sum(Case(When(amount__lt=0, then='amount'), default=0, output_field=DecimalField())),
+        total_income=Sum(Case(When(amount__gt=0, then='amount'), default=0, output_field=DecimalField())),
+        total_amount=Sum('amount'),
+        uncategorized_count=Count(Case(When(category__isnull=True, then=1), output_field=IntegerField())),
+        uncategorized_amount=Sum(Case(When(category__isnull=True, then='amount'), default=0, output_field=DecimalField())),
+        unapproved_count=Count(Case(When(approved=False, then=1), output_field=IntegerField())),
+        unapproved_amount=Sum(Case(When(approved=False, then='amount'), default=0, output_field=DecimalField()))
+    )
+    # Get top comments with amounts (excluding empty comments)
+    top_comments = trxs.exclude(comment='').values('comment').annotate(amount=Sum('amount'), count=Count('id'))
+    top_comments = sorted(top_comments, key=lambda x: abs(x['amount'] or 0), reverse=True)[:10]
+    return {
+        'top_comments': [{
+            'comment': item['comment'],
+            'amount': round(item['amount'] or 0, 2),
+            'count': item['count']
+        } for item in top_comments],
+        'total_spent': round(totals['total_spent'] or 0, 2),
+        'total_income': round(totals['total_income'] or 0, 2),
+        'total_amount': round(totals['total_amount'] or 0, 2),
+        'uncategorized_count': totals['uncategorized_count'] or 0,
+        'uncategorized_amount': round(totals['uncategorized_amount'] or 0, 2),
+        'unapproved_count': totals['unapproved_count'] or 0,
+        'unapproved_amount': round(totals['unapproved_amount'] or 0, 2)
+    }
 
 
 @router.post('/import_transactions', response=List[schemas.ImportResponseSchema], exclude_unset=True)
