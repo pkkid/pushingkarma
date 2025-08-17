@@ -1,6 +1,7 @@
 # encoding: utf-8
-import logging
+import logging, re
 from datetime import datetime
+from dateutil.parser import parse as parse_date
 from django_searchquery import searchfields as sf
 from django_searchquery.search import Search
 from django.db.models import Count, Case, When, Max, Min, Sum, DecimalField, IntegerField
@@ -247,9 +248,11 @@ def summarize_transactions(request,
     """ Summarizes transactions for the logged in user. """
     # Get base queryset and apply search filter
     trxs = Transaction.objects.filter(user=request.user)
+    searchobj = None
     if search:
         searchobj = Search(TRANSACTIONSEARCHFIELDS)
         trxs = searchobj.get_queryset(trxs, search)
+        log.info(searchobj.meta)
     # Calculate aggregated totals
     totals = trxs.aggregate(
         total_spent=Sum(Case(When(amount__lt=0, then='amount'), default=0, output_field=DecimalField())),
@@ -317,7 +320,8 @@ def summarize_months(request,
     # Build the response object from the django summary
     response = dict(items=[],
         minmonth=first_of_month(dates['mindate']) if dates['mindate'] else None,
-        maxmonth=first_of_month(dates['maxdate']) if dates['maxdate'] else None)
+        maxmonth=first_of_month(dates['maxdate']) if dates['maxdate'] else None,
+        links=_get_year_links(search or ''))
     for catid, group in groupby(summary, key=lambda x: x['category__id']):
         cat = categories.get(catid)
         response['items'].append({
@@ -325,9 +329,47 @@ def summarize_months(request,
             'url': cat.url if cat else None,
             'name': cat.name if cat else 'Uncategorized',
             'exclude': cat.exclude if cat else False,
-            'months': {str(row['month']): round(row['saved'] or 0, 2) for row in group}
+            'months': {str(row['month']): round(row['saved'] or 0, 2) for row in group},
         })
     return response
+
+
+def _get_year_links(search):
+    """ Returns a list of links to navigate the years. """
+    this_year = datetime.now().year
+    # Remove existing date filters and get clean search
+    clean_search = re.sub(r'date[><]=?"[^"]*"?|date[><]=?\S+', '', search).strip()
+    clean_search = ' '.join(clean_search.split())
+    # Determine selected year from date filters
+    selected_year = this_year
+    mindates = re.findall(r'date>="([^"]*)"', search)
+    maxdates = re.findall(r'date<"([^"]*)"', search)
+    if len(mindates) == 1 and len(maxdates) == 1:
+        try:
+            mindate = parse_date(mindates[0])
+            maxdate = parse_date(maxdates[0])
+            if (mindate.month == 1 and mindate.day == 1 and maxdate.month == 1
+              and maxdate.day == 1 and maxdate.year == mindate.year + 1):
+                selected_year = mindate.year
+        except Exception:
+            pass
+    # Build set of years to include
+    years = {selected_year - 1, selected_year}
+    if selected_year + 1 <= this_year:
+        years.add(selected_year + 1)
+    if this_year not in years:
+        years.add(this_year)
+    # Generate ordered year links
+    year_links = []
+    for year in sorted(years):
+        if year == this_year:
+            selected = selected_year == this_year
+            year_links.append({'name':'this year', 'selected':selected, 'query':clean_search})
+        else:
+            selected = selected_year == year
+            query = f'{clean_search} date>="{year}-01-01" date<"{year + 1}-01-01"'.strip()
+            year_links.append({'name':str(year), 'selected':selected, 'query':query})
+    return year_links
 
 
 def _sort_items(items, sortlist, itemid='id', sortkey='sortid'):

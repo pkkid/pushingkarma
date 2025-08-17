@@ -3,11 +3,16 @@
     <template #content>
       <!-- Search -->
       <div class='searchwrap'>
-        <input type='text' v-model='_search' placeholder='Search Transactions'
-          class='searchinput' @keydown.enter='search=_search || null'>
-        <transition name='fade'>
-          <i v-if='_search?.length' class='mdi mdi-close' @click='search=""; _search=""'/>
-        </transition>
+        <div class='searchinputwrap'>
+          <input type='text' v-model='_search' placeholder='Search Transactions' class='searchinput' @keydown.enter='search=_search || null'>
+          <transition name='fade'><i v-if='_search?.length' class='mdi mdi-close' @click='search=""; _search=""'/></transition>
+        </div>
+        <div class='searchlinkwrap'>
+          <template v-for='link in summary?.links' :key='link.name'>
+            <a v-if='!link.selected' @click='search=link.query'>{{link.name}}</a>
+            <span v-else class='selected'>{{link.name}}</span>
+          </template>
+        </div>
       </div>
       <!-- Header -->
       <h1>Budget Year Overview
@@ -191,21 +196,43 @@
     .searchwrap {
       text-align: right;
       display: flex;
+      flex-direction: column;
       justify-content: flex-end;
       margin-top: -10px;
       align-items: center;
       padding-top: 22px;
       float: right;
       width: 550px;
-      input {
+      .searchinputwrap {
+        display: flex;
+        flex-direction: column;
         width: 100%;
-        border-radius: 20px;
-        padding: 5px 15px;
+        position: relative;
+        input {
+          width: 100%;
+          border-radius: 20px;
+          padding: 5px 15px;
+        }
+        .mdi-close {
+          position: absolute;
+          right: 10px;
+          top: 9px;
+          font-size: 14px;
+        }
       }
-      .mdi-close {
-        position: absolute;
-        right: 40px;
-        font-size: 14px;
+      .searchlinkwrap {
+        text-align: right;
+        margin-right: 20px;
+        font-size: 13px;
+        margin-top: 3px;
+        width: 100%;
+        color: var(--lightbg-fg3);
+        * { margin:0px 3px; padding:2px 0px; }
+        .selected {
+          background-color: var(--lightbg-bg2);
+          border-radius: 4px;
+          padding: 2px 5px;
+        }
       }
     }
 
