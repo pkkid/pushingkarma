@@ -84,6 +84,12 @@ class TransactionPatchSchema(Schema):
     category: Optional[str] = Field(None, description='Category name of transaction')
 
 
+class FilterSchema(Schema):
+    name: str = Field(..., description='Display name for the year link (e.g., "2024", "this year")')
+    query: str = Field(..., description='Search query string for this year')
+    selected: bool = Field(..., description='True if this year is currently selected')
+
+
 class SortSchema(Schema):
     sortlist: List[int] = Field(..., description='List of items ids in sorted order')
 
@@ -91,13 +97,8 @@ class SortSchema(Schema):
 class SummarizeCategoriesByMonthSchema(Schema):
     class SummarizeCategoryMonths(CategorySchema):
         months: Dict[str, Decimal] = Field(..., description='Dict of {month: total} for the category')
-    class YearLinkSchema(Schema):
-        name: str = Field(..., description='Display name for the year link (e.g., "2024", "this year")')
-        query: str = Field(..., description='Search query string for this year')
-        selected: bool = Field(..., description='True if this year is currently selected')
     minmonth: Optional[datetime.date] = Field(None, description='Earliest month displayed')
     maxmonth: Optional[datetime.date] = Field(None, description='Latest month displayed')
-    links: List[YearLinkSchema] = Field(..., description='Ordered list of year navigation links')
     items: List[SummarizeCategoryMonths] = Field(..., description='List of categories containing month summaries.')
 
 
@@ -126,3 +127,4 @@ class TransactionSummarySchema(Schema):
     uncategorized_amount: Decimal = Field(..., description='Total amount of uncategorized transactions')
     unapproved_count: int = Field(..., description='Number of unapproved transactions')
     unapproved_amount: Decimal = Field(..., description='Total amount of unapproved transactions')
+    filters: List[FilterSchema] = Field(..., description='Ordered list of year navigation links')

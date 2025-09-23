@@ -225,6 +225,24 @@
       setTimeout(() => loading.value = false, 500)
     }
   }
+
+  // Update Transactions Summary
+  // Fetch transactions from the server
+  const updateSummary = async function() {
+    loading.value = true
+    cancelctrl = api.cancel(cancelctrl)
+    try {
+      var params = {search:searchstr.value}
+      var {data} = await api.Budget.listTransactions(params, cancelctrl.signal)
+      trxs.value = data
+      edittable.value?.deselect(null, false)
+      edittable.value?.clearUndoRedoStack()
+    } catch (err) {
+      if (!api.isCancel(err)) { throw(err) }
+    } finally {
+      setTimeout(() => loading.value = false, 500)
+    }
+  }
 </script>
 
 <style>

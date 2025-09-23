@@ -278,7 +278,8 @@ def summarize_transactions(request,
         'uncategorized_count': totals['uncategorized_count'] or 0,
         'uncategorized_amount': round(totals['uncategorized_amount'] or 0, 2),
         'unapproved_count': totals['unapproved_count'] or 0,
-        'unapproved_amount': round(totals['unapproved_amount'] or 0, 2)
+        'unapproved_amount': round(totals['unapproved_amount'] or 0, 2),
+        'filters': _get_filters_by_year(search or '')
     }
 
 
@@ -320,8 +321,7 @@ def summarize_months(request,
     # Build the response object from the django summary
     response = dict(items=[],
         minmonth=first_of_month(dates['mindate']) if dates['mindate'] else None,
-        maxmonth=first_of_month(dates['maxdate']) if dates['maxdate'] else None,
-        links=_get_year_links(search or ''))
+        maxmonth=first_of_month(dates['maxdate']) if dates['maxdate'] else None)
     for catid, group in groupby(summary, key=lambda x: x['category__id']):
         cat = categories.get(catid)
         response['items'].append({
@@ -334,7 +334,7 @@ def summarize_months(request,
     return response
 
 
-def _get_year_links(search):
+def _get_filters_by_year(search):
     """ Returns a list of links to navigate the years. """
     this_year = datetime.now().year
     # Remove existing date filters and get clean search
@@ -370,6 +370,49 @@ def _get_year_links(search):
             query = f'{clean_search} date>="{year}-01-01" date<"{year + 1}-01-01"'.strip()
             year_links.append({'name':str(year), 'selected':selected, 'query':query})
     return year_links
+
+
+def _get_month_links(search):
+    """ Returns a list of links to navigate the months. """
+    from calendar import month_name
+    this_month = datetime.now().replace(day=1)
+    # Remove existing date filters and get clean search
+    clean_search = re.sub(r'date[><]=?"[^"]*"?|date[><]=?\S+', '', search).strip()
+    clean_search = ' '.join(clean_search.split())
+    # Determine selected month from date filters
+    selected_month = this_month
+    mindates = re.findall(r'date>="([^"]*)"', search)
+    maxdates = re.findall(r'date<"([^"]*)"', search)
+    if len(mindates) == 1 and len(maxdates) == 1:
+        try:
+            mindate = parse_date(mindates[0]).replace(day=1)
+            maxdate = parse_date(maxdates[0]).replace(day=1)
+            # Check if this looks like a month selection (1st of month to 1st of next month)
+            next_month = add_months(mindate, 1)
+            if mindate.day == 1 and maxdate == next_month:
+                selected_month = mindate
+        except Exception:
+            pass
+    # Build set of months to include
+    months = {add_months(selected_month, -1), selected_month}
+    next_month = add_months(selected_month, 1)
+    if next_month <= this_month:
+        months.add(next_month)
+    if this_month not in months:
+        months.add(this_month)
+    # Generate ordered month links
+    month_links = []
+    for month in sorted(months):
+        if month == this_month:
+            selected = selected_month == this_month
+            month_links.append({'name':'this month', 'selected':selected, 'query':clean_search})
+        else:
+            selected = selected_month == month
+            month_name_str = f"{month_name[month.month]} {month.year}"
+            next_month_date = add_months(month, 1)
+            query = f'{clean_search} date>="{month.strftime("%Y-%m-%d")}" date<"{next_month_date.strftime("%Y-%m-%d")}"'.strip()
+            month_links.append({'name':month_name_str, 'selected':selected, 'query':query})
+    return month_links
 
 
 def _sort_items(items, sortlist, itemid='id', sortkey='sortid'):
