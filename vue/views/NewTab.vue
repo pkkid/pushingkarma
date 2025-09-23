@@ -21,7 +21,11 @@
   var dateInterval = null
 
   const updateDate = function() { now.value = new Date() }
-  const updateFullscreen = function() { isFullscreen.value = window.innerHeight === screen.height }
+  const updateFullscreen = function() {
+    // In F11 fullscreen, outerWidth equals innerWidth (no browser chrome)
+    console.log('Inner:', window.innerWidth, 'Outer:', window.outerWidth)
+    isFullscreen.value = Math.abs(window.innerWidth - window.outerWidth) <= 5
+  }
 
   onMounted(() => {
     updateDate()
@@ -54,7 +58,7 @@
     &.fullscreen {
       height: calc(100vh - 20px);
       width: calc(100vw - 20px);
-      animation: square-move 300s linear infinite;
+      animation: square-move 240s linear infinite;
     }
 
     .logo-container {
@@ -97,7 +101,7 @@
     0% { transform: translate(0, 0); }
     25% { transform: translate(20px, 0); }
     50% { transform: translate(20px, 20px); }
-    75% { transform: translate(0, 40px); }
+    75% { transform: translate(0, 20px); }
     100% { transform: translate(0, 0); }
   }
 </style>
