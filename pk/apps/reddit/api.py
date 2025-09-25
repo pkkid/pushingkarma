@@ -10,7 +10,7 @@ from .schemas import NewsRequestSchema, NewsResponseSchema
 log = logging.getLogger(__name__)
 router = Router()
 
-BLOCKED_DOMAINS = ['i.redd.it', 'imgur.com', r'^self\.']
+BLOCKED_DOMAINS = ['i.redd.it', 'imgur.com']
 LUCKY_URL = 'http://google.com/search?btnI=I%27m+Feeling+Lucky&sourceid=navclient&q={domain}%20{title}'
 REDDIT_ATTRS = ['title','score','permalink','domain','created_utc','selftext']
 
@@ -50,12 +50,12 @@ def news(request,
 
 
 def _get_subreddit_posts(reddit, subreddit, count=30, maxtitle=9999, mintext=0, maxtext=9999):
-    """ Get posts from a specific subreddit.
+    """ Get posts from a specific subreddit. Setting mintext=0 will disallow self posts.
         https://praw.readthedocs.io/en/latest/code_overview/reddit_instance.html
     """
     posts = []
     for post in reddit.subreddit(subreddit).top('day', limit=count*2):
-        if _blocked_domain(subreddit, post):
+        if _blocked_domain(subreddit, post, mintext == 0):
             continue
         post = {attr.replace('.','_'):utils.rget(post,attr) for attr in REDDIT_ATTRS}
         post['subreddit'] = subreddit
@@ -70,9 +70,11 @@ def _get_subreddit_posts(reddit, subreddit, count=30, maxtitle=9999, mintext=0, 
     return sorted(posts, key=lambda x:x['score'], reverse=True)[:count]
 
 
-def _blocked_domain(subreddit, post):
+def _blocked_domain(subreddit, post, blockself=True):
     """ Check the subreddit post domain against a list of blocked domains. """
     for regex in BLOCKED_DOMAINS:
         if re.findall(regex, post.domain):
             return True
+    if blockself and re.findall(r'^self\.', post.domain):
+        return True
     return False

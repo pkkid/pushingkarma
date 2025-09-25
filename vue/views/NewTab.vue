@@ -36,12 +36,12 @@
   const shownews = ref(true)     // True when news post is showing
   const fullscreen = ref(false)     // True when browser is in fullscreen
   const reddit_queries = [
-    {subreddit:'news', count:15, maxtitle:100, maxtext:100},
-    {subreddit:'technology', count:15, maxtitle:100, maxtext:100},
-    {subreddit:'worldnews', count:15, maxtitle:100, maxtext:100},
-    {subreddit:'boston', count:10, maxtitle:100, maxtext:100},
-    {subreddit:'jokes', count:15, maxtitle:100, mintext:5, maxtext:100},
-    {subreddit:'dadjokes', count:15, maxtitle:100, mintext:5, maxtext:100},
+    // {subreddit:'news', count:15, maxtitle:150, maxtext:100},
+    // {subreddit:'technology', count:15, maxtitle:150, maxtext:100},
+    // {subreddit:'worldnews', count:15, maxtitle:150, maxtext:100},
+    // {subreddit:'boston', count:10, maxtitle:150, maxtext:100},
+    {subreddit:'jokes', count:15, maxtitle:150, mintext:5, maxtext:100},
+    {subreddit:'dadjokes', count:15, maxtitle:150, mintext:5, maxtext:100},
   ]
   
   // On Mounted
