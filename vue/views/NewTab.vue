@@ -18,6 +18,7 @@
 <script setup>
   import {onMounted, ref} from 'vue'
   import {api, utils} from '@/utils'
+  import hotkeys from 'hotkeys-js'
 
   const now = ref()                 // Current datetime
   const news = ref(null)            // List of Reddit news posts to cycle
@@ -40,10 +41,13 @@
     updateTime()
     updateFullscreen()
     updateNews()
-    setInterval(updateTime, 1000)         // 1s
-    setInterval(updateNews, 900000)       // 15m
-    setInterval(showNextNewsPost, 20000)  // 20s
+    setInterval(updateTime, 1000)  // 1s
+    setInterval(updateNews, 900000)  // 15m
+    setInterval(showNextNewsPost, 60000)  // 60s
     window.addEventListener('resize', updateFullscreen)
+    hotkeys('left', 'newtab', function() { showNextNewsPost(-1) })
+    hotkeys('right', 'newtab', function() { showNextNewsPost() })
+    hotkeys.setScope('newtab')
   })
 
   // Update Fullscreen
@@ -64,11 +68,11 @@
 
   // Show Next Reddit Post
   // Display the next Reddit post from localStorage
-  const showNextNewsPost = async function() {
+  const showNextNewsPost = async function(offset=1) {
     if (news.value) {
       shownews.value = false
       await utils.sleep(500)
-      newsindex.value = (newsindex.value + 1) % news.value.length
+      newsindex.value = (newsindex.value + offset) % news.value.length
       await utils.sleep(200)
       shownews.value = true
     }
