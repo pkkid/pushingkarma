@@ -1,6 +1,6 @@
 <template>
   <div id='newtab-wrapper'>
-    <div id='newtab' :class='{"fullscreen": isFullscreen}'>
+    <div id='newtab' :class='{fullscreen}'>
       <div class='logo-container'>
         <div class='logoimg'/>
       </div>
@@ -16,26 +16,44 @@
   import {onMounted, onUnmounted, ref} from 'vue'
   import {utils} from '@/utils'
 
-  const now = ref()
-  const isFullscreen = ref(false)
-  var dateInterval = null
-
-  const updateDate = function() { now.value = new Date() }
-  const updateFullscreen = function() {
-    // In F11 fullscreen, outerWidth equals innerWidth (no browser chrome)
-    console.log('Inner:', window.innerWidth, 'Outer:', window.outerWidth)
-    isFullscreen.value = Math.abs(window.innerWidth - window.outerWidth) <= 5
-  }
-
-  onMounted(() => {
-    updateDate()
+  var timeInterval = null           // Interval for datetime
+  const now = ref()                 // Current datetime
+  const fullscreen = ref(false)     // True when browser is in fullscreen
+  const reddit_queries = [
+    {subreddit:'news', count:15},
+    {subreddit:'technology', count:15},
+    {subreddit:'worldnews', count:15},
+    {subreddit:'boston', count:10},
+    {subreddit:'jokes', count:15, maxtitle:100, mintext:10, maxtext:200},
+    {subreddit:'dadjokes', count:15, maxtitle:100, mintext:10, maxtext:200},
+  ]
+  
+  // On Mounted
+  // Initialize date and fullscreen status, set interval to update
+  // date every second
+  onMounted(function() {
+    updateTime()
     updateFullscreen()
-    dateInterval = setInterval(updateDate, 1000)
+    timeInterval = setInterval(updateTime, 1000)
     window.addEventListener('resize', updateFullscreen)
   })
 
+  // Update Time
+  // Update the 'now' ref to current datetime
+  const updateTime = function() {
+    now.value = new Date()
+  }
+
+  // Update Fullscreen
+  // Update the 'fullscreen' ref to true if browser is in fullscreen
+  const updateFullscreen = function() {
+    fullscreen.value = Math.abs(window.innerWidth - window.outerWidth) <= 5
+  }
+
+  // On Unmounted
+  // Clear the time interval and remove the resize event listener
   onUnmounted(() => {
-    if (dateInterval) { clearInterval(dateInterval) }
+    if (timeInterval) { clearInterval(timeInterval) }
     window.removeEventListener('resize', updateFullscreen)
   })
 </script>
