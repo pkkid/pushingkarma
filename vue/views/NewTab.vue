@@ -8,7 +8,17 @@
       </div>
       <Transition name='fade' style='transition-duration:1s;' appear>
         <div class='news-container' v-if='news && shownews'>
-          <div class='title'>{{news[newsindex].title}}</div>
+          <div class='title'>
+            <a target='_blank' :href='news[newsindex].url'>{{news[newsindex].title}}</a>
+          </div>
+          <div v-if='news[newsindex].selftext' class='subtext'>
+            {{news[newsindex].selftext}} | {{utils.intComma(news[newsindex].score)}} upvotes
+          </div>
+          <div v-else class='subtext'>
+            {{ utils.timeAgo(new Date(news[newsindex].created)) }} |
+            <a target='_blank' :href='news[newsindex].redditurl'>{{news[newsindex].subreddit}}</a> |
+            {{utils.intComma(news[newsindex].score)}} upvotes
+          </div>
         </div>
       </Transition>
     </div>
@@ -26,12 +36,12 @@
   const shownews = ref(true)     // True when news post is showing
   const fullscreen = ref(false)     // True when browser is in fullscreen
   const reddit_queries = [
-    {subreddit:'news', count:15},
-    {subreddit:'technology', count:15},
-    {subreddit:'worldnews', count:15},
-    {subreddit:'boston', count:10},
-    {subreddit:'jokes', count:15, maxtitle:100, mintext:10, maxtext:200},
-    {subreddit:'dadjokes', count:15, maxtitle:100, mintext:10, maxtext:200},
+    {subreddit:'news', count:15, maxtitle:100, maxtext:100},
+    {subreddit:'technology', count:15, maxtitle:100, maxtext:100},
+    {subreddit:'worldnews', count:15, maxtitle:100, maxtext:100},
+    {subreddit:'boston', count:10, maxtitle:100, maxtext:100},
+    {subreddit:'jokes', count:15, maxtitle:100, mintext:5, maxtext:100},
+    {subreddit:'dadjokes', count:15, maxtitle:100, mintext:5, maxtext:100},
   ]
   
   // On Mounted
@@ -73,7 +83,7 @@
       shownews.value = false
       await utils.sleep(500)
       newsindex.value = (newsindex.value + offset) % news.value.length
-      await utils.sleep(200)
+      await utils.sleep(500)
       shownews.value = true
     }
   }
@@ -104,6 +114,12 @@
     position: relative;
     width: 100vw; height: 100vh;
 
+    a, a:visited {
+      color: inherit;
+      text-decoration: none;
+      &:hover { text-decoration: underline; }
+    }
+
     .logoimg {
       aspect-ratio: 1/1;
       background-color: color-mix(in srgb, var(--darkbg-fg1), #000 20%);
@@ -128,16 +144,15 @@
       transform: translate(-50%, -50%);
       text-align: center;
       font-size: 1.5rem;
-      width: 80vw;
+      width: 90vw;
+      .title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .subtext { margin-top:2px }
     }
 
     &.fullscreen {
       width: calc(100vw - 20px); height: calc(100vh - 20px);
       animation: square-move 240s linear infinite;
-      .logoimg {
-        width: 120px;
-        top: 40px; left: 40px;
-      }
+      .logoimg { width:100px; top:40px; left:40px; }
       .time-container .time { font-size:12rem; }
       .time-container .date { font-size:4rem; }
       .news-container { font-size: 2.8rem; }
