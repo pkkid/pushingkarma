@@ -6,7 +6,7 @@
         <div class='time'>{{utils.formatDate(now, 'h:mm')}}</div>
         <div class='date'>{{utils.formatDate(now, 'MMMM D, YYYY')}}</div>
       </div>
-      <Transition name='fade' style='transition-duration:1s;' appear>
+      <Transition name='fade' style='transition-duration:1s;'>
         <div class='news-container' v-if='news && shownews'>
           <div class='title'>
             <a target='_blank' :href='news[newsindex].url'>{{news[newsindex].title}}</a>
