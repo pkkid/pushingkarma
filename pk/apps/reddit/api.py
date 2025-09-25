@@ -3,12 +3,9 @@ import logging, praw, re
 from concurrent import futures
 from datetime import datetime
 from django.conf import settings
-from django.views.decorators.cache import cache_page
 from ninja import Body, Router
-from ninja.decorators import decorate_view
 from pk.utils import utils
-from typing import List
-from .schemas import RedditPostSchema, RedditNewsSchema
+from .schemas import NewsRequestSchema, NewsResponseSchema
 log = logging.getLogger(__name__)
 router = Router()
 
@@ -17,10 +14,9 @@ LUCKY_URL = 'http://google.com/search?btnI=I%27m+Feeling+Lucky&sourceid=navclien
 REDDIT_ATTRS = ['title','score','permalink','domain','created_utc','selftext']
 
 
-@router.post('/news', response=List[RedditPostSchema], exclude_unset=True)
-@decorate_view(cache_page(0 if settings.DEBUG else 1800))
+@router.post('/news', response=NewsResponseSchema, exclude_unset=True)
 def news(request,
-      data: RedditNewsSchema=Body(..., description='List of subreddit queries')):
+      data: NewsRequestSchema=Body(..., description='List of subreddit queries')):
     """ Get news from various Reddit subreddits. Example request:
         {"queries": [
             {"subreddit":"technology", "count":15},
@@ -37,7 +33,7 @@ def news(request,
             subreddit_posts[subreddit] = future.result()
     posts = [post for sublist in subreddit_posts.values() for post in sublist]
     posts = sorted(posts, key=lambda x:x['score'], reverse=True)
-    return posts
+    return {'posts':posts}
 
 
 def _get_subreddit_posts(reddit, subreddit, count=30, maxtitle=9999, mintext=0, maxtext=9999):

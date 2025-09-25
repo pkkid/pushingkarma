@@ -1,23 +1,28 @@
 <template>
   <div id='newtab-wrapper'>
     <div id='newtab' :class='{fullscreen}'>
-      <div class='logo-container'>
-        <div class='logoimg'/>
-      </div>
+      <div class='logoimg'/>
       <div class='time-container'>
         <div class='time'>{{utils.formatDate(now, 'h:mm')}}</div>
         <div class='date'>{{utils.formatDate(now, 'MMMM D, YYYY')}}</div>
       </div>
+      <Transition name='fade' style='transition-duration:1s;' appear>
+        <div class='news-container' v-if='news && shownews'>
+          <div class='title'>{{news[newsindex].title}}</div>
+        </div>
+      </Transition>
     </div>
   </div>
 </template>
 
 <script setup>
-  import {onMounted, onUnmounted, ref} from 'vue'
-  import {utils} from '@/utils'
+  import {onMounted, ref} from 'vue'
+  import {api, utils} from '@/utils'
 
-  var timeInterval = null           // Interval for datetime
   const now = ref()                 // Current datetime
+  const news = ref(null)            // List of Reddit news posts to cycle
+  const newsindex = ref(0)          // Current index in news posts
+  const shownews = ref(true)     // True when news post is showing
   const fullscreen = ref(false)     // True when browser is in fullscreen
   const reddit_queries = [
     {subreddit:'news', count:15},
@@ -34,28 +39,46 @@
   onMounted(function() {
     updateTime()
     updateFullscreen()
-    timeInterval = setInterval(updateTime, 1000)
+    updateNews()
+    setInterval(updateTime, 1000)         // 1s
+    setInterval(updateNews, 900000)       // 15m
+    setInterval(showNextNewsPost, 20000)  // 20s
     window.addEventListener('resize', updateFullscreen)
   })
 
-  // Update Time
-  // Update the 'now' ref to current datetime
-  const updateTime = function() {
-    now.value = new Date()
-  }
-
   // Update Fullscreen
   // Update the 'fullscreen' ref to true if browser is in fullscreen
-  const updateFullscreen = function() {
-    fullscreen.value = Math.abs(window.innerWidth - window.outerWidth) <= 5
+  const updateFullscreen = async function() {
+    fullscreen.value = ((Math.abs(window.innerWidth - window.outerWidth) <= 5)
+     && (Math.abs(window.innerHeight - window.outerHeight) <= 5))
   }
 
-  // On Unmounted
-  // Clear the time interval and remove the resize event listener
-  onUnmounted(() => {
-    if (timeInterval) { clearInterval(timeInterval) }
-    window.removeEventListener('resize', updateFullscreen)
-  })
+  // Update Reddit
+  // Fetch posts from specified subreddits and store them in localStorage
+  const updateNews = async function() {
+    var data = await api.Reddit.getNews({queries:reddit_queries})
+    news.value = data.data.posts.sort(() => Math.random() - 0.5)
+    newsindex.value = Math.floor(Math.random() * news.value.length)
+    console.log(news.value)
+  }
+
+  // Show Next Reddit Post
+  // Display the next Reddit post from localStorage
+  const showNextNewsPost = async function() {
+    if (news.value) {
+      shownews.value = false
+      await utils.sleep(500)
+      newsindex.value = (newsindex.value + 1) % news.value.length
+      await utils.sleep(200)
+      shownews.value = true
+    }
+  }
+
+  // Update Time
+  // Update the 'now' ref to current datetime
+  const updateTime = async function() {
+    now.value = new Date()
+  }
 </script>
 
 <style>
@@ -68,51 +91,54 @@
   }
 
   #newtab {
-    background: url('/static/img/floral-pattern.jpg') no-repeat center center fixed;
     background-size: cover;
-    height: 100vh;
-    width: 100vw;
+    background: url('/static/img/floral-pattern.jpg') no-repeat center center / cover;
+    color: var(--darkbg-fg4);
+    font-family: var(--fontfamily-title);
+    font-weight: 400;
+    text-shadow: 1px 1px 10px #000;
     position: relative;
-    &.fullscreen {
-      height: calc(100vh - 20px);
-      width: calc(100vw - 20px);
-      animation: square-move 240s linear infinite;
-    }
+    width: 100vw; height: 100vh;
 
-    .logo-container {
-      align-items: center;
-      display: flex;
-      flex-direction: column;
+    .logoimg {
+      aspect-ratio: 1/1;
+      background-color: color-mix(in srgb, var(--darkbg-fg1), #000 20%);
+      mask: url('/static/img/pk.svg') no-repeat center/contain;
       position: absolute;
-      top: 30px; left: 30px;
-      .logoimg {
-        background-color: color-mix(in srgb, var(--darkbg-fg1), #000 20%);
-        mask: url('/static/img/pk.svg') no-repeat center/contain;
-        width: 100px; height: 100px;
-      }
+      top: 20px; left: 20px;
+      width: 80px;
     }
 
     .time-container {
       position: absolute;
-      top: 50%; left: 50%;
+      top: 45%; left: 50%;
       transform: translate(-50%, -50%);
       text-align: center;
-      .time {
-        color: var(--darkbg-fg4);
-        font-family: var(--fontfamily-title);
-        font-size: 10rem;
-        font-weight: 400;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-      }
-      .date {
-        color: var(--darkbg-fg4);
-        font-family: var(--fontfamily-title);
-        font-size: 3rem;
-        font-weight: 400;
-        margin-top: -40px;
-        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
-      }
+      .time { font-size:8rem; }
+      .date { font-size:3rem; margin-top:-40px; }
     }
+
+    .news-container {
+      position: absolute;
+      bottom: 0%; left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      font-size: 1.5rem;
+      width: 80vw;
+    }
+
+    &.fullscreen {
+      width: calc(100vw - 20px); height: calc(100vh - 20px);
+      animation: square-move 240s linear infinite;
+      .logoimg {
+        width: 120px;
+        top: 40px; left: 40px;
+      }
+      .time-container .time { font-size:12rem; }
+      .time-container .date { font-size:4rem; }
+      .news-container { font-size: 2.8rem; }
+    }
+
   }
 
   @keyframes square-move {

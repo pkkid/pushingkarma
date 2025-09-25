@@ -297,13 +297,19 @@ export function scrollIntoView(elem, offset=200, behavior='smooth') {
   }
 }
 
-
 // Set Nav Position
 // set the main site nav position to top or left.
 export function setNavPosition(pos) {
   document.body.classList.remove(`leftnav`)
   document.body.classList.remove(`topnav`)
   document.body.classList.add(`${pos}nav`)
+}
+
+// Sleep
+// JavaScript sleep function for use in async functions
+// https://stackoverflow.com/a/39914235/84463
+export function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms))
 }
 
 // Slug
