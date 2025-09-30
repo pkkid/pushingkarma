@@ -125,7 +125,7 @@
   var toc = ref(null)                     // Table of contents (api root)
   var _path = ref(null)                   // Current input value
 
-  var content = computed(() => utils.stringify(response.value?.data || "", {indent:2}))
+  var content = computed(() => utils.stringify(response.value?.data || "", {indent:2, maxlen:100}))
 
   // Categories
   // Computes object of {category: [endpoints]} to display in the sidepanel
