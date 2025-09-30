@@ -3,11 +3,16 @@
     <template #content>
       <!-- Search -->
       <div class='searchwrap'>
-        <input type='text' v-model='_search' placeholder='Search Transactions'
-          class='searchinput' @keydown.enter='search=_search || null'>
-        <transition name='fade'>
-          <i v-if='_search?.length' class='mdi mdi-close' @click='search=""; _search=""'/>
-        </transition>
+        <div class='searchinputwrap'>
+          <input type='text' v-model='_search' placeholder='Search Transactions' class='searchinput' @keydown.enter='search=_search || null'>
+          <transition name='fade'><i v-if='_search?.length' class='mdi mdi-close' @click='search=""; _search=""'/></transition>
+        </div>
+        <div class='searchfilterswrap'>
+          <template v-for='link in summary?.suggested_month_filters' :key='link.name'>
+            <a v-if='!link.selected' @click='search=link.query'>{{link.name}}</a>
+            <span v-else class='selected'>{{link.name}}</span>
+          </template>
+        </div>
       </div>
       <!-- Header -->
       <h1>Budget Transactions
@@ -252,27 +257,6 @@
 
 <style>
   #transactions {
-    .searchwrap {
-      text-align: right;
-      display: flex;
-      justify-content: flex-end;
-      margin-top: -10px;
-      align-items: center;
-      padding-top: 22px;
-      float: right;
-      width: 550px;
-      input {
-        width: 100%;
-        border-radius: 20px;
-        padding: 5px 15px;
-      }
-      .mdi-close {
-        position: absolute;
-        right: 40px;
-        font-size: 14px;
-      }
-    }
-
     .edittable {
       .account { width:36px; text-align:center; }
       .date { width:100px; text-align:left; }

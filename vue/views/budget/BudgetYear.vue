@@ -193,49 +193,6 @@
   #yearoverview {
     position: relative;
 
-    .searchwrap {
-      text-align: right;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-end;
-      margin-top: -10px;
-      align-items: center;
-      padding-top: 22px;
-      float: right;
-      width: 550px;
-      .searchinputwrap {
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        position: relative;
-        input {
-          width: 100%;
-          border-radius: 20px;
-          padding: 5px 15px;
-        }
-        .mdi-close {
-          position: absolute;
-          right: 10px;
-          top: 9px;
-          font-size: 14px;
-        }
-      }
-      .searchlinkwrap {
-        text-align: right;
-        margin-right: 20px;
-        font-size: 13px;
-        margin-top: 3px;
-        width: 100%;
-        color: var(--lightbg-fg3);
-        * { margin:0px 3px; padding:2px 0px; }
-        .selected {
-          background-color: var(--lightbg-bg2);
-          border-radius: 4px;
-          padding: 2px 5px;
-        }
-      }
-    }
-
     .edittable {
       .tdwrap { font-size:12px; }
       .category { width:151px; text-align:left; .tdwrap { background-color: #ddd8; }}
