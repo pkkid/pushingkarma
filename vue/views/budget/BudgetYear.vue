@@ -176,7 +176,7 @@
     cancelctrl = api.cancel(cancelctrl)
     try {
       var params = {search:searchstr.value}
-      var {data} = await api.Budget.summarizeMonths(params, cancelctrl.signal)
+      var {data} = await api.Budget.annualTransactions(params, cancelctrl.signal)
       summary.value = data
       // edittable.value?.deselect(null, false)
       // edittable.value?.clearUndoRedoStack()
