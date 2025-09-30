@@ -127,4 +127,5 @@ class TransactionSummarySchema(Schema):
     uncategorized_amount: Decimal = Field(..., description='Total amount of uncategorized transactions')
     unapproved_count: int = Field(..., description='Number of unapproved transactions')
     unapproved_amount: Decimal = Field(..., description='Total amount of unapproved transactions')
-    filters: List[FilterSchema] = Field(..., description='Ordered list of year navigation links')
+    suggested_year_filters: List[FilterSchema] = Field(..., description='Ordered list of year navigation links')
+    suggested_month_filters: List[FilterSchema] = Field(..., description='Ordered list of year navigation links')

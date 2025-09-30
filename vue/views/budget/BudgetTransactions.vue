@@ -84,6 +84,7 @@
   const _search = ref(search.value)           // Temp search before enter
   const categories = ref(null)                // Categories list
   const trxs = ref(null)                      // Transactions list
+  const summary = ref(null)                   // Transactions summary
   const edittable = ref(null)                 // Ref to EditTable component
 
   // Search String
@@ -215,8 +216,12 @@
     cancelctrl = api.cancel(cancelctrl)
     try {
       var params = {search:searchstr.value}
-      var {data} = await api.Budget.listTransactions(params, cancelctrl.signal)
-      trxs.value = data
+      var [trxResponse, summaryResponse] = await Promise.all([
+        api.Budget.listTransactions(params, cancelctrl.signal),
+        api.Budget.summarizeTransactions(params, cancelctrl.signal)
+      ])
+      trxs.value = trxResponse.data
+      summary.value = summaryResponse.data
       edittable.value?.deselect(null, false)
       edittable.value?.clearUndoRedoStack()
     } catch (err) {

@@ -5,81 +5,40 @@ from dateutil.parser import parse as parse_date
 from pk.utils.utils import add_months
 
 
-def get_filters_by_month(search):
-    """ Returns a list of links to navigate the months. """
-    from calendar import month_name
-    this_month = datetime.now().replace(day=1)
-    # Remove existing date filters and get clean search
-    clean_search = re.sub(r'date[><]=?"[^"]*"?|date[><]=?\S+', '', search).strip()
-    clean_search = ' '.join(clean_search.split())
-    # Determine selected month from date filters
-    selected_month = this_month
-    mindates = re.findall(r'date>="([^"]*)"', search)
-    maxdates = re.findall(r'date<"([^"]*)"', search)
-    if len(mindates) == 1 and len(maxdates) == 1:
-        try:
-            mindate = parse_date(mindates[0]).replace(day=1)
-            maxdate = parse_date(maxdates[0]).replace(day=1)
-            # Check if this looks like a month selection (1st of month to 1st of next month)
-            next_month = add_months(mindate, 1)
-            if mindate.day == 1 and maxdate == next_month:
-                selected_month = mindate
-        except Exception:
-            pass
-    # Build set of months to include
-    months = {add_months(selected_month, -1), selected_month}
-    next_month = add_months(selected_month, 1)
-    if next_month <= this_month: months.add(next_month)
-    if this_month not in months: months.add(this_month)
-    # Generate ordered month links
-    month_links = []
-    for month in sorted(months):
-        if month == this_month:
-            selected = selected_month == this_month
-            month_links.append({'name':'this month', 'selected':selected, 'query':clean_search})
+def get_suggested_filters(search='', interval='year'):
+    """ Returns a list of links to navigate by year or month.
+        Interval should be 'year' or 'month'.
+    """
+    # Create a few helper functions
+    to_interval = lambda dt: dt.replace(day=1) if interval == 'month' else dt.replace(month=1, day=1)
+    add_interval = lambda dt, n: add_months(dt, n) if interval == 'month' else dt.replace(year=dt.year + n)
+    str_interval = lambda dt: dt.strftime('%b') if interval == 'month' else dt.strftime('%Y')
+    # Determine mindate, maxdate and selected from date filters
+    mindate, maxdate, selected = get_min_and_max_dates(search, interval)
+    mindate = to_interval(mindate) if mindate else None
+    maxdate = to_interval(maxdate) if maxdate else None
+    selected = to_interval(selected or datetime.now())
+    # Create list of filters to suggest
+    now = to_interval(datetime.now())
+    suggested_dates = {add_interval(selected, -1), selected}
+    if add_interval(selected, 1) <= now:
+        suggested_dates.add(add_interval(selected, 1))
+    if now not in suggested_dates:
+        suggested_dates.add(now)
+    # Generate list of ordered suggestions
+    suggestions = []
+    clean_search = clean_date_filters(search)
+    for suggested_date in sorted(suggested_dates):
+        if suggested_date == now:
+            is_selected = selected == now
+            suggestions.append({'name':f'this {interval}', 'selected':is_selected, 'query':clean_search})
         else:
-            selected = selected_month == month
-            month_name_str = f"{month_name[month.month]} {month.year}"
-            next_month_date = add_months(month, 1)
-            query = f'{clean_search} date>="{month.strftime("%Y-%m-%d")}" date<"{next_month_date.strftime("%Y-%m-%d")}"'.strip()
-            month_links.append({'name':month_name_str, 'selected':selected, 'query':query})
-    return month_links
-
-
-def get_filters_by_year(search):
-    """ Returns a list of links to navigate the years. """
-    this_year = datetime.now().year
-    # Remove existing date filters and get clean search
-    clean_search = re.sub(r'date[><]=?"[^"]*"?|date[><]=?\S+', '', search).strip()
-    clean_search = ' '.join(clean_search.split())
-    # Determine selected year from date filters
-    selected_year = this_year
-    mindates = re.findall(r'date>="([^"]*)"', search)
-    maxdates = re.findall(r'date<"([^"]*)"', search)
-    if len(mindates) == 1 and len(maxdates) == 1:
-        try:
-            mindate = parse_date(mindates[0])
-            maxdate = parse_date(maxdates[0])
-            if (mindate.month == 1 and mindate.day == 1 and maxdate.month == 1
-              and maxdate.day == 1 and maxdate.year == mindate.year + 1):
-                selected_year = mindate.year
-        except Exception:
-            pass
-    # Build set of years to include
-    years = {selected_year - 1, selected_year}
-    if selected_year + 1 <= this_year: years.add(selected_year + 1)
-    if this_year not in years: years.add(this_year)
-    # Generate ordered year links
-    year_links = []
-    for year in sorted(years):
-        if year == this_year:
-            selected = selected_year == this_year
-            year_links.append({'name':'this year', 'selected':selected, 'query':clean_search})
-        else:
-            selected = selected_year == year
-            query = f'{clean_search} date>="{year}-01-01" date<"{year + 1}-01-01"'.strip()
-            year_links.append({'name':str(year), 'selected':selected, 'query':query})
-    return year_links
+            is_selected = selected == now
+            mindatestr = suggested_date.strftime('%Y-%m-%d')
+            maxdatestr = add_interval(suggested_date, 1).strftime('%Y-%m-%d')
+            query = f'{clean_search} date>={mindatestr} date<{maxdatestr}'.strip()
+            suggestions.append({'name':str_interval(suggested_date), 'selected':is_selected, 'query':query})
+    return suggestions
 
 
 def sort_items(items, sortlist, itemid='id', sortkey='sortid'):
@@ -98,3 +57,32 @@ def sort_items(items, sortlist, itemid='id', sortkey='sortid'):
             setattr(item, sortkey, i+1)
             updates.append(item)
     return updates
+
+
+def clean_date_filters(search):
+    """ Removes any date filters from the search string. """
+    clean_search = re.sub(r'date[><]=?"[^"]*"?|date[><]=?\S+', '', search).strip()
+    return ' '.join(clean_search.split())
+
+
+def get_min_and_max_dates(search, interval='year'):
+    """ Returns the min and max dates from the search string, if any. """
+    mindates = re.findall(r'date>="([^"]*)"', search)
+    maxdates = re.findall(r'date<"([^"]*)"', search)
+    if len(mindates) == 1 and len(maxdates) == 1:
+        try:
+            mindate = parse_date(mindates[0])
+            maxdate = parse_date(maxdates[0])
+            if (interval == 'year'
+              and (mindate.month == 1 and mindate.day == 1)
+              and (maxdate.month == 1 and maxdate.day == 1)
+              and (maxdate.year - mindate.year) == 1):
+                selected = mindate
+            elif (interval == 'month'
+              and (mindate.day == 1 and maxdate.day == 1)
+              and add_months(mindate, 1) == maxdate):
+                selected = mindate
+        except Exception:
+            return None, None, None
+        return mindate, maxdate, selected
+    return None, None, None

@@ -241,7 +241,7 @@ def list_transactions(request,
     return response
 
 
-@router.get('/transactions_summary', response=schemas.TransactionSummarySchema)
+@router.get('/summarize_transactions', response=schemas.TransactionSummarySchema)
 def summarize_transactions(request,
       search: str=Query('', description='Search term to filter transactions')):
     """ Summarizes transactions for the logged in user. """
@@ -278,7 +278,8 @@ def summarize_transactions(request,
         'uncategorized_amount': round(totals['uncategorized_amount'] or 0, 2),
         'unapproved_count': totals['unapproved_count'] or 0,
         'unapproved_amount': round(totals['unapproved_amount'] or 0, 2),
-        'filters': utils.get_filters_by_year(search or '')
+        'suggested_year_filters': utils.get_suggested_filters(search, 'year'),
+        'suggested_month_filters': utils.get_suggested_filters(search, 'month')
     }
 
 
