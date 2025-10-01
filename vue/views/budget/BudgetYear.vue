@@ -1,19 +1,7 @@
 <template>
   <LayoutPaper id='yearoverview' width='1250px'>
     <template #content>
-      <!-- Search -->
-      <div class='searchwrap'>
-        <div class='searchinputwrap'>
-          <input type='text' v-model='_search' placeholder='Search Transactions' class='searchinput' @keydown.enter='search=_search || null'>
-          <transition name='fade'><i v-if='_search?.length' class='mdi mdi-close' @click='search=""; _search=""'/></transition>
-        </div>
-        <div class='searchlinkwrap'>
-          <template v-for='link in summary?.links' :key='link.name'>
-            <a v-if='!link.selected' @click='search=link.query'>{{link.name}}</a>
-            <span v-else class='selected'>{{link.name}}</span>
-          </template>
-        </div>
-      </div>
+      <BudgetSearch :suggested_filters='summary?.suggested_year_filters'/>
       <!-- Header -->
       <h1>Budget Year Overview
         <div v-if='summary?.items' class='subtext'>Showing {{summary?.items.length}} categories</div>
@@ -38,6 +26,7 @@
   import {EditTable, IconMessage, LayoutPaper} from '@/components'
   import {useUrlParams} from '@/composables'
   import {api, utils} from '@/utils'
+  import BudgetSearch from './BudgetSearch.vue'
 
   const props = defineProps({
     demo: {type:Boolean},                     // Enables demo mode
@@ -45,7 +34,6 @@
   var cancelctrl = null                       // Cancel controller
   const loading = ref(false)                  // True to show loading indicator
   const {search} = useUrlParams({search:{}})  // Method & path url params
-  const _search = ref(search.value)           // Temp search before enter
   const summary = ref(null)                   // Summary of transactions
   const columns = ref(null)                   // EditTable columns
   const edittable = ref(null)                 // Ref to EditTable component
@@ -58,7 +46,6 @@
   // Watch Search
   // Update transactions and _search.value
   watch(search, function() {
-    _search.value = search.value
     updateSummary()
   })
 
