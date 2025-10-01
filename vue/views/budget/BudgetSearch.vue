@@ -70,7 +70,7 @@
       margin-top: 3px;
       width: 100%;
       color: var(--lightbg-fg3);
-      * { margin:0px 3px; padding:2px 0px; }
+      * { margin:0px 4px; padding:2px 0px; }
       .selected {
         background-color: var(--lightbg-bg2);
         border-radius: 4px;
