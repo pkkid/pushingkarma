@@ -8,7 +8,7 @@
           <transition name='fade'><i v-if='_search?.length' class='mdi mdi-close' @click='search=""; _search=""'/></transition>
         </div>
         <div class='searchlinkwrap'>
-          <template v-for='link in summary?.links' :key='link.name'>
+          <template v-for='link in annualtrxs?.links' :key='link.name'>
             <a v-if='!link.selected' @click='search=link.query'>{{link.name}}</a>
             <span v-else class='selected'>{{link.name}}</span>
           </template>
@@ -16,12 +16,12 @@
       </div>
       <!-- Header -->
       <h1>Budget Year Overview
-        <div v-if='summary?.items' class='subtext'>Showing {{summary?.items.length}} categories</div>
-        <div v-else class='subtext'>Loading summary...</div>
+        <div v-if='annualtrxs?.items' class='subtext'>Showing {{annualtrxs?.items.length}} categories</div>
+        <div v-else class='subtext'>Loading transactions...</div>
       </h1>
       <!-- Year Overview Table -->
-      <div v-if='summary?.items?.length > 0'>
-        <EditTable ref='edittable' v-if='summary?.items && columns' :columns='columns' :items='summary?.items'
+      <div v-if='annualtrxs?.items?.length > 0'>
+        <EditTable ref='edittable' v-if='annualtrxs?.items && columns' :columns='columns' :items='annualtrxs?.items'
           :footer='footer' :onRequestDeselect='onRequestDeselect' @itemSelected='onItemSelected' />
         <BudgetYearPopover ref='popover' />
       </div>
@@ -46,7 +46,7 @@
   const loading = ref(false)                  // True to show loading indicator
   const {search} = useUrlParams({search:{}})  // Method & path url params
   const _search = ref(search.value)           // Temp search before enter
-  const summary = ref(null)                   // Summary of transactions
+  const annualtrxs = ref(null)                // Annual transactions
   const columns = ref(null)                   // EditTable columns
   const edittable = ref(null)                 // Ref to EditTable component
   const popover = ref(null)                   // Ref to popover component
@@ -64,13 +64,13 @@
 
   // Watch Summary
   // Update columns when summary changes
-  watch(summary, function() {
-    if (summary.value?.items == 0) { columns.value = null; return }
+  watch(annualtrxs, function() {
+    if (annualtrxs.value?.items == 0) { columns.value = null; return }
     columns.value = [{
         name:'category', title:'Category', editable:false,
         html: cat => cat.name,
       }, ...Array.from({length:13}, (_, i) => {
-        var month = utils.newDate(summary.value.minmonth)
+        var month = utils.newDate(annualtrxs.value.minmonth)
         month.setMonth(month.getMonth() + 12 - i)
         var key = utils.formatDate(month, 'YYYY-MM-DD')
         var name = `month month-${utils.formatDate(month, 'YYYYMMDD')}`
@@ -96,11 +96,11 @@
   // Footer
   // Create the table footer item object
   const footer = computed(function() {
-    if (!summary.value?.items) { return null }
+    if (!annualtrxs.value?.items) { return null }
     var item = {name:'Total', months:{}}
-    var months = new Set(summary.value.items.flatMap(cat => Object.keys(cat.months)))
+    var months = new Set(annualtrxs.value.items.flatMap(cat => Object.keys(cat.months)))
     months.forEach(month => {
-      item.months[month] = summary.value.items.reduce(function(sum, cat) {
+      item.months[month] = annualtrxs.value.items.reduce(function(sum, cat) {
         if (cat.exclude) { return sum }
         return sum + (Number(cat.months[month]) || 0)
       }, 0)
@@ -153,7 +153,7 @@
   const onItemSelected = function(event, row, col, editing) {
     if (editing || (popover.value.showing() && event.key?.includes('Arrow'))) {
       var month = columns.value[col]._month
-      var {id, name, exclude} = summary.value.items[row]
+      var {id, name, exclude} = annualtrxs.value.items[row]
       var category = {id, name, exclude}
       var cell = edittable.value.getCell(row, col)
       popover.value.show(cell, category, month, searchstr.value)
@@ -177,7 +177,7 @@
     try {
       var params = {search:searchstr.value}
       var {data} = await api.Budget.annualTransactions(params, cancelctrl.signal)
-      summary.value = data
+      annualtrxs.value = data
       // edittable.value?.deselect(null, false)
       // edittable.value?.clearUndoRedoStack()
     } catch (err) {
