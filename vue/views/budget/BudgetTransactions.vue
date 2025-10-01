@@ -1,19 +1,7 @@
 <template>
   <LayoutPaper id='transactions' width='1000px'>
     <template #content>
-      <!-- Search -->
-      <div class='searchwrap'>
-        <div class='searchinputwrap'>
-          <input type='text' v-model='_search' placeholder='Search Transactions' class='searchinput' @keydown.enter='search=_search || null'>
-          <transition name='fade'><i v-if='_search?.length' class='mdi mdi-close' @click='search=""; _search=""'/></transition>
-        </div>
-        <div class='searchfilterswrap'>
-          <template v-for='link in summary?.suggested_month_filters' :key='link.name'>
-            <a v-if='!link.selected' @click='search=link.query'>{{link.name}}</a>
-            <span v-else class='selected'>{{link.name}}</span>
-          </template>
-        </div>
-      </div>
+      <BudgetSearch :suggested_filters='summary?.suggested_month_filters'/>
       <!-- Header -->
       <h1>Budget Transactions
         <div v-if='trxs' class='subtext'>Showing {{utils.intComma(trxs.items.length)}}
@@ -41,6 +29,7 @@
   import {useUrlParams} from '@/composables'
   import {api, utils} from '@/utils'
   import axios from 'axios'
+  import BudgetSearch from './BudgetSearch.vue'
 
   var COLUMNS = [{
       name:'account', title:'Act', editable:false,
@@ -86,7 +75,6 @@
   var updating = false                        // True if updating a transaction
   const loading = ref(false)                  // True to show loading indicator
   const {search} = useUrlParams({search:{}})  // Method & path url params
-  const _search = ref(search.value)           // Temp search before enter
   const categories = ref(null)                // Categories list
   const trxs = ref(null)                      // Transactions list
   const summary = ref(null)                   // Transactions summary
@@ -110,7 +98,6 @@
   // Watch Search
   // Update transactions and _search.value
   watch(search, function() {
-    _search.value = search.value
     updateTransactions()
   })
 

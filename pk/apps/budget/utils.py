@@ -30,8 +30,9 @@ def get_suggested_filters(search='', interval='year'):
     clean_search = clean_date_filters(search)
     for suggested_date in sorted(suggested_dates):
         if suggested_date == now:
+            name = 'All Transactions' if interval == 'month' else 'This Year'
             is_selected = selected == now
-            suggestions.append({'name':f'this {interval}', 'selected':is_selected, 'query':clean_search})
+            suggestions.append({'name':name, 'selected':is_selected, 'query':clean_search})
         else:
             is_selected = selected == now
             mindatestr = suggested_date.strftime('%Y-%m-%d')
