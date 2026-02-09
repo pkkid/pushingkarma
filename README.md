@@ -8,13 +8,17 @@ for your own site. If you find anything useful, by all means let me know.
 git git@github.com:pkkid/pushingkarma.git
 cd pushingkarma
 
-# Install uv
+# Install nvm & uv
+curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
-# Install node v20.11 (lts)
+# Install node v20.11 and setup the Python environment
 nvm install 20.11
 nvm use 20.11
 npm install
+uv pip install -r pyproject.toml
+ln -s ~/Private/Secrets/pushingkarma/settings.py pk/settings.py
+scripts/database-get.py
 
 # Start the Django and Vue servers together
 # Django http://localhost:8000/
