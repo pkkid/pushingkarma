@@ -16,6 +16,7 @@ curl -LsSf https://astral.sh/uv/install.sh | sh
 nvm install 20.11
 nvm use 20.11
 npm install
+uv venv --python=3.13
 uv pip install -r pyproject.toml
 ln -s ~/Private/Secrets/pushingkarma/settings.py pk/settings.py
 scripts/database-get.py
