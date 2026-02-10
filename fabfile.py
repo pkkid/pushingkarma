@@ -78,6 +78,7 @@ class MyConnection(Connection):
         try:
             self.sudo('whoami', hide='both')
         except invoke.exceptions.Failure:
+            keyring.delete_password('pk', 'synologypw')
             raise SystemExit('Remote sudo password is incorrect.')
 
 

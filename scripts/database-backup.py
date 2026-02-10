@@ -13,8 +13,8 @@ log.basicConfig(stream=sys.stdout, level=log.INFO, format=logformat)
 
 ROOT = dirname(dirname(abspath(__file__)))
 LOCAL_SOURCE = f'{ROOT}/pk/db.sqlite3'
-REMOTE_DEST = '/volume1/Synology/Michael/Backup/PushingKarma/pushingkarma-{dtstr}.sqlite3'
-BACKUP_DIR = '/volume1/Synology/Michael/Backup/PushingKarma'
+BACKUP_DIR = '/volume1/Synology/Michael/Backup/pushingkarma'
+REMOTE_DEST = f'{BACKUP_DIR}/pushingkarma-{{dtstr}}.sqlite3'
 _ = lambda path: path.replace(ROOT, '')
 
 

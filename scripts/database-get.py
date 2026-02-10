@@ -10,7 +10,8 @@ logformat = '%(asctime)-.19s %(module)16s:%(lineno)-3s %(levelname)-7s %(message
 log.basicConfig(stream=sys.stdout, level=log.INFO, format=logformat)
 
 ROOT = dirname(dirname(abspath(__file__)))
-REMOTE_SOURCE = 'synology:~/synology/Michael/Backup/PushingKarma/pushingkarma-{dtstr}.sqlite3'
+BACKUP_DIR = '/volume1/Synology/Michael/Backup/pushingkarma'
+REMOTE_SOURCE = f'synology:{BACKUP_DIR}/pushingkarma-{{dtstr}}.sqlite3'
 LOCAL_TMP = f'{ROOT}/pk/db.sqlite3.tmp'
 LOCAL_BAK = f'{ROOT}/pk/db.sqlite3.bak'
 LOCAL_DEST = f'{ROOT}/pk/db.sqlite3'
