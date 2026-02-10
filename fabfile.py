@@ -49,13 +49,6 @@ class MyConnection(Connection):
         cmd += ' '.join([f'--exclude={x}' for x in excludes])
         print(cmd)
         self.local(cmd)
-        # cmd = 'rsync --recursive --links --copy-links --checksum --times '
-        # cmd += '--omit-dir-times --delete --verbose --rsh="ssh -p 131" '
-        # cmd += ' '.join(f'--exclude={x}' for x in excludes)
-        # cmd += f' {localdir} {rsyncdest}'
-        # print(cmd)
-        # responder = invoke.Responder(pattern=r'Password:', response=f'{self.sudopw}\n')
-        # invoke.run(cmd, pty=True, watchers=[responder])
     
     def step(self, msg, color='#ff0'):
         r,g,b = tuple(int(x * 2, 16) for x in color.lstrip('#'))
