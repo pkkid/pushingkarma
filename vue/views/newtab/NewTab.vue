@@ -19,13 +19,14 @@
 
 <script setup>
   import {onMounted, ref} from 'vue'
+  import useStorage from '@/composables/useStorage'
   import LogoWidget from './LogoWidget.vue'
   import NewsWidget from './NewsWidget.vue'
   import TimeWidget from './TimeWidget.vue'
 
   const layouts = ['simple', 'stats']
-  const layout = ref('simple')   // Current active layout
-  const fullscreen = ref(false)         // True when browser is in fullscreen
+  const layout = useStorage('newtab.layout', 'simple')   // Current active layout
+  const fullscreen = ref(false)   // True when browser is in fullscreen
 
   // On Mounted
   // Initialize fullscreen status and update on resize
