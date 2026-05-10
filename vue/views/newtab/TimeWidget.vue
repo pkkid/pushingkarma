@@ -1,5 +1,5 @@
 <template>
-  <div id='timewidget' :class='{fullscreen}'>
+  <div id='timewidget' :class='{fullscreen, compact}'>
     <div class='time'>{{utils.formatDate(now, 'h:mm')}}</div>
     <div class='date'>{{utils.formatDate(now, 'MMMM D, YYYY')}}</div>
   </div>
@@ -11,6 +11,7 @@
 
   const props = defineProps({
     fullscreen: {type: Boolean, default: false},  // True if browser fullscreen
+    compact: {type: Boolean, default: false},     // True in stats layout (no absolute centering)
   })
   const now = ref()                               // Current date and time
 
@@ -40,6 +41,13 @@
     &.fullscreen {
       .time { font-size:12rem; }
       .date { font-size:4rem; }
+    }
+    &.compact {
+      position: static;
+      transform: none;
+      text-align: left;
+      .time { font-size:4em; line-height:1; }
+      .date { font-size:1.2em; margin-top:6px; opacity:0.65; }
     }
   }
 </style>

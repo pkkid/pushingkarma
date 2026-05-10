@@ -8,8 +8,20 @@
           <NewsWidget :fullscreen='fullscreen'/>
         </div>
         <div v-else-if='layout === "stats"' id='stats' key='stats'>
-          <div class='wrapper'>
-            <div class='hello'>Hello World</div>
+          <div class='stats-grid'>
+            <div class='col-cpu'>
+              <CpuWidget/>
+            </div>
+            <div class='col-center'>
+              <NetworkWidget/>
+              <ProcessesWidget/>
+            </div>
+            <div class='col-right'>
+              <TimeWidget :fullscreen='fullscreen' compact class='glances-widget'/>
+              <MemoryWidget/>
+              <NvidiaWidget/>
+              <FilesystemWidget/>
+            </div>
           </div>
         </div>
       </Transition>
@@ -20,10 +32,18 @@
 <script setup>
   import {onMounted, ref} from 'vue'
   import useStorage from '@/composables/useStorage'
+  import useGlances from '@/composables/useGlances'
   import LogoWidget from './LogoWidget.vue'
   import NewsWidget from './NewsWidget.vue'
   import TimeWidget from './TimeWidget.vue'
+  import CpuWidget from './CpuWidget.vue'
+  import MemoryWidget from './MemoryWidget.vue'
+  import NvidiaWidget from './NvidiaWidget.vue'
+  import ProcessesWidget from './ProcessesWidget.vue'
+  import NetworkWidget from './NetworkWidget.vue'
+  import FilesystemWidget from './FilesystemWidget.vue'
 
+  const {start} = useGlances()
   const layouts = ['simple', 'stats']
   const layout = useStorage('newtab.layout', 'simple')   // Current active layout
   const fullscreen = ref(false)   // True when browser is in fullscreen
@@ -31,6 +51,7 @@
   // On Mounted
   // Initialize fullscreen status and update on resize
   onMounted(function() {
+    start()
     updateFullscreen()
     window.addEventListener('resize', updateFullscreen)
   })
@@ -92,16 +113,55 @@
     align-items: center;
     justify-content: center;
     width:100%; height:100%;
-    .wrapper {
-      width:1900px; height:1060px;
-      border: 1px solid #eee4;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 280px;
+    grid-template-rows: 1fr 1fr;
+    gap: 12px;
+    padding: 20px;
+    width: 1900px;
+    height: 1060px;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    font-size: 30px;
+    .col-cpu {
+      grid-column: 1;
+      grid-row: 1 / 3;
+    }
+    .col-center {
+      grid-column: 2;
+      grid-row: 1 / 3;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      & > * { flex: 1; }
+    }
+    .col-right {
+      grid-column: 3;
+      grid-row: 1 / 3;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
   }
-  #stats {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    .hello { font-size: 4rem; }
+
+  /* Widget base style */
+  .glances-widget {
+    background: rgba(0,0,0,0.55);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+    padding: 14px 16px;
+    backdrop-filter: blur(6px);
+    overflow: hidden;
+    .widget-title {
+      font-size: 0.75em;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      opacity: 0.4;
+      margin-bottom: 10px;
+    }
   }
 
   /* Animations */
