@@ -1,9 +1,16 @@
 <template>
   <div id='newtab-wrapper'>
     <div id='newtab' :class='{fullscreen}'>
-      <LogoWidget :fullscreen='fullscreen'/>
-      <TimeWidget :fullscreen='fullscreen'/>
-      <NewsWidget :fullscreen='fullscreen'/>
+      <Transition name='layout-fade' mode='out-in'>
+        <div v-if='layout === "simple-layout"' class='simple-layout' key='simple-layout' @dblclick.self='cycleLayout'>
+          <LogoWidget :fullscreen='fullscreen'/>
+          <TimeWidget :fullscreen='fullscreen'/>
+          <NewsWidget :fullscreen='fullscreen'/>
+        </div>
+        <div v-else-if='layout === "stats-layout"' class='stats-layout' key='stats-layout' @dblclick.self='cycleLayout'>
+          <div class='hello'>Hello World</div>
+        </div>
+      </Transition>
     </div>
   </div>
 </template>
@@ -14,7 +21,9 @@
   import NewsWidget from './NewsWidget.vue'
   import TimeWidget from './TimeWidget.vue'
 
-  const fullscreen = ref(false)     // True when browser is in fullscreen
+  const layouts = ['simple-layout', 'stats-layout']
+  const layout = ref('simple-layout')   // Current active layout
+  const fullscreen = ref(false)         // True when browser is in fullscreen
 
   // On Mounted
   // Initialize fullscreen status and update on resize
@@ -22,6 +31,13 @@
     updateFullscreen()
     window.addEventListener('resize', updateFullscreen)
   })
+
+  // Cycle Layout
+  // Advance to the next layout in the list
+  const cycleLayout = function() {
+    const next = (layouts.indexOf(layout.value) + 1) % layouts.length
+    layout.value = layouts[next]
+  }
 
   // Update Fullscreen
   // Update the 'fullscreen' ref to true if browser is in fullscreen
@@ -62,6 +78,21 @@
     }
 
   }
+
+  .simple-layout, .stats-layout {
+    width: 100%; height: 100%;
+    position: relative;
+  }
+
+  .stats-layout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .hello { font-size: 4rem; }
+  }
+
+  .layout-fade-enter-active, .layout-fade-leave-active { transition: opacity 0.5s ease; }
+  .layout-fade-enter-from, .layout-fade-leave-to { opacity: 0; }
 
   @keyframes square-move {
     0% { transform: translate(0, 0); }
