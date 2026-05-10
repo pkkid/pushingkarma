@@ -9,7 +9,10 @@
         </div>
         <div v-else-if='layout === "stats"' id='stats' key='stats'>
           <div class='stats-grid'>
-            <div class='col-cpu'>
+            <div class='cell-time'>
+              <TimeWidget :fullscreen='fullscreen' compact class='glances-widget'/>
+            </div>
+            <div class='cell-cpu'>
               <CpuWidget/>
             </div>
             <div class='col-center'>
@@ -17,7 +20,6 @@
               <ProcessesWidget/>
             </div>
             <div class='col-right'>
-              <TimeWidget :fullscreen='fullscreen' compact class='glances-widget'/>
               <MemoryWidget/>
               <NvidiaWidget/>
               <FilesystemWidget/>
@@ -117,8 +119,8 @@
 
   .stats-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr 280px;
-    grid-template-rows: 1fr 1fr;
+    grid-template-columns: 550px 1fr 500px;
+    grid-template-rows: auto 1fr;
     gap: 12px;
     padding: 20px;
     width: 1900px;
@@ -126,9 +128,13 @@
     flex-shrink: 0;
     box-sizing: border-box;
     font-size: 30px;
-    .col-cpu {
+    .cell-time {
       grid-column: 1;
-      grid-row: 1 / 3;
+      grid-row: 1;
+    }
+    .cell-cpu {
+      grid-column: 1;
+      grid-row: 2;
     }
     .col-center {
       grid-column: 2;

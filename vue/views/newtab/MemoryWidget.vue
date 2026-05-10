@@ -66,7 +66,7 @@
       font-size: 1em;
       line-height: 1.8;
       opacity: 0.85;
-      .label { opacity: 0.6; width: 52px; display: inline-block; }
+      .label { opacity: 0.6; width: 3.2em; display: inline-block; }
       .pct { font-size: 2em; font-weight: 600; line-height: 1; margin-top: 4px; }
     }
   }
