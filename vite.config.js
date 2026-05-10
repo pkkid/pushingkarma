@@ -12,7 +12,6 @@ export default defineConfig({
   },
   plugins: [vue()],
   publicDir: 'public',
-  resolve: {
-    alias: {'@': fileURLToPath(new URL('./vue', import.meta.url))}
-  },
+  resolve: {alias: {'@': fileURLToPath(new URL('./vue', import.meta.url))}},
+  server: {allowedHosts: ['localhost', 'localhost.localdomain', 'pushingkarma.com']},
 })
