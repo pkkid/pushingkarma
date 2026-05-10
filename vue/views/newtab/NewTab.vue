@@ -1,14 +1,16 @@
 <template>
-  <div id='newtab-wrapper'>
+  <div id='newtab-wrapper' @dblclick='cycleLayout'>
     <div id='newtab' :class='{fullscreen}'>
       <Transition name='layout-fade' mode='out-in'>
-        <div v-if='layout === "simple-layout"' class='simple-layout' key='simple-layout' @dblclick.self='cycleLayout'>
+        <div v-if='layout === "simple"' id='simple' key='simple' >
           <LogoWidget :fullscreen='fullscreen'/>
           <TimeWidget :fullscreen='fullscreen'/>
           <NewsWidget :fullscreen='fullscreen'/>
         </div>
-        <div v-else-if='layout === "stats-layout"' class='stats-layout' key='stats-layout' @dblclick.self='cycleLayout'>
-          <div class='hello'>Hello World</div>
+        <div v-else-if='layout === "stats"' id='stats' key='stats'>
+          <div class='wrapper'>
+            <div class='hello'>Hello World</div>
+          </div>
         </div>
       </Transition>
     </div>
@@ -21,8 +23,8 @@
   import NewsWidget from './NewsWidget.vue'
   import TimeWidget from './TimeWidget.vue'
 
-  const layouts = ['simple-layout', 'stats-layout']
-  const layout = ref('simple-layout')   // Current active layout
+  const layouts = ['simple', 'stats']
+  const layout = ref('simple')   // Current active layout
   const fullscreen = ref(false)         // True when browser is in fullscreen
 
   // On Mounted
@@ -65,32 +67,43 @@
     text-shadow: 1px 1px 10px #000;
     position: relative;
     width: 100vw; height: 100vh;
-
     a, a:visited {
       color: inherit;
       text-decoration: none;
       &:hover { text-decoration: underline; }
     }
-
     &.fullscreen {
       width: calc(100vw - 20px); height: calc(100vh - 20px);
       animation: square-move 240s linear infinite;
     }
-
   }
 
-  .simple-layout, .stats-layout {
-    width: 100%; height: 100%;
+  /* Simple Layout */
+  #simple {
     position: relative;
+    width:100%; height:100%;
   }
 
-  .stats-layout {
+  /* Stats Layout */
+  #stats {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width:100%; height:100%;
+    .wrapper {
+      width:1900px; height:1060px;
+      border: 1px solid #eee4;
+    }
+  }
+  #stats {
     display: flex;
     align-items: center;
     justify-content: center;
     .hello { font-size: 4rem; }
   }
 
+  /* Animations */
   .layout-fade-enter-active, .layout-fade-leave-active { transition: opacity 0.5s ease; }
   .layout-fade-enter-from, .layout-fade-leave-to { opacity: 0; }
 
