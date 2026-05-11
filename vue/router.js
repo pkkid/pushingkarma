@@ -9,7 +9,7 @@ const router = createRouter({
     {path:'/notes', name:'notes', component: () => import('@/views/notes/Notes.vue')},
     {path:'/budget', name:'budget', component: () => import('@/views/budget/Budget.vue')},
     {path:'/stocks', name:'stocks', component: () => import('@/views/stocks/Stocks.vue')},
-    {path:'/newtab', name:'newtab', component: () => import('@/views/NewTab.vue')},
+    {path:'/newtab', name:'newtab', component: () => import('@/views/newtab/NewTab.vue')},
     {path:'/apidoc', name:'apidoc', component: () => import('@/views/api/ApiDoc.vue')},
   ],
   scrollBehavior(to, from, savedPosition) {
