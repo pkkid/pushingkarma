@@ -8,7 +8,7 @@ from os.path import abspath, basename, dirname, exists, expanduser, islink
 
 PROJECT_DIR = dirname(dirname(abspath(__file__)))
 SETTINGS = f'{PROJECT_DIR}/pk/settings.py'
-MOUNT_CMD = expanduser('~/Sync/Scripts/mount-private.py')
+MOUNT_CMD = expanduser('~/Projects/scripts/mount-private.py')
 style = color_style()
 
 
@@ -45,7 +45,7 @@ def check_notes_symlinks():
 
     
 if __name__ == "__main__":
-    setup_python_path()
     check_private_mount()
+    setup_python_path()
     check_notes_symlinks()
     execute_from_command_line(sys.argv)
