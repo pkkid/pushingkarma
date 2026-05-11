@@ -18,6 +18,7 @@ nvm use 20.11
 npm install
 uv venv --python=3.13
 uv pip install -r pyproject.toml
+uv sync --all-extras
 ln -s ~/Private/Secrets/pushingkarma/settings.py pk/settings.py
 scripts/database-get.py
 
