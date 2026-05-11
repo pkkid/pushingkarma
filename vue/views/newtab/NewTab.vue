@@ -9,20 +9,16 @@
         </div>
         <div v-else-if='layout === "stats"' id='stats' key='stats'>
           <div class='stats-grid'>
-            <!-- <div class='cell-time'> -->
-              <TimeWidget :fullscreen='fullscreen' compact class='glances-widget'/>
-            <!-- </div>
-            <div class='cell-cpu'> -->
+            <div class='stats-col col-1'>
+              <TimeWidget :fullscreen='fullscreen' compact class='widget'/>
               <CpuWidget :animationDuration='chartAnimationDuration' :animationStyle='chartAnimationStyle'/>
-            <!-- </div>
-            <div class='cell-gpu'> -->
               <NvidiaWidget :animationDuration='chartAnimationDuration' :animationStyle='chartAnimationStyle'/>
-            <!-- </div> -->
-            <div class='col-center'>
+            </div>
+            <div class='stats-col col-2'>
               <NetworkWidget :animationDuration='chartAnimationDuration' :animationStyle='chartAnimationStyle'/>
               <ProcessesWidget/>
             </div>
-            <div class='col-right'>
+            <div class='stats-col col-3'>
               <MemoryWidget/>
               <FilesystemWidget/>
             </div>
@@ -41,11 +37,11 @@
   import NewsWidget from './NewsWidget.vue'
   import TimeWidget from './TimeWidget.vue'
   import CpuWidget from './StatsCpuWidget.vue'
-  import MemoryWidget from './MemoryWidget.vue'
+  import MemoryWidget from './StatsMemoryWidget.vue'
   import NvidiaWidget from './StatsNvidiaWidget.vue'
-  import ProcessesWidget from './ProcessesWidget.vue'
-  import NetworkWidget from './NetworkWidget.vue'
-  import FilesystemWidget from './FilesystemWidget.vue'
+  import ProcessesWidget from './StatsProcsWidget.vue'
+  import NetworkWidget from './StatsNetworkWidget.vue'
+  import FilesystemWidget from './StatsFilesystemWidget.vue'
 
   const {start} = useGlances()
   const layouts = ['simple', 'stats']
@@ -135,37 +131,14 @@
   .stats-grid {
     display: grid;
     grid-template-columns: 33% 33% 33%;
-    /* grid-template-rows: auto 1fr auto; */
+    grid-template-rows: 100%;
     gap: 12px;
     padding: 20px;
     width: 1900px;
     height: 1060px;
-    flex-shrink: 0;
     box-sizing: border-box;
     font-size: 30px;
-    .cell-time {
-      grid-column: 1;
-      grid-row: 1;
-    }
-    .cell-cpu {
-      grid-column: 1;
-      grid-row: 2;
-    }
-    .cell-gpu {
-      grid-column: 1;
-      grid-row: 3;
-    }
-    .col-center {
-      grid-column: 2;
-      grid-row: 1 / 4;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      & > * { flex: 1; }
-    }
-    .col-right {
-      grid-column: 3;
-      grid-row: 1 / 4;
+    .stats-col {
       display: flex;
       flex-direction: column;
       gap: 12px;
@@ -173,10 +146,10 @@
   }
 
   /* Widget base style */
-  .glances-widget {
+  .widget {
     background: #0006;
     border-radius: 8px;
-    padding: 14px 16px;
+    padding: 25px 15px;
     overflow: hidden;
     .widget-title {
       font-size: 0.75em;

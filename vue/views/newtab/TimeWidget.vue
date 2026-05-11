@@ -1,5 +1,5 @@
 <template>
-  <div id='timewidget' :class='{fullscreen, compact}'>
+  <div id='timewidget' class='widget' :class='{fullscreen, compact}'>
     <div class='time'>{{utils.formatDate(now, 'h:mm')}}</div>
     <div class='date'>{{utils.formatDate(now, 'MMMM D, YYYY')}}</div>
   </div>
@@ -49,7 +49,6 @@
       transform: none;
       align-items: center;
       justify-content: center;
-      height: 100%;
       .time { font-size:4em; line-height:1; }
       .date { font-size:1.2em; margin-top:6px; opacity:0.65; }
     }

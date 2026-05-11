@@ -1,5 +1,5 @@
 <template>
-  <div class='glances-widget memory-widget'>
+  <div class='widget memory-widget'>
     <div class='widget-title'>Memory</div>
     <div class='mem-layout'>
       <div class='chart-wrap'>

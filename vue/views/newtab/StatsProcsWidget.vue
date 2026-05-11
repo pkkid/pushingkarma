@@ -1,5 +1,5 @@
 <template>
-  <div class='glances-widget processes-widget' @click.stop='toggleSort'>
+  <div class='widget processes-widget' @click.stop='toggleSort'>
     <div class='widget-title'>Processes <span class='sort-label'>sorted by {{sortBy === 'cpu' ? 'CPU' : 'Memory'}}</span></div>
     <table v-if='procs.length'>
       <thead>

@@ -1,5 +1,5 @@
 <template>
-  <div class='glances-widget network-widget'>
+  <div class='widget network-widget'>
     <div class='widget-title'>Network</div>
     <div class='chart-wrap'>
       <Line ref='lineRef' v-if='lineData' :data='lineData' :options='lineOptions'/>

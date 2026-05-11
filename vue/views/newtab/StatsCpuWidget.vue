@@ -1,5 +1,5 @@
 <template>
-  <div class='glances-widget cpu-widget'>
+  <div class='widget cpu-widget'>
     <div class='widget-title'>CPU: {{hostname}}</div>
     <div class='chart-row'>
       <!-- History Line Chart -->

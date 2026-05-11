@@ -1,5 +1,5 @@
 <template>
-  <div class='glances-widget nvidia-widget'>
+  <div class='widget nvidia-widget'>
     <div class='widget-title'>GPU: {{gpuName}}</div>
     <div class='chart-wrap'>
       <span class='current-value'>{{gpuProc}}%</span>

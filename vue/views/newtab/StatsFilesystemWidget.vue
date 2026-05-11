@@ -1,5 +1,5 @@
 <template>
-  <div class='glances-widget filesystem-widget'>
+  <div class='widget filesystem-widget'>
     <div class='widget-title'>Filesystem</div>
     <div v-for='mount in mounts' :key='mount.mnt_point' class='mount'>
       <div class='mount-header'>
