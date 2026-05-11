@@ -9,15 +9,15 @@
         </div>
         <div v-else-if='layout === "stats"' id='stats' key='stats'>
           <div class='stats-grid'>
-            <div class='cell-time'>
+            <!-- <div class='cell-time'> -->
               <TimeWidget :fullscreen='fullscreen' compact class='glances-widget'/>
-            </div>
-            <div class='cell-cpu'>
+            <!-- </div>
+            <div class='cell-cpu'> -->
               <CpuWidget :animationDuration='chartAnimationDuration' :animationStyle='chartAnimationStyle'/>
-            </div>
-            <div class='cell-gpu'>
+            <!-- </div>
+            <div class='cell-gpu'> -->
               <NvidiaWidget :animationDuration='chartAnimationDuration' :animationStyle='chartAnimationStyle'/>
-            </div>
+            <!-- </div> -->
             <div class='col-center'>
               <NetworkWidget :animationDuration='chartAnimationDuration' :animationStyle='chartAnimationStyle'/>
               <ProcessesWidget/>
@@ -40,9 +40,9 @@
   import LogoWidget from './LogoWidget.vue'
   import NewsWidget from './NewsWidget.vue'
   import TimeWidget from './TimeWidget.vue'
-  import CpuWidget from './CpuWidget.vue'
+  import CpuWidget from './StatsCpuWidget.vue'
   import MemoryWidget from './MemoryWidget.vue'
-  import NvidiaWidget from './NvidiaWidget.vue'
+  import NvidiaWidget from './StatsNvidiaWidget.vue'
   import ProcessesWidget from './ProcessesWidget.vue'
   import NetworkWidget from './NetworkWidget.vue'
   import FilesystemWidget from './FilesystemWidget.vue'
@@ -134,8 +134,8 @@
 
   .stats-grid {
     display: grid;
-    grid-template-columns: 550px 1fr 500px;
-    grid-template-rows: auto 1fr auto;
+    grid-template-columns: 33% 33% 33%;
+    /* grid-template-rows: auto 1fr auto; */
     gap: 12px;
     padding: 20px;
     width: 1900px;
@@ -174,7 +174,7 @@
 
   /* Widget base style */
   .glances-widget {
-    background: #0008;
+    background: #0006;
     border-radius: 8px;
     padding: 14px 16px;
     overflow: hidden;
@@ -182,9 +182,23 @@
       font-size: 0.75em;
       letter-spacing: 0.12em;
       text-transform: uppercase;
-      opacity: 0.4;
+      opacity: 0.6;
       margin-bottom: 10px;
-      color:#eee;
+      font-weight: bold;
+    }
+  }
+  .chart-wrap {
+    position: relative;
+    background-color: #0005;
+    border-radius: 12px;
+    border: 1px solid #000;
+    width: 100%;
+    height: 150px;
+    .current-value {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 1.2em;
       font-weight: bold;
     }
   }

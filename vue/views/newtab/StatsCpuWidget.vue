@@ -1,21 +1,25 @@
 <template>
   <div class='glances-widget cpu-widget'>
-    <div class='widget-title'>CPU</div>
-    <div class='stats-row'>
-      <span class='stat-big'>{{cpuTotal}}%</span>
+    <div class='widget-title'>CPU: {{hostname}}</div>
+    <div class='chart-row'>
+      <!-- History Line Chart -->
+      <div class='chart-wrap cpu-wrap'>
+        <span class='current-value'>{{cpuTotal}}%</span>
+        <Line ref='lineRef' v-if='lineData' :data='lineData' :options='lineOptions'/>
+      </div>
+      <!-- Per-core Bar Charts (two rows) -->
+      <div class='cores-col'>
+        <div class='chart-wrap cores-wrap'><Bar v-if='coreData1' :data='coreData1' :options='barOptions' :plugins='corePlugins'/></div>
+        <div class='chart-wrap cores-wrap'><Bar v-if='coreData2' :data='coreData2' :options='barOptions' :plugins='corePlugins'/></div>
+      </div>
+    </div>
+    <!-- Text rows -->
+    <div class='stats-row' style='clear:left;'>
       <div class='stat-col'>
         <div>Temp: {{cpuTemp}}°C</div>
         <div>Freq: {{cpuFreq}} GHz</div>
         <div>Uptime: {{uptime}}</div>
       </div>
-    </div>
-    <!-- History Line Chart -->
-    <div class='chart-wrap'>
-      <Line ref='lineRef' v-if='lineData' :data='lineData' :options='lineOptions'/>
-    </div>
-    <!-- Per-core Bar Chart -->
-    <div class='chart-wrap cores-wrap'>
-      <Bar v-if='coreData' :data='coreData' :options='barOptions'/>
     </div>
   </div>
 </template>
@@ -54,7 +58,7 @@
 
   const lineOptions = baseLineOpts
   const barOptions = {
-    animation: false,
+    animation: {duration: 300},
     responsive: true,
     maintainAspectRatio: false,
     plugins: {legend: {display: false}, tooltip: {enabled: false}},
@@ -64,6 +68,7 @@
     },
   }
 
+  const hostname = computed(() => data.value?.system?.hostname ?? 'CPU')
   const cpuTotal = computed(() => data.value?.cpu?.total?.toFixed(1) ?? '--')
 
   const cpuTemp = computed(function() {
@@ -93,8 +98,26 @@
     }
   })
 
-  const coreData = computed(function() {
-    const cores = data.value?.percpu
+  const BLUE_TRACK = '#0000'
+
+  const corePlugins = [{
+    id: 'coreTrack',
+    beforeDatasetsDraw(chart) {
+      const {ctx, chartArea} = chart
+      if (!chartArea) return
+      const meta = chart.getDatasetMeta(0)
+      ctx.save()
+      ctx.fillStyle = BLUE_TRACK
+      meta.data.forEach(bar => {
+        ctx.beginPath()
+        ctx.roundRect(bar.x - bar.width / 2, chartArea.top, bar.width, chartArea.height, 2)
+        ctx.fill()
+      })
+      ctx.restore()
+    },
+  }]
+
+  function makeCoreData(cores) {
     if (!cores?.length) return null
     return {
       labels: cores.map((_, i) => i),
@@ -104,11 +127,32 @@
         borderRadius: 2,
       }],
     }
+  }
+
+  const coreData1 = computed(function() {
+    const cores = data.value?.percpu
+    if (!cores?.length) return null
+    return makeCoreData(cores.filter((_, i) => i % 2 === 0))
+  })
+
+  const coreData2 = computed(function() {
+    const cores = data.value?.percpu
+    if (!cores?.length) return null
+    return makeCoreData(cores.filter((_, i) => i % 2 === 1))
   })
 </script>
 
 <style>
   .cpu-widget {
+
+    .chart-row {
+      display: flex;
+      gap: 5px;
+      .cpu-chart { flex: 1; }
+      .cores-col { display: flex; flex-direction: column; gap: 4px; width: 120px; flex-shrink: 0; }
+      .cores-wrap { width: 120px; height:69px; flex-shrink: 0; margin-bottom:5px; }
+    }
+
     .stats-row {
       display: flex;
       align-items: center;
@@ -117,7 +161,6 @@
     }
     .stat-big { font-size: 3em; font-weight: 600; line-height: 1; min-width: 4.5ch; text-align: right; flex-shrink: 0; }
     .stat-col { font-size: 0.95em; opacity: 0.75; line-height: 1.6; }
-    .chart-wrap { height: 150px; width: 100%; }
-    .cores-wrap { height: 50px; margin-top: 4px; }
+    .cores-wrap { height: 50px; }
   }
 </style>

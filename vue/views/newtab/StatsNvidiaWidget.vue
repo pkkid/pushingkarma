@@ -1,19 +1,21 @@
 <template>
   <div class='glances-widget nvidia-widget'>
-    <div class='widget-title'>GPU</div>
+    <div class='widget-title'>GPU: {{gpuName}}</div>
+    <div class='chart-wrap'>
+      <span class='current-value'>{{gpuProc}}%</span>
+      <Line ref='lineRef' v-if='lineData' :data='lineData' :options='lineOptions'/>
+    </div>
+    
     <div v-if='!hasGpu' class='no-gpu'>Not available</div>
     <template v-else>
       <div class='stats-row'>
-        <span class='stat-big'>{{gpuProc}}%</span>
         <div class='stat-col'>
           <div>Temp: {{gpuTemp}}°C</div>
           <div>VRAM: {{gpuMemRate}}%</div>
-          <div>{{gpuName}}</div>
+          <div></div>
         </div>
       </div>
-      <div class='chart-wrap'>
-        <Line ref='lineRef' v-if='lineData' :data='lineData' :options='lineOptions'/>
-      </div>
+      
     </template>
   </div>
 </template>
