@@ -1,18 +1,19 @@
 import {ref, readonly} from 'vue'
 import useStorage from './useStorage'
 
-const HISTORY_LEN = 60         // 60 samples × 2s = 2 minutes
-const POLL_INTERVAL = 2000     // 2 seconds
+export const HISTORY_MINUTES = 2   // How many minutes of history to display (change me)
+const POLL_INTERVAL = 2000         // 2 seconds
+const HISTORY_LEN = Math.round((HISTORY_MINUTES * 60 * 1000) / POLL_INTERVAL)
 
 // --- Singleton state ---
 const host = useStorage('newtab.glances.host', 'http://192.168.4.253:61208')
 const data = ref(null)         // Latest full /api/4/all payload
 const error = ref(null)        // Fetch error if any
 
-// Rolling history arrays
-const cpuHistory = ref([])     // [{time, value}] total cpu %
-const netHistory = ref([])     // [{time, sent, recv}] bytes/sec aggregated
-const gpuHistory = ref([])     // [{time, value}] gpu proc %
+// Rolling history arrays — pre-filled with zeros so charts show full width immediately
+const cpuHistory = ref(Array.from({length: HISTORY_LEN}, () => ({time: 0, value: 0})))
+const netHistory = ref(Array.from({length: HISTORY_LEN}, () => ({time: 0, sent: 0, recv: 0})))
+const gpuHistory = ref(Array.from({length: HISTORY_LEN}, () => ({time: 0, value: 0})))
 
 let polling = false
 

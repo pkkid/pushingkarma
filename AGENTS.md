@@ -29,19 +29,16 @@ uv run fab deploy --full             # Full deployment with Docker rebuild
 ```
 
 ## Architecture
-
 ### Backend (Django)
 - **Django apps structure**: Each major feature is a separate Django app under `pk/apps/`
   - `main/`: Core website functionality and homepage
   - `budget/`: Financial transaction tracking and categorization
   - `stocks/`: Stock portfolio monitoring with yfinance integration
   - `obsidian/`: Integration with Obsidian vault for notes
-
 - **API Architecture**: Uses Django Ninja for REST API with automatic OpenAPI docs
   - All APIs are mounted under `/api/` prefix
   - Each app has its own router (`api.py`) with schemas defined in `schemas.py`
   - Central API configuration in `pk/urls.py`
-
 - **Database**: SQLite with Django ORM models
   - Transaction data with automatic categorization rules
   - Stock ticker history and portfolio tracking
@@ -54,7 +51,6 @@ uv run fab deploy --full             # Full deployment with Docker rebuild
   - `views/`: Page-level components for each app section
   - `composables/`: Vue composition API utilities
   - `utils/`: JavaScript utilities and API client
-
 - **Build system**: Vite with custom configuration
   - Builds to `_dist/` directory
   - Assets served from `public/static/`
@@ -67,25 +63,33 @@ uv run fab deploy --full             # Full deployment with Docker rebuild
 - **Obsidian vault**: File-based notes integration with live sync
 
 ## Development Workflow
-
 1. **Database changes**: Create migrations with `uv run python pk/manage.py makemigrations`
 2. **Static files**: Auto-collected during build process, served from `_dist/static/`
 3. **API testing**: Use `/apidoc` route for interactive API documentation
 4. **Logs**: Development logs written to `_logs/` directory
 
 ## Production Deployment
-
 - **Docker**: Containerized deployment with nginx + supervisord
 - **Fabric**: Automated deployment scripts in `fabfile.py`
 - **Static hosting**: Built Vue app served directly by nginx
 - **Database**: SQLite file persisted via Docker volume mounts
 
-## Data Management Commands
 
+
+## Data Management Commands
 The budget app includes several management commands for transaction processing:
 - `categorize_trxs`: Auto-categorize transactions based on rules
 - `clean_payees`: Normalize payee names for better categorization
 - `dedupe_trxs`: Remove duplicate transactions
 - `import_trxs`: Import transactions from OFX files
-
 Stock data updates via `update_stocks` command that fetches from yfinance API.
+
+## New Tab Page
+The new tab page (`vue/views/newtab/`) is a browser new-tab replacement that displays a dashboard of system stats widgets. Each widget is a standalone Vue component under `vue/views/newtab/`:
+
+### Glances Integration
+All system stats widgets source their data from a [Glances](https://nicolargo.github.io/glances/) instance running on the local network. The `useGlances` composable (`vue/composables/useGlances.js`) is a singleton that polls the Glances REST API (`/api/4/all`) every 2 seconds and provides reactive state to all widgets:
+- `data`: Latest full payload from the Glances API
+- `cpuHistory`, `netHistory`, `gpuHistory`: Rolling history arrays (default 2 minutes) pre-filled with zeros so trend charts show full width immediately
+- `host`: Configurable Glances server URL, persisted via `useStorage` (default `http://192.168.4.253:61208`)
+Widgets import `useGlances` and destructure only the fields they need. Because `useGlances` is a module-level singleton, all widgets share the same polling loop and data regardless of how many times the composable is called.

@@ -2,7 +2,7 @@
   <div class='glances-widget network-widget'>
     <div class='widget-title'>Network</div>
     <div class='chart-wrap'>
-      <Line v-if='lineData' :data='lineData' :options='lineOptions'/>
+      <Line ref='lineRef' v-if='lineData' :data='lineData' :options='lineOptions'/>
     </div>
     <table v-if='ifaces.length'>
       <tbody>
@@ -17,13 +17,16 @@
 </template>
 
 <script setup>
-  import {computed} from 'vue'
+  import {computed, ref, watch} from 'vue'
   import {Chart, registerables} from 'chart.js'
   import {Line} from 'vue-chartjs'
   import useGlances from '@/composables/useGlances'
-  Chart.register(...registerables)
+  import chartScrollPlugin, {triggerChartScroll} from '@/utils/chartScrollPlugin'
+  Chart.register(...registerables, chartScrollPlugin)
 
   const {data, netHistory} = useGlances()
+  const lineRef = ref(null)
+  watch(netHistory, () => triggerChartScroll(lineRef.value?.chart), {flush: 'post'})
 
   const UP_COLOR = 'rgba(214,93,14,0.9)'
   const DN_COLOR = 'rgba(69,133,136,0.9)'
@@ -48,7 +51,7 @@
   })
 
   const lineOptions = {
-    animation: {duration: 300},
+    animation: false,
     responsive: true,
     maintainAspectRatio: false,
     plugins: {legend: {display: false}, tooltip: {enabled: false}},
@@ -56,7 +59,7 @@
       x: {display: false},
       y: {display: false, min: 0},
     },
-    elements: {point: {radius: 0}, line: {tension: 0.3, borderWidth: 1.5}},
+    elements: {point: {radius: 0}, line: {tension: 0.3, borderWidth: 2.5}},
   }
 
   const lineData = computed(function() {
@@ -86,7 +89,7 @@
 
 <style>
   .network-widget {
-    .chart-wrap { height: 80px; width: 100%; margin-bottom: 8px; }
+    .chart-wrap { height: 150px; width: 100%; margin-bottom: 8px; }
     table { width: 100%; border-collapse: collapse; font-size: 1em; }
     td { padding: 4px 8px; opacity: 0.85; white-space: nowrap; }
     .iface-name { opacity: 0.55; }

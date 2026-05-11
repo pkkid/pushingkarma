@@ -15,13 +15,15 @@
             <div class='cell-cpu'>
               <CpuWidget/>
             </div>
+            <div class='cell-gpu'>
+              <NvidiaWidget/>
+            </div>
             <div class='col-center'>
               <NetworkWidget/>
               <ProcessesWidget/>
             </div>
             <div class='col-right'>
               <MemoryWidget/>
-              <NvidiaWidget/>
               <FilesystemWidget/>
             </div>
           </div>
@@ -80,6 +82,9 @@
     width: 100vw;
     overflow: hidden;
     position: relative;
+    cursor: default;
+    user-select: none;
+    display: flex;
   }
 
   #newtab {
@@ -90,6 +95,9 @@
     font-weight: 400;
     text-shadow: 1px 1px 10px #000;
     position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: 100vw; height: 100vh;
     a, a:visited {
       color: inherit;
@@ -114,13 +122,18 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width:100%; height:100%;
+    width:1900px; height:1060px;
+    border: 1px solid #fff2;
+    border-radius: 12px;
+  }
+  .fullscreen #stats {
+    border-width: 0px;
   }
 
   .stats-grid {
     display: grid;
     grid-template-columns: 550px 1fr 500px;
-    grid-template-rows: auto 1fr;
+    grid-template-rows: auto 1fr auto;
     gap: 12px;
     padding: 20px;
     width: 1900px;
@@ -136,9 +149,13 @@
       grid-column: 1;
       grid-row: 2;
     }
+    .cell-gpu {
+      grid-column: 1;
+      grid-row: 3;
+    }
     .col-center {
       grid-column: 2;
-      grid-row: 1 / 3;
+      grid-row: 1 / 4;
       display: flex;
       flex-direction: column;
       gap: 12px;
@@ -146,7 +163,7 @@
     }
     .col-right {
       grid-column: 3;
-      grid-row: 1 / 3;
+      grid-row: 1 / 4;
       display: flex;
       flex-direction: column;
       gap: 12px;
@@ -155,11 +172,9 @@
 
   /* Widget base style */
   .glances-widget {
-    background: rgba(0,0,0,0.55);
-    border: 1px solid rgba(255,255,255,0.08);
+    background: #0008;
     border-radius: 8px;
     padding: 14px 16px;
-    backdrop-filter: blur(6px);
     overflow: hidden;
     .widget-title {
       font-size: 0.75em;
@@ -167,6 +182,8 @@
       text-transform: uppercase;
       opacity: 0.4;
       margin-bottom: 10px;
+      color:#eee;
+      font-weight: bold;
     }
   }
 

@@ -7,26 +7,28 @@
         <span class='stat-big'>{{gpuProc}}%</span>
         <div class='stat-col'>
           <div>Temp: {{gpuTemp}}°C</div>
-          <div>Mem: {{gpuMemUsed}} / {{gpuMemTotal}} MB</div>
-          <div>Mem Rate: {{gpuMemRate}}%</div>
-          <div>Driver: {{driver}}</div>
+          <div>VRAM: {{gpuMemRate}}%</div>
+          <div>{{gpuName}}</div>
         </div>
       </div>
       <div class='chart-wrap'>
-        <Line v-if='lineData' :data='lineData' :options='lineOptions'/>
+        <Line ref='lineRef' v-if='lineData' :data='lineData' :options='lineOptions'/>
       </div>
     </template>
   </div>
 </template>
 
 <script setup>
-  import {computed} from 'vue'
+  import {computed, ref, watch} from 'vue'
   import {Chart, registerables} from 'chart.js'
   import {Line} from 'vue-chartjs'
   import useGlances from '@/composables/useGlances'
-  Chart.register(...registerables)
+  import chartScrollPlugin, {triggerChartScroll} from '@/utils/chartScrollPlugin'
+  Chart.register(...registerables, chartScrollPlugin)
 
   const {data, gpuHistory} = useGlances()
+  const lineRef = ref(null)
+  watch(gpuHistory, () => triggerChartScroll(lineRef.value?.chart), {flush: 'post'})
 
   const GREEN = 'rgba(152,151,26,0.9)'
   const GREEN_FILL = 'rgba(152,151,26,0.2)'
@@ -36,13 +38,11 @@
 
   const gpuProc = computed(() => gpu.value?.proc?.toFixed(1) ?? '--')
   const gpuTemp = computed(() => gpu.value?.temperature ?? '--')
-  const gpuMemUsed = computed(() => gpu.value ? Math.round(gpu.value.mem * gpu.value.mem_total / 100) : '--')
-  const gpuMemTotal = computed(() => gpu.value?.mem_total ?? '--')
   const gpuMemRate = computed(() => gpu.value?.mem?.toFixed(1) ?? '--')
-  const driver = computed(() => gpu.value?.driver_version ?? '--')
+  const gpuName = computed(() => gpu.value?.name ?? '--')
 
   const lineOptions = {
-    animation: {duration: 300},
+    animation: false,
     responsive: true,
     maintainAspectRatio: false,
     plugins: {legend: {display: false}, tooltip: {enabled: false}},
@@ -50,7 +50,7 @@
       x: {display: false},
       y: {display: false, min: 0, max: 100},
     },
-    elements: {point: {radius: 0}, line: {tension: 0.3, borderWidth: 1.5}},
+    elements: {point: {radius: 0}, line: {tension: 0.3, borderWidth: 2.5}},
   }
 
   const lineData = computed(function() {
@@ -79,6 +79,6 @@
     }
     .stat-big { font-size: 3em; font-weight: 600; line-height: 1; }
     .stat-col { font-size: 0.95em; opacity: 0.75; line-height: 1.6; }
-    .chart-wrap { height: 70px; width: 100%; }
+    .chart-wrap { height: 150px; width: 100%; }
   }
 </style>

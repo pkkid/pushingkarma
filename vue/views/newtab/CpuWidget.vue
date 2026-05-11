@@ -11,7 +11,7 @@
     </div>
     <!-- History Line Chart -->
     <div class='chart-wrap'>
-      <Line v-if='lineData' :data='lineData' :options='lineOptions'/>
+      <Line ref='lineRef' v-if='lineData' :data='lineData' :options='lineOptions'/>
     </div>
     <!-- Per-core Bar Chart -->
     <div class='chart-wrap cores-wrap'>
@@ -21,19 +21,22 @@
 </template>
 
 <script setup>
-  import {computed} from 'vue'
+  import {computed, ref, watch} from 'vue'
   import {Chart, registerables} from 'chart.js'
   import {Line, Bar} from 'vue-chartjs'
   import useGlances from '@/composables/useGlances'
-  Chart.register(...registerables)
+  import chartScrollPlugin, {triggerChartScroll} from '@/utils/chartScrollPlugin'
+  Chart.register(...registerables, chartScrollPlugin)
 
   const {data, cpuHistory} = useGlances()
+  const lineRef = ref(null)
+  watch(cpuHistory, () => triggerChartScroll(lineRef.value?.chart), {flush: 'post'})
 
   const BLUE = 'rgba(69,133,136,0.9)'
   const BLUE_FILL = 'rgba(69,133,136,0.2)'
 
   const baseLineOpts = {
-    animation: {duration: 300},
+    animation: false,
     responsive: true,
     maintainAspectRatio: false,
     plugins: {legend: {display: false}, tooltip: {enabled: false}},
@@ -41,7 +44,7 @@
       x: {display: false},
       y: {display: false, min: 0, max: 100},
     },
-    elements: {point: {radius: 0}, line: {tension: 0.3, borderWidth: 1.5}},
+    elements: {point: {radius: 0}, line: {tension: 0.3, borderWidth: 2.5}},
   }
 
   const lineOptions = baseLineOpts
@@ -65,12 +68,8 @@
   })
 
   const cpuFreq = computed(function() {
-    const freq = data.value?.percpu?.[0]
-    if (!freq) return '--'
-    // glances exposes cpu_freq via the quicklook plugin; fall back to showing core count
-    const cpufreq = data.value?.quicklook?.cpu_freq
-    if (cpufreq) return (cpufreq / 1000).toFixed(2)
-    return '--'
+    const hz = data.value?.quicklook?.cpu_hz_current
+    return hz ? (hz / 1e9).toFixed(2) : '--'
   })
 
   const uptime = computed(() => data.value?.uptime ?? '--')
@@ -111,9 +110,9 @@
       gap: 16px;
       margin-bottom: 6px;
     }
-    .stat-big { font-size: 3em; font-weight: 600; line-height: 1; }
+    .stat-big { font-size: 3em; font-weight: 600; line-height: 1; min-width: 4.5ch; text-align: right; flex-shrink: 0; }
     .stat-col { font-size: 0.95em; opacity: 0.75; line-height: 1.6; }
-    .chart-wrap { height: 80px; width: 100%; }
+    .chart-wrap { height: 150px; width: 100%; }
     .cores-wrap { height: 50px; margin-top: 4px; }
   }
 </style>
