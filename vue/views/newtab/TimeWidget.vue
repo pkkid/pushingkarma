@@ -43,9 +43,13 @@
       .date { font-size:4rem; }
     }
     &.compact {
+      display: flex;
+      flex-direction: column;
       position: static;
       transform: none;
-      text-align: left;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
       .time { font-size:4em; line-height:1; }
       .date { font-size:1.2em; margin-top:6px; opacity:0.65; }
     }
