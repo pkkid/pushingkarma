@@ -15,11 +15,12 @@ function chartScrollPlugin(duration=300) {
   id: 'chartScroll',
 
   beforeInit(chart) {
-    chart.$scroll = {offset: 0, rafId: null, duration}
+    chart.$scroll = {offset: 0, rafId: null, duration, yRafId: null, yMax: null}
   },
 
   destroy(chart) {
     if (chart.$scroll?.rafId) cancelAnimationFrame(chart.$scroll.rafId)
+    if (chart.$scroll?.yRafId) cancelAnimationFrame(chart.$scroll.yRafId)
   },
 
   beforeDatasetsDraw(chart) {
@@ -69,3 +70,37 @@ export function triggerChartScroll(chart) {
 }
 
 export default chartScrollPlugin
+
+// animateYMax
+// Smoothly animate the Y axis max of a chart from its current value to a new target.
+// Call this after updating chart data when the Y axis uses auto-scaling.
+export function animateYMax(chart, newMax) {
+  if (!chart?.$scroll) return
+  const duration = chart.$scroll.duration ?? 300
+  const yScale = chart.scales?.y
+  if (!yScale) return
+  const fromMax = chart.$scroll.yMax ?? yScale.max
+  if (newMax === fromMax) return
+  chart.$scroll.yMax = newMax
+  if (duration === 0) {
+    chart.options.scales.y.max = newMax
+    chart.update('none')
+    return
+  }
+  const start = performance.now()
+  if (chart.$scroll.yRafId) cancelAnimationFrame(chart.$scroll.yRafId)
+  function easeInOut(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t }
+  const easeFn = (chart.$scroll.style === 'linear') ? (t => t) : easeInOut
+  function tick(now) {
+    const t = Math.min((now - start) / duration, 1)
+    chart.options.scales.y.max = fromMax + (newMax - fromMax) * easeFn(t)
+    chart.update('none')
+    if (t < 1) {
+      chart.$scroll.yRafId = requestAnimationFrame(tick)
+    } else {
+      chart.$scroll.yMax = newMax
+      chart.$scroll.yRafId = null
+    }
+  }
+  chart.$scroll.yRafId = requestAnimationFrame(tick)
+}

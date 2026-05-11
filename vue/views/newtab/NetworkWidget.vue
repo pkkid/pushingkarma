@@ -21,7 +21,7 @@
   import {Chart, registerables} from 'chart.js'
   import {Line} from 'vue-chartjs'
   import useGlances from '@/composables/useGlances'
-  import chartScrollPlugin, {triggerChartScroll} from '@/utils/chartScrollPlugin'
+  import chartScrollPlugin, {triggerChartScroll, animateYMax} from '@/utils/chartScrollPlugin'
   Chart.register(...registerables, chartScrollPlugin())
 
   const props = defineProps({animationDuration: {default: 300}, animationStyle: {default: 'ease'}})
@@ -30,6 +30,9 @@
   watch(netHistory, () => {
     const chart = lineRef.value?.chart
     if (chart?.$scroll) { chart.$scroll.duration = props.animationDuration; chart.$scroll.style = props.animationStyle }
+    const h = netHistory.value
+    const peak = Math.max(...h.map(p => Math.max(p.sent, p.recv)), 1)
+    animateYMax(chart, peak)
     triggerChartScroll(chart)
   }, {flush: 'post'})
 
