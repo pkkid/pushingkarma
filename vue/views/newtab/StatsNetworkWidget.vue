@@ -7,7 +7,7 @@
     <table v-if='ifaces.length'>
       <tbody>
         <tr v-for='iface in ifaces' :key='iface.name'>
-          <td class='iface-name'>{{iface.name}}</td>
+          <td class='iface-ip'>{{iface.ip}}</td>
           <td class='speed'><span class='up'>↑</span> {{iface.sent}}</td>
           <td class='speed'><span class='dn'>↓</span> {{iface.recv}}</td>
         </tr>
@@ -49,13 +49,14 @@
 
   const ifaces = computed(function() {
     const list = data.value?.network || []
-    return list
-      .filter(i => i.interface_name !== 'lo')
-      .map(i => ({
-        name: i.interface_name,
-        sent: fmtSpeed(i.bytes_sent_rate_per_sec || 0),
-        recv: fmtSpeed(i.bytes_recv_rate_per_sec || 0),
-      }))
+    const primaryIp = data.value?.ip?.address || ''
+    const filtered = list.filter(i => i.interface_name !== 'lo' && i.speed > 0)
+    return filtered.map((i, idx) => ({
+      name: i.interface_name,
+      ip: idx === 0 ? primaryIp : '',
+      sent: fmtSpeed(i.bytes_sent_rate_per_sec || 0),
+      recv: fmtSpeed(i.bytes_recv_rate_per_sec || 0),
+    }))
   })
 
   const lineOptions = {
@@ -98,10 +99,11 @@
 <style>
   .network-widget {
     .chart-wrap { height: 150px; width: 100%; margin-bottom: 8px; }
-    table { width: 100%; border-collapse: collapse; font-size: 1em; }
-    td { padding: 4px 8px; opacity: 0.85; white-space: nowrap; }
+    table { width: 100%; border-collapse: collapse; font-size: 1em; table-layout: fixed; }
+    td { padding: 4px 8px; opacity: 0.85; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .iface-name { opacity: 0.55; }
-    .speed { text-align: right; }
+    .iface-ip { opacity: 0.55; font-size: 0.85em; width: 40%; }
+    .speed { text-align: right; width: 45%; }
     .up { color: rgba(214,93,14,0.9); }
     .dn { color: rgba(69,133,136,0.9); }
   }
