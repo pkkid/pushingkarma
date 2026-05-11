@@ -22,11 +22,16 @@
   import {Line} from 'vue-chartjs'
   import useGlances from '@/composables/useGlances'
   import chartScrollPlugin, {triggerChartScroll} from '@/utils/chartScrollPlugin'
-  Chart.register(...registerables, chartScrollPlugin)
+  Chart.register(...registerables, chartScrollPlugin())
 
+  const props = defineProps({animationDuration: {default: 300}, animationStyle: {default: 'ease'}})
   const {data, netHistory} = useGlances()
   const lineRef = ref(null)
-  watch(netHistory, () => triggerChartScroll(lineRef.value?.chart), {flush: 'post'})
+  watch(netHistory, () => {
+    const chart = lineRef.value?.chart
+    if (chart?.$scroll) { chart.$scroll.duration = props.animationDuration; chart.$scroll.style = props.animationStyle }
+    triggerChartScroll(chart)
+  }, {flush: 'post'})
 
   const UP_COLOR = 'rgba(214,93,14,0.9)'
   const DN_COLOR = 'rgba(69,133,136,0.9)'

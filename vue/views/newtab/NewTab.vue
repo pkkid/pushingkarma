@@ -13,13 +13,13 @@
               <TimeWidget :fullscreen='fullscreen' compact class='glances-widget'/>
             </div>
             <div class='cell-cpu'>
-              <CpuWidget/>
+              <CpuWidget :animationDuration='chartAnimationDuration' :animationStyle='chartAnimationStyle'/>
             </div>
             <div class='cell-gpu'>
-              <NvidiaWidget/>
+              <NvidiaWidget :animationDuration='chartAnimationDuration' :animationStyle='chartAnimationStyle'/>
             </div>
             <div class='col-center'>
-              <NetworkWidget/>
+              <NetworkWidget :animationDuration='chartAnimationDuration' :animationStyle='chartAnimationStyle'/>
               <ProcessesWidget/>
             </div>
             <div class='col-right'>
@@ -49,8 +49,10 @@
 
   const {start} = useGlances()
   const layouts = ['simple', 'stats']
-  const layout = useStorage('newtab.layout', 'simple')   // Current active layout
-  const fullscreen = ref(false)   // True when browser is in fullscreen
+  const layout = useStorage('newtab.layout', 'simple')  // Current active layout
+  const chartAnimationDuration = 2000                   // Chart scroll animation duration in ms
+  const chartAnimationStyle = 'linear'                  // Chart scroll animation style: 'ease' or 'linear'
+  const fullscreen = ref(false)                         // True when browser is in fullscreen
 
   // On Mounted
   // Initialize fullscreen status and update on resize

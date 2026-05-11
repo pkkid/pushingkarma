@@ -7,14 +7,15 @@
 //   3. Calls chart.draw() each frame (cheap repaint, no data processing)
 //
 // Usage:
-//   Chart.register(chartScrollPlugin)      // register once (de-duped by id)
+//   Chart.register(chartScrollPlugin(300))  // register once with desired duration
 //   triggerChartScroll(chartRef.value?.chart)   // call after each data update
 
-const chartScrollPlugin = {
+function chartScrollPlugin(duration=300) {
+  return {
   id: 'chartScroll',
 
   beforeInit(chart) {
-    chart.$scroll = {offset: 0, rafId: null}
+    chart.$scroll = {offset: 0, rafId: null, duration}
   },
 
   destroy(chart) {
@@ -35,22 +36,27 @@ const chartScrollPlugin = {
   afterDatasetsDraw(chart) {
     if (chart.$scroll?.offset) chart.ctx.restore()
   },
+  }
 }
 
 // triggerChartScroll
 // Call this (with flush:'post') after updating chart data. It resets the canvas
 // translate to +stepWidth (so new data appears to enter from the right) and
-// linearly decays it to 0 over `duration` ms.
-export function triggerChartScroll(chart, duration=1800) {
+// eases it to 0 over the duration configured in chartScrollPlugin().
+export function triggerChartScroll(chart) {
   if (!chart?.$scroll || !chart.chartArea) return
+  const duration = chart.$scroll.duration ?? 300
+  if (duration === 0) { chart.$scroll.offset = 0; return }
   const count = chart.data.labels?.length || 1
   const stepWidth = chart.chartArea.width / Math.max(count - 1, 1)
-  chart.$scroll.offset = stepWidth
+  chart.$scroll.offset = Math.max(chart.$scroll.offset, stepWidth)
   const start = performance.now()
   if (chart.$scroll.rafId) cancelAnimationFrame(chart.$scroll.rafId)
+  function easeInOut(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t }
+  const easeFn = (chart.$scroll.style === 'linear') ? (t => t) : easeInOut
   function tick(now) {
     const t = Math.min((now - start) / duration, 1)
-    chart.$scroll.offset = stepWidth * (1 - t)
+    chart.$scroll.offset = stepWidth * (1 - easeFn(t))
     chart.draw()
     if (t < 1) {
       chart.$scroll.rafId = requestAnimationFrame(tick)

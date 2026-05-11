@@ -26,11 +26,16 @@
   import {Line, Bar} from 'vue-chartjs'
   import useGlances from '@/composables/useGlances'
   import chartScrollPlugin, {triggerChartScroll} from '@/utils/chartScrollPlugin'
-  Chart.register(...registerables, chartScrollPlugin)
+  Chart.register(...registerables, chartScrollPlugin())
 
+  const props = defineProps({animationDuration: {default: 300}, animationStyle: {default: 'ease'}})
   const {data, cpuHistory} = useGlances()
   const lineRef = ref(null)
-  watch(cpuHistory, () => triggerChartScroll(lineRef.value?.chart), {flush: 'post'})
+  watch(cpuHistory, () => {
+    const chart = lineRef.value?.chart
+    if (chart?.$scroll) { chart.$scroll.duration = props.animationDuration; chart.$scroll.style = props.animationStyle }
+    triggerChartScroll(chart)
+  }, {flush: 'post'})
 
   const BLUE = 'rgba(69,133,136,0.9)'
   const BLUE_FILL = 'rgba(69,133,136,0.2)'
@@ -49,7 +54,7 @@
 
   const lineOptions = baseLineOpts
   const barOptions = {
-    animation: {duration: 300},
+    animation: false,
     responsive: true,
     maintainAspectRatio: false,
     plugins: {legend: {display: false}, tooltip: {enabled: false}},

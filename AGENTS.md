@@ -75,7 +75,6 @@ uv run fab deploy --full             # Full deployment with Docker rebuild
 - **Database**: SQLite file persisted via Docker volume mounts
 
 
-
 ## Data Management Commands
 The budget app includes several management commands for transaction processing:
 - `categorize_trxs`: Auto-categorize transactions based on rules
