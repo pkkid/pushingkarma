@@ -1,24 +1,35 @@
 <template>
-  <div class='widget cpu-widget'>
-    <div class='widget-title'>CPU: {{hostname}}</div>
-    <div class='chart-row'>
-      <!-- History Line Chart -->
-      <div class='chart-wrap cpu-wrap'>
-        <span class='current-value'>{{cpuTotal}}%</span>
-        <Line ref='lineRef' v-if='lineData' :data='lineData' :options='lineOptions'/>
+  <div id='cpuwidget' class='widget'>
+    <div class='header-row'>
+      <div class='title'>{{data?.system?.hostname || 'CPU'}}</div>
+      <div class='values'>
+        {{data?.cpu?.total?.toFixed(1) ?? '--'}}%
+        <span>|</span>
+        {{cputemp}}°C
       </div>
-      <!-- Per-core Bar Charts (two rows) -->
-      <div class='cores-col'>
-        <div class='chart-wrap cores-wrap'><Bar v-if='coreData1' :data='coreData1' :options='barOptions' :plugins='corePlugins'/></div>
-        <div class='chart-wrap cores-wrap'><Bar v-if='coreData2' :data='coreData2' :options='barOptions' :plugins='corePlugins'/></div>
+    </div>
+    <!-- CPU Charts -->
+    <div class='chartrow'>
+      <div class='chartwrap cpu'>
+        <span class='maxvalue'>100%</span>
+        <Line ref='cpuref' v-if='cpudata' :data='cpudata' :options='cpuopts'/>
+      </div>
+      <div class='chartwrap core1'>
+        <Bar v-if='coredata1' :data='coredata1' :options='baropts'/>
+      </div>
+      <div class='chartwrap core2'>
+        <Bar v-if='coredata2' :data='coredata2' :options='baropts'/>
+      </div>
+      <div class='chartwrap cputemp'>
+        <span class='maxvalue'>{{cputempmax}}°C</span>
+        <Line ref='tempref' v-if='cputempdata' :data='cputempdata' :options='tempopts'/>
       </div>
     </div>
     <!-- Text rows -->
     <div class='stats-row' style='clear:left;'>
       <div class='stat-col'>
-        <div>Temp: {{cpuTemp}}°C</div>
-        <div>Freq: {{cpuFreq}} GHz</div>
-        <div>Uptime: {{uptime}}</div>
+        <div>Freq: {{cpufreq}} GHz</div>
+        <div>Uptime: {{ data?.uptime?.replace(/:\d+$/, '') || '--' }}</div>
       </div>
     </div>
   </div>
@@ -32,59 +43,60 @@
   import chartScrollPlugin, {triggerChartScroll} from '@/utils/chartScrollPlugin'
   Chart.register(...registerables, chartScrollPlugin())
 
-  const props = defineProps({animationDuration: {default: 300}, animationStyle: {default: 'ease'}})
-  const {data, cpuHistory} = useGlances()
-  const lineRef = ref(null)
-  watch(cpuHistory, () => {
-    const chart = lineRef.value?.chart
-    if (chart?.$scroll) { chart.$scroll.duration = props.animationDuration; chart.$scroll.style = props.animationStyle }
-    triggerChartScroll(chart)
-  }, {flush: 'post'})
-
   const BLUE = 'rgba(69,133,136,0.9)'
   const BLUE_FILL = 'rgba(69,133,136,0.2)'
+  const ORANGE = 'rgba(214,93,14,0.9)'
+  const ORANGE_FILL = 'rgba(214,93,14,0.15)'
 
-  const baseLineOpts = {
-    animation: false,
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {legend: {display: false}, tooltip: {enabled: false}},
-    scales: {
-      x: {display: false},
-      y: {display: false, min: 0, max: 100},
-    },
-    elements: {point: {radius: 0}, line: {tension: 0.3, borderWidth: 2.5}},
-  }
+  const {data, cpuHistory, tempHistory} = useGlances()
+  const props = defineProps({
+    animationDuration: {default: 300},    // Chart animation duration
+    animationStyle: {default: 'ease'}     // Chart animation style
+  })
+  const cpuref = ref(null)                // Ref for CPU usage chart
+  const tempref = ref(null)               // Ref for CPU temperature chart
 
-  const lineOptions = baseLineOpts
-  const barOptions = {
-    animation: {duration: 300},
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {legend: {display: false}, tooltip: {enabled: false}},
-    scales: {
-      x: {display: false},
-      y: {display: false, min: 0, max: 100},
-    },
-  }
-
-  const hostname = computed(() => data.value?.system?.hostname ?? 'CPU')
-  const cpuTotal = computed(() => data.value?.cpu?.total?.toFixed(1) ?? '--')
-
-  const cpuTemp = computed(function() {
+  const cputemp = computed(function() {
     const sensors = data.value?.sensors || []
     const pkg = sensors.find(s => s.label === 'Package id 0')
     return pkg ? pkg.value : '--'
   })
 
-  const cpuFreq = computed(function() {
+  const cputempmax = computed(function() {
+    const h = tempHistory.value
+    const vals = h.map(p => p.value).filter(v => v > 0)
+    return vals.length ? Math.max(...vals) : '--'
+  })
+
+  const cpufreq = computed(function() {
     const hz = data.value?.quicklook?.cpu_hz_current
     return hz ? (hz / 1e9).toFixed(2) : '--'
   })
 
-  const uptime = computed(() => data.value?.uptime ?? '--')
+  // Chart Options
+  // Chart.js options for CPU usage, temperature, and core bar charts
+  const cpuopts = {
+    animation: false,
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {legend:{display: false}, tooltip:{enabled:false}},
+    scales: {x:{display:false}, y:{display:false, min:0, max:100}},
+    elements: {point:{radius:0}, line:{tension:0.3, borderWidth:2.5}},
+  }
+  const tempopts = {...cpuopts,
+    scales: {...cpuopts.scales, y:{display:false, min:40}}
+  }
+  const baropts = {
+    animation: {duration: 300},
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {legend: {display: false}, tooltip: {enabled: false}},
+    scales: {x:{display:false}, y:{display:false, min:0, max:100}},
+  }
 
-  const lineData = computed(function() {
+  // CPU Data
+  // Chart.js data object for CPU usage chart
+  const cpudata = computed(function() {
     const h = cpuHistory.value
     if (!h.length) return null
     return {
@@ -98,26 +110,27 @@
     }
   })
 
-  const BLUE_TRACK = '#0000'
+  // CPU Temp Data
+  // Chart.js data object for CPU temperature chart
+  const cputempdata = computed(function() {
+    const h = tempHistory.value
+    if (!h.length) return null
+    return {
+      labels: h.map(() => ''),
+      datasets: [{
+        data: h.map(p => p.value),
+        borderColor: ORANGE,
+        backgroundColor: ORANGE_FILL,
+        fill: true,
+      }],
+    }
+  })
 
-  const corePlugins = [{
-    id: 'coreTrack',
-    beforeDatasetsDraw(chart) {
-      const {ctx, chartArea} = chart
-      if (!chartArea) return
-      const meta = chart.getDatasetMeta(0)
-      ctx.save()
-      ctx.fillStyle = BLUE_TRACK
-      meta.data.forEach(bar => {
-        ctx.beginPath()
-        ctx.roundRect(bar.x - bar.width / 2, chartArea.top, bar.width, chartArea.height, 2)
-        ctx.fill()
-      })
-      ctx.restore()
-    },
-  }]
-
-  function makeCoreData(cores) {
+  // Get Core Data
+  // Helper function to get Chart.js data object for even or odd indexed cores
+  const getCoreData = function(evenodd='even') {
+    const mod = evenodd === 'even' ? 0 : 1
+    const cores = data.value?.percpu.filter((_, i) => i % 2 == mod)
     if (!cores?.length) return null
     return {
       labels: cores.map((_, i) => i),
@@ -129,38 +142,40 @@
     }
   }
 
-  const coreData1 = computed(function() {
-    const cores = data.value?.percpu
-    if (!cores?.length) return null
-    return makeCoreData(cores.filter((_, i) => i % 2 === 0))
-  })
+  // Core Data
+  // Even-indexed cores in one chart
+  const coredata1 = computed(function() { return getCoreData('even') })
+  const coredata2 = computed(function() { return getCoreData('odd') })
 
-  const coreData2 = computed(function() {
-    const cores = data.value?.percpu
-    if (!cores?.length) return null
-    return makeCoreData(cores.filter((_, i) => i % 2 === 1))
-  })
+  // Watch CPU History
+  // Trigger chart scroll animation on new data
+  watch(cpuHistory, () => {
+    const chart = cpuref.value?.chart
+    if (chart?.$scroll) {
+      chart.$scroll.duration = props.animationDuration
+      chart.$scroll.style = props.animationStyle
+    }
+    triggerChartScroll(chart)
+  }, {flush: 'post'})
+  
+  // Watch Temp History
+  // Trigger chart scroll animation on new data
+  watch(tempHistory, () => {
+    const chart = tempref.value?.chart
+    if (chart?.$scroll) {
+      chart.$scroll.duration = props.animationDuration
+      chart.$scroll.style = props.animationStyle
+    }
+    triggerChartScroll(chart)
+  }, {flush: 'post'})
 </script>
 
 <style>
-  .cpu-widget {
-
-    .chart-row {
-      display: flex;
-      gap: 5px;
-      .cpu-chart { flex: 1; }
-      .cores-col { display: flex; flex-direction: column; gap: 4px; width: 120px; flex-shrink: 0; }
-      .cores-wrap { width: 120px; height:69px; flex-shrink: 0; margin-bottom:5px; }
+  #stats #cpuwidget {
+    .chartrow {
+      grid-template-columns: auto 150px;
+      grid-template-rows: 50px 50px 70px;
+      .cpu { grid-row:span 3; width:3fr; }
     }
-
-    .stats-row {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 6px;
-    }
-    .stat-big { font-size: 3em; font-weight: 600; line-height: 1; min-width: 4.5ch; text-align: right; flex-shrink: 0; }
-    .stat-col { font-size: 0.95em; opacity: 0.75; line-height: 1.6; }
-    .cores-wrap { height: 50px; }
   }
 </style>

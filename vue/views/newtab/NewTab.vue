@@ -8,7 +8,7 @@
           <NewsWidget :fullscreen='fullscreen'/>
         </div>
         <div v-else-if='layout === "stats"' id='stats' key='stats'>
-          <div class='stats-grid'>
+          <div class='grid-layout'>
             <div class='stats-col col-1'>
               <TimeWidget :fullscreen='fullscreen' compact class='widget'/>
               <CpuWidget :animationDuration='chartAnimationDuration' :animationStyle='chartAnimationStyle'/>
@@ -108,13 +108,17 @@
     }
   }
 
-  /* Simple Layout */
+  /* ------------------------------
+  /* Simple Layout
+  /* ---------------------------- */
   #simple {
     position: relative;
     width:100%; height:100%;
   }
 
-  /* Stats Layout */
+  /* ------------------------------
+  /* Stats Layout
+  /* ---------------------------- */
   #stats {
     position: relative;
     display: flex;
@@ -123,61 +127,86 @@
     width:1900px; height:1060px;
     border: 1px solid #fff2;
     border-radius: 12px;
+    font-size: 16px;
+
+    .grid-layout {
+      display: grid;
+      grid-template-columns: 33% 33% 33%;
+      grid-template-rows: 100%;
+      gap: 12px;
+      padding: 20px;
+      width: 1900px;
+      height: 1060px;
+      box-sizing: border-box;
+      font-size: 30px;
+      .stats-col {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+    }
+
+    /* Widgets */
+    .widget {
+      background: #0006;
+      border-radius: 8px;
+      padding: 25px 15px;
+      overflow: hidden;
+      font-size: 28px;
+      .header-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 5px;
+        .title {
+          font-size: 0.8em;
+          letter-spacing: 0.12em;
+          text-transform: uppercase;
+          opacity: 0.6;
+          font-weight: bold;
+        }
+        .values {
+          font-size: 1.2em;
+          font-weight: 500;
+          font-weight: bold;
+          span { opacity: 0.6; }
+        }
+      }
+
+      /* Charts */
+      .chartrow {
+        display: grid;
+        gap: 5px;
+        grid-template-columns: 1fr;
+        grid-template-rows: 150px;
+        margin-bottom: 10px;
+        .chartwrap { margin-bottom: 0px; }
+      }
+      .chartwrap {
+        background-color: #0005;
+        border-radius: 6px;
+        border: 1px solid #3339;
+        margin-bottom: 10px;
+        position: relative;
+        width: 100%;
+        .maxvalue {
+          position: absolute;
+          top: 5px;
+          left: 5px;
+          font-size: 0.6em;
+          font-weight: bold;
+          opacity: 0.5;
+        }
+      }
+    }
   }
   .fullscreen #stats {
     border-width: 0px;
   }
-
-  .stats-grid {
-    display: grid;
-    grid-template-columns: 33% 33% 33%;
-    grid-template-rows: 100%;
-    gap: 12px;
-    padding: 20px;
-    width: 1900px;
-    height: 1060px;
-    box-sizing: border-box;
-    font-size: 30px;
-    .stats-col {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-  }
-
-  /* Widget base style */
-  .widget {
-    background: #0006;
-    border-radius: 8px;
-    padding: 25px 15px;
-    overflow: hidden;
-    .widget-title {
-      font-size: 0.75em;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      opacity: 0.6;
-      margin-bottom: 10px;
-      font-weight: bold;
-    }
-  }
-  .chart-wrap {
-    position: relative;
-    background-color: #0005;
-    border-radius: 12px;
-    border: 1px solid #000;
-    width: 100%;
-    height: 150px;
-    margin-bottom: 5px;
-    .current-value {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      font-size: 1.2em;
-      font-weight: bold;
-    }
-  }
-
-  /* Animations */
+  
+  /* ------------------------------
+  /* Animations
+  /* ---------------------------- */
   .layout-fade-enter-active, .layout-fade-leave-active { transition: opacity 0.5s ease; }
   .layout-fade-enter-from, .layout-fade-leave-to { opacity: 0; }
 

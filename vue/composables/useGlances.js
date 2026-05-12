@@ -12,6 +12,7 @@ const error = ref(null)        // Fetch error if any
 
 // Rolling history arrays — pre-filled with zeros so charts show full width immediately
 const cpuHistory = ref(Array.from({length: HISTORY_LEN}, () => ({time: 0, value: 0})))
+const tempHistory = ref(Array.from({length: HISTORY_LEN}, () => ({time: 0, value: 0})))
 const netHistory = ref(Array.from({length: HISTORY_LEN}, () => ({time: 0, sent: 0, recv: 0})))
 const gpuHistory = ref(Array.from({length: HISTORY_LEN}, () => ({time: 0, value: 0})))
 
@@ -41,6 +42,8 @@ async function poll() {
     error.value = null
     const now = Date.now()
     pushHistory(cpuHistory, {time: now, value: json.cpu?.total ?? 0})
+    const cpuPkg = (json.sensors || []).find(s => s.label === 'Package id 0')
+    pushHistory(tempHistory, {time: now, value: cpuPkg?.value ?? 0})
     const net = sumNetwork(json.network)
     pushHistory(netHistory, {time: now, sent: net.sent, recv: net.recv})
     const gpuPercent = json.gpu?.[0]?.proc ?? null
@@ -63,6 +66,7 @@ export default function useGlances() {
     data: readonly(data),
     error: readonly(error),
     cpuHistory: readonly(cpuHistory),
+    tempHistory: readonly(tempHistory),
     netHistory: readonly(netHistory),
     gpuHistory: readonly(gpuHistory),
     start,
