@@ -34,8 +34,9 @@
         return true
       })
       .map(function(m) {
+        const lastPart = m.mnt_point.split('/').filter(Boolean).pop()
         return {
-          mnt_point: m.mnt_point,
+          mnt_point: m.alias || lastPart || m.mnt_point,
           usedGB: (m.used / GB).toFixed(1),
           totalGB: (m.size / GB).toFixed(1),
           percent: m.percent,
@@ -62,14 +63,14 @@
     .mnt { opacity: 0.75; }
     .sizes { opacity: 0.55; font-size: 0.9em; }
     .bar-track {
-      height: 6px;
+      height: 10px;
       background: rgba(255,255,255,0.1);
-      border-radius: 3px;
+      border-radius: 5px;
       overflow: hidden;
     }
     .bar-fill {
       height: 100%;
-      border-radius: 3px;
+      border-radius: 5px;
       transition: width 0.3s ease;
     }
     .mount-pct { font-size: 0.85em; opacity: 0.45; text-align: right; margin-top: 2px; }

@@ -167,6 +167,7 @@
     border: 1px solid #000;
     width: 100%;
     height: 150px;
+    margin-bottom: 5px;
     .current-value {
       position: absolute;
       top: 10px;

@@ -38,6 +38,9 @@
     text-align: center;
     .time { font-size:8rem; }
     .date { font-size:3rem; margin-top:-40px; }
+    &:not(.compact) {
+      background-color: transparent;
+    }
     &.fullscreen {
       .time { font-size:12rem; }
       .date { font-size:4rem; }
