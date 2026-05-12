@@ -7,40 +7,39 @@
 //   3. Calls chart.draw() each frame (cheap repaint, no data processing)
 //
 // Usage:
-//   Chart.register(chartScrollPlugin(300))  // register once with desired duration
-//   triggerChartScroll(chartRef.value?.chart)   // call after each data update
-
-function chartScrollPlugin(duration=300) {
+//   Chart.register(chartScrollPlugin(300))     // register once with desired duration
+//   triggerChartScroll(chartRef.value?.chart)  // call after each data update
+export default function chartScrollPlugin(duration=300) {
   return {
-  id: 'chartScroll',
+    id: 'chartScroll',
 
-  beforeInit(chart) {
-    chart.$scroll = {offset: 0, rafId: null, duration, yRafId: null, yMax: null}
-  },
+    beforeInit: function(chart) {
+      chart.$scroll = {offset: 0, rafId: null, duration, yRafId: null, yMax: null}
+    },
 
-  destroy(chart) {
-    if (chart.$scroll?.rafId) cancelAnimationFrame(chart.$scroll.rafId)
-    if (chart.$scroll?.yRafId) cancelAnimationFrame(chart.$scroll.yRafId)
-  },
+    destroy: function(chart) {
+      if (chart.$scroll?.rafId) { cancelAnimationFrame(chart.$scroll.rafId) }
+      if (chart.$scroll?.yRafId) { cancelAnimationFrame(chart.$scroll.yRafId) }
+    },
 
-  beforeDatasetsDraw(chart) {
-    const offset = chart.$scroll?.offset
-    if (!offset) return
-    const {ctx, chartArea: {left, top, width, height}} = chart
-    ctx.save()
-    ctx.beginPath()
-    ctx.rect(left, top, width, height)
-    ctx.clip()
-    ctx.translate(offset, 0)
-  },
+    beforeDatasetsDraw: function(chart) {
+      const offset = chart.$scroll?.offset
+      if (!offset) { return }
+      const {ctx, chartArea: {left, top, width, height}} = chart
+      ctx.save()
+      ctx.beginPath()
+      ctx.rect(left, top, width, height)
+      ctx.clip()
+      ctx.translate(offset, 0)
+    },
 
-  afterDatasetsDraw(chart) {
-    if (chart.$scroll?.offset) chart.ctx.restore()
-  },
+    afterDatasetsDraw: function(chart) {
+      if (chart.$scroll?.offset) { chart.ctx.restore() }
+    },
   }
 }
 
-// triggerChartScroll
+// Trigger Chart Scroll
 // Call this (with flush:'post') after updating chart data. It resets the canvas
 // translate to +stepWidth (so new data appears to enter from the right) and
 // eases it to 0 over the duration configured in chartScrollPlugin().
@@ -69,9 +68,7 @@ export function triggerChartScroll(chart) {
   chart.$scroll.rafId = requestAnimationFrame(tick)
 }
 
-export default chartScrollPlugin
-
-// animateYMax
+// Animate Y Max
 // Smoothly animate the Y axis max of a chart from its current value to a new target.
 // Call this after updating chart data when the Y axis uses auto-scaling.
 export function animateYMax(chart, newMax) {

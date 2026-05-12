@@ -40,7 +40,7 @@
   import {Chart, registerables} from 'chart.js'
   import {Line, Bar} from 'vue-chartjs'
   import useGlances from '@/composables/useGlances'
-  import chartScrollPlugin, {triggerChartScroll} from '@/utils/chartScrollPlugin'
+  import chartScrollPlugin, {triggerChartScroll} from '@/utils/chartscroll'
   Chart.register(...registerables, chartScrollPlugin())
 
   const BLUE = 'rgba(69,133,136,0.9)'

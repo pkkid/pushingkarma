@@ -25,7 +25,7 @@
   import {Chart, registerables} from 'chart.js'
   import {Line} from 'vue-chartjs'
   import useGlances from '@/composables/useGlances'
-  import chartScrollPlugin, {triggerChartScroll} from '@/utils/chartScrollPlugin'
+  import chartScrollPlugin, {triggerChartScroll} from '@/utils/chartscroll'
   Chart.register(...registerables, chartScrollPlugin())
 
   const props = defineProps({animationDuration: {default: 300}, animationStyle: {default: 'ease'}})
