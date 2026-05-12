@@ -40,13 +40,9 @@
   import {Chart, registerables} from 'chart.js'
   import {Line, Bar} from 'vue-chartjs'
   import useGlances from '@/composables/useGlances'
-  import chartScrollPlugin, {triggerChartScroll} from '@/utils/chartscroll'
+  import chartScrollPlugin from '@/utils/chartscroll'
+  import {BLUE, BLUE_FILL, ORANGE, ORANGE_FILL, lineOpts, barOpts, scrollChart} from '@/utils/statsutils'
   Chart.register(...registerables, chartScrollPlugin())
-
-  const BLUE = 'rgba(69,133,136,0.9)'
-  const BLUE_FILL = 'rgba(69,133,136,0.2)'
-  const ORANGE = 'rgba(214,93,14,0.9)'
-  const ORANGE_FILL = 'rgba(214,93,14,0.15)'
 
   const {data, cpuHistory, tempHistory} = useGlances()
   const props = defineProps({
@@ -55,6 +51,8 @@
   })
   const cpuref = ref(null)                // Ref for CPU usage chart
   const tempref = ref(null)               // Ref for CPU temperature chart
+  watch(cpuHistory, () => scrollChart(cpuref.value?.chart, props), {flush: 'post'})
+  watch(tempHistory, () => scrollChart(tempref.value?.chart, props), {flush: 'post'})
 
   const cputemp = computed(function() {
     const sensors = data.value?.sensors || []
@@ -75,24 +73,9 @@
 
   // Chart Options
   // Chart.js options for CPU usage, temperature, and core bar charts
-  const cpuopts = {
-    animation: false,
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {legend:{display: false}, tooltip:{enabled:false}},
-    scales: {x:{display:false}, y:{display:false, min:0, max:100}},
-    elements: {point:{radius:0}, line:{tension:0.3, borderWidth:2.5}},
-  }
-  const tempopts = {...cpuopts,
-    scales: {...cpuopts.scales, y:{display:false, min:40}}
-  }
-  const baropts = {
-    animation: {duration: 300},
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {legend: {display: false}, tooltip: {enabled: false}},
-    scales: {x:{display:false}, y:{display:false, min:0, max:100}},
-  }
+  const cpuopts  = {...lineOpts, scales: {...lineOpts.scales, y: {...lineOpts.scales.y, max: 100}}}
+  const tempopts = {...lineOpts, scales: {...lineOpts.scales, y: {display: false, min: 40}}}
+  const baropts  = barOpts
 
   // CPU Data
   // Chart.js data object for CPU usage chart
@@ -146,28 +129,6 @@
   // Even-indexed cores in one chart
   const coredata1 = computed(function() { return getCoreData('even') })
   const coredata2 = computed(function() { return getCoreData('odd') })
-
-  // Watch CPU History
-  // Trigger chart scroll animation on new data
-  watch(cpuHistory, () => {
-    const chart = cpuref.value?.chart
-    if (chart?.$scroll) {
-      chart.$scroll.duration = props.animationDuration
-      chart.$scroll.style = props.animationStyle
-    }
-    triggerChartScroll(chart)
-  }, {flush: 'post'})
-  
-  // Watch Temp History
-  // Trigger chart scroll animation on new data
-  watch(tempHistory, () => {
-    const chart = tempref.value?.chart
-    if (chart?.$scroll) {
-      chart.$scroll.duration = props.animationDuration
-      chart.$scroll.style = props.animationStyle
-    }
-    triggerChartScroll(chart)
-  }, {flush: 'post'})
 </script>
 
 <style>

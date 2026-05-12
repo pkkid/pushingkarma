@@ -27,7 +27,8 @@
   import {Chart, registerables} from 'chart.js'
   import {Line} from 'vue-chartjs'
   import useGlances from '@/composables/useGlances'
-  import chartScrollPlugin, {triggerChartScroll, animateYMax} from '@/utils/chartscroll'
+  import chartScrollPlugin, {animateYMax} from '@/utils/chartscroll'
+  import {UP_COLOR, UP_FILL, DN_COLOR, DN_FILL, lineOpts, scrollChart} from '@/utils/statsutils'
   Chart.register(...registerables, chartScrollPlugin())
 
   const props = defineProps({animationDuration: {default: 300}, animationStyle: {default: 'ease'}})
@@ -41,16 +42,10 @@
     const peakUp = Math.max(...h.map(p => p.sent), 1)
     const peakDn = Math.max(...h.map(p => p.recv), 1)
     for (const [chart, peak] of [[upChart, peakUp], [dnChart, peakDn]]) {
-      if (chart?.$scroll) { chart.$scroll.duration = props.animationDuration; chart.$scroll.style = props.animationStyle }
       animateYMax(chart, peak)
-      triggerChartScroll(chart)
+      scrollChart(chart, props)
     }
   }, {flush: 'post'})
-
-  const UP_COLOR = 'rgba(214,93,14,0.9)'
-  const DN_COLOR = 'rgba(69,133,136,0.9)'
-  const UP_FILL = 'rgba(214,93,14,0.15)'
-  const DN_FILL = 'rgba(69,133,136,0.15)'
 
   function fmtSpeed(bytesPerSec) {
     if (bytesPerSec >= 1024 * 1024) return (bytesPerSec / (1024 * 1024)).toFixed(1) + ' MB/s'
@@ -73,17 +68,7 @@
     }))
   })
 
-  const baseOptions = {
-    animation: false,
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {legend: {display: false}, tooltip: {enabled: false}},
-    scales: {
-      x: {display: false},
-      y: {display: false, min: 0},
-    },
-    elements: {point: {radius: 0}, line: {tension: 0.3, borderWidth: 2.5}},
-  }
+  const baseOptions = lineOpts
   const upOptions = baseOptions
   const dnOptions = {...baseOptions, scales: {...baseOptions.scales, y: {...baseOptions.scales.y, reverse: true}}}
 

@@ -25,20 +25,14 @@
   import {Chart, registerables} from 'chart.js'
   import {Line} from 'vue-chartjs'
   import useGlances from '@/composables/useGlances'
-  import chartScrollPlugin, {triggerChartScroll} from '@/utils/chartscroll'
+  import chartScrollPlugin from '@/utils/chartscroll'
+  import {GREEN, GREEN_FILL, lineOpts, scrollChart} from '@/utils/statsutils'
   Chart.register(...registerables, chartScrollPlugin())
 
   const props = defineProps({animationDuration: {default: 300}, animationStyle: {default: 'ease'}})
   const {data, gpuHistory} = useGlances()
   const lineRef = ref(null)
-  watch(gpuHistory, () => {
-    const chart = lineRef.value?.chart
-    if (chart?.$scroll) { chart.$scroll.duration = props.animationDuration; chart.$scroll.style = props.animationStyle }
-    triggerChartScroll(chart)
-  }, {flush: 'post'})
-
-  const GREEN = 'rgba(152,151,26,0.9)'
-  const GREEN_FILL = 'rgba(152,151,26,0.2)'
+  watch(gpuHistory, () => scrollChart(lineRef.value?.chart, props), {flush: 'post'})
 
   const gpu = computed(() => data.value?.gpu?.[0] ?? null)
   const hasGpu = computed(() => !!gpu.value)
@@ -48,17 +42,7 @@
   const gpuMemRate = computed(() => gpu.value?.mem?.toFixed(1) ?? '--')
   const gpuName = computed(() => gpu.value?.name ?? '--')
 
-  const lineOptions = {
-    animation: false,
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {legend: {display: false}, tooltip: {enabled: false}},
-    scales: {
-      x: {display: false},
-      y: {display: false, min: 0, max: 100},
-    },
-    elements: {point: {radius: 0}, line: {tension: 0.3, borderWidth: 2.5}},
-  }
+  const lineOptions = {...lineOpts, scales: {...lineOpts.scales, y: {...lineOpts.scales.y, max: 100}}}
 
   const lineData = computed(function() {
     const h = gpuHistory.value.filter(p => p.value !== null)
