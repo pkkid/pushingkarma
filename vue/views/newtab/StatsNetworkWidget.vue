@@ -2,7 +2,6 @@
   <div class='widget network-widget'>
     <div class='widget-title'>
       Network
-
     </div>
     <div class='chart-wrap' style='height:100px; margin-bottom:0px;'>
       <div class='current-value'><span class='up'>↑</span> {{currentSent}}</div>
@@ -27,8 +26,8 @@
   import {Chart, registerables} from 'chart.js'
   import {Line} from 'vue-chartjs'
   import useGlances from '@/composables/useGlances'
-  import chartScrollPlugin, {animateYMax} from '@/utils/chartscroll'
-  import {UP_COLOR, UP_FILL, DN_COLOR, DN_FILL, lineOpts, scrollChart} from '@/utils/statsutils'
+  import chartScrollPlugin from '@/utils/chartscroll'
+  import {COLORS, lineOpts, scrollChart} from '@/utils/statsutils'
   Chart.register(...registerables, chartScrollPlugin())
 
   const props = defineProps({animationDuration: {default: 300}, animationStyle: {default: 'ease'}})
@@ -36,15 +35,8 @@
   const upRef = ref(null)
   const dnRef = ref(null)
   watch(netHistory, () => {
-    const upChart = upRef.value?.chart
-    const dnChart = dnRef.value?.chart
-    const h = netHistory.value
-    const peakUp = Math.max(...h.map(p => p.sent), 1)
-    const peakDn = Math.max(...h.map(p => p.recv), 1)
-    for (const [chart, peak] of [[upChart, peakUp], [dnChart, peakDn]]) {
-      animateYMax(chart, peak)
-      scrollChart(chart, props)
-    }
+    scrollChart(upRef.value?.chart, props, true)
+    scrollChart(dnRef.value?.chart, props, true)
   }, {flush: 'post'})
 
   function fmtSpeed(bytesPerSec) {
@@ -79,8 +71,8 @@
       labels: h.map(() => ''),
       datasets: [{
         data: h.map(p => p.sent),
-        borderColor: UP_COLOR,
-        backgroundColor: UP_FILL,
+        borderColor: COLORS.ORANGE,
+        backgroundColor: `${COLORS.ORANGE}33`,
         fill: true,
       }],
     }
@@ -93,8 +85,8 @@
       labels: h.map(() => ''),
       datasets: [{
         data: h.map(p => p.recv),
-        borderColor: DN_COLOR,
-        backgroundColor: DN_FILL,
+        borderColor: COLORS.GREEN,
+        backgroundColor: `${COLORS.GREEN}33`,
         fill: true,
       }],
     }

@@ -41,7 +41,7 @@
   import {Line, Bar} from 'vue-chartjs'
   import useGlances from '@/composables/useGlances'
   import chartScrollPlugin from '@/utils/chartscroll'
-  import {BLUE, BLUE_FILL, ORANGE, ORANGE_FILL, lineOpts, barOpts, scrollChart} from '@/utils/statsutils'
+  import {COLORS, lineOpts, barOpts, scrollChart} from '@/utils/statsutils'
   Chart.register(...registerables, chartScrollPlugin())
 
   const {data, cpuHistory, tempHistory} = useGlances()
@@ -73,8 +73,8 @@
 
   // Chart Options
   // Chart.js options for CPU usage, temperature, and core bar charts
-  const cpuopts  = {...lineOpts, scales: {...lineOpts.scales, y: {...lineOpts.scales.y, max: 100}}}
-  const tempopts = {...lineOpts, scales: {...lineOpts.scales, y: {display: false, min: 40}}}
+  const cpuopts  = {...lineOpts, scales: {...lineOpts.scales, y:{...lineOpts.scales.y, max:100}}}
+  const tempopts = {...lineOpts, scales: {...lineOpts.scales, y:{display:false, min:40}}}
   const baropts  = barOpts
 
   // CPU Data
@@ -86,8 +86,8 @@
       labels: h.map(() => ''),
       datasets: [{
         data: h.map(p => p.value),
-        borderColor: BLUE,
-        backgroundColor: BLUE_FILL,
+        borderColor: COLORS.BLUE,
+        backgroundColor: `${COLORS.BLUE}33`,
         fill: true,
       }],
     }
@@ -102,8 +102,8 @@
       labels: h.map(() => ''),
       datasets: [{
         data: h.map(p => p.value),
-        borderColor: ORANGE,
-        backgroundColor: ORANGE_FILL,
+        borderColor: COLORS.ORANGE,
+        backgroundColor: `${COLORS.ORANGE}33`,
         fill: true,
       }],
     }
@@ -119,7 +119,7 @@
       labels: cores.map((_, i) => i),
       datasets: [{
         data: cores.map(c => c.total),
-        backgroundColor: BLUE,
+        backgroundColor: COLORS.BLUE,
         borderRadius: 2,
       }],
     }

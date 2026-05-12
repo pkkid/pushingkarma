@@ -26,7 +26,8 @@
   import {Line} from 'vue-chartjs'
   import useGlances from '@/composables/useGlances'
   import chartScrollPlugin from '@/utils/chartscroll'
-  import {GREEN, GREEN_FILL, lineOpts, scrollChart} from '@/utils/statsutils'
+  import {COLORS, lineOpts, scrollChart} from '@/utils/statsutils'
+  const {GREEN, GREEN_FILL} = COLORS
   Chart.register(...registerables, chartScrollPlugin())
 
   const props = defineProps({animationDuration: {default: 300}, animationStyle: {default: 'ease'}})
