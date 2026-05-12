@@ -173,6 +173,12 @@
         }
       }
 
+      /* Metrics */
+      .metrics .name {
+        margin-right: 10px;
+        opacity: 0.6;
+      }
+
       /* Charts */
       .chartrow {
         display: grid;

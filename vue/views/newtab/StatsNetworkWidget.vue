@@ -26,8 +26,7 @@
   import {Chart, registerables} from 'chart.js'
   import {Line} from 'vue-chartjs'
   import useGlances from '@/composables/useGlances'
-  import chartScrollPlugin from '@/utils/chartscroll'
-  import {COLORS, lineOpts, scrollChart} from '@/utils/statsutils'
+  import {COLORS, LINEOPTS, scrollChart, chartScrollPlugin} from '@/utils/statutils'
   Chart.register(...registerables, chartScrollPlugin())
 
   const props = defineProps({animationDuration: {default: 300}, animationStyle: {default: 'ease'}})
@@ -60,7 +59,7 @@
     }))
   })
 
-  const baseOptions = lineOpts
+  const baseOptions = LINEOPTS
   const upOptions = baseOptions
   const dnOptions = {...baseOptions, scales: {...baseOptions.scales, y: {...baseOptions.scales.y, reverse: true}}}
 

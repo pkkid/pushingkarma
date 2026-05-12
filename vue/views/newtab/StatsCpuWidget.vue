@@ -1,5 +1,6 @@
 <template>
   <div id='cpuwidget' class='widget'>
+    <!-- Header -->
     <div class='header-row'>
       <div class='title'>{{data?.system?.hostname || 'CPU'}}</div>
       <div class='values'>
@@ -8,7 +9,7 @@
         {{cputemp}}°C
       </div>
     </div>
-    <!-- CPU Charts -->
+    <!-- Charts -->
     <div class='chartrow'>
       <div class='chartwrap cpu'>
         <span class='maxvalue'>100%</span>
@@ -25,11 +26,15 @@
         <Line ref='tempref' v-if='cputempdata' :data='cputempdata' :options='tempopts'/>
       </div>
     </div>
-    <!-- Text rows -->
-    <div class='stats-row' style='clear:left;'>
-      <div class='stat-col'>
-        <div>Freq: {{cpufreq}} GHz</div>
-        <div>Uptime: {{ data?.uptime?.replace(/:\d+$/, '') || '--' }}</div>
+    <!-- Metrics -->
+    <div class='metrics' style='clear:left;'>
+      <div>
+        <span class='name'>Freq:</span>
+        <span class='value'>{{((data?.quicklook?.cpu_hz_current ?? 0) / 1e9).toFixed(2)}} GHz</span>
+      </div>
+      <div>
+        <span class='name'>Uptime:</span>
+        <span class='value'>{{ data?.uptime?.replace(/:\d+$/, '') || '--' }}</span>
       </div>
     </div>
   </div>
@@ -39,25 +44,19 @@
   import {computed, ref, watch} from 'vue'
   import {Chart, registerables} from 'chart.js'
   import {Line, Bar} from 'vue-chartjs'
+  import {utils, sutils} from '@/utils'
   import useGlances from '@/composables/useGlances'
-  import chartScrollPlugin from '@/utils/chartscroll'
-  import {COLORS, lineOpts, barOpts, scrollChart} from '@/utils/statsutils'
-  Chart.register(...registerables, chartScrollPlugin())
+  Chart.register(...registerables, sutils.chartScrollPlugin())
 
   const {data, cpuHistory, tempHistory} = useGlances()
-  const props = defineProps({
-    animationDuration: {default: 300},    // Chart animation duration
-    animationStyle: {default: 'ease'}     // Chart animation style
-  })
   const cpuref = ref(null)                // Ref for CPU usage chart
   const tempref = ref(null)               // Ref for CPU temperature chart
-  watch(cpuHistory, () => scrollChart(cpuref.value?.chart, props), {flush: 'post'})
-  watch(tempHistory, () => scrollChart(tempref.value?.chart, props), {flush: 'post'})
+  watch(cpuHistory, () => sutils.scrollChart(cpuref.value?.chart), {flush: 'post'})
+  watch(tempHistory, () => sutils.scrollChart(tempref.value?.chart), {flush: 'post'})
 
   const cputemp = computed(function() {
-    const sensors = data.value?.sensors || []
-    const pkg = sensors.find(s => s.label === 'Package id 0')
-    return pkg ? pkg.value : '--'
+    var lookup = 'Package id 0'
+    return utils.findItem(data.value?.sensors, lookup)?.value ?? '--'
   })
 
   const cputempmax = computed(function() {
@@ -66,16 +65,12 @@
     return vals.length ? Math.max(...vals) : '--'
   })
 
-  const cpufreq = computed(function() {
-    const hz = data.value?.quicklook?.cpu_hz_current
-    return hz ? (hz / 1e9).toFixed(2) : '--'
-  })
-
   // Chart Options
   // Chart.js options for CPU usage, temperature, and core bar charts
-  const cpuopts  = {...lineOpts, scales: {...lineOpts.scales, y:{...lineOpts.scales.y, max:100}}}
-  const tempopts = {...lineOpts, scales: {...lineOpts.scales, y:{display:false, min:40}}}
-  const baropts  = barOpts
+  const OPTS = sutils.LINEOPTS
+  const cpuopts  = {...OPTS, scales: {...OPTS.scales, y:{...OPTS.scales.y, max:100}}}
+  const tempopts = {...OPTS, scales: {...OPTS.scales, y:{display:false, min:40}}}
+  const baropts  = sutils.BAROPTS
 
   // CPU Data
   // Chart.js data object for CPU usage chart
@@ -86,8 +81,8 @@
       labels: h.map(() => ''),
       datasets: [{
         data: h.map(p => p.value),
-        borderColor: COLORS.BLUE,
-        backgroundColor: `${COLORS.BLUE}33`,
+        borderColor: sutils.COLORS.BLUE,
+        backgroundColor: `${sutils.COLORS.BLUE}33`,
         fill: true,
       }],
     }
@@ -102,8 +97,8 @@
       labels: h.map(() => ''),
       datasets: [{
         data: h.map(p => p.value),
-        borderColor: COLORS.ORANGE,
-        backgroundColor: `${COLORS.ORANGE}33`,
+        borderColor: sutils.COLORS.ORANGE,
+        backgroundColor: `${sutils.COLORS.ORANGE}33`,
         fill: true,
       }],
     }
@@ -119,7 +114,7 @@
       labels: cores.map((_, i) => i),
       datasets: [{
         data: cores.map(c => c.total),
-        backgroundColor: COLORS.BLUE,
+        backgroundColor: sutils.COLORS.BLUE,
         borderRadius: 2,
       }],
     }

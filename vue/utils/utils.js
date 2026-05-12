@@ -60,6 +60,12 @@ export function escapeHtml(str) {
   }[match]))
 }
 
+// Find Item
+// Find an item in a list of objects by a key and value
+export function findItem(list, key, value) {
+  return (list || []).find(item => item?.[key] == value)
+}
+
 // Format Date
 // Format a date using various format strings:
 export function formatDate(value, format) {

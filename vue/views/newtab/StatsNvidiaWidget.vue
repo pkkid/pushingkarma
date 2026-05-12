@@ -25,8 +25,7 @@
   import {Chart, registerables} from 'chart.js'
   import {Line} from 'vue-chartjs'
   import useGlances from '@/composables/useGlances'
-  import chartScrollPlugin from '@/utils/chartscroll'
-  import {COLORS, lineOpts, scrollChart} from '@/utils/statsutils'
+  import {COLORS, LINEOPTS, scrollChart, chartScrollPlugin} from '@/utils/statutils'
   const {GREEN, GREEN_FILL} = COLORS
   Chart.register(...registerables, chartScrollPlugin())
 
@@ -43,7 +42,7 @@
   const gpuMemRate = computed(() => gpu.value?.mem?.toFixed(1) ?? '--')
   const gpuName = computed(() => gpu.value?.name ?? '--')
 
-  const lineOptions = {...lineOpts, scales: {...lineOpts.scales, y: {...lineOpts.scales.y, max: 100}}}
+  const lineOptions = {...LINEOPTS, scales: {...LINEOPTS.scales, y: {...LINEOPTS.scales.y, max: 100}}}
 
   const lineData = computed(function() {
     const h = gpuHistory.value.filter(p => p.value !== null)
