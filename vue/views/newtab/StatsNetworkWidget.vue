@@ -26,16 +26,29 @@
   import {Chart, registerables} from 'chart.js'
   import {Line} from 'vue-chartjs'
   import useGlances from '@/composables/useGlances'
-  import {COLORS, LINEOPTS, scrollChart, chartScrollPlugin} from '@/utils/statutils'
+  import {COLORS, LINEOPTS, animateChart, chartScrollPlugin} from '@/utils/statutils'
   Chart.register(...registerables, chartScrollPlugin())
 
   const props = defineProps({animationDuration: {default: 300}, animationStyle: {default: 'ease'}})
-  const {data, netHistory} = useGlances()
+
+  function sumNetwork(networkList) {
+    return (networkList || []).reduce(function(acc, iface) {
+      if (iface.interface_name === 'lo') return acc
+      acc.sent += iface.bytes_sent_rate_per_sec || 0
+      acc.recv += iface.bytes_recv_rate_per_sec || 0
+      return acc
+    }, {sent: 0, recv: 0})
+  }
+
+  const {data, trackHistory} = useGlances()
   const upRef = ref(null)
   const dnRef = ref(null)
-  watch(netHistory, () => {
-    scrollChart(upRef.value?.chart, props, true)
-    scrollChart(dnRef.value?.chart, props, true)
+  trackHistory('netsent', 60, (d) => sumNetwork(d?.network).sent)
+  trackHistory('netrecv', 60, (d) => sumNetwork(d?.network).recv)
+
+  watch(data, () => {
+    animateChart(upRef.value?.chart, props, true)
+    animateChart(dnRef.value?.chart, props, true)
   }, {flush: 'post'})
 
   function fmtSpeed(bytesPerSec) {
@@ -44,8 +57,8 @@
     return bytesPerSec.toFixed(0) + ' B/s'
   }
 
-  const currentSent = computed(() => { const h = netHistory.value; return h.length ? fmtSpeed(h[h.length-1].sent) : '0 B/s' })
-  const currentRecv = computed(() => { const h = netHistory.value; return h.length ? fmtSpeed(h[h.length-1].recv) : '0 B/s' })
+  const currentSent = computed(() => { const h = data.value?.history?.netsent; return h?.length ? fmtSpeed(h[h.length-1].value) : '0 B/s' })
+  const currentRecv = computed(() => { const h = data.value?.history?.netrecv; return h?.length ? fmtSpeed(h[h.length-1].value) : '0 B/s' })
 
   const ifaces = computed(function() {
     const list = data.value?.network || []
@@ -64,12 +77,12 @@
   const dnOptions = {...baseOptions, scales: {...baseOptions.scales, y: {...baseOptions.scales.y, reverse: true}}}
 
   const upData = computed(function() {
-    const h = netHistory.value
-    if (!h.length) return null
+    const h = data.value?.history?.netsent
+    if (!h?.length) return null
     return {
       labels: h.map(() => ''),
       datasets: [{
-        data: h.map(p => p.sent),
+        data: h.map(p => p.value),
         borderColor: COLORS.ORANGE,
         backgroundColor: `${COLORS.ORANGE}33`,
         fill: true,
@@ -78,12 +91,12 @@
   })
 
   const dnData = computed(function() {
-    const h = netHistory.value
-    if (!h.length) return null
+    const h = data.value?.history?.netrecv
+    if (!h?.length) return null
     return {
       labels: h.map(() => ''),
       datasets: [{
-        data: h.map(p => p.recv),
+        data: h.map(p => p.value),
         borderColor: COLORS.GREEN,
         backgroundColor: `${COLORS.GREEN}33`,
         fill: true,

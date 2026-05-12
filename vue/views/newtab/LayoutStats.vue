@@ -4,15 +4,15 @@
       <div class='stats-col col-1'>
         <TimeWidget compact class='widget'/>
         <CpuWidget />
-        <NvidiaWidget />
+        <!-- <NvidiaWidget /> -->
       </div>
       <div class='stats-col col-2'>
-        <NetworkWidget />
-        <ProcessesWidget/>
+        <!-- <NetworkWidget />
+        <ProcessesWidget/> -->
       </div>
       <div class='stats-col col-3'>
-        <MemoryWidget/>
-        <FilesystemWidget/>
+        <!-- <MemoryWidget/>
+        <FilesystemWidget/> -->
       </div>
     </div>
   </div>
@@ -20,6 +20,7 @@
 
 <script setup>
   import {onMounted} from 'vue'
+  import {useStorage} from '@/composables'
   import useGlances from '@/composables/useGlances'
   import TimeWidget from './TimeWidget.vue'
   import CpuWidget from './StatsCpuWidget.vue'
@@ -29,8 +30,12 @@
   import NetworkWidget from './StatsNetworkWidget.vue'
   import FilesystemWidget from './StatsFilesystemWidget.vue'
 
-  const {start} = useGlances()
-  onMounted(start)
+  const {startGlances} = useGlances()
+  const host = useStorage('newtab.glances.host', 'http://192.168.4.253:61208')
+  
+  onMounted(function() {
+    startGlances(host.value)
+  })
 </script>
 
 <style>

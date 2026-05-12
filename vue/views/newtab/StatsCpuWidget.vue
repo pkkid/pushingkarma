@@ -2,9 +2,9 @@
   <div id='cpuwidget' class='widget'>
     <!-- Header -->
     <div class='header-row'>
-      <div class='title'>{{data?.system?.hostname || 'CPU'}}</div>
+      <div class='title'>{{glances.data.system?.hostname || 'CPU'}}</div>
       <div class='values'>
-        {{data?.cpu?.total?.toFixed(1) ?? '--'}}%
+        {{glances.data.cpu?.total?.toFixed(1) ?? '--'}}%
         <span>|</span>
         {{cputemp}}°C
       </div>
@@ -22,7 +22,7 @@
         <Bar v-if='coredata2' :data='coredata2' :options='baropts'/>
       </div>
       <div class='chartwrap cputemp'>
-        <span class='maxvalue'>{{cputempmax}}°C</span>
+        <span class='maxvalue'>{{glances.getMaxValue('cputemp')}}°C</span>
         <Line ref='tempref' v-if='cputempdata' :data='cputempdata' :options='tempopts'/>
       </div>
     </div>
@@ -30,11 +30,11 @@
     <div class='metrics' style='clear:left;'>
       <div>
         <span class='name'>Freq:</span>
-        <span class='value'>{{((data?.quicklook?.cpu_hz_current ?? 0) / 1e9).toFixed(2)}} GHz</span>
+        <span class='value'>{{((glances.data.quicklook?.cpu_hz_current ?? 0) / 1e9).toFixed(2)}} GHz</span>
       </div>
       <div>
         <span class='name'>Uptime:</span>
-        <span class='value'>{{ data?.uptime?.replace(/:\d+$/, '') || '--' }}</span>
+        <span class='value'>{{ glances.data.uptime?.replace(/:\d+$/, '') || '--' }}</span>
       </div>
     </div>
   </div>
@@ -48,22 +48,25 @@
   import useGlances from '@/composables/useGlances'
   Chart.register(...registerables, sutils.chartScrollPlugin())
 
-  const {data, cpuHistory, tempHistory} = useGlances()
-  const cpuref = ref(null)                // Ref for CPU usage chart
-  const tempref = ref(null)               // Ref for CPU temperature chart
-  watch(cpuHistory, () => sutils.scrollChart(cpuref.value?.chart), {flush: 'post'})
-  watch(tempHistory, () => sutils.scrollChart(tempref.value?.chart), {flush: 'post'})
+  const glances = useGlances()    // Glances composable
+  const cpuref = ref(null)        // Ref for CPU usage chart
+  const tempref = ref(null)       // Ref for CPU temperature chart
 
   const cputemp = computed(function() {
-    var lookup = 'Package id 0'
-    return utils.findItem(data.value?.sensors, lookup)?.value ?? '--'
+    return utils.findItem(glances.data?.sensors, 'label', 'Package id 0', 'value') ?? 0
   })
 
-  const cputempmax = computed(function() {
-    const h = tempHistory.value
-    const vals = h.map(p => p.value).filter(v => v > 0)
-    return vals.length ? Math.max(...vals) : '--'
-  })
+  // Track History
+  // tracks history for CPU usage and temperature
+  glances.trackHistory('cpuusage', 60, (d) => d?.cpu?.total ?? 0)
+  glances.trackHistory('cputemp', 30, (d) => utils.findItem(d?.sensors, 'label', 'Package id 0', 'value') ?? 0)
+
+  // Watch Glances Data
+  // Animates the line charts on new data
+  watch(() => glances.data, () => {
+    sutils.animateChart(cpuref.value?.chart)
+    sutils.animateChart(tempref.value?.chart)
+  }, {flush: 'post'})
 
   // Chart Options
   // Chart.js options for CPU usage, temperature, and core bar charts
@@ -75,8 +78,8 @@
   // CPU Data
   // Chart.js data object for CPU usage chart
   const cpudata = computed(function() {
-    const h = cpuHistory.value
-    if (!h.length) return null
+    const h = glances.data?.history?.cpuusage
+    if (!h?.length) return null
     return {
       labels: h.map(() => ''),
       datasets: [{
@@ -91,8 +94,8 @@
   // CPU Temp Data
   // Chart.js data object for CPU temperature chart
   const cputempdata = computed(function() {
-    const h = tempHistory.value
-    if (!h.length) return null
+    const h = glances.data?.history?.cputemp
+    if (!h?.length) return null
     return {
       labels: h.map(() => ''),
       datasets: [{
@@ -108,7 +111,7 @@
   // Helper function to get Chart.js data object for even or odd indexed cores
   const getCoreData = function(evenodd='even') {
     const mod = evenodd === 'even' ? 0 : 1
-    const cores = data.value?.percpu.filter((_, i) => i % 2 == mod)
+    const cores = glances.data?.percpu?.filter((_, i) => i % 2 == mod)
     if (!cores?.length) return null
     return {
       labels: cores.map((_, i) => i),

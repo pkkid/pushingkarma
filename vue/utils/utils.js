@@ -62,8 +62,9 @@ export function escapeHtml(str) {
 
 // Find Item
 // Find an item in a list of objects by a key and value
-export function findItem(list, key, value) {
-  return (list || []).find(item => item?.[key] == value)
+export function findItem(list, lookupkey, lookupvalue, key=null) {
+  var item = (list || []).find(item => item?.[lookupkey] == lookupvalue)
+  return key && item ? item[key] : item
 }
 
 // Format Date

@@ -25,14 +25,16 @@
   import {Chart, registerables} from 'chart.js'
   import {Line} from 'vue-chartjs'
   import useGlances from '@/composables/useGlances'
-  import {COLORS, LINEOPTS, scrollChart, chartScrollPlugin} from '@/utils/statutils'
+  import {COLORS, LINEOPTS, animateChart, chartScrollPlugin} from '@/utils/statutils'
   const {GREEN, GREEN_FILL} = COLORS
   Chart.register(...registerables, chartScrollPlugin())
 
   const props = defineProps({animationDuration: {default: 300}, animationStyle: {default: 'ease'}})
-  const {data, gpuHistory} = useGlances()
+  const {data, trackHistory} = useGlances()
   const lineRef = ref(null)
-  watch(gpuHistory, () => scrollChart(lineRef.value?.chart, props), {flush: 'post'})
+  trackHistory('gpuproc', 60, (d) => d?.gpu?.[0]?.proc ?? null)
+
+  watch(data, () => animateChart(lineRef.value?.chart, props), {flush: 'post'})
 
   const gpu = computed(() => data.value?.gpu?.[0] ?? null)
   const hasGpu = computed(() => !!gpu.value)
@@ -45,7 +47,7 @@
   const lineOptions = {...LINEOPTS, scales: {...LINEOPTS.scales, y: {...LINEOPTS.scales.y, max: 100}}}
 
   const lineData = computed(function() {
-    const h = gpuHistory.value.filter(p => p.value !== null)
+    const h = (data.value?.history?.gpuproc||[]).filter(p => p.value !== null)
     if (!h.length) return null
     return {
       labels: h.map(() => ''),

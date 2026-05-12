@@ -60,7 +60,7 @@ export function chartScrollPlugin(duration=300) {
 
     beforeDatasetsDraw: function(chart) {
       const offset = chart.$scroll?.offset
-      if (!offset) { return }
+      if (!offset || !chart.ctx) { return }
       const {ctx, chartArea: {left, top, width, height}} = chart
       ctx.save()
       ctx.beginPath()
@@ -91,6 +91,7 @@ export function triggerChartScroll(chart) {
   function easeInOut(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t }
   const easeFn = (chart.$scroll.style === 'linear') ? (t => t) : easeInOut
   function tick(now) {
+    if (!chart.ctx) { chart.$scroll.rafId = null; return }
     const t = Math.min((now - start) / duration, 1)
     chart.$scroll.offset = stepWidth * (1 - easeFn(t))
     chart.draw()
@@ -143,7 +144,7 @@ export function animateYMax(chart, newMax) {
 // Pass autoYMax=true to auto-compute the Y axis peak from the chart's own dataset
 // and animate to it (for auto-scaling charts like network).
 // Call inside a watch(..., {flush: 'post'}) callback after any data updates.
-export function scrollChart(chart, props, autoYMax=false) {
+export function animateChart(chart, props, autoYMax=false) {
   if (chart?.$scroll) {
     chart.$scroll.duration = props?.animationDuration || 2000
     chart.$scroll.style = props?.animationStyle || 'linear'
