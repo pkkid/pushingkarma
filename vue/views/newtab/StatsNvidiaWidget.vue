@@ -3,7 +3,7 @@
     <div class='widget-title'>GPU: {{gpuName}}</div>
     <div class='chart-wrap'>
       <span class='current-value'>{{gpuProc}}%</span>
-      <Line ref='lineRef' v-if='lineData' :data='lineData' :options='lineOptions'/>
+      <Line ref='lineRef' v-if='lineData' :data='lineData' :options='lineOptions' :plugins='[scrollPlugin]'/>
     </div>
     
     <div v-if='!hasGpu' class='no-gpu'>Not available</div>
@@ -21,20 +21,17 @@
 </template>
 
 <script setup>
-  import {computed, ref, watch} from 'vue'
+  import {computed} from 'vue'
   import {Chart, registerables} from 'chart.js'
   import {Line} from 'vue-chartjs'
   import useGlances from '@/composables/useGlances'
-  import {COLORS, LINEOPTS, animateChart, chartScrollPlugin} from '@/utils/statutils'
+  import {COLORS, LINEOPTS, scrollingChartPlugin} from '@/utils/statutils'
   const {GREEN, GREEN_FILL} = COLORS
-  Chart.register(...registerables, chartScrollPlugin())
+  const scrollPlugin = scrollingChartPlugin({animateXDuration: 300, animateXStyle: 'ease'})
+  Chart.register(...registerables)
 
-  const props = defineProps({animationDuration: {default: 300}, animationStyle: {default: 'ease'}})
   const {data, trackHistory} = useGlances()
-  const lineRef = ref(null)
   trackHistory('gpuproc', 60, (d) => d?.gpu?.[0]?.proc ?? null)
-
-  watch(data, () => animateChart(lineRef.value?.chart, props), {flush: 'post'})
 
   const gpu = computed(() => data.value?.gpu?.[0] ?? null)
   const hasGpu = computed(() => !!gpu.value)

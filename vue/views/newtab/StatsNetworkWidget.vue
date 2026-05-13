@@ -5,11 +5,11 @@
     </div>
     <div class='chart-wrap' style='height:100px; margin-bottom:0px;'>
       <div class='current-value'><span class='up'>↑</span> {{currentSent}}</div>
-      <Line ref='upRef' v-if='upData' :data='upData' :options='upOptions'/>
+      <Line ref='upRef' v-if='upData' :data='upData' :options='upOptions' :plugins='[scrollPlugin]'/>
     </div>
     <div class='chart-wrap' style='height:100px;'>
       <div class='current-value'><span class='dn'>↓</span> {{currentRecv}}</div>
-      <Line ref='dnRef' v-if='dnData' :data='dnData' :options='dnOptions'/>
+      <Line ref='dnRef' v-if='dnData' :data='dnData' :options='dnOptions' :plugins='[scrollPlugin]'/>
     </div>
     <!-- Text rows -->
     <div class='stats-row' style='clear:left;'>
@@ -22,14 +22,13 @@
 </template>
 
 <script setup>
-  import {computed, ref, watch} from 'vue'
+  import {computed} from 'vue'
   import {Chart, registerables} from 'chart.js'
   import {Line} from 'vue-chartjs'
   import useGlances from '@/composables/useGlances'
-  import {COLORS, LINEOPTS, animateChart, chartScrollPlugin} from '@/utils/statutils'
-  Chart.register(...registerables, chartScrollPlugin())
-
-  const props = defineProps({animationDuration: {default: 300}, animationStyle: {default: 'ease'}})
+  import {COLORS, LINEOPTS, scrollingChartPlugin} from '@/utils/statutils'
+  const scrollPlugin = scrollingChartPlugin({animateXDuration: 300, animateXStyle: 'ease', animateYDuration: 300, animateYStyle: 'ease'})
+  Chart.register(...registerables)
 
   function sumNetwork(networkList) {
     return (networkList || []).reduce(function(acc, iface) {
@@ -41,15 +40,8 @@
   }
 
   const {data, trackHistory} = useGlances()
-  const upRef = ref(null)
-  const dnRef = ref(null)
   trackHistory('netsent', 60, (d) => sumNetwork(d?.network).sent)
   trackHistory('netrecv', 60, (d) => sumNetwork(d?.network).recv)
-
-  watch(data, () => {
-    animateChart(upRef.value?.chart, props, true)
-    animateChart(dnRef.value?.chart, props, true)
-  }, {flush: 'post'})
 
   function fmtSpeed(bytesPerSec) {
     if (bytesPerSec >= 1024 * 1024) return (bytesPerSec / (1024 * 1024)).toFixed(1) + ' MB/s'

@@ -13,7 +13,7 @@
     <div class='chartrow'>
       <div class='chartwrap cpu'>
         <span class='maxvalue'>100%</span>
-        <Line ref='cpuref' v-if='cpudata' :data='cpudata' :options='cpuopts'/>
+        <Line v-if='cpudata' :data='cpudata' :options='cpuopts' :plugins='[chartplugin]'/>
       </div>
       <div class='chartwrap core1'>
         <Bar v-if='coredata1' :data='coredata1' :options='baropts'/>
@@ -23,11 +23,11 @@
       </div>
       <div class='chartwrap cputemp'>
         <span class='maxvalue'>{{glances.getMaxValue('cputemp')}}°C</span>
-        <Line ref='tempref' v-if='cputempdata' :data='cputempdata' :options='tempopts'/>
+        <Line v-if='cputempdata' :data='cputempdata' :options='tempopts' :plugins='[chartplugin]'/>
       </div>
     </div>
     <!-- Metrics -->
-    <div class='metrics' style='clear:left;'>
+    <div class='metrics'>
       <div>
         <span class='name'>Freq:</span>
         <span class='value'>{{((glances.data.quicklook?.cpu_hz_current ?? 0) / 1e9).toFixed(2)}} GHz</span>
@@ -41,16 +41,15 @@
 </template>
 
 <script setup>
-  import {computed, ref, watch} from 'vue'
+  import {computed} from 'vue'
   import {Chart, registerables} from 'chart.js'
   import {Line, Bar} from 'vue-chartjs'
   import {utils, sutils} from '@/utils'
   import useGlances from '@/composables/useGlances'
-  Chart.register(...registerables, sutils.chartScrollPlugin())
+  Chart.register(...registerables)
 
-  const glances = useGlances()    // Glances composable
-  const cpuref = ref(null)        // Ref for CPU usage chart
-  const tempref = ref(null)       // Ref for CPU temperature chart
+  const chartplugin = sutils.scrollingChartPlugin()   // Chart.js plugin for smooth scrolling
+  const glances = useGlances()                        // Glances composable
 
   const cputemp = computed(function() {
     return utils.findItem(glances.data?.sensors, 'label', 'Package id 0', 'value') ?? 0
@@ -60,13 +59,6 @@
   // tracks history for CPU usage and temperature
   glances.trackHistory('cpuusage', 60, (d) => d?.cpu?.total ?? 0)
   glances.trackHistory('cputemp', 30, (d) => utils.findItem(d?.sensors, 'label', 'Package id 0', 'value') ?? 0)
-
-  // Watch Glances Data
-  // Animates the line charts on new data
-  watch(() => glances.data, () => {
-    sutils.animateChart(cpuref.value?.chart)
-    sutils.animateChart(tempref.value?.chart)
-  }, {flush: 'post'})
 
   // Chart Options
   // Chart.js options for CPU usage, temperature, and core bar charts

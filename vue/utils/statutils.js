@@ -11,7 +11,6 @@ export const COLORS = {
   GREEN_FILL: '#98971a33',
 }
 
-
 // Base Line Chart Options
 // Defaults for all stat line charts.
 export const LINEOPTS = {
@@ -33,35 +32,40 @@ export const BAROPTS = {
   scales: {x: {display: false}, y: {display: false, min: 0, max: 100}},
 }
 
-
-// chartScrollPlugin
-// Chart.js plugin that produces a smooth "scroll left" effect as new data arrives.
-// Instead of using Chart.js's built-in animation system (which redraws all points
-// simultaneously and causes flicker), this plugin:
-//   1. Clips drawing to the chart area
-//   2. Applies a decreasing translateX offset via its own RAF loop
-//   3. Calls chart.draw() each frame (cheap repaint, no data processing)
+// scrollingChartPlugin
+// Chart.js plugin for smooth live-data animations. Supports two independent effects:
+//
+//   animateX — "scroll left" effect as new data arrives. Instead of Chart.js's built-in
+//     animation (which redraws all points at once and causes flicker), this clips the
+//     canvas to the chart area, translates it right by one step-width, then eases it
+//     back to 0 via a RAF loop — so new data appears to slide in from the right.
+//   animateY — smoothly tweens the Y axis max to the current data peak, preventing
+//     the scale from jumping when large values arrive. Only active when animateYDuration > 0.
+//
+// The afterUpdate hook auto-triggers both animations on every data update, so no
+// manual watch() is needed. Pass the plugin per-chart via the :plugins prop (not
+// Chart.register) so each chart gets its own isolated instance.
 //
 // Usage:
-//   Chart.register(chartScrollPlugin(300))     // register once with desired duration
-//   triggerChartScroll(chartRef.value?.chart)  // call after each data update
-export function chartScrollPlugin(duration=300) {
-  return {
+//   const plugin = scrollingChartPlugin({animateXDuration:300, animateXStyle:'ease'})
+//   <Line :plugins="[plugin]" />
+export function scrollingChartPlugin({animateXDuration=300, animateXStyle='linear', animateYDuration=0, animateYStyle='linear'} = {}) {
+  const plugin = {
     id: 'chartScroll',
 
-    beforeInit: function(chart) {
-      chart.$scroll = {offset: 0, rafId: null, duration, yRafId: null, yMax: null}
+    beforeInit(chart) {
+      chart._scroll = {offset:0, xrafid:null, yrafid:null, ymax:null, ready:false}
     },
 
-    destroy: function(chart) {
-      if (chart.$scroll?.rafId) { cancelAnimationFrame(chart.$scroll.rafId) }
-      if (chart.$scroll?.yRafId) { cancelAnimationFrame(chart.$scroll.yRafId) }
+    destroy(chart) {
+      if (chart._scroll?.xrafid) cancelAnimationFrame(chart._scroll.xrafid)
+      if (chart._scroll?.yrafid) cancelAnimationFrame(chart._scroll.yrafid)
     },
 
-    beforeDatasetsDraw: function(chart) {
-      const offset = chart.$scroll?.offset
-      if (!offset || !chart.ctx) { return }
-      const {ctx, chartArea: {left, top, width, height}} = chart
+    beforeDatasetsDraw(chart) {
+      const offset = chart._scroll?.offset
+      if (!offset || !chart.ctx) return
+      const {ctx, chartArea:{left, top, width, height}} = chart
       ctx.save()
       ctx.beginPath()
       ctx.rect(left, top, width, height)
@@ -69,89 +73,74 @@ export function chartScrollPlugin(duration=300) {
       ctx.translate(offset, 0)
     },
 
-    afterDatasetsDraw: function(chart) {
-      if (chart.$scroll?.offset) { chart.ctx.restore() }
+    afterDatasetsDraw(chart) {
+      if (chart._scroll?.offset) chart.ctx.restore()
+    },
+
+    // Auto-trigger animation after each real data update.
+    // mode='none' updates are from animateymax's own chart.update() calls — skip those
+    // to avoid a feedback loop. Also skip the very first render (no data "entered").
+    afterUpdate(chart, args) {
+      if (args?.mode === 'none') return
+      const sc = chart._scroll
+      if (!sc) return
+      if (!sc.ready) { sc.ready = true; return }
+      plugin.animateX(chart)
+      if (animateYDuration > 0) {
+        const vals = chart.data?.datasets?.flatMap(d => d.data).filter(v => v != null) || []
+        plugin.animateY(chart, Math.max(...vals, 1))
+      }
+    },
+
+    // Animate X
+    // Smoothly scroll line chart to the left
+    animateX(chart) {
+      const sc = chart?._scroll
+      if (!sc || !chart.chartArea) return
+      if (animateXDuration === 0) { sc.offset = 0; return }
+      const count = chart.data.labels?.length || 1
+      const stepWidth = chart.chartArea.width / Math.max(count - 1, 1)
+      sc.offset = Math.max(sc.offset, stepWidth)
+      tween(sc, 'xrafid', animateXDuration, animateXStyle, stepWidth, 0,
+        (v) => { if (!chart.ctx) return false; sc.offset = v; chart.draw() },
+        () => { sc.offset = 0 },
+      )
+    },
+
+    // Animate Y
+    // Smoothly animate the Y axis max from its current value to newmax.
+    animateY(chart, newmax) {
+      const sc = chart?._scroll
+      if (!sc || !chart.scales?.y) { return }
+      const fromMax = sc.ymax ?? chart.scales.y.max
+      if (newmax === fromMax) { return }
+      sc.ymax = newmax
+      if (animateYDuration === 0) { chart.options.scales.y.max = newmax; chart.update('none'); return }
+      tween(sc, 'yrafid', animateYDuration, animateYStyle, fromMax, newmax,
+        (v) => { chart.options.scales.y.max = v; chart.update('none') },
+        () => { sc.ymax = newmax },
+      )
     },
   }
-}
 
-// Trigger Chart Scroll
-// Call this (with flush:'post') after updating chart data. It resets the canvas
-// translate to +stepWidth (so new data appears to enter from the right) and
-// eases it to 0 over the duration configured in chartScrollPlugin().
-export function triggerChartScroll(chart) {
-  if (!chart?.$scroll || !chart.chartArea) return
-  const duration = chart.$scroll.duration ?? 300
-  if (duration === 0) { chart.$scroll.offset = 0; return }
-  const count = chart.data.labels?.length || 1
-  const stepWidth = chart.chartArea.width / Math.max(count - 1, 1)
-  chart.$scroll.offset = Math.max(chart.$scroll.offset, stepWidth)
-  const start = performance.now()
-  if (chart.$scroll.rafId) cancelAnimationFrame(chart.$scroll.rafId)
-  function easeInOut(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t }
-  const easeFn = (chart.$scroll.style === 'linear') ? (t => t) : easeInOut
-  function tick(now) {
-    if (!chart.ctx) { chart.$scroll.rafId = null; return }
-    const t = Math.min((now - start) / duration, 1)
-    chart.$scroll.offset = stepWidth * (1 - easeFn(t))
-    chart.draw()
-    if (t < 1) {
-      chart.$scroll.rafId = requestAnimationFrame(tick)
-    } else {
-      chart.$scroll.offset = 0
-      chart.$scroll.rafId = null
+  // Ease
+  // Shared ease function (smooth acceleration + deceleration)
+  function ease(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t }
+
+  // Tween
+  // Shared RAF tween — interpolates from→to over duration, calling onTick each frame.
+  // onTick can return false to cancel early (e.g. if the chart was destroyed).
+  function tween(sc, key, dur, style, from, to, onTick, onDone) {
+    if (sc[key]) { cancelAnimationFrame(sc[key]) }
+    const easeFn = style === 'linear' ? (t => t) : ease
+    const start = performance.now()
+    function tick(now) {
+      const t = Math.min((now - start) / dur, 1)
+      if (onTick(from + (to - from) * easeFn(t)) === false) { sc[key] = null; return }
+      sc[key] = t < 1 ? requestAnimationFrame(tick) : (onDone?.(), null)
     }
+    sc[key] = requestAnimationFrame(tick)
   }
-  chart.$scroll.rafId = requestAnimationFrame(tick)
-}
 
-// Animate Y Max
-// Smoothly animate the Y axis max of a chart from its current value to a new target.
-// Call this after updating chart data when the Y axis uses auto-scaling.
-export function animateYMax(chart, newMax) {
-  if (!chart?.$scroll) return
-  const duration = chart.$scroll.duration ?? 300
-  const yScale = chart.scales?.y
-  if (!yScale) return
-  const fromMax = chart.$scroll.yMax ?? yScale.max
-  if (newMax === fromMax) return
-  chart.$scroll.yMax = newMax
-  if (duration === 0) {
-    chart.options.scales.y.max = newMax
-    chart.update('none')
-    return
-  }
-  const start = performance.now()
-  if (chart.$scroll.yRafId) cancelAnimationFrame(chart.$scroll.yRafId)
-  function easeInOut(t) { return t < 0.5 ? 2*t*t : -1+(4-2*t)*t }
-  const easeFn = (chart.$scroll.style === 'linear') ? (t => t) : easeInOut
-  function tick(now) {
-    const t = Math.min((now - start) / duration, 1)
-    chart.options.scales.y.max = fromMax + (newMax - fromMax) * easeFn(t)
-    chart.update('none')
-    if (t < 1) {
-      chart.$scroll.yRafId = requestAnimationFrame(tick)
-    } else {
-      chart.$scroll.yMax = newMax
-      chart.$scroll.yRafId = null
-    }
-  }
-  chart.$scroll.yRafId = requestAnimationFrame(tick)
-}
-
-// Scroll Chart
-// Apply animation props from widget defineProps then trigger the scroll animation.
-// Pass autoYMax=true to auto-compute the Y axis peak from the chart's own dataset
-// and animate to it (for auto-scaling charts like network).
-// Call inside a watch(..., {flush: 'post'}) callback after any data updates.
-export function animateChart(chart, props, autoYMax=false) {
-  if (chart?.$scroll) {
-    chart.$scroll.duration = props?.animationDuration || 2000
-    chart.$scroll.style = props?.animationStyle || 'linear'
-  }
-  if (autoYMax) {
-    const vals = chart?.data?.datasets?.flatMap(d => d.data).filter(v => v != null) || []
-    animateYMax(chart, Math.max(...vals, 1))
-  }
-  triggerChartScroll(chart)
+  return plugin
 }
