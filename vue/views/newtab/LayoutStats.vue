@@ -4,7 +4,7 @@
       <div class='stats-col col-1'>
         <WidgetTime compact class='widget'/>
         <WidgetCpu />
-        <!-- <WidgetNvidia /> -->
+        <WidgetNvidia />
       </div>
       <div class='stats-col col-2'>
         <!-- <WidgetNetwork />
@@ -75,7 +75,7 @@
       padding: 25px 15px;
       overflow: hidden;
       font-size: 28px;
-      .header-row {
+      .header {
         display: flex;
         justify-content: space-between;
         align-items: center;

@@ -1,8 +1,10 @@
 <template>
   <div id='cpuwidget' class='widget'>
     <!-- Header -->
-    <div class='header-row'>
-      <div class='title'>{{glances.data.system?.hostname || 'CPU'}}</div>
+    <div class='header'>
+      <div class='title'>
+        {{glances.data.system?.hostname || 'CPU'}}
+      </div>
       <div class='values'>
         {{glances.data.cpu?.total?.toFixed(1) ?? '--'}}%
         <span>|</span>
@@ -51,17 +53,17 @@
   const glances = useGlances()    // Glances composable
   const OPTS = sutils.LINEOPTS    // Base line chart options
 
-  // Setup CPU Chart
+  // Setup CPU Usage Chart
   const cpuChartPlugin = sutils.scrollingChartPlugin({animateXDuration:2000})
   const cpuopts = {...OPTS, scales: {...OPTS.scales, y:{...OPTS.scales.y, max:100}}}
   glances.trackHistory('cpuusage', 60, (d) => d?.cpu?.total ?? 0)
 
-  // Setup Tempurature Chart
+  // Setup CPU Tempurature Chart
   const tempChartPlugin = sutils.scrollingChartPlugin({animateXDuration:2000, animateYDuration:300})
   const tempopts = {...OPTS, scales: {...OPTS.scales, y:{display:false, min:40}}}
   glances.trackHistory('cputemp', 30, (d) => utils.findItem(d?.sensors, 'label', 'Package id 0', 'value') ?? 0)
 
-  // CPU Data
+  // CPU Usage Data
   // Chart.js data object for CPU usage chart
   const cpudata = computed(function() {
     const h = glances.data?.history?.cpuusage
