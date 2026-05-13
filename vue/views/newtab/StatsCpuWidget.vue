@@ -6,24 +6,24 @@
       <div class='values'>
         {{glances.data.cpu?.total?.toFixed(1) ?? '--'}}%
         <span>|</span>
-        {{cputemp}}°C
+        {{utils.findItem(glances.data?.sensors, 'label', 'Package id 0', 'value') ?? 0}}°C
       </div>
     </div>
     <!-- Charts -->
     <div class='chartrow'>
       <div class='chartwrap cpu'>
         <span class='maxvalue'>100%</span>
-        <Line v-if='cpudata' :data='cpudata' :options='cpuopts' :plugins='[chartplugin]'/>
+        <Line v-if='cpudata' :data='cpudata' :options='cpuopts' :plugins='[cpuChartPlugin]'/>
       </div>
       <div class='chartwrap core1'>
-        <Bar v-if='coredata1' :data='coredata1' :options='baropts'/>
+        <Bar v-if='coredata1' :data='coredata1' :options='sutils.BAROPTS'/>
       </div>
       <div class='chartwrap core2'>
-        <Bar v-if='coredata2' :data='coredata2' :options='baropts'/>
+        <Bar v-if='coredata2' :data='coredata2' :options='sutils.BAROPTS'/>
       </div>
       <div class='chartwrap cputemp'>
         <span class='maxvalue'>{{glances.getMaxValue('cputemp')}}°C</span>
-        <Line v-if='cputempdata' :data='cputempdata' :options='tempopts' :plugins='[chartplugin]'/>
+        <Line v-if='cputempdata' :data='cputempdata' :options='tempopts' :plugins='[tempChartPlugin]'/>
       </div>
     </div>
     <!-- Metrics -->
@@ -48,24 +48,18 @@
   import useGlances from '@/composables/useGlances'
   Chart.register(...registerables)
 
-  const chartplugin = sutils.scrollingChartPlugin()   // Chart.js plugin for smooth scrolling
-  const glances = useGlances()                        // Glances composable
+  const glances = useGlances()    // Glances composable
+  const OPTS = sutils.LINEOPTS    // Base line chart options
 
-  const cputemp = computed(function() {
-    return utils.findItem(glances.data?.sensors, 'label', 'Package id 0', 'value') ?? 0
-  })
-
-  // Track History
-  // tracks history for CPU usage and temperature
+  // Setup CPU Chart
+  const cpuChartPlugin = sutils.scrollingChartPlugin({animateXDuration:2000})
+  const cpuopts = {...OPTS, scales: {...OPTS.scales, y:{...OPTS.scales.y, max:100}}}
   glances.trackHistory('cpuusage', 60, (d) => d?.cpu?.total ?? 0)
-  glances.trackHistory('cputemp', 30, (d) => utils.findItem(d?.sensors, 'label', 'Package id 0', 'value') ?? 0)
 
-  // Chart Options
-  // Chart.js options for CPU usage, temperature, and core bar charts
-  const OPTS = sutils.LINEOPTS
-  const cpuopts  = {...OPTS, scales: {...OPTS.scales, y:{...OPTS.scales.y, max:100}}}
+  // Setup Tempurature Chart
+  const tempChartPlugin = sutils.scrollingChartPlugin({animateXDuration:2000, animateYDuration:300})
   const tempopts = {...OPTS, scales: {...OPTS.scales, y:{display:false, min:40}}}
-  const baropts  = sutils.BAROPTS
+  glances.trackHistory('cputemp', 30, (d) => utils.findItem(d?.sensors, 'label', 'Package id 0', 'value') ?? 0)
 
   // CPU Data
   // Chart.js data object for CPU usage chart
@@ -83,7 +77,7 @@
     }
   })
 
-  // CPU Temp Data
+  // CPU Tempurature Data
   // Chart.js data object for CPU temperature chart
   const cputempdata = computed(function() {
     const h = glances.data?.history?.cputemp
