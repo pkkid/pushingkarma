@@ -115,6 +115,7 @@
         border-radius: 6px;
         border: 1px solid #3339;
         margin-bottom: 10px;
+        overflow: hidden;
         position: relative;
         width: 100%;
         .maxvalue {

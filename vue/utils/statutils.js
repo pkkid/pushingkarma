@@ -60,6 +60,7 @@ export function scrollingChartPlugin({animateXDuration=300, animateXStyle='linea
     destroy(chart) {
       if (chart._scroll?.xrafid) cancelAnimationFrame(chart._scroll.xrafid)
       if (chart._scroll?.yrafid) cancelAnimationFrame(chart._scroll.yrafid)
+      if (chart.canvas) { chart.canvas.style.width = ''; chart.canvas.style.marginLeft = '' }
     },
 
     beforeDatasetsDraw(chart) {
@@ -84,12 +85,25 @@ export function scrollingChartPlugin({animateXDuration=300, animateXStyle='linea
       if (args?.mode === 'none') return
       const sc = chart._scroll
       if (!sc) return
+      plugin.updateCanvas(chart)
       if (!sc.ready) { sc.ready = true; return }
       plugin.animateX(chart)
       if (animateYDuration > 0) {
         const vals = chart.data?.datasets?.flatMap(d => d.data).filter(v => v != null) || []
         plugin.animateY(chart, Math.max(...vals, 1))
       }
+    },
+
+    // Update Canvas
+    // Extend the canvas width by one stepWidth and offset it left by the same amount
+    // so data exiting the left edge scrolls smoothly out of view (clipped by the
+    // .chartwrap overflow:hidden).
+    updateCanvas(chart) {
+      if (!chart.chartArea || !chart.canvas) return
+      const count = chart.data.labels?.length || 1
+      const stepWidth = chart.chartArea.width / Math.max(count - 1, 1)
+      chart.canvas.style.width = `calc(100% + ${stepWidth*2}px)`
+      chart.canvas.style.marginLeft = `-${stepWidth*2}px`
     },
 
     // Animate X
