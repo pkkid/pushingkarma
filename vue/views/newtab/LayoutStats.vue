@@ -2,17 +2,17 @@
   <div id='stats'>
     <div class='grid-layout'>
       <div class='stats-col col-1'>
-        <TimeWidget compact class='widget'/>
-        <CpuWidget />
-        <!-- <NvidiaWidget /> -->
+        <WidgetTime compact class='widget'/>
+        <WidgetCpu />
+        <!-- <WidgetNvidia /> -->
       </div>
       <div class='stats-col col-2'>
-        <!-- <NetworkWidget />
-        <ProcessesWidget/> -->
+        <!-- <WidgetNetwork />
+        <WidgetProcs/> -->
       </div>
       <div class='stats-col col-3'>
-        <!-- <MemoryWidget/>
-        <FilesystemWidget/> -->
+        <!-- <WidgetMemory/>
+        <WidgetFilesystem/> -->
       </div>
     </div>
   </div>
@@ -22,13 +22,13 @@
   import {onMounted} from 'vue'
   import {useStorage} from '@/composables'
   import useGlances from '@/composables/useGlances'
-  import TimeWidget from './TimeWidget.vue'
-  import CpuWidget from './StatsCpuWidget.vue'
-  import MemoryWidget from './StatsMemoryWidget.vue'
-  import NvidiaWidget from './StatsNvidiaWidget.vue'
-  import ProcessesWidget from './StatsProcsWidget.vue'
-  import NetworkWidget from './StatsNetworkWidget.vue'
-  import FilesystemWidget from './StatsFilesystemWidget.vue'
+  import WidgetTime from './WidgetTime.vue'
+  import WidgetCpu from './WidgetCpu.vue'
+  import WidgetMemory from './WidgetMemory.vue'
+  import WidgetNvidia from './WidgetNvidia.vue'
+  import WidgetProcs from './WidgetProcs.vue'
+  import WidgetNetwork from './WidgetNetwork.vue'
+  import WidgetFilesystem from './WidgetFilesystem.vue'
 
   const {startGlances} = useGlances()
   const host = useStorage('newtab.glances.host', 'http://192.168.4.253:61208')

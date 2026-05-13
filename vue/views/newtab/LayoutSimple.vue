@@ -1,17 +1,15 @@
 <template>
   <div id='simple'>
-    <LogoWidget :fullscreen='fullscreen'/>
-    <TimeWidget :fullscreen='fullscreen'/>
-    <NewsWidget :fullscreen='fullscreen'/>
+    <WidgetLogo/>
+    <WidgetTime/>
+    <WidgetNews/>
   </div>
 </template>
 
 <script setup>
-  import LogoWidget from './LogoWidget.vue'
-  import NewsWidget from './NewsWidget.vue'
-  import TimeWidget from './TimeWidget.vue'
-
-  defineProps({fullscreen: {default: false}})
+  import WidgetLogo from './WidgetLogo.vue'
+  import WidgetNews from './WidgetNews.vue'
+  import WidgetTime from './WidgetTime.vue'
 </script>
 
 <style>

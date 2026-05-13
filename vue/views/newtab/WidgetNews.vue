@@ -48,7 +48,6 @@
     var data = await api.Reddit.getNews({queries:reddit_queries})
     news.value = data.data.posts.sort(() => Math.random() - 0.5)
     newsindex.value = Math.floor(Math.random() * news.value.length)
-    console.log(news.value)
   }
 
   // Show Next Reddit Post
