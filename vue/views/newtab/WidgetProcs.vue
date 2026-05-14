@@ -7,37 +7,12 @@
     </div>
     <!-- Table -->
     <table v-if='procs.length' class='processlist'>
-      <!-- <tr>
-        <th class='name'>Name</th>
-        <th class='cpu' :class='{selected: sortby == "cpu"}'>CPU</th>
-        <th class='mem' :class='{selected: sortby == "mem"}'>Mem</th>
-      </tr> -->
       <tr v-for='p in procs' :key='p.pid'>
         <td class='name'>{{p.name}}</td>
         <td class='cpu'>{{p.cpu.toFixed(2)}}%</td>
         <td class='mem'>{{utils.formatSize(p.mem)}}</td>
       </tr>
     </table>
-
-
-    <!-- <div class='widget-title'>Processes <span class='sort-label'>sorted by {{sortBy === 'cpu' ? 'CPU' : 'Memory'}}</span></div>
-    <table v-if='procs.length'>
-      <thead>
-        <tr>
-          <th class='name-col'>Name</th>
-          <th :class='{active: sortBy === "cpu"}'>CPU%</th>
-          <th :class='{active: sortBy === "mem"}'>Mem</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for='p in procs' :key='p.pid'>
-          <td class='name-col'>{{p.name}}</td>
-          <td>{{p.cpu_percent.toFixed(1)}}%</td>
-          <td>{{p.memory_mb}} MB</td>
-        </tr>
-      </tbody>
-    </table>
-    <div v-else class='no-data'>No data</div> -->
   </div>
 </template>
 
