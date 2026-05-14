@@ -77,7 +77,7 @@
   // Get Bar Color
   // Return bar color based on usage percent
   const getBarColor = function(pct) {
-    if (pct >= 85) return sutils.COLORS.ORANGE
+    if (pct >= 85) { return sutils.COLORS.ORANGE }
     return sutils.COLORS.BLUE
   }
 </script>
