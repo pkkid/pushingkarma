@@ -21,10 +21,11 @@
       </div>
     </div>
     <!-- Metrics -->
-    <div class='metrics'>
-      <div><label>Internal IP:</label> {{glances.data.ip?.address}}</div>
-      <div><label>External IP:</label> {{glances.data.ip?.public_address}}</div>
+    <div class='metrics twocols'>
+      <div><label>Local IP:</label> {{glances.data.ip?.address}}</div>
       <div><label>Connections:</label> {{glances.data.connections?.ESTABLISHED ?? '--'}}</div>
+      <div><label>Ext IP:</label> {{glances.data.ip?.public_address}}</div>
+      <div><label>Listening:</label> {{glances.data.connections?.LISTEN ?? '--'}}</div>
     </div>
   </div>
 </template>

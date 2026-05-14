@@ -100,11 +100,20 @@
       }
 
       /* Metrics */
-      .metrics label {
-        display: inline;
-        font-size: 1em;
-        margin-right: 5px;
-        opacity: 0.7;
+      .metrics {
+        font-size: 0.9em;
+        &.twocols {
+          column-gap: 50px;
+          display: grid;
+          grid-template-columns: auto auto;
+          justify-content: start;
+        }
+        label {
+          display: inline;
+          font-size: 1em;
+          margin-right: 5px;
+          opacity: 0.7;
+        }
       }
 
       /* Charts */

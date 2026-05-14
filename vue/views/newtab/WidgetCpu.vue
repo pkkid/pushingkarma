@@ -29,10 +29,11 @@
       </div>
     </div>
     <!-- Metrics -->
-    <div class='metrics'>
+    <div class='metrics twocols'>
       <div><label>Freq:</label> {{((glances.data.quicklook?.cpu_hz_current ?? 0) / 1e9).toFixed(2)}} GHz</div>
       <div><label>Coolant:</label> {{utils.findItem(glances.data?.sensors, 'label', 'Coolant temp', 'value') ?? '--'}}°C</div>
       <div><label>Uptime:</label> {{formatUptime(glances.data.uptime)}}</div>
+      <div><label>Pump:</label> {{utils.findItem(glances.data?.sensors, 'label', 'Pump speed', 'value') ?? '--'}} rpm</div>
     </div>
   </div>
 </template>
