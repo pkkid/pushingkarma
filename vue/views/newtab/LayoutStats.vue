@@ -8,7 +8,7 @@
       </div>
       <div class='stats-col col-2'>
         <WidgetNetwork />
-        <!-- <WidgetProcs/> -->
+        <WidgetProcs />
       </div>
       <div class='stats-col col-3'>
         <!-- <WidgetMemory/>
@@ -31,7 +31,7 @@
   import WidgetFilesystem from './WidgetFilesystem.vue'
 
   const {startGlances} = useGlances()
-  const host = useStorage('newtab.glances.host', 'http://192.168.4.253:61208')
+  const host = useStorage('newtab.stats.host', 'http://192.168.4.253:61208')
   
   onMounted(function() {
     startGlances(host.value)
@@ -52,10 +52,11 @@
     &.fullscreen { border-width: 0px; }
 
     .grid-layout {
+      --gap: 20px;
       display: grid;
       grid-template-columns: 33% 33% 33%;
       grid-template-rows: 100%;
-      gap: 12px;
+      gap: var(--gap);
       padding: 20px;
       width: 1900px;
       height: 1060px;
@@ -64,7 +65,7 @@
       .stats-col {
         display: flex;
         flex-direction: column;
-        gap: 12px;
+        gap: var(--gap);
       }
     }
 

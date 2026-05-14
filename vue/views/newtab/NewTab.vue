@@ -15,9 +15,9 @@
   import LayoutSimple from './LayoutSimple.vue'
   import LayoutStats from './LayoutStats.vue'
 
-  const layouts = ['simple', 'stats']                   // Two layout options
+  const layouts = ['simple', 'stats']  // Two layout options
   const layout = useStorage('newtab.layout', 'simple')  // Current active layout
-  const fullscreen = ref(false)                         // True when browser is in fullscreen
+  const fullscreen = ref(false)  // True when browser is in fullscreen
 
   // On Mounted
   // Initialize fullscreen status and update on resize

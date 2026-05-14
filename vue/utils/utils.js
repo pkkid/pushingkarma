@@ -155,12 +155,21 @@ export function formatDate(value, format) {
   return result
 }
 
+// Format Size
+// Format bytes to human readable string
+export function formatSize(bytes, places=0) {
+  const [KB, MB, GB, TB] = [1,2,3,4].map(e => 1024**e)
+  if (bytes >= TB) return (bytes / TB).toFixed(1) + ' GB'
+  if (bytes >= GB) return (bytes / GB).toFixed(1) + ' GB'
+  if (bytes >= MB) return (bytes / MB).toFixed(1) + ' MB'
+  if (bytes >= KB) return (bytes / KB).toFixed(1) + ' KB'
+  return bytes.toFixed(places) + ' B'
+}
+
 // Format Speed
 // Format bytes per second to human readable string
 export function formatSpeed(bps) {
-  if (bps >= 1024 * 1024) return (bps / (1024 * 1024)).toFixed(1) + ' MB/s'
-  if (bps >= 1024) return (bps / 1024).toFixed(1) + ' KB/s'
-  return bps.toFixed(0) + ' B/s'
+  return formatSize(bps) + '/s'
 }
 
 // Get Value

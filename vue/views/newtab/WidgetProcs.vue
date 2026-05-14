@@ -1,6 +1,26 @@
 <template>
-  <div class='widget processes-widget' @click.stop='toggleSort'>
-    <div class='widget-title'>Processes <span class='sort-label'>sorted by {{sortBy === 'cpu' ? 'CPU' : 'Memory'}}</span></div>
+  <div id='procswidget' class='widget' @click.stop='toggleSort'>
+    <!-- Header -->
+    <div class='header'>
+      <div class='title'>Processes</div>
+      <div class='values'>{{glances.data.processcount?.total ?? '--'}}</div>
+    </div>
+    <!-- Table -->
+    <table v-if='procs.length' class='processlist'>
+      <!-- <tr>
+        <th class='name'>Name</th>
+        <th class='cpu' :class='{selected: sortby == "cpu"}'>CPU</th>
+        <th class='mem' :class='{selected: sortby == "mem"}'>Mem</th>
+      </tr> -->
+      <tr v-for='p in procs' :key='p.pid'>
+        <td class='name'>{{p.name}}</td>
+        <td class='cpu'>{{p.cpu.toFixed(2)}}%</td>
+        <td class='mem'>{{utils.formatSize(p.mem)}}</td>
+      </tr>
+    </table>
+
+
+    <!-- <div class='widget-title'>Processes <span class='sort-label'>sorted by {{sortBy === 'cpu' ? 'CPU' : 'Memory'}}</span></div>
     <table v-if='procs.length'>
       <thead>
         <tr>
@@ -17,84 +37,65 @@
         </tr>
       </tbody>
     </table>
-    <div v-else class='no-data'>No data</div>
+    <div v-else class='no-data'>No data</div> -->
   </div>
 </template>
 
 <script setup>
-  import {computed, ref, watch} from 'vue'
+  import {computed, ref} from 'vue'
+  import {useStorage} from '@/composables'
+  import {utils} from '@/utils'
   import useGlances from '@/composables/useGlances'
 
-  const {data, host} = useGlances()
-  const sortBy = ref('cpu')       // 'cpu' or 'mem'
-  const memList = ref([])         // processlist fetched sorted by memory
+  const glances = useGlances()  // Glances composable
+  const shownum = 6  // Number of processes to show
+  const sortby = useStorage('newtab.procs.sortby', 'cpu')  // Sort by cpu or mem
 
-  const toggleSort = function() {
-    sortBy.value = sortBy.value === 'cpu' ? 'mem' : 'cpu'
-  }
-
-  // Fetch memory-sorted processlist from Glances directly
-  const fetchMemList = async function() {
-    try {
-      const res = await fetch(`${host.value}/api/4/processlist`)
-      if (!res.ok) return
-      const list = await res.json()
-      memList.value = list
-    } catch (e) { /* ignore */ }
-  }
-
-  // Re-fetch memory list whenever main data updates (same cadence as poll)
-  watch(data, function() {
-    if (sortBy.value === 'mem') fetchMemList()
-  })
-
-  // Fetch immediately when switching to mem sort
-  watch(sortBy, function(val) {
-    if (val === 'mem') fetchMemList()
-  })
-
+  // List Processes
+  // Compute a list of processes with name, pid, cpu%, mem, and user,
   const procs = computed(function() {
-    const cores = data.value?.cpu?.cpucore || 1
-    const totalMem = data.value?.mem?.total || 0
-    const toRow = p => ({
-      ...p,
-      cpu_percent: p.cpu_percent / cores,
-      memory_mb: Math.round(p.memory_percent / 100 * totalMem / 1024 / 1024),
-    })
-    if (sortBy.value === 'mem') {
-      if (!memList.value?.length) return []
-      return [...memList.value]
-        .sort((a, b) => b.memory_percent - a.memory_percent)
-        .slice(0, 6)
-        .map(toRow)
-    }
-    const list = data.value?.processlist
-    if (!list?.length) return []
-    return [...list]
-      .sort((a, b) => b.cpu_percent - a.cpu_percent)
-      .slice(0, 6)
-      .map(toRow)
+    const cores = glances.data?.cpu?.cpucore || 1
+    return (glances.data?.processlist || []).map(p => ({
+      name: p.name,
+      pid: p.pid,
+      cpu: p.cpu_percent / cores,
+      mem: Math.round(p.memory_info?.rss),
+      user: p.username,
+    })).sort((a, b) => b[sortby.value] - a[sortby.value]).slice(0, shownum)
   })
+
+  // Toggle Sort
+  // Toggle sorting between CPU and Memory
+  const toggleSort = function() {
+    sortby.value = sortby.value === 'cpu' ? 'mem' : 'cpu'
+  }
 </script>
 
 <style>
-  .processes-widget {
-    .sort-label { opacity: 0.5; font-size: 0.85em; margin-left: 6px; }
-    table {
-      width: 100%;
+  #procswidget {
+    .processlist {
       border-collapse: collapse;
-      font-size: 1em;
+      font-size: 0.9em;
+      width: 100%;
+      td {
+        padding: 2px 10px;
+        white-space: nowrap;
+      }
+      .name {
+        overflow: hidden;
+        padding-left: 0px;
+        text-align: left;
+        text-overflow: ellipsis;
+      }
+      .cpu {
+        text-align: right;
+        width: 170px;
+      }
+      .mem {
+        padding-right: 0px;
+        text-align: right;
+        width: 170px;
+      }
     }
-    th, td {
-      padding: 5px 8px;
-      text-align: right;
-      white-space: nowrap;
-    }
-    th { opacity: 0.5; font-weight: 500; border-bottom: 1px solid rgba(255,255,255,0.1); }
-    th.active { opacity: 0.9; }
-    td { opacity: 0.85; }
-    .name-col { text-align: left; max-width: 140px; overflow: hidden; text-overflow: ellipsis; }
-
-    .no-data { opacity: 0.4; font-size: 1em; }
   }
 </style>
