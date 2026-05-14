@@ -12,7 +12,7 @@
       </div>
       <div class='stats-col col-3'>
         <WidgetMemory />
-        <!-- <WidgetFilesystem /> -->
+        <WidgetFilesystem />
       </div>
     </div>
   </div>
@@ -91,9 +91,12 @@
         .values {
           font-size: 1.2em;
           font-weight: 500;
-          font-weight: bold;
-          .delim { opacity: 0.4; margin:0px 10px; }
+          font-weight: bold;  
         }
+      }
+      .delim {
+        opacity: 0.4;
+        margin: 0px 10px;
       }
 
       /* Metrics */
