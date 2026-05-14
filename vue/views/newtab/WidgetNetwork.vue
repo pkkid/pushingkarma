@@ -1,21 +1,34 @@
 <template>
-  <div class='widget network-widget'>
-    <div class='widget-title'>
-      Network
+  <div id='networkwidget' class='widget'>
+    <!-- Header -->
+    <div class='header'>
+      <div class='title'>Network</div>
+      <div class='values'>
+        <span class='up'>↑</span> {{utils.formatSpeed(sumNetwork().up)}}
+        <span class='delim'>|</span>
+        <span class='down'>↓</span> {{utils.formatSpeed(sumNetwork().down)}}
+      </div>
     </div>
-    <div class='chart-wrap' style='height:100px; margin-bottom:0px;'>
-      <div class='current-value'><span class='up'>↑</span> {{currentSent}}</div>
-      <Line ref='upRef' v-if='upData' :data='upData' :options='upOptions' :plugins='[scrollPlugin]'/>
+    <!-- Charts -->
+    <div class='chartrow'>
+      <div class='chartwrap upload'>
+        <div class='maxvalue'>{{utils.formatSpeed(glances.getMaxValue('upload'))}}</div>
+        <Line v-if='updata' :data='updata' :options='OPTS' :plugins='[upChartPlugin]'/>
+      </div>
+      <div class='chartwrap download'>
+        <div class='maxvalue'>{{utils.formatSpeed(glances.getMaxValue('download'))}}</div>
+        <Line v-if='downdata' :data='downdata' :options='downopts' :plugins='[downChartPlugin]'/>
+      </div>
     </div>
-    <div class='chart-wrap' style='height:100px;'>
-      <div class='current-value'><span class='dn'>↓</span> {{currentRecv}}</div>
-      <Line ref='dnRef' v-if='dnData' :data='dnData' :options='dnOptions' :plugins='[scrollPlugin]'/>
-    </div>
-    <!-- Text rows -->
-    <div class='stats-row' style='clear:left;'>
-      <div class='stat-col'>
-        <div>Intenral IP: {{data?.ip?.address}}</div>
-        <div>External IP: {{data?.ip?.public_address}}</div>
+    <!-- Metrics -->
+    <div class='metrics'>
+      <div>
+        <span class='name'>Intenral IP:</span>
+        <span class='value'>{{glances.data.ip?.address}}</span>
+      </div>
+      <div>
+        <span class='name'>External IP:</span>
+        <span class='value'>{{glances.data.ip?.public_address}}</span>
       </div>
     </div>
   </div>
@@ -25,72 +38,63 @@
   import {computed} from 'vue'
   import {Chart, registerables} from 'chart.js'
   import {Line} from 'vue-chartjs'
+  import {utils, sutils} from '@/utils'
   import useGlances from '@/composables/useGlances'
-  import {COLORS, LINEOPTS, scrollingChartPlugin} from '@/utils/statutils'
-  const scrollPlugin = scrollingChartPlugin({animateXDuration: 300, animateXStyle: 'ease', animateYDuration: 300, animateYStyle: 'ease'})
   Chart.register(...registerables)
 
-  function sumNetwork(networkList) {
-    return (networkList || []).reduce(function(acc, iface) {
+  const glances = useGlances()    // Glances composable
+  const OPTS = sutils.LINEOPTS    // Base line chart options
+
+  // Setup Upload Chart
+  const upChartPlugin = sutils.scrollingChartPlugin({animateXDuration:2000, animateYDuration:1000, maxy:50000})
+  glances.trackHistory('upload', 60, (d) => sumNetwork(d).up)
+
+  // Setup Download Chart
+  const downChartPlugin = sutils.scrollingChartPlugin({animateXDuration:2000, animateYDuration:1000, maxy:50000})
+  const downopts = {...OPTS, scales: {...OPTS.scales, y:{...OPTS.scales.y, reverse:true}}}
+  glances.trackHistory('download', 60, (d) => sumNetwork(d).down)
+
+  // Sum Network
+  // Sum sent and recv speeds across all interfaces, excluding loopback
+  function sumNetwork(data) {
+    var interfaces = data?.network || glances.data?.network || []
+    return (interfaces || []).reduce(function(acc, iface) {
       if (iface.interface_name === 'lo') return acc
-      acc.sent += iface.bytes_sent_rate_per_sec || 0
-      acc.recv += iface.bytes_recv_rate_per_sec || 0
+      acc.up += iface.bytes_sent_rate_per_sec || 0
+      acc.down += iface.bytes_recv_rate_per_sec || 0
+      acc.uptotal += iface.bytes_sent || 0
+      acc.dntotal += iface.bytes_recv || 0
       return acc
-    }, {sent: 0, recv: 0})
+    }, {up:0, down:0})
   }
 
-  const {data, trackHistory} = useGlances()
-  trackHistory('netsent', 60, (d) => sumNetwork(d?.network).sent)
-  trackHistory('netrecv', 60, (d) => sumNetwork(d?.network).recv)
-
-  function fmtSpeed(bytesPerSec) {
-    if (bytesPerSec >= 1024 * 1024) return (bytesPerSec / (1024 * 1024)).toFixed(1) + ' MB/s'
-    if (bytesPerSec >= 1024) return (bytesPerSec / 1024).toFixed(1) + ' KB/s'
-    return bytesPerSec.toFixed(0) + ' B/s'
-  }
-
-  const currentSent = computed(() => { const h = data.value?.history?.netsent; return h?.length ? fmtSpeed(h[h.length-1].value) : '0 B/s' })
-  const currentRecv = computed(() => { const h = data.value?.history?.netrecv; return h?.length ? fmtSpeed(h[h.length-1].value) : '0 B/s' })
-
-  const ifaces = computed(function() {
-    const list = data.value?.network || []
-    const primaryIp = data.value?.ip?.address || ''
-    const filtered = list.filter(i => i.interface_name !== 'lo' && i.speed > 0)
-    return filtered.map((i, idx) => ({
-      name: i.interface_name,
-      ip: idx === 0 ? primaryIp : '',
-      sent: fmtSpeed(i.bytes_sent_rate_per_sec || 0),
-      recv: fmtSpeed(i.bytes_recv_rate_per_sec || 0),
-    }))
-  })
-
-  const baseOptions = LINEOPTS
-  const upOptions = baseOptions
-  const dnOptions = {...baseOptions, scales: {...baseOptions.scales, y: {...baseOptions.scales.y, reverse: true}}}
-
-  const upData = computed(function() {
-    const h = data.value?.history?.netsent
+  // Upload Data
+  // Chart.js data object for Network Upload chart
+  const updata = computed(function() {
+    const h = glances.data?.history?.upload
     if (!h?.length) return null
     return {
       labels: h.map(() => ''),
       datasets: [{
         data: h.map(p => p.value),
-        borderColor: COLORS.ORANGE,
-        backgroundColor: `${COLORS.ORANGE}33`,
+        borderColor: sutils.COLORS.ORANGE,
+        backgroundColor: `${sutils.COLORS.ORANGE}33`,
         fill: true,
       }],
     }
   })
 
-  const dnData = computed(function() {
-    const h = data.value?.history?.netrecv
+  // Download Data
+  // Chart.js data object for Network Download chart
+  const downdata = computed(function() {
+    const h = glances.data?.history?.download
     if (!h?.length) return null
     return {
       labels: h.map(() => ''),
       datasets: [{
         data: h.map(p => p.value),
-        borderColor: COLORS.GREEN,
-        backgroundColor: `${COLORS.GREEN}33`,
+        borderColor: sutils.COLORS.GREEN,
+        backgroundColor: `${sutils.COLORS.GREEN}33`,
         fill: true,
       }],
     }
@@ -98,7 +102,32 @@
 </script>
 
 <style>
-  .network-widget {
+  #networkwidget {
+    .up { color: #d65d0e; }
+    .down { color: #98971a; }
+
+    .chartrow {
+      gap: 0px !important;
+      grid-template-rows: 80px 80px !important;
+      .chartwrap.upload {
+        border-bottom-right-radius: 0px;
+        border-bottom-left-radius: 0px;
+        border-bottom-width: 0px;
+      }
+      .chartwrap.download {
+        border-top-right-radius: 0px;
+        border-top-left-radius: 0px;
+        border-top-width: 0px;
+        .maxvalue {
+          top: auto;
+          bottom: 1px;
+        }
+      }
+    }
+  }
+
+
+  /* .network-widget {
     .chart-wrap { flex: 1; min-width: 0; position: relative; height: 80px; }
     .chart-label { font-size: 0.75em; opacity: 0.6; margin-bottom: 2px; }
     .chart-label.up { color: rgba(214,93,14,0.9); }
@@ -112,5 +141,5 @@
     .speed { text-align: right; width: 45%; }
     .up { color: rgba(214,93,14,0.9); }
     .dn { color: rgba(69,133,136,0.9); }
-  }
+  } */
 </style>

@@ -7,8 +7,8 @@
         <WidgetNvidia />
       </div>
       <div class='stats-col col-2'>
-        <!-- <WidgetNetwork />
-        <WidgetProcs/> -->
+        <WidgetNetwork />
+        <!-- <WidgetProcs/> -->
       </div>
       <div class='stats-col col-3'>
         <!-- <WidgetMemory/>
@@ -91,7 +91,7 @@
           font-size: 1.2em;
           font-weight: 500;
           font-weight: bold;
-          span { opacity: 0.6; }
+          .delim { opacity: 0.4; margin:0px 10px; }
         }
       }
 
@@ -120,7 +120,7 @@
         width: 100%;
         .maxvalue {
           position: absolute;
-          top: 5px;
+          top: 1px;
           left: 5px;
           font-size: 0.6em;
           font-weight: bold;

@@ -155,6 +155,14 @@ export function formatDate(value, format) {
   return result
 }
 
+// Format Speed
+// Format bytes per second to human readable string
+export function formatSpeed(bps) {
+  if (bps >= 1024 * 1024) return (bps / (1024 * 1024)).toFixed(1) + ' MB/s'
+  if (bps >= 1024) return (bps / 1024).toFixed(1) + ' KB/s'
+  return bps.toFixed(0) + ' B/s'
+}
+
 // Get Value
 // Get value of the cell in EditTable.vue
 export function getItemValue(item, column, text=null) {

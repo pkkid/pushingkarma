@@ -7,7 +7,7 @@
       </div>
       <div class='values'>
         {{gpu?.proc?.toFixed(0) ?? '--'}}%
-        <span>|</span>
+        <span class='delim'>|</span>
         {{gpu?.temperature?.toFixed(0) ?? 0}}°C
       </div>
     </div>

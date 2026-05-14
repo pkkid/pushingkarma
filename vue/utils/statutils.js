@@ -133,7 +133,7 @@ export function scrollingChartPlugin({animateXDuration=300, animateXStyle='linea
       sc.ymax = newmax
       if (animateYDuration === 0) { chart.options.scales.y.max = newmax; chart.update('none'); return }
       tween(sc, 'yrafid', animateYDuration, animateYStyle, frommax, newmax,
-        (v) => { chart.options.scales.y.max = v; chart.update('none') },
+        (v) => { if (!chart.ctx) return false; chart.options.scales.y.max = v; chart.update('none') },
         () => { sc.ymax = newmax },
       )
     },

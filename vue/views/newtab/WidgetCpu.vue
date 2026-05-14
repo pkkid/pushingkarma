@@ -7,7 +7,7 @@
       </div>
       <div class='values'>
         {{glances.data.cpu?.total?.toFixed(1) ?? '--'}}%
-        <span>|</span>
+        <span class='delim'>|</span>
         {{utils.findItem(glances.data?.sensors, 'label', 'Package id 0', 'value') ?? 0}}°C
       </div>
     </div>
