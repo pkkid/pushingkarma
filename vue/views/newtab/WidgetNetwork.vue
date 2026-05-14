@@ -22,8 +22,9 @@
     </div>
     <!-- Metrics -->
     <div class='metrics'>
-      <div><label>Intenral IP:</label> {{glances.data.ip?.address}}</div>
+      <div><label>Internal IP:</label> {{glances.data.ip?.address}}</div>
       <div><label>External IP:</label> {{glances.data.ip?.public_address}}</div>
+      <div><label>Connections:</label> {{glances.data.connections?.ESTABLISHED ?? '--'}}</div>
     </div>
   </div>
 </template>

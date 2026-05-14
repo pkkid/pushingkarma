@@ -31,7 +31,8 @@
     <!-- Metrics -->
     <div class='metrics'>
       <div><label>Freq:</label> {{((glances.data.quicklook?.cpu_hz_current ?? 0) / 1e9).toFixed(2)}} GHz</div>
-      <div><label>Uptime:</label> {{glances.data.uptime?.replace(/:\d+$/, '') || '--'}}</div>
+      <div><label>Coolant:</label> {{utils.findItem(glances.data?.sensors, 'label', 'Coolant temp', 'value') ?? '--'}}°C</div>
+      <div><label>Uptime:</label> {{formatUptime(glances.data.uptime)}}</div>
     </div>
   </div>
 </template>
@@ -109,6 +110,23 @@
   // Even-indexed cores in one chart
   const coredata1 = computed(function() { return getCoreData('even') })
   const coredata2 = computed(function() { return getCoreData('odd') })
+
+  // Format Uptime
+  // Parse Glances uptime string (e.g. '3 days, 12:14:05' or '6:01:36') and
+  // return the two most significant non-zero components as '3d 12h', '12h 14m', etc.
+  function formatUptime(str) {
+    if (!str) return '--'
+    const dayMatch = str.match(/(\d+)\s+day/)
+    const timeMatch = str.match(/(\d+):(\d+):\d+/)
+    if (!timeMatch) return str
+    const days = dayMatch ? parseInt(dayMatch[1]) : 0
+    const hours = parseInt(timeMatch[1])
+    const mins = parseInt(timeMatch[2])
+    const parts = [{v:days, s:'d'}, {v:hours, s:'h'}, {v:mins, s:'m'}]
+    const start = parts.findIndex(p => p.v > 0)
+    if (start === -1) return '0m'
+    return parts.slice(start, start + 2).map(p => `${p.v}${p.s}`).join(' ')
+  }
 </script>
 
 <style>
