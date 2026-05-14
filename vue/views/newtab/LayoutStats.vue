@@ -54,7 +54,7 @@
     .grid-layout {
       --gap: 20px;
       display: grid;
-      grid-template-columns: 33% 33% 33%;
+      grid-template-columns: 1fr 1fr 1fr;
       grid-template-rows: 100%;
       gap: var(--gap);
       padding: 20px;
