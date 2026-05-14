@@ -1,4 +1,5 @@
 import {onUnmounted, reactive, ref, readonly} from 'vue'
+import {Main} from '@/utils/api'
 
 // Use Glances
 // Singleton composable for fetching and storing Glances data
@@ -36,9 +37,8 @@ export default (function() {
   // Fetch latest data from Glances API
   async function update() {
     try {
-      const res = await fetch(`${host}/api/4/all`)
-      if (!res.ok) { throw new Error(`HTTP ${res.status}`) }
-      const json = await res.json()
+      const res = await Main.getGlances()
+      const json = res.data
       const now = Date.now()
       const history = {}
       for (const [name, t] of Object.entries(trackers)) {

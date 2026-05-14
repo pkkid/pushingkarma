@@ -9,7 +9,7 @@ DOCKER = '/usr/local/bin/docker'
 DOCKERNAME = 'pushingkarma'
 LOCALDIR = abspath(dirname(__file__))
 REMOTEUSER = 'pkkid'
-REMOTEHOST = 'pushingkarma.com'
+REMOTEHOST = 'synology.local'
 REMOTEDIR = '~/pushingkarma'
 UV = '/var/services/homes/pkkid/.local/bin/uv'
 

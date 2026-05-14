@@ -1,5 +1,5 @@
 # encoding: utf-8
-import logging
+import logging, requests
 from django.conf import settings
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as django_login
@@ -11,6 +11,14 @@ from ninja.errors import HttpError
 from .schemas import GlobalVarsSchema, UserSchema, LoginSchema
 log = logging.getLogger(__name__)
 router = Router()
+
+
+@router.get('/glances')
+def glances(request):
+    """ Proxy the Glances /api/4/all endpoint to avoid browser Private Network Access restrictions. """
+    glances_url = getattr(settings, 'GLANCES_URL', 'http://192.168.4.253:61208')
+    response = requests.get(f'{glances_url}/api/4/all', timeout=5)
+    return response.json()
 
 
 @router.post('/login', response=UserSchema)
