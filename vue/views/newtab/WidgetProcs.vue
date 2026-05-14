@@ -3,7 +3,7 @@
     <!-- Header -->
     <div class='header'>
       <div class='title'>Processes</div>
-      <div class='values'>{{glances.data.processcount?.total ?? '--'}}</div>
+      <div class='values'>{{glances.data.processcount?.total ?? '--'}} total</div>
     </div>
     <!-- Table -->
     <table v-if='procs.length' class='processlist'>

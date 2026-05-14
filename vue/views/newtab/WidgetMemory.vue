@@ -1,73 +1,47 @@
 <template>
-  <div class='widget memory-widget'>
-    <div class='widget-title'>Memory</div>
-    <div class='mem-layout'>
-      <div class='chart-wrap'>
-        <Doughnut v-if='ringData' :data='ringData' :options='ringOptions'/>
-      </div>
-      <div class='mem-stats'>
-        <div><span class='label'>Used</span> {{usedGB}} GB</div>
-        <div><span class='label'>Total</span> {{totalGB}} GB</div>
-        <div><span class='label'>Free</span> {{freeGB}} GB</div>
-        <div class='pct'>{{pct}}%</div>
-      </div>
+  <div id='memorywidget' class='widget'>
+    <!-- Header -->
+    <div class='header'>
+      <div class='title'>Memory</div>
+    </div>
+    <!-- Charts -->
+    <div class='chartwrap mem' style='padding:10px; float:left; width:180px;'>
+      <RingChart :value='glances.data?.mem?.percent ?? 0' :max='100' :size='150' :thickness='20'
+        :color='sutils.COLORS.GREEN' bgcolor='#222' :label='`${glances.data?.mem?.percent?.toFixed(0)}%`'
+        sublabel='Used'/>
+    </div>
+    <!-- Metrics -->
+    <div class='metrics' style='float:left; margin-left:20px;'>
+      <div><label>Used:</label> {{utils.formatSize(glances.data.mem?.used ?? 0)}}</div>
+      <div><label>Total:</label> {{utils.formatSize(glances.data.mem?.total ?? 0)}}</div>
+      <div><label>Available:</label> {{utils.formatSize(glances.data.mem?.available ?? 0)}}</div>
     </div>
   </div>
 </template>
 
 <script setup>
   import {computed} from 'vue'
-  import {Chart, registerables} from 'chart.js'
-  import {Doughnut} from 'vue-chartjs'
+  import {RingChart} from '@/components'
+  import {utils, sutils} from '@/utils'
   import useGlances from '@/composables/useGlances'
-  Chart.register(...registerables)
 
-  const {data} = useGlances()
-
-  const GB = 1024 ** 3
-  const fmt = v => (v / GB).toFixed(1)
-
-  const mem = computed(() => data.value?.mem ?? null)
-  const usedGB = computed(() => mem.value ? fmt(mem.value.used) : '--')
-  const totalGB = computed(() => mem.value ? fmt(mem.value.total) : '--')
-  const freeGB = computed(() => mem.value ? fmt(mem.value.available) : '--')
-  const pct = computed(() => mem.value ? mem.value.percent.toFixed(1) : '--')
-
-  const ringData = computed(function() {
-    if (!mem.value) return null
-    return {
-      labels: ['Used', 'Free'],
-      datasets: [{
-        data: [mem.value.used, mem.value.available],
-        backgroundColor: ['rgba(69,133,136,0.85)', 'rgba(255,255,255,0.1)'],
-        borderWidth: 0,
-      }],
-    }
-  })
-
-  const ringOptions = {
-    animation: {duration: 300},
-    responsive: true,
-    maintainAspectRatio: false,
-    cutout: '72%',
-    plugins: {legend: {display: false}, tooltip: {enabled: false}},
-  }
+  const glances = useGlances()    // Glances composable
 </script>
 
 <style>
-  .memory-widget {
-    .mem-layout {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-    }
-    .chart-wrap { height: 90px; width: 90px; flex-shrink: 0; }
-    .mem-stats {
-      font-size: 1em;
-      line-height: 1.8;
-      opacity: 0.85;
-      .label { opacity: 0.6; width: 3.2em; display: inline-block; }
-      .pct { font-size: 2em; font-weight: 600; line-height: 1; margin-top: 4px; }
+  #memorywidget {
+    .chartwrap {
+      border-width: 0px !important;
+      background-color: transparent !important;
+      .label {
+        font-size: 1.2em;
+        transform:translateY(3px);
+      }
+      .sublabel {
+        font-size: 0.7em;
+        opacity: 0.6;
+        transform:translateY(-7px);
+      }
     }
   }
 </style>

@@ -11,8 +11,8 @@
         <WidgetProcs />
       </div>
       <div class='stats-col col-3'>
-        <!-- <WidgetMemory/>
-        <WidgetFilesystem/> -->
+        <WidgetMemory />
+        <!-- <WidgetFilesystem /> -->
       </div>
     </div>
   </div>
@@ -97,9 +97,11 @@
       }
 
       /* Metrics */
-      .metrics .name {
-        margin-right: 10px;
-        opacity: 0.6;
+      .metrics label {
+        display: inline;
+        font-size: 1em;
+        margin-right: 5px;
+        opacity: 0.7;
       }
 
       /* Charts */

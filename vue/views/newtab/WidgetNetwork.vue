@@ -22,14 +22,8 @@
     </div>
     <!-- Metrics -->
     <div class='metrics'>
-      <div>
-        <span class='name'>Intenral IP:</span>
-        <span class='value'>{{glances.data.ip?.address}}</span>
-      </div>
-      <div>
-        <span class='name'>External IP:</span>
-        <span class='value'>{{glances.data.ip?.public_address}}</span>
-      </div>
+      <div><label>Intenral IP:</label> {{glances.data.ip?.address}}</div>
+      <div><label>External IP:</label> {{glances.data.ip?.public_address}}</div>
     </div>
   </div>
 </template>
