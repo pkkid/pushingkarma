@@ -59,8 +59,8 @@
   glances.trackHistory('gpuusage', 60, (d) => d?.gpu?.[0]?.proc ?? 0)
 
   // Setup GPU Tempurature Chart
-  const tempChartPlugin = sutils.scrollingChartPlugin({animateXDuration:2000, animateYDuration:300})
-  const tempopts = {...OPTS, scales: {...OPTS.scales, y:{display:false, min:40}}}
+  const tempChartPlugin = sutils.scrollingChartPlugin({animateXDuration:2000, animateYDuration:300, maxy:100})
+  const tempopts = {...OPTS, scales: {...OPTS.scales, y:{display:false, min:35, max:100}}}
   glances.trackHistory('gputemp', 30, (d) => d?.gpu?.[0]?.temperature ?? 0)
 
   // GPU Usage Data

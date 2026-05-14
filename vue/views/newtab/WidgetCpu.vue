@@ -59,8 +59,8 @@
   glances.trackHistory('cpuusage', 60, (d) => d?.cpu?.total ?? 0)
 
   // Setup CPU Tempurature Chart
-  const tempChartPlugin = sutils.scrollingChartPlugin({animateXDuration:2000, animateYDuration:300})
-  const tempopts = {...OPTS, scales: {...OPTS.scales, y:{display:false, min:40}}}
+  const tempChartPlugin = sutils.scrollingChartPlugin({animateXDuration:2000, animateYDuration:300, maxy:100})
+  const tempopts = {...OPTS, scales: {...OPTS.scales, y:{display:false, min:35}}}
   glances.trackHistory('cputemp', 30, (d) => utils.findItem(d?.sensors, 'label', 'Package id 0', 'value') ?? 0)
 
   // CPU Usage Data

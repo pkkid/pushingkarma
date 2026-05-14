@@ -49,7 +49,8 @@ export const BAROPTS = {
 // Usage:
 //   const plugin = scrollingChartPlugin({animateXDuration:300, animateXStyle:'ease'})
 //   <Line :plugins="[plugin]" />
-export function scrollingChartPlugin({animateXDuration=300, animateXStyle='linear', animateYDuration=0, animateYStyle='linear'} = {}) {
+export function scrollingChartPlugin({animateXDuration=300, animateXStyle='linear',
+    animateYDuration=0, animateYStyle='linear', maxy=null} = {}) {
   const plugin = {
     id: 'chartScroll',
 
@@ -90,20 +91,21 @@ export function scrollingChartPlugin({animateXDuration=300, animateXStyle='linea
       plugin.animateX(chart)
       if (animateYDuration > 0) {
         const vals = chart.data?.datasets?.flatMap(d => d.data).filter(v => v != null) || []
-        plugin.animateY(chart, Math.max(...vals, 1))
+        const calcmax = Math.max(...vals, 1)
+        plugin.animateY(chart, maxy !== null ? Math.max(calcmax, maxy) : calcmax)
       }
     },
 
     // Update Canvas
-    // Extend the canvas width by one stepWidth and offset it left by the same amount
+    // Extend the canvas width by one stepwidth and offset it left by the same amount
     // so data exiting the left edge scrolls smoothly out of view (clipped by the
     // .chartwrap overflow:hidden).
     updateCanvas(chart) {
       if (!chart.chartArea || !chart.canvas) return
       const count = chart.data.labels?.length || 1
-      const stepWidth = chart.chartArea.width / Math.max(count - 1, 1)
-      chart.canvas.style.width = `calc(100% + ${stepWidth*2}px)`
-      chart.canvas.style.marginLeft = `-${stepWidth*2}px`
+      const stepwidth = chart.chartArea.width / Math.max(count - 1, 1)
+      chart.canvas.style.width = `calc(100% + ${stepwidth*2}px)`
+      chart.canvas.style.marginLeft = `-${stepwidth*2}px`
     },
 
     // Animate X
@@ -113,9 +115,9 @@ export function scrollingChartPlugin({animateXDuration=300, animateXStyle='linea
       if (!sc || !chart.chartArea) return
       if (animateXDuration === 0) { sc.offset = 0; return }
       const count = chart.data.labels?.length || 1
-      const stepWidth = chart.chartArea.width / Math.max(count - 1, 1)
-      sc.offset = Math.max(sc.offset, stepWidth)
-      tween(sc, 'xrafid', animateXDuration, animateXStyle, stepWidth, 0,
+      const stepwidth = chart.chartArea.width / Math.max(count - 1, 1)
+      sc.offset = Math.max(sc.offset, stepwidth)
+      tween(sc, 'xrafid', animateXDuration, animateXStyle, stepwidth, 0,
         (v) => { if (!chart.ctx) return false; sc.offset = v; chart.draw() },
         () => { sc.offset = 0 },
       )
@@ -126,11 +128,11 @@ export function scrollingChartPlugin({animateXDuration=300, animateXStyle='linea
     animateY(chart, newmax) {
       const sc = chart?._scroll
       if (!sc || !chart.scales?.y) { return }
-      const fromMax = sc.ymax ?? chart.scales.y.max
-      if (newmax === fromMax) { return }
+      const frommax = sc.ymax ?? chart.scales.y.max
+      if (newmax === frommax) { return }
       sc.ymax = newmax
       if (animateYDuration === 0) { chart.options.scales.y.max = newmax; chart.update('none'); return }
-      tween(sc, 'yrafid', animateYDuration, animateYStyle, fromMax, newmax,
+      tween(sc, 'yrafid', animateYDuration, animateYStyle, frommax, newmax,
         (v) => { chart.options.scales.y.max = v; chart.update('none') },
         () => { sc.ymax = newmax },
       )
