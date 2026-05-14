@@ -59,14 +59,14 @@ export function scrollingChartPlugin({animateXDuration=300, animateXStyle='linea
     },
 
     destroy(chart) {
-      if (chart._scroll?.xrafid) cancelAnimationFrame(chart._scroll.xrafid)
-      if (chart._scroll?.yrafid) cancelAnimationFrame(chart._scroll.yrafid)
+      if (chart._scroll?.xrafid) { cancelAnimationFrame(chart._scroll.xrafid) }
+      if (chart._scroll?.yrafid) { cancelAnimationFrame(chart._scroll.yrafid) }
       if (chart.canvas) { chart.canvas.style.width = ''; chart.canvas.style.marginLeft = '' }
     },
 
     beforeDatasetsDraw(chart) {
       const offset = chart._scroll?.offset
-      if (!offset || !chart.ctx) return
+      if (!offset || !chart.ctx) { return }
       const {ctx, chartArea:{left, top, width, height}} = chart
       ctx.save()
       ctx.beginPath()
@@ -76,16 +76,16 @@ export function scrollingChartPlugin({animateXDuration=300, animateXStyle='linea
     },
 
     afterDatasetsDraw(chart) {
-      if (chart._scroll?.offset) chart.ctx.restore()
+      if (chart._scroll?.offset) { chart.ctx.restore() }
     },
 
     // Auto-trigger animation after each real data update.
     // mode='none' updates are from animateymax's own chart.update() calls — skip those
     // to avoid a feedback loop. Also skip the very first render (no data "entered").
     afterUpdate(chart, args) {
-      if (args?.mode === 'none') return
+      if (args?.mode === 'none') { return }
       const sc = chart._scroll
-      if (!sc) return
+      if (!sc) { return }
       plugin.updateCanvas(chart)
       if (!sc.ready) { sc.ready = true; return }
       plugin.animateX(chart)
@@ -101,7 +101,7 @@ export function scrollingChartPlugin({animateXDuration=300, animateXStyle='linea
     // so data exiting the left edge scrolls smoothly out of view (clipped by the
     // .chartwrap overflow:hidden).
     updateCanvas(chart) {
-      if (!chart.chartArea || !chart.canvas) return
+      if (!chart.chartArea || !chart.canvas) { return }
       const count = chart.data.labels?.length || 1
       const stepwidth = chart.chartArea.width / Math.max(count - 1, 1)
       chart.canvas.style.width = `calc(100% + ${stepwidth*2}px)`
@@ -112,7 +112,7 @@ export function scrollingChartPlugin({animateXDuration=300, animateXStyle='linea
     // Smoothly scroll line chart to the left
     animateX(chart) {
       const sc = chart?._scroll
-      if (!sc || !chart.chartArea) return
+      if (!sc || !chart.chartArea) { return }
       if (animateXDuration === 0) { sc.offset = 0; return }
       const count = chart.data.labels?.length || 1
       const stepwidth = chart.chartArea.width / Math.max(count - 1, 1)

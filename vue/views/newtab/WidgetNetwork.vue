@@ -55,7 +55,7 @@
   function sumNetwork(data) {
     var interfaces = data?.network || glances.data?.network || []
     return (interfaces || []).reduce(function(acc, iface) {
-      if (iface.interface_name === 'lo') return acc
+      if (iface.interface_name === 'lo') { return acc }
       acc.up += iface.bytes_sent_rate_per_sec || 0
       acc.down += iface.bytes_recv_rate_per_sec || 0
       acc.uptotal += iface.bytes_sent || 0
@@ -68,7 +68,7 @@
   // Chart.js data object for Network Upload chart
   const updata = computed(function() {
     const h = glances.data?.history?.upload
-    if (!h?.length) return null
+    if (!h?.length) { return null }
     return {
       labels: h.map(() => ''),
       datasets: [{
@@ -84,7 +84,7 @@
   // Chart.js data object for Network Download chart
   const downdata = computed(function() {
     const h = glances.data?.history?.download
-    if (!h?.length) return null
+    if (!h?.length) { return null }
     return {
       labels: h.map(() => ''),
       datasets: [{
@@ -121,21 +121,4 @@
       }
     }
   }
-
-
-  /* .network-widget {
-    .chart-wrap { flex: 1; min-width: 0; position: relative; height: 80px; }
-    .chart-label { font-size: 0.75em; opacity: 0.6; margin-bottom: 2px; }
-    .chart-label.up { color: rgba(214,93,14,0.9); }
-    .chart-label.dn { color: rgba(69,133,136,0.9); }
-    table { width: 100%; border-collapse: collapse; font-size: 1em; table-layout: fixed; }
-    td { padding: 4px 8px; opacity: 0.85; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .iface-name { opacity: 0.55; }
-    .iface-label { opacity: 0.55; font-size: 0.85em; width: 15%; }
-    .iface-ip { opacity: 0.55; font-size: 0.85em; width: 40%; }
-    .ext-ip { width: auto; }
-    .speed { text-align: right; width: 45%; }
-    .up { color: rgba(214,93,14,0.9); }
-    .dn { color: rgba(69,133,136,0.9); }
-  } */
 </style>

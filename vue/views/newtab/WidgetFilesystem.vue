@@ -54,7 +54,7 @@
   // Chart.js data object for total disk IO chart
   const diskiodata = computed(function() {
     const h = glances.data?.history?.diskio
-    if (!h?.length) return null
+    if (!h?.length) { return null }
     return {
       labels: h.map(() => ''),
       datasets: [{

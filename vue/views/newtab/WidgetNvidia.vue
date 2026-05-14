@@ -67,7 +67,7 @@
   // Chart.js data object for CPU usage chart
   const gpudata = computed(function() {
     const h = glances.data?.history?.gpuusage
-    if (!h?.length) return null
+    if (!h?.length) { return null }
     return {
       labels: h.map(() => ''),
       datasets: [{
@@ -83,7 +83,7 @@
   // Chart.js data object for CPU temperature chart
   const gputempdata = computed(function() {
     const h = glances.data?.history?.gputemp
-    if (!h?.length) return null
+    if (!h?.length) { return null }
     return {
       labels: h.map(() => ''),
       datasets: [{

@@ -63,7 +63,7 @@
   // Chart.js data object for CPU usage chart
   const cpudata = computed(function() {
     const h = glances.data?.history?.cpuusage
-    if (!h?.length) return null
+    if (!h?.length) { return null }
     return {
       labels: h.map(() => ''),
       datasets: [{
@@ -79,7 +79,7 @@
   // Chart.js data object for CPU temperature chart
   const cputempdata = computed(function() {
     const h = glances.data?.history?.cputemp
-    if (!h?.length) return null
+    if (!h?.length) { return null }
     return {
       labels: h.map(() => ''),
       datasets: [{
@@ -96,7 +96,7 @@
   const getCoreData = function(evenodd='even') {
     const mod = evenodd === 'even' ? 0 : 1
     const cores = glances.data?.percpu?.filter((_, i) => i % 2 == mod)
-    if (!cores?.length) return null
+    if (!cores?.length) { return null }
     return {
       labels: cores.map((_, i) => i),
       datasets: [{
@@ -116,16 +116,16 @@
   // Parse Glances uptime string (e.g. '3 days, 12:14:05' or '6:01:36') and
   // return the two most significant non-zero components as '3d 12h', '12h 14m', etc.
   function formatUptime(str) {
-    if (!str) return '--'
+    if (!str) { return '--' }
     const dayMatch = str.match(/(\d+)\s+day/)
     const timeMatch = str.match(/(\d+):(\d+):\d+/)
-    if (!timeMatch) return str
+    if (!timeMatch) { return str }
     const days = dayMatch ? parseInt(dayMatch[1]) : 0
     const hours = parseInt(timeMatch[1])
     const mins = parseInt(timeMatch[2])
     const parts = [{v:days, s:'d'}, {v:hours, s:'h'}, {v:mins, s:'m'}]
     const start = parts.findIndex(p => p.v > 0)
-    if (start === -1) return '0m'
+    if (start === -1) { return '0m' }
     return parts.slice(start, start + 2).map(p => `${p.v}${p.s}`).join(' ')
   }
 </script>

@@ -159,10 +159,10 @@ export function formatDate(value, format) {
 // Format bytes to human readable string
 export function formatSize(bytes, places=0) {
   const [KB, MB, GB, TB] = [1,2,3,4].map(e => 1024**e)
-  if (bytes >= TB) return (bytes / TB).toFixed(places) + ' GB'
-  if (bytes >= GB) return (bytes / GB).toFixed(places) + ' GB'
-  if (bytes >= MB) return (bytes / MB).toFixed(places) + ' MB'
-  if (bytes >= KB) return (bytes / KB).toFixed(places) + ' KB'
+  if (bytes >= TB) { return (bytes / TB).toFixed(places) + ' GB' }
+  if (bytes >= GB) { return (bytes / GB).toFixed(places) + ' GB' }
+  if (bytes >= MB) { return (bytes / MB).toFixed(places) + ' MB' }
+  if (bytes >= KB) { return (bytes / KB).toFixed(places) + ' KB' }
   return bytes.toFixed(places) + ' B'
 }
 
@@ -274,8 +274,9 @@ export function rget(obj, property, delim) {
   var parts = property.split(delim)
   var key = parts.shift()
   if ((obj[key] !== undefined) && (obj[key] !== null)) {
-    if (parts.length >= 1)
+    if (parts.length >= 1) {
       return rget(obj[key], parts.join(delim), delim)
+    }
     return obj[key]
   }
   return undefined
@@ -489,10 +490,10 @@ export function usd(value, places=2, symbol='$', sigdigs=null) {
   }
   places = places == 0 && value < 1 && value > -1 && value != 0 ? 2 : places
   let result = `${symbol}${intComma(absval.toFixed(places))}`
-  if (value < 0) result = `-${result}`
+  if (value < 0) { result = `-${result}` }
   if (places == 2) {
-    if (result.match(/\.\d{1}$/)) return result + '0'
-    if (!result.includes('.')) return result + '.00'
+    if (result.match(/\.\d{1}$/)) { return result + '0' }
+    if (!result.includes('.')) { return result + '.00' }
   }
   return result
 }
