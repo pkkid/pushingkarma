@@ -18,7 +18,8 @@
         <Line v-if='gpudata' :data='gpudata' :options='gpuopts' :plugins='[gpuChartPlugin]'/>
       </div>
       <div class='chartwrap gpumem'>
-        GPU Mem
+        <RingChart :value='gpu?.mem ?? 0' :max='100' :size='90' :thickness='12'
+          :color='sutils.COLORS.GREEN' bgcolor='#222' :label='`${(gpu?.mem ?? 0).toFixed(0)}%`'/>
       </div>
       <div class='chartwrap gputemp'>
         <span class='maxvalue'>{{glances.getMaxValue('gputemp')}}°C</span>
@@ -43,6 +44,7 @@
   import {computed} from 'vue'
   import {Chart, registerables} from 'chart.js'
   import {Line} from 'vue-chartjs'
+  import {RingChart} from '@/components'
   import {sutils} from '@/utils'
   import useGlances from '@/composables/useGlances'
   Chart.register(...registerables)
@@ -100,7 +102,18 @@
       grid-template-columns: auto 150px;
       grid-template-rows: 50px 50px 70px;
       .gpu { grid-row:span 3; width:3fr; }
-      .gpumem { grid-row:span 2; }
+      .gpumem {
+        grid-row:span 2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        .memlabel {
+          font-size: 0.7em;
+          opacity: 0.6;
+        }
+      }
     }
   }
 </style>
