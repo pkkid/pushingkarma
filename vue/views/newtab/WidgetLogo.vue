@@ -16,10 +16,10 @@
     position: absolute;
     top: 20px; left: 20px;
     width: 80px;
-    &.fullscreen {
-      width: 100px;
-      top: 40px;
-      left: 40px;
-    }
+  }
+  #newtab.fullscreen #logowidget {
+    width: 100px;
+    top: 40px;
+    left: 40px;
   }
 </style>

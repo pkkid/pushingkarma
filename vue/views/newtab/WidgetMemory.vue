@@ -11,7 +11,7 @@
         sublabel='Used'/>
     </div>
     <!-- Metrics -->
-    <div class='metrics' style='float:left; margin-left:20px;'>
+    <div class='metrics' style='float:left; margin-left:30px;'>
       <div><label>Used:</label> {{utils.formatSize(glances.data.mem?.used ?? 0)}}</div>
       <div><label>Available:</label> {{utils.formatSize(glances.data.mem?.available ?? 0)}}</div>
       <div><label>Total:</label> {{utils.formatSize(glances.data.mem?.total ?? 0)}}</div>

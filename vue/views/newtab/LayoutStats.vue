@@ -39,6 +39,9 @@
 </script>
 
 <style>
+  #newtab.fullscreen #stats {
+    border-width: 0px;
+  }
   #stats {
     position: relative;
     display: flex;
@@ -48,8 +51,6 @@
     border: 1px solid #fff2;
     border-radius: 12px;
     font-size: 16px;
-
-    &.fullscreen { border-width: 0px; }
 
     .grid-layout {
       --gap: 20px;

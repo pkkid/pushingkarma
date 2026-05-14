@@ -41,10 +41,6 @@
     &:not(.compact) {
       background-color: transparent;
     }
-    &.fullscreen {
-      .time { font-size:12rem; }
-      .date { font-size:4rem; }
-    }
     &.compact {
       display: flex;
       flex-direction: column;
@@ -55,5 +51,9 @@
       .time { font-size:4em; line-height:1; }
       .date { font-size:1.2em; margin-top:6px; opacity:0.65; }
     }
+  }
+  #newtab.fullscreen #simple #timewidget {
+    .time { font-size: 12rem !important; }
+    .date { font-size: 4rem !important; }
   }
 </style>

@@ -80,7 +80,7 @@
     bottom: 0%; left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
-    font-size: 1.5rem;
+    font-size: 1.7rem;
     width: 90vw;
     .title {
       overflow: hidden;
@@ -88,6 +88,8 @@
       white-space: nowrap;
     }
     .subtext { margin-top:2px }
-    &.fullscreen { font-size:2.8rem; }
+  }
+  #newtab.fullscreen #newswidget {
+    font-size:2.8rem;
   }
 </style>
