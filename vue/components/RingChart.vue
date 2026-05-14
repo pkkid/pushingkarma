@@ -4,9 +4,13 @@
     <circle class='fg' :cx='center' :cy='center' :r='radius' :stroke='color' :stroke-width='thickness'
       :stroke-dasharray='circumference' :stroke-dashoffset='dashOffset' stroke-linecap='round' fill='none'
       transform='rotate(-90)' :transform-origin='`${center} ${center}`' />
-    <text v-if='label' class='label' :x='center' :y='center' text-anchor='middle' dominant-baseline='central'>
-      {{label}}
-    </text>
+    <template v-if='sublabel && label'>
+      <text v-if='label' class='sublabel' :x='center' :y='center-14' text-anchor='middle' dominant-baseline='central'>{{sublabel}}</text>
+      <text v-if='label' class='label' :x='center' :y='center+9' text-anchor='middle' dominant-baseline='central'>{{label}}</text>
+    </template>
+    <template v-else-if='label'>
+      <text v-if='label' class='label' :x='center' :y='center' text-anchor='middle' dominant-baseline='central'>{{label}}</text>
+    </template>
   </svg>
 </template>
 
@@ -21,6 +25,7 @@
     color: {default: '#4a9eff'},    // Foreground arc color
     bgcolor: {default: 'rgba(255,255,255,0.12)'},  // Background ring color
     label: {default: null},         // Optional text inside the ring
+    sublabel: {default: null},     // Optional text inside the ring
   })
 
   const center = computed(() => props.size / 2)
@@ -40,6 +45,12 @@
       font-size: 0.9em;
       font-weight: bold;
       fill: currentColor;
+    }
+    .sublabel {
+      font-size: 0.5em;
+      font-weight: bold;
+      fill: currentColor;
+      opacity: 0.6;
     }
   }
 </style>

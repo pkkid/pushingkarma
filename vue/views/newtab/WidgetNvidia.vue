@@ -18,8 +18,8 @@
         <Line v-if='gpudata' :data='gpudata' :options='gpuopts' :plugins='[gpuChartPlugin]'/>
       </div>
       <div class='chartwrap gpumem'>
-        <RingChart :value='gpu?.mem ?? 0' :max='100' :size='90' :thickness='12'
-          :color='sutils.COLORS.GREEN' bgcolor='#222' :label='`${(gpu?.mem ?? 0).toFixed(0)}%`'/>
+        <RingChart :value='gpu?.mem ?? 0' :max='100' :size='90' :thickness='12' :color='sutils.COLORS.GREEN'
+          bgcolor='#222' sublabel='Mem' :label='`${(gpu?.mem ?? 0).toFixed(0)}%`'/>
       </div>
       <div class='chartwrap gputemp'>
         <span class='maxvalue'>{{glances.getMaxValue('gputemp')}}°C</span>
