@@ -26,17 +26,6 @@
         <Line v-if='gputempdata' :data='gputempdata' :options='tempopts' :plugins='[tempChartPlugin]'/>
       </div>
     </div>
-    <!-- Metrics -->
-    <!-- <div class='metrics'>
-      <div>
-        <span class='name'>Freq:</span>
-        <span class='value'>{{((glances.data.quicklook?.cpu_hz_current ?? 0) / 1e9).toFixed(2)}} GHz</span>
-      </div>
-      <div>
-        <span class='name'>Uptime:</span>
-        <span class='value'>{{ glances.data.uptime?.replace(/:\d+$/, '') || '--' }}</span>
-      </div>
-    </div> -->
   </div>
 </template>
 

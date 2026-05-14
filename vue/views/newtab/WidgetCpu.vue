@@ -6,7 +6,7 @@
         {{glances.data.system?.hostname || 'CPU'}}
       </div>
       <div class='values'>
-        {{glances.data.cpu?.total?.toFixed(1) ?? '--'}}%
+        {{glances.data.cpu?.total?.toPrecision(2) ?? '--'}}%
         <span class='delim'>|</span>
         {{utils.findItem(glances.data?.sensors, 'label', 'Package id 0', 'value') ?? 0}}°C
       </div>
@@ -30,7 +30,7 @@
     </div>
     <!-- Metrics -->
     <div class='metrics twocols'>
-      <div><label>Freq:</label> {{((glances.data.quicklook?.cpu_hz_current ?? 0) / 1e9).toFixed(2)}} GHz</div>
+      <div><label>Freq:</label> {{((glances.data.quicklook?.cpu_hz_current ?? 0) / 1e9).toPrecision(3)}} GHz</div>
       <div><label>Coolant:</label> {{utils.findItem(glances.data?.sensors, 'label', 'Coolant temp', 'value') ?? '--'}}°C</div>
       <div><label>Uptime:</label> {{formatUptime(glances.data.uptime)}}</div>
       <div><label>Pump:</label> {{utils.findItem(glances.data?.sensors, 'label', 'Pump speed', 'value') ?? '--'}} rpm</div>

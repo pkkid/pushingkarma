@@ -19,7 +19,7 @@
         <label>Swap:</label>
         {{(glances.data.memswap?.percent ?? 0).toFixed(0)}}%
         <span class='delimtext'>of</span>
-        {{utils.formatSize(glances.data.memswap?.total ?? 0, 0)}}
+        {{utils.formatSize(glances.data.memswap?.total ?? 0, 1)}}
       </div>
     </div>
   </div>

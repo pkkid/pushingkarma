@@ -62,7 +62,7 @@
       width: 1900px;
       height: 1060px;
       box-sizing: border-box;
-      font-size: 30px;
+      font-size: 2em;
       .stats-col {
         display: flex;
         flex-direction: column;
@@ -76,7 +76,7 @@
       border-radius: 8px;
       padding: 25px 15px;
       overflow: hidden;
-      font-size: 28px;
+      font-size: 0.95em;
       .header {
         display: flex;
         justify-content: space-between;
@@ -86,11 +86,11 @@
           font-size: 0.8em;
           letter-spacing: 0.12em;
           text-transform: uppercase;
-          opacity: 0.6;
+          color: color-mix(currentColor 70%);
           font-weight: bold;
         }
         .values {
-          font-size: 1.2em;
+          font-size: 1em;
           font-weight: 500;
           font-weight: bold;  
         }
@@ -100,7 +100,7 @@
 
       /* Metrics */
       .metrics {
-        font-size: 0.9em;
+        font-size: 0.8em;
         &.twocols {
           column-gap: 50px;
           display: grid;
@@ -111,7 +111,7 @@
           display: inline;
           font-size: 1em;
           margin-right: 5px;
-          opacity: 0.7;
+          color: color-mix(currentColor 60%);
         }
       }
 
@@ -133,6 +133,7 @@
         position: relative;
         width: 100%;
         .maxvalue {
+          display:none;
           position: absolute;
           top: 1px;
           left: 5px;

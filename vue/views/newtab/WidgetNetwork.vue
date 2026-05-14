@@ -22,9 +22,9 @@
     </div>
     <!-- Metrics -->
     <div class='metrics twocols'>
-      <div><label>Local IP:</label> {{glances.data.ip?.address}}</div>
+      <div><label>IP:</label> {{glances.data.ip?.address}}</div>
       <div><label>Connections:</label> {{glances.data.connections?.ESTABLISHED ?? '--'}}</div>
-      <div><label>Ext IP:</label> {{glances.data.ip?.public_address}}</div>
+      <div><label>Ext:</label> {{glances.data.ip?.public_address}}</div>
       <div><label>Listening:</label> {{glances.data.connections?.LISTEN ?? '--'}}</div>
     </div>
   </div>

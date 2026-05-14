@@ -18,7 +18,7 @@
       <span class='used'>
         {{fs.percent.toFixed(0)}}%
         <span class='delimtext'>of</span>
-        {{utils.formatSize(fs.size, 0)}}
+        {{utils.formatSize(fs.size, 3)}}
       </span>
       <div class='barbg'>
         <div class='barfg' :style='{width: fs.percent+"%", backgroundColor:getBarColor(fs.percent)}'/>
@@ -91,7 +91,7 @@
         font-size: 0.9em;
       }
       .barbg {
-        height: 10px;
+        height: 8px;
         background: #222;
         border-radius: 5px;
         overflow: hidden;

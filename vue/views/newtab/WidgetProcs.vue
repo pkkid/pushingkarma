@@ -10,7 +10,7 @@
       <tr v-for='p in procs' :key='p.pid'>
         <td class='name'>{{p.name}}</td>
         <td class='mem'>{{utils.formatSize(p.mem)}}</td>
-        <td class='cpu'>{{p.cpu.toFixed(2)}}%</td>
+        <td class='cpu'>{{p.cpu.toPrecision(1)}}%</td>
       </tr>
     </table>
   </div>
@@ -23,7 +23,7 @@
   import useGlances from '@/composables/useGlances'
 
   const glances = useGlances()  // Glances composable
-  const shownum = 10  // Number of processes to show
+  const shownum = 8  // Number of processes to show
   const sortby = useStorage('newtab.procs.sortby', 'cpu')  // Sort by cpu or mem
 
   // List Processes
