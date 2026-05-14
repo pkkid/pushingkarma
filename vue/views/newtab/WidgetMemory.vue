@@ -15,6 +15,12 @@
       <div><label>Used:</label> {{utils.formatSize(glances.data.mem?.used ?? 0)}}</div>
       <div><label>Available:</label> {{utils.formatSize(glances.data.mem?.available ?? 0)}}</div>
       <div><label>Total:</label> {{utils.formatSize(glances.data.mem?.total ?? 0)}}</div>
+      <div>
+        <label>Swap:</label>
+        {{(glances.data.memswap?.percent ?? 0).toFixed(0)}}%
+        <span class='delimtext'>of</span>
+        {{utils.formatSize(glances.data.memswap?.total ?? 0, 0)}}
+      </div>
     </div>
   </div>
 </template>

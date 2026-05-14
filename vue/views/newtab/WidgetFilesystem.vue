@@ -17,7 +17,7 @@
       <span class='name'>{{getFsName(fs)}}</span>
       <span class='used'>
         {{fs.percent.toFixed(0)}}%
-        <span style='margin:0px; opacity:0.8;'>of</span>
+        <span class='delimtext'>of</span>
         {{utils.formatSize(fs.size, 0)}}
       </span>
       <div class='barbg'>

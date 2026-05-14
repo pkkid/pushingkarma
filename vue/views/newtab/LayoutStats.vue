@@ -7,12 +7,12 @@
         <WidgetNvidia />
       </div>
       <div class='stats-col col-2'>
+        <WidgetMemory />
         <WidgetNetwork />
-        <WidgetProcs />
       </div>
       <div class='stats-col col-3'>
-        <WidgetMemory />
         <WidgetFilesystem />
+        <WidgetProcs />
       </div>
     </div>
   </div>
@@ -94,10 +94,8 @@
           font-weight: bold;  
         }
       }
-      .delim {
-        opacity: 0.4;
-        margin: 0px 10px;
-      }
+      .delim { opacity:0.4; margin:0px 10px; }
+      .delimtext { opacity: 0.8; }
 
       /* Metrics */
       .metrics {
