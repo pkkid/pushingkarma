@@ -13,14 +13,13 @@
     <!-- Metrics -->
     <div class='metrics' style='float:left; margin-left:20px;'>
       <div><label>Used:</label> {{utils.formatSize(glances.data.mem?.used ?? 0)}}</div>
-      <div><label>Total:</label> {{utils.formatSize(glances.data.mem?.total ?? 0)}}</div>
       <div><label>Available:</label> {{utils.formatSize(glances.data.mem?.available ?? 0)}}</div>
+      <div><label>Total:</label> {{utils.formatSize(glances.data.mem?.total ?? 0)}}</div>
     </div>
   </div>
 </template>
 
 <script setup>
-  import {computed} from 'vue'
   import {RingChart} from '@/components'
   import {utils, sutils} from '@/utils'
   import useGlances from '@/composables/useGlances'
