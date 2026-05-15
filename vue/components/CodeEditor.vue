@@ -97,12 +97,14 @@
   })
 
   // Watch Code Value
-  // Calls highlight.js
+  // Calls highlight.js (skip for large content to avoid long blocking)
   watchEffect(function() {
     if (code.value == null) { return }
     code.value.textContent = currentvalue.value
     delete code.value.dataset.highlighted
-    hljs.highlightElement(code.value)
+    if ((currentvalue.value?.length ?? 0) < 100000) {
+      hljs.highlightElement(code.value)
+    }
     code.value.classList.remove('hljs')
   })
 
