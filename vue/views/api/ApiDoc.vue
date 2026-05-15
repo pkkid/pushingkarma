@@ -82,7 +82,10 @@
                     </div>
                   </template>
                 </div>
-                <CodeEditor :value='content' showlinenums language='json' readonly/>
+                <div v-if='isJsonResponse' class='jsonviewer'>
+                  <JsonViewer :value='response.data'/>
+                </div>
+                <CodeEditor v-else :value='content' showlinenums language='json' readonly/>
               </template>
               <!-- No Response and Loading -->
               <template v-else>
@@ -103,7 +106,7 @@
 
 <script setup>
   import {computed, inject, nextTick, onMounted, ref, watch} from 'vue'
-  import {CodeEditor, IconMessage, LayoutPaper, LayoutSidePanel, Tooltip} from '@/components'
+  import {CodeEditor, IconMessage, JsonViewer, LayoutPaper, LayoutSidePanel, Tooltip} from '@/components'
   import {ApiSettings} from '@/views/api'
   import {useUrlParams} from '@/composables'
   import {utils} from '@/utils'
@@ -125,7 +128,15 @@
   var toc = ref(null)                     // Table of contents (api root)
   var _path = ref(null)                   // Current input value
 
-  var content = computed(() => utils.stringify(response.value?.data || "", {indent:2, maxlen:100}))
+  var isJsonResponse = computed(() => response.value?.headers?.['content-type']?.includes('application/json'))
+
+  var content = computed(() => {
+    const str = utils.stringify(response.value?.data || "", {indent:2, maxlen:100})
+    const limit = 1000
+    const lines = str.split('\n')
+    const url = axios.defaults.baseURL + _path.value
+    return lines.length > limit ? lines.slice(0, limit).join('\n') + `\n\n// ... truncated\n// Full response: ${url}` : str
+  })
 
   // Categories
   // Computes object of {category: [endpoints]} to display in the sidepanel
@@ -429,6 +440,15 @@
         transition: color 0.3s;
         &:hover { color:var(--fgcolor); }
       }
+    }
+
+    /* JSON Viewer */
+    .jsonviewer {
+      background-color: #ddddd9;
+      border-radius: 4px;
+      overflow: auto;
+      padding: 8px 8px 8px 20px;
+      font-size: 11px;
     }
   }
 </style>
