@@ -74,14 +74,13 @@ def get_min_and_max_dates(search, interval='year'):
         try:
             mindate = parse_date(mindates[0])
             maxdate = parse_date(maxdates[0])
-            if (interval == 'year'
+            if ((interval == 'year'
               and (mindate.month == 1 and mindate.day == 1)
               and (maxdate.month == 1 and maxdate.day == 1)
-              and (maxdate.year - mindate.year) == 1):
-                selected = mindate
-            elif (interval == 'month'
+              and (maxdate.year - mindate.year) == 1)
+            or (interval == 'month'
               and (mindate.day == 1 and maxdate.day == 1)
-              and add_months(mindate, 1) == maxdate):
+              and add_months(mindate, 1) == maxdate)):
                 selected = mindate
         except Exception:
             return None, None, None

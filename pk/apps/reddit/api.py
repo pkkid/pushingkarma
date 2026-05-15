@@ -75,6 +75,4 @@ def _blocked_domain(subreddit, post, blockself=True):
     for regex in BLOCKED_DOMAINS:
         if re.findall(regex, post.domain):
             return True
-    if blockself and re.findall(r'^self\.', post.domain):
-        return True
-    return False
+    return blockself and re.findall(r'^self\.', post.domain)

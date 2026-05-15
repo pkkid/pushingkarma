@@ -67,8 +67,8 @@ def rget(obj, attrstr, default=None, delim='.'):
         attrstr = parts[1] if len(parts) == 2 else None
         attrint = to_int(attr)
         if isinstance(obj, dict): value = obj[attr]
-        elif isinstance(obj, list) and attrint is not None: value = obj[attrint]
-        elif isinstance(obj, tuple) and attrint is not None: value = obj[attrint]
+        elif isinstance(obj, list) and attrint is not None: value = obj[attrint]  # noqa
+        elif isinstance(obj, tuple) and attrint is not None: value = obj[attrint]  # noqa
         elif isinstance(obj, object): value = getattr(obj, attr)
         if attrstr: return rget(value, attrstr, default, delim)
         return value
