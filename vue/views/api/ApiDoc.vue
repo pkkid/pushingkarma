@@ -250,6 +250,13 @@
     setupRequest(newpath, method.value, null, false)
   })
 
+  // Watch path/method URL params
+  // Handles browser back/forward navigation - syncs content when URL changes externally
+  watch([path, method], function([newpath, newmethod]) {
+    if (!toc.value || newpath === _path.value) { return }
+    setupRequest(newpath || APIROOT, newmethod || 'get')
+  })
+
   // Paths Match
   // Check the two paths match
   const pathMatches = function(pathstr, endptstr) {
