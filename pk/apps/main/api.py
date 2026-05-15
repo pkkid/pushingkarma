@@ -13,14 +13,6 @@ log = logging.getLogger(__name__)
 router = Router()
 
 
-@router.get('/glances')
-def glances(request):
-    """ Proxy the Glances /api/4/all endpoint to avoid browser Private Network Access restrictions. """
-    glances_url = getattr(settings, 'GLANCES_URL', 'http://192.168.4.253:61208')
-    response = requests.get(f'{glances_url}/api/4/all', timeout=5)
-    return response.json()
-
-
 @router.post('/login', response=UserSchema)
 def login(request, data:LoginSchema=Body(...)):
     """ Log into to the django application. """
@@ -50,3 +42,11 @@ def get_global_vars(request):
     result = dict(**settings.GLOBALVARS)
     result['user'] = user
     return result
+
+
+@router.get('/glances')
+def glances(request):
+    """ Proxy the Glances /api/4/all endpoint to avoid browser Private Network Access restrictions. """
+    glances_url = getattr(settings, 'GLANCES_URL', 'http://192.168.4.253:61208')
+    response = requests.get(f'{glances_url}/api/4/all', timeout=5)
+    return response.json()
