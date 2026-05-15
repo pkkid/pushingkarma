@@ -83,7 +83,7 @@
                   </template>
                 </div>
                 <div v-if='isJsonResponse' class='jsonviewer'>
-                  <JsonViewer :value='response.data'/>
+                  <JsonViewer :value='response.data' :urlHandler='onUrlClick'/>
                 </div>
                 <CodeEditor v-else :value='content' showlinenums language='json' readonly/>
               </template>
@@ -211,10 +211,17 @@
     for (var [pname, properties] of Object.entries(schema.properties || {})) {
       var ptype = properties.type || properties.anyOf[0]?.type
       var pvalue = {'string':'string', 'number':1, 'boolean':true, 'object':{}, 'array':[]}[ptype]
-      console.log('pname', pname, 'ptype', ptype, 'pvalue', pvalue)
       result[pname] = pvalue
     }
     return result
+  }
+
+  const onUrlClick = (url) => {
+    try {
+      const pathname = new URL(url).pathname
+      if (pathname.startsWith('/api/')) { setupRequest(pathname, 'get'); return }
+    } catch(e) {}
+    window.open(url, '_blank')
   }
 
   // Link Response URLs
@@ -256,7 +263,6 @@
   // Set Path
   // Update path and method from the endpoint path
   const setupRequest = function(newpath, newmethod, newpayload=null, autoRequest=true) {
-    console.log(`setupRequest(${newpath}, ${newmethod}, <payload>, ${autoRequest})`)
     // Close any tooltips and clear the response
     historyTooltip.value?.close()
     response.value = null
@@ -267,7 +273,6 @@
     _path.value = path.value
     // Update the endpoint, check current method allowed, check send request
     updateEndpoint()
-    // console.log('endpoint:', endpoint.value)
     if (!allowed.value.includes(method.value)) { method.value = allowed.value[0] }
     if (autoRequest) { checkSendRequest() }
   }

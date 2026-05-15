@@ -13,7 +13,8 @@
         <span class='json-block'>
           <JsonViewer v-for='entry in entries' :key='entry.key' :value='entry.value'
             :keyName='isObject ? String(entry.key) : undefined' :isLast='entry.isLast'
-            :depth='depth + 1' :registerSetter='registerChildSetter' :ctrlToggle='ctrlToggleChildren'/>
+            :depth='depth + 1' :registerSetter='registerChildSetter' :ctrlToggle='ctrlToggleChildren'
+            :urlHandler='urlHandler'/>
         </span>
         {{closeBracket}}<span v-if='!isLast' class='json-punct'>,</span>
       </template>
@@ -23,7 +24,7 @@
     </template>
     <!-- Primitive -->
     <template v-else>
-      <a v-if='isUrl' :href='value' target='_blank' class='json-string json-url'>{{displayValue}}</a>
+      <span v-if='isUrl' class='json-string json-url' @click='handleUrlClick'>{{displayValue}}</span>
       <span v-else :class='primitiveClass'>{{displayValue}}</span>
       <span v-if='!isLast' class='json-punct'>,</span>
     </template>
@@ -39,6 +40,7 @@
     keyName: {type:String, default:undefined},
     isLast: {type:Boolean, default:true},
     depth: {type:Number, default:0},
+    urlHandler: {type:Function, default:null},
     registerSetter: {type:Function, default:null},
     ctrlToggle: {type:Function, default:null},
   })
@@ -67,6 +69,11 @@
       .replace(/\t/g, '\\t') + '"'
   })
   
+  const handleUrlClick = () => {
+    if (props.urlHandler) props.urlHandler(props.value)
+    else window.open(props.value, '_blank')
+  }
+
   // Child State Management
   // RegisterChildSetter returns an unregister fn to avoid stale setters
   const childSetters = []
@@ -116,9 +123,14 @@
   .json-number { color: #076678; }
   .json-boolean { color: #af3a03; }
   .json-null { color: #af3a03; }
-  .json-url { color: #076678; }
   .json-punct { color: #504945; }
   .json-summary { color: #a89984; }
+  .json-url {
+    color: #076678;
+    cursor: pointer;
+    transition: color 0.15s ease;
+    &:hover { color:#000; }
+  }
   .json-arrow,
   .json-arrow-placeholder {
     position: relative;
