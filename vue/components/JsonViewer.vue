@@ -5,18 +5,13 @@
       <!-- Empty collection -->
       <span v-if='collectionSize === 0'>
         <span class='json-arrow-placeholder'/>
-        <span v-if='keyName !== undefined' class='json-key'>
-          "{{keyName}}"<span class='json-punct'>: </span>
-        </span>
+        <span v-if='keyName !== undefined' class='json-key'>"{{keyName}}"<span class='json-punct'>: </span></span>
         {{openBracket}}{{closeBracket}}
       </span>
       <!-- Expanded collection -->
       <template v-else-if='isOpen'>
         <span class='json-arrow' @click.stop='handleToggle'>▶</span>
-        <span v-if='keyName !== undefined' class='json-key'>
-          "{{keyName}}"<span class='json-punct'>: </span>
-        </span>
-        {{openBracket}}
+        <span v-if='keyName !== undefined' class='json-key'>"{{keyName}}"<span class='json-punct'>: </span></span>{{openBracket}}
         <span class='json-block'>
           <JsonViewer v-for='entry in entries' :key='entry.key' :value='entry.value'
             :keyName='isObject ? String(entry.key) : undefined' :isLast='entry.isLast'
@@ -27,8 +22,7 @@
       </template>
       <!-- Collapsed collection -->
       <template v-else>
-        <span class='json-arrow json-collapsed' @click.stop='handleToggle'>▶</span>
-        <span v-if='keyName !== undefined' class='json-key'>"{{keyName}}"<span class='json-punct'>: </span></span>
+        <span class='json-arrow json-collapsed' @click.stop='handleToggle'>▶</span><span v-if='keyName !== undefined' class='json-key'>"{{keyName}}"<span class='json-punct'>: </span></span>
         <span class='json-collapsed-body' @click.stop='handleToggle'>
           {{openBracket}}
           <span class='json-summary'> … {{collectionSize}} {{itemLabel}}</span>
@@ -159,10 +153,11 @@
 <style scoped>
   .json-node {
     display: block;
-    position: relative;
+    /* position: relative; */
     font-family: var(--fontfamily-code);
     font-size: 11px;
     line-height: 1.3em;
+    padding-left: 0.3em;
     color: #504945;
   }
   .json-key { color: #af3a03; }
@@ -175,15 +170,19 @@
   .json-summary { color: #a89984; }
 
   .json-arrow, .json-arrow-placeholder {
-    position: absolute;
-    left: -13px;
+    /* position: absolute;
+    left: -13px; */
+    position: relative;
+    margin-left: -15px;
     display: inline-block;
-    width: 1.2em;
+    width: 1.3em;
     font-size: 10px;
   }
   .json-arrow {
     cursor: pointer;
     user-select: none;
+    position: relative;
+    left: -0.1em;
     opacity: 0.5;
     transform: rotate(90deg);
     transition: transform 0.15s ease, opacity 0.15s ease;
@@ -201,7 +200,7 @@
 
   .json-block {
     display: block;
-    margin-left: 0.3em;
+    margin-left: 0em;
     padding-left: 1.5em;
     border-left: 1px dotted #0002;
   }
