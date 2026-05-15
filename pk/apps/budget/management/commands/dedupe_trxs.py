@@ -31,7 +31,8 @@ class Command(BaseCommand):
         """ Do we want to continue? Returns True if we should proceed. """
         result = None
         dtstr = dupe['date'].strftime('%Y-%m-%d')
-        print(f'\n{i+1:>2}.) {dupe["count"]}x  {dupe["account"]}  {dtstr}  {dupe["payee"]}  {dupe["amount"]}  (ids: {dupe["ids"]})')
+        print(f'\n{i+1:>2}.) {dupe["count"]}x  {dupe["account"]}  {dtstr}  '
+            f'{dupe["payee"]}  {dupe["amount"]}  (ids: {dupe["ids"]})')
         while result not in ['ignore', 'clean', 'keep']:
             result = input(utils.rgb('     What would you like to do? (ignore, clean, keep): ', '#6aa')).lower()
         return result

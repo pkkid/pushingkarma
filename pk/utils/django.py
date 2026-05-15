@@ -6,8 +6,8 @@ from datetime import date, datetime
 from django.conf import settings
 from django.core.exceptions import EmptyResultSet
 from django.db import connection, connections
-from django.db.models.query import QuerySet
 from django.db.models import Aggregate, CharField, DateTimeField, Model
+from django.db.models.query import QuerySet
 from django.urls import reverse as django_reverse
 from django.utils import timezone
 from urllib.parse import urlencode

@@ -35,7 +35,8 @@ class Migration(migrations.Migration):
                 ('high', models.DecimalField(decimal_places=2, max_digits=9, null=True)),
                 ('low', models.DecimalField(decimal_places=2, max_digits=9, null=True)),
                 ('volume', models.IntegerField(null=True)),
-                ('ticker', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='history', to='stocks.ticker')),
+                ('ticker', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE,
+                    related_name='history', to='stocks.ticker')),
             ],
             options={
                 'unique_together': {('ticker', 'date')},
@@ -44,6 +45,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='ticker',
             name='lastday',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, related_name='+', to='stocks.tickerhistory'),
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL,
+                related_name='+', to='stocks.tickerhistory'),
         ),
     ]
