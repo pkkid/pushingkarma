@@ -10,7 +10,7 @@
       <tr v-for='p in procs' :key='p.pid'>
         <td class='name'>{{p.name}}</td>
         <td class='mem'>{{utils.formatSize(p.mem)}}</td>
-        <td class='cpu'>{{p.cpu.toPrecision(1)}}%</td>
+        <td class='cpu'>{{p.cpu.toPrecision(2)}}%</td>
       </tr>
     </table>
   </div>
