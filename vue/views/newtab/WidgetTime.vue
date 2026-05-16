@@ -59,7 +59,7 @@
       transform: none;
       padding: 40px !important;
       .logo {
-        width: 150px;
+        width: 130px;
         align-self: flex-start;
         position: relative;
         top: -10px; left: -10px;
