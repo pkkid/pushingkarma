@@ -39,16 +39,12 @@
 </script>
 
 <style>
-  #newtab.fullscreen #stats {
-    border-width: 0px;
-  }
   #stats {
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
     width: 1900px; height: 1060px;
-    border: 1px solid #fff2;
     border-radius: 12px;
     font-size: 16px;
 
