@@ -1,15 +1,15 @@
 {
   "version": "2.0.0",
   "tasks": [{
+    "label": "Start Dev Server",
+    "type": "shell",
+    "command": "npm run start",
+    "inAgents": true
+  },{
     "label": "Install Dependencies",
     "type": "shell",
     "command": "./scripts/setup-env.sh",
     "inAgents": true,
     "runOptions": { "runOn": "worktreeCreated" }
-  },{
-    "label": "Start Dev Server",
-    "type": "shell",
-    "command": "npm run start",
-    "inAgents": true
   }]
 }
