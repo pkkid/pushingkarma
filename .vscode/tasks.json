@@ -3,7 +3,7 @@
   "tasks": [{
     "label": "Start Dev Server",
     "type": "shell",
-    "command": "npm run start",
+    "command": "bash -lc 'npm run start & SERVER_PID=$!; sleep 3; xdg-open http://localhost:5173/ >/dev/null 2>&1 || true; wait \"$SERVER_PID\"'",
     "inAgents": true
   },{
     "label": "Install Dependencies",
