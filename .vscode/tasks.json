@@ -1,18 +1,15 @@
 {
   "version": "2.0.0",
-  "tasks": [
-    {
-      "label": "Install dependencies",
-      "type": "shell",
-      "command": "npm install && uv sync && ln -sf /home/pkkid/Projects/pushingkarma/pk/settings.py pk/settings.py && cp -n /home/pkkid/Projects/pushingkarma/pk/db.sqlite3 pk/db.sqlite3",
-      "inAgents": true,
-      "runOptions": { "runOn": "worktreeCreated" }
-    },
-    {
-      "label": "Start dev server",
-      "type": "shell",
-      "command": "npm run start",
-      "inAgents": true
-    }
-  ]
+  "tasks": [{
+    "label": "Install Dependencies",
+    "type": "shell",
+    "command": "npm install && uv sync && ln -sf /home/pkkid/Projects/pushingkarma/pk/settings.py pk/settings.py && cp -n /home/pkkid/Projects/pushingkarma/pk/db.sqlite3 pk/db.sqlite3",
+    "inAgents": true,
+    "runOptions": { "runOn": "worktreeCreated" }
+  },{
+    "label": "Start Dev Server",
+    "type": "shell",
+    "command": "npm run start",
+    "inAgents": true
+  }]
 }
