@@ -19,7 +19,7 @@ npm install
 uv venv --python=3.13
 uv pip install -r pyproject.toml
 uv sync --all-extras
-ln -s ~/Private/Secrets/pushingkarma/settings.py pk/settings.py
+cp .env.example .env
 scripts/database-get.py
 
 # Start the Django and Vue servers together
@@ -28,7 +28,16 @@ scripts/database-get.py
 npm run start
 ```
 
-#### Other Useful Package Commands
+## Environment Variables
+Secrets are loaded from .env in the repository root.
+
+### Production Deploy
+- Keep a .env file on the remote host at ~/pushingkarma/.env.
+- fab deploy --full validates this file exists before building/restarting.
+- Deploy rsync excludes `.env` so remote secrets are not overwritten or deleted.
+
+
+## Other Useful Package Commands
 ```bash
 npm run getdb          # Gets the Production sqlite db from http://pdash.nasuni.net/db.sqlite3
 npm run start          # Starts Django and Vue servers together
@@ -38,7 +47,7 @@ npm run build          # Compile and Minify for Production
 npm run eslint         # Lint with [ESLint](https://eslint.org/)
 ```
 
-#### References
+## References
 * [Vue Extension for VSCode](https://marketplace.visualstudio.com/items?itemName=Vue.volar)
 * [Vite Configuration Reference](https://vitejs.dev/config/)
 * [Material Design Icons](https://pictogrammers.com/library/mdi/)

@@ -72,13 +72,25 @@ class MyConnection(Connection):
             self.sudo('whoami', hide='both')
         except invoke.exceptions.Failure:
             keyring.delete_password('pk', 'synologypw')
-            raise SystemExit('Remote sudo password is incorrect.')
+            raise SystemExit('Remote sudo password is incorrect.')  # noqa
 
 
 def check_settings_exists(conn):
     """ Ensure private directory is mounted. """
     if not os.path.exists(f'{LOCALDIR}/pk/settings.py'):
         raise SystemExit('Settings file does not exist.')
+
+
+def check_local_env_exists(conn):
+    """ Ensure local .env exists before building Django assets. """
+    if not os.path.exists(f'{LOCALDIR}/.env'):
+        raise SystemExit(f'Local .env file is missing: {LOCALDIR}/.env')
+
+
+def check_local_env_production_exists(conn):
+    """ Ensure local .env.production exists before full docker deploys. """
+    if not os.path.exists(f'{LOCALDIR}/.env.production'):
+        raise SystemExit(f'Local .env.production file is missing: {LOCALDIR}/.env.production')
 
 
 def build_vue(conn):
@@ -91,13 +103,19 @@ def build_vue(conn):
     conn.local(f'rm -rf {LOCALDIR}/_static')
 
 
+def upload_env_production(conn):
+    """ Upload local .env.production to the remote host as .env. """
+    conn.step(f'Uploading .env.production to {REMOTEHOST}:{REMOTEDIR}/.env')
+    conn.put(f'{LOCALDIR}/.env.production', f'{REMOTEDIR}/.env')
+
+
 def rsync_to_remote(conn):
     """ Sync project files and set the right permissions. """
     conn.step(f'Rsyncing Project to {REMOTEDIR}')
     excludes = [
         '__pycache__', '*/.git/', '*/.venv/', '*/.vscode/',
         '*/node_modules/', '*/_logs/', '*/_static/',
-        '*/static/notes/', '*.bak', '*.sqlite3*']
+        '*/static/notes/', '*.bak', '*.sqlite3*', '.env', '.env.*']
     conn.rsync(LOCALDIR, '~', excludes=excludes)
 
 
@@ -154,9 +172,12 @@ def restart_services(conn):
 def deploy(ctx, full=False):
     conn = MyConnection(host=REMOTEHOST, user=REMOTEUSER)
     check_settings_exists(conn)
+    check_local_env_exists(conn)
+    check_local_env_production_exists(conn) if full else None
     conn.validate_sudopw()
     build_vue(conn)
     rsync_to_remote(conn)
+    upload_env_production(conn) if full else None
     setup_log_directory(conn) if full else None
     initialize_django(conn) if full else None
     build_docker_image(conn) if full else None

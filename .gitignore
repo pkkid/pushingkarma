@@ -16,9 +16,9 @@
 **/.direnv
 **/.DS_Store
 **/.env
+**/.env.development
+**/.env.production
 **/build
 **/coverage
 **/node_modules/
-
 vue/assets/hljsthemes.css
-settings.py
