@@ -3,7 +3,7 @@
     <div id='newtab' :class='{fullscreen}'>
       <Transition name='layout-fade' mode='out-in'>
         <LayoutSimple v-if='layout === "simple"' key='simple' />
-        <LayoutStats v-else-if='layout === "stats"' key='stats' />
+        <LayoutStats v-else-if='layout === "stats"' key='stats' :style='{zoom: statsZoom}' />
       </Transition>
     </div>
   </div>
@@ -18,6 +18,7 @@
   const layouts = ['simple', 'stats']  // Two layout options
   const layout = useStorage('newtab.layout', 'simple')  // Current active layout
   const fullscreen = ref(false)  // True when browser is in fullscreen
+  const statsZoom = ref(1)  // CSS zoom applied to stats layout when not fullscreen
 
   // On Mounted
   // Initialize fullscreen status and update on resize
@@ -35,9 +36,20 @@
 
   // Update Fullscreen
   // Update the 'fullscreen' ref to true if browser is in fullscreen
+  // Also recompute statsZoom so stats layout fits with 200px margin when windowed
   const updateFullscreen = async function() {
     fullscreen.value = ((Math.abs(window.innerWidth - window.outerWidth) <= 5)
      && (Math.abs(window.innerHeight - window.outerHeight) <= 5))
+    if (fullscreen.value) {
+      statsZoom.value = 1
+    } else {
+      const statsW = 1900, statsH = 1060       // Natural size of the stats layout
+      const marginX = 400, marginY = 200       // Total margin to preserve (sides x2, top/bottom x2)
+      const maxWidth = 1100, minWidth = 800    // Clamp the effective rendered width
+      const zoomX = (window.innerWidth - marginX) / statsW
+      const zoomY = (window.innerHeight - marginY) / statsH
+      statsZoom.value = Math.max(Math.min(zoomX, zoomY, maxWidth / statsW), minWidth / statsW)
+    }
   }
 </script>
 
