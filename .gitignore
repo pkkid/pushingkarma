@@ -9,6 +9,7 @@
 *.sublime-project
 *.sublime-workspace
 *.vscode
+.vscode/settings.json
 **/_dist/
 **/_logs/
 **/_static/
