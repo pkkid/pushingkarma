@@ -3,21 +3,19 @@ This is the core code running pushingkarma.com. Feel free to borrow some ideas
 for your own site. If you find anything useful, by all means let me know.
 
 ## Development Setup
+
+1. Install NVM: https://github.com/nvm-sh/nvm
+2. Install UV: https://github.com/astral-sh/uv
+
 ```bash
-# Clone the repo
-git git@github.com:pkkid/pushingkarma.git
-cd pushingkarma
-
-# Install nvm & uv
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
-
-# Install node v20.11 and setup the Python environment
-nvm install
-npm install
-uv sync --all-extras
-cp .env.example .env
-scripts/get-database.py
+# Setup JS and Python environments
+cd pushingkarma             # Change cwd
+cp ~/Private/Secrets/pushingkarma/.env.development .env
+cp ~/Private/Secrets/pushingkarma/.env.production .
+nvm install                 # Install npm
+npm install                 # Setup JS env
+uv sync --all-extras        # Setup Python env
+scripts/get-database.py     # Fetch latest db
 
 # Start the Django and Vue servers together
 # Django http://localhost:8000/
