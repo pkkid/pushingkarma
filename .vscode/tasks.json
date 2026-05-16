@@ -3,7 +3,7 @@
   "tasks": [{
     "label": "Install Dependencies",
     "type": "shell",
-    "command": "npm install && uv sync && ln -sf /home/pkkid/Projects/pushingkarma/pk/settings.py pk/settings.py && cp -n /home/pkkid/Projects/pushingkarma/pk/db.sqlite3 pk/db.sqlite3",
+    "command": "./scripts/setup-env.sh",
     "inAgents": true,
     "runOptions": { "runOn": "worktreeCreated" }
   },{

@@ -13,14 +13,11 @@ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.4/install.sh | bash
 curl -LsSf https://astral.sh/uv/install.sh | sh
 
 # Install node v20.11 and setup the Python environment
-nvm install 20.11
-nvm use 20.11
+nvm install
 npm install
-uv venv --python=3.13
-uv pip install -r pyproject.toml
 uv sync --all-extras
 cp .env.example .env
-scripts/database-get.py
+scripts/get-database.py
 
 # Start the Django and Vue servers together
 # Django http://localhost:8000/
