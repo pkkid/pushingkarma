@@ -6,7 +6,7 @@
     </div>
     <!-- Chart -->
     <div class='chartwrap mem' style='padding:10px; float:left; width:180px;'>
-      <RingChart :value='glances.data?.mem?.percent ?? 0' :max='100' :size='150' :thickness='20'
+      <RingChart :value='glances.data?.mem?.percent ?? 0' :max='100' :size='150' :thickness='15'
         :color='sutils.COLORS.GREEN' bgcolor='#222' :label='`${glances.data?.mem?.percent?.toFixed(0)}%`'
         sublabel='Used'/>
     </div>
