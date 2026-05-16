@@ -1,7 +1,16 @@
 <template>
   <div id='timewidget' class='widget' :class='{fullscreen, compact}'>
-    <div class='time'>{{utils.formatDate(now, 'h:mm')}}</div>
-    <div class='date'>{{utils.formatDate(now, 'MMMM D, YYYY')}}</div>
+    <template v-if='compact'>
+      <div class='logo'/>
+      <div class='timedate'>
+        <div class='time'>{{utils.formatDate(now, 'h:mm')}}</div>
+        <div class='date'>{{utils.formatDate(now, 'MMMM D, YYYY')}}</div>
+      </div>
+    </template>
+    <template v-else>
+      <div class='time'>{{utils.formatDate(now, 'h:mm')}}</div>
+      <div class='date'>{{utils.formatDate(now, 'MMMM D, YYYY')}}</div>
+    </template>
   </div>
 </template>
 
@@ -43,11 +52,27 @@
     }
     &.compact {
       display: flex;
-      flex-direction: column;
-      position: static;
-      transform: none;
+      flex-direction: row;
       align-items: center;
-      justify-content: center;
+      position: relative;
+      top: auto; left: auto;
+      transform: none;
+      padding: 40px !important;
+      .logo {
+        width: 150px;
+        align-self: flex-start;
+        position: relative;
+        top: -10px; left: -10px;
+        aspect-ratio: 1/1;
+        background-color: color-mix(in srgb, var(--darkbg-fg1), #000 20%);
+        mask: url('/static/img/pk.svg') no-repeat center/contain;
+      }
+      .timedate {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        flex: 1;
+      }
       .time { font-size:4em; line-height:1; }
       .date { font-size:1.2em; margin-top:6px; opacity:0.65; }
     }
