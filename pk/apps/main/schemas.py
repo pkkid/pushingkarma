@@ -23,3 +23,11 @@ class GlobalVarsSchema(Schema):
     DEBUG: bool = Field(..., description='True if site running in debug mode')
     DOMAIN: str = Field(..., description='Domain the Django app is configured for')
     user: Optional[UserSchema] = Field(None, description='Currently logged in user')
+
+
+class ClaudeQuestionSchema(Schema):
+    prompt: str = Field(..., description='Prompt sent to Claude CLI')
+
+
+class ClaudeResponseSchema(Schema):
+    response: str = Field(..., description='Claude CLI text response')

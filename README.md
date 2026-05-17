@@ -42,6 +42,11 @@ npm run build          # Compile and Minify for Production
 npm run eslint         # Lint with [ESLint](https://eslint.org/)
 ```
 
+## Bash Access on Container
+```
+sudo docker exec -it pushingkarma /bin/bash
+```
+
 ## References
 * [Vue Extension for VSCode](https://marketplace.visualstudio.com/items?itemName=Vue.volar)
 * [Vite Configuration Reference](https://vitejs.dev/config/)

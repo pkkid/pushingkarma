@@ -162,6 +162,12 @@ REDDIT_AUTH = {
     'user_agent': platform.node()
 }
 
+# Claude CLI Settings
+CLAUDE_BIN = os.getenv('CLAUDE_BIN', expanduser('~/.local/bin/claude'))
+CLAUDE_TIMEOUT_SEC = 45
+CLAUDE_MAX_PROMPT_CHARS = 4000
+CLAUDE_MAX_RESPONSE_CHARS = 20000
+
 # Logging
 # https://docs.djangoproject.com/en/5.0/topics/logging/
 LOGDIR = f'{BASE_DIR}/_logs'
