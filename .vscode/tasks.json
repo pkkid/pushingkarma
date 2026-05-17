@@ -3,7 +3,7 @@
   "tasks": [{
     "label": "Start Dev Server",
     "type": "shell",
-    "command": "./scripts/start-dev-server.sh",
+    "command": "./scripts/start-dev-server.py",
     "inAgents": true
   },{
     "label": "Install Dependencies",
