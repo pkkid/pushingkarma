@@ -3,12 +3,12 @@
   "tasks": [{
     "label": "Start Dev Server",
     "type": "shell",
-    "command": "./scripts/start-server.sh",
+    "command": "./scripts/start-dev-server.sh",
     "inAgents": true
   },{
     "label": "Install Dependencies",
     "type": "shell",
-    "command": "./scripts/setup-env.sh",
+    "command": "./scripts/install-dependancies.py",
     "inAgents": true,
     "runOptions": { "runOn": "worktreeCreated" }
   }]

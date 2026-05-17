@@ -1,7 +1,9 @@
 #!/usr/bin/env python
-# Database Backup
-# Fetches the latest database backup from Synology
-import os, subprocess, sys
+"""
+Get Database
+Fetch the latest SQLite backup from Synology into the local project.
+"""
+import os, shlex, subprocess, sys
 import logging as log
 from datetime import datetime
 from os.path import abspath, dirname, exists
@@ -16,6 +18,7 @@ LOCAL_TMP = f'{ROOT}/pk/db.sqlite3.tmp'
 LOCAL_BAK = f'{ROOT}/pk/db.sqlite3.bak'
 LOCAL_DEST = f'{ROOT}/pk/db.sqlite3'
 _ = lambda path: path.replace(ROOT, '')
+q = lambda path: shlex.quote(path)
 
 
 if __name__ == '__main__':
@@ -23,7 +26,7 @@ if __name__ == '__main__':
     dtstr = datetime.now().strftime('%Y-%m-%d')
     remote_source = REMOTE_SOURCE.format(dtstr=dtstr)
     log.info(f'Downloading database {remote_source}')
-    subprocess.run(['scp', '-O', remote_source, LOCAL_TMP], check=True)
+    subprocess.run(f"scp -O {q(remote_source)} {q(LOCAL_TMP)}", shell=True, check=True)
     # Delete LOCAL_BAK
     if exists(LOCAL_BAK):
         log.info(f'Deleting {_(LOCAL_BAK)}')

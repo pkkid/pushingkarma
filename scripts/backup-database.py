@@ -1,12 +1,13 @@
 #!/usr/bin/env python
-# Database Backup
-# Saves a backup of the current database to Synology
-import shutil, sys
+"""
+Backup Database
+Copy the local SQLite database to the Synology backup location.
+"""
+import os, shutil, sys
 import logging as log
 from datetime import datetime, timedelta
 from glob import glob
 from os.path import dirname, abspath
-from pathlib import Path
 
 logformat = '%(asctime)-.19s %(module)16s:%(lineno)-3s %(levelname)-7s %(message)s'
 log.basicConfig(stream=sys.stdout, level=log.INFO, format=logformat)
@@ -24,7 +25,7 @@ def cleanup_old_backups():
     pattern = f'{BACKUP_DIR}/pushingkarma-*.sqlite3'
     for backup_file in glob(pattern):
         # Extract date from filename (format: pushingkarma-YYYY-MM-DD.sqlite3)
-        filename = Path(backup_file).name
+        filename = backup_file.split('/')[-1]
         date_str = filename.replace('pushingkarma-', '').replace('.sqlite3', '')
         backup_date = datetime.strptime(date_str, '%Y-%m-%d')
         # Keep if newer than 2 weeks OR if it's from the 1st of the month
@@ -32,7 +33,7 @@ def cleanup_old_backups():
         is_monthly_archive = backup_date.day == 1
         if is_old and not is_monthly_archive:
             log.info(f'Deleting old backup: {filename}')
-            Path(backup_file).unlink()
+            os.remove(backup_file)
 
 
 if __name__ == '__main__':

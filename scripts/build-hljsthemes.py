@@ -1,9 +1,8 @@
 #!/usr/bin/env python
-# Make Themes
-# Utility function creates all these in the highlight.js/styles/base16 directory
-# and copies all the themes to a single vue/assests/hightlightjs-themes.js file.
-# Each theme will be namespaced within a [theme='<theme-name>'] that must be
-# included at or before the <pre> tag in the html element.
+"""
+Build Highlight.js Themes
+Build namespaced Highlight.js base16 themes into a single CSS output file.
+"""
 import os, textwrap, sys
 import logging as log
 from os.path import dirname, abspath
