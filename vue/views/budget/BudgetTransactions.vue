@@ -202,10 +202,13 @@
     var count = trx?.similar_uncategorized_count
     if (column.name != 'category' || !trx?.category?.name || !count || count < 1) { return }
     var title = 'Transaction Categorized'
-    var message = `${utils.intComma(count)} similar uncategorized transactions found in ${trx.account?.name}.`
-    notify.notify(title, message, 'mdi-tag-multiple-outline', 0, [{
+    var message = `${utils.intComma(count)} similar uncategorized transactions found for "${trx.payee}".`
+    notify.notify(title, message, 'mdi-tag-multiple-outline', 20000, [{
       label: `Apply ${trx.category.name}`,
       onClick: async function() { await applySimilarCategorization(trx) }
+    }, {
+      label: 'Cancel',
+      onClick: function() {}
     }])
   }
 

@@ -74,6 +74,7 @@
       font-size: 13px;
       padding: 20px;
       position: relative;
+      border: 1px solid var(--lightbg-fg1);
       width: 100%;
       .icon { font-size:20px; float:left; }
       .title {
@@ -91,7 +92,7 @@
         margin: 12px 0px 0px 30px;
       }
       .actionbtn {
-        background: var(--lightbg-fg4);
+        background: var(--lightbg-fg1);
         border: 0;
         border-radius: 4px;
         color: var(--darkbg-fg1);
@@ -99,8 +100,12 @@
         font-family: var(--fontfamily-title);
         font-size: 11px;
         padding: 5px 10px;
+        opacity: 0.7;
       }
-      .actionbtn:hover { opacity: 0.9; }
+      .actionbtn:hover {
+        background: var(--lightbg-fg2);
+        opacity: 1;
+      }
     }
     .close {
       position: absolute;

@@ -51,6 +51,9 @@ def _pageurl(request, pagenum):
     """ Create URL for the specified page number. """
     query_params = request.GET.copy()
     query_params['page'] = pagenum
-    url = f'{settings.DOMAIN}{request.path}'
+    # Keep pagination URLs on the same origin as the current request.
+    # Using settings.DOMAIN can point to a different host in development,
+    # which drops session cookies on follow-up page requests.
+    url = request.path
     if query_params: url += f'?{urlencode(query_params)}'
     return url
