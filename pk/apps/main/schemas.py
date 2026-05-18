@@ -25,9 +25,9 @@ class GlobalVarsSchema(Schema):
     user: Optional[UserSchema] = Field(None, description='Currently logged in user')
 
 
-class ClaudeQuestionSchema(Schema):
-    prompt: str = Field(..., description='Prompt sent to Claude CLI')
+class AiPromptQuestionSchema(Schema):
+    prompt: str = Field(..., description='Prompt sent to the AI provider')
 
 
-class ClaudeResponseSchema(Schema):
-    response: str = Field(..., description='Claude CLI text response')
+class AiPromptResponseSchema(Schema):
+    response: str = Field(..., description='Text response from the AI provider')

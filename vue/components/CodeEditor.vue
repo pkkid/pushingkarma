@@ -37,6 +37,7 @@
     maxheight: {type:String, default:'100%'},             // Max height of the editor
     modelValue: {type:String},                            // v-model; varied value
     readonly: {type:Boolean, default:false},              // Enable editable or not
+    submitOnShiftEnter: {type:Boolean, default:false},    // Emit shift-enter on Shift+Enter
     showlinenums: {type:Boolean, default:false},          // Show line numbers
     tabspaces: {type:Number, default:2},                  // Number of spaces for tab
     theme: {type:String, default:'gruvbox-light-hard'},   // Highlight.js theme to apply
@@ -45,7 +46,7 @@
 
   var linenumsObserver = null                       // ResizeObserver for linenums
   var textareaObserver = null                       // ResizeObserver for textarea
-  const emit = defineEmits(['save', 'update:modelValue', 'update'])
+  const emit = defineEmits(['save', 'shiftenter', 'update:modelValue', 'update'])
   const backgroundcolor = ref('transparent')        // Background color of current theme
   const code = ref(null)                            // Reference to code element
   const codearea = ref(null)                        // Reference to codearea div
@@ -117,8 +118,12 @@
 
   // On Enter
   // Inserts new line adding indentation if needed
-  const onEnter = async function() {
+  const onEnter = async function(event) {
     if (props.readonly) { return }
+    if (event.shiftKey && props.submitOnShiftEnter) {
+      emit('shiftenter')
+      return
+    }
     textedit.indentNewLine(textarea.value, props.tabspaces)
     updateContent(textarea.value.value)
   }

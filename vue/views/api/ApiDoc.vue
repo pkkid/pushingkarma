@@ -55,7 +55,8 @@
                 </div>
                 <!-- Content Body -->
                 <div v-if='showPayload' class='payloadwrap'>
-                  <CodeEditor v-model='payload' :showlinenums='true' padding='10px' @keydown.shift.enter.prevent='sendRequest'/>
+                  <CodeEditor v-model='payload' :showlinenums='true' :submitOnShiftEnter='true'
+                    padding='10px' @shiftenter='sendRequest'/>
                   <Tooltip class='send-request' position='lefttop'>
                     <template #tooltip>Send Request<div class='subtext'>shift+enter</div></template>
                     <i class='mdi mdi-send' @click='sendRequest'/>
@@ -220,7 +221,9 @@
     try {
       const pathname = new URL(url).pathname
       if (pathname.startsWith('/api/')) { setupRequest(pathname, 'get'); return }
-    } catch(e) {}
+    } catch(e) {
+      // Ignore URL parsing errors and fall back to opening directly.
+    }
     window.open(url, '_blank')
   }
 
@@ -428,6 +431,8 @@
           .mdi {
             opacity: 0.6;
             cursor: pointer;
+            position: relative;
+            top: 2px;
             transition: opacity 0.3s ease;
             &:hover { opacity:1; }
           }

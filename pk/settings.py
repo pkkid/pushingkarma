@@ -162,11 +162,13 @@ REDDIT_AUTH = {
     'user_agent': platform.node()
 }
 
-# Claude CLI Settings
-CLAUDE_BIN = os.getenv('CLAUDE_BIN', expanduser('~/.local/bin/claude'))
-CLAUDE_TIMEOUT_SEC = 45
-CLAUDE_MAX_PROMPT_CHARS = 4000
-CLAUDE_MAX_RESPONSE_CHARS = 20000
+# AI Prompt Settings
+# AI and Gemini Settings
+AIPROMPT_TIMEOUT = 45
+AIPROMPT_MAX_CHARS = 4000
+AIPROMPT_MAX_RESPONSE = 20000
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
+GEMINI_MODEL = os.getenv('GEMINI_MODEL', 'gemini-2.0-flash')
 
 # Logging
 # https://docs.djangoproject.com/en/5.0/topics/logging/

@@ -1,5 +1,5 @@
 # encoding: utf-8
-import logging, requests, subprocess
+import logging, requests
 from django.conf import settings
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as django_login
@@ -9,9 +9,12 @@ from django.shortcuts import get_object_or_404
 from ninja import Body, Router
 from ninja.errors import HttpError
 from .schemas import GlobalVarsSchema, UserSchema, LoginSchema
-from .schemas import ClaudeQuestionSchema, ClaudeResponseSchema
+from .schemas import AiPromptQuestionSchema, AiPromptResponseSchema
 log = logging.getLogger(__name__)
 router = Router()
+
+class AiPromptBlocked(Exception):
+    pass
 
 
 @router.post('/login', response=UserSchema)
@@ -53,32 +56,33 @@ def glances(request):
     return response.json()
 
 
-@router.post('/claude', response=ClaudeResponseSchema)
-def claude(request, data:ClaudeQuestionSchema=Body(...)):
-    """ Ask Claude a question using the local CLI binary. """
+@router.post('/aiprompt', response=AiPromptResponseSchema)
+def aiprompt(request, data:AiPromptQuestionSchema=Body(...)):
+    """ Ask Gemini a question. """
     if not request.user.is_authenticated:
         raise HttpError(403, 'Permission denied.')
-    max_prompt_chars = int(getattr(settings, 'CLAUDE_MAX_PROMPT_CHARS', 4000))
-    max_response_chars = int(getattr(settings, 'CLAUDE_MAX_RESPONSE_CHARS', 20000))
-    timeout_sec = int(getattr(settings, 'CLAUDE_TIMEOUT_SEC', 45))
     prompt = data.prompt.strip()
-    if not prompt or len(prompt) > max_prompt_chars:
+    if not prompt or len(prompt) > settings.AIPROMPT_MAX_CHARS:
         raise HttpError(400, 'Prompt empty or too long.')
     try:
-        command = [settings.CLAUDE_BIN, '-p', prompt]
-        result = subprocess.run(command, capture_output=True, text=True,
-            timeout=timeout_sec, check=True)
-        response = result.stdout.strip()
-        if len(response) > max_response_chars:
-            response = response[:max_response_chars]
-        return {'response': response}
-    except subprocess.TimeoutExpired:
-        raise HttpError(504, 'Claude request timed out.')  # noqa
-    except subprocess.CalledProcessError as err:
-        stderr = (err.stderr or '').strip()
-        log.error('Claude CLI failed (%s): %s', err.returncode, stderr)
-        raise HttpError(502, 'Claude command failed.')  # noqa
-    except FileNotFoundError:
-        raise HttpError(500, f'Claude binary not found: {settings.CLAUDE_BIN}')  # noqa
+        response = _aiprompt_gemini(prompt)
     except Exception as err:
-        raise HttpError(500, f'Error running Claude command: {err}')  # noqa
+        raise HttpError(502, f'AI request failed: {type(err).__name__}: {err}') from err  # noqa
+    return {'response': response[:settings.AIPROMPT_MAX_RESPONSE]}
+
+
+def _aiprompt_gemini(prompt):
+    """ Ask Gemini a question and return the response text. """
+    if not settings.GEMINI_API_KEY:
+        raise Exception('Gemini API key not configured.')
+    model = settings.GEMINI_MODEL
+    url = f'https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent'
+    payload = {'contents': [{'role': 'user', 'parts': [{'text': prompt}]}]}
+    headers = {'x-goog-api-key': settings.GEMINI_API_KEY}
+    result = requests.post(url, headers=headers, json=payload, timeout=settings.AIPROMPT_TIMEOUT)
+    result.raise_for_status()
+    data = result.json()
+    if blockreason := data.get('promptFeedback', {}).get('blockReason'):
+        raise Exception(f'Prompt blocked: {blockreason}')
+    return data['candidates'][0]['content']['parts'][0]['text'].strip()
+
