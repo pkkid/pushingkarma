@@ -67,6 +67,7 @@ def aiprompt(request, data:AiPromptQuestionSchema=Body(...)):
     try:
         response = _aiprompt_gemini(prompt)
     except Exception as err:
+        log.exception('AI request failed')
         raise HttpError(502, f'AI request failed: {type(err).__name__}: {err}') from err  # noqa
     return {'response': response[:settings.AIPROMPT_MAX_RESPONSE]}
 

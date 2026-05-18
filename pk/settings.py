@@ -168,7 +168,7 @@ AIPROMPT_TIMEOUT = 45
 AIPROMPT_MAX_CHARS = 4000
 AIPROMPT_MAX_RESPONSE = 20000
 GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
-GEMINI_MODEL = os.getenv('GEMINI_MODEL', 'gemini-2.0-flash')
+GEMINI_MODEL = os.getenv('GEMINI_MODEL')
 
 # Logging
 # https://docs.djangoproject.com/en/5.0/topics/logging/
