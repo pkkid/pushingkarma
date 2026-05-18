@@ -30,7 +30,7 @@ class Command(BaseCommand):
             trxs = Transaction.objects.filter(user=user, account=account, category=None)
             account_updates = TransactionManager.categorize_transactions(user, account, trxs)
             for trx in account_updates:
-                log.info(f'  {trx.payee} -> {trx.category_id}')
+                log.info(f'  {trx.payee} -> {trx.category.name}')
             updated.extend(account_updates)
         log.info(f'Updating category for {len(updated)} transactions')
         if opts['save']:
