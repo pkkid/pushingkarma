@@ -2,6 +2,7 @@
 # https://github.com/csingley/ofxtools
 # https://ofxtools.readthedocs.io/en/latest/
 import csv, datetime, fnmatch, re, logging
+from collections import defaultdict
 from decimal import Decimal
 from hashlib import md5
 from io import StringIO
@@ -12,6 +13,11 @@ log = logging.getLogger(__name__)
 
 
 class TransactionManager:
+    CATEGORIZATION_STOPWORDS = ['venmo']
+    MONTH_TOKENS = {'jan', 'january', 'feb', 'february', 'mar', 'march',
+        'apr', 'april', 'may', 'jun', 'june', 'jul', 'july', 'aug', 'august',
+        'sep', 'sept', 'september', 'oct', 'october', 'nov', 'november',
+        'dec', 'december'}
   
     def __init__(self, user, safe=False, save=False):
         self.user = user        # User transactions belong to
@@ -104,21 +110,6 @@ class TransactionManager:
         )
         log.info(f'Imported {metrics["created"]} transactions to account {account.name} for {self.user.email}')
         return metrics
-
-    @classmethod
-    def categorize_transactions(cls, user, account, trxs, daysback=730, skip_categorized=True):
-        """ Categorize transactions from payee history and return updated items. """
-        updated = []
-        payee_categoryids = cls.payee_categoryids(user, account, daysback=daysback)
-        for trx in trxs:
-            if skip_categorized and trx.category_id:
-                continue
-            catpayee = cls.scrub_payee(trx.payee)
-            newcategoryid = payee_categoryids.get(catpayee)
-            if newcategoryid and newcategoryid != trx.category_id:
-                trx.category_id = newcategoryid
-                updated.append(trx)
-        return updated
     
     @classmethod
     def sort(cls, rows, rules):
@@ -128,15 +119,120 @@ class TransactionManager:
         first_date = cls.clean_date(rget(rows[0], rget(rules, 'columns.date')), dateformat)
         last_date = cls.clean_date(rget(rows[-1], rget(rules, 'columns.date')), dateformat)
         return reversed(rows) if first_date > last_date else rows
+
+    @classmethod
+    def categorize_transactions(cls, user, account, trxs, daysback=730, skip_categorized=True):
+        """ Categorize transactions from payee history and return updated items. """
+        updated = []
+        history = cls.category_history(user, account, daysback=daysback)
+        for trx in trxs:
+            if skip_categorized and trx.category_id: continue
+            newcategoryid = cls.match_category(trx, history, daysback=daysback)
+            if newcategoryid and newcategoryid != trx.category_id:
+                trx.category_id = newcategoryid
+                updated.append(trx)
+        return updated
     
     @classmethod
-    def payee_categoryids(cls, user, account, daysback=730):
-        """ Returns a dict of existing payee -> category """
-        mindate = datetime.datetime.now() - datetime.timedelta(days=daysback)
+    def category_history(cls, user, account, daysback=730):
+        """ Returns categorized transaction history used for matching. """
+        history = []
+        mindate = datetime.date.today() - datetime.timedelta(days=daysback)
         trxs = Transaction.objects.filter(user=user, account=account, category__isnull=False, date__gte=mindate)
-        trxs = trxs.values('payee', 'category_id')
-        categories = {cls.scrub_payee(trx['payee']):trx['category_id'] for trx in trxs}
-        return {payee:catid for payee,catid in categories.items() if len(payee) > 2}
+        trxs = trxs.values('payee', 'category_id', 'date', 'amount')
+        for trx in trxs:
+            if cls.has_stopword(trx['payee']):
+                continue
+            scrubbed = cls.scrub_payee(trx['payee'])
+            tokens = scrubbed.split()
+            if len(scrubbed) < 3 or len(tokens) == 0:
+                continue
+            history.append(dict(scrubbed=scrubbed, tokens=tokens, category_id=trx['category_id'],
+                date=trx['date'], sign=cls.amount_sign(trx['amount'])))
+        return history
+
+    @classmethod
+    def match_category(cls, trx, history, daysback=730):
+        """ Return the highest confidence category id for the transaction. """
+        if cls.has_stopword(trx.payee):
+            return None
+        scrubbed = cls.scrub_payee(trx.payee)
+        tokens = scrubbed.split()
+        if len(scrubbed) < 3 or len(tokens) == 0:
+            return None
+        scores = defaultdict(float)
+        target_sign = cls.amount_sign(trx.amount)
+        for item in history:
+            if target_sign != 0 and item['sign'] != 0 and item['sign'] != target_sign:
+                continue
+            score = cls.match_score(scrubbed, tokens, item, daysback)
+            if score > 0: scores[item['category_id']] += score  # Additive scoring for multiple signals
+        if len(scores) == 0: return None  # No signals for this transaction
+        ranked = sorted(scores.items(), key=lambda item: item[1], reverse=True)
+        top_categoryid, top_score = ranked[0]
+        second_score = ranked[1][1] if len(ranked) > 1 else 0
+        if top_score < 5: return None  # Not a strong enough signal
+        if second_score and top_score < second_score * 1.35: return None  # Not better than the next best signal
+        if second_score and top_score - second_score < 1.5: return None  # Not strong margin over the next best signal
+        return top_categoryid
+
+    @classmethod
+    def match_score(cls, scrubbed, tokens, item, daysback=730):
+        """ Return match score between a transaction and a history item. """
+        # Only use the first two words for keyword matching signals.
+        # Trailing tokens are often noisy (location/help/reference fragments).
+        left_tokens = tokens[:2]
+        right_tokens = item['tokens'][:2]
+        shared = set(left_tokens) & set(right_tokens)
+        if len(shared) == 0: return 0  # No shared tokens means no match
+        common_prefix = 0
+        for i in range(min(len(left_tokens), len(right_tokens))):
+            if left_tokens[i] != right_tokens[i]: break
+            common_prefix += 1
+        score = 0
+        # 10: Exact match on scrubbed payee is a very strong signal
+        # 4+: Common prefix is a strong signal
+        # 3:  Matching first token is a strong signal
+        # 1+: Each shared token is a signal
+        if scrubbed == item['scrubbed']: score += 10  
+        if common_prefix > 0: score += 4 + ((common_prefix - 1) * 2)  
+        if left_tokens[0] == right_tokens[0]: score += 3  
+        score += sum([1 / (i + 1) for i, token in enumerate(left_tokens) if token in shared])  
+        return score * cls.recency_weight(item['date'], daysback)
+
+    @classmethod
+    def recency_weight(cls, date, daysback=730):
+        """ Return recency multiplier for historical categorization signal. """
+        daysold = max((datetime.date.today() - date).days, 0)
+        return max(0.35, 1 - ((daysold / max(daysback, 1)) * 0.65))
+
+    @classmethod
+    def amount_sign(cls, amount):
+        """ Return -1 for debit, 1 for credit and 0 for zero amount. """
+        if amount < 0: return -1
+        if amount > 0: return 1
+        return 0
+
+    @classmethod
+    def stopwords(cls):
+        """ Return normalized stopwords that should never be auto-categorized. """
+        words = cls.CATEGORIZATION_STOPWORDS
+        return {' '.join(word.lower().split()) for word in words if isinstance(word, str) and word.strip()}
+
+    @classmethod
+    def has_stopword(cls, payee):
+        """ True if payee includes a configured categorization stopword. """
+        stopwords = cls.stopwords()
+        if len(stopwords) == 0: return False
+        normalized = ' '.join(re.sub(r'[^a-z0-9 ]', ' ', (payee or '').lower()).split())
+        if len(normalized) == 0: return False
+        tokens = set(normalized.split())
+        for stopword in stopwords:
+            if ' ' in stopword:
+                if stopword in normalized: return True
+                continue
+            if stopword in tokens: return True
+        return False
     
     @classmethod
     def clean_date(cls, date, dateformat=None):
@@ -168,6 +264,17 @@ class TransactionManager:
     @classmethod
     def scrub_payee(cls, payee):
         """ Scrub unique details from payee when trying to match categories. """
-        payee = re.sub(r'[^a-z ]', ' ', payee.lower())               # Keep letters only
-        payee = ' '.join([w for w in payee.split() if len(w) > 1])   # Remove multi-spaces and 1 char words
-        return payee.strip()
+        tokens = re.sub(r'[^a-z0-9 ]', ' ', payee.lower()).split()
+        scrubbed = []
+        i = 0
+        while i < len(tokens):
+            token = tokens[i]
+            nexttoken = tokens[i + 1] if i + 1 < len(tokens) else None
+            if token in cls.MONTH_TOKENS and nexttoken and re.fullmatch(r'\d{1,2}', nexttoken):
+                i += 2
+                continue
+            token = re.sub(r'\d+', '', token)
+            if len(token) > 1:
+                scrubbed.append(token)
+            i += 1
+        return ' '.join(scrubbed).strip()
