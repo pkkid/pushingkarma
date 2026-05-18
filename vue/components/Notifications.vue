@@ -6,6 +6,11 @@
         <i v-if='notification.icon' class='icon mdi' :class='notification.icon' />
         <div class='title'>{{ notification.title }}</div>
         <div class='message'>{{ notification.message }}</div>
+        <div v-if='notification.actions?.length' class='actions'>
+          <button v-for='(action, i) in notification.actions' :key='i' class='actionbtn' @click='runAction(index, action)'>
+            {{ action.label }}
+          </button>
+        </div>
       </div>
     </TransitionGroup>
   </div>
@@ -17,9 +22,9 @@
 
   // Add Notification
   // Display a new notification
-  const notify = function(title, message, icon=null, duration=30000) {
+  const notify = function(title, message, icon=null, duration=30000, actions=[]) {
     const id = Math.random().toString(36).substring(2, 15)
-    const notification = {title, message, icon, id}
+    const notification = {title, message, icon, actions, id}
     // Add new notification to the first position
     notifications.unshift(notification)
     if (duration > 0) {
@@ -34,6 +39,15 @@
   // Closes and removes the notification
   function removeNotification(index) {
     notifications.splice(index, 1)
+  }
+
+  // Run Action
+  // Trigger an inline action for a notification
+  async function runAction(index, action) {
+    if (action?.closeOnClick !== false) {
+      removeNotification(index)
+    }
+    await action?.onClick?.()
   }
 
   // Define Exposed
@@ -71,6 +85,22 @@
         margin: 0px 20px 0px 30px;
         font-family: var(--fontfamily-article);
       }
+      .actions {
+        display: flex;
+        gap: 8px;
+        margin: 12px 0px 0px 30px;
+      }
+      .actionbtn {
+        background: var(--lightbg-fg4);
+        border: 0;
+        border-radius: 4px;
+        color: var(--darkbg-fg1);
+        cursor: pointer;
+        font-family: var(--fontfamily-title);
+        font-size: 11px;
+        padding: 5px 10px;
+      }
+      .actionbtn:hover { opacity: 0.9; }
     }
     .close {
       position: absolute;

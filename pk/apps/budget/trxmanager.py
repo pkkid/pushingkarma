@@ -121,10 +121,10 @@ class TransactionManager:
         return reversed(rows) if first_date > last_date else rows
 
     @classmethod
-    def categorize_transactions(cls, user, account, trxs, daysback=730, skip_categorized=True):
+    def categorize_transactions(cls, user, account, trxs, daysback=730, skip_categorized=True, source_trxs=None):
         """ Categorize transactions from payee history and return updated items. """
         updated = []
-        history = cls.category_history(user, account, daysback=daysback)
+        history = cls.category_history(user, account, daysback=daysback, source_trxs=source_trxs)
         for trx in trxs:
             if skip_categorized and trx.category_id: continue
             newcategoryid = cls.match_category(trx, history, daysback=daysback)
@@ -134,21 +134,27 @@ class TransactionManager:
         return updated
     
     @classmethod
-    def category_history(cls, user, account, daysback=730):
+    def category_history(cls, user, account, daysback=730, source_trxs=None):
         """ Returns categorized transaction history used for matching. """
         history = []
-        mindate = datetime.date.today() - datetime.timedelta(days=daysback)
-        trxs = Transaction.objects.filter(user=user, account=account, category__isnull=False, date__gte=mindate)
-        trxs = trxs.values('payee', 'category_id', 'date', 'amount')
-        for trx in trxs:
-            if cls.has_stopword(trx['payee']):
+        if source_trxs is None:
+            mindate = datetime.date.today() - datetime.timedelta(days=daysback)
+            source_trxs = Transaction.objects.filter(user=user, account=account, category__isnull=False, date__gte=mindate)
+        for trx in source_trxs:
+            payee = trx['payee'] if isinstance(trx, dict) else trx.payee
+            categoryid = trx['category_id'] if isinstance(trx, dict) else trx.category_id
+            amount = trx['amount'] if isinstance(trx, dict) else trx.amount
+            date = trx['date'] if isinstance(trx, dict) else trx.date
+            if not categoryid:
                 continue
-            scrubbed = cls.scrub_payee(trx['payee'])
+            if cls.has_stopword(payee):
+                continue
+            scrubbed = cls.scrub_payee(payee)
             tokens = scrubbed.split()
             if len(scrubbed) < 3 or len(tokens) == 0:
                 continue
-            history.append(dict(scrubbed=scrubbed, tokens=tokens, category_id=trx['category_id'],
-                date=trx['date'], sign=cls.amount_sign(trx['amount'])))
+            history.append(dict(scrubbed=scrubbed, tokens=tokens, category_id=categoryid,
+                date=date, sign=cls.amount_sign(amount)))
         return history
 
     @classmethod

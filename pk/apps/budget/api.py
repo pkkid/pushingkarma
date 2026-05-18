@@ -203,7 +203,7 @@ def update_transaction(request,
     """ Update the specified transaction. """
     item = get_object_or_404(Transaction, user=request.user, id=pk)
     fields = data.dict(exclude_unset=True)
-    print(fields)
+    old_categoryid = item.category_id
     if 'date' in fields: item.date = fields['date']
     if 'payee' in fields: item.payee = fields['payee']
     if 'amount' in fields: item.amount = fields['amount']
@@ -215,7 +215,24 @@ def update_transaction(request,
             raise HttpError(409, f'Category "{fields['category']}" not found')
         item.category = category
     item.save()
-    return get_transaction(request, pk)
+    response = get_transaction(request, pk)
+    category_changed = old_categoryid != item.category_id
+    if category_changed and item.category_id:
+        response.similar_uncategorized_count = len(utils.get_similar_uncategorized_trxs(request.user, item))
+    return response
+
+
+@router.post('/transactions/{pk}/categorize_similar', response=schemas.SimilarCategorizeResponseSchema)
+def categorize_similar_transactions(request,
+      pk: int=Path(..., description='Primary key of source transaction for similar categorization')):
+    """ Categorize similar uncategorized transactions in the same account. """
+    source_trx = get_object_or_404(Transaction, user=request.user, id=pk)
+    if not source_trx.category_id:
+        raise HttpError(409, 'Source transaction must have a category')
+    updates = utils.get_similar_uncategorized_trxs(request.user, source_trx)
+    if len(updates):
+        Transaction.objects.bulk_update(updates, ['category'])
+    return {'updated_count': len(updates), 'category': source_trx.category.name}
 
 
 @router.get('/transactions', response=PageSchema(schemas.TransactionSchema), exclude_unset=True)

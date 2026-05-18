@@ -71,6 +71,7 @@ class TransactionSchema(Schema):
     original_amount: Optional[Decimal] = Field(None, description='Original amount of transaction')
     approved: bool = Field(..., description='True when user approved transaction')
     comment: Optional[str] = Field(None, description='User comment for transaction')
+    similar_uncategorized_count: Optional[int] = Field(None, description='Count of similar uncategorized transactions that can be auto-categorized')
     account: AccountSchema = Field(..., description='Financial institution of transaction')
     category: Optional[CategorySchema] = Field(None, description='User category of transaction')
 
@@ -129,3 +130,8 @@ class TransactionSummarySchema(Schema):
     unapproved_amount: Decimal = Field(..., description='Total amount of unapproved transactions')
     suggested_year_filters: List[FilterSchema] = Field(..., description='Ordered list of year navigation links')
     suggested_month_filters: List[FilterSchema] = Field(..., description='Ordered list of year navigation links')
+
+
+class SimilarCategorizeResponseSchema(Schema):
+    updated_count: int = Field(..., description='Number of uncategorized transactions updated')
+    category: str = Field(..., description='Category that was applied')

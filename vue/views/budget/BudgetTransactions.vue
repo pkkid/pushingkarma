@@ -24,7 +24,7 @@
 </template>
 
 <script setup>
-  import {computed, nextTick, onMounted, ref, watch} from 'vue'
+  import {computed, inject, nextTick, onMounted, ref, watch} from 'vue'
   import {EditTable, IconMessage, LayoutPaper} from '@/components'
   import {useUrlParams} from '@/composables'
   import {api, utils} from '@/utils'
@@ -74,6 +74,7 @@
   var cancelctrl = null                       // Cancel controller
   var updating = false                        // True if updating a transaction
   const loading = ref(false)                  // True to show loading indicator
+  const notify = inject('notify')             // Notification methods
   const {search} = useUrlParams({search:{}})  // Method & path url params
   const categories = ref(null)                // Categories list
   const trxs = ref(null)                      // Transactions list
@@ -177,6 +178,7 @@
         var {data} = await api.Budget.updateTransaction(trx.id, params)
         trxs.value.items[row] = data
         edittable.value.getCell(row, col).animateBg(isundo ? '#8404':'#0a48')
+        suggestSimilarCategorization(column, data)
       }
       // If saved from input enter key, select the next item
       if (event?.type === 'keydown' && event.key === 'Enter') {
@@ -192,6 +194,30 @@
     } finally {
       updating = false
     }
+  }
+
+  // Maybe Suggest Similar Categorization
+  // Show notification action when similar uncategorized transactions are found
+  const suggestSimilarCategorization = function(column, trx) {
+    var count = trx?.similar_uncategorized_count
+    if (column.name != 'category' || !trx?.category?.name || !count || count < 1) { return }
+    var title = 'Transaction Categorized'
+    var message = `${utils.intComma(count)} similar uncategorized transactions found in ${trx.account?.name}.`
+    notify.notify(title, message, 'mdi-tag-multiple-outline', 0, [{
+      label: `Apply ${trx.category.name}`,
+      onClick: async function() { await applySimilarCategorization(trx) }
+    }])
+  }
+
+  // Apply Similar Categorization
+  // Apply the same category to similar uncategorized transactions
+  const applySimilarCategorization = async function(trx) {
+    var {data} = await api.Budget.categorizeSimilarTransaction(trx.id)
+    if (data.updated_count > 0) {
+      notify.notify('Categorization Applied',
+        `${utils.intComma(data.updated_count)} transactions categorized as ${data.category}.`, 'mdi-check')
+    }
+    updateTransactions()
   }
 
   // Update Categories

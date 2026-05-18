@@ -5,6 +5,23 @@ from dateutil.parser import parse as parse_date
 from pk.utils.utils import add_months
 
 
+def get_similar_uncategorized_trxs(user, source_trx):
+    """ Returns uncategorized transactions that can be categorized like source_trx. """
+    if not source_trx.category_id:
+        return []
+    from .models import Transaction
+    from .trxmanager import TransactionManager
+    trxs = Transaction.objects.filter(user=user, account=source_trx.account, category__isnull=True)
+    trxs = trxs.exclude(id=source_trx.id)
+    updates = TransactionManager.categorize_transactions(
+        user,
+        source_trx.account,
+        trxs,
+        source_trxs=[source_trx],
+    )
+    return [trx for trx in updates if trx.category_id == source_trx.category_id]
+
+
 def get_suggested_filters(search='', interval='year'):
     """ Returns a list of links to navigate by year or month.
         Interval should be 'year' or 'month'.
