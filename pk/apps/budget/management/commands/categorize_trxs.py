@@ -27,14 +27,11 @@ class Command(BaseCommand):
         updated = []
         user = User.objects.get(email=opts['user'])
         for account in Account.objects.filter(user=user):
-            payee_categoryids = TransactionManager.payee_categoryids(account.user, account)
-            for trx in Transaction.objects.filter(user=user, account=account, category=None):
-                catpayee = TransactionManager.scrub_payee(trx.payee)
-                newcategoryid = payee_categoryids.get(catpayee)
-                if newcategoryid:
-                    log.info(f'  {trx.payee} -> {newcategoryid}')
-                    trx.category_id = newcategoryid
-                    updated.append(trx)
+            trxs = Transaction.objects.filter(user=user, account=account, category=None)
+            account_updates = TransactionManager.categorize_transactions(user, account, trxs)
+            for trx in account_updates:
+                log.info(f'  {trx.payee} -> {trx.category_id}')
+            updated.extend(account_updates)
         log.info(f'Updating category for {len(updated)} transactions')
         if opts['save']:
             Transaction.objects.bulk_update(updated, ['category'])

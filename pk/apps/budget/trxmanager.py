@@ -27,15 +27,13 @@ class TransactionManager:
                 log.info(f'Importing transactions for {self.user.email} {account.name}')
                 ext = filename.split('.')[-1].lower()
                 account, trxs = getattr(self, f'_read_{ext}')(account, rules, filehandle)
-                payee_categoryids = self.payee_categoryids(self.user, account)
                 for trx in trxs:
-                    catpayee = TransactionManager.scrub_payee(trx.payee)
                     trx.user = self.user
                     trx.account_id = account.id
                     trx.original_date = trx.date
                     trx.original_payee = trx.payee
                     trx.original_amount = trx.amount
-                    trx.category_id = payee_categoryids.get(catpayee)
+                self.categorize_transactions(self.user, account, trxs)
                 if self.save is True:
                     account.save()
                     trxs = self._bulk_create(account, trxs)
@@ -106,6 +104,21 @@ class TransactionManager:
         )
         log.info(f'Imported {metrics["created"]} transactions to account {account.name} for {self.user.email}')
         return metrics
+
+    @classmethod
+    def categorize_transactions(cls, user, account, trxs, daysback=730, skip_categorized=True):
+        """ Categorize transactions from payee history and return updated items. """
+        updated = []
+        payee_categoryids = cls.payee_categoryids(user, account, daysback=daysback)
+        for trx in trxs:
+            if skip_categorized and trx.category_id:
+                continue
+            catpayee = cls.scrub_payee(trx.payee)
+            newcategoryid = payee_categoryids.get(catpayee)
+            if newcategoryid and newcategoryid != trx.category_id:
+                trx.category_id = newcategoryid
+                updated.append(trx)
+        return updated
     
     @classmethod
     def sort(cls, rows, rules):
@@ -155,8 +168,6 @@ class TransactionManager:
     @classmethod
     def scrub_payee(cls, payee):
         """ Scrub unique details from payee when trying to match categories. """
-        payee = re.sub(r'[^a-z\. ]', '', payee.lower())             # Remove specical chars
-        payee = ' '.join([w for w in payee.split() if len(w) > 1])  # Remove multi-spaces and 1 char words
-        if payee.startswith('amazon mktpl'): payee = 'amazon mktpl'
-        if payee.startswith('amazon reta'): payee = 'amazon reta'
+        payee = re.sub(r'[^a-z ]', ' ', payee.lower())               # Keep letters only
+        payee = ' '.join([w for w in payee.split() if len(w) > 1])   # Remove multi-spaces and 1 char words
         return payee.strip()
