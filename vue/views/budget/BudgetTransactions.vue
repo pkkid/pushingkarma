@@ -31,6 +31,10 @@
   import axios from 'axios'
   import BudgetSearch from './BudgetSearch.vue'
 
+  // Animation Colors
+  const COLOR_UNDO = '#8404'
+  const COLOR_SAVE = '#0a48'
+
   var COLUMNS = [{
       name:'account', title:'Act', editable:false,
       html: trx => accountIcon(trx),
@@ -111,6 +115,12 @@
     )
   }
 
+  // Close Open Editor
+  // Deselect any active cell to close open inputs/dropdowns before batch updates
+  const closeOpenEditor = function() {
+    edittable.value?.deselect(null, false)
+  }
+
   // Get Next Page
   // Fetch next page of transactions
   const getNextPage = async function(url) {
@@ -177,7 +187,7 @@
       if (newval != oldval) {
         var {data} = await api.Budget.updateTransaction(trx.id, params)
         trxs.value.items[row] = data
-        edittable.value.getCell(row, col).animateBg(isundo ? '#8404':'#0a48')
+        edittable.value.getCell(row, col).animateBg(isundo ? COLOR_UNDO : COLOR_SAVE)
         suggestSimilarCategorization(column, data)
       }
       // If saved from input enter key, select the next item
@@ -215,12 +225,29 @@
   // Apply Similar Categorization
   // Apply the same category to similar uncategorized transactions
   const applySimilarCategorization = async function(trx) {
+    closeOpenEditor()
     var {data} = await api.Budget.categorizeSimilarTransaction(trx.id)
     if (data.updated_count > 0) {
-      notify.notify('Categorization Applied',
-        `${utils.intComma(data.updated_count)} transactions categorized as ${data.category}.`, 'mdi-check')
+      await updateTransactionRows(data.updated_transactions)
+      updateSummary()
+      var msg = `${utils.intComma(data.updated_count)} transactions categorized as ${data.category}.`
+      notify.notify('Categorization Applied', msg, 'mdi-check')
     }
-    updateTransactions()
+  }
+
+  // Update Transaction Rows
+  // Replace loaded rows with server-updated transactions and animate updated category cells
+  const updateTransactionRows = function(updatedItems) {
+    if (!trxs.value?.items?.length || !updatedItems?.length) { return }
+    var updatesById = new Map(updatedItems.map(item => [item.id, item]))
+    var categoryCol = COLUMNS.findIndex(col => col.name == 'category')
+    trxs.value.items = trxs.value.items.map(function(item, row) {
+      var updated = updatesById.get(item.id)
+      if (updated && categoryCol >= 0) {
+        nextTick(function() { edittable.value?.getCell(row, categoryCol)?.animateBg(COLOR_SAVE) })
+      }
+      return updated || item
+    })
   }
 
   // Update Categories
@@ -255,18 +282,13 @@
   // Update Transactions Summary
   // Fetch transactions from the server
   const updateSummary = async function() {
-    loading.value = true
     cancelctrl = api.cancel(cancelctrl)
     try {
       var params = {search:searchstr.value}
-      var {data} = await api.Budget.listTransactions(params, cancelctrl.signal)
-      trxs.value = data
-      edittable.value?.deselect(null, false)
-      edittable.value?.clearUndoRedoStack()
+      var {data} = await api.Budget.summarizeTransactions(params, cancelctrl.signal)
+      summary.value = data
     } catch (err) {
       if (!api.isCancel(err)) { throw(err) }
-    } finally {
-      setTimeout(() => loading.value = false, 500)
     }
   }
 </script>

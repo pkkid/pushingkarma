@@ -2,7 +2,36 @@
 import re
 from datetime import datetime
 from dateutil.parser import parse as parse_date
+from django.forms.models import model_to_dict
 from pk.utils.utils import add_months
+
+
+def clean_date_filters(search):
+    """ Removes any date filters from the search string. """
+    clean_search = re.sub(r'date[><]=?"[^"]*"?|date[><]=?\S+', '', search).strip()
+    return ' '.join(clean_search.split())
+
+
+def get_min_and_max_dates(search, interval='year'):
+    """ Returns the min and max dates from the search string, if any. """
+    mindates = re.findall(r'date>="([^"]*)"', search)
+    maxdates = re.findall(r'date<"([^"]*)"', search)
+    if len(mindates) == 1 and len(maxdates) == 1:
+        try:
+            mindate = parse_date(mindates[0])
+            maxdate = parse_date(maxdates[0])
+            if ((interval == 'year'
+              and (mindate.month == 1 and mindate.day == 1)
+              and (maxdate.month == 1 and maxdate.day == 1)
+              and (maxdate.year - mindate.year) == 1)
+            or (interval == 'month'
+              and (mindate.day == 1 and maxdate.day == 1)
+              and add_months(mindate, 1) == maxdate)):
+                selected = mindate
+        except Exception:
+            return None, None, None
+        return mindate, maxdate, selected
+    return None, None, None
 
 
 def get_similar_uncategorized_trxs(user, source_trx):
@@ -77,29 +106,12 @@ def sort_items(items, sortlist, itemid='id', sortkey='sortid'):
     return updates
 
 
-def clean_date_filters(search):
-    """ Removes any date filters from the search string. """
-    clean_search = re.sub(r'date[><]=?"[^"]*"?|date[><]=?\S+', '', search).strip()
-    return ' '.join(clean_search.split())
+def transaction_to_dict(trx):
+    """ Convert transaction model to response dictionary used by API schemas. """
+    item = model_to_dict(trx)
+    item['url'] = trx.url
+    item['account'] = dict(id=trx.account.id, url=trx.account.url, name=trx.account.name)
+    item['category'] = dict(id=trx.category.id, url=trx.category.url, name=trx.category.name) if trx.category else None
+    if trx.category and trx.category.exclude: item['category']['exclude'] = True
+    return item
 
-
-def get_min_and_max_dates(search, interval='year'):
-    """ Returns the min and max dates from the search string, if any. """
-    mindates = re.findall(r'date>="([^"]*)"', search)
-    maxdates = re.findall(r'date<"([^"]*)"', search)
-    if len(mindates) == 1 and len(maxdates) == 1:
-        try:
-            mindate = parse_date(mindates[0])
-            maxdate = parse_date(maxdates[0])
-            if ((interval == 'year'
-              and (mindate.month == 1 and mindate.day == 1)
-              and (maxdate.month == 1 and maxdate.day == 1)
-              and (maxdate.year - mindate.year) == 1)
-            or (interval == 'month'
-              and (mindate.day == 1 and maxdate.day == 1)
-              and add_months(mindate, 1) == maxdate)):
-                selected = mindate
-        except Exception:
-            return None, None, None
-        return mindate, maxdate, selected
-    return None, None, None

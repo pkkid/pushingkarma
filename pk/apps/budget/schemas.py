@@ -135,3 +135,4 @@ class TransactionSummarySchema(Schema):
 class SimilarCategorizeResponseSchema(Schema):
     updated_count: int = Field(..., description='Number of uncategorized transactions updated')
     category: str = Field(..., description='Category that was applied')
+    updated_transactions: List[TransactionSchema] = Field(..., description='Updated transactions after categorization')

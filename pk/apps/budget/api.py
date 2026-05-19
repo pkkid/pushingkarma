@@ -12,6 +12,7 @@ from itertools import groupby
 from ninja import Body, File, Path, Query, Router
 from ninja.errors import HttpError
 from ninja.files import UploadedFile
+from ninja.security import django_auth
 from pk.utils.utils import add_months, first_of_month
 from pk.utils.django import get_object_or_none
 from pk.utils.ninja import PageSchema, paginate
@@ -20,7 +21,7 @@ from . import schemas, utils
 from .models import Account, Category, Transaction
 from .trxmanager import TransactionManager
 log = logging.getLogger(__name__)
-router = Router()
+router = Router(auth=django_auth)
 
 ACCOUNTSEARCHFIELDS = [
     sf.StrField('name', 'name', desc='Account name', generic=True),
@@ -190,10 +191,7 @@ def get_transaction(request,
       pk: int=Path(..., description='Primary key of transaction to get')):
     """ List details for the specified transaction. """
     trx = get_object_or_404(Transaction, user=request.user, id=pk)
-    response = schemas.TransactionSchema.from_orm(trx)
-    response.account = dict(url=trx.account.url, id=trx.account.id, name=trx.account.name)
-    response.category = dict(url=trx.category.url, id=trx.category.id, name=trx.category.name) if trx.category else None
-    return response
+    return utils.transaction_to_dict(trx)
 
 
 @router.patch('/transactions/{pk}', response=schemas.TransactionSchema, exclude_unset=True)
@@ -218,7 +216,7 @@ def update_transaction(request,
     response = get_transaction(request, pk)
     category_changed = old_categoryid != item.category_id
     if category_changed and item.category_id:
-        response.similar_uncategorized_count = len(utils.get_similar_uncategorized_trxs(request.user, item))
+        response['similar_uncategorized_count'] = len(utils.get_similar_uncategorized_trxs(request.user, item))
     return response
 
 
@@ -232,7 +230,11 @@ def categorize_similar_transactions(request,
     updates = utils.get_similar_uncategorized_trxs(request.user, source_trx)
     if len(updates):
         Transaction.objects.bulk_update(updates, ['category'])
-    return {'updated_count': len(updates), 'category': source_trx.category.name}
+    return {
+        'updated_count': len(updates),
+        'category': source_trx.category.name,
+        'updated_transactions': [utils.transaction_to_dict(trx) for trx in updates],
+    }
 
 
 @router.get('/transactions', response=PageSchema(schemas.TransactionSchema), exclude_unset=True)
@@ -249,12 +251,7 @@ def list_transactions(request,
     response = paginate(request, trxs, page=page, perpage=100)
     for i in range(len(response['items'])):
         trx = response['items'][i]
-        item = model_to_dict(trx)
-        item['url'] = trx.url
-        item['account'] = dict(id=trx.account.id, url=trx.account.url, name=trx.account.name)
-        item['category'] = dict(id=trx.category.id, url=trx.category.url, name=trx.category.name) if trx.category else None
-        if trx.category and trx.category.exclude: item['category']['exclude'] = True
-        response['items'][i] = item
+        response['items'][i] = utils.transaction_to_dict(trx)
     return response
 
 
