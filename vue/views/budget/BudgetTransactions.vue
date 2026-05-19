@@ -211,8 +211,9 @@
         edittable.value.getCell(row, col).animateBg(isundo ? COLOR_UNDO : COLOR_SAVE)
         suggestSimilarCategories(column, data)
       }
-      // If saved from input enter key, select the next item
-      if (event?.type === 'keydown' && event.key === 'Enter' && !event.ctrlKey && !event.metaKey && !event.altKey) {
+      // If saved from enter/space key, select the next item
+      var isAdvanceKey = event?.key === 'Enter' || event?.key === ' ' || event?.code === 'Space'
+      if (event?.type === 'keydown' && isAdvanceKey && !event.ctrlKey && !event.metaKey && !event.altKey) {
         if (event.shiftKey) { edittable.value.selectUp(event) }
         else { edittable.value.selectDown(event) }
       } else if (event?.type === 'click' && event.key === 'Enter') {

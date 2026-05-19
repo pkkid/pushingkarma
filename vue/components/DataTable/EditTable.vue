@@ -76,7 +76,7 @@
     hotkeys('shift+tab', 'edittable', function(event) { selectLeft(event) })
     hotkeys('right', 'edittable', function(event) { selectRight(event) })
     hotkeys('tab', 'edittable', function(event) { selectRight(event) })
-    hotkeys('enter, shift+enter', 'edittable', function(event) { startEditing(event) })
+    hotkeys('enter, shift+enter, space', 'edittable', function(event) { startEditing(event) })
     hotkeys('ctrl+z', 'edittable', function(event) { undo(event) })
     hotkeys('ctrl+y', 'edittable', function(event) { redo(event) })
     hotkeys('alt+backspace', 'edittable', function(event) { resetToDefault(event) })
@@ -222,8 +222,8 @@
     else if (event.key == 'Enter') {
       event.preventDefault()
       var hasModifier = event.ctrlKey || event.metaKey || event.altKey
-      var column = props.columns[col]
-      var oldval = utils.getItemValue(props.items[row], column)
+      var evtcol = props.columns[col]
+      var oldval = utils.getItemValue(props.items[row], evtcol)
       var newval = getCell(row, col).$el.querySelector('input').value
       if (oldval != newval) {
         getCell(row, col).setError(null)
