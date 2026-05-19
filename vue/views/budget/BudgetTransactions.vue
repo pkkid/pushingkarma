@@ -24,7 +24,7 @@
 </template>
 
 <script setup>
-  import {computed, inject, nextTick, onMounted, ref, watch} from 'vue'
+  import {computed, inject, nextTick, onBeforeUnmount, onMounted, ref, watch} from 'vue'
   import {EditTable, IconMessage, LayoutPaper} from '@/components'
   import {useUrlParams} from '@/composables'
   import {api, utils} from '@/utils'
@@ -98,6 +98,13 @@
   onMounted(function() {
     updateTransactions()
     updateCategories()
+    window.addEventListener('keydown', preventBrowserBackspace)
+  })
+
+  // On Before Unmount
+  // Remove global listeners used by this view
+  onBeforeUnmount(function() {
+    window.removeEventListener('keydown', preventBrowserBackspace)
   })
 
   // Watch Search
@@ -105,6 +112,22 @@
   watch(search, function() {
     updateTransactions()
   })
+
+  // Prevent Browser Backspace
+  // Block browser history navigation from Backspace outside editable fields
+  const preventBrowserBackspace = function(event) {
+    if (event.key != 'Backspace') { return }
+    var target = event.target
+    if (!target) {
+      event.preventDefault()
+      return
+    }
+    var tagName = target.tagName?.toLowerCase()
+    var isEditable = target.isContentEditable
+      || tagName == 'input' || tagName == 'textarea' || tagName == 'select'
+    if (isEditable && !target.disabled && !target.readOnly) { return }
+    event.preventDefault()
+  }
 
   // Category Choices
   // Return a list of category choices for SelectInput
@@ -116,9 +139,9 @@
   }
 
   // Close Open Editor
-  // Deselect any active cell to close open inputs/dropdowns before batch updates
+  // Stop editing while keeping the current cell selected before batch updates
   const closeOpenEditor = function() {
-    edittable.value?.deselect(null, false)
+    edittable.value?.deselect(null, true)
   }
 
   // Get Next Page
@@ -191,7 +214,7 @@
         suggestSimilarCategories(column, data)
       }
       // If saved from input enter key, select the next item
-      if (event?.type === 'keydown' && event.key === 'Enter') {
+      if (event?.type === 'keydown' && event.key === 'Enter' && !event.ctrlKey && !event.metaKey && !event.altKey) {
         if (event.shiftKey) { edittable.value.selectUp(event) }
         else { edittable.value.selectDown(event) }
       } else if (event?.type === 'click' && event.key === 'Enter') {
@@ -217,6 +240,8 @@
     var message = `${utils.intComma(count)} similar uncategorized transactions found for "${trx.payee}".`
     notify.notify(title, message, 'mdi-tag-multiple-outline', 20000, [{
       label: `Apply ${trx.category.name}`,
+      hotkey: {ctrlKey:true, key:'Enter'},
+      hotkeyLabel: 'Ctrl+Enter',
       onClick: async function() { await applySimilarCategories(trx) }
     }, {
       label: 'Cancel',

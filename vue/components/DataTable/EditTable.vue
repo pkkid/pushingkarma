@@ -221,6 +221,7 @@
     else if (event.key == 'y' && event.ctrlKey) { redo(event) }
     else if (event.key == 'Enter') {
       event.preventDefault()
+      var hasModifier = event.ctrlKey || event.metaKey || event.altKey
       var column = props.columns[col]
       var oldval = utils.getItemValue(props.items[row], column)
       var newval = getCell(row, col).$el.querySelector('input').value
@@ -228,7 +229,7 @@
         getCell(row, col).setError(null)
         emit('itemUpdated', event, row, col, newval)
         addUndo(row, col, oldval, newval)
-      } else if (event.type == 'keydown') {
+      } else if (event.type == 'keydown' && !hasModifier) {
         selectDown(event)
       }
     }

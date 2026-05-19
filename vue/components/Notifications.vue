@@ -8,7 +8,8 @@
         <div class='message'>{{ notification.message }}</div>
         <div v-if='notification.actions?.length' class='actions'>
           <button v-for='(action, i) in notification.actions' :key='i' class='actionbtn' @click='runAction(index, action)'>
-            {{ action.label }}
+            <div>{{ action.label }}</div>
+            <div v-if='action.hotkeyLabel' class='subtext'>{{ action.hotkeyLabel }}</div>
           </button>
         </div>
       </div>
@@ -17,7 +18,7 @@
 </template>
 
 <script setup>
-  import {reactive} from 'vue'
+  import {onBeforeUnmount, onMounted, reactive} from 'vue'
   const notifications = reactive([])
 
   // Add Notification
@@ -49,6 +50,40 @@
     }
     await action?.onClick?.()
   }
+
+  // Matches Hotkey
+  // Returns true when key event matches a configured hotkey object
+  const matchesHotkey = function(event, hotkey) {
+    if (!hotkey?.key) { return false }
+    var key = event.key?.toLowerCase()
+    if (key != hotkey.key.toLowerCase()) { return false }
+    if (!!hotkey.altKey != event.altKey) { return false }
+    if (!!hotkey.ctrlKey != event.ctrlKey) { return false }
+    if (!!hotkey.metaKey != event.metaKey) { return false }
+    if (!!hotkey.shiftKey != event.shiftKey) { return false }
+    return true
+  }
+
+  // On Keydown
+  // Runs the first matching shortcut for the most recent notification
+  const onKeydown = async function(event) {
+    if (!notifications.length) { return }
+    var topNotification = notifications[0]
+    if (!topNotification?.actions?.length) { return }
+    var action = topNotification.actions.find(action => matchesHotkey(event, action.hotkey))
+    if (!action) { return }
+    event.preventDefault()
+    event.stopPropagation()
+    await runAction(0, action)
+  }
+
+  onMounted(function() {
+    window.addEventListener('keydown', onKeydown)
+  })
+
+  onBeforeUnmount(function() {
+    window.removeEventListener('keydown', onKeydown)
+  })
 
   // Define Exposed
   defineExpose({notify})
@@ -101,6 +136,10 @@
         font-size: 11px;
         padding: 5px 10px;
         opacity: 0.7;
+        text-align: left;
+        .subtext {
+          margin-top: 3px;
+        }
       }
       .actionbtn:hover {
         background: var(--lightbg-fg2);
