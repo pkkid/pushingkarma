@@ -228,7 +228,7 @@
         getCell(row, col).setError(null)
         emit('itemUpdated', event, row, col, newval)
         addUndo(row, col, oldval, newval)
-      } else {
+      } else if (event.type == 'keydown') {
         selectDown(event)
       }
     }

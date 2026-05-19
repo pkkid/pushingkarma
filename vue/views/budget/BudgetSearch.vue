@@ -53,7 +53,7 @@
       input {
         width: 100%;
         border-radius: 20px;
-        padding: 5px 15px;
+        padding: 5px 30px 5px 15px;
       }
       .mdi-close {
         position: absolute;

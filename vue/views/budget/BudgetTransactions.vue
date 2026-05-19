@@ -188,12 +188,14 @@
         var {data} = await api.Budget.updateTransaction(trx.id, params)
         trxs.value.items[row] = data
         edittable.value.getCell(row, col).animateBg(isundo ? COLOR_UNDO : COLOR_SAVE)
-        suggestSimilarCategorization(column, data)
+        suggestSimilarCategories(column, data)
       }
       // If saved from input enter key, select the next item
       if (event?.type === 'keydown' && event.key === 'Enter') {
         if (event.shiftKey) { edittable.value.selectUp(event) }
         else { edittable.value.selectDown(event) }
+      } else if (event?.type === 'click' && event.key === 'Enter') {
+        closeOpenEditor()
       }
     } catch (err) {
       // Set an error message on the cell
@@ -208,14 +210,14 @@
 
   // Maybe Suggest Similar Categorization
   // Show notification action when similar uncategorized transactions are found
-  const suggestSimilarCategorization = function(column, trx) {
+  const suggestSimilarCategories = function(column, trx) {
     var count = trx?.similar_uncategorized_count
     if (column.name != 'category' || !trx?.category?.name || !count || count < 1) { return }
     var title = 'Transaction Categorized'
     var message = `${utils.intComma(count)} similar uncategorized transactions found for "${trx.payee}".`
     notify.notify(title, message, 'mdi-tag-multiple-outline', 20000, [{
       label: `Apply ${trx.category.name}`,
-      onClick: async function() { await applySimilarCategorization(trx) }
+      onClick: async function() { await applySimilarCategories(trx) }
     }, {
       label: 'Cancel',
       onClick: function() {}
@@ -224,14 +226,14 @@
 
   // Apply Similar Categorization
   // Apply the same category to similar uncategorized transactions
-  const applySimilarCategorization = async function(trx) {
+  const applySimilarCategories = async function(trx) {
     closeOpenEditor()
     var {data} = await api.Budget.categorizeSimilarTransaction(trx.id)
     if (data.updated_count > 0) {
-      await updateTransactionRows(data.updated_transactions)
+      updateTransactionRows(data.updated_transactions)
       updateSummary()
       var msg = `${utils.intComma(data.updated_count)} transactions categorized as ${data.category}.`
-      notify.notify('Categorization Applied', msg, 'mdi-check')
+      notify.notify('Categorization Applied', msg, 'mdi-check', 5000)
     }
   }
 

@@ -3,7 +3,7 @@
     <input v-model='_value' spellcheck='false' autocomplete='off' @keydown='onKeyDown'/>
     <div v-if='fchoices.length > 0' class='selectinput-dropdown lightbg'>
       <div v-for='(choice, i) in fchoices' :key='choice.id' :ref='el => choicerefs[i]=el' class='selectinput-choice' 
-        :class='{focused:focused?.name == choice.name}'>
+        :class='{focused:focused?.name == choice.name}' @mousedown.prevent @click='onChoiceClick(choice)'>
         {{choice.name}}
       </div>
     </div>
@@ -100,6 +100,15 @@
     _value.value = focused.value.name
     await nextTick()
     emit('keydown', event)
+  }
+
+  // On Choice Click
+  // Apply the clicked dropdown choice and notify parent without keyboard navigation
+  const onChoiceClick = async function(choice) {
+    _value.value = choice.name
+    focused.value = choice
+    await nextTick()
+    emit('keydown', {key:'Enter', shiftKey:false, type:'click', preventDefault:function(){}})
   }
 </script>
 
