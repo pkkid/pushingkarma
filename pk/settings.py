@@ -99,7 +99,7 @@ if DEBUG is True:
 # https://docs.djangoproject.com/en/5.0/ref/csrf/
 CSRF_COOKIE_SAMESITE = 'Strict'
 CSRF_COOKIE_SECURE = True
-CSRF_TRUSTED_ORIGINS = ['http://localhost:5173', 'http://localhost.localdomain:5173']
+CSRF_TRUSTED_ORIGINS = _to_list(os.getenv('CSRF_TRUSTED_ORIGINS'))
 if DEBUG is True:
     CSRF_COOKIE_SAMESITE = 'Lax'
     CSRF_COOKIE_SECURE = False
