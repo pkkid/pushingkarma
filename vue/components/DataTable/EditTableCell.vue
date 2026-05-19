@@ -39,7 +39,7 @@
   const props = defineProps({
     item: {type:Object},                      // Transaction object
     column: {type:Object},                    // Column object
-    tooltip: {type:String},                   // Tooltip text
+    tooltip: {type:[String, Object]},         // Tooltip html string or Vue component
     tooltipWidth: {type:String},              // Tooltip width
   })
   var animateBgTimeout = null                 // Timeout for success animation

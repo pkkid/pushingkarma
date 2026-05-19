@@ -1,9 +1,10 @@
 # encoding: utf-8
-import logging, re, requests
+import functools, hashlib, json, logging, re, requests
 import sqlparse, textwrap, time
 from collections import defaultdict
 from datetime import date, datetime
 from django.conf import settings
+from django.core.cache import cache
 from django.core.exceptions import EmptyResultSet
 from django.db import connection, connections
 from django.db.models import Aggregate, CharField, DateTimeField, Model
@@ -12,6 +13,38 @@ from django.urls import reverse as django_reverse
 from django.utils import timezone
 from urllib.parse import urlencode
 log = logging.getLogger(__name__)
+
+
+def cache_response(timeout=3600, prefix='viewcache', peruser=True, bodyarg='data'):
+    """ Cache view responses and optionally include hashed body data in the cache key. """
+    def decorator(func):
+        @functools.wraps(func)
+        def wrapper(*args, **kwargs):
+            request = kwargs.get('request') or (args[0] if args else None)
+            if request is None or not timeout:
+                return func(*args, **kwargs)
+            parts = [prefix, func.__module__, func.__name__, request.method, request.path]
+            if peruser:
+                userid = getattr(getattr(request, 'user', None), 'id', None)
+                parts.append(f'user:{userid or "anon"}')
+            body = kwargs.get(bodyarg)
+            if body is None and bodyarg == 'data' and len(args) > 1:
+                body = args[1]
+            if bodyarg and body is not None:
+                bodystr = json.dumps(body, separators=(',', ':'), sort_keys=True, default=str)
+                bodyhash = hashlib.sha256(bodystr.encode('utf-8')).hexdigest()[:16]
+                parts.append(f'body:{bodyhash}')
+            cachehash = hashlib.sha256(':'.join(parts).encode('utf-8')).hexdigest()
+            cachekey = f'{prefix}:{cachehash}'
+            cached = cache.get(cachekey)
+            if cached is not None:
+                return cached
+            response = func(*args, **kwargs)
+            if response is not None:
+                cache.set(cachekey, response, timeout)
+            return response
+        return wrapper
+    return decorator
 
 
 def _rgb(text, color='#aaa', reset=True):

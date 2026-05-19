@@ -8,8 +8,10 @@ from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from ninja import Body, Router
 from ninja.errors import HttpError
+from pk.utils.django import cache_response
 from .schemas import GlobalVarsSchema, UserSchema, LoginSchema
 from .schemas import AiPromptQuestionSchema, AiPromptResponseSchema
+from typing import Optional
 log = logging.getLogger(__name__)
 router = Router()
 
@@ -56,20 +58,21 @@ def glances(request):
     return response.json()
 
 
-@router.post('/aiprompt', response=AiPromptResponseSchema)
-def aiprompt(request, data:AiPromptQuestionSchema=Body(...)):
-    """ Ask Gemini a question. """
+@router.post('/aiprompt', response=Optional[AiPromptResponseSchema])
+@cache_response(timeout=86400, prefix='aiprompt', peruser=False, bodyarg='data')
+def aiprompt(request, data:AiPromptQuestionSchema=Body(...), cache_only:bool=False):
+    """ Ask Gemini a question. Pass cache_only=true to return null on a cache miss instead of
+        calling the AI. This allows callers to silently check for a cached response.
+    """
     if not request.user.is_authenticated:
         raise HttpError(403, 'Permission denied.')
     prompt = data.prompt.strip()
     if not prompt or len(prompt) > settings.AIPROMPT_MAX_CHARS:
         raise HttpError(400, 'Prompt empty or too long.')
-    try:
-        response = _aiprompt_gemini(prompt)
-    except Exception as err:
-        log.exception('AI request failed')
-        raise HttpError(502, f'AI request failed: {type(err).__name__}: {err}') from err  # noqa
-    return {'response': response[:settings.AIPROMPT_MAX_RESPONSE]}
+    if cache_only: return None
+    response = _aiprompt_gemini(prompt)
+    response = response[:settings.AIPROMPT_MAX_RESPONSE]
+    return {'response': response}
 
 
 def _aiprompt_gemini(prompt):

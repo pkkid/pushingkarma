@@ -18,6 +18,7 @@ console.log(`Axios.defaults.baseURL: ${axios.defaults.baseURL}`)
 // API Endpoints
 // Endpoints defined in the Django application
 export const Main = {
+  aiPrompt(data, params, signal) { return axios.post(`/api/main/aiprompt`, data, {signal, params}) },
   getGlances(signal) { return axios.get(`/api/main/glances`, {signal}) },
   getGlobalVars(signal) { return axios.get(`/api/main/global_vars`, {signal}) },
   login(data, signal) { return axios.post(`/api/main/login`, data, {signal}) },

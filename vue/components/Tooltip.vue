@@ -1,23 +1,31 @@
 <template>
   <div class='tooltip-container' ref='container' @mouseenter='onMouseEnter'
     @mouseleave='onMouseLeave' @click='onClick'>
-    <div v-if='visible' class='tooltip' ref='tooltip' :class='position' :style='tstyle'>
-      <slot name='tooltip'>
-        <template v-if='html'><div v-html='html'/></template>
-        <template v-else>{{text}}</template>
-      </slot>
+    <div v-if='visible' class='tooltip darkbg' ref='tooltip' :class='position' :style='tstyle'>
+      <div class='tooltip-arrow'/>
+      <div ref='content' class='tooltip-body'>
+        <div class='tooltip-content'>
+          <slot name='tooltip'>
+            <template v-if='typeof html == "string"'><div v-html='html'/></template>
+            <component v-else-if='html' :is='html.component || html' v-bind='html.props || {}'/>
+            <template v-else>{{text}}</template>
+          </slot>
+        </div>
+      </div>
     </div>
     <slot></slot>
   </div>
 </template>
 
 <script setup>
-  import {ref, nextTick, onBeforeUnmount, onMounted, useSlots} from 'vue'
+  import {ref, nextTick, onBeforeUnmount, onMounted, useSlots, watch} from 'vue'
 
   var timeout_show = null                             // Timeout for showing tooltip
   var timeout_hide = null                             // Timeout for hiding tooltip
+  var resizeObserver = null                           // Observer to reposition on content size change
   const container = ref(null)                         // Reference to tooltip container
   const tooltip = ref(null)                           // Reference to tooltip element
+  const content = ref(null)                           // Reference to tooltip content element
   const tstyle = ref({})                              // Dynamic style for tooltip
   const visible = ref(false)                          // Tooltip visibility
   const slots = useSlots()                            // Slots for tooltip content
@@ -25,7 +33,7 @@
     position: {type:String, default:'top'},           // Tooltip position {topleft,top,topright,righttop,right,rightbottom,etc.}
     delay: {type:Number, default:500},                // Delay before showing tooltip
     text: {type:String, default:null},                // Tooltip text (or define #content slow)
-    html: {type:String, default:null},                // Tooltip html (or define #content slow)
+    html: {type:[String, Object], default:null},      // Tooltip html string or Vue component
     width: {type:String, default:'max-content'},      // Tooltip width
     trigger: {type:String, default:'hover'},          // Trigger type: {hover, click, always}
   })
@@ -43,6 +51,16 @@
     }
   })
 
+  // Watch Content
+  // Attach a ResizeObserver to the inner content so any size change triggers a reposition.
+  watch(content, function(elem) {
+    resizeObserver?.disconnect()
+    if (elem) {
+      resizeObserver = new ResizeObserver(function() { updateTooltipStyle() })
+      resizeObserver.observe(elem)
+    }
+  })
+
   // On Before Unmount
   // Remove event listeners
   onBeforeUnmount(function() {
@@ -50,6 +68,7 @@
       document.removeEventListener('click', onDocumentClick)
       document.removeEventListener('keydown', onKeyDown)
     }
+    resizeObserver?.disconnect()
     clearTimeout(timeout_show)
     clearTimeout(timeout_hide)
   })
@@ -117,20 +136,23 @@
   const updateTooltipStyle = async function() {
     tooltip.value.style.width = props.width
     await nextTick()
+    var contentbox = content.value.getBoundingClientRect()
+    var tooltipHeight = contentbox.height + 10
     var cbox = container.value.getBoundingClientRect()
     var tbox = tooltip.value.getBoundingClientRect()
-    if (props.position.startsWith('top')) { tooltip.value.style.top = `${-tbox.height - 5}px` }
+    tooltip.value.style.height = `${tooltipHeight}px`
+    if (props.position.startsWith('top')) { tooltip.value.style.top = `${-tooltipHeight - 5}px` }
     if (props.position.startsWith('right')) { tooltip.value.style.left = `${cbox.width + 5}px` }
     if (props.position.startsWith('bottom')) { tooltip.value.style.top = `${cbox.height + 5}px` }
     if (props.position.startsWith('left')) { tooltip.value.style.left = `${-tbox.width - 5}px` }
     if (props.position.length > 6) {
-      if (props.position.endsWith('top')) { tooltip.value.style.top = `${(cbox.height / 2) - tbox.height + 15}px` }
+      if (props.position.endsWith('top')) { tooltip.value.style.top = `${(cbox.height / 2) - tooltipHeight + 15}px` }
       if (props.position.endsWith('right')) { tooltip.value.style.left = `${(cbox.width / 2) - 15}px` }
       if (props.position.endsWith('bottom')) { tooltip.value.style.top = `${(cbox.height / 2) - 15}px` }
       if (props.position.endsWith('left')) { tooltip.value.style.left = `${(cbox.width / 2) - tbox.width + 15}px` }
     } else {
       if (props.position == 'top' || props.position == 'bottom') { tooltip.value.style.left = `${(cbox.width - tbox.width) / 2}px` }
-      if (props.position == 'right' || props.position == 'left') { tooltip.value.style.top = `${(cbox.height - tbox.height) / 2}px` }
+      if (props.position == 'right' || props.position == 'left') { tooltip.value.style.top = `${(cbox.height - tooltipHeight) / 2}px` }
     }
     tooltip.value.classList.add('loaded')
   }
@@ -142,14 +164,15 @@
   })
 </script>
 
-<style scoped>
+<style>
   .tooltip-container {
-    --bgcolor: var(--darkbg-bg1);
+    --tooltip-bgcolor: var(--darkbg-bg1);
+    --tooltip-transition-duration: 0.2s;
     position: relative;
     display: inline-block;
 
     .tooltip {
-      background-color: var(--bgcolor);
+      background-color: var(--tooltip-bgcolor);
       border-radius: 4px;
       box-shadow: 0 4px 8px #0002, 0 2px 4px #0002;
       color: var(--darkbg-fg1);
@@ -157,67 +180,75 @@
       opacity: 0;
       padding: 5px 10px;
       position: absolute;
-      transition: all 0.4s ease;
+      transition:
+        opacity var(--tooltip-transition-duration) ease,
+        top var(--tooltip-transition-duration) ease,
+        left var(--tooltip-transition-duration) ease,
+        height var(--tooltip-transition-duration) ease;
+      overflow: visible;
       user-select: text;
       text-align: left;
       z-index: 11;
       &.loaded { opacity: 1; }
+      .tooltip-arrow {
+        display: block;
+        content: ' ';
+        width: 0;
+        height: 0;
+        border-style: solid;
+        position: absolute;
+        border-color: transparent transparent transparent transparent;
+        border-width: 5px 5px 5px 5px;
+      }
+      .tooltip-body { overflow: hidden; }
+      .tooltip-content { display: block; }
     }
-    .tooltip::before {
-      display: block;
-      content: ' ';
-      width: 0;
-      height: 0;
-      border-style: solid;
-      position: absolute;
-      border-color: transparent transparent transparent transparent;
-      border-width: 5px 5px 5px 5px;
-    }
-    .tooltip.topleft::before,
-    .tooltip.top::before,
-    .tooltip.topright::before {
+
+    .tooltip.topleft .tooltip-arrow,
+    .tooltip.top .tooltip-arrow,
+    .tooltip.topright .tooltip-arrow {
       border-bottom-width: 0px;
-      border-top-color: var(--bgcolor);
+      border-top-color: var(--tooltip-bgcolor);
       transform: translateX(-50%);
     }
-    .tooltip.topleft::before { bottom: -5px; right: 5px; }
-    .tooltip.top::before { bottom: -5px; left: 50%; }
-    .tooltip.topright::before { bottom: -5px; left: 15px; }
+    .tooltip.topleft .tooltip-arrow { bottom: -5px; right: 5px; }
+    .tooltip.top .tooltip-arrow { bottom: -5px; left: 50%; }
+    .tooltip.topright .tooltip-arrow { bottom: -5px; left: 15px; }
     
     /* Right */
-    .tooltip.righttop::before,
-    .tooltip.right::before,
-    .tooltip.rightbottom::before {
+    .tooltip.righttop .tooltip-arrow,
+    .tooltip.right .tooltip-arrow,
+    .tooltip.rightbottom .tooltip-arrow {
       border-left-width: 0px;
-      border-right-color: var(--bgcolor);
+      border-right-color: var(--tooltip-bgcolor);
       transform: translateY(-50%);
     }
-    .tooltip.righttop::before { bottom: 5px; left: -5px; }
-    .tooltip.right::before { top: 50%; left: -5px; }
-    .tooltip.rightbottom::before { top: 15px; left: -5px; }
+    .tooltip.righttop .tooltip-arrow { bottom: 5px; left: -5px; }
+    .tooltip.right .tooltip-arrow { top: 50%; left: -5px; }
+    .tooltip.rightbottom .tooltip-arrow { top: 15px; left: -5px; }
     
     /* Bottom */
-    .tooltip.bottomleft::before,
-    .tooltip.bottom::before,
-    .tooltip.bottomright::before {
+    .tooltip.bottomleft .tooltip-arrow,
+    .tooltip.bottom .tooltip-arrow,
+    .tooltip.bottomright .tooltip-arrow {
       border-top-width: 0px;
-      border-bottom-color: var(--bgcolor);
+      border-bottom-color: var(--tooltip-bgcolor);
       transform: translateX(-50%);
     }
-    .tooltip.bottomleft::before { top: -5px; right: 5px; }
-    .tooltip.bottom::before { top: -5px; left: 50%; }
-    .tooltip.bottomright::before { top: -5px; left: 15px; }
+    .tooltip.bottomleft .tooltip-arrow { top: -5px; right: 5px; }
+    .tooltip.bottom .tooltip-arrow { top: -5px; left: 50%; }
+    .tooltip.bottomright .tooltip-arrow { top: -5px; left: 15px; }
     
     /* Left */
-    .tooltip.lefttop::before,
-    .tooltip.left::before,
-    .tooltip.leftbottom::before {
+    .tooltip.lefttop .tooltip-arrow,
+    .tooltip.left .tooltip-arrow,
+    .tooltip.leftbottom .tooltip-arrow {
       border-right-width: 0px;
-      border-left-color: var(--bgcolor);
+      border-left-color: var(--tooltip-bgcolor);
       transform: translateY(-50%);
     }
-    .tooltip.lefttop::before { bottom: 5px; right: -5px; }
-    .tooltip.left::before { top: 50%; right: -5px; }
-    .tooltip.leftbottom::before { top: 15px; right: -5px; }
+    .tooltip.lefttop .tooltip-arrow { bottom: 5px; right: -5px; }
+    .tooltip.left .tooltip-arrow { top: 50%; right: -5px; }
+    .tooltip.leftbottom .tooltip-arrow { top: 15px; right: -5px; }
   }
 </style>

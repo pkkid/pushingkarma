@@ -24,12 +24,13 @@
 </template>
 
 <script setup>
-  import {computed, inject, nextTick, onBeforeUnmount, onMounted, ref, watch} from 'vue'
+  import {computed, inject, markRaw, nextTick, onBeforeUnmount, onMounted, ref, watch} from 'vue'
   import {EditTable, IconMessage, LayoutPaper} from '@/components'
   import {useUrlParams} from '@/composables'
   import {api, utils} from '@/utils'
   import axios from 'axios'
   import BudgetSearch from './BudgetSearch.vue'
+  import BudgetPayeeTooltip from './BudgetPayeeTooltip.vue'
 
   // Animation Colors
   const COLOR_UNDO = '#8404'
@@ -177,12 +178,9 @@
   }
 
   // Payee Tooltip
-  // Tooltip shows the original value of the cell
+  // Returns a component descriptor for the payee tooltip content
   const payeeTooltip = function(trx) {
-    var tooltip = origTooltip(trx, 'payee')
-    if (tooltip) { return tooltip }
-    if (trx.payee.length > 35) { return utils.tmpl(`{{payee}}`, trx) }
-    return null
+    return {component:markRaw(BudgetPayeeTooltip), props:{trx}}
   }
 
   // On Selected

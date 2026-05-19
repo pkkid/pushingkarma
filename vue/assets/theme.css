@@ -109,7 +109,7 @@ html,body {
   --fgcolor40: #777060;
   --linkcolor: var(--lightbg-blue1);
   --linkhover: #000;
-  --linkhoverunderline: 2px dotted var(--linkhover);
+  --linkhoverunderline: 1px dotted var(--linkhover);
   ::selection {
     background: #d50d !important;
     color: #eeee !important;
@@ -124,7 +124,7 @@ html,body {
   --fgcolor40: #777060;
   --linkcolor: var(--darkbg-fg0);
   --linkhover: var(--darkbg-orange1);
-  --linkhoverunderline: 2px dotted transparent;
+  --linkhoverunderline: 1px dotted transparent;
   ::selection {
     background: #fff3 !important;
     color: #eee !important;
@@ -138,7 +138,7 @@ html,body {
     cursor: pointer;
     text-decoration: none;
     transition: all 0.3s ease;
-    border-bottom: 2px dotted transparent;
+    border-bottom: 1px dotted transparent;
   }
   a:hover {
     color: var(--linkhover);
