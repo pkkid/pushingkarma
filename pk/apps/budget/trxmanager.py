@@ -13,7 +13,7 @@ log = logging.getLogger(__name__)
 
 
 class TransactionManager:
-    CATEGORIZATION_STOPWORDS = ['venmo']
+    CATEGORIZATION_STOPWORDS = ['venmo', 'google']
     MONTH_TOKENS = {'jan', 'january', 'feb', 'february', 'mar', 'march',
         'apr', 'april', 'may', 'jun', 'june', 'jul', 'july', 'aug', 'august',
         'sep', 'sept', 'september', 'oct', 'october', 'nov', 'november',
