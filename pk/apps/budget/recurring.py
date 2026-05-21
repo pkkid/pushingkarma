@@ -1,40 +1,49 @@
 # encoding: utf-8
-import datetime
-import re
-import statistics
+"""
+Recurring payment detection heuristics. This module identifies likely recurring
+charges directly from transaction history without storing separate profile tables.
+
+High-level flow:
+1. Pull recent debit transactions for a user (lookback window).
+2. Normalize each payee into a grouping key (remove noisy/company suffix tokens).
+3. For each payee group, detect a cadence from date intervals:
+   - monthly, quarterly, or yearly
+4. Score confidence using:
+   - cadence fit ratio
+   - observation coverage (count/span)
+   - amount consistency (MAD/median)
+   - soft signal boosts/penalties from categories, comments, and payee keywords
+5. Classify each candidate as:
+   - recurring (subscription-like)
+   - recurring_bill (bill/payment-like)
+6. Estimate monthly/yearly cost from cadence and median amount.
+7. Apply filters (minimum confidence/count/charge, stale/inactive rules, include_bills).
+
+If a whole payee group fails detection, the detector attempts an amount-cluster
+fallback so a merchant with multiple plans/prices can still produce a valid
+recurring candidate.
+
+Returned items include confidence, cadence, cost estimates, accounts/categories,
+and short human-readable reasons to explain why each candidate was surfaced.
+"""
+import datetime, statistics
 from collections import Counter, defaultdict
 from decimal import Decimal
+from . import utils as butils
 from .models import Transaction
-from .trxmanager import TransactionManager
 
 
 class RecurringDetector:
     MIN_CHARGE = Decimal('5.00')
     COMMENT_TAGS = {'sub', 'subscription', 'recurring', 'renewal', 'autopay'}
     RECURRING_CATEGORY_WORDS = {'subscription', 'subscriptions', 'software, games', 'software'}
-    BILL_CATEGORY_WORDS = {
-        'loan', 'loans', 'mortgage', 'transfers', 'ignored',
-        'utilities', 'insurance', 'taxes', 'medical',
-    }
+    BILL_CATEGORY_WORDS = {'loan', 'loans', 'mortgage', 'transfers', 'ignored', 'utilities', 'insurance', 'taxes', 'medical'}
     BILL_PAYEE_WORDS = {'pymt', 'payment', 'loan', 'mortgage', 'cardmember', 'autopay', 'ach', 'taxpymt'}
     RECURRING_PAYEE_WORDS = {'subscription', 'subscrip', 'premium', 'plus', 'membership', 'member', 'dues', 'stream'}
     AGGREGATOR_TOKENS = {'google', 'apple', 'amazon', 'paypal', 'sq', 'amz'}
-    CADENCE_RANGES = {
-        'monthly': (24, 40),
-        'quarterly': (75, 110),
-        'yearly': (330, 400),
-    }
-    GROUP_NOISE_TOKENS = {
-        'help', 'new', 'york', 'tv', 'str', 'an', 'ski', 'sno', 'httpswww',
-    }
-    STALE_DAYS_BY_CADENCE = {
-        'monthly': 62,
-        'quarterly': 150,
-        'yearly': 548,
-    }
-    MAX_INACTIVE_DAYS_BY_CADENCE = {
-        'monthly': 365,
-    }
+    CADENCE_RANGES = {'monthly':(24,40), 'quarterly':(75,110), 'yearly':(330,400)}
+    STALE_DAYS_BY_CADENCE = {'monthly':62, 'quarterly':150, 'yearly':548}
+    MAX_INACTIVE_DAYS_BY_CADENCE = {'monthly':365}
 
     @classmethod
     def detect(cls, user, lookback_days=913, min_count=3, min_confidence=45, include_bills=False, include_inactive=False):
@@ -42,12 +51,16 @@ class RecurringDetector:
         mindate = datetime.date.today() - datetime.timedelta(days=lookback_days)
         trxs = Transaction.objects.filter(user=user, amount__lt=0, date__gte=mindate)
         trxs = trxs.select_related('account', 'category').order_by('date', 'id')
+        # Group transactions by payee key
         grouped = defaultdict(list)
         for trx in trxs:
-            key = cls.group_key(trx.payee)
-            if len(key) < 3:
-                continue
+            key = butils.scrub_payee(trx.payee)
+            if len(key) < 3: continue
             grouped[key].append(trx)
+        print('-----------')
+        for key, rows in grouped.items():
+            print(f'{rows[0].payee}  ->  {key}')
+        # Detect recurring patterns within each group and assign confidence scores
         items = []
         for key, rows in grouped.items():
             if len(rows) < 2:
@@ -78,6 +91,7 @@ class RecurringDetector:
                     continue
                 if item['confidence'] >= min_confidence:
                     items.append(item)
+        # Sort by confidence, cost, count
         items = sorted(items, key=lambda item: (item['confidence'], item['yearly_cost'], item['count']), reverse=True)
         monthly_total = sum([item['monthly_cost'] for item in items])
         yearly_total = sum([item['yearly_cost'] for item in items])
@@ -90,7 +104,7 @@ class RecurringDetector:
 
     @classmethod
     def detect_group(cls, key, rows):
-        """Compute cadence, confidence and cost estimates for one recurring payee group."""
+        """ Compute cadence, confidence and cost estimates for one recurring payee group. """
         rows = sorted(rows, key=lambda trx: trx.date)
         span_days = (rows[-1].date - rows[0].date).days
         if span_days < 70:
@@ -140,29 +154,6 @@ class RecurringDetector:
             'category_names': categories,
             'reasons': reasons[:4],
         }
-
-    @classmethod
-    def group_key(cls, payee):
-        """Normalize a payee into a stable grouping key."""
-        key = TransactionManager.scrub_payee(payee or '')
-        key = re.sub(r'\b(?:com|www|http|https|co|inc|llc|corp)\b', ' ', key)
-        tokens = re.sub(r'\s+', ' ', key).strip().split()
-        tokens = [token for token in tokens if not cls.is_noise_token(token)]
-        deduped = []
-        seen = set()
-        for token in tokens:
-            if token in seen:
-                continue
-            deduped.append(token)
-            seen.add(token)
-        return ' '.join(deduped)
-
-    @classmethod
-    def is_noise_token(cls, token):
-        """True for transient descriptor tokens that fragment payee groups."""
-        if token in cls.GROUP_NOISE_TOKENS:
-            return True
-        return bool(re.fullmatch(r'p[bcdfghjklmnpqrstvwxyz]{2,6}', token))
 
     @classmethod
     def intervals(cls, rows):

@@ -2,6 +2,7 @@
 import re
 from datetime import datetime
 from dateutil.parser import parse as parse_date
+from django.conf import settings
 from django.forms.models import model_to_dict
 from pk.utils.utils import add_months
 
@@ -104,6 +105,39 @@ def sort_items(items, sortlist, itemid='id', sortkey='sortid'):
             setattr(item, sortkey, i+1)
             updates.append(item)
     return updates
+
+
+def scrub_payee(payee):
+    """ Scrub unique details from payee when trying to match categories. """
+    # Scrub payment processor tokens followed by *
+    payee = payee.lower()
+    # Scrub paymenet processor tokens followed by *
+    if payee.split('*', 1)[0].strip() in settings.BUDGET_SCRUB_AGGREGATOR_TOKENS:
+        payee = '*' + payee.split('*', 1)[-1].strip()
+    # Split the payee into tokens
+    tokens = re.sub(r'[^a-z0-9 ]', ' ', payee).split()
+    scrubbed, seen, i = [], set(), 0
+    while i < len(tokens):
+        token = tokens[i]
+        # Scrub month tokens followed by year tokens (e.g. "jan 2020", "february 21")
+        nexttoken = tokens[i+1] if i+1 < len(tokens) else None
+        nextisyear = bool(nexttoken and re.fullmatch(r'(?:\d{2}|20\d{2})', nexttoken))
+        if token in settings.BUDGET_SCRUB_MONTH_TOKENS and nextisyear:
+            i += 2; continue
+        # Scrub junk strings <nums><chars><nums> or similar
+        if re.search(r'(?:\d+[a-z]+\d+|[a-z]+\d+[a-z]+)', token):
+            i += 1; continue
+        # Scrub numbers and asterisks completly
+        token = re.sub(r'\d+', '', token)
+        # Scrub common noisy tokens
+        if token in settings.BUDGET_SCRUB_NOISE_TOKENS:
+            i += 1; continue
+        # Scrubs tokens <1 char and non-unique within this payee
+        if len(token) >= settings.BUDGET_SCRUB_MIN_TOKEN_LEN and token not in seen:
+            scrubbed.append(token)
+            seen.add(token)
+        i += 1
+    return ' '.join(scrubbed).strip()
 
 
 def transaction_to_dict(trx):

@@ -48,7 +48,7 @@
       tooltip: item => utils.escapeHtml(item.accounts.join(', ')),
     },{
       name:'payee', title:'Payee', editable:true,
-      html: item => `${item.display_name}<div class='subtext'>${item.category_names.join("; ")}</div>`,
+      html: item => `${item.key.split('|')[0].toUpperCase()}<div class='subtext'>${item.category_names.join("; ")}</div>`,
     },{
       name:'confidence', title:'Conf', editable:false,
       class: item => item.confidence >= 80 ? 'high' : item.confidence >= 60 ? 'medium' : 'low',

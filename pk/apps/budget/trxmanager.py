@@ -3,6 +3,7 @@
 # https://ofxtools.readthedocs.io/en/latest/
 import csv, datetime, fnmatch, re, logging
 from collections import defaultdict
+from django.conf import settings
 from decimal import Decimal
 from hashlib import md5
 from io import StringIO
@@ -13,11 +14,6 @@ log = logging.getLogger(__name__)
 
 
 class TransactionManager:
-    CATEGORIZATION_STOPWORDS = ['venmo', 'google']
-    MONTH_TOKENS = {'jan', 'january', 'feb', 'february', 'mar', 'march',
-        'apr', 'april', 'may', 'jun', 'june', 'jul', 'july', 'aug', 'august',
-        'sep', 'sept', 'september', 'oct', 'october', 'nov', 'november',
-        'dec', 'december'}
   
     def __init__(self, user, safe=False, save=False):
         self.user = user        # User transactions belong to
@@ -220,15 +216,9 @@ class TransactionManager:
         return 0
 
     @classmethod
-    def stopwords(cls):
-        """ Return normalized stopwords that should never be auto-categorized. """
-        words = cls.CATEGORIZATION_STOPWORDS
-        return {' '.join(word.lower().split()) for word in words if isinstance(word, str) and word.strip()}
-
-    @classmethod
     def has_stopword(cls, payee):
         """ True if payee includes a configured categorization stopword. """
-        stopwords = cls.stopwords()
+        stopwords = settings.BUDGET_CATEGORY_STOPWORDS
         if len(stopwords) == 0: return False
         normalized = ' '.join(re.sub(r'[^a-z0-9 ]', ' ', (payee or '').lower()).split())
         if len(normalized) == 0: return False
@@ -272,15 +262,21 @@ class TransactionManager:
         """ Scrub unique details from payee when trying to match categories. """
         tokens = re.sub(r'[^a-z0-9 ]', ' ', payee.lower()).split()
         scrubbed = []
+        seen = set()
         i = 0
         while i < len(tokens):
             token = tokens[i]
             nexttoken = tokens[i + 1] if i + 1 < len(tokens) else None
-            if token in cls.MONTH_TOKENS and nexttoken and re.fullmatch(r'\d{1,2}', nexttoken):
-                i += 2
-                continue
+            nextisyear = bool(nexttoken and re.fullmatch(r'(?:\d{2}|20\d{2})', nexttoken))
+            if token in cls.MONTH_TOKENS and nextisyear:
+                i += 2; continue
+            if re.search(r'(?:\d+[a-z]+\d+|[a-z]+\d+[a-z]+)', token):
+                i += 1; continue
             token = re.sub(r'\d+', '', token)
-            if len(token) > 1:
+            if token in cls.PAYEE_NOISE_TOKENS:
+                i += 1; continue
+            if len(token) > 1 and token not in seen:
                 scrubbed.append(token)
+                seen.add(token)
             i += 1
         return ' '.join(scrubbed).strip()
