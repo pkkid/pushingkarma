@@ -64,24 +64,20 @@
     }
   ]
 
-  var cancelctrl = null
-  const loading = ref(false)
-  const includebills = useStorage('budget.includebills', false)
-  const includeinactive = useStorage('budget.inactive', false)
-  const summary = ref(null)
+  var cancelctrl = null               // Cancel controller
+  const loading = ref(false)          // True while loading recurring items
+  const summary = ref(null)           // Summary of recurring items
+  const includebills = useStorage('budget.includebills', false)  // Include bills in summary
+  const includeinactive = useStorage('budget.inactive', false)   // Include inactive items in summary
 
-  onMounted(function() {
-    updateRecurring()
-  })
+  // On Mounted & Watchers
+  // Update recurring items when mounted, and when toggles change
+  onMounted(function() { updateRecurring() })
+  watch(includebills, function() { updateRecurring() })
+  watch(includeinactive, function() { updateRecurring() })
 
-  watch(includebills, function() {
-    updateRecurring()
-  })
-
-  watch(includeinactive, function() {
-    updateRecurring()
-  })
-
+  // Update Recurring
+  // Load recurring items from API with current toggle settings.
   const updateRecurring = async function() {
     loading.value = true
     cancelctrl = api.cancel(cancelctrl)
@@ -97,7 +93,7 @@
     } catch (err) {
       if (!api.isCancel(err)) { throw(err) }
     } finally {
-      setTimeout(() => loading.value = false, 300)
+      setTimeout(() => loading.value = false, 500)
     }
   }
 </script>
