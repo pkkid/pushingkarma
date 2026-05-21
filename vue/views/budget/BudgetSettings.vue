@@ -134,6 +134,10 @@
       }
     }
 
+    h2 {
+      padding-top: 10px;
+    }
+
     /* Add Account or Category */
     h3 {
       margin-bottom: 5px;

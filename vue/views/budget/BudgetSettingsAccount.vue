@@ -119,6 +119,11 @@
       font-size: 10px;
       .codewrap { background-color:#efefed !important; }
     }
+    .expandable {
+      margin: 0px;
+      border-radius: 0px;
+      background-color: transparent;
+    }
     .tooltip pre {
       background-color: #0002;
       border-radius: 4px;
