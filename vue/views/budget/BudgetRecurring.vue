@@ -17,7 +17,11 @@
         <div v-else class='subtext'>Loading recurring items...</div>
       </h1>
       <!-- Table -->
-      <EditTable v-if='summary?.items?.length' :columns='COLUMNS' :items='summary.items'/>
+      <div v-if='summary?.items?.length'>
+        <EditTable ref='edittable' :columns='COLUMNS' :items='summary.items'
+          :onRequestDeselect='onRequestDeselect' @itemSelected='onItemSelected'/>
+        <BudgetRecurringPopover ref='popover'/>
+      </div>
       <IconMessage v-else-if='loading' icon='pk' iconsize='40px' animation='gelatine' text='Detecting recurring items' ellipsis/>
       <IconMessage v-else icon='mdi-robot-angry-outline' iconsize='40px' text='No recurring items detected.' />
     </template>
@@ -29,6 +33,7 @@
   import {EditTable, IconMessage, LayoutPaper, ToggleSwitch} from '@/components'
   import {useStorage} from '@/composables'
   import {api, utils} from '@/utils'
+  import BudgetRecurringPopover from './BudgetRecurringPopover.vue'
 
   const accountIcons = function(item) {
     return item.accounts.map(function(name) {
@@ -42,9 +47,8 @@
       html: item => accountIcons(item),
       tooltip: item => utils.escapeHtml(item.accounts.join(', ')),
     },{
-      name:'payee', title:'Payee', editable:false,
+      name:'payee', title:'Payee', editable:true,
       html: item => `${item.display_name}<div class='subtext'>${item.category_names.join("; ")}</div>`,
-      tooltip: item => item.reasons.map(r => utils.escapeHtml(r)).join('<br>'),
     },{
       name:'confidence', title:'Conf', editable:false,
       class: item => item.confidence >= 80 ? 'high' : item.confidence >= 60 ? 'medium' : 'low',
@@ -69,12 +73,40 @@
   const summary = ref(null)           // Summary of recurring items
   const includebills = useStorage('budget.includebills', false)  // Include bills in summary
   const includeinactive = useStorage('budget.inactive', false)   // Include inactive items in summary
+  const edittable = ref(null)         // Ref to the recurring table
+  const popover = ref(null)           // Ref to the recurring payee popover
 
   // On Mounted & Watchers
   // Update recurring items when mounted, and when toggles change
   onMounted(function() { updateRecurring() })
   watch(includebills, function() { updateRecurring() })
   watch(includeinactive, function() { updateRecurring() })
+
+  // On Selected
+  // Match the year view: open on edit/enter, and keep the popover in sync while
+  // navigating with arrows.
+  const onItemSelected = function(event, row, col, editing) {
+    if (col != 1) {
+      popover.value.hide()
+      return
+    }
+    if (editing || (popover.value.showing() && event.key?.includes('Arrow'))) {
+      var item = summary.value.items[row]
+      var cell = edittable.value.getCell(row, col)
+      popover.value.show(cell, item)
+    } else {
+      popover.value.hide()
+    }
+  }
+
+  // On Request Deselect
+  // Keep the cell selected while the popover is visible so Escape can close it.
+  const onRequestDeselect = function() {
+    if (popover.value.showing()) {
+      popover.value.hide()
+      return false
+    }
+  }
 
   // Update Recurring
   // Load recurring items from API with current toggle settings.
