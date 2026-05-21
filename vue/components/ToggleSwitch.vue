@@ -64,7 +64,7 @@
     position: absolute;
     top: 2px;
     left: 2px;
-    transition: transform 0.3s;
+    transition: transform 0.2s;
     width: calc(var(--height) - 4px);
   }
 

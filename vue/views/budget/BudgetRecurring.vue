@@ -1,51 +1,23 @@
 <template>
-  <LayoutPaper id='recurring' width='1200px'>
+  <LayoutPaper id='recurring' width='1000px'>
     <template #content>
-      <h1>Budget Recurring
-        <div v-if='recurringSummary' class='subtext'>
-          {{utils.intComma(recurringSummary.count)}} detected
-          • {{utils.usd(recurringSummary.monthly_total)}} / month
-          • {{utils.usd(recurringSummary.yearly_total)}} / year
+      <!-- Controls -->
+      <div class='controls'>
+        <ToggleSwitch v-model='includebills' label='Include Bills' />
+        <ToggleSwitch v-model='includeinactive' label='Include Inactive' />
+      </div>
+      <!-- Header -->
+      <h1>
+        Budget Recurring
+        <div v-if='summary' class='subtext'>
+          {{utils.intComma(summary.count)}} detected -
+          {{utils.usd(summary.monthly_total)}}/mo -
+          {{utils.usd(summary.yearly_total)}}/yr
         </div>
         <div v-else class='subtext'>Loading recurring items...</div>
       </h1>
-      <div class='controls'>
-        <ToggleSwitch v-model='includeBills' label='Include recurring bills' />
-        <ToggleSwitch v-model='includeInactive' label='Include inactive recurring items' />
-      </div>
-      <table v-if='recurringSummary?.items?.length' class='recurring-table'>
-        <thead>
-          <tr>
-            <th>Payee</th>
-            <th>Confidence</th>
-            <th>Cadence</th>
-            <th>Median</th>
-            <th>Monthly</th>
-            <th>Yearly</th>
-            <th>Last</th>
-            <th>Category</th>
-            <th>Status</th>
-            <th>Reason</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for='item in recurringSummary.items' :key='item.key' :class='{inactive:item.is_stale}'>
-            <td>
-              <div class='payee'>{{item.display_name}}</div>
-              <div class='subtext'>{{item.accounts.join(', ')}}</div>
-            </td>
-            <td :class='confidenceClass(item.confidence)'>{{item.confidence}}</td>
-            <td>{{item.cadence}}</td>
-            <td>{{utils.usd(item.median_amount)}}</td>
-            <td>{{utils.usd(item.monthly_cost)}}</td>
-            <td>{{utils.usd(item.yearly_cost)}}</td>
-            <td>{{utils.formatDate(item.last_date, 'YYYY-MM-DD')}}</td>
-            <td>{{item.category_names.join(', ') || '-'}}</td>
-            <td>{{item.is_stale ? `Inactive (${item.days_since_last}d)` : 'Active'}}</td>
-            <td>{{item.reasons.join(' • ')}}</td>
-          </tr>
-        </tbody>
-      </table>
+      <!-- Table -->
+      <EditTable v-if='summary?.items?.length' :columns='COLUMNS' :items='summary.items'/>
       <IconMessage v-else-if='loading' icon='pk' iconsize='40px' animation='gelatine' text='Detecting recurring items' ellipsis/>
       <IconMessage v-else icon='mdi-robot-angry-outline' iconsize='40px' text='No recurring items detected.' />
     </template>
@@ -54,45 +26,74 @@
 
 <script setup>
   import {onMounted, ref, watch} from 'vue'
-  import {IconMessage, LayoutPaper, ToggleSwitch} from '@/components'
+  import {EditTable, IconMessage, LayoutPaper, ToggleSwitch} from '@/components'
+  import {useStorage} from '@/composables'
   import {api, utils} from '@/utils'
+
+  const accountIcons = function(item) {
+    return item.accounts.map(function(name) {
+      var path = `/static/img/icons/${name.toLowerCase()}.svg`
+      return `<i class='icon' style='--mask:url(${path})' title='${utils.escapeHtml(name)}'/>` 
+    }).join('')
+  }
+
+  const COLUMNS = [{
+      name:'accounts', title:'Act', editable:false,
+      html: item => accountIcons(item),
+      tooltip: item => utils.escapeHtml(item.accounts.join(', ')),
+    },{
+      name:'payee', title:'Payee', editable:false,
+      html: item => `${item.display_name}<div class='subtext'>${item.category_names.join("; ")}</div>`,
+      tooltip: item => item.reasons.map(r => utils.escapeHtml(r)).join('<br>'),
+    },{
+      name:'confidence', title:'Conf', editable:false,
+      class: item => item.confidence >= 80 ? 'high' : item.confidence >= 60 ? 'medium' : 'low',
+      html: item => String(item.confidence),
+    },{
+      name:'cadence', title:'Cadence', editable:false,
+      html: item => `${utils.title(item.cadence)}<div class='subtext'>${item.is_stale ? `Inactive` : 'Active'}</span>`,
+    },{
+      name:'lastdate', title:'Last', editable:false,
+      html: item => `${utils.formatDate(item.last_date, 'MMM D, YYYY')}<div class='subtext'>${item.days_since_last} days ago</div>`,
+    },{
+      name:'monthly', title:'Monthly', editable:false,
+      html: item => utils.usd(item.monthly_cost),
+    },{
+      name:'yearly', title:'Yearly', editable:false,
+      html: item => utils.usd(item.yearly_cost),
+    }
+  ]
 
   var cancelctrl = null
   const loading = ref(false)
-  const includeBills = ref(false)
-  const includeInactive = ref(true)
-  const recurringSummary = ref(null)
+  const includebills = useStorage('budget.includebills', false)
+  const includeinactive = useStorage('budget.inactive', false)
+  const summary = ref(null)
 
   onMounted(function() {
     updateRecurring()
   })
 
-  watch(includeBills, function() {
+  watch(includebills, function() {
     updateRecurring()
   })
 
-  watch(includeInactive, function() {
+  watch(includeinactive, function() {
     updateRecurring()
   })
-
-  const confidenceClass = function(confidence) {
-    if (confidence >= 80) { return 'high' }
-    if (confidence >= 60) { return 'medium' }
-    return 'low'
-  }
 
   const updateRecurring = async function() {
     loading.value = true
     cancelctrl = api.cancel(cancelctrl)
     try {
       var params = {
-        include_bills: includeBills.value,
-        include_inactive: includeInactive.value,
+        include_bills: includebills.value,
+        include_inactive: includeinactive.value,
         min_confidence: 45,
         lookback_days: 913,
       }
       var {data} = await api.Budget.listRecurring(params, cancelctrl.signal)
-      recurringSummary.value = data
+      summary.value = data
     } catch (err) {
       if (!api.isCancel(err)) { throw(err) }
     } finally {
@@ -104,41 +105,53 @@
 <style>
   #recurring {
     .controls {
+      float: right;
       display: flex;
+      flex-direction: column;
       justify-content: flex-end;
-      gap: 16px;
+      gap: 1px;
       margin: -6px 0 12px 0;
+      width: 140px;
     }
 
-    .recurring-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 13px;
-
-      th, td {
-        border-bottom: 1px solid #ddd6;
-        text-align: left;
-        vertical-align: top;
-        padding: 8px 10px;
+    .edittable {
+      .tdwrap {
+        display: flex;
+        height: 42px;
+        .fakeinput {
+          padding-top: 5px;
+          line-height: 16px;
+          height: 42px !important;
+        }
       }
 
-      th {
-        font-size: 11px;
-        text-transform: uppercase;
-        color: var(--fgcolor70);
-        letter-spacing: 0.4px;
+      .accounts { width: 36px; text-align: center; }
+      .accounts .tdwrap {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 4px;
+        .icon {
+          background-color: var(--lightbg-fg4);
+          display: inline-block;
+          height: 16px;
+          mask: var(--mask) no-repeat center / contain;
+          position: relative;
+          top: 3px;
+          width: 16px;
+        }
       }
+      .payee { width: 350px; text-align: left; .tdwrap { max-width:350px; } }
+      .confidence { width: 100px; text-align: right; }
+      .cadence { width: 100px; text-align: right; }
+      .lastdate { width: 130px; text-align: right; }
+      .monthly { width: 110px; text-align: right; }
+      .yearly { width: 110px; text-align: right; }
+      .status { width: 110px; text-align: left; }
 
-      td.high { color: var(--lightbg-green2); font-weight: bold; }
-      td.medium { color: #b67f00; font-weight: bold; }
-      td.low { color: var(--lightbg-red1); font-weight: bold; }
-
-      .payee { font-weight: bold; }
-      .subtext { font-size: 10px; color: var(--fgcolor50); }
-
-      tr.inactive {
-        opacity: 0.72;
-      }
+      td.high .tdwrap { color: var(--lightbg-green2); }
+      td.medium .tdwrap { color: #b67f00; }
+      td.low .tdwrap { color: var(--lightbg-red1); }
     }
   }
 </style>
