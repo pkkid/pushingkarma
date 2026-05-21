@@ -3,7 +3,7 @@
 Get Database
 Fetch the latest SQLite backup from Synology into the local project.
 """
-import os, shlex, subprocess, sys
+import argparse, os, shlex, subprocess, sys
 import logging as log
 from datetime import datetime
 from os.path import abspath, dirname, exists
@@ -21,9 +21,16 @@ _ = lambda path: path.replace(ROOT, '')
 q = lambda path: shlex.quote(path)
 
 
-if __name__ == '__main__':
-    # Download REMOTE_SOURCE to LOCAL_TMP
-    dtstr = datetime.now().strftime('%Y-%m-%d')
+def list_backups(opts):
+    """ List available backups on the remote server. """
+    result = subprocess.run(f"ssh synology ls {q(BACKUP_DIR)}", shell=True, check=True, capture_output=True, text=True)
+    for filename in sorted(result.stdout.splitlines()):
+        print(filename)
+
+
+def download_backup(opts):
+    """ Download the backup for the given date string to the local project. """
+    dtstr = opts.date or datetime.now().strftime('%Y-%m-%d')
     remote_source = REMOTE_SOURCE.format(dtstr=dtstr)
     log.info(f'Downloading database {remote_source}')
     subprocess.run(f"scp -O {q(remote_source)} {q(LOCAL_TMP)}", shell=True, check=True)
@@ -38,3 +45,12 @@ if __name__ == '__main__':
     # Move LOCAL_TMP to LOCAL_DEST
     log.info(f'Moving {_(LOCAL_TMP)} to {_(LOCAL_DEST)}')
     os.rename(LOCAL_TMP, LOCAL_DEST)
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Fetch a SQLite backup from Synology.')
+    parser.add_argument('--list', action='store_true', help='List available backups on the remote server.')
+    parser.add_argument('--date', metavar='YYYY-MM-DD', help='Date of the backup to download (default: today).')
+    opts = parser.parse_args()
+    if opts.list: list_backups(opts)
+    else: download_backup(opts)
