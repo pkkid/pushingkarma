@@ -71,7 +71,7 @@ class TransactionSchema(Schema):
     original_amount: Optional[Decimal] = Field(None, description='Original amount of transaction')
     approved: bool = Field(..., description='True when user approved transaction')
     comment: Optional[str] = Field(None, description='User comment for transaction')
-    similar_uncategorized_count: Optional[int] = Field(None, description='Count of similar uncategorized transactions that can be auto-categorized')
+    similar_uncategorized_count: Optional[int] = Field(None, description='Count of similar uncategorized transactions')
     account: AccountSchema = Field(..., description='Financial institution of transaction')
     category: Optional[CategorySchema] = Field(None, description='User category of transaction')
 
@@ -136,3 +136,31 @@ class SimilarCategorizeResponseSchema(Schema):
     updated_count: int = Field(..., description='Number of uncategorized transactions updated')
     category: str = Field(..., description='Category that was applied')
     updated_transactions: List[TransactionSchema] = Field(..., description='Updated transactions after categorization')
+
+
+class RecurringItemSchema(Schema):
+    key: str = Field(..., description='Normalized key used to group recurring payees')
+    display_name: str = Field(..., description='Representative payee display name')
+    confidence: int = Field(..., description='Detection confidence score 0-100')
+    kind: str = Field(..., description='Detected type (recurring or recurring_bill)')
+    kind_score: int = Field(..., description='Recurring-vs-bill heuristic score')
+    cadence: str = Field(..., description='Detected cadence (monthly, yearly, quarterly, irregular)')
+    count: int = Field(..., description='Number of matching transactions in lookback window')
+    first_date: datetime.date = Field(..., description='Date of first matching transaction')
+    last_date: datetime.date = Field(..., description='Date of most recent matching transaction')
+    days_since_last: int = Field(..., description='Days elapsed since most recent transaction')
+    is_stale: bool = Field(..., description='True when item is older than cadence freshness threshold')
+    median_amount: Decimal = Field(..., description='Median absolute transaction amount')
+    monthly_cost: Decimal = Field(..., description='Estimated monthly cost')
+    yearly_cost: Decimal = Field(..., description='Estimated yearly cost')
+    amount_variability: float = Field(..., description='Robust amount variability based on MAD/median')
+    accounts: List[str] = Field(..., description='List of account names used by this recurring payee')
+    category_names: List[str] = Field(..., description='Observed category names for the recurring payee')
+    reasons: List[str] = Field(..., description='Human-readable score reasons shown in the UI')
+
+
+class RecurringSummarySchema(Schema):
+    items: List[RecurringItemSchema] = Field(..., description='Detected recurring candidates')
+    count: int = Field(..., description='Number of returned candidates')
+    monthly_total: Decimal = Field(..., description='Estimated total monthly spend across candidates')
+    yearly_total: Decimal = Field(..., description='Estimated total yearly spend across candidates')

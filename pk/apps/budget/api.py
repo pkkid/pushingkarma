@@ -19,6 +19,7 @@ from pk.utils.ninja import PageSchema, paginate
 from typing import List
 from . import schemas, utils
 from .models import Account, Category, Transaction
+from .recurring import RecurringDetector
 from .trxmanager import TransactionManager
 log = logging.getLogger(__name__)
 router = Router(auth=django_auth)
@@ -346,3 +347,25 @@ def annual_transactions(request,
             'months': {str(row['month']): round(row['saved'] or 0, 2) for row in group},
         })
     return response
+
+
+# -------------------
+# Recurring
+# -------------------
+
+@router.get('/recurring', response=schemas.RecurringSummarySchema, exclude_unset=True)
+def list_recurring(request,
+          lookback_days: int=Query(913, description='Number of days to evaluate for recurring payments'),
+          min_count: int=Query(3, description='Minimum number of transactions in a recurring group'),
+          min_confidence: int=Query(45, description='Minimum confidence score to return'),
+          include_bills: bool=Query(False, description='Include recurring bill-like groups in results'),
+          include_inactive: bool=Query(False, description='Include stale groups older than cadence thresholds')):
+    """ Detect likely recurring payments from transaction patterns. """
+    return RecurringDetector.detect(
+        request.user,
+        lookback_days=lookback_days,
+        min_count=min_count,
+        min_confidence=min_confidence,
+        include_bills=include_bills,
+        include_inactive=include_inactive,
+    )

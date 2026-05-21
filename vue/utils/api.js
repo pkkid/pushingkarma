@@ -40,6 +40,7 @@ export const Budget = {
   sortCategories(data, signal) { return axios.patch(`/api/budget/sort_categories`, data, {signal}) },
   summarizeTransactions(params, signal) { return axios.get(`/api/budget/summarize_transactions`, {params, signal}) },
   annualTransactions(params, signal) { return axios.get(`/api/budget/annual_transactions`, {params, signal}) },
+  listRecurring(params, signal) { return axios.get(`/api/budget/recurring`, {params, signal}) },
   categorizeSimilarTransaction(pk, signal) { return axios.post(`/api/budget/transactions/${pk}/categorize_similar`, null, {signal}) },
   updateAccount(pk, data, signal) { return axios.patch(`/api/budget/accounts/${pk}`, data, {signal}) },
   updateCategory(pk, data, signal) { return axios.patch(`/api/budget/categories/${pk}`, data, {signal}) },

@@ -33,6 +33,12 @@
             <div class='balance'>{{utils.usd(sumAccounts('saved'), places=0)}}</div>
             <div class='lastupdate'>Average {{utils.usd(avgAccounts('saved'), places=0)}} / month</div>
           </div>
+          <!-- Recurring -->
+          <a href='/budget?view=recurring' class='item link' @click.prevent="view='recurring'"
+            :class='{selected:view=="recurring" && !showSettings}'>
+            <i class='mdi mdi-autorenew'/>
+            Recurring
+          </a>
           <!-- Settings -->
           <div class='item link' :class='{selected:showSettings}' @click='showSettings=true'>
             <i class='mdi mdi-cog'/>
@@ -51,6 +57,7 @@
       <template #content>
         <Dropzone @filesDropped='upload' text='Drop Transactions' subtext='Hold shift for safe import'>
           <BudgetYear v-if="view=='year'" :demo='demo'/>
+          <BudgetRecurring v-else-if="view=='recurring'"/>
           <BudgetTransactions v-else :demo='demo'/>
         </Dropzone>
       </template>
@@ -61,7 +68,7 @@
 
 <script setup>
   import {inject, onBeforeMount, ref} from 'vue'
-  import {BudgetSettings, BudgetTransactions, BudgetYear} from '@/views/budget'
+  import {BudgetRecurring, BudgetSettings, BudgetTransactions, BudgetYear} from '@/views/budget'
   import {LayoutSidePanel} from '@/components/Layout'
   import {Dropzone} from '@/components'
   import {useUrlParams} from '@/composables'
