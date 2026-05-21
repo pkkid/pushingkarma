@@ -151,8 +151,8 @@
           font-family: inherit;
           font-weight: inherit;
           font-size: inherit;
-          height: calc(var(--lineheight) + 2px);
-          line-height: calc(var(--lineheight) + 2px);
+          height: calc(var(--lineheight) + 1px);
+          line-height: calc(var(--lineheight) + 1px);
           outline: none;
           padding: 0px 6px;
           width: 100%;
@@ -171,7 +171,7 @@
         background-color: var(--lightbg-bg1);
         height: calc(100% + 1px);
         left: 0px;
-        line-height: calc(var(--lineheight) + 1px);
+        line-height: var(--lineheight);
         padding: 0px;
         position: absolute;
         top: 0px;
