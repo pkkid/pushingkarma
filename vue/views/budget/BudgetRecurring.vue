@@ -61,7 +61,8 @@
       html: item => `${utils.formatDate(item.last_date, 'MMM D, YYYY')}<div class='subtext'>${item.days_since_last} days ago</div>`,
     },{
       name:'monthly', title:'Monthly', editable:false,
-      html: item => utils.usd(item.monthly_cost),
+      html: item => item.cadence == 'monthly' ? utils.usd(item.monthly_cost) : '--',
+      class: item => item.cadence == 'monthly' ? '' : 'dimmed',
     },{
       name:'yearly', title:'Yearly', editable:false,
       html: item => utils.usd(item.yearly_cost),
@@ -180,6 +181,7 @@
       td.high .tdwrap { color: var(--lightbg-green2); }
       td.medium .tdwrap { color: #b67f00; }
       td.low .tdwrap { color: var(--lightbg-red1); }
+      .dimmed { opacity: 0.5;  }
     }
   }
 </style>
