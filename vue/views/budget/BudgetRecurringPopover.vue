@@ -1,7 +1,8 @@
 <template>
   <div v-if='showing' ref='root' id='budgetrecurringpopover' class='lightbg'>
-    <h3>{{item?.display_name}}
-      <div class='subtext'>{{item?.count}} transactions - {{utils.usd(item?.monthly_cost)}}/mo - {{utils.usd(item?.yearly_cost)}}/yr</div>
+    <h3>
+      {{item?.name}}
+      <div class='subtext'>{{item?.count}} transactions</div>
     </h3>
     <div v-if='trxs?.items?.length'>
       <div class='trxs' :class='{scroll}'>
@@ -17,9 +18,6 @@
         <router-link :to='`/budget?search=${searchstr}`'>{{trxs.items?.length}} transactions</router-link>
         <div class='total' :class='utils.getSign(total)'>{{utils.usd(total, 0, '$', 3)}}</div>
       </div>
-      <div v-if='item?.reasons?.length' class='reasons'>
-        <div v-for='(reason, index) in item.reasons' :key='index'>{{reason}}</div>
-      </div>
     </div>
     <div v-else>
       <div v-if='item?.reasons?.length' class='reasons'>
@@ -34,24 +32,28 @@
   import {computed, nextTick, ref} from 'vue'
   import {api, utils} from '@/utils'
 
-  var cancelctrl = null
-  const root = ref(null)
-  const showing = ref(false)
-  const trxs = ref(null)
-  const item = ref(null)
-  const scroll = ref(false)
+  var cancelctrl = null             // Cancel controller
+  const root = ref(null)            // Reference to root element
+  const loading = ref(false)        // True to show loading indicator
+  const showing = ref(false)        // True if the popover is showing
+  const trxs = ref(null)            // Transactions to show
+  const item = ref(null)            // Recurring item to show
+  const scroll = ref(false)         // True if .trxs has scrollbar
 
+  // Search String
+  // Search string for the transactions
   const searchstr = computed(function() {
     if (!item.value) { return '' }
-    var maxdate = new Date(item.value.last_date)
-    maxdate.setDate(maxdate.getDate() + 1)
-    var payee = String(item.value.display_name || '').replaceAll('\\', '\\\\').replaceAll('"', '\\"')
-    var str = `payee="${payee}"`
-    str += ` date>=${utils.formatDate(item.value.first_date, 'YYYY-MM-DD')}`
-    str += ` date<${utils.formatDate(maxdate, 'YYYY-MM-DD')}`
+    var str = ``
+    for (var word of item.value.name.split(' ')) {
+      str += ` payee:${word}`
+    }
+    str += ` date>${utils.formatDate(item.value.first_date, 'YYYY-MM-DD')}`
     return str.trim()
   })
 
+  // Total
+  // Sum the values in the object
   const total = computed(function() {
     if (!trxs.value?.items) { return 0 }
     return trxs.value.items.reduce(function(sum, trx) {
@@ -59,6 +61,8 @@
     }, 0)
   })
 
+  // Set Position
+  // Set the position of the popover
   const setPosition = async function(cell) {
     if (!showing.value) { return }
     await nextTick()
@@ -72,6 +76,8 @@
     scroll.value = elem?.scrollHeight > elem?.clientHeight
   }
 
+  // Show Popover
+  // Show the popover with the given item
   const show = async function(cell, _item) {
     item.value = _item
     showing.value = true
@@ -79,6 +85,8 @@
     setPosition(cell)
   }
 
+  // Hide Popover
+  // Hide the popover
   const hide = function() {
     showing.value = false
     trxs.value = null
@@ -87,8 +95,10 @@
     cancelctrl = api.cancel(cancelctrl)
   }
 
+  // Update Transactions
+  // Fetch transactions from the server
   const updateTransactions = async function() {
-    if (!item.value) { return }
+    loading.value = true
     cancelctrl = api.cancel(cancelctrl)
     try {
       var params = {search:searchstr.value}
@@ -96,9 +106,13 @@
       trxs.value = data
     } catch (err) {
       if (!api.isCancel(err)) { throw(err) }
+    } finally {
+      loading.value = false
     }
   }
 
+  // Define Exposed
+  // Expose this function to the parent
   defineExpose({
     show, hide,
     showing: () => showing.value,
@@ -139,7 +153,7 @@
     }
 
     .trxs {
-      max-height: 90px;
+      max-height: 150px;
       overflow-y: auto;
     }
 
@@ -160,15 +174,6 @@
       .date { width: 80px; }
       .payee { padding:0px 8px; }
       .amount, .total { width:55px; text-align:right; font-family:var(--fontfamily-code); padding-right:5px; }
-    }
-
-    .reasons {
-      border-top: 1px dotted color-mix(in srgb, var(--lightbg-fg4), #0000 70%);
-      color: var(--lightbg-fg2);
-      font-size: 10px;
-      line-height: 1.35;
-      margin: 8px 0 0 2px;
-      padding-top: 4px;
     }
 
     .total {

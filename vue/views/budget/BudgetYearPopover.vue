@@ -1,10 +1,11 @@
 <template>
   <div v-if='showing' ref='root' id='budgetyearpopover' class='lightbg'>
-    {{console.log(category)}}
-    <Tooltip text='Transactions excluded from totals' position='left' class='exclude-icon'>
-      <i v-if='category?.exclude' class='mdi mdi-tag-off-outline'/>
+    <Tooltip v-if='category?.exclude' position='left' class='exclude-icon'
+      text='Transactions excluded from totals'>
+      <i class='mdi mdi-tag-off-outline'/>
     </Tooltip>
-    <h3>{{category?.name}}
+    <h3>
+      {{category?.name}}
       <div class='subtext'>{{utils.formatDate(month, 'MMMM YYYY')}}</div>
     </h3>
     <div v-if='trxs?.items?.length'>

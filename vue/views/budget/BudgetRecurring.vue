@@ -3,7 +3,6 @@
     <template #content>
       <!-- Controls -->
       <div class='controls'>
-        <ToggleSwitch v-model='includebills' label='Include Bills' />
         <ToggleSwitch v-model='includeinactive' label='Include Inactive' />
       </div>
       <!-- Header -->
@@ -48,31 +47,32 @@
       tooltip: item => utils.escapeHtml(item.accounts.join(', ')),
     },{
       name:'payee', title:'Payee', editable:true,
-      html: item => `${item.key.split('|')[0].toUpperCase()}<div class='subtext'>${item.category_names.join("; ")}</div>`,
-    },{
-      name:'confidence', title:'Conf', editable:false,
-      class: item => item.confidence >= 80 ? 'high' : item.confidence >= 60 ? 'medium' : 'low',
-      html: item => String(item.confidence),
+      html: item => `${item.name.split('|')[0].toUpperCase()}<div class='subtext'>${item.categories.join("; ")}</div>`,
     },{
       name:'cadence', title:'Cadence', editable:false,
-      html: item => `${utils.title(item.cadence)}<div class='subtext'>${item.is_stale ? `Inactive` : 'Active'}</span>`,
+      html: item => `${utils.title(item.cadence)}<div class='subtext'>${item.is_active ? `Active` : 'Inactive'}</span>`,
     },{
       name:'lastdate', title:'Last', editable:false,
-      html: item => `${utils.formatDate(item.last_date, 'MMM D, YYYY')}<div class='subtext'>${item.days_since_last} days ago</div>`,
+      html: item => `${utils.formatDate(item.last_date, 'MMM D, YYYY')}<div class='subtext'>${item.last_date} days ago</div>`,
     },{
       name:'monthly', title:'Monthly', editable:false,
-      html: item => item.cadence == 'monthly' ? utils.usd(item.monthly_cost) : '--',
+      html: item => item.cadence == 'monthly' ? utils.usd(item.last_amount) : '--',
       class: item => item.cadence == 'monthly' ? '' : 'dimmed',
     },{
       name:'yearly', title:'Yearly', editable:false,
-      html: item => utils.usd(item.yearly_cost),
+      html: item => item.cadence == 'monthly' ? utils.usd(item.last_amount*12) : utils.usd(item.last_amount),
     }
+
+    // {
+    //   name:'confidence', title:'Conf', editable:false,
+    //   class: item => item.confidence >= 80 ? 'high' : item.confidence >= 60 ? 'medium' : 'low',
+    //   html: item => String(item.confidence),
+    // },,,,
   ]
 
   var cancelctrl = null               // Cancel controller
   const loading = ref(false)          // True while loading recurring items
   const summary = ref(null)           // Summary of recurring items
-  const includebills = useStorage('budget.includebills', false)  // Include bills in summary
   const includeinactive = useStorage('budget.inactive', false)   // Include inactive items in summary
   const edittable = ref(null)         // Ref to the recurring table
   const popover = ref(null)           // Ref to the recurring payee popover
@@ -80,7 +80,6 @@
   // On Mounted & Watchers
   // Update recurring items when mounted, and when toggles change
   onMounted(function() { updateRecurring() })
-  watch(includebills, function() { updateRecurring() })
   watch(includeinactive, function() { updateRecurring() })
 
   // On Selected
@@ -116,7 +115,6 @@
     cancelctrl = api.cancel(cancelctrl)
     try {
       var params = {
-        include_bills: includebills.value,
         include_inactive: includeinactive.value,
         min_confidence: 45,
         lookback_days: 913,
