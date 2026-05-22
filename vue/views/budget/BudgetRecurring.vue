@@ -8,11 +8,7 @@
       <!-- Header -->
       <h1>
         Budget Recurring
-        <div v-if='summary' class='subtext'>
-          {{utils.intComma(summary.count)}} detected -
-          {{utils.usd(summary.monthly_total)}}/mo -
-          {{utils.usd(summary.yearly_total)}}/yr
-        </div>
+        <div v-if='summary' class='subtext'>{{utils.intComma(summary.count)}} detected</div>
         <div v-else class='subtext'>Loading recurring items...</div>
       </h1>
       <!-- Table -->
@@ -64,12 +60,6 @@
       name:'yearly', title:'Yearly', editable:false,
       html: item => item.cadence == 'monthly' ? utils.usd(item.last_amount*12) : utils.usd(item.last_amount),
     }
-
-    // {
-    //   name:'confidence', title:'Conf', editable:false,
-    //   class: item => item.confidence >= 80 ? 'high' : item.confidence >= 60 ? 'medium' : 'low',
-    //   html: item => String(item.confidence),
-    // },,,,
   ]
 
   var cancelctrl = null               // Cancel controller
