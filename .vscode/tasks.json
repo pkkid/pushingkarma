@@ -4,12 +4,14 @@
     "label": "Start Dev Server",
     "type": "shell",
     "command": "./scripts/start-dev-server.py",
-    "inAgents": true
+    "inAgents": true,
+    "options": {"cwd": "${workspaceFolder}"},
   },{
     "label": "Install Dependencies",
     "type": "shell",
     "command": "./scripts/install-dependancies.py",
     "inAgents": true,
-    "runOptions": { "runOn": "worktreeCreated" }
+    "runOptions": { "runOn": "worktreeCreated" },
+    "options": {"cwd": "${workspaceFolder}"},
   }]
 }
