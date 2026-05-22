@@ -44,13 +44,14 @@
   // Search string for the transactions
   const searchstr = computed(function() {
     if (!item.value) { return '' }
-    var str = ``
-    for (var word of item.value.name.split(' ')) {
-      str += ` payee:${word}`
-    }
+    var str = `payee~"${item.value.name}"`
     str += ` date>${utils.formatDate(item.value.first_date, 'YYYY-MM-DD')}`
-    str += ` amount>=${item.value.min_amount}`
-    str += ` amount<=${item.value.max_amount}`
+    if (item.value.min_amount == item.value.max_amount) {
+      str += ` amount=${item.value.min_amount}`
+    } else {
+      str += ` amount<=${item.value.max_amount}`
+      str += ` amount>=${item.value.min_amount}`
+    }
     return str.trim()
   })
 
