@@ -9,7 +9,7 @@
   },{
     "label": "Install Dependencies",
     "type": "shell",
-    "command": "./scripts/install-dependancies.py",
+    "command": "./scripts/install-dependencies.py",
     "inAgents": true,
     "runOptions": { "runOn": "worktreeCreated" },
     "options": {"cwd": "${workspaceFolder}"},

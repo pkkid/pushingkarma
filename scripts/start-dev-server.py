@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Start Dev Server
-Stop conflicting dev ports, start the app, and open the local dev URL.
+Stop conflicting dev ports and start the app.
 """
 import os, shlex, shutil, subprocess, sys, time
 
@@ -23,9 +23,8 @@ if __name__ == '__main__':
         for port in [5173, 8000]: kill_port(port)
         server = subprocess.Popen(shlex.split('npm run start'))
         time.sleep(2)
-        subprocess.Popen(shlex.split('xdg-open http://localhost:5173/'),
-            stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL, start_new_session=True)
+        print('Dev server started at http://localhost:5173/')
+        print('Tip: In Agents mode, ask Copilot to open this URL in the browser pane.')
         server.wait()
     except KeyboardInterrupt:
         server.terminate()
