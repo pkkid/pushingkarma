@@ -13,7 +13,7 @@ from ninja import Body, File, Path, Query, Router
 from ninja.errors import HttpError
 from ninja.files import UploadedFile
 from ninja.security import django_auth
-from pk.utils.utils import add_months, first_of_month
+from pk.utils.utils import Bunch, add_months, first_of_month
 from pk.utils.django import get_object_or_none
 from pk.utils.ninja import PageSchema, paginate
 from typing import List
@@ -359,5 +359,5 @@ def list_recurring(request,
       showinactive: bool=Query(False, description='Include stale groups older than cadence thresholds')):
     """ Detect likely recurring payments from transaction patterns. """
     mgr = RecurringManager(request.user, days=days)
-    items = mgr.items if showinactive else list(filter(lambda i: i['is_active'], mgr.items))
-    return {'count':len(items), 'items':items}
+    items = mgr.items if showinactive else list(filter(lambda i: i.is_active, mgr.items))
+    return Bunch(count=len(items), items=items)

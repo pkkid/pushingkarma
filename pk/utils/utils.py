@@ -7,6 +7,12 @@ from os.path import getctime
 from pk.utils.django import make_aware
 
 
+class Bunch:
+    """ Simple class to convert a dict to an object with attributes. """
+    def __init__(self, **kwargs): self.__dict__.update(kwargs)
+    def __repr__(self): return f'Bunch({self.__dict__})'
+
+
 def add_months(dt, months):
     """ Add months to a datetime. """
     if not dt or not months: return dt
