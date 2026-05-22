@@ -7,7 +7,7 @@ from django.core.management.color import color_style
 from os.path import abspath, basename, dirname, exists, expanduser, islink
 
 PROJECT_DIR = dirname(dirname(abspath(__file__)))
-SETTINGS = f'{PROJECT_DIR}/pk/settings.py'
+ENVFILE = f'{PROJECT_DIR}/.env'
 MOUNT_CMD = expanduser('~/Projects/scripts/mount-private.py')
 style = color_style()
 
@@ -23,7 +23,7 @@ def setup_python_path():
 
 def check_private_mount():
     """ Ensure private directory is mounted. """
-    if not exists(SETTINGS) and 'runserver' in sys.argv:
+    if not exists(ENVFILE) and 'runserver' in sys.argv:
         time.sleep(0.3)
         os.system(MOUNT_CMD)
 
