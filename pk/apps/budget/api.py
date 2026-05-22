@@ -357,4 +357,5 @@ def list_recurring(request,
       lookback_days: int=Query(900, description='Number of days to evaluate for recurring payments'),
       include_inactive: bool=Query(False, description='Include stale groups older than cadence thresholds')):
     """ Detect likely recurring payments from transaction patterns. """
-    return recurring.find_recurring_transactions(request.user, lookback_days=lookback_days, include_inactive=include_inactive)
+    return recurring.find_recurring_transactions(request.user, lookback_days=lookback_days,
+        include_inactive=include_inactive)
