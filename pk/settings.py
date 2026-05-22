@@ -1,10 +1,11 @@
 # encoding: utf-8
 import os
 import platform
+from corsheaders.defaults import default_headers
+from decimal import Decimal
+from dotenv import load_dotenv
 from os import makedirs
 from os.path import abspath, dirname, expanduser
-from corsheaders.defaults import default_headers
-from dotenv import load_dotenv
 
 _to_bool = lambda v: str(v).strip().lower() in ['true', '1', 'yes', 't']
 _to_list = lambda v: [item.strip() for item in v.split(',') if item.strip()]
@@ -130,10 +131,19 @@ QUERYCOUNTER_SIMPLIFY_SQL = True
 BUDGET_CATEGORY_STOPWORDS = {'venmo', 'google'}
 BUDGET_SCRUB_MIN_TOKEN_LEN = 3
 BUDGET_SCRUB_AGGREGATOR_TOKENS = {'sq','tst','google','paypal'}  # followed by * in payee
-BUDGET_SCRUB_NOISE_TOKENS = {'com', 'www', 'http', 'https', 'co', 'inc', 'llc', 'corp', 'help', 'michael', 'shepanski'}
+BUDGET_SCRUB_NOISE_TOKENS = {'com', 'www', 'http', 'https', 'httpswww', 'co', 'inc', 'llc', 'corp',
+    'help', 'michael', 'shepanski'}
 BUDGET_SCRUB_MONTH_TOKENS = {'jan','feb','mar','apr','may','jun','jul','aug','sep','sept','oct','nov','dec',
     'january','february','march','april','june','july','august','september','october','november','december'}
-
+BUDGET_RECURRING_AMOUNT_THRESHOLD = Decimal('0.18')
+BUDGET_RECURRING_THRESHOLD_DAYS = {'monthly':7, 'yearly':7}
+BUDGET_RECURRING_ACTIVE_THRESHOLD_DAYS = {'monthly':62, 'yearly':375}
+BUDGET_RECURRING_MIN_SPAN_DAYS = {'monthly':60, 'yearly':355}
+BUDGET_RECURRING_MIN_TRXS = {'monthly':3, 'yearly':2}
+# BUDGET_RECURRING_MIN_CADENCE_RATIO = {'monthly':0.4, 'yearly':0.4}
+# BUDGET_RECURRING_PINPONG_MAX_PCT = {'monthly':0.6, 'yearly':0.6}
+# BUDGET_RECURRING_AMT_MIN_VARIABILITY = {'monthly':0.8, 'yearly':0.8}
+# BUDGET_RECURRING_SKIP_CATEGORIES = {'income', 'restaurants', 'transfers'}
 
 # Email Settings
 # https://docs.djangoproject.com/en/5.0/topics/email/

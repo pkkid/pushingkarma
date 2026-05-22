@@ -47,7 +47,9 @@
       tooltip: item => utils.escapeHtml(item.accounts.join(', ')),
     },{
       name:'payee', title:'Payee', editable:true,
-      html: item => `${item.name.split('|')[0].toUpperCase()}<div class='subtext'>${item.categories.join("; ")}</div>`,
+      html: item => item.average ?
+        `${item.name.split('|')[0].toUpperCase()} ${utils.usd(item.average)}<div class='subtext'>${item.categories.join("; ")}</div>` :
+        `${item.name.split('|')[0].toUpperCase()}<div class='subtext'>${item.categories.join("; ")}</div>`,
     },{
       name:'cadence', title:'Cadence', editable:false,
       html: item => `${utils.title(item.cadence)}<div class='subtext'>${item.is_active ? `Active` : 'Inactive'}</span>`,
@@ -168,13 +170,11 @@
           width: 16px;
         }
       }
-      .payee { width: 350px; text-align: left; .tdwrap { max-width:350px; } }
-      .confidence { width: 100px; text-align: right; }
-      .cadence { width: 100px; text-align: right; }
-      .lastdate { width: 130px; text-align: right; }
-      .monthly { width: 110px; text-align: right; }
-      .yearly { width: 110px; text-align: right; }
-      .status { width: 110px; text-align: left; }
+      .payee { width: 340px; text-align: left; .tdwrap { max-width:340px; } }
+      .cadence { width: 140px; text-align: right; }
+      .lastdate { width: 140px; text-align: right; }
+      .monthly { width: 140px; text-align: right; }
+      .yearly { width: 140px; text-align: right; }
 
       td.high .tdwrap { color: var(--lightbg-green2); }
       td.medium .tdwrap { color: #b67f00; }

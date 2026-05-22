@@ -49,6 +49,8 @@
       str += ` payee:${word}`
     }
     str += ` date>${utils.formatDate(item.value.first_date, 'YYYY-MM-DD')}`
+    str += ` amount>=${item.value.min_amount}`
+    str += ` amount<=${item.value.max_amount}`
     return str.trim()
   })
 
