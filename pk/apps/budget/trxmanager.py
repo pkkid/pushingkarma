@@ -10,6 +10,7 @@ from io import StringIO
 from ofxtools.Parser import OFXTree
 from pk.utils.utils import rget
 from .models import Account, Transaction
+from .utils import scrub_payee
 log = logging.getLogger(__name__)
 
 
@@ -145,7 +146,7 @@ class TransactionManager:
                 continue
             if cls.has_stopword(payee):
                 continue
-            scrubbed = cls.scrub_payee(payee)
+            scrubbed = scrub_payee(payee)
             tokens = scrubbed.split()
             if len(scrubbed) < 3 or len(tokens) == 0:
                 continue
@@ -158,7 +159,7 @@ class TransactionManager:
         """ Return the highest confidence category id for the transaction. """
         if cls.has_stopword(trx.payee):
             return None
-        scrubbed = cls.scrub_payee(trx.payee)
+        scrubbed = scrub_payee(trx.payee)
         tokens = scrubbed.split()
         if len(scrubbed) < 3 or len(tokens) == 0:
             return None
@@ -256,27 +257,3 @@ class TransactionManager:
         payee = ' '.join([word for word in payee.split()])
         payee = payee.strip(' -')
         return payee
-    
-    @classmethod
-    def scrub_payee(cls, payee):
-        """ Scrub unique details from payee when trying to match categories. """
-        tokens = re.sub(r'[^a-z0-9 ]', ' ', payee.lower()).split()
-        scrubbed = []
-        seen = set()
-        i = 0
-        while i < len(tokens):
-            token = tokens[i]
-            nexttoken = tokens[i + 1] if i + 1 < len(tokens) else None
-            nextisyear = bool(nexttoken and re.fullmatch(r'(?:\d{2}|20\d{2})', nexttoken))
-            if token in cls.MONTH_TOKENS and nextisyear:
-                i += 2; continue
-            if re.search(r'(?:\d+[a-z]+\d+|[a-z]+\d+[a-z]+)', token):
-                i += 1; continue
-            token = re.sub(r'\d+', '', token)
-            if token in cls.PAYEE_NOISE_TOKENS:
-                i += 1; continue
-            if len(token) > 1 and token not in seen:
-                scrubbed.append(token)
-                seen.add(token)
-            i += 1
-        return ' '.join(scrubbed).strip()
