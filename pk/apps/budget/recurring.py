@@ -18,6 +18,7 @@ High-level flow:
 """
 import datetime, logging, statistics
 from decimal import Decimal
+from django.conf import settings
 from . import utils as butils
 from .models import Transaction
 log = logging.getLogger(__name__)
@@ -33,6 +34,7 @@ class RecurringManager:
     MIN_CADENCE_RATIO = {'monthly':0.4, 'yearly':0.4}
     MAX_PINPONG_RATIO = {'monthly':0.4, 'yearly':0.4}
     MAX_VARIABILITY = {'monthly':0.8, 'yearly':0.8}
+    SKIP_CATEGORIES = getattr(settings, 'BUDGET_RECURRING_SKIP_CATEORIES', {})
 
     CADENCE_RANGES = {}
     CADENCE_RANGES['monthly'] = (28-THRESHOLD_DAYS['monthly'], 31+THRESHOLD_DAYS['monthly'])
@@ -48,6 +50,7 @@ class RecurringManager:
         """ Detect likely recurring payments directly from transactions without profile tables. """
         mindate = datetime.date.today() - datetime.timedelta(days=self.days)
         trxs = Transaction.objects.filter(user=self.user, amount__lt=0, date__gte=mindate)
+        trxs = trxs.exclude(category__name__in=self.SKIP_CATEGORIES)
         trxs = trxs.select_related('account', 'category').order_by('date', 'id')
         groups = self._group_by_payee_and_amount(trxs)
         log.debug(f'Analyzing {len(groups)} groups from {len(trxs)} trxs for recurring transactions')

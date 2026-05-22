@@ -49,9 +49,10 @@
     },{
       name:'cadence', title:'Cadence', editable:false,
       html: item => `${utils.title(item.cadence)}<div class='subtext'>${item.is_active ? `Active` : 'Inactive'}</span>`,
+      class: item => item.is_active ? 'active' : 'inactive',
     },{
       name:'lastdate', title:'Last', editable:false,
-      html: item => `${utils.formatDate(item.last_date, 'MMM D, YYYY')}<div class='subtext'>${item.last_date} days ago</div>`,
+      html: item => `${utils.formatDate(item.last_date, 'MMM D, YYYY')}<div class='subtext'>${utils.timeAgo(new Date(item.last_date), true)}</div>`,
     },{
       name:'monthly', title:'Monthly', editable:false,
       html: item => item.cadence == 'monthly' ? utils.usd(item.last_amount) : '--',
@@ -140,6 +141,10 @@
           line-height: 16px;
           height: 42px !important;
         }
+      }
+
+      tr:has(.inactive) .fakeinput {
+        opacity: 0.4;
       }
 
       .accounts { width: 36px; text-align: center; }

@@ -125,9 +125,10 @@ QUERYCOUNTER_SIMPLIFY_SQL = True
 # Budget Settings
 # These settings are used by the budget app. All tokens must be lowercase
 # - BUDGET_CATEGORY_STOPWORDS: Stop words to prevent auto-categorization
-# - BUDGET_AGGREGATOR_TOKENS: Payment processor tokens (followed by * in payee)
-# - BUDGET_NOISE_TOKENS: Noisy tokens to simply remove when scrubbing payee
-# - BUDGET_MONTH_TOKENS: Month tokens to remove when scrubbing payee (e.g. "jan 2020")
+# - BUDGET_SCRUB_MIN_TOKEN_LEN: Minimum token length to keep when scrubbing payee
+# - BUDGET_SCRUB_AGGREGATOR_TOKENS: Payment processor tokens (followed by * in payee)
+# - BUDGET_SCRUB_NOISE_TOKENS: Noisy tokens to simply remove when scrubbing payee
+# - BUDGET_SCRUB_MONTH_TOKENS: Month tokens to remove when scrubbing payee (e.g. "jan 2020")
 BUDGET_CATEGORY_STOPWORDS = {'venmo', 'google'}
 BUDGET_SCRUB_MIN_TOKEN_LEN = 3
 BUDGET_SCRUB_AGGREGATOR_TOKENS = {'sq','tst','google','paypal'}
@@ -136,7 +137,7 @@ BUDGET_SCRUB_NOISE_TOKENS = {'com', 'www', 'http', 'https', 'httpswww', 'co',
 BUDGET_SCRUB_MONTH_TOKENS = {'jan','feb','mar','apr','may','jun','jul','aug',
     'sep','sept','oct','nov','dec','january','february','march','april','june',
     'july','august','september','october','november','december'}
-# BUDGET_RECURRING_SKIP_CATEGORIES = {'income', 'restaurants', 'transfers'}
+BUDGET_RECURRING_SKIP_CATEORIES = {'Restaurant', 'Shopping, Clothing', 'Taxes'}
 
 # Email Settings
 # https://docs.djangoproject.com/en/5.0/topics/email/
