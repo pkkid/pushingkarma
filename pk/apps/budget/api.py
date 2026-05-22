@@ -17,8 +17,9 @@ from pk.utils.utils import add_months, first_of_month
 from pk.utils.django import get_object_or_none
 from pk.utils.ninja import PageSchema, paginate
 from typing import List
-from . import recurring, schemas, utils
+from . import schemas, utils
 from .models import Account, Category, Transaction
+from .recurring import RecurringManager
 from .trxmanager import TransactionManager
 log = logging.getLogger(__name__)
 router = Router(auth=django_auth)
@@ -354,8 +355,9 @@ def annual_transactions(request,
 
 @router.get('/recurring', response=schemas.RecurringSummarySchema, exclude_unset=True)
 def list_recurring(request,
-      lookback_days: int=Query(900, description='Number of days to evaluate for recurring payments'),
-      include_inactive: bool=Query(False, description='Include stale groups older than cadence thresholds')):
+      days: int=Query(900, description='Number of days to evaluate for recurring payments'),
+      showinactive: bool=Query(False, description='Include stale groups older than cadence thresholds')):
     """ Detect likely recurring payments from transaction patterns. """
-    return recurring.find_recurring_transactions(request.user, lookback_days=lookback_days,
-        include_inactive=include_inactive)
+    mgr = RecurringManager(request.user, days=days)
+    items = mgr.items if showinactive else list(filter(lambda i: i['is_active'], mgr.items))
+    return {'count':len(items), 'items':items}

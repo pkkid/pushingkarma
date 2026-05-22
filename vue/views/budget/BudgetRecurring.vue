@@ -3,7 +3,7 @@
     <template #content>
       <!-- Controls -->
       <div class='controls'>
-        <ToggleSwitch v-model='includeinactive' label='Include Inactive' />
+        <ToggleSwitch v-model='showinactive' label='Show Inactive' />
       </div>
       <!-- Header -->
       <h1>
@@ -65,14 +65,14 @@
   var cancelctrl = null               // Cancel controller
   const loading = ref(false)          // True while loading recurring items
   const summary = ref(null)           // Summary of recurring items
-  const includeinactive = useStorage('budget.inactive', false)   // Include inactive items in summary
+  const showinactive = useStorage('budget.showinactive', false)   // Include inactive items in summary
   const edittable = ref(null)         // Ref to the recurring table
   const popover = ref(null)           // Ref to the recurring payee popover
 
   // On Mounted & Watchers
   // Update recurring items when mounted, and when toggles change
   onMounted(function() { updateRecurring() })
-  watch(includeinactive, function() { updateRecurring() })
+  watch(showinactive, function() { updateRecurring() })
 
   // On Selected
   // Match the year view: open on edit/enter, and keep the popover in sync while
@@ -107,9 +107,7 @@
     cancelctrl = api.cancel(cancelctrl)
     try {
       var params = {
-        include_inactive: includeinactive.value,
-        min_confidence: 45,
-        lookback_days: 913,
+        showinactive: showinactive.value,
       }
       var {data} = await api.Budget.listRecurring(params, cancelctrl.signal)
       summary.value = data
