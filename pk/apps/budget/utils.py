@@ -35,6 +35,14 @@ def get_min_and_max_dates(search, interval='year'):
     return None, None, None
 
 
+def get_months_range(trxs):
+    """ Get the number of months between the first and last transaction. """
+    if not trxs: return 0
+    first = trxs.order_by('date').first().date
+    last = trxs.order_by('-date').first().date
+    return (last.year - first.year) * 12 + (last.month - first.month) + 1
+
+
 def get_similar_uncategorized_trxs(user, source_trx):
     """ Returns uncategorized transactions that can be categorized like source_trx. """
     if not source_trx.category_id:

@@ -1,20 +1,20 @@
 <template>
   <div v-if='summary' id='budgetsummary'>
     <div class='bignums'>
-      <!-- Total Spent -->
-      <div v-if='summary.total_count < 100 && summary.total_spent != 0' class='bignum-panel'>
-        <div class='bignum-num'>{{utils.usd(summary.total_spent, 0)}}</div>
-        <div class='bignum-label'>Spent</div>
-      </div>
       <!-- Total Income (only if nonzero) -->
       <div v-if='summary.total_count < 100 && summary.total_income != 0' class='bignum-panel'>
         <div class='bignum-num'>{{utils.usd(summary.total_income, 0)}}</div>
         <div class='bignum-label'>Income</div>
       </div>
+      <!-- Total Spent -->
+      <div v-if='summary.total_count < 100 && summary.total_spent != 0' class='bignum-panel'>
+        <div class='bignum-num'>{{utils.usd(summary.total_spent, 0)}}</div>
+        <div class='bignum-label'>Spent</div>
+      </div>
       <!-- Net Amount -->
       <div v-if='summary.total_count < 100 && summary.total_spent != 0 && summary.total_income != 0' class='bignum-panel'>
         <div class='bignum-num'>{{utils.usd(summary.total_amount, 0)}}</div>
-        <div class='bignum-label'>Net</div>
+        <div class='bignum-label'>Total</div>
       </div>
       <!-- Uncategorized (filter button) -->
       <div v-if='summary.uncategorized_count' class='bignum-panel bignum-btn'
@@ -31,10 +31,11 @@
         <div class='bignum-label'>Unapproved</div>
       </div>
       <!-- Monthly Spending Chart -->
-      <div v-if='chartDatasets' class='bignum-panel bignum-btn minichart-wrap'>
-        <div class='minichart' :class='{expanded: isExpanded}'
-            @click='isExpanded = true' @mouseleave='isExpanded = false'>
-          <Bar :options='chartOptions' :data='chartDatasets'/>
+      <div v-if='summary.total_months >= 3 && chartDatasets' class='bignum-panel bignum-btn minichart-wrap'>
+        <div ref='minichartEl' class='minichart' :class='{expanded: isExpanded}' @click='openExpanded'>
+          <Transition name='chart-fade'>
+            <Bar v-if='showChart' :options='chartOptions' :data='chartDatasets'/>
+          </Transition>
         </div>
       </div>
     </div>
@@ -42,7 +43,7 @@
 </template>
 
 <script setup>
-  import {computed, onMounted, ref, watch} from 'vue'
+  import {computed, onBeforeUnmount, onMounted, ref, watch} from 'vue'
   import {Bar} from 'vue-chartjs'
   import {Chart, registerables} from 'chart.js'
   import {useUrlParams} from '@/composables'
@@ -54,8 +55,23 @@
   })
   var cancelctrl = null                         // Cancel controller for monthly spending
   const isExpanded = ref(false)                 // Whether the chart is expanded
+  const showChart = ref(true)                   // Whether the chart is visible (hidden during resize)
+  const minichartEl = ref(null)                 // Chart container element (for click-outside close)
   const monthlyData = ref(null)                 // Monthly spending data
   const {search} = useUrlParams({search:{}})    // Search string from URL
+
+  // Open expanded chart
+  const openExpanded = function() {
+    isExpanded.value = true
+  }
+
+  // Close chart only when clicking outside of it
+  const onWindowPointerDown = function(evt) {
+    if (!isExpanded.value) { return }
+    if (minichartEl.value && !minichartEl.value.contains(evt.target)) {
+      isExpanded.value = false
+    }
+  }
 
   // Is Filter Active
   // Check if the filter token is already in the search string
@@ -73,6 +89,25 @@
     search.value = parts.join(' ') || null
   }
 
+  // Apply date filter from chart click
+  // Replaces existing date="..." token, then appends the clicked month-year
+  const applyChartDateFilter = function(label) {
+    if (!label) { return }
+    var token = `date="${label}"`
+    var cleaned = (search.value || '').replace(/\bdate="[^"]+"/g, '').replace(/\s+/g, ' ').trim()
+    search.value = cleaned ? `${cleaned} ${token}` : token
+  }
+
+  // Handle chart clicks using tooltip-like index mode (intersect:false)
+  const onChartClick = function(evt, activeEls, chart) {
+    var els = chart.getElementsAtEventForMode(evt, 'index', {intersect: false}, false)
+    if (!els || !els.length) { return }
+    var idx = els[0].index
+    if (idx == null) { return }
+    var label = chart?.data?.labels?.[idx]
+    applyChartDateFilter(label)
+  }
+
   // Chart Datasets
   // Build chart.js dataset from monthly spending data
   const chartDatasets = computed(function() {
@@ -84,14 +119,14 @@
       datasets: [{
         label: 'Spending',
         data: monthlyData.value.spending,
-        backgroundColor: '#cc241d33',
+        backgroundColor: '#cc241d',
         borderColor: '#cc241d',
         borderWidth: 1,
         borderRadius: 2,
       }, {
         label: 'Income',
         data: monthlyData.value.income,
-        backgroundColor: '#98971a33',
+        backgroundColor: '#98971a',
         borderColor: '#98971a',
         borderWidth: 1,
         borderRadius: 2,
@@ -104,6 +139,7 @@
   const chartOptions = computed(function() {
     var opts = {}
     utils.rset(opts, 'events', ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove'])
+    utils.rset(opts, 'animation.duration', 0)
     utils.rset(opts, 'plugins.legend.display', true)
     utils.rset(opts, 'plugins.legend.labels.boxHeight', 7)
     utils.rset(opts, 'plugins.legend.labels.boxWidth', 7)
@@ -118,6 +154,7 @@
     utils.rset(opts, 'plugins.tooltip.enabled', true)
     utils.rset(opts, 'plugins.tooltip.mode', 'index')
     utils.rset(opts, 'plugins.tooltip.intersect', false)
+    utils.rset(opts, 'onClick', onChartClick)
     utils.rset(opts, 'plugins.tooltip.callbacks.label', function(ctx) {
       return ` ${ctx.dataset.label}: ${utils.usd(ctx.parsed.y, 0)}`
     })
@@ -146,10 +183,25 @@
     return opts
   })
 
+  // Hide chart during minichart resize transition, then restore it
+  watch(isExpanded, function() {
+    showChart.value = false
+    setTimeout(function() { showChart.value = true }, 200)
+  })
+
   // On Mounted
-  // Fetch monthly spending data
-  onMounted(function() { updateMonthlySpending() })
-  watch(search, function() { updateMonthlySpending() })
+  // Fetch monthly spending data and install click-outside listener
+  onMounted(function() {
+    updateMonthlySpending()
+    window.addEventListener('pointerdown', onWindowPointerDown)
+  })
+  onBeforeUnmount(function() {
+    window.removeEventListener('pointerdown', onWindowPointerDown)
+  })
+  watch(search, function() {
+    isExpanded.value = false
+    updateMonthlySpending()
+  })
 
   // Update Monthly Spending
   // Fetch monthly spending data from the API
@@ -212,13 +264,12 @@
           border-color: var(--lightbg-bg3);
         }
         &.active {
-          background-color: var(--lightbg-bgs);
-          border-color: var(--lightbg-bg4);
+          border-color: var(--accent);
+          box-shadow: inset 0 0 0 1px var(--accent);
+          background-color: #f812;
         }
       }
     }
-
-    
 
     .minichart-wrap {
       position: relative;
@@ -247,11 +298,15 @@
         box-shadow: 0 8px 24px rgba(15, 23, 42, 0.15);
         height: 210px;
         padding: 12px;
-        top: -5px;
+        top: -2px;
         left: -1px;
         width: 420px;
         z-index: 50;
       }
     }
+
+    .chart-fade-enter-active { transition: opacity 0.15s ease; }
+    .chart-fade-leave-active { transition: opacity 0.1s ease; }
+    .chart-fade-enter-from, .chart-fade-leave-to { opacity: 0; }
   }
 </style>
