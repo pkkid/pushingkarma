@@ -1,6 +1,6 @@
 <template>
-  <BudgetChart v-if='chartData' v-slot='{isExpanded, isReady}'>
-    <ChartView v-if='isReady' type='treemap' :options='chartOptions(isExpanded)' :data='chartData'/>
+  <BudgetChart v-if='hasData' :collapseKey='search' v-slot='{isExpanded, isReady}'>
+    <ChartView v-if='isReady' type='treemap' :options='chartOptions(isExpanded)' :data='chartData(isExpanded)'/>
   </BudgetChart>
 </template>
 
@@ -40,6 +40,18 @@
     return `rgba(${r}, ${g}, ${b}, ${alpha})`
   }
 
+  // Darken a hex color by mixing it with black.
+  // amount=0.5 means 50% original color + 50% black.
+  const mixWithBlack = function(hex, amount=0.5) {
+    var val = hex.replace('#', '')
+    if (val.length !== 6) { return hex }
+    var ratio = Math.max(0, Math.min(1, 1 - amount))
+    var r = Math.round(parseInt(val.slice(0, 2), 16) * ratio)
+    var g = Math.round(parseInt(val.slice(2, 4), 16) * ratio)
+    var b = Math.round(parseInt(val.slice(4, 6), 16) * ratio)
+    return `rgb(${r}, ${g}, ${b})`
+  }
+
   // Apply category filter token from treemap click
   // Replaces existing category filter tokens, then appends the clicked category
   const applyCategoryFilter = function(category) {
@@ -59,8 +71,13 @@
     applyCategoryFilter(node.category)
   }
 
+  // True when there is at least one category to render in the treemap
+  const hasData = computed(function() {
+    return (treemapData.value?.items || []).length > 0
+  })
+
   // Build treemap dataset from category treemap API data
-  const chartData = computed(function() {
+  const chartData = function(isExpanded) {
     var items = treemapData.value?.items || []
     if (!items.length) { return null }
     var tree = items.map(function(item) {
@@ -68,21 +85,36 @@
     })
     return {
       datasets: [{
-        label: 'Category Spend',
-        tree,
-        key: 'value',
+        borderWidth: isExpanded ? 1 : 1,
+        captions: {display: false},
         groups: ['category'],
-        spacing: 1,
-        borderWidth: 1,
-        borderColor: 'var(--lightbg-bg3)',
+        key: 'value',
+        label: 'Category Spend',
+        spacing: isExpanded ? 1 : 1,
+        tree: tree,
+        labels: {
+          align: 'left',
+          color: '#222c',
+          display: isExpanded,
+          font: {size:9, weight:'400'},
+          formatter: (ctx) => ctx.raw?._data?.category || ctx.raw?.g || '',
+          overflow: 'fit',
+          padding: 2,
+          position: 'top',
+        },
         backgroundColor: function(ctx) {
           var category = ctx.raw?._data?.category || ''
           var color = colorForCategory(category)
           return withAlpha(color, 0.78)
         },
+        borderColor: function(ctx) {
+          var category = ctx.raw?._data?.category || ''
+          var color = colorForCategory(category)
+          return mixWithBlack(color, 0.1)
+        },
       }],
     }
-  })
+  }
 
   // Build chart.js options, switching between mini and expanded modes
   const chartOptions = function(isExpanded) {

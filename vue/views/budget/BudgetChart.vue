@@ -11,6 +11,10 @@
 <script setup>
   import {onBeforeUnmount, onMounted, ref, watch} from 'vue'
 
+  const props = defineProps({
+    collapseKey: {type:[String, Number, Boolean], default:null},
+  })
+
   const isExpanded = ref(false)     // Whether the chart is expanded
   const isReady = ref(true)         // Whether the chart should render (hidden during resize)
   const chart = ref(null)           // Chart container element (for click-outside close)
@@ -38,6 +42,9 @@
   watch(isExpanded, function() {
     isReady.value = false
     setTimeout(function() { isReady.value = true }, 200)
+  })
+  watch(() => props.collapseKey, function() {
+    isExpanded.value = false
   })
   onBeforeUnmount(function() {
     window.removeEventListener('pointerdown', onWindowPointerDown)
