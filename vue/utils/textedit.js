@@ -68,7 +68,6 @@ export function tabIndent(textarea, shiftkey, tabspaces=2) {
         textarea.setSelectionRange(selstart - spaces, selstart - spaces)
       }
     } else {
-      console.log('Adding spaces')
       document.execCommand('insertText', false, ' '.repeat(tabspaces))
     }
   }

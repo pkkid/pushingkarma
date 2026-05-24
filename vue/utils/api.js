@@ -13,7 +13,7 @@ axios.defaults.xsrfHeaderName = 'X-CSRFToken'
 axios.defaults.baseURL = process.env.NODE_ENV === 'development'
   ? `${window.location.protocol}//${window.location.hostname}:8000`
   : `${window.location.protocol}//${window.location.hostname}`
-console.log(`Axios.defaults.baseURL: ${axios.defaults.baseURL}`)
+console.info(`Axios.defaults.baseURL: ${axios.defaults.baseURL}`)
 
 // API Endpoints
 // Endpoints defined in the Django application

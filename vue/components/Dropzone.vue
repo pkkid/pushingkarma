@@ -52,7 +52,7 @@
     var files = event.dataTransfer.files
     var formdata = new FormData()
     for (var i=0; i<event.dataTransfer.files.length; i++) {
-      console.log(`Dropped ${files[i].name}`)
+      console.info(`Dropped ${files[i].name}`)
       formdata.append('files', files[i])
     }
     emit('filesDropped', event, formdata)

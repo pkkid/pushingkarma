@@ -58,8 +58,6 @@
       var params = {cache_only:true}
       var {data} = await api.Main.aiPrompt(prompt, params)
       response.value = data?.response?.trim() || null
-    } catch (err) {
-      console.log(err)
     } finally {
       transitionDuration.value = '0.2s'
     }

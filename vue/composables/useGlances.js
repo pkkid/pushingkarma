@@ -36,19 +36,15 @@ export default (function() {
   // Update
   // Fetch latest data from Glances API
   async function update() {
-    try {
-      const res = await Main.getGlances()
-      const json = res.data
-      const now = Date.now()
-      const history = {}
-      for (const [name, t] of Object.entries(trackers)) {
-        t.history = [...t.history.slice(-(t.len - 1)), {time: now, value: t.lookup(json)}]
-        history[name] = t.history
-      }
-      data.value = {...json, history}
-    } catch (err) {
-      console.log('Glances Error: ', err)
+    const res = await Main.getGlances()
+    const json = res.data
+    const now = Date.now()
+    const history = {}
+    for (const [name, t] of Object.entries(trackers)) {
+      t.history = [...t.history.slice(-(t.len - 1)), {time: now, value: t.lookup(json)}]
+      history[name] = t.history
     }
+    data.value = {...json, history}
   }
 
   // Track History

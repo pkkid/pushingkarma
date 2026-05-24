@@ -22,6 +22,7 @@
   })
   var cancelctrl = null                             // Cancel controller for treemap requests
   const treemapData = ref(null)                     // Category treemap data from API
+  const treemapCountLookup = ref({})               // Lookup map for count data by category+payee
   const {search} = useUrlParams({search:{}})        // Search string from URL
 
   const colorForCategory = function(name) {
@@ -61,12 +62,15 @@
     return `${str.slice(0, Math.max(1, maxlen - 1)).trim()}…`
   }
 
-  // Apply category filter token from treemap click
-  // Replaces existing category filter tokens, then appends the clicked category
-  const applyCategoryFilter = function(category) {
-    if (!category) { return }
-    var token = `category="${category}"`
-    var cleaned = (search.value || '').replace(/\bcategory=(?:"[^"]+"|null)/g, '').replace(/\s+/g, ' ').trim()
+  // Apply category and/or payee filter token from treemap click
+  // Replaces existing category filter tokens, then appends the clicked category and/or payee
+  const applyCategoryFilter = function(category, payee) {
+    if (!category && !payee) { return }
+    var tokens = []
+    if (category) { tokens.push(`category="${category}"`) }
+    if (payee) { tokens.push(`payee~"${payee}"`) }
+    var token = tokens.join(' ')
+    var cleaned = (search.value || '').replace(/\bcategory=(?:"[^"]+"|null)/g, '').replace(/\bpayee~(?:"[^"]+"|null)/g, '').replace(/\s+/g, ' ').trim()
     search.value = cleaned ? `${cleaned} ${token}` : token
   }
 
@@ -76,8 +80,8 @@
     if (!els || !els.length) { return }
     var elm = els[0]
     var raw = chart?.data?.datasets?.[elm.datasetIndex]?.data?.[elm.index]
-    var node = raw?._data || {}
-    applyCategoryFilter(node.category)
+    var item = raw?.data || raw?._data || raw || {}
+    applyCategoryFilter(item.category, item.payee)
   }
 
   // True when there is at least one category to render in the treemap
@@ -89,8 +93,13 @@
   const chartData = function(isExpanded) {
     var items = treemapData.value?.items || []
     if (!items.length) { return null }
+    
+    // Build lookup map for counts since the treemap library doesn't preserve them
+    treemapCountLookup.value = {}
     var tree = items.map(function(item) {
-      return {category: item.category, payee: item.payee, value: item.value, count: item.count}
+      var key = `${item.category}|${item.payee}`
+      treemapCountLookup.value[key] = item.count
+      return {category: item.category, payee: item.payee, value: item.value}
     })
     return {
       datasets: [{
@@ -146,20 +155,42 @@
     utils.rset(opts, 'plugins.title.font.family', 'Merriweather')
     utils.rset(opts, 'plugins.title.font.size', 14)
     utils.rset(opts, 'plugins.title.padding.bottom', 5)
-    utils.rset(opts, 'plugins.title.text', 'By Category')
+    utils.rset(opts, 'plugins.title.text', 'Amount By Category')
     utils.rset(opts, 'plugins.tooltip.enabled', true)
     utils.rset(opts, 'plugins.tooltip.callbacks.label', function(ctx) {
-      var node = ctx.raw?._data || {}
-      var amount = utils.usd(node.value || 0, 0)
-      var count = utils.intComma(node.count || 0)
-      var title = [node.category, node.payee].filter(Boolean).join(' / ')
-      return `${title}: ${amount} (${count})`
+      // Get the original data from ctx
+      var item = ctx.raw?.data || ctx.raw?._data || {}
+      
+      // The treemap library doesn't preserve extra properties, so look up the count
+      var category = item.category || ''
+      var payee = item.payee || ''
+      var count = 0
+      
+      if (payee) {
+        // If there's a specific payee, look it up directly
+        var key = `${category}|${payee}`
+        count = treemapCountLookup.value[key] || 0
+      } else {
+        // If no payee (category-level node), sum all payees under this category
+        for (let key in treemapCountLookup.value) {
+          if (key.startsWith(`${category}|`)) {
+            count += treemapCountLookup.value[key] || 0
+          }
+        }
+      }
+      
+      var amount = utils.usd(item.value || 0, 0)
+      var countStr = utils.intComma(count)
+      var isSubcategory = !!payee
+      var title = isSubcategory ? ellipsis(payee, 20) : (category || '')
+      return `${title}: ${amount} (${countStr})`
     })
     utils.rset(opts, 'plugins.tooltip.callbacks.title', function() { return '' })
     if (!isExpanded) {
       utils.rset(opts, 'events', [])
       utils.rset(opts, 'plugins.title.font.size', 11)
       utils.rset(opts, 'plugins.title.padding.bottom', 0)
+      utils.rset(opts, 'plugins.title.text', 'By Category')
       utils.rset(opts, 'plugins.tooltip.enabled', false)
       utils.rset(opts, 'layout.padding.top', 0)
       utils.rset(opts, 'layout.padding.left', 0)

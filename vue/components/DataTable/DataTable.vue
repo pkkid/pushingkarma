@@ -72,7 +72,7 @@
     observer = new IntersectionObserver(function(entries) {
       if (entries[0].isIntersecting && props.items.length !== lastemitlen && props.nextpage) {
         lastemitlen = props.items.length
-        console.log('Sending getNextPage')
+        console.info(`Sending getNextPage for items beyond ${props.items.length}`)
         emit('getNextPage', props.nextpage)
       }
     }, {root:null, rootMargin:'200px', threshold:0})

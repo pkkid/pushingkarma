@@ -58,7 +58,7 @@
     var {data} = await api.Main.login(params)
     if (data.id) {
       setUser(data)
-      console.log(`Logged in as ${user.value.email}`)
+      console.info(`Logged in as ${user.value.email}`)
     }
   }
 
