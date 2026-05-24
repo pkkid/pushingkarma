@@ -70,6 +70,7 @@
   const chartOptions = function(isExpanded) {
     var opts = {}
     utils.rset(opts, 'animation.duration', 0)
+    utils.rset(opts, 'maintainAspectRatio', false)
     utils.rset(opts, 'events', ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove'])
     utils.rset(opts, 'onClick', onChartClick)
     utils.rset(opts, 'plugins.legend.align', 'end')
@@ -100,7 +101,6 @@
       utils.rset(opts, 'layout.padding.left', 0)
       utils.rset(opts, 'layout.padding.right', 0)
       utils.rset(opts, 'layout.padding.top', 0)
-      utils.rset(opts, 'maintainAspectRatio', false)
       utils.rset(opts, 'plugins.legend.display', false)
       utils.rset(opts, 'plugins.title.font.size', 11)
       utils.rset(opts, 'plugins.title.padding.bottom', 2)
