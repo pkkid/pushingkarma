@@ -1,21 +1,6 @@
 <template>
   <div v-if='summary' id='budgetsummary'>
     <div class='bignums'>
-      <!-- Total Income (only if nonzero) -->
-      <div v-if='summary.total_count < 100 && summary.total_income != 0' class='bignum-panel'>
-        <div class='bignum-num'>{{utils.usd(summary.total_income, 0)}}</div>
-        <div class='bignum-label'>Income</div>
-      </div>
-      <!-- Total Spent -->
-      <div v-if='summary.total_count < 100 && summary.total_spent != 0' class='bignum-panel'>
-        <div class='bignum-num'>{{utils.usd(summary.total_spent, 0)}}</div>
-        <div class='bignum-label'>Spent</div>
-      </div>
-      <!-- Net Amount -->
-      <div v-if='summary.total_count < 100 && summary.total_spent != 0 && summary.total_income != 0' class='bignum-panel'>
-        <div class='bignum-num'>{{utils.usd(summary.total_amount, 0)}}</div>
-        <div class='bignum-label'>Total</div>
-      </div>
       <!-- Uncategorized (filter button) -->
       <div v-if='summary.uncategorized_count' class='bignum-panel bignum-btn'
           :class='{active: isFilterActive("category=null")}'
@@ -29,6 +14,21 @@
           @click='toggleFilter("approved=false")'>
         <div class='bignum-num'>{{utils.intComma(summary.unapproved_count)}}</div>
         <div class='bignum-label'>Unapproved</div>
+      </div>
+      <!-- Total Income (only if nonzero) -->
+      <div v-if='summary.total_count < 100 && summary.total_income != 0' class='bignum-panel'>
+        <div class='bignum-num'>{{utils.usd(summary.total_income, 0, '$', 3)}}</div>
+        <div class='bignum-label'>Income</div>
+      </div>
+      <!-- Total Spent -->
+      <div v-if='summary.total_count < 100 && summary.total_spent != 0' class='bignum-panel'>
+        <div class='bignum-num'>{{utils.usd(summary.total_spent, 0, '$', 3)}}</div>
+        <div class='bignum-label'>Spent</div>
+      </div>
+      <!-- Total Amount -->
+      <div v-if='summary.total_count < 100 && summary.total_spent != 0 && summary.total_income != 0' class='bignum-panel'>
+        <div class='bignum-num'>{{utils.usd(summary.total_amount, 0, '$', 3)}}</div>
+        <div class='bignum-label'>Total</div>
       </div>
       <!-- Monthly Spending Chart -->
       <BudgetChartMonthly v-if='summary.total_months >= 3'/>

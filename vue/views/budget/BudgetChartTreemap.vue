@@ -1,6 +1,7 @@
 <template>
-  <BudgetChart v-if='hasData' :collapseKey='search' v-slot='{isExpanded, isReady}'>
-    <ChartView v-if='isReady' type='treemap' :options='chartOptions(isExpanded)' :data='chartData(isExpanded)'/>
+  <BudgetChart v-if='hasData' :collapseKey='search' :canFullscreen='props.canFullscreen'
+    v-slot='{isExpanded, isFullscreen, isReady}' >
+    <ChartView v-if='isReady' type='treemap' :options='chartOptions(isExpanded, isFullscreen)' :data='chartData(isExpanded)'/>
   </BudgetChart>
 </template>
 
@@ -15,12 +16,13 @@
   Chart.register(...registerables, TreemapController, TreemapElement)
 
   const props = defineProps({
-    months: {type:Number, default:24},
-    limit: {type:Number, default:25},
+    months: {type:Number, default:24},              // Number of months to look back for the treemap (e.g. last 12 months)
+    limit: {type:Number, default:25},               // Max number of treemap blocks to show (API limit, not client-side)
+    canFullscreen: {type:Boolean, default:false},   // Whether to show the fullscreen expand button (only if treemap has data)
   })
-  var cancelctrl = null                         // Cancel controller for treemap requests
-  const treemapData = ref(null)                 // Category treemap data from API
-  const {search} = useUrlParams({search:{}})    // Search string from URL
+  var cancelctrl = null                             // Cancel controller for treemap requests
+  const treemapData = ref(null)                     // Category treemap data from API
+  const {search} = useUrlParams({search:{}})        // Search string from URL
 
   const colorForCategory = function(name) {
     var palette = ['#689d6a', '#458588', '#d79921', '#b16286', '#cc241d', '#83a598', '#98971a', '#d65d0e', '#458588', '#8f3f71']
@@ -93,7 +95,6 @@
     return {
       datasets: [{
         borderWidth: isExpanded ? 1 : 1,
-        
         groups: ['category', 'payee'],
         key: 'value',
         label: 'Category Spend',
@@ -132,19 +133,20 @@
   }
 
   // Build chart.js options, switching between mini and expanded modes
-  const chartOptions = function(isExpanded) {
+  const chartOptions = function(isExpanded, isFullscreen) {
     var opts = {}
     utils.rset(opts, 'animation.duration', 0)
-    utils.rset(opts, 'maintainAspectRatio', false)
     utils.rset(opts, 'events', ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove'])
+    utils.rset(opts, 'maintainAspectRatio', false)
     utils.rset(opts, 'onClick', onChartClick)
     utils.rset(opts, 'plugins.legend.display', false)
     utils.rset(opts, 'plugins.title.align', 'start')
     utils.rset(opts, 'plugins.title.color', 'var(--lightbg-fg1)')
     utils.rset(opts, 'plugins.title.display', true)
-    utils.rset(opts, 'plugins.title.text', 'Category Treemap')
+    utils.rset(opts, 'plugins.title.font.family', 'Merriweather')
     utils.rset(opts, 'plugins.title.font.size', 14)
-    utils.rset(opts, 'plugins.title.padding.bottom', 2)
+    utils.rset(opts, 'plugins.title.padding.bottom', 5)
+    utils.rset(opts, 'plugins.title.text', 'By Category')
     utils.rset(opts, 'plugins.tooltip.enabled', true)
     utils.rset(opts, 'plugins.tooltip.callbacks.label', function(ctx) {
       var node = ctx.raw?._data || {}
@@ -168,12 +170,8 @@
   }
 
   // Fetch treemap data once mounted and whenever the search string changes
-  onMounted(function() {
-    updateCategoryTreemap()
-  })
-  watch(search, function() {
-    updateCategoryTreemap()
-  })
+  onMounted(function() { updateCategoryTreemap() })
+  watch(search, function() { updateCategoryTreemap() })
 
   // Update Category Treemap
   // Fetch category treemap values from the API

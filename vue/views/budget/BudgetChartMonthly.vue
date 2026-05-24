@@ -1,6 +1,6 @@
 <template>
-  <BudgetChart v-if='chartDatasets' :collapseKey='search' v-slot='{isExpanded, isReady}'>
-    <Bar v-if='isReady' :options='chartOptions(isExpanded)' :data='chartDatasets'/>
+  <BudgetChart v-if='chartDatasets' :collapseKey='search' v-slot='{isExpanded, isFullscreen, isReady}'>
+    <Bar v-if='isReady' :options='chartOptions(isExpanded, isFullscreen)' :data='chartDatasets'/>
   </BudgetChart>
 </template>
 
@@ -14,11 +14,12 @@
   Chart.register(...registerables)
 
   const props = defineProps({
-    months: {type:Number, default:24},
+    months: {type:Number, default:24},              // Number of months to show in the chart
+    canFullscreen: {type:Boolean, default:false},   // Whether to show the fullscreen expand button
   })
-  var cancelctrl = null                         // Cancel controller for monthly spending
-  const monthlyData = ref(null)                 // Monthly spending data
-  const {search} = useUrlParams({search:{}})    // Search string from URL
+  var cancelctrl = null                             // Cancel controller for monthly spending
+  const monthlyData = ref(null)                     // Monthly spending data
+  const {search} = useUrlParams({search:{}})        // Search string from URL
 
   // Apply date filter from chart click
   // Replaces existing date="..." token, then appends the clicked month-year
@@ -67,14 +68,14 @@
 
   // Chart Options
   // Build chart.js options, switching between mini and expanded modes
-  const chartOptions = function(isExpanded) {
+  const chartOptions = function(isExpanded, isFullscreen) {
     var opts = {}
     utils.rset(opts, 'animation.duration', 0)
     utils.rset(opts, 'maintainAspectRatio', false)
     utils.rset(opts, 'events', ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove'])
     utils.rset(opts, 'onClick', onChartClick)
     utils.rset(opts, 'plugins.legend.align', 'end')
-    utils.rset(opts, 'plugins.legend.display', true)
+    utils.rset(opts, 'plugins.legend.display', false)
     utils.rset(opts, 'plugins.legend.labels.boxHeight', 7)
     utils.rset(opts, 'plugins.legend.labels.boxWidth', 7)
     utils.rset(opts, 'plugins.legend.position', 'top')
@@ -82,12 +83,14 @@
     utils.rset(opts, 'plugins.title.color', 'var(--lightbg-fg1)')
     utils.rset(opts, 'plugins.title.display', true)
     utils.rset(opts, 'plugins.title.font.size', 15)
-    utils.rset(opts, 'plugins.title.padding.bottom', -23)
-    utils.rset(opts, 'plugins.title.text', 'Monthly Spend')
+    utils.rset(opts, 'plugins.title.font.family', 'Merriweather')
+    utils.rset(opts, 'plugins.title.padding.bottom', 15)
+    utils.rset(opts, 'plugins.title.text', 'By Month')
     utils.rset(opts, 'plugins.tooltip.callbacks.label', (ctx) => ` ${ctx.dataset.label}: ${utils.usd(ctx.parsed.y, 0)}`)
     utils.rset(opts, 'plugins.tooltip.enabled', true)
     utils.rset(opts, 'plugins.tooltip.intersect', false)
     utils.rset(opts, 'plugins.tooltip.mode', 'index')
+    utils.rset(opts, 'layout.padding.right', 24)
     utils.rset(opts, 'scales.x.display', true)
     utils.rset(opts, 'scales.x.ticks.font.size', 9)
     utils.rset(opts, 'scales.x.ticks.maxTicksLimit', 12)
@@ -108,6 +111,11 @@
       utils.rset(opts, 'scales.x.display', false)
       utils.rset(opts, 'scales.y.display', false)
       utils.rset(opts, 'scales.y.min', 0)
+    }
+    if (isFullscreen) {
+      utils.rset(opts, 'layout.padding', 20)
+      utils.rset(opts, 'plugins.title.font.size', 20)
+      utils.rset(opts, 'plugins.title.padding.bottom', 0)
     }
     return opts
   }
