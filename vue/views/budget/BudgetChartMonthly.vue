@@ -1,5 +1,5 @@
 <template>
-  <BudgetChart v-if='chartDatasets' :collapseKey='search' v-slot='{isExpanded, isFullscreen, isReady}'>
+  <BudgetChart v-if='chartDatasets' :collapseKey='search' :resetChartOnClick='true' v-slot='{isExpanded, isFullscreen, isReady}'>
     <Bar v-if='isReady' :options='chartOptions(isExpanded, isFullscreen)' :data='chartDatasets'/>
   </BudgetChart>
 </template>

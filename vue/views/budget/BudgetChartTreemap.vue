@@ -1,5 +1,5 @@
 <template>
-  <BudgetChart v-if='hasData' :collapseKey='search' :canFullscreen='props.canFullscreen'
+  <BudgetChart v-if='hasData' :collapseKey='search' :resetChartOnClick='false' :canFullscreen='props.canFullscreen'
     v-slot='{isExpanded, isFullscreen, isReady}' >
     <ChartView v-if='isReady' type='treemap' :options='chartOptions(isExpanded, isFullscreen)' :data='chartData(isExpanded)'/>
   </BudgetChart>

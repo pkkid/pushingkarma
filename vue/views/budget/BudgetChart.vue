@@ -18,6 +18,7 @@
   const props = defineProps({
     collapseKey: {type:[String, Number, Boolean], default:null},    // Optional key to watch for changes to auto-collapse the chart (e.g. search string)
     canFullscreen: {type:Boolean, default:false},                   // Whether to show the fullscreen expand button (only if chart has data)
+    resetChartOnClick: {type:Boolean, default:true},                // If false, ignore collapseKey changes and keep expanded state after chart-triggered filters
   })
 
   const isExpanded = ref(false)     // Whether the chart is expanded
@@ -71,6 +72,7 @@
     setTimeout(function() { isReady.value = true }, 200)
   })
   watch(() => props.collapseKey, function() {
+    if (!props.resetChartOnClick) { return }
     isFullscreen.value = false
     isExpanded.value = false
   })
