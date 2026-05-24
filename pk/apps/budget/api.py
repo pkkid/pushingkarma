@@ -389,25 +389,34 @@ def category_treemap(request,
       search: str=Query('', description='Search term to filter transactions'),
       months: int=Query(24, description='Number of months to look back'),
       limit: int=Query(25, description='Max number of categories to return')):
-    """ Returns category spending totals for rendering a treemap chart. """
+    """ Returns category/payee spending totals for rendering a treemap chart. """
     mindate = first_of_month(add_months(datetime.now(), -(months - 1)))
-    trxs = Transaction.objects.filter(user=request.user, date__gte=mindate, category__isnull=False)
+    trxs = Transaction.objects.filter(user=request.user, date__gte=mindate, category__isnull=False, amount__lt=0)
     if search:
         searchobj = Search(TRANSACTIONSEARCHFIELDS)
         trxs = searchobj.get_queryset(trxs, search)
-    summary = trxs.values('category__name').annotate(
-        spent=Sum(Case(When(amount__lt=0, then='amount'), default=0, output_field=DecimalField())),
-        count=Count(Case(When(amount__lt=0, then=1), output_field=IntegerField()))
+    summary = trxs.values('category__name', 'payee').annotate(
+        spent=Sum('amount'),
+        count=Count('id')
     ).order_by('category__sortid', 'category__name')
-    items = []
+    grouped = {}
     for row in summary:
-        value = abs(float(row['spent'] or 0))
-        if value <= 0:
+        category = row['category__name'] or 'Uncategorized'
+        payee = utils.scrub_payee(row['payee'] or '') or '(other)'
+        key = (category, payee)
+        if key not in grouped:
+            grouped[key] = {'category': category, 'payee': payee, 'value': 0.0, 'count': 0}
+        grouped[key]['value'] += abs(float(row['spent'] or 0))
+        grouped[key]['count'] += row['count'] or 0
+    items = []
+    for item in grouped.values():
+        if item['value'] <= 0:
             continue
         items.append({
-            'category': row['category__name'] or 'Uncategorized',
-            'value': round(value, 2),
-            'count': row['count'] or 0,
+            'category': item['category'],
+            'payee': item['payee'],
+            'value': round(item['value'], 2),
+            'count': item['count'],
         })
     items = sorted(items, key=lambda x: x['value'], reverse=True)
     if limit > 0:

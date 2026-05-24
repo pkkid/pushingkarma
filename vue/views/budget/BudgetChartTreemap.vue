@@ -52,6 +52,13 @@
     return `rgb(${r}, ${g}, ${b})`
   }
 
+  // Ellipsize long labels so we do not auto-scale text to fit tiny blocks.
+  const ellipsis = function(text, maxlen=20) {
+    var str = (text || '').trim()
+    if (str.length <= maxlen) { return str }
+    return `${str.slice(0, Math.max(1, maxlen - 1)).trim()}…`
+  }
+
   // Apply category filter token from treemap click
   // Replaces existing category filter tokens, then appends the clicked category
   const applyCategoryFilter = function(category) {
@@ -81,24 +88,32 @@
     var items = treemapData.value?.items || []
     if (!items.length) { return null }
     var tree = items.map(function(item) {
-      return {category: item.category, value: item.value, count: item.count}
+      return {category: item.category, payee: item.payee, value: item.value, count: item.count}
     })
     return {
       datasets: [{
         borderWidth: isExpanded ? 1 : 1,
-        captions: {display: false},
-        groups: ['category'],
+        
+        groups: ['category', 'payee'],
         key: 'value',
         label: 'Category Spend',
         spacing: isExpanded ? 1 : 1,
         tree: tree,
+        captions: {
+          display: isExpanded,
+          color: '#222c',
+          align: 'left',
+          padding: 2,
+          font: {size: 9, weight: '600'},
+          formatter: (ctx) => ellipsis(ctx.raw?.g || ''),
+        },
         labels: {
           align: 'left',
           color: '#222c',
           display: isExpanded,
-          font: {size:9, weight:'400'},
-          formatter: (ctx) => ctx.raw?._data?.category || ctx.raw?.g || '',
-          overflow: 'fit',
+          font: {size:8, weight:'400'},
+          formatter: (ctx) => ellipsis(ctx.raw?._data?.payee || ''),
+          overflow: 'cut',
           padding: 2,
           position: 'top',
         },
@@ -135,7 +150,8 @@
       var node = ctx.raw?._data || {}
       var amount = utils.usd(node.value || 0, 0)
       var count = utils.intComma(node.count || 0)
-      return `${node.category}: ${amount} (${count})`
+      var title = [node.category, node.payee].filter(Boolean).join(' / ')
+      return `${title}: ${amount} (${count})`
     })
     utils.rset(opts, 'plugins.tooltip.callbacks.title', function() { return '' })
     if (!isExpanded) {

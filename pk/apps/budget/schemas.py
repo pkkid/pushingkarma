@@ -142,6 +142,7 @@ class MonthlySpendingSchema(Schema):
 
 class CategoryTreemapItemSchema(Schema):
     category: str = Field(..., description='Transaction category name')
+    payee: str = Field(..., description='Scrubbed payee name used as treemap sub-category')
     value: float = Field(..., description='Absolute spending value for the category')
     count: int = Field(..., description='Number of spending transactions in this category')
 
