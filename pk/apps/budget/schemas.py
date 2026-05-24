@@ -120,7 +120,7 @@ class CommentSummarySchema(Schema):
 
 
 class TransactionSummarySchema(Schema):
-    top_comments: List[CommentSummarySchema] = Field(..., description='Top comments with total amounts')
+    total_count: int = Field(..., description='Total number of transactions')
     total_spent: Decimal = Field(..., description='Total amount spent (negative amounts)')
     total_income: Decimal = Field(..., description='Total amount earned (positive amounts)')
     total_amount: Decimal = Field(..., description='Net total amount')
@@ -128,6 +128,7 @@ class TransactionSummarySchema(Schema):
     uncategorized_amount: Decimal = Field(..., description='Total amount of uncategorized transactions')
     unapproved_count: int = Field(..., description='Number of unapproved transactions')
     unapproved_amount: Decimal = Field(..., description='Total amount of unapproved transactions')
+    top_comments: List[CommentSummarySchema] = Field(..., description='Top comments with total amounts')
     suggested_year_filters: List[FilterSchema] = Field(..., description='Ordered list of year navigation links')
     suggested_month_filters: List[FilterSchema] = Field(..., description='Ordered list of year navigation links')
 

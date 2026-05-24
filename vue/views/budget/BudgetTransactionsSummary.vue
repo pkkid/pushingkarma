@@ -2,17 +2,17 @@
   <div v-if='summary' id='budgetsummary'>
     <div class='bignums'>
       <!-- Total Spent -->
-      <div class='bignum-panel'>
-        <div class='bignum-num'>{{utils.usd(Math.abs(summary.total_spent), 0)}}</div>
+      <div v-if='summary.total_count < 100 && summary.total_spent != 0' class='bignum-panel'>
+        <div class='bignum-num'>{{utils.usd(summary.total_spent, 0)}}</div>
         <div class='bignum-label'>Spent</div>
       </div>
       <!-- Total Income (only if nonzero) -->
-      <div v-if='summary.total_income > 0' class='bignum-panel'>
+      <div v-if='summary.total_count < 100 && summary.total_income != 0' class='bignum-panel'>
         <div class='bignum-num'>{{utils.usd(summary.total_income, 0)}}</div>
         <div class='bignum-label'>Income</div>
       </div>
       <!-- Net Amount -->
-      <div class='bignum-panel' :class='netClass'>
+      <div v-if='summary.total_count < 100 && summary.total_spent != 0 && summary.total_income != 0' class='bignum-panel'>
         <div class='bignum-num'>{{utils.usd(summary.total_amount, 0)}}</div>
         <div class='bignum-label'>Net</div>
       </div>
@@ -31,7 +31,7 @@
         <div class='bignum-label'>Unapproved</div>
       </div>
       <!-- Monthly Spending Chart -->
-      <div v-if='chartDatasets' class='minichart-wrap'>
+      <div v-if='chartDatasets' class='bignum-panel bignum-btn minichart-wrap'>
         <div class='minichart' :class='{expanded: isExpanded}'
             @click='isExpanded = true' @mouseleave='isExpanded = false'>
           <Bar :options='chartOptions' :data='chartDatasets'/>
@@ -47,8 +47,6 @@
   import {Chart, registerables} from 'chart.js'
   import {useUrlParams} from '@/composables'
   import {api, utils} from '@/utils'
-  import axios from 'axios'
-
   Chart.register(...registerables)
 
   const props = defineProps({
@@ -58,13 +56,6 @@
   const isExpanded = ref(false)                 // Whether the chart is expanded
   const monthlyData = ref(null)                 // Monthly spending data
   const {search} = useUrlParams({search:{}})    // Search string from URL
-
-  // Net Class
-  // Add color class based on whether net is positive or negative
-  const netClass = computed(function() {
-    if (!props.summary) { return '' }
-    return props.summary.total_amount >= 0 ? 'net-positive' : 'net-negative'
-  })
 
   // Is Filter Active
   // Check if the filter token is already in the search string
@@ -88,7 +79,7 @@
     if (!monthlyData.value) { return null }
     return {
       labels: monthlyData.value.labels.map(function(d) {
-        return utils.formatDate(d, 'MMM YY')
+        return utils.formatDate(d, 'MMM YYYY')
       }),
       datasets: [{
         label: 'Spending',
@@ -112,37 +103,45 @@
   // Build chart.js options, switching between mini and expanded modes
   const chartOptions = computed(function() {
     var opts = {}
-    utils.rset(opts, 'animation.duration', 0)
-    utils.rset(opts, 'maintainAspectRatio', false)
-    utils.rset(opts, 'plugins.legend.display', false)
-    utils.rset(opts, 'plugins.title.display', false)
-    utils.rset(opts, 'plugins.tooltip.enabled', false)
-    utils.rset(opts, 'scales.x.display', false)
-    utils.rset(opts, 'scales.y.display', false)
-    utils.rset(opts, 'scales.y.min', 0)
-    if (isExpanded.value) {
-      utils.rset(opts, 'plugins.legend.display', true)
-      utils.rset(opts, 'plugins.legend.labels.boxHeight', 7)
-      utils.rset(opts, 'plugins.legend.labels.boxWidth', 7)
-      utils.rset(opts, 'plugins.legend.position', 'top')
-      utils.rset(opts, 'plugins.legend.align', 'end')
-      utils.rset(opts, 'plugins.title.display', true)
-      utils.rset(opts, 'plugins.title.text', 'Monthly Spending')
-      utils.rset(opts, 'plugins.title.align', 'start')
-      utils.rset(opts, 'plugins.title.color', 'var(--lightbg-fg1)')
-      utils.rset(opts, 'plugins.title.font.size', 13)
-      utils.rset(opts, 'plugins.tooltip.enabled', true)
-      utils.rset(opts, 'plugins.tooltip.mode', 'index')
-      utils.rset(opts, 'plugins.tooltip.intersect', false)
-      utils.rset(opts, 'plugins.tooltip.callbacks.label', function(ctx) {
-        return ` ${ctx.dataset.label}: ${utils.usd(ctx.parsed.y, 0)}`
-      })
-      utils.rset(opts, 'scales.x.display', true)
-      utils.rset(opts, 'scales.x.ticks.font.size', 9)
-      utils.rset(opts, 'scales.x.ticks.maxTicksLimit', 12)
-      utils.rset(opts, 'scales.y.display', true)
-      utils.rset(opts, 'scales.y.ticks.font.size', 9)
-      utils.rset(opts, 'scales.y.ticks.callback', function(v) { return utils.usd(v, 0, '$', 3) })
+    utils.rset(opts, 'events', ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove'])
+    utils.rset(opts, 'plugins.legend.display', true)
+    utils.rset(opts, 'plugins.legend.labels.boxHeight', 7)
+    utils.rset(opts, 'plugins.legend.labels.boxWidth', 7)
+    utils.rset(opts, 'plugins.legend.position', 'top')
+    utils.rset(opts, 'plugins.legend.align', 'end')
+    utils.rset(opts, 'plugins.title.align', 'start')
+    utils.rset(opts, 'plugins.title.color', 'var(--lightbg-fg1)')
+    utils.rset(opts, 'plugins.title.display', true)
+    utils.rset(opts, 'plugins.title.font.size', 15)
+    utils.rset(opts, 'plugins.title.padding.bottom', -23)
+    utils.rset(opts, 'plugins.title.text', 'Monthly Spend')
+    utils.rset(opts, 'plugins.tooltip.enabled', true)
+    utils.rset(opts, 'plugins.tooltip.mode', 'index')
+    utils.rset(opts, 'plugins.tooltip.intersect', false)
+    utils.rset(opts, 'plugins.tooltip.callbacks.label', function(ctx) {
+      return ` ${ctx.dataset.label}: ${utils.usd(ctx.parsed.y, 0)}`
+    })
+    utils.rset(opts, 'scales.x.display', true)
+    utils.rset(opts, 'scales.x.ticks.font.size', 9)
+    utils.rset(opts, 'scales.x.ticks.maxTicksLimit', 12)
+    utils.rset(opts, 'scales.y.display', true)
+    utils.rset(opts, 'scales.y.ticks.font.size', 9)
+    utils.rset(opts, 'scales.y.ticks.callback', function(v) { return utils.usd(v, 0, '$', 3) })
+    if (!isExpanded.value) {
+      utils.rset(opts, 'events', [])
+      utils.rset(opts, 'animation.duration', 0)
+      utils.rset(opts, 'layout.padding.top', 0)
+      utils.rset(opts, 'layout.padding.left', 0)
+      utils.rset(opts, 'layout.padding.right', 0)
+      utils.rset(opts, 'layout.padding.bottom', 0)
+      utils.rset(opts, 'maintainAspectRatio', false)
+      utils.rset(opts, 'plugins.legend.display', false)
+      utils.rset(opts, 'plugins.title.font.size', 11)
+      utils.rset(opts, 'plugins.title.padding.bottom', 2)
+      utils.rset(opts, 'plugins.tooltip.enabled', false)
+      utils.rset(opts, 'scales.x.display', false)
+      utils.rset(opts, 'scales.y.display', false)
+      utils.rset(opts, 'scales.y.min', 0)
     }
     return opts
   })
@@ -150,9 +149,6 @@
   // On Mounted
   // Fetch monthly spending data
   onMounted(function() { updateMonthlySpending() })
-
-  // Watch Search
-  // Re-fetch monthly spending when search changes
   watch(search, function() { updateMonthlySpending() })
 
   // Update Monthly Spending
@@ -183,14 +179,16 @@
     }
 
     .bignum-panel {
+      align-items: end;
+      border-radius: 6px;
+      border: 1px solid var(--lightbg-bg2);
       display: flex;
       flex-direction: column;
-      align-items: center;
+      height: 60px;
       justify-content: center;
-      padding: 6px 14px;
-      border-radius: 6px;
-      border: 1px solid transparent;
       min-width: 80px;
+      padding: 6px 14px;
+      user-select: none;
       white-space: nowrap;
 
       .bignum-num {
@@ -198,32 +196,29 @@
         font-weight: 600;
         color: var(--lightbg-fg1);
         line-height: 1.2;
-        font-family: var(--fontfamily-code);
+        text-align: right;
       }
       .bignum-label {
         font-size: 10px;
         color: var(--lightbg-fg4);
-        text-transform: uppercase;
         letter-spacing: 0.04em;
         margin-top: 2px;
       }
+      &.bignum-btn {
+        cursor: pointer;
+        transition: all 0.2s ease;
+        &:hover {
+          background-color: var(--lightbg-bg2);
+          border-color: var(--lightbg-bg3);
+        }
+        &.active {
+          background-color: var(--lightbg-bgs);
+          border-color: var(--lightbg-bg4);
+        }
+      }
     }
 
-    .bignum-btn {
-      cursor: pointer;
-      transition: background-color 0.15s, border-color 0.15s;
-      &:hover {
-        background-color: var(--lightbg-bg2);
-        border-color: var(--lightbg-bg3);
-      }
-      &.active {
-        background-color: var(--lightbg-bgs);
-        border-color: var(--lightbg-bg4);
-      }
-    }
-
-    .net-negative .bignum-num { color: var(--lightbg-red0); }
-    .net-positive .bignum-num { color: var(--lightbg-green2); }
+    
 
     .minichart-wrap {
       position: relative;
@@ -244,17 +239,16 @@
       background-color: transparent;
       padding: 4px;
       box-sizing: border-box;
-      transition: width 0.2s ease, height 0.2s ease, top 0.2s ease,
-        background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+      transition: all 0.2s ease;
       z-index: 1;
-      &:hover { border-color: var(--lightbg-bg3); }
       &.expanded {
-        background-color: var(--lightbg-bg0);
+        background-color: var(--lightbg-bg1);
         border-color: var(--lightbg-bg3);
         box-shadow: 0 8px 24px rgba(15, 23, 42, 0.15);
         height: 210px;
         padding: 12px;
         top: -5px;
+        left: -1px;
         width: 420px;
         z-index: 50;
       }

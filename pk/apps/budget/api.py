@@ -281,11 +281,7 @@ def summarize_transactions(request,
     top_comments = trxs.exclude(comment='').values('comment').annotate(amount=Sum('amount'), count=Count('id'))
     top_comments = sorted(top_comments, key=lambda x: abs(x['amount'] or 0), reverse=True)[:10]
     return {
-        'top_comments': [{
-            'comment': item['comment'],
-            'amount': round(item['amount'] or 0, 2),
-            'count': item['count']
-        } for item in top_comments],
+        'total_count': trxs.count(),
         'total_spent': round(totals['total_spent'] or 0, 2),
         'total_income': round(totals['total_income'] or 0, 2),
         'total_amount': round(totals['total_amount'] or 0, 2),
@@ -293,6 +289,11 @@ def summarize_transactions(request,
         'uncategorized_amount': round(totals['uncategorized_amount'] or 0, 2),
         'unapproved_count': totals['unapproved_count'] or 0,
         'unapproved_amount': round(totals['unapproved_amount'] or 0, 2),
+        'top_comments': [{
+            'comment': item['comment'],
+            'amount': round(item['amount'] or 0, 2),
+            'count': item['count']
+        } for item in top_comments],
         'suggested_year_filters': utils.get_suggested_filters(search, 'year'),
         'suggested_month_filters': utils.get_suggested_filters(search, 'month')
     }
