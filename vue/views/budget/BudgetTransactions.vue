@@ -8,6 +8,8 @@
           of {{utils.intComma(trxs.count)}} transactions</div>
         <div v-else class='subtext'>Loading transactions...</div>
       </h1>
+      <!-- Summary Row -->
+      <BudgetTransactionsSummary :summary='summary'/>
       <!-- Transactions Table -->
       <EditTable v-if='trxs?.items?.length' ref='edittable' :columns='COLUMNS' :items='trxs?.items'
         infinite :nextpage='trxs?.next' @getNextPage='getNextPage' @itemSelected='onItemSelected'
@@ -30,6 +32,7 @@
   import {api, utils} from '@/utils'
   import axios from 'axios'
   import BudgetSearch from './BudgetSearch.vue'
+  import BudgetTransactionsSummary from './BudgetTransactionsSummary.vue'
   import BudgetPayeeTooltip from './BudgetPayeeTooltip.vue'
 
   // Animation Colors

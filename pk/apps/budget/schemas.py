@@ -132,6 +132,12 @@ class TransactionSummarySchema(Schema):
     suggested_month_filters: List[FilterSchema] = Field(..., description='Ordered list of year navigation links')
 
 
+class MonthlySpendingSchema(Schema):
+    labels: List[str] = Field(..., description='Month labels in YYYY-MM-DD format')
+    spending: List[float] = Field(..., description='Monthly spending totals (positive values, outflow)')
+    income: List[float] = Field(..., description='Monthly income totals (positive values, inflow)')
+
+
 class SimilarCategorizeResponseSchema(Schema):
     updated_count: int = Field(..., description='Number of uncategorized transactions updated')
     category: str = Field(..., description='Category that was applied')

@@ -350,6 +350,39 @@ def annual_transactions(request,
 
 
 # -------------------
+# Monthly Spending
+# -------------------
+
+@router.get('/monthly_spending', response=schemas.MonthlySpendingSchema)
+def monthly_spending(request,
+      search: str=Query('', description='Search term to filter transactions'),
+      months: int=Query(24, description='Number of months to look back')):
+    """ Returns monthly spending and income totals for the past N months. """
+    # Build date range and filter transactions
+    mindate = first_of_month(add_months(datetime.now(), -(months - 1)))
+    trxs = Transaction.objects.filter(user=request.user, date__gte=mindate)
+    if search:
+        searchobj = Search(TRANSACTIONSEARCHFIELDS)
+        trxs = searchobj.get_queryset(trxs, search)
+    # Aggregate spending and income per month
+    monthly = trxs.annotate(month=TruncMonth('date')).values('month').annotate(
+        spending=Sum(Case(When(amount__lt=0, then='amount'), default=0, output_field=DecimalField())),
+        income=Sum(Case(When(amount__gt=0, then='amount'), default=0, output_field=DecimalField()))
+    ).order_by('month')
+    # Build complete labels list filling gaps with zeros
+    monthly_dict = {str(row['month']): row for row in monthly}
+    labels, spending, income = [], [], []
+    for i in range(months):
+        month = first_of_month(add_months(datetime.now(), -(months - 1 - i)))
+        label = month.strftime('%Y-%m-%d')
+        row = monthly_dict.get(label, {})
+        labels.append(label)
+        spending.append(abs(float(row.get('spending', 0) or 0)))
+        income.append(float(row.get('income', 0) or 0))
+    return {'labels': labels, 'spending': spending, 'income': income}
+
+
+# -------------------
 # Recurring
 # -------------------
 
