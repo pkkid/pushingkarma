@@ -4,6 +4,8 @@ export {default as BudgetSettingsAccount} from '@/views/budget/BudgetSettingsAcc
 export {default as BudgetSettingsCategory} from '@/views/budget/BudgetSettingsCategory.vue'
 export {default as BudgetTransactions} from '@/views/budget/BudgetTransactions.vue'
 export {default as BudgetTransactionsSummary} from '@/views/budget/BudgetTransactionsSummary.vue'
+export {default as BudgetChart} from '@/views/budget/BudgetChart.vue'
+export {default as BudgetChartMonthly} from '@/views/budget/BudgetChartMonthly.vue'
 export {default as BudgetRecurring} from '@/views/budget/BudgetRecurring.vue'
 export {default as BudgetYear} from '@/views/budget/BudgetYear.vue'
 export {default as BudgetYearPopover} from '@/views/budget/BudgetYearPopover.vue'
