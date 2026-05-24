@@ -6,6 +6,7 @@ export {default as BudgetTransactions} from '@/views/budget/BudgetTransactions.v
 export {default as BudgetTransactionsSummary} from '@/views/budget/BudgetTransactionsSummary.vue'
 export {default as BudgetChart} from '@/views/budget/BudgetChart.vue'
 export {default as BudgetChartMonthly} from '@/views/budget/BudgetChartMonthly.vue'
+export {default as BudgetChartTreemap} from '@/views/budget/BudgetChartTreemap.vue'
 export {default as BudgetRecurring} from '@/views/budget/BudgetRecurring.vue'
 export {default as BudgetYear} from '@/views/budget/BudgetYear.vue'
 export {default as BudgetYearPopover} from '@/views/budget/BudgetYearPopover.vue'

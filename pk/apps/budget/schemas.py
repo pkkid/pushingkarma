@@ -140,6 +140,16 @@ class MonthlySpendingSchema(Schema):
     income: List[float] = Field(..., description='Monthly income totals (positive values, inflow)')
 
 
+class CategoryTreemapItemSchema(Schema):
+    category: str = Field(..., description='Transaction category name')
+    value: float = Field(..., description='Absolute spending value for the category')
+    count: int = Field(..., description='Number of spending transactions in this category')
+
+
+class CategoryTreemapSchema(Schema):
+    items: List[CategoryTreemapItemSchema] = Field(..., description='Category treemap nodes')
+
+
 class SimilarCategorizeResponseSchema(Schema):
     updated_count: int = Field(..., description='Number of uncategorized transactions updated')
     category: str = Field(..., description='Category that was applied')

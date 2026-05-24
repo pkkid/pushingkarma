@@ -32,6 +32,8 @@
       </div>
       <!-- Monthly Spending Chart -->
       <BudgetChartMonthly v-if='summary.total_months >= 3'/>
+      <!-- Category Treemap Chart -->
+      <BudgetChartTreemap v-if='summary.total_count > 0'/>
     </div>
   </div>
 </template>
@@ -40,6 +42,7 @@
   import {useUrlParams} from '@/composables'
   import {utils} from '@/utils'
   import BudgetChartMonthly from './BudgetChartMonthly.vue'
+  import BudgetChartTreemap from './BudgetChartTreemap.vue'
 
   const props = defineProps({
     summary: {type:Object, default:null},       // Summary data from parent
