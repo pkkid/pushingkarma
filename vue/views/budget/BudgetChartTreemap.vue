@@ -25,6 +25,13 @@
   const treemapCountLookup = ref({})               // Lookup map for count data by category+payee
   const {search} = useUrlParams({search:{}})        // Search string from URL
 
+  // On Mounted  and Watch Search
+  // Fetch treemap data once mounted and whenever the search string changes
+  onMounted(function() { updateCategoryTreemap() })
+  watch(search, function() { updateCategoryTreemap() })
+
+  // Color For Category
+  // Get a consistent color for a category name by hashing it to a palette
   const colorForCategory = function(name) {
     var palette = ['#689d6a', '#458588', '#d79921', '#b16286', '#cc241d', '#83a598', '#98971a', '#d65d0e', '#458588', '#8f3f71']
     var seed = 0
@@ -34,6 +41,8 @@
     return palette[seed % palette.length]
   }
 
+  // With Alpha
+  // Add alpha transparency to a hex color (e.g. for hover states)
   const withAlpha = function(hex, alpha) {
     var val = hex.replace('#', '')
     if (val.length !== 6) { return hex }
@@ -43,6 +52,7 @@
     return `rgba(${r}, ${g}, ${b}, ${alpha})`
   }
 
+  // Mix With Black
   // Darken a hex color by mixing it with black.
   // amount=0.5 means 50% original color + 50% black.
   const mixWithBlack = function(hex, amount=0.5) {
@@ -55,6 +65,7 @@
     return `rgb(${r}, ${g}, ${b})`
   }
 
+  // Ellipsize
   // Ellipsize long labels so we do not auto-scale text to fit tiny blocks.
   const ellipsis = function(text, maxlen=20) {
     var str = (text || '').trim()
@@ -62,24 +73,51 @@
     return `${str.slice(0, Math.max(1, maxlen - 1)).trim()}…`
   }
 
-  // Apply category and/or payee filter token from treemap click
-  // Replaces existing category/payee tokens, then appends clicked category/payee.
-  // If exclude=true (Shift+click), prefix tokens with '-' for exclusion.
-  const applyCategoryFilter = function(category, payee, exclude=false) {
-    if (!category && !payee) { return }
-    var prefix = exclude ? '-' : ''
-    var tokens = []
-    if (category) { tokens.push(`${prefix}category="${category}"`) }
-    if (payee) { tokens.push(`${prefix}payee~"${payee}"`) }
-    var token = tokens.join(' ')
-    var cleaned = (search.value || '')
-      .replace(/\b-?category=(?:"[^"]+"|null)/g, '')
-      .replace(/\b-?payee~(?:"[^"]+"|null)/g, '')
-      .replace(/\s+/g, ' ')
-      .trim()
-    search.value = cleaned ? `${cleaned} ${token}` : token
+  // Get Item Count
+  // Get count for item from lookup by category and optional payee
+  const getItemCount = function(category, payee) {
+    if (payee) {
+      var key = `${category}|${payee}`
+      return treemapCountLookup.value[key] || 0
+    }
+    var count = 0
+    for (let key in treemapCountLookup.value) {
+      if (key.startsWith(`${category}|`)) {
+        count += treemapCountLookup.value[key] || 0
+      }
+    }
+    return count
   }
 
+  // Apply Category Filter
+  // Apply category and/or payee filter token from treemap click.
+  // Normal click replaces existing category/payee filters.
+  // Shift+click appends exclude filters so multiple exclusions can accumulate.
+  const applyCategoryFilter = function(category, payee, exclude=false) {
+    if (!category && !payee) { return }
+    var nextTokens = []
+    if (category) { nextTokens.push(`${exclude ? '-' : ''}category="${category}"`) }
+    if (payee) { nextTokens.push(`${exclude ? '-' : ''}payee~"${payee}"`) }
+    var cleaned = (search.value || '')
+    if (exclude) {
+      cleaned = cleaned.replace(/(^|\s)category=(?:"[^"]+"|null)(?=\s|$)/g, ' ')
+      cleaned = cleaned.replace(/(^|\s)payee~(?:"[^"]+"|null)(?=\s|$)/g, ' ')
+    } else {
+      cleaned = cleaned.replace(/(^|\s)-?category=(?:"[^"]+"|null)(?=\s|$)/g, ' ')
+      cleaned = cleaned.replace(/(^|\s)-?payee~(?:"[^"]+"|null)(?=\s|$)/g, ' ')
+    }
+    var result = cleaned.replace(/\s+/g, ' ').trim()
+    for (const token of nextTokens) {
+      var escaped = token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      var tokenRegex = new RegExp(`(^|\\s)${escaped}(?=\\s|$)`)
+      if (!tokenRegex.test(result)) {
+        result = result ? `${result} ${token}` : token
+      }
+    }
+    search.value = result || null
+  }
+
+  // On Chart Click
   // Handle treemap block clicks and update category filter in search
   const onChartClick = function(evt, activeEls, chart) {
     var els = chart.getElementsAtEventForMode(evt, 'nearest', {intersect: true}, false)
@@ -91,16 +129,17 @@
     applyCategoryFilter(item.category, item.payee, exclude)
   }
 
+  // Has Data
   // True when there is at least one category to render in the treemap
   const hasData = computed(function() {
     return (treemapData.value?.items || []).length > 0
   })
 
+  // Chart Data
   // Build treemap dataset from category treemap API data
   const chartData = function(isExpanded) {
     var items = treemapData.value?.items || []
     if (!items.length) { return null }
-    
     // Build lookup map for counts since the treemap library doesn't preserve them
     treemapCountLookup.value = {}
     var tree = items.map(function(item) {
@@ -108,46 +147,46 @@
       treemapCountLookup.value[key] = item.count
       return {category: item.category, payee: item.payee, value: item.value}
     })
-    return {
-      datasets: [{
-        borderWidth: isExpanded ? 1 : 1,
-        groups: ['category', 'payee'],
-        key: 'value',
-        label: 'Category Spend',
-        spacing: isExpanded ? 1 : 1,
-        tree: tree,
-        captions: {
-          display: isExpanded,
-          color: '#222c',
-          align: 'left',
-          padding: 2,
-          font: {size: 9, weight: '600'},
-          formatter: (ctx) => ellipsis(ctx.raw?.g || ''),
-        },
-        labels: {
-          align: 'left',
-          color: '#222c',
-          display: isExpanded,
-          font: {size:8, weight:'400'},
-          formatter: (ctx) => ellipsis(ctx.raw?._data?.payee || ''),
-          overflow: 'cut',
-          padding: 2,
-          position: 'top',
-        },
-        backgroundColor: function(ctx) {
-          var category = ctx.raw?._data?.category || ''
-          var color = colorForCategory(category)
-          return withAlpha(color, 0.78)
-        },
-        borderColor: function(ctx) {
-          var category = ctx.raw?._data?.category || ''
-          var color = colorForCategory(category)
-          return mixWithBlack(color, 0.1)
-        },
-      }],
-    }
+    // build the dataset
+    var ds = {}
+    utils.rset(ds, 'borderWidth', 1)
+    utils.rset(ds, 'groups', ['category', 'payee'])
+    utils.rset(ds, 'key', 'value')
+    utils.rset(ds, 'label', 'Category Spend')
+    utils.rset(ds, 'spacing', 1)
+    utils.rset(ds, 'tree', tree)
+    utils.rset(ds, 'backgroundColor', function(ctx) {
+      var category = ctx.raw?._data?.category || ''
+      var color = colorForCategory(category)
+      return withAlpha(color, 0.78)
+    })
+    utils.rset(ds, 'borderColor', function(ctx) {
+      var category = ctx.raw?._data?.category || ''
+      var color = colorForCategory(category)
+      return mixWithBlack(color, 0.1)
+    })
+    // Captions represet categories
+    utils.rset(ds, 'captions.align', 'left')
+    utils.rset(ds, 'captions.color', '#222c')
+    utils.rset(ds, 'captions.display', isExpanded)
+    utils.rset(ds, 'captions.font.size', 10)
+    utils.rset(ds, 'captions.font.weight', '600')
+    utils.rset(ds, 'captions.formatter', (ctx) => ellipsis(ctx.raw?.g || ''))
+    utils.rset(ds, 'captions.padding', 2)
+    // Labels represent payees within categories
+    utils.rset(ds, 'labels.align', 'left')
+    utils.rset(ds, 'labels.color', '#222c')
+    utils.rset(ds, 'labels.display', isExpanded)
+    utils.rset(ds, 'labels.font.size', 9)
+    utils.rset(ds, 'labels.font.weight', '400')
+    utils.rset(ds, 'labels.formatter', (ctx) => ellipsis(ctx.raw?._data?.payee || ''))
+    utils.rset(ds, 'labels.overflow', 'cut')
+    utils.rset(ds, 'labels.padding', 2)
+    utils.rset(ds, 'labels.position', 'top')
+    return {datasets: [ds]}
   }
 
+  // Chart Options
   // Build chart.js options, switching between mini and expanded modes
   const chartOptions = function(isExpanded, isFullscreen) {
     var opts = {}
@@ -165,32 +204,15 @@
     utils.rset(opts, 'plugins.title.text', 'Amount By Category')
     utils.rset(opts, 'plugins.tooltip.enabled', true)
     utils.rset(opts, 'plugins.tooltip.callbacks.label', function(ctx) {
-      // Get the original data from ctx
       var item = ctx.raw?.data || ctx.raw?._data || {}
-      
-      // The treemap library doesn't preserve extra properties, so look up the count
       var category = item.category || ''
       var payee = item.payee || ''
-      var count = 0
-      
-      if (payee) {
-        // If there's a specific payee, look it up directly
-        var key = `${category}|${payee}`
-        count = treemapCountLookup.value[key] || 0
-      } else {
-        // If no payee (category-level node), sum all payees under this category
-        for (let key in treemapCountLookup.value) {
-          if (key.startsWith(`${category}|`)) {
-            count += treemapCountLookup.value[key] || 0
-          }
-        }
-      }
-      
+      var count = getItemCount(category, payee)
       var amount = utils.usd(item.value || 0, 0)
       var countStr = utils.intComma(count)
       var isSubcategory = !!payee
       var title = isSubcategory ? ellipsis(payee, 20) : (category || '')
-      return `${title}: ${amount} (${countStr})`
+      return `${title} (${countStr}): ${amount}`
     })
     utils.rset(opts, 'plugins.tooltip.callbacks.title', function() { return '' })
     if (!isExpanded) {
@@ -206,10 +228,6 @@
     }
     return opts
   }
-
-  // Fetch treemap data once mounted and whenever the search string changes
-  onMounted(function() { updateCategoryTreemap() })
-  watch(search, function() { updateCategoryTreemap() })
 
   // Update Category Treemap
   // Fetch category treemap values from the API
