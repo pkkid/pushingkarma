@@ -125,6 +125,7 @@ class TransactionSummarySchema(Schema):
     total_income: Decimal = Field(..., description='Total amount earned (positive amounts)')
     total_amount: Decimal = Field(..., description='Net total amount')
     total_months: int = Field(..., description='Number of months covered by the transactions')
+    total_payees: int = Field(..., description='Number of unique payees in the transactions')
     uncategorized_count: int = Field(..., description='Number of uncategorized transactions')
     uncategorized_amount: Decimal = Field(..., description='Total amount of uncategorized transactions')
     unapproved_count: int = Field(..., description='Number of unapproved transactions')

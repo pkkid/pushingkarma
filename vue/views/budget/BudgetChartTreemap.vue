@@ -63,14 +63,20 @@
   }
 
   // Apply category and/or payee filter token from treemap click
-  // Replaces existing category filter tokens, then appends the clicked category and/or payee
-  const applyCategoryFilter = function(category, payee) {
+  // Replaces existing category/payee tokens, then appends clicked category/payee.
+  // If exclude=true (Shift+click), prefix tokens with '-' for exclusion.
+  const applyCategoryFilter = function(category, payee, exclude=false) {
     if (!category && !payee) { return }
+    var prefix = exclude ? '-' : ''
     var tokens = []
-    if (category) { tokens.push(`category="${category}"`) }
-    if (payee) { tokens.push(`payee~"${payee}"`) }
+    if (category) { tokens.push(`${prefix}category="${category}"`) }
+    if (payee) { tokens.push(`${prefix}payee~"${payee}"`) }
     var token = tokens.join(' ')
-    var cleaned = (search.value || '').replace(/\bcategory=(?:"[^"]+"|null)/g, '').replace(/\bpayee~(?:"[^"]+"|null)/g, '').replace(/\s+/g, ' ').trim()
+    var cleaned = (search.value || '')
+      .replace(/\b-?category=(?:"[^"]+"|null)/g, '')
+      .replace(/\b-?payee~(?:"[^"]+"|null)/g, '')
+      .replace(/\s+/g, ' ')
+      .trim()
     search.value = cleaned ? `${cleaned} ${token}` : token
   }
 
@@ -81,7 +87,8 @@
     var elm = els[0]
     var raw = chart?.data?.datasets?.[elm.datasetIndex]?.data?.[elm.index]
     var item = raw?.data || raw?._data || raw || {}
-    applyCategoryFilter(item.category, item.payee)
+    var exclude = !!(evt?.native?.shiftKey || evt?.shiftKey)
+    applyCategoryFilter(item.category, item.payee, exclude)
   }
 
   // True when there is at least one category to render in the treemap

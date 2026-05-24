@@ -16,24 +16,23 @@
         <div class='bignum-label'>Unapproved</div>
       </div>
       <!-- Total Income (only if nonzero) -->
-      <div v-if='summary.total_count < 100 && summary.total_income != 0' class='bignum-panel'>
+      <div v-if='summary.total_count < 1000 && summary.total_income != 0' class='bignum-panel'>
         <div class='bignum-num'>{{utils.usd(summary.total_income, 0, '$', 3)}}</div>
         <div class='bignum-label'>Income</div>
       </div>
       <!-- Total Spent -->
-      <div v-if='summary.total_count < 100 && summary.total_spent != 0' class='bignum-panel'>
+      <div v-if='summary.total_count < 1000 && summary.total_spent != 0' class='bignum-panel'>
         <div class='bignum-num'>{{utils.usd(summary.total_spent, 0, '$', 3)}}</div>
         <div class='bignum-label'>Spent</div>
       </div>
       <!-- Total Amount -->
-      <div v-if='summary.total_count < 100 && summary.total_spent != 0 && summary.total_income != 0' class='bignum-panel'>
+      <div v-if='summary.total_count < 1000 && summary.total_spent != 0 && summary.total_income != 0' class='bignum-panel'>
         <div class='bignum-num'>{{utils.usd(summary.total_amount, 0, '$', 3)}}</div>
         <div class='bignum-label'>Total</div>
       </div>
-      <!-- Monthly Spending Chart -->
+      <!-- Charts -->
       <BudgetChartMonthly v-if='summary.total_months >= 3'/>
-      <!-- Category Treemap Chart -->
-      <BudgetChartTreemap v-if='summary.total_count > 0'/>
+      <BudgetChartTreemap v-if='summary.total_payees >= 2'/>
     </div>
   </div>
 </template>

@@ -280,12 +280,14 @@ def summarize_transactions(request,
     # Get top comments with amounts (excluding empty comments)
     top_comments = trxs.exclude(comment='').values('comment').annotate(amount=Sum('amount'), count=Count('id'))
     top_comments = sorted(top_comments, key=lambda x: abs(x['amount'] or 0), reverse=True)[:10]
+    payees = set(utils.scrub_payee(p) for p in trxs.values_list('payee', flat=True))
     return {
         'total_count': trxs.count(),
         'total_spent': round(totals['total_spent'] or 0, 2),
         'total_income': round(totals['total_income'] or 0, 2),
         'total_amount': round(totals['total_amount'] or 0, 2),
         'total_months': utils.get_months_range(trxs),
+        'total_payees': len(payees),
         'uncategorized_count': totals['uncategorized_count'] or 0,
         'uncategorized_amount': round(totals['uncategorized_amount'] or 0, 2),
         'unapproved_count': totals['unapproved_count'] or 0,
@@ -384,21 +386,26 @@ def monthly_spending(request,
     return {'labels': labels, 'spending': spending, 'income': income}
 
 
+# -------------------
+# Category Spending
+# -------------------
+
 @router.get('/category_treemap', response=schemas.CategoryTreemapSchema)
 def category_treemap(request,
       search: str=Query('', description='Search term to filter transactions'),
       months: int=Query(24, description='Number of months to look back'),
       limit: int=Query(25, description='Max number of categories to return')):
     """ Returns category/payee spending totals for rendering a treemap chart. """
+    # Build date range and filter transactions
     mindate = first_of_month(add_months(datetime.now(), -(months - 1)))
     trxs = Transaction.objects.filter(user=request.user, date__gte=mindate, category__isnull=False, amount__lt=0)
     if search:
         searchobj = Search(TRANSACTIONSEARCHFIELDS)
         trxs = searchobj.get_queryset(trxs, search)
-    summary = trxs.values('category__name', 'payee').annotate(
-        spent=Sum('amount'),
-        count=Count('id')
-    ).order_by('category__sortid', 'category__name')
+    # Aggregate spending and by category
+    summary = trxs.values('category__name', 'payee')
+    summary = summary.annotate(spent=Sum('amount'), count=Count('id'))
+    summary = summary.order_by('category__sortid', 'category__name')
     grouped = {}
     for row in summary:
         category = row['category__name'] or 'Uncategorized'
@@ -408,19 +415,18 @@ def category_treemap(request,
             grouped[key] = {'category': category, 'payee': payee, 'value': 0.0, 'count': 0}
         grouped[key]['value'] += abs(float(row['spent'] or 0))
         grouped[key]['count'] += row['count'] or 0
+    # Build response list sorted by value and apply limit
     items = []
-    for item in grouped.values():
-        if item['value'] <= 0:
-            continue
-        items.append({
-            'category': item['category'],
-            'payee': item['payee'],
-            'value': round(item['value'], 2),
-            'count': item['count'],
-        })
+    for grouped_item in grouped.values():
+        if grouped_item['value'] <= 0: continue
+        item = {}
+        item['category'] = grouped_item['category']
+        item['payee'] = grouped_item['payee']
+        item['value'] = round(grouped_item['value'], 2)
+        item['count'] = grouped_item['count']
+        items.append(item)
     items = sorted(items, key=lambda x: x['value'], reverse=True)
-    if limit > 0:
-        items = items[:limit]
+    items = items[:limit] if limit else items
     return {'items': items}
 
 
