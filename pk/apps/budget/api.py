@@ -279,7 +279,6 @@ def summarize_transactions(request,
     if search:
         searchobj = Search(TRANSACTIONSEARCHFIELDS)
         trxs = searchobj.get_queryset(trxs, search)
-        log.info(searchobj.meta)
     # Calculate aggregated totals
     totals = trxs.aggregate(
         total_spent=Sum(Case(When(amount__lt=0, then='amount'), default=0, output_field=DecimalField())),
@@ -449,9 +448,10 @@ def category_treemap(request,
 
 @router.get('/recurring', response=schemas.RecurringSummarySchema, exclude_unset=True)
 def list_recurring(request,
-      days: int=Query(900, description='Number of days to evaluate for recurring payments'),
+      search: str=Query('', description='Search term to filter transactions before recurring detection'),
       showinactive: bool=Query(False, description='Include stale groups older than cadence thresholds')):
     """ Detect likely recurring payments from transaction patterns. """
-    mgr = RecurringManager(request.user, days=days)
+    search = search or 'date>="900 days ago"'
+    mgr = RecurringManager(request.user, search=search, searchfields=TRANSACTIONSEARCHFIELDS)
     items = mgr.items if showinactive else list(filter(lambda i: i.is_active, mgr.items))
     return Bunch(count=len(items), items=items)

@@ -21,6 +21,7 @@ High-level flow:
 import datetime, logging, statistics
 from decimal import Decimal
 from django.conf import settings
+from django_searchquery.search import Search
 from pk.utils.utils import Bunch
 from . import utils as butils
 from .models import Transaction
@@ -29,30 +30,32 @@ log = logging.getLogger(__name__)
 
 class RecurringManager:
     """ Manager class for recurring payment detection. """
-    THRESHOLD_AMOUNT = Decimal('0.18')
+    THRESHOLD_AMOUNT = Decimal('0.6')
     THRESHOLD_DAYS = {'monthly':7, 'yearly':7}
     MIN_ACTIVE_DAYS = {'monthly':62, 'yearly':375}
     MIN_SPAN_DAYS = {'monthly':60, 'yearly':355}
     MIN_TRXS = {'monthly':3, 'yearly':2}
     MIN_CADENCE_RATIO = {'monthly':0.4, 'yearly':0.4}
     MAX_PINPONG_RATIO = {'monthly':0.4, 'yearly':0.4}
-    MAX_VARIABILITY = {'monthly':0.8, 'yearly':0.8}
+    MAX_VARIABILITY = {'monthly':0.6, 'yearly':0.8}
     SKIP_CATEGORIES = getattr(settings, 'BUDGET_RECURRING_SKIP_CATEORIES', {})
 
     CADENCE_RANGES = {}
     CADENCE_RANGES['monthly'] = (28-THRESHOLD_DAYS['monthly'], 31+THRESHOLD_DAYS['monthly'])
     CADENCE_RANGES['yearly'] = (365-THRESHOLD_DAYS['yearly'], 365+THRESHOLD_DAYS['yearly'])
 
-    def __init__(self, user, days=900):
-        self.user = user            # User transactions belong to
-        self.days = days            # Number of days to look back
-        self.items = []             # List of detected recurring items
-        self._find_recurring()      # Run the detection algorithm
+    def __init__(self, user, search='', searchfields=None):
+        self.user = user                        # User transactions belong to
+        self.search = (search or '').strip()    # Optional search filter for test/debug scenarios
+        self.searchfields = searchfields        # Optional list of fields to apply search filter
+        self.items = []                         # List of detected recurring items
+        self._find_recurring()                  # Run the detection algorithm
 
     def _find_recurring(self):
         """ Detect likely recurring payments directly from transactions without profile tables. """
-        mindate = datetime.date.today() - datetime.timedelta(days=self.days)
-        trxs = Transaction.objects.filter(user=self.user, amount__lt=0, date__gte=mindate)
+        trxs = Transaction.objects.filter(user=self.user, amount__lt=0)
+        if self.search and self.searchfields:
+            trxs = Search(self.searchfields).get_queryset(trxs, self.search)
         trxs = trxs.exclude(category__name__in=self.SKIP_CATEGORIES)
         trxs = trxs.select_related('account', 'category').order_by('date', 'id')
         groups = self._group_by_payee_and_amount(trxs)
@@ -87,7 +90,7 @@ class RecurringManager:
         merged = []
         for i in items:
             for m in merged:
-                if i.name != i.name or m.cadence != i.cadence:
+                if i.name != m.name or m.cadence != i.cadence:
                     continue
                 if i.last_date < m.first_date or i.first_date > m.last_date:
                     m.trxs.extend(i.trxs)
@@ -107,13 +110,11 @@ class RecurringManager:
         item.cadence, item.cadenceratio = self._get_cadence_ratio(item)
         # Peform checks to confirm group meets criteria for recurring payments.
         # If any check fails, return None to reject the group.
-        if not all((
-            self._check_cadence_ratio(item),
-            self._check_span_days(item),
-            self._check_min_trxs(item),
-            self._check_ping_pong(item),
-            self._check_variability(item),
-        )): return None
+        if not self._check_cadence_ratio(item): return None
+        if not self._check_span_days(item): return None
+        if not self._check_min_trxs(item): return None
+        if not self._check_ping_pong(item): return None
+        if not self._check_variability(item): return None
         return self._collect_metrics(item)
 
     def _collect_metrics(self, item):
@@ -130,7 +131,6 @@ class RecurringManager:
         item.accounts = sorted({trx.account.name for trx in item.trxs})
         item.categories = sorted({trx.category.name for trx in item.trxs if trx.category})
         return item
-
 
     def _get_cadence_ratio(self, item):
         """ Pick the cadence with best interval fit ratio. Returns:
