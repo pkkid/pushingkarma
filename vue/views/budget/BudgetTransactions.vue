@@ -12,7 +12,7 @@
       <BudgetTransactionsSummary :summary='summary'/>
       <!-- Transactions Table -->
       <EditTable v-if='trxs?.items?.length' ref='edittable' :columns='COLUMNS' :items='trxs?.items'
-        infinite :nextpage='trxs?.next' @getNextPage='getNextPage' @itemSelected='onItemSelected'
+        infinite :nextpage='nextPageUrl' @getNextPage='getNextPage' @itemSelected='onItemSelected'
         @itemUpdated='onItemUpdated'>
         <template #scrollwatch>
           <IconMessage icon='pk' animation='gelatine' text='Loading more transactions' ellipsis/>
@@ -97,6 +97,17 @@
     return str.trim()
   })
 
+  // Next Page URL
+  // Build the URL for fetching the next page of transactions using cursor-based pagination
+  // This is resilient to result set changes (e.g., approving transactions while scrolling)
+  const nextPageUrl = computed(function() {
+    if (!trxs.value?.next_cursor) { return null }
+    var params = new URLSearchParams()
+    params.append('search', searchstr.value)
+    params.append('cursor', trxs.value.next_cursor)
+    return `/api/budget/transactions?${params.toString()}`
+  })
+
   // On Mounted
   // Update transactions and initialize hotkeys
   onMounted(function() {
@@ -149,13 +160,19 @@
   }
 
   // Get Next Page
-  // Fetch next page of transactions
+  // Fetch next page of transactions using cursor pagination (keyset).
+  // Keep the original count stable so the header does not drift while
+  // the filtered dataset changes during in-place approvals.
   const getNextPage = async function(url) {
-    if (!trxs.value?.next) { return }
+    if (!trxs.value?.next_cursor) { return }
     cancelctrl = api.cancel(cancelctrl)
     try {
+      var currentCount = trxs.value?.count
       var {data} = await axios.get(url, {signal:cancelctrl.signal})
       data.items = trxs.value.items.concat(data.items)
+      if (currentCount !== undefined && currentCount !== null) {
+        data.count = currentCount
+      }
       trxs.value = data
     } catch (err) {
       if (!api.isCancel(err)) { throw(err) }

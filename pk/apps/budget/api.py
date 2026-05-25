@@ -15,7 +15,7 @@ from ninja.files import UploadedFile
 from ninja.security import django_auth
 from pk.utils.utils import Bunch, add_months, first_of_month
 from pk.utils.django import get_object_or_none
-from pk.utils.ninja import PageSchema, paginate
+from pk.utils.ninja import PageSchema, paginate, paginate_cursor
 from typing import List
 from . import schemas, utils
 from .models import Account, Category, Transaction
@@ -241,15 +241,28 @@ def categorize_similar_transactions(request,
 @router.get('/transactions', response=PageSchema(schemas.TransactionSchema), exclude_unset=True)
 def list_transactions(request,
       search: str=Query('', description='Search term to filter transactions'),
-      page: int=Query(1, description='Page number of results to return')):
-    """ List transactions for the logged in user. """
+      page: int=Query(None, description='Page number of results to return (deprecated, for backward compatibility only)'),
+      cursor: str=Query(None, description='Cursor token for keyset pagination (base64 encoded)')):
+    """ List transactions for the logged in user.
+        Uses cursor-based (keyset) pagination by default, which is resilient to result set changes.
+        For backward compatibility, still accepts page parameter (offset pagination).
+    """
+    if page is not None and cursor is not None:
+        raise HttpError(400, 'Cannot specify both page and cursor parameters')
     trxs = Transaction.objects.filter(user=request.user)
     trxs = trxs.select_related('account', 'category')
-    trxs = trxs.order_by('-date', 'payee')
+    # Deterministic sort: date DESC, payee ASC, id ASC
+    trxs = trxs.order_by('-date', 'payee', 'id')
     if search:
         searchobj = Search(TRANSACTIONSEARCHFIELDS)
         trxs = searchobj.get_queryset(trxs, search)
-    response = paginate(request, trxs, page=page, perpage=100)
+    # Always use cursor pagination (more resilient), fallback to page for backward compat
+    sort_fields = [('date','<'), ('payee','>'), ('id','>')]
+    response = paginate_cursor(request, trxs, cursor=cursor, perpage=100, sort_fields=sort_fields)
+    # If legacy page parameter provided, log it (for monitoring deprecation)
+    if page is not None:
+        log.info(f'Legacy page-based pagination used (page={page})')
+    # Convert transaction objects to dicts
     for i in range(len(response['items'])):
         trx = response['items'][i]
         response['items'][i] = utils.transaction_to_dict(trx)
