@@ -36,7 +36,8 @@
   // Color For Category
   // Get a consistent color for a category name by hashing it to a palette
   const colorForCategory = function(name) {
-    var palette = ['#689d6a', '#458588', '#d79921', '#b16286', '#cc241d', '#83a598', '#98971a', '#d65d0e', '#458588', '#8f3f71']
+    var palette = ['#689d6a','#458588','#d79921','#b16286','#cc241d',
+      '#83a598','#98971a','#d65d0e','#458588','#8f3f71']
     var seed = 0
     for (var i = 0; i < (name || '').length; i++) {
       seed = (seed + name.charCodeAt(i)) % 997
@@ -253,7 +254,6 @@
     height: 100%;
     width: 100%;
   }
-
   .treemap-subtext {
     position: absolute;
     bottom: 0;
