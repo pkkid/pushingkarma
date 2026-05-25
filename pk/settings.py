@@ -137,7 +137,7 @@ BUDGET_SCRUB_NOISE_TOKENS = {'com', 'www', 'http', 'https', 'httpswww', 'co',
 BUDGET_SCRUB_MONTH_TOKENS = {'jan','feb','mar','apr','may','jun','jul','aug',
     'sep','sept','oct','nov','dec','january','february','march','april','june',
     'july','august','september','october','november','december'}
-BUDGET_RECURRING_SKIP_CATEORIES = {'Restaurant', 'Shopping, Clothing', 'Taxes'}
+BUDGET_RECURRING_SKIP_CATEORIES = {'Restaurant', 'Shopping, Clothing', 'Taxes', 'Transfer'}
 BUDGET_RECURRING_ALLOW_SINGLE = {'Subscription'}
 
 # Email Settings
