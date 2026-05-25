@@ -167,18 +167,10 @@ class RecurringItemSchema(Schema):
     last_date: datetime.date = Field(..., description='Last transaction date')
     min_amount: Decimal = Field(..., description='Minimum transaction amount')
     max_amount: Decimal = Field(..., description='Maximum transaction amount')
+    last_comment: Optional[str] = Field(None, description='Latest comment from transactions')
     is_active: bool = Field(..., description='True if item is considered still active')
     accounts: List[str] = Field(..., description='List of account used by this recurring payee')
     categories: List[str] = Field(..., description='List of categories for the recurring payee')
-    
-    # confidence: int = Field(..., description='Detection confidence score 0-100')
-    # kind: str = Field(..., description='Detected type (recurring or recurring_bill)')
-    # kind_score: int = Field(..., description='Recurring-vs-bill heuristic score')
-    # days_since_last: int = Field(..., description='Days elapsed since most recent transaction')
-    # monthly_cost: Decimal = Field(..., description='Estimated monthly cost')
-    # yearly_cost: Decimal = Field(..., description='Estimated yearly cost')
-    # amount_variability: float = Field(..., description='Robust amount variability based on MAD/median')
-    # reasons: List[str] = Field(..., description='Human-readable score reasons shown in the UI')
 
 
 class RecurringSummarySchema(Schema):

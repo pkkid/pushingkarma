@@ -119,6 +119,8 @@ class RecurringManager:
 
     def _collect_metrics(self, item):
         """ Update metrics for an item after merging or amount splitting. """
+        item.trxs = sorted(item.trxs, key=lambda trx: (trx.date, trx.id))
+        item.amounts = [Decimal(trx.amount) for trx in item.trxs]
         item.count = len(item.trxs)
         item.first_date = min(trx.date for trx in item.trxs)
         item.last_date = max(trx.date for trx in item.trxs)
@@ -126,6 +128,7 @@ class RecurringManager:
         item.last_amount = round(item.amounts[-1], 2)
         item.max_amount = round(max(item.amounts), 2)
         item.min_amount = round(min(item.amounts), 2)
+        item.last_comment = self._get_last_comment(item)
         item.average = round(sum(item.amounts) / len(item.amounts), 2)
         item.is_active = self.MIN_ACTIVE_DAYS[item.cadence] >= item.daysago
         item.accounts = sorted({trx.account.name for trx in item.trxs})
@@ -145,6 +148,14 @@ class RecurringManager:
             scores[cadence] = len(matches) / max(len(intervals), 1)
         cadence = max(scores.keys(), key=lambda item: scores[item])
         return cadence, scores[cadence]
+    
+    def _get_last_comment(self, item):
+        """ Get the most recent non-empty comment from the transactions in the item. """
+        for trx in reversed(item.trxs):
+            comment = (trx.comment or '').strip()
+            if comment:
+                return comment
+        return None
 
     def _check_cadence_ratio(self, item):
         """ Check if the cadence ratio meets the threshold for any cadence. """

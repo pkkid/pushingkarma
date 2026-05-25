@@ -36,4 +36,6 @@ class Command(BaseCommand):
             out += f' | {item.first_date}..{item.last_date} | avg={item.average}'
             if not item.is_active:
                 out += ' | inactive'
+            if item.latest_comment:
+                out += f' | comment={item.latest_comment}'
             self.stdout.write(out)

@@ -43,8 +43,8 @@
       tooltip: item => utils.escapeHtml(item.accounts.join(', ')),
     },{
       name:'payee', title:'Payee', editable:true,
-      html: item => item.average ?
-        `${item.name.split('|')[0].toUpperCase()} ${utils.usd(item.average)}<div class='subtext'>${item.categories.join("; ")}</div>` :
+      html: item => item.last_comment ?
+        `${item.name.split('|')[0].toUpperCase()}<div class='subtext'>${item.categories.join("; ")} - ${item.last_comment}</div>` :
         `${item.name.split('|')[0].toUpperCase()}<div class='subtext'>${item.categories.join("; ")}</div>`,
     },{
       name:'cadence', title:'Cadence', editable:false,
