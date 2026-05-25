@@ -16,9 +16,9 @@
   import {onBeforeUnmount, onMounted, ref, watch} from 'vue'
 
   const props = defineProps({
-    collapseKey: {type:[String, Number, Boolean], default:null},    // Optional key to watch for changes to auto-collapse the chart (e.g. search string)
-    canFullscreen: {type:Boolean, default:false},                   // Whether to show the fullscreen expand button (only if chart has data)
-    resetChartOnClick: {type:Boolean, default:true},                // If false, ignore collapseKey changes and keep expanded state after chart-triggered filters
+    canFullscreen: {type:Boolean, default:false},                   // Set True to allow fullscreen
+    collapseKey: {type:[String, Number, Boolean], default:null},    // Optional key to watch for changes to auto-collapse
+    resetChartOnClick: {type:Boolean, default:true},                // If false, ignore collapseKey changes
   })
 
   const isExpanded = ref(false)     // Whether the chart is expanded
@@ -68,10 +68,20 @@
   onMounted(function() {
     window.addEventListener('pointerdown', onWindowPointerDown)
   })
+
+  // Watch isExpanded and isFullscreen
+  // When either expand state changes, briefly set isReady to false to hide the
+  // chart and prevent awkward intermediate states during the CSS transition,
+  // then restore it after the transition completes
   watch([isExpanded, isFullscreen], function() {
     isReady.value = false
     setTimeout(function() { isReady.value = true }, 200)
   })
+
+  // Watch isExpanded
+  // When expanding, measure the available space and apply an inline left offset
+  // if needed to keep the expanded chart within the viewport (accounting for
+  // 30px of padding on the right side of the screen)
   watch(isExpanded, function(val) {
     if (!val) { expandedStyle.value = {}; return }
     // Measure wrap position before DOM updates (chart still collapsed, pre-render flush)
@@ -80,11 +90,18 @@
     var overflow = (wrapRect.left + 549) - (window.innerWidth - 30)
     expandedStyle.value = overflow > 0 ? {left: `${-1 - overflow}px`} : {}
   })
+
+  // Watch collapseKey
+  // When the collapseKey changes, auto-collapse the chart back to mini
+  // mode (if resetChartOnClick is true)
   watch(() => props.collapseKey, function() {
     if (!props.resetChartOnClick) { return }
     isFullscreen.value = false
     isExpanded.value = false
   })
+
+  // On Before Unmount
+  // Clean up event listener on unmount
   onBeforeUnmount(function() {
     window.removeEventListener('pointerdown', onWindowPointerDown)
   })
