@@ -35,7 +35,7 @@
 
   // Color For Category
   // Get a consistent color for a category name by hashing it to a palette
-  const colorForCategory = function(name) {
+  const getColor = function(name) {
     var palette = ['#689d6a','#458588','#d79921','#b16286','#cc241d',
       '#83a598','#98971a','#d65d0e','#458588','#8f3f71']
     var seed = 0
@@ -80,15 +80,13 @@
   // Get Item Count
   // Get count for item from lookup by category and optional payee
   const getItemCount = function(category, payee) {
-    if (payee) {
-      var key = `${category}|${payee}`
-      return treemapCountLookup.value[key] || 0
+    if (payee && category) {
+      return treemapCountLookup.value[`${category}|${payee}`] || 0
     }
     var count = 0
     for (let key in treemapCountLookup.value) {
-      if (key.startsWith(`${category}|`)) {
-        count += treemapCountLookup.value[key] || 0
-      }
+      var matches = payee ? key.endsWith(`|${payee}`) : key.startsWith(`${category}|`)
+      if (matches) { count += treemapCountLookup.value[key] || 0 }
     }
     return count
   }
@@ -130,13 +128,24 @@
     var raw = chart?.data?.datasets?.[elm.datasetIndex]?.data?.[elm.index]
     var item = raw?.data || raw?._data || raw || {}
     var exclude = !!(evt?.native?.shiftKey || evt?.shiftKey)
-    applyCategoryFilter(item.category, item.payee, exclude)
+    var category = item.category || (singleCategory.value ? treemapData.value?.items?.[0]?.category : '')
+    applyCategoryFilter(category, item.payee, exclude)
   }
 
   // Has Data
   // True when there is at least one category to render in the treemap
   const hasData = computed(function() {
     return (treemapData.value?.items || []).length > 0
+  })
+
+  // Single Category
+  // True when all treemap items belong to the same category; in this case
+  // we flatten the chart to show payees as top-level blocks instead of nesting them.
+  const singleCategory = computed(function() {
+    var items = treemapData.value?.items || []
+    if (!items.length) { return false }
+    var first = items[0].category
+    return items.every(function(i) { return i.category === first })
   })
 
   // Chart Data
@@ -154,22 +163,11 @@
     // build the dataset
     var ds = {}
     utils.rset(ds, 'borderWidth', 1)
-    utils.rset(ds, 'groups', ['category', 'payee'])
+    utils.rset(ds, 'groups', singleCategory.value ? ['payee'] : ['category', 'payee'])
     utils.rset(ds, 'key', 'value')
     utils.rset(ds, 'label', 'Category Spend')
     utils.rset(ds, 'spacing', 1)
     utils.rset(ds, 'tree', tree)
-    utils.rset(ds, 'backgroundColor', function(ctx) {
-      var category = ctx.raw?._data?.category || ''
-      var color = colorForCategory(category)
-      return withAlpha(color, 0.78)
-    })
-    utils.rset(ds, 'borderColor', function(ctx) {
-      var category = ctx.raw?._data?.category || ''
-      var color = colorForCategory(category)
-      return mixWithBlack(color, 0.1)
-    })
-    // Captions represet categories
     utils.rset(ds, 'captions.align', 'left')
     utils.rset(ds, 'captions.color', '#222c')
     utils.rset(ds, 'captions.display', isExpanded)
@@ -177,7 +175,6 @@
     utils.rset(ds, 'captions.font.weight', '600')
     utils.rset(ds, 'captions.formatter', (ctx) => ellipsis(ctx.raw?.g || ''))
     utils.rset(ds, 'captions.padding', 2)
-    // Labels represent payees within categories
     utils.rset(ds, 'labels.align', 'left')
     utils.rset(ds, 'labels.color', '#222c')
     utils.rset(ds, 'labels.display', isExpanded)
@@ -187,6 +184,14 @@
     utils.rset(ds, 'labels.overflow', 'cut')
     utils.rset(ds, 'labels.padding', 2)
     utils.rset(ds, 'labels.position', 'top')
+    utils.rset(ds, 'backgroundColor', function(ctx) {
+      var name = singleCategory.value ? (ctx.raw?._data?.payee || '') : (ctx.raw?._data?.category || '')
+      return withAlpha(getColor(name), 0.78)
+    })
+    utils.rset(ds, 'borderColor', function(ctx) {
+      var name = singleCategory.value ? (ctx.raw?._data?.payee || '') : (ctx.raw?._data?.category || '')
+      return mixWithBlack(getColor(name), 0.1)
+    })
     return {datasets: [ds]}
   }
 
@@ -206,7 +211,7 @@
     utils.rset(opts, 'plugins.title.font.family', 'Merriweather')
     utils.rset(opts, 'plugins.title.font.size', 14)
     utils.rset(opts, 'plugins.title.padding.bottom', 5)
-    utils.rset(opts, 'plugins.title.text', 'Amount By Category')
+    utils.rset(opts, 'plugins.title.text', singleCategory.value ? 'Amount By Payee' : 'Amount By Category')
     utils.rset(opts, 'plugins.tooltip.callbacks.title', function() { return '' })
     utils.rset(opts, 'plugins.tooltip.enabled', true)
     utils.rset(opts, 'plugins.tooltip.callbacks.label', function(ctx) {
@@ -224,7 +229,7 @@
       utils.rset(opts, 'events', [])
       utils.rset(opts, 'plugins.title.font.size', 11)
       utils.rset(opts, 'plugins.title.padding.bottom', 0)
-      utils.rset(opts, 'plugins.title.text', 'By Category')
+      utils.rset(opts, 'plugins.title.text', singleCategory.value ? 'By Payee' : 'By Category')
       utils.rset(opts, 'plugins.tooltip.enabled', false)
       utils.rset(opts, 'layout.padding.top', 0)
       utils.rset(opts, 'layout.padding.left', 0)
