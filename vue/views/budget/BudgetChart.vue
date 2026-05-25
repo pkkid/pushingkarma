@@ -1,6 +1,6 @@
 <template>
   <div class='bignum-panel bignum-btn minichart-wrap'>
-    <div ref='chart' class='minichart' :class='{expanded: isExpanded, fullscreen: isFullscreen}' @click='openExpanded'>
+      <div ref='chart' class='minichart' :class='{expanded: isExpanded, fullscreen: isFullscreen}' :style='expandedStyle' @click='openExpanded'>
       <div v-if='isExpanded' class='chart-controls'>
         <button v-if='canFullscreen && !isFullscreen' class='chart-control-btn' @click.stop='openFullscreen'><i class='mdi mdi-arrow-expand-all'/></button>
         <button v-else-if='canFullscreen' class='chart-control-btn' @click.stop='closeChart'><i class='mdi mdi-close'/></button>
@@ -25,6 +25,7 @@
   const isFullscreen = ref(false)   // Whether the chart is expanded to near full screen
   const isReady = ref(true)         // Whether the chart should render (hidden during resize)
   const chart = ref(null)           // Chart container element (for click-outside close)
+  const expandedStyle = ref({})     // Inline style override to keep expanded chart within viewport
 
   // Open Expanded
   // Open the expanded version of the chart
@@ -70,6 +71,14 @@
   watch([isExpanded, isFullscreen], function() {
     isReady.value = false
     setTimeout(function() { isReady.value = true }, 200)
+  })
+  watch(isExpanded, function(val) {
+    if (!val) { expandedStyle.value = {}; return }
+    // Measure wrap position before DOM updates (chart still collapsed, pre-render flush)
+    // Expanded chart will sit at wrapLeft - 1px with width 550px
+    var wrapRect = chart.value.parentElement.getBoundingClientRect()
+    var overflow = (wrapRect.left + 549) - (window.innerWidth - 30)
+    expandedStyle.value = overflow > 0 ? {left: `${-1 - overflow}px`} : {}
   })
   watch(() => props.collapseKey, function() {
     if (!props.resetChartOnClick) { return }
