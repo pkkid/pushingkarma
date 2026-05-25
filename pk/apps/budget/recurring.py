@@ -38,7 +38,9 @@ class RecurringManager:
     MIN_CADENCE_RATIO = {'monthly':0.4, 'yearly':0.4}
     MAX_PINPONG_RATIO = {'monthly':0.4, 'yearly':0.4}
     MAX_VARIABILITY = {'monthly':0.6, 'yearly':0.8}
-    SKIP_CATEGORIES = getattr(settings, 'BUDGET_RECURRING_SKIP_CATEORIES', {})
+    SKIP_CATEGORIES = getattr(settings, 'BUDGET_RECURRING_SKIP_CATEORIES', set())
+    ALLOW_SINGLE = getattr(settings, 'BUDGET_RECURRING_ALLOW_SINGLE', set())
+    SINGLE_ACTIVE_DAYS = getattr(settings, 'BUDGET_RECURRING_SINGLE_ACTIVE_DAYS', 31)
 
     CADENCE_RANGES = {}
     CADENCE_RANGES['monthly'] = (28-THRESHOLD_DAYS['monthly'], 31+THRESHOLD_DAYS['monthly'])
@@ -82,8 +84,17 @@ class RecurringManager:
                     break
             else:
                 groups.append(Bunch(name=name, trxs=[trx], average=amount))
-        # Only keep groups with at least 2 transactions
-        return [grp for grp in groups if len(grp.trxs) >= 2]
+        # Keep groups with at least 2 transactions, and optionally allow
+        # single-transaction groups when category is explicitly allow-listed.
+        return [grp for grp in groups if len(grp.trxs) >= 2 or self._is_allow_single_group(grp)]
+
+    def _is_allow_single_group(self, group):
+        """ True if this one-transaction group is allowed by category allow-list. """
+        if len(group.trxs) != 1:
+            return False
+        trx = group.trxs[0]
+        category = trx.category.name if trx.category else None
+        return bool(category and category in self.ALLOW_SINGLE)
 
     def _check_merge_items(self, items):
         """ Merge items with the same name when their date ranges do not overlap. """
@@ -107,6 +118,10 @@ class RecurringManager:
         item.trxs = sorted(group.trxs, key=lambda trx: trx.date)
         item.amounts = [Decimal(trx.amount) for trx in item.trxs]
         item.daysago = (datetime.date.today() - item.trxs[-1].date).days
+        if len(item.trxs) == 1:
+            if not self._is_allow_single_group(group): return None
+            item.cadence = 'monthly'
+            return self._collect_metrics(item)
         item.cadence, item.cadenceratio = self._get_cadence_ratio(item)
         # Peform checks to confirm group meets criteria for recurring payments.
         # If any check fails, return None to reject the group.
@@ -130,7 +145,11 @@ class RecurringManager:
         item.min_amount = round(min(item.amounts), 2)
         item.last_comment = self._get_last_comment(item)
         item.average = round(sum(item.amounts) / len(item.amounts), 2)
-        item.is_active = self.MIN_ACTIVE_DAYS[item.cadence] >= item.daysago
+        item.daysago = (datetime.date.today() - item.last_date).days
+        if item.cadence == 'single':
+            item.is_active = item.daysago <= self.SINGLE_ACTIVE_DAYS
+        else:
+            item.is_active = self.MIN_ACTIVE_DAYS[item.cadence] >= item.daysago
         item.accounts = sorted({trx.account.name for trx in item.trxs})
         item.categories = sorted({trx.category.name for trx in item.trxs if trx.category})
         return item
