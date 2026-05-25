@@ -1,7 +1,10 @@
 <template>
   <BudgetChart v-if='hasData' :collapseKey='search' :resetChartOnClick='false' :canFullscreen='props.canFullscreen'
-    v-slot='{isExpanded, isFullscreen, isReady}' >
-    <ChartView v-if='isReady' type='treemap' :options='chartOptions(isExpanded, isFullscreen)' :data='chartData(isExpanded)'/>
+    v-slot='{isExpanded, isFullscreen, isReady}'>
+    <div class='treemap-content' :class='{expanded: isExpanded}'>
+      <ChartView v-if='isReady' type='treemap' :options='chartOptions(isExpanded, isFullscreen)' :data='chartData(isExpanded)'/>
+      <div v-if='isExpanded' class='subtext treemap-subtext'><i>Click to filter by category or payee. Shift+Click to exclude.</i></div>
+    </div>
   </BudgetChart>
 </template>
 
@@ -192,6 +195,7 @@
     var opts = {}
     utils.rset(opts, 'animation.duration', 0)
     utils.rset(opts, 'events', ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove'])
+    utils.rset(opts, 'layout.padding.bottom', isExpanded ? 16 : 0)
     utils.rset(opts, 'maintainAspectRatio', false)
     utils.rset(opts, 'onClick', onChartClick)
     utils.rset(opts, 'plugins.legend.display', false)
@@ -202,6 +206,7 @@
     utils.rset(opts, 'plugins.title.font.size', 14)
     utils.rset(opts, 'plugins.title.padding.bottom', 5)
     utils.rset(opts, 'plugins.title.text', 'Amount By Category')
+    utils.rset(opts, 'plugins.tooltip.callbacks.title', function() { return '' })
     utils.rset(opts, 'plugins.tooltip.enabled', true)
     utils.rset(opts, 'plugins.tooltip.callbacks.label', function(ctx) {
       var item = ctx.raw?.data || ctx.raw?._data || {}
@@ -214,7 +219,6 @@
       var title = isSubcategory ? ellipsis(payee, 20) : (category || '')
       return `${title} (${countStr}): ${amount}`
     })
-    utils.rset(opts, 'plugins.tooltip.callbacks.title', function() { return '' })
     if (!isExpanded) {
       utils.rset(opts, 'events', [])
       utils.rset(opts, 'plugins.title.font.size', 11)
@@ -242,3 +246,22 @@
     }
   }
 </script>
+
+<style scoped>
+  .treemap-content {
+    position: relative;
+    height: 100%;
+    width: 100%;
+  }
+
+  .treemap-subtext {
+    position: absolute;
+    bottom: 0;
+    left: 2px;
+    z-index: 2;
+    line-height: 1.1;
+    text-align: left;
+    white-space: normal;
+    pointer-events: none;
+  }
+</style>
