@@ -25,7 +25,8 @@
   })
   var cancelctrl = null                             // Cancel controller for treemap requests
   const treemapData = ref(null)                     // Category treemap data from API
-  const treemapCountLookup = ref({})               // Lookup map for count data by category+payee
+  const treemapCountLookup = ref({})                // Lookup map for count data by category+payee
+  const tooltip = ref(null)                         // Custom tooltip element
   const {search} = useUrlParams({search:{}})        // Search string from URL
 
   // On Mounted  and Watch Search
@@ -101,15 +102,6 @@
     if (exclude && category && payee) { category = '' }    
     if (category) { tokens.push(`${exclude}category="${category}"`) }
     if (payee) { tokens.push(`${exclude}payee~"${payee}"`) }
-    // var cleaned = (search.value || '')
-    // if (exclude) {
-    //   cleaned = cleaned.replace(/(^|\s)category=(?:"[^"]+"|null)(?=\s|$)/g, ' ')
-    //   cleaned = cleaned.replace(/(^|\s)payee~(?:"[^"]+"|null)(?=\s|$)/g, ' ')
-    // } else {
-    //   cleaned = cleaned.replace(/(^|\s)-?category=(?:"[^"]+"|null)(?=\s|$)/g, ' ')
-    //   cleaned = cleaned.replace(/(^|\s)-?payee~(?:"[^"]+"|null)(?=\s|$)/g, ' ')
-    // }
-    // var result = cleaned.replace(/\s+/g, ' ').trim()
     var result = (search.value || '').trim()
     for (const token of tokens) {
       var escaped = token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
@@ -231,24 +223,8 @@
     utils.rset(opts, 'plugins.title.font.size', 14)
     utils.rset(opts, 'plugins.title.padding.bottom', 5)
     utils.rset(opts, 'plugins.title.text', singleCategory.value ? 'Amount By Payee' : 'Amount By Category')
-    utils.rset(opts, 'plugins.tooltip.bodyFont.size', 10)
-    utils.rset(opts, 'plugins.tooltip.callbacks.label', function() { return null })
-    utils.rset(opts, 'plugins.tooltip.enabled', true)
-    utils.rset(opts, 'plugins.tooltip.titleFont.size', 12)
-    utils.rset(opts, 'plugins.tooltip.titleMarginBottom', 0)
-    utils.rset(opts, 'plugins.tooltip.yAlign', 'top')
-    utils.rset(opts, 'plugins.tooltip.callbacks.title', function(items) {
-      var item = getTooltipItem(items)
-      return item.payee ? ellipsis(item.payee, 20) : ellipsis(item.category, 20)
-    })
-    utils.rset(opts, 'plugins.tooltip.callbacks.beforeBody', function(items) {
-      var item = getTooltipItem(items)
-      var count = getItemCount(item.category || '', item.payee || '')
-      var amount = utils.usd(item.value || 0, 0)
-      var countStr = utils.intComma(count)
-      return [`${countStr} transactions`, amount]
-    })
-    
+    utils.rset(opts, 'plugins.tooltip.enabled', false)
+    utils.rset(opts, 'plugins.tooltip.external', externalTooltipHandler)
     if (!isExpanded) {
       utils.rset(opts, 'events', [])
       utils.rset(opts, 'plugins.title.font.size', 11)
@@ -259,8 +235,31 @@
       utils.rset(opts, 'layout.padding.left', 0)
       utils.rset(opts, 'layout.padding.right', 0)
       utils.rset(opts, 'layout.padding.bottom', 0)
+      if (tooltip.value) { tooltip.value.style.opacity = '0' }
     }
     return opts
+  }
+
+  // External Tooltip Handler
+  // Render tooltip as custom DOM element positioned in top-right of canvas
+  const externalTooltipHandler = function(context) {
+    if (!context.tooltip.opacity) {
+      if (tooltip.value) { tooltip.value.style.opacity = '0' }
+      return
+    }
+    if (!tooltip.value) {
+      tooltip.value = document.createElement('div')
+      tooltip.value.className = 'tooltip-custom'
+      context.chart.canvas.parentElement.appendChild(tooltip.value)
+    }
+    var items = context.tooltip.dataPoints
+    var item = getTooltipItem(items)
+    var count = getItemCount(item.category || '', item.payee || '')
+    var amount = utils.usd(item.value || 0, 0)
+    tooltip.value.innerHTML = `
+      ${item.payee ? item.payee : item.category}
+      <div class='subtext'>${amount} (${utils.intComma(count)} trxs)</div>`
+    tooltip.value.style.opacity = '1'
   }
 
   // Get Tooltip Item
@@ -303,5 +302,24 @@
     text-align: left;
     white-space: normal;
     pointer-events: none;
+  }
+  :deep(.tooltip-custom) {
+    position: absolute;
+    color: var(--lightbg-fg1);
+    top: -6px; right: 0px;
+    padding: 0px;
+    font-size: 10px;
+    pointer-events: none;
+    z-index: 1;
+    white-space: normal;
+    line-height: 1.5;
+    text-align: right;
+    height: 30px;
+    transition: opacity 0.2s ease;
+    .subtext {
+      color: var(--lightbg-fg2);
+      font-size: 9px;
+      opacity: 0.8;
+    }
   }
 </style>
