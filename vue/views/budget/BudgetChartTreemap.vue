@@ -95,21 +95,23 @@
   // Apply category and/or payee filter token from treemap click.
   // Normal click replaces existing category/payee filters.
   // Shift+click appends exclude filters so multiple exclusions can accumulate.
-  const applyCategoryFilter = function(category, payee, exclude=false) {
-    if (!category && !payee) { return }
-    var nextTokens = []
-    if (category) { nextTokens.push(`${exclude ? '-' : ''}category="${category}"`) }
-    if (payee) { nextTokens.push(`${exclude ? '-' : ''}payee~"${payee}"`) }
-    var cleaned = (search.value || '')
-    if (exclude) {
-      cleaned = cleaned.replace(/(^|\s)category=(?:"[^"]+"|null)(?=\s|$)/g, ' ')
-      cleaned = cleaned.replace(/(^|\s)payee~(?:"[^"]+"|null)(?=\s|$)/g, ' ')
-    } else {
-      cleaned = cleaned.replace(/(^|\s)-?category=(?:"[^"]+"|null)(?=\s|$)/g, ' ')
-      cleaned = cleaned.replace(/(^|\s)-?payee~(?:"[^"]+"|null)(?=\s|$)/g, ' ')
-    }
-    var result = cleaned.replace(/\s+/g, ' ').trim()
-    for (const token of nextTokens) {
+  const applySearchFilter = function(category, payee, exclude=false) {
+    var tokens = []
+    exclude = exclude ? '-' : ''
+    if (exclude && category && payee) { category = '' }    
+    if (category) { tokens.push(`${exclude}category="${category}"`) }
+    if (payee) { tokens.push(`${exclude}payee~"${payee}"`) }
+    // var cleaned = (search.value || '')
+    // if (exclude) {
+    //   cleaned = cleaned.replace(/(^|\s)category=(?:"[^"]+"|null)(?=\s|$)/g, ' ')
+    //   cleaned = cleaned.replace(/(^|\s)payee~(?:"[^"]+"|null)(?=\s|$)/g, ' ')
+    // } else {
+    //   cleaned = cleaned.replace(/(^|\s)-?category=(?:"[^"]+"|null)(?=\s|$)/g, ' ')
+    //   cleaned = cleaned.replace(/(^|\s)-?payee~(?:"[^"]+"|null)(?=\s|$)/g, ' ')
+    // }
+    // var result = cleaned.replace(/\s+/g, ' ').trim()
+    var result = (search.value || '').trim()
+    for (const token of tokens) {
       var escaped = token.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
       var tokenRegex = new RegExp(`(^|\\s)${escaped}(?=\\s|$)`)
       if (!tokenRegex.test(result)) {
@@ -121,15 +123,32 @@
 
   // On Chart Click
   // Handle treemap block clicks and update category filter in search
-  const onChartClick = function(evt, activeEls, chart) {
-    var els = chart.getElementsAtEventForMode(evt, 'nearest', {intersect: true}, false)
-    if (!els || !els.length) { return }
-    var elm = els[0]
-    var raw = chart?.data?.datasets?.[elm.datasetIndex]?.data?.[elm.index]
-    var item = raw?.data || raw?._data || raw || {}
-    var exclude = !!(evt?.native?.shiftKey || evt?.shiftKey)
+  const getTreemapItem = function(raw) {
+    var merged = Object.assign({}, raw || {}, raw?.data || {}, raw?._data || {})
+    var groups = Array.isArray(raw?.gs) ? raw.gs : []
+    if (!merged.category && !singleCategory.value && groups[0]) { merged.category = groups[0] }
+    if (!merged.payee && groups[1]) { merged.payee = groups[1] }
+    if (!merged.payee && singleCategory.value && groups[0]) { merged.payee = groups[0] }
+    return merged
+  }
+
+  // On Chart Click
+  // When a treemap block is clicked, get the associated category and/or
+  // payee and update the search filter.
+  const onChartClick = function(event, elems, chart) {
+    var hits = chart.getElementsAtEventForMode(event, 'point', {intersect: true}, false)
+    if (!hits || !hits.length) { return }
+    var getHitItem = function(elm) {
+      var point = chart?.getDatasetMeta?.(elm.datasetIndex)?.data?.[elm.index]
+      var raw = point?.$context?.raw || chart?.data?.datasets?.[elm.datasetIndex]?.data?.[elm.index]
+      return getTreemapItem(raw)
+    }
+    var items = hits.map(getHitItem).filter(Boolean)
+    var item = items.find(function(i) { return !!i.payee }) || items[0]
+    if (!item) { return }
+    var exclude = !!(event?.native?.shiftKey || event?.shiftKey)
     var category = item.category || (singleCategory.value ? treemapData.value?.items?.[0]?.category : '')
-    applyCategoryFilter(category, item.payee, exclude)
+    applySearchFilter(category, item.payee, exclude)
   }
 
   // Has Data
@@ -173,14 +192,14 @@
     utils.rset(ds, 'captions.display', isExpanded)
     utils.rset(ds, 'captions.font.size', 10)
     utils.rset(ds, 'captions.font.weight', '600')
-    utils.rset(ds, 'captions.formatter', (ctx) => ellipsis(ctx.raw?.g || ''))
+    utils.rset(ds, 'captions.formatter', (ctx) => ctx.raw?.g || '')
     utils.rset(ds, 'captions.padding', 2)
     utils.rset(ds, 'labels.align', 'left')
     utils.rset(ds, 'labels.color', '#222c')
     utils.rset(ds, 'labels.display', isExpanded)
     utils.rset(ds, 'labels.font.size', 9)
     utils.rset(ds, 'labels.font.weight', '400')
-    utils.rset(ds, 'labels.formatter', (ctx) => ellipsis(ctx.raw?._data?.payee || ''))
+    utils.rset(ds, 'labels.formatter', (ctx) => ctx.raw?._data?.payee || '')
     utils.rset(ds, 'labels.overflow', 'cut')
     utils.rset(ds, 'labels.padding', 2)
     utils.rset(ds, 'labels.position', 'top')
