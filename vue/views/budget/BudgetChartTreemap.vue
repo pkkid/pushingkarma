@@ -231,19 +231,24 @@
     utils.rset(opts, 'plugins.title.font.size', 14)
     utils.rset(opts, 'plugins.title.padding.bottom', 5)
     utils.rset(opts, 'plugins.title.text', singleCategory.value ? 'Amount By Payee' : 'Amount By Category')
-    utils.rset(opts, 'plugins.tooltip.callbacks.title', function() { return '' })
+    utils.rset(opts, 'plugins.tooltip.bodyFont.size', 10)
+    utils.rset(opts, 'plugins.tooltip.callbacks.label', function() { return null })
     utils.rset(opts, 'plugins.tooltip.enabled', true)
-    utils.rset(opts, 'plugins.tooltip.callbacks.label', function(ctx) {
-      var item = ctx.raw?.data || ctx.raw?._data || {}
-      var category = item.category || ''
-      var payee = item.payee || ''
-      var count = getItemCount(category, payee)
+    utils.rset(opts, 'plugins.tooltip.titleFont.size', 12)
+    utils.rset(opts, 'plugins.tooltip.titleMarginBottom', 0)
+    utils.rset(opts, 'plugins.tooltip.yAlign', 'top')
+    utils.rset(opts, 'plugins.tooltip.callbacks.title', function(items) {
+      var item = getTooltipItem(items)
+      return item.payee ? ellipsis(item.payee, 20) : ellipsis(item.category, 20)
+    })
+    utils.rset(opts, 'plugins.tooltip.callbacks.beforeBody', function(items) {
+      var item = getTooltipItem(items)
+      var count = getItemCount(item.category || '', item.payee || '')
       var amount = utils.usd(item.value || 0, 0)
       var countStr = utils.intComma(count)
-      var isSubcategory = !!payee
-      var title = isSubcategory ? ellipsis(payee, 20) : (category || '')
-      return `${title} (${countStr}): ${amount}`
+      return [`${countStr} transactions`, amount]
     })
+    
     if (!isExpanded) {
       utils.rset(opts, 'events', [])
       utils.rset(opts, 'plugins.title.font.size', 11)
@@ -256,6 +261,17 @@
       utils.rset(opts, 'layout.padding.bottom', 0)
     }
     return opts
+  }
+
+  // Get Tooltip Item
+  // Get the relevant data item for the tooltip from the list of hovered items.
+  const getTooltipItem = function(items) {
+    var list = Array.isArray(items) ? items : []
+    var payeeItem = list.find(function(item) {
+      return (item?.raw?.data?.payee || item?.raw?._data?.payee)
+    })
+    var targetItem = payeeItem || list[0] || {}
+    return targetItem?.raw?.data || targetItem?.raw?._data || {}
   }
 
   // Update Category Treemap
