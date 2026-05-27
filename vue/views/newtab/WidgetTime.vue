@@ -1,7 +1,7 @@
 <template>
   <div id='timewidget' class='widget' :class='{fullscreen, compact}'>
     <template v-if='compact'>
-      <div class='logo'/>
+      <a class='logo' href='/' aria-label='Go to homepage'/>
       <div class='timedate'>
         <div class='time'>{{utils.formatDate(now, 'h:mm')}}</div>
         <div class='date'>{{utils.formatDate(now, 'MMMM D, YYYY')}}</div>
@@ -51,6 +51,7 @@
       background-color: transparent;
     }
     &.compact {
+      overflow: visible;
       display: flex;
       flex-direction: row;
       align-items: center;
@@ -59,13 +60,22 @@
       transform: none;
       padding: 40px !important;
       .logo {
+        --logo-color: color-mix(in srgb, var(--darkbg-fg1), #000 20%);
         width: 130px;
         align-self: flex-start;
         position: relative;
         top: -10px; left: -10px;
         aspect-ratio: 1/1;
-        background-color: color-mix(in srgb, var(--darkbg-fg1), #000 20%);
+        background-color: var(--logo-color);
         mask: url('/static/img/pk.svg') no-repeat center/contain;
+        transition: filter 0.2s ease;
+        cursor: pointer;
+        isolation: isolate;
+      }
+      .logo:hover,
+      .logo:focus-visible {
+        filter: brightness(1.08);
+        &::before { opacity: 0.8; }
       }
       .timedate {
         display: flex;
