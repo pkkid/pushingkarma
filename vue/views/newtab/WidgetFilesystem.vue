@@ -84,6 +84,9 @@
 
 <style>
   #filesystemwidget {
+    .chartrow {
+      grid-template-rows: 100px !important;
+    }
     .fs {
       margin: 20px 0px;
       .used {
