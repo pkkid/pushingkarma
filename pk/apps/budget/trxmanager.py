@@ -78,7 +78,7 @@ class TransactionManager:
                 md5(f'{date}{payee}{amount}'.encode()).hexdigest()
             transactions.append(Transaction(trxid=trxid, date=date, payee=payee, amount=amount))
         account.balance = rget(ofx, rget(rules, 'balance'))
-        account.balance_updated = rget(ofx, rget(rules, 'balance_date'))
+        account.balance_updated = date
         return account, transactions
     
     def _bulk_create(self, account, trxs):
