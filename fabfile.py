@@ -48,11 +48,11 @@ class MyConnection(Connection):
         cmd += ' '.join([f'--exclude={x}' for x in excludes])
         print(cmd)
         self.local(cmd)
-    
+
     def step(self, msg, color='#ff0'):
         r,g,b = tuple(int(x * 2, 16) for x in color.lstrip('#'))
         print(f'\n==> \033[38;2;{r};{g};{b}m{msg}\033[00m')
-    
+
     def sudo(self, cmd, logcmd=False, **kwargs):
         """ Run a sudo command on the remote machine. """
         self.sudopw = keyring.get_password('pk', 'synologypw')
@@ -64,7 +64,7 @@ class MyConnection(Connection):
         kwargs.setdefault('watchers', []).append(responder)
         if logcmd is True: print(f'> {cmd}')
         super().sudo(cmd, **kwargs)
-    
+
     def validate_sudopw(self):
         """ Validate and save the sudo password of the remote machine. """
         try:
