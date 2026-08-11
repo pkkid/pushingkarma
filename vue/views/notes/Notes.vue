@@ -103,4 +103,8 @@
   #notes {
     article:has(#bannerimage) h1 { margin-top: 170px; }
   }
+
+  @media print {
+    #notes article:has(#bannerimage) h1 { margin-top: 0; }
+  }
 </style>

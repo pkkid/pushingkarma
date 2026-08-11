@@ -72,4 +72,20 @@
       }
     }
   }
+
+  @media print {
+    .layoutpaper {
+      background: none;
+      box-shadow: none;
+      display: block;
+      min-height: 0;
+      .paper {
+        box-shadow: none;
+        margin: 0;
+        padding: 0;
+        width: auto;
+      }
+      .controls { display: none; }
+    }
+  }
 </style>

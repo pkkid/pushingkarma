@@ -108,4 +108,10 @@
     }
   }
 
+  /* Print */
+  @media print {
+    #navigation { display: none; }
+    body.leftnav #content, body.topnav #content { padding: 0; }
+  }
+
 </style>

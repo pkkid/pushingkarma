@@ -77,6 +77,14 @@
     }
   }
 
+  /* Print */
+  @media print {
+    .layoutsidepanel {
+      .sidepanel-panel { display: none; }
+      .sidepanel-content { padding-left: 0; min-height: 0; }
+    }
+  }
+
   /* SidePanel Search Input */
   .sidepanel-panel .searchwrap {
     position: relative;

@@ -153,4 +153,8 @@
       font-size: 16px;
     }
   }
+
+  @media print {
+    #notifications { display: none; }
+  }
 </style>

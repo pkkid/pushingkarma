@@ -26,4 +26,8 @@
     top: 5px;
     width: calc(100% - 10px);
   }
+
+  @media print {
+    #bannerimage { display: none; }
+  }
 </style>

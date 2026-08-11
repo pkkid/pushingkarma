@@ -58,4 +58,11 @@
   body { overflow-x:hidden; }
   #notifications { top:80px; right:20px; }
   #content { min-height:100vh; }
+
+  @media print {
+    /* index.html sets an inline dark background on body for the pre-mount
+       loading screen; !important is required to override it here. */
+    body { background:#fff !important; }
+    #content { background:none; min-height:0; }
+  }
 </style>

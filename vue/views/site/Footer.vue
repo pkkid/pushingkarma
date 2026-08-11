@@ -82,10 +82,14 @@
         bottom: -3px;
         content: ' ';
         display: block;
-        height: 1px; 
+        height: 1px;
         position: absolute;
         width: 30px;
       }
     }
+  }
+
+  @media print {
+    #footer { display: none; }
   }
 </style>
