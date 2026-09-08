@@ -59,4 +59,24 @@
       line-height: 60px;
     }
   }
+
+  @media screen and (max-width: 900px) {
+    body.leftnav, body.topnav {
+      #logo .logoimg {
+        width: 42px;
+        left: 12px;
+        top: 15px;
+        transition: none;
+      }
+      #logo .logotxt {
+        width: auto;
+        left: 66px;
+        top: 0;
+        line-height: 60px;
+        font-size: 13px;
+        letter-spacing: 1.5px;
+        transition: none;
+      }
+    }
+  }
 </style>

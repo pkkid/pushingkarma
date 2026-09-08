@@ -20,6 +20,10 @@ ROOT_URLCONF = 'pk.urls'
 SECRET_KEY = os.getenv('SECRET_KEY')
 WSGI_APPLICATION = 'pk.wsgi.application'
 
+# Use the first active superuser for anonymous requests during local development.
+# The middleware also requires DEBUG and the runserver command.
+DEBUG_SUPERUSER = _to_bool(os.getenv('DEBUG'))
+
 # Domain, Allowed Hosts and Internal IPs
 # DOMAIN is my own settings used for reverse URL lookups
 # https://docs.djangoproject.com/en/2.0/ref/settings/#allowed-hosts
@@ -66,6 +70,7 @@ MIDDLEWARE = (
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'pk.apps.main.middleware.DebugSuperuserMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'pk.utils.django.QueryCounterMiddleware',
@@ -95,7 +100,7 @@ SESSION_COOKIE_SECURE = True
 if DEBUG is True:
     SESSION_COOKIE_SAMESITE = 'Lax'
     SESSION_COOKIE_SECURE = False
-    
+
 # CSRF Settings
 # https://docs.djangoproject.com/en/5.0/ref/csrf/
 CSRF_COOKIE_SAMESITE = 'Strict'
