@@ -1,20 +1,13 @@
-import path from 'node:path'
+import globals from 'globals'
 import pluginjs from '@eslint/js'
-import {fileURLToPath} from 'node:url'
-import {FlatCompat} from '@eslint/eslintrc'
-
-const filename = fileURLToPath(import.meta.url)
-const dirname = path.dirname(filename)
-const compat = new FlatCompat({
-    baseDirectory: dirname,
-    recommendedConfig: pluginjs.configs.recommended,
-})
+import pluginvue from 'eslint-plugin-vue'
 
 export default [
-  ...compat.extends('eslint:recommended'),
-  ...compat.extends('plugin:vue/vue3-essential'),
+  pluginjs.configs.recommended,
+  ...pluginvue.configs['flat/essential'],
   {ignores: ['pk/*', '.venv/*']},
   {languageOptions: { globals: {
+    ...globals.browser,
     process:'readonly'
   }}},
   {rules: {
