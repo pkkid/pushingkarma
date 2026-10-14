@@ -1,0 +1,22 @@
+{
+  "project": {
+    "name": "PushingKarma",
+    "tools": [
+      {
+        "type": "server",
+        "label": "Server",
+        "port": 5173,
+        "ready": "Local:\\s+(http\\S+)",
+        "start": [
+          "{checkout}/scripts/start-dev-server.py"
+        ],
+        "stop": "fuser -k 5173/tcp 8000/tcp >/dev/null 2>&1; echo 'Dev server stopped.'"
+      },
+      {
+        "type": "link",
+        "label": "Open",
+        "url": "http://localhost:5173"
+      }
+    ]
+  }
+}
