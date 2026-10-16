@@ -1,5 +1,11 @@
 <template>
   <div id='footer' class='darkbg'>
+    <!-- Boston Harbor coastline, fading out toward the ocean -->
+    <div class='harbormap'><img src='/static/img/boston-harbor.svg'/></div>
+    <div class='maplabel'>
+      Boston Harbor · 42.33° N 71.02° W<br/>
+      <span>Map data © OpenStreetMap contributors</span>
+    </div>
     <div class='footerwrap'>
       <div class='footercolumn' style='width:400px'>
         <h4>PushingKarma</h4>
@@ -48,12 +54,41 @@
     font-size: 0.85rem;
     font-weight: 400;
     line-height: 1.7;
+    overflow: hidden;
     padding-left: 300px;
     position: relative;
     text-align: left;
 
+    .harbormap {
+      mask-image: linear-gradient(90deg, #000 0%, #000 28%, transparent 88%);
+      opacity: 0.1;
+      overflow: hidden;
+      pointer-events: none;
+      position: absolute;
+      top: 0px; left: 300px; right: 0px; bottom: 0px;
+      img {
+        max-width: none;
+        position: absolute;
+        top: -290px; left: -40px;
+        width: 1200px;
+      }
+    }
+    .maplabel {
+      bottom: 14px;
+      color: var(--darkbg-fg4);
+      font-family: var(--fontfamily-code);
+      font-size: 10px;
+      letter-spacing: 1.5px;
+      line-height: 1.6;
+      position: absolute;
+      right: 24px;
+      text-align: right;
+      text-transform: uppercase;
+      span { letter-spacing: 0.5px; text-transform: none; }
+    }
     .footerwrap {
       margin: 0px auto;
+      position: relative;
       width: 1005px;
     }
     .footercolumn {
