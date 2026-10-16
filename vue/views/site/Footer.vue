@@ -7,7 +7,7 @@
       <span>Map data © OpenStreetMap contributors</span>
     </div>
     <div class='footerwrap'>
-      <div class='footercolumn' style='width:400px'>
+      <div class='footercolumn'>
         <h4>PushingKarma</h4>
         Created with <i class='mdi mdi-heart'/> using<br/>
         <a href='https://www.djangoproject.com/'>Django</a>,
@@ -18,7 +18,7 @@
           {{email}}<span style='display:none;'>+site</span>@gmail.com
         </div>
       </div>
-      <div class='footercolumn' style='width:250px'>
+      <div class='footercolumn'>
         <h4>Social Media</h4>
         <div>
           <i class='icon' style='--img:url(/static/img/icons/github.svg)' />
@@ -33,11 +33,10 @@
           <a href='https://www.facebook.com/mshepanski'>Facebook</a>
         </div>
       </div>
-      <div class='footercolumn' style='width:350px'>
+      <div class='footercolumn'>
         <h4>Legal</h4>
         Copyright (c) 2020-{{year}} PushingKarma. All rights reserved.
       </div>
-      <div style='clear:left;'/>
     </div>
   </div>
 </template>
@@ -93,19 +92,22 @@
       text-transform: uppercase;
       span { letter-spacing: 0.5px; text-transform: none; }
     }
-    /* Three columns side by side that narrow (never wrap) on smaller screens */
+    /* Same centered column as the homepage content, so the first column lines up
+     * with the sections above. Three columns side by side, stacking into one when
+     * the window gets narrow (see the media query below). */
     .footerwrap {
-      display: flex;
+      column-gap: 40px;
+      display: grid;
+      grid-template-columns: 4fr 2.5fr 3.5fr;
       margin: 0px auto;
-      max-width: 1005px;
-      padding-bottom: 50px;
+      max-width: 1030px;
+      padding: 50px 40px 100px 40px;
       position: relative;
+      row-gap: 30px;
       z-index: 12;
     }
     .footercolumn {
-      float:left;
       min-width: 0px;
-      padding: 50px clamp(15px, 4vw, 50px);
       position: relative;
       .icon {
         background-color: var(--fgcolor);
@@ -140,6 +142,10 @@
   body.topnav #footer .harbormap {
     clip-path: none;
     top: 0px;
+  }
+
+  @media (max-width: 1000px) {
+    #footer .footerwrap { grid-template-columns: 1fr; }
   }
 
   @media print {

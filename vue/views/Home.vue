@@ -254,17 +254,21 @@
           border: 10px solid #282828;
           box-sizing: border-box;
           flex-shrink: 0;
-          height: 240px;
+          height: 210px;
           margin-top: 30px;
-          margin-right: 60px;
+          margin-right: 50px;
           position: relative;
           top:-10px; left:20px;
-          width: 320px;
+          width: 280px;
           img {
             position: relative;
-            width: 320px;
-            top:-24px; left:-24px;
+            width: 280px;
+            top:-20px; left:-20px;
           }
+        }
+        .aboutme {
+          flex: 1 1 400px;
+          min-width: 0px;
         }
       }
     }
