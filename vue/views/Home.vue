@@ -174,7 +174,7 @@
         height: 100%;
         justify-content: space-between;
         margin: 0px auto;
-        max-width: 1160px;
+        max-width: 1030px;
         padding: 0px 40px 70px 40px;
         position: relative;
       }
@@ -234,7 +234,7 @@
     /* Projects and About share the splash content's centered column */
     #projects, #about {
       margin: 0px auto;
-      max-width: 1160px;
+      max-width: 1030px;
     }
 
     h1 { font-size: 32px }
@@ -276,7 +276,7 @@
         grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
         grid-gap: 20px;
         margin-top: 30px;
-        max-width: 1080px;
+        max-width: 950px;
       }
       a {
         background-color: #fff;
