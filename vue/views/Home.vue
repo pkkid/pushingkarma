@@ -124,7 +124,7 @@
 <style>
   #home {
     #splash {
-      height: 530px;
+      height: 470px;
       overflow: hidden;
       position: relative;
 
@@ -174,8 +174,8 @@
         height: 100%;
         justify-content: space-between;
         margin: 0px auto;
-        max-width: 1280px;
-        padding: 0px 40px 90px 40px;
+        max-width: 1160px;
+        padding: 0px 40px 70px 40px;
         position: relative;
       }
       .intro {
@@ -184,15 +184,15 @@
         .kicker {
           color: #fe8019;
           font-family: var(--fontfamily-code);
-          font-size: 13px;
+          font-size: 12px;
           letter-spacing: 2px;
-          margin-bottom: 18px;
+          margin-bottom: 14px;
           text-transform: uppercase;
         }
         .name {
           color: #fbf1c7;
           font-family: var(--fontfamily-title);
-          font-size: 46px;
+          font-size: 38px;
           font-weight: 300;
           line-height: 1.05;
           span { color: #fe8019; font-weight: 400; }
@@ -200,10 +200,10 @@
         p {
           color: #ebdbb2;
           font-family: var(--fontfamily-article);
-          font-size: 18px;
+          font-size: 16px;
           line-height: 1.6;
-          margin: 22px 0px 32px 0px;
-          max-width: 540px;
+          margin: 16px 0px 24px 0px;
+          max-width: 500px;
         }
         .cta, .cta:hover {
           background-color: #fe8019;
@@ -212,9 +212,9 @@
           color: #1d2021;
           display: inline-block;
           font-family: var(--fontfamily-article);
-          font-size: 15px;
+          font-size: 14px;
           font-weight: 600;
-          padding: 14px 26px;
+          padding: 11px 20px;
           text-shadow: none;
         }
         .cta:hover {
@@ -227,20 +227,20 @@
         border: 6px solid #665c54d9;
         box-shadow: 0 20px 50px #0006;
         flex-shrink: 0;
-        width: 160px;
+        width: 130px;
       }
     }
 
     /* Projects and About share the splash content's centered column */
     #projects, #about {
       margin: 0px auto;
-      max-width: 1280px;
+      max-width: 1160px;
     }
 
-    h1 { font-size: 40px }
-    h1 .subtext { font-size: 15px; }
-    h2 { font-size: 25px; }
-    p { font-size: 16px; }
+    h1 { font-size: 32px }
+    h1 .subtext { font-size: 13px; }
+    h2 { font-size: 21px; }
+    p { font-size: 15px; }
 
     #about {
       padding-bottom: 90px;
@@ -254,16 +254,16 @@
           border: 10px solid #282828;
           box-sizing: border-box;
           flex-shrink: 0;
-          height: 300px;
-          margin-top: 40px;
-          margin-right: 80px;
+          height: 240px;
+          margin-top: 30px;
+          margin-right: 60px;
           position: relative;
           top:-10px; left:20px;
-          width: 400px;
+          width: 320px;
           img {
             position: relative;
-            width: 400px;
-            top:-30px; left:-30px;
+            width: 320px;
+            top:-24px; left:-24px;
           }
         }
       }
@@ -273,10 +273,10 @@
       /* As many 300px+ columns as fit, at most three, stacking on narrow screens */
       .projectlist {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-        grid-gap: 30px;
-        margin-top: 40px;
-        max-width: 1200px;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        grid-gap: 20px;
+        margin-top: 30px;
+        max-width: 1080px;
       }
       a {
         background-color: #fff;
@@ -284,36 +284,36 @@
         box-sizing: border-box;
         color: #504945;
         display: block;
-        padding: 30px 40px 33px 40px;
+        padding: 22px 26px 22px 26px;
         position: relative;
         text-decoration: none !important;
         top: 0px;
         transition: all .2s ease;
 
         .mdi{
-          font-size: 3rem;
+          font-size: 2.2rem;
           position: relative;
-          left: -6px;
+          left: -4px;
         }
         .title {
           color: #363636;
-          font-size: 1.4rem;
+          font-size: 1.15rem;
           font-weight: 400;
           left: -1px;
           line-height: 1;
-          margin: 12px 0px 16px 0px;
+          margin: 8px 0px 10px 0px;
           position: relative;
         }
         p {
-          font-size: 14px;
+          font-size: 13px;
           font-weight: 400;
-          min-height: 90px;
-          letter-spacing: 0.5px;
+          min-height: 66px;
+          letter-spacing: 0.3px;
           line-height: 1.7;
           word-wrap: break-word;
         }
         &:hover {
-          top: -10px;
+          top: -6px;
         }
       }
     }
