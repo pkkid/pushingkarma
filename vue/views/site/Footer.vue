@@ -21,6 +21,10 @@
       <div class='footercolumn'>
         <h4>Social Media</h4>
         <div>
+          <i class='mdi mdi-file-account-outline linkicon'/>
+          <router-link to='/resume'>Resume</router-link>
+        </div>
+        <div>
           <i class='icon' style='--img:url(/static/img/icons/github.svg)' />
           <a href='https://github.com/pkkid'>Github</a>
         </div>
@@ -117,6 +121,14 @@
         mask: var(--img) no-repeat center / contain;
         position: relative;
         top: 3px;
+        width: 16px;
+      }
+      .linkicon {
+        display: inline-block;
+        font-size: 18px;
+        line-height: 16px;
+        margin-left: -1px;
+        margin-right: 7px;
         width: 16px;
       }
     }
