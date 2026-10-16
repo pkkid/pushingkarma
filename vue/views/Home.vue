@@ -98,7 +98,7 @@
   import {inject, onBeforeMount} from 'vue'
   import {utils} from '@/utils'
 
-  const motes = createMotes(46)                             // Dust particles floating over the splash image
+  const motes = createMotes(15)                             // Dust particles floating over the splash image
 
   onBeforeMount(function() { utils.setNavPosition('left') })
 
@@ -124,7 +124,7 @@
 <style>
   #home {
     #splash {
-      height: 680px;
+      height: 530px;
       overflow: hidden;
       position: relative;
 
@@ -180,6 +180,7 @@
       }
       .intro {
         max-width: 640px;
+        text-shadow: 0 0 40px #0009;
         .kicker {
           color: #fe8019;
           font-family: var(--fontfamily-code);
@@ -191,7 +192,7 @@
         .name {
           color: #fbf1c7;
           font-family: var(--fontfamily-title);
-          font-size: 68px;
+          font-size: 46px;
           font-weight: 300;
           line-height: 1.05;
           span { color: #fe8019; font-weight: 400; }
@@ -214,6 +215,7 @@
           font-size: 15px;
           font-weight: 600;
           padding: 14px 26px;
+          text-shadow: none;
         }
         .cta:hover {
           box-shadow: 0 8px 20px #0004;
@@ -225,7 +227,7 @@
         border: 6px solid #665c54d9;
         box-shadow: 0 20px 50px #0006;
         flex-shrink: 0;
-        width: 200px;
+        width: 160px;
       }
     }
 
@@ -235,6 +237,7 @@
     p { font-size: 16px; }
 
     #about {
+      padding-bottom: 90px;
       .photowrap {
         display: flex;
         margin-top: 30px;

@@ -54,22 +54,29 @@
     font-size: 0.85rem;
     font-weight: 400;
     line-height: 1.7;
-    overflow: hidden;
     padding-left: 300px;
     position: relative;
     text-align: left;
 
+    /* One map that scrolls with the footer. It rises 450px above the footer only
+     * over the left nav column (clip-path), fades toward the ocean on the right and
+     * toward the top over the nav, and sits above the fixed nav so it shows there. */
     .harbormap {
-      mask-image: linear-gradient(90deg, #000 0%, #000 28%, transparent 88%);
-      opacity: 0.1;
+      clip-path: polygon(0px 0px, 300px 0px, 300px 450px, 100% 450px, 100% 100%, 0px 100%);
+      mask-image:
+        linear-gradient(90deg, #000 0%, #000 43%, transparent 90%),
+        linear-gradient(0deg, #000 0px, #000 270px, transparent 100%);
+      mask-composite: intersect;
+      opacity: 0.06;
       overflow: hidden;
       pointer-events: none;
       position: absolute;
-      top: 0px; left: 300px; right: 0px; bottom: 0px;
+      top: -450px; left: 0px; right: 0px; bottom: 0px;
+      z-index: 11;
       img {
         max-width: none;
         position: absolute;
-        top: -290px; left: -40px;
+        bottom: -464px; left: 0px;
         width: 1200px;
       }
     }
@@ -77,9 +84,9 @@
       bottom: 14px;
       color: var(--darkbg-fg4);
       font-family: var(--fontfamily-code);
-      font-size: 10px;
-      letter-spacing: 1.5px;
-      line-height: 1.6;
+      font-size: 7px;
+      letter-spacing: 1px;
+      line-height: 1.5;
       position: absolute;
       right: 24px;
       text-align: right;
@@ -88,8 +95,10 @@
     }
     .footerwrap {
       margin: 0px auto;
+      padding-bottom: 50px;
       position: relative;
       width: 1005px;
+      z-index: 12;
     }
     .footercolumn {
       float:left;
@@ -122,6 +131,12 @@
         width: 30px;
       }
     }
+  }
+
+  /* Top navigation has no left column for the map to rise into */
+  body.topnav #footer .harbormap {
+    clip-path: none;
+    top: 0px;
   }
 
   @media print {
