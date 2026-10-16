@@ -93,16 +93,19 @@
       text-transform: uppercase;
       span { letter-spacing: 0.5px; text-transform: none; }
     }
+    /* Three columns side by side that narrow (never wrap) on smaller screens */
     .footerwrap {
+      display: flex;
       margin: 0px auto;
+      max-width: 1005px;
       padding-bottom: 50px;
       position: relative;
-      width: 1005px;
       z-index: 12;
     }
     .footercolumn {
       float:left;
-      padding: 50px;
+      min-width: 0px;
+      padding: 50px clamp(15px, 4vw, 50px);
       position: relative;
       .icon {
         background-color: var(--fgcolor);

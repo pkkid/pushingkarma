@@ -25,7 +25,7 @@
     <!-- Projects -->
     <article id='projects'>
       <h1>Projects <div class='subtext'>Whats been keeping me busy</div></h1>
-      <div class='projectlist' style='min-width:1100px; max-width:1200px;'>
+      <div class='projectlist'>
         <div><a href='https://github.com/pkkid/dalica'>
           <i class='mdi mdi-image-multiple-outline'/>
           <div class='title'>Dalica</div>
@@ -174,7 +174,7 @@
         height: 100%;
         justify-content: space-between;
         margin: 0px auto;
-        max-width: 1060px;
+        max-width: 1280px;
         padding: 0px 40px 90px 40px;
         position: relative;
       }
@@ -231,6 +231,12 @@
       }
     }
 
+    /* Projects and About share the splash content's centered column */
+    #projects, #about {
+      margin: 0px auto;
+      max-width: 1280px;
+    }
+
     h1 { font-size: 40px }
     h1 .subtext { font-size: 15px; }
     h2 { font-size: 25px; }
@@ -238,9 +244,12 @@
 
     #about {
       padding-bottom: 90px;
+      /* Text drops below the photo when there isn't room beside it */
       .photowrap {
         display: flex;
+        flex-wrap: wrap;
         margin-top: 30px;
+        row-gap: 40px;
         .photo {
           border: 10px solid #282828;
           box-sizing: border-box;
@@ -261,11 +270,13 @@
     }
 
     #projects {
+      /* As many 300px+ columns as fit, at most three, stacking on narrow screens */
       .projectlist {
         display: grid;
-        grid-template-columns: 30% 30% 30%;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
         grid-gap: 30px;
         margin-top: 40px;
+        max-width: 1200px;
       }
       a {
         background-color: #fff;
@@ -296,7 +307,7 @@
         p {
           font-size: 14px;
           font-weight: 400;
-          height: 90px;
+          min-height: 90px;
           letter-spacing: 0.5px;
           line-height: 1.7;
           word-wrap: break-word;
