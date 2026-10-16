@@ -258,7 +258,7 @@
           margin-top: 30px;
           margin-right: 50px;
           position: relative;
-          top:-10px; left:20px;
+          top:-10px; left:10px;
           width: 280px;
           img {
             position: relative;
@@ -269,6 +269,7 @@
         .aboutme {
           flex: 1 1 400px;
           min-width: 0px;
+          h2 { line-height: 1.2; margin-top: 6px; }
         }
       }
     }
