@@ -269,7 +269,11 @@
         .aboutme {
           flex: 1 1 400px;
           min-width: 0px;
-          h2 { line-height: 1.2; margin-top: 6px; }
+          h2 {
+            line-height: 1.2;
+            margin-top: 6px;
+            .accent { color: #d65d0e; }
+          }
         }
       }
     }
