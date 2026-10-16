@@ -145,8 +145,11 @@
           radial-gradient(ellipse 35% 14% at 75% 60%, #ebdbb229, transparent 70%);
         left: -40%; right: -40%;
       }
+      /* Dark fade in from the left (behind the text) plus the fade to dark at the bottom */
       .shade {
-        background: linear-gradient(180deg, #1d202126 0%, #1d202159 55%, #1d2021 100%);
+        background:
+          linear-gradient(90deg, #1d2021b3 0%, #1d202159 35%, #1d202100 75%),
+          linear-gradient(180deg, #1d202126 0%, #1d202159 55%, #1d2021 100%);
       }
       .dust {
         overflow: hidden;
