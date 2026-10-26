@@ -7,8 +7,8 @@ from ninja import Path, Query, Router
 from ninja.decorators import decorate_view
 from ninja.errors import HttpError
 from os import listdir
-from os.path import basename, exists, getctime, getmtime, join
-from os.path import getsize, isdir, isfile, normpath
+from os.path import basename, commonpath, exists, getctime, getmtime, join
+from os.path import getsize, isdir, isfile, realpath
 from pk.utils import utils
 from pk.utils.django import make_aware, reverse
 from pk.utils.ninja import PageSchema, paginate
@@ -29,10 +29,11 @@ def get_note(request,
     bucket, bucketname = settings.OBSIDIAN_BUCKETS[bucket], bucket
     check_permission = bucket.get('check_permission', lambda user: True)
     if check_permission(request.user):
-        icons = _get_bucket_icons(bucket)
-        filepath = join(bucket['path'], path)
-        if not exists(filepath):
+        bucketroot = realpath(bucket['path'])
+        filepath = realpath(join(bucketroot, path))
+        if commonpath([bucketroot, filepath]) != bucketroot or not isfile(filepath):
             raise HttpError(404, 'Unknown note path.')
+        icons = _get_bucket_icons(bucket)
         with open(filepath, 'r', encoding='utf-8') as handle:
             content = handle.read()
         return dict(
@@ -102,13 +103,13 @@ def list_static(request,
         raise HttpError(404, 'Unknown bucket name.')
     bucket, bucketname = settings.OBSIDIAN_BUCKETS[bucket], bucket
     check_permission = bucket.get('check_permission', lambda user: True)
-    staticroot = f'{bucket['path']}/_static'
-    dirpath = normpath(join(staticroot, path))
+    staticroot = realpath(f'{bucket['path']}/_static')
+    dirpath = realpath(join(staticroot, path))
     # Check permissions and path
     if not check_permission(request.user):
         log.warning(f'check_permission failed for user {request.user}')
         raise HttpError(403, 'Permission denied.')
-    if not dirpath.startswith(staticroot):
+    if commonpath([staticroot, dirpath]) != staticroot:
         log.warning(f'dirpath does not start with staticroot {dirpath}')
         raise HttpError(403, 'Permission denied.')
     if not exists(dirpath) or not isdir(dirpath):
