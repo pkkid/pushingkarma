@@ -7,7 +7,7 @@ RUN apt-get install -y build-essential cron git nginx supervisor
 RUN rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
-COPY pyproject.toml .
+COPY pyproject.toml uv.lock ./
 COPY docker/nginx.conf /etc/nginx/sites-enabled/pushingkarma.conf
 COPY docker/supervisord.conf /etc/supervisor/conf.d/pushingkarma.conf
 COPY docker/crontab.conf /etc/cron.d/pushingkarma
@@ -15,7 +15,8 @@ COPY docker/crontab.conf /etc/cron.d/pushingkarma
 RUN pip install uv
 RUN uv venv /opt/venv
 RUN /opt/venv/bin/python -m ensurepip
-RUN VIRTUAL_ENV=/opt/venv uv pip install -r pyproject.toml
+RUN uv export --frozen --no-hashes --no-emit-project -o /tmp/requirements.txt
+RUN VIRTUAL_ENV=/opt/venv uv pip install -r /tmp/requirements.txt
 
 RUN useradd -u 1026 -m -s /usr/sbin/nologin pkkid && usermod -aG pkkid www-data
 RUN echo 'daemon off;' >> /etc/nginx/nginx.conf
