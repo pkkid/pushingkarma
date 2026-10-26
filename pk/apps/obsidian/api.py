@@ -2,15 +2,13 @@
 import json, glob, logging, re
 from datetime import datetime
 from django.conf import settings
-from django.views.decorators.cache import cache_page
 from ninja import Path, Query, Router
-from ninja.decorators import decorate_view
 from ninja.errors import HttpError
 from os import listdir
 from os.path import basename, commonpath, exists, getctime, getmtime, join
 from os.path import getsize, isdir, isfile, realpath
 from pk.utils import utils
-from pk.utils.django import make_aware, reverse
+from pk.utils.django import cache_response, make_aware, reverse
 from pk.utils.ninja import PageSchema, paginate
 from .schemas import NoteSchema, StaticSchema
 log = logging.getLogger(__name__)
@@ -50,7 +48,7 @@ def get_note(request,
 
 
 @router.get('/notes', response=PageSchema(NoteSchema), exclude_unset=True)
-@decorate_view(cache_page(0 if settings.DEBUG else 300))
+@cache_response(timeout=0 if settings.DEBUG else 300, prefix='notes', peruser=True)
 def list_notes(request,
       search: str=Query('', description='Search term to filter notes'),
       page: int=Query(1, description='Page number of results to return')):
@@ -91,7 +89,7 @@ def list_notes(request,
 
 
 @router.get('/static/{bucket}/{path:path}', response=StaticSchema, exclude_unset=True)
-@decorate_view(cache_page(0 if settings.DEBUG else 300))
+@cache_response(timeout=0 if settings.DEBUG else 300, prefix='notes_static', peruser=True)
 def list_static(request,
       bucket: str=Path(..., description='Name of Obsidian bucket in settings.py'),
       path: str=Path(..., description='Path of static resources in the bucket'),

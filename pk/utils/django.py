@@ -23,7 +23,7 @@ def cache_response(timeout=3600, prefix='viewcache', peruser=True, bodyarg='data
             request = kwargs.get('request') or (args[0] if args else None)
             if request is None or not timeout:
                 return func(*args, **kwargs)
-            parts = [prefix, func.__module__, func.__name__, request.method, request.path]
+            parts = [prefix, func.__module__, func.__name__, request.method, request.get_full_path()]
             if peruser:
                 userid = getattr(getattr(request, 'user', None), 'id', None)
                 parts.append(f'user:{userid or "anon"}')

@@ -41,6 +41,14 @@ def logout(request):
     return {'status': 'Successfully logged out.'}
 
 
+@router.get('/auth_check', response=dict)
+def auth_check(request):
+    """ Verify the current user is authenticated (used by nginx auth_request). """
+    if not request.user.is_authenticated:
+        raise HttpError(403, 'Permission denied.')
+    return {'status': 'Authenticated.'}
+
+
 @router.get('/global_vars', response=GlobalVarsSchema)
 def get_global_vars(request):
     """ Return global variables. """
