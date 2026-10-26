@@ -8,6 +8,7 @@ from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
 from ninja import Body, Router
 from ninja.errors import HttpError
+from ninja.security import django_auth
 from pk.utils.django import cache_response
 from .schemas import GlobalVarsSchema, UserSchema, LoginSchema
 from .schemas import AiPromptQuestionSchema, AiPromptResponseSchema
@@ -58,7 +59,7 @@ def get_global_vars(request):
     return result
 
 
-@router.get('/glances')
+@router.get('/glances', auth=django_auth)
 def glances(request):
     """ Proxy the Glances /api/4/all endpoint to avoid browser Private Network Access restrictions. """
     glances_url = getattr(settings, 'GLANCES_URL', 'http://192.168.4.253:61208')
@@ -66,14 +67,12 @@ def glances(request):
     return response.json()
 
 
-@router.post('/aiprompt', response=Optional[AiPromptResponseSchema])
+@router.post('/aiprompt', auth=django_auth, response=Optional[AiPromptResponseSchema])
 @cache_response(timeout=86400, prefix='aiprompt', peruser=False, bodyarg='data')
 def aiprompt(request, data:AiPromptQuestionSchema=Body(...), cache_only:bool=False):
     """ Ask Gemini a question. Pass cache_only=true to return null on a cache miss instead of
         calling the AI. This allows callers to silently check for a cached response.
     """
-    if not request.user.is_authenticated:
-        raise HttpError(403, 'Permission denied.')
     prompt = data.prompt.strip()
     if not prompt or len(prompt) > settings.AIPROMPT_MAX_CHARS:
         raise HttpError(400, 'Prompt empty or too long.')
