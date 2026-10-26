@@ -40,7 +40,8 @@ def index(request):
 def api_exception(request, err):
     status = getattr(err, 'status_code', 500)
     phrase = HTTPStatus(status).phrase
-    data = dict(status=phrase, message=str(err))
+    message = 'Internal server error.' if status == 500 and not settings.DEBUG else str(err)
+    data = dict(status=phrase, message=message)
     if status == 500: log.exception(err)
     return api.create_response(request, data, status=status)
 

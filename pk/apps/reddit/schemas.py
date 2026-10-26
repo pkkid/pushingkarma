@@ -8,11 +8,11 @@ from pydantic import Field
 class NewsRequestSchema(Schema):
     class QuerySchema(Schema):
         subreddit: str = Field(..., description='Subreddit name to query')
-        count: int = Field(15, description='Number of posts to retrieve')
+        count: int = Field(15, ge=1, le=50, description='Number of posts to retrieve')
         maxtitle: Optional[int] = Field(9999, description='Maximum title length')
         mintext: Optional[int] = Field(0, description='Minimum selftext length')
         maxtext: Optional[int] = Field(9999, description='Maximum selftext length')
-    queries: list[QuerySchema] = Field(..., description='List of subreddit queries')
+    queries: list[QuerySchema] = Field(..., max_length=25, description='List of subreddit queries')
 
 
 class NewsResponseSchema(Schema):
