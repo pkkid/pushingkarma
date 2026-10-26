@@ -143,9 +143,9 @@ def build_docker_image(conn, start=True):
         conn.sudo(f'{DOCKER} rm {DOCKERNAME} || true', logcmd=True)
         # Ensure ownership for non-root daphne process
         conn.sudo(f'chown -R {REMOTEUSER}:users {REMOTEDIR}/pk {REMOTEDIR}/_logs', logcmd=True)
-        # Start the new docker image
+        # Start the new docker image (172.17.0.1 is how the cloudflared container reaches it)
         print(f'Starting Docker Image: {DOCKERNAME}')
-        cmd = f'{DOCKER} run --name {DOCKERNAME} -d -p 127.0.0.1:8080:80/tcp'
+        cmd = f'{DOCKER} run --name {DOCKERNAME} -d -p 127.0.0.1:8080:80/tcp -p 172.17.0.1:8080:80/tcp'
         cmd += ' --security-opt no-new-privileges:true'
         cmd += f' -v {REMOTEDIR}:/app:ro'
         cmd += f' -v {REMOTEDIR}/pk:/app/pk:rw'
