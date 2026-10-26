@@ -17,6 +17,7 @@ RUN uv venv /opt/venv
 RUN /opt/venv/bin/python -m ensurepip
 RUN VIRTUAL_ENV=/opt/venv uv pip install -r pyproject.toml
 
+RUN useradd -u 1026 -m -s /usr/sbin/nologin pkkid && usermod -aG pkkid www-data
 RUN echo 'daemon off;' >> /etc/nginx/nginx.conf
 CMD rm -f /tmp/daphne.sock.lock && supervisord
 

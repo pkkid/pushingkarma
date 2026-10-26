@@ -128,7 +128,7 @@ def setup_log_directory(conn):
 def initialize_django(conn):
     """ Run the Django migrations inside the running docker container. """
     conn.step('Initilizing Django Application')
-    conn.sudo(f'{DOCKER} exec {DOCKERNAME} /opt/venv/bin/python /app/pk/manage.py migrate', logcmd=True)
+    conn.sudo(f'{DOCKER} exec -u {REMOTEUSER} {DOCKERNAME} /opt/venv/bin/python /app/pk/manage.py migrate', logcmd=True)
 
 
 def build_docker_image(conn, start=True):
@@ -141,11 +141,16 @@ def build_docker_image(conn, start=True):
         print(f'Remove Old Docker Image: {DOCKERNAME}')
         conn.sudo(f'{DOCKER} stop {DOCKERNAME} || true', logcmd=True)
         conn.sudo(f'{DOCKER} rm {DOCKERNAME} || true', logcmd=True)
+        # Ensure ownership for non-root daphne process
+        conn.sudo(f'chown -R {REMOTEUSER}:users {REMOTEDIR}/pk {REMOTEDIR}/_logs', logcmd=True)
         # Start the new docker image
         print(f'Starting Docker Image: {DOCKERNAME}')
-        cmd = f'{DOCKER} run --name {DOCKERNAME} -d -p 8080:80/tcp'
-        cmd += f' -v {REMOTEDIR}:/app:rw'
-        cmd += '  -v /volume1/homes/pkkid/Sync/Notes:/notes:ro'
+        cmd = f'{DOCKER} run --name {DOCKERNAME} -d -p 127.0.0.1:8080:80/tcp'
+        cmd += ' --security-opt no-new-privileges:true'
+        cmd += f' -v {REMOTEDIR}:/app:ro'
+        cmd += f' -v {REMOTEDIR}/pk:/app/pk:rw'
+        cmd += f' -v {REMOTEDIR}/_logs:/app/_logs:rw'
+        cmd += ' -v /volume1/homes/pkkid/Sync/Notes:/notes:ro'
         cmd += f' -v {REMOTEDIR}/_logs/nginx:/var/log/nginx:rw'
         cmd += f' -v {REMOTEDIR}/_logs/supervisor:/var/log/supervisor:rw'
         cmd += f' {DOCKERNAME}'
