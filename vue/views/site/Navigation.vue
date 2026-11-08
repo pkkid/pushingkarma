@@ -4,18 +4,19 @@
     <Account :visible='showAccount' @close='showAccount=false'/>
     <div class='sitelinks'>
       <div class='home'><router-link to='/#splash'>Home</router-link></div>
-      <div class='projects' v-if='!user?.id'><router-link to='/#projects'>Projects</router-link></div>
       <div class='notes'><router-link to='/notes'>Notes</router-link></div>
       <div class='budget' v-if='user?.id'><router-link to='/budget'>Budget</router-link></div>
       <div class='stocks' v-if='user?.id'><router-link to='/stocks'>Stocks</router-link></div>
       <div class='account' v-if='user?.id'><a href='#' @click.prevent @click='showAccount=true'>{{user.first_name}}</a></div>
       <div class='apidoc' v-if='user?.id'><a href='/apidoc'>API</a></div>
     </div>
+    <ProjectList/>
   </div>
 </template>
 
 <script setup>
   import {inject, ref} from 'vue'
+  import {ProjectList} from '@/views/projects'
   import {Account, Logo} from '@/views/site'
 
   const {user} = inject('user')
@@ -61,18 +62,30 @@
     --navwidth: 300px;
     --navheight: 0px;
     #navigation {
+      display: flex;
+      flex-direction: column;
       height: 100vh;
       position: fixed;
       width: var(--navwidth);
       z-index: 10;
+      /* Links sit side by side, wrapping when logged in adds more of them. The
+       * hover line is drawn under the link since there is no room beside it. */
       .sitelinks {
-        height: calc(100vh - 250px - 20px);
-        margin-top: 250px;
-        margin-left: 66px;
-        flex-direction: column;
-        justify-content: flex-start;
-        width: 200px;
-        div { padding-bottom: 15px; }
+        column-gap: 28px;
+        flex-shrink: 0;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin: 212px 18px 34px 18px;
+        row-gap: 12px;
+        width: auto;
+        a:before {
+          bottom: -4px;
+          left: 0px;
+          margin-left: 0px;
+          top: auto;
+          transform: none;
+        }
+        a:hover:before { width: 100%; }
       }
     }
     #content {
@@ -91,6 +104,7 @@
       position: fixed;
       width: 100vw;
       z-index: 10;
+      #projectlist { display: none; }
       .sitelinks {
         width: calc(100vw - 320px - 20px);
         margin-left: 320px;

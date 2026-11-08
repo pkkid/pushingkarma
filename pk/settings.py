@@ -59,6 +59,7 @@ INSTALLED_APPS = (
     'pk.apps.obsidian',
     'pk.apps.budget',
     'pk.apps.stocks',
+    'pk.apps.projects',
 )
 MIDDLEWARE = (
     'corsheaders.middleware.CorsMiddleware',
@@ -180,6 +181,27 @@ REDDIT_AUTH = {
     'password': os.getenv('REDDIT_PASSWORD'),
     'user_agent': platform.node()
 }
+
+# GitHub Projects
+# Repos synced hourly by the update_projects command (owner/repo). Display details for
+# each project (name, icon, banner, page content) live in vue/views/projects/projects.js.
+GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
+PROJECTS_GITHUB_REPOS = [
+    'pkkid/dalica',
+    'pkkid/vowelit',
+    'pkkid/claude-aitools',
+    'pushingkarmaorg/python-plexapi',
+    'Archmonger/django-dbbackup',
+    'pkkid/x11pygrid',
+    'pkkid/pkmeter',
+    'pkkid/python-algorithmx',
+    'pkkid/link-manager',
+    'pkkid/colorpecker',
+    'pkkid/chrome-tools',
+    'pkkid/django-searchquery',
+    'pkkid/conky-pkmeter',
+    'pkkid/pushingkarma',
+]
 
 # AI Prompt Settings
 # AI and Gemini Settings

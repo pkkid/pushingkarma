@@ -17,60 +17,42 @@
           <p>I love building things that make my own life a little easier, and I love sharing
             them even more, in case they make yours easier too. Some of them even work on the
             first try.</p>
-          <router-link to='/#projects' class='cta'>See my projects</router-link>
         </div>
         <img class='photo' src='/static/img/photo.jpg'>
       </div>
     </div>
-    <!-- Projects -->
+    <!-- Recent Projects -->
     <article id='projects'>
-      <h1>Projects <div class='subtext'>Whats been keeping me busy</div></h1>
-      <div class='projectlist'>
-        <div><a href='https://github.com/pkkid/dalica'>
-          <i class='mdi mdi-image-multiple-outline'/>
-          <div class='title'>Dalica</div>
-          <p>A fast, local-first photo organizer written in Rust. Star, tag and caption the photos in your own folders.</p>
-        </a></div>
-        <div><a href='https://vowelit.pkarma.com'>
-          <i class='mdi mdi-alphabetical-variant'/>
-          <div class='title'>Vowelit</div>
-          <p>A word game for Android, iOS and the web. Find words on a letter grid solo, or challenge your friends.</p>
-        </a></div>
-        <div><a href='https://github.com/pkkid/claude-aitools'>
-          <i class='mdi mdi-toolbox-outline'/>
-          <div class='title'>Claude AITools Mod</div>
-          <p>A Claude Code mod that adds a slim bar showing usage and cost, plus task checklists and branch cleanup.</p>
-        </a></div>
-        <div><a href='https://github.com/pkkid/python-plexapi'>
-          <i class='mdi mdi-code-block-braces'/>
-          <div class='title'>Python PlexAPI</div>
-          <p>Python bindings for the Plex Server API. Navigate and manage your local or remote shared libraries.</p>
-        </a></div>
-        <div><a href='https://github.com/django-dbbackup/django-dbbackup'>
-          <i class='mdi mdi-database-outline'/>
-          <div class='title'>Django DBBackup</div>
-          <p>Management commands to backup and restore project database to AmazonS3, Dropbox or Local Disk.</p>
-        </a></div>
-        <div><a href='https://github.com/pkkid/pygrid'>
-          <i class='mdi mdi-view-dashboard-outline'/>
-          <div class='title'>PyGrid</div>
-          <p>Easily organize open windows by tiling and positioning them to make the best use of your desktop.</p>
-        </a></div>
-        <div><a href='https://github.com/pkkid/link-manager'>
-          <i class='mdi mdi-vector-link'/>
-          <div class='title'>Link Manager</div>
-          <p>Collection of scripts to help easily sync specific configuration files across all your Linux computers.</p>
-        </a></div>
-        <div><a href='https://github.com/pkkid/django-searchquery'>
-          <i class='mdi mdi-magnify'/>
-          <div class='title'>Django Searchquery</div>
-          <p>Provides advanced search and filtering capabilities to structured data in Django models.</p>
-        </a></div>
-        <div><a href='https://github.com/pkkid/pkmeter-conky'>
-          <i class='mdi mdi-speedometer-slow'/>
-          <div class='title'>PKMeter-Conky</div>
-          <p>Collection of scripts and a Conky configuration. Makes fetching data easy and results stored as json.</p>
-        </a></div>
+      <h1>Recent Projects <div class='subtext'>What I have been building lately</div></h1>
+      <div class='recentlist'>
+        <router-link v-for='project in recent' :key='project.slug' :to='`/projects/${project.slug}`' class='recent'>
+          <div class='banner'>
+            <div class='bgimg' :class='{placeholder:!project.banner}'
+              :style='project.banner ? {backgroundImage:`url(${project.banner})`} : {}'/>
+            <div class='title'>{{project.name}}</div>
+          </div>
+          <div class='details'>
+            <p>{{project.tagline}}</p>
+            <div class='meta' v-if='project.github'>
+              <span v-if='project.github.language'><span class='dot' :style='{backgroundColor:LANGUAGE_COLORS[project.github.language]}'/>{{project.github.language}}</span>
+              <span v-if='project.github.stars'>&#9733; {{utils.intComma(project.github.stars)}}</span>
+            </div>
+          </div>
+        </router-link>
+      </div>
+      <!-- Smaller Projects -->
+      <h1>Smaller Projects <div class='subtext'>Little tools I keep coming back to</div></h1>
+      <div class='smalllist'>
+        <router-link v-for='project in small' :key='project.slug' :to='`/projects/${project.slug}`' class='small'>
+          <ProjectIcon :project='project'/>
+          <div class='title'>{{project.name}}</div>
+          <p>{{project.tagline}}</p>
+          <div class='meta' v-if='project.github'>
+            <span v-if='project.github.language'>{{project.github.language}}</span>
+            <span v-if='project.github.stars'>&#9733; {{project.github.stars}}</span>
+            <span v-if='project.github.pushed'>updated {{utils.timeAgo(new Date(project.github.pushed).getTime(), true)}}</span>
+          </div>
+        </router-link>
       </div>
     </article>
     <!-- About Me -->
@@ -95,12 +77,25 @@
 </template>
 
 <script setup>
-  import {inject, onBeforeMount} from 'vue'
+  import {computed, onBeforeMount} from 'vue'
+  import {useProjects} from '@/composables'
   import {utils} from '@/utils'
+  import {LANGUAGE_COLORS, ProjectIcon} from '@/views/projects'
 
   const motes = createMotes(15)                             // Dust particles floating over the splash image
+  const {projects} = useProjects()                          // Projects with their GitHub stats
+  const recent = computed(() => sortByPushed(projects.value.filter(p => p.section == 'recent')))
+  const small = computed(() => projects.value.filter(p => p.section == 'small'))
 
   onBeforeMount(function() { utils.setNavPosition('left') })
+
+  // Sort By Pushed
+  // Most recently pushed projects first; projects without stats keep their order
+  function sortByPushed(list) {
+    return [...list].sort(function(a, b) {
+      return new Date(b.github?.pushed || 0) - new Date(a.github?.pushed || 0)
+    })
+  }
 
   // Create Motes
   // Build dust particles from a seeded random so they land in the same places on
@@ -208,22 +203,6 @@
           margin: 16px 0px 24px 0px;
           max-width: 500px;
         }
-        .cta, .cta:hover {
-          background-color: #fe8019;
-          border-bottom: none;
-          border-radius: 8px;
-          color: #1d2021;
-          display: inline-block;
-          font-family: var(--fontfamily-article);
-          font-size: 14px;
-          font-weight: 600;
-          padding: 11px 20px;
-          text-shadow: none;
-        }
-        .cta:hover {
-          box-shadow: 0 8px 20px #0004;
-          transform: translateY(-2px);
-        }
       }
       .photo {
         border-radius: 100%;
@@ -282,51 +261,90 @@
     }
 
     #projects {
-      /* As many 300px+ columns as fit, at most three, stacking on narrow screens */
-      .projectlist {
-        display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-        grid-gap: 20px;
-        margin-top: 30px;
-        max-width: 950px;
+      h1 + .recentlist, h1 + .smalllist { margin-top: 30px; }
+      .smalllist + * , .recentlist + h1 { margin-top: 60px; }
+      a, a:hover { color: inherit; text-decoration: none; }
+      .meta {
+        align-items: center;
+        color: var(--lightbg-fg4);
+        display: flex;
+        flex-wrap: wrap;
+        font-size: 12px;
+        gap: 2px 14px;
+        span { align-items:center; display:inline-flex; gap:6px; white-space:nowrap; }
+        .dot { border-radius:50%; height:8px; width:8px; }
       }
-      a {
+      /* Recent projects: banner cards, four across on wide screens */
+      .recentlist {
+        display: grid;
+        gap: 20px;
+        grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      }
+      .recent {
         background-color: #fff;
-        box-shadow: 0 0 20px #ccc;
-        box-sizing: border-box;
-        color: #504945;
-        display: block;
-        padding: 22px 26px 22px 26px;
-        position: relative;
-        text-decoration: none !important;
-        top: 0px;
-        transition: all .2s ease;
-
-        .mdi{
-          font-size: 2.2rem;
+        border-radius: 12px;
+        box-shadow: 0 2px 10px #28282812;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        transition: transform .25s ease, box-shadow .25s ease;
+        &:hover { box-shadow:0 20px 40px #28282824; transform:translateY(-5px); }
+        .banner {
+          align-items: flex-end;
+          display: flex;
+          height: 120px;
+          padding: 12px 16px;
           position: relative;
-          left: -4px;
+        }
+        .bgimg {
+          background-color: #282828;
+          background-position: center;
+          background-size: cover;
+          position: absolute;
+          top:0px; left:0px; right:0px; bottom:0px;
+          &::after {
+            background: linear-gradient(0deg, #1d2021eb 0%, #1d202173 55%, #1d202126 100%);
+            content: '';
+            position: absolute;
+            top:0px; left:0px; right:0px; bottom:0px;
+          }
+          &.placeholder {
+            background-color: #3c3836;
+            background-image: repeating-linear-gradient(135deg, #fbf1c70d 0px 14px, transparent 14px 28px);
+          }
         }
         .title {
-          color: #363636;
-          font-size: 1.15rem;
-          font-weight: 400;
-          left: -1px;
-          line-height: 1;
-          margin: 8px 0px 10px 0px;
+          color: var(--darkbg-fg0);
+          font-family: var(--fontfamily-title);
+          font-size: 20px;
+          font-weight: 700;
           position: relative;
+          text-shadow: 0 2px 10px #0008;
         }
-        p {
-          font-size: 13px;
-          font-weight: 400;
-          min-height: 66px;
-          letter-spacing: 0.3px;
-          line-height: 1.7;
-          word-wrap: break-word;
-        }
-        &:hover {
-          top: -6px;
-        }
+        .details { display:flex; flex:1; flex-direction:column; gap:10px; padding:14px 16px 16px 16px; }
+        p { color:var(--lightbg-fg2); flex:1; font-size:13.5px; line-height:1.6; margin:0px; }
+      }
+      /* Smaller projects: compact cards with a colored icon */
+      .smalllist {
+        display: grid;
+        gap: 14px;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      }
+      .small {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 1px 4px #2828280f;
+        column-gap: 14px;
+        display: grid;
+        grid-template-columns: 34px 1fr;
+        grid-template-rows: auto 1fr auto;
+        padding: 16px 18px;
+        transition: transform .2s ease, box-shadow .2s ease;
+        &:hover { box-shadow:0 12px 24px #2828281a; transform:translateY(-3px); }
+        .projecticon { font-size:30px; grid-row:span 3; justify-self:center; line-height:1; margin-top:-2px; }
+        .title { color:var(--lightbg-fg0); font-family:var(--fontfamily-title); font-size:16px; }
+        p { color:var(--lightbg-fg3); font-size:13px; line-height:1.5; margin:4px 0px 0px 0px; }
+        .meta { font-family:var(--fontfamily-code); font-size:11.5px; margin-top:8px; }
       }
     }
   }

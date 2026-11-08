@@ -53,6 +53,10 @@ export const Obsidian = {
   listNotes(params, signal) { return axios.get(`/api/obsidian/notes`, {params, signal}) },
   listStatic(bucket, path, params, signal) { return axios.get(`/api/obsidian/static/${bucket}/${path}`, {params, signal}) },
 }
+export const Projects = {
+  getRepo(name, signal) { return axios.get(`/api/projects/repos/${name}`, {signal}) },
+  listRepos(signal) { return axios.get(`/api/projects/repos`, {signal}) },
+}
 export const Reddit = {
   getNews(formdata, signal) { return axios.post(`/api/reddit/news`, formdata, {signal}) },
 }
