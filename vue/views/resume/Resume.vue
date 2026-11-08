@@ -3,7 +3,7 @@
     <LayoutPaper>
       <!-- Resume Content -->
       <template #content>
-        <BannerImage banner='/static/img/mtn-landscape.png' :y='0.4'/>
+        <BannerImage banner='/static/img/backgrounds/china-2007-landscape.png' :y='0.4'/>
         <h1>Michael Shepanski
           <div class='subtext'>
             Boston, MA &nbsp;|&nbsp; {{phone}} &nbsp;|&nbsp; <a :href='`mailto:${email}`'>{{email}}</a><br/>

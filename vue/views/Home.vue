@@ -134,7 +134,7 @@
       }
       .bgimg {
         background-color: #282828;
-        background-image: url('/static/img/mtn-landscape.png');
+        background-image: url('/static/img/backgrounds/china-2007-landscape.png');
         background-position: center 40%;
         background-size: cover;
       }

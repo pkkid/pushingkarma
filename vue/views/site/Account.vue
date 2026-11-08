@@ -104,7 +104,7 @@
       line-height: 1.5;
     }
     .image {
-      background-image: url('/static/img/mtn-field.png');
+      background-image: url('/static/img/backgrounds/ai-2025-mtnfield.png');
       background-position: center center;
       background-size: cover;
       border-bottom-right-radius: 8px;
