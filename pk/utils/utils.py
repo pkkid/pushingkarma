@@ -1,5 +1,5 @@
 # encoding: utf-8
-import exifread
+import exifread, functools, html, re
 from calendar import monthrange
 from datetime import date, datetime
 from decimal import Decimal
@@ -40,6 +40,28 @@ def get_photo_datetime(filepath):
             return make_aware(dt)
     dt = datetime.fromtimestamp(getctime(filepath))
     return make_aware(dt)
+
+
+@functools.lru_cache(maxsize=256)
+def get_image_description(filepath, mtime=None):
+    """ Return the description saved in an image's EXIF ImageDescription, falling back to
+        an XMP dc:description (written by editors like gThumb), or None. Pass the file's
+        mtime so the cached result is refreshed when the image is edited.
+    """
+    with open(filepath, 'rb') as handle:
+        tags = exifread.process_file(handle, details=False, stop_tag='Image ImageDescription')
+        if description := str(tags.get('Image ImageDescription', '')).strip():
+            return description
+        # Look for an XMP packet, stored as plain text inside both JPEG and PNG files. The
+        # description is either an element (<dc:description><rdf:Alt><rdf:li>...) or, as
+        # gThumb writes it, an attribute (dc:description="...").
+        handle.seek(0)
+        data = handle.read()
+    match = re.search(rb'<dc:description>.*?<rdf:li[^>]*>(.*?)</rdf:li>', data, re.DOTALL) \
+        or re.search(rb'dc:description="([^"]*)"', data)
+    if not match:
+        return None
+    return html.unescape(match.group(1).decode('utf-8', 'ignore')).strip() or None
 
 
 def first_of_month(dt):

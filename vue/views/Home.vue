@@ -27,8 +27,7 @@
       <div class='recentlist'>
         <router-link v-for='project in recent' :key='project.slug' :to='`/projects/${project.slug}`' class='recent'>
           <div class='banner'>
-            <div class='bgimg' :class='{placeholder:!project.banner}'
-              :style='project.banner ? {backgroundImage:`url(${project.banner})`} : {}'/>
+            <div class='bgimg' :class='{placeholder:!project.banner}' :style='bannerStyle(project)'/>
             <div class='title'>{{project.name}}</div>
           </div>
           <div class='details'>
@@ -80,7 +79,7 @@
   import {computed, onBeforeMount} from 'vue'
   import {useProjects} from '@/composables'
   import {utils} from '@/utils'
-  import {LANGUAGE_COLORS, ProjectIcon} from '@/views/projects'
+  import {LANGUAGE_COLORS, ProjectIcon, bannerStyle} from '@/views/projects'
 
   const motes = createMotes(15)                             // Dust particles floating over the splash image
   const {projects} = useProjects()                          // Projects with their GitHub stats

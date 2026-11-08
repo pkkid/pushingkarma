@@ -3,7 +3,7 @@
     <Logo @dblclick='showAccount=true'/>
     <Account :visible='showAccount' @close='showAccount=false'/>
     <div class='sitelinks'>
-      <div class='home'><router-link to='/#splash'>Home</router-link></div>
+      <div class='home'><router-link to='/#splash'>Projects</router-link></div>
       <div class='notes'><router-link to='/notes'>Notes</router-link></div>
       <div class='budget' v-if='user?.id'><router-link to='/budget'>Budget</router-link></div>
       <div class='stocks' v-if='user?.id'><router-link to='/stocks'>Stocks</router-link></div>
@@ -38,21 +38,20 @@
         text-decoration: none;
         text-transform: uppercase;
       }
+      /* Hover line grows under the link from left to right */
       a:before {
         background-color: var(--darkbg-bg0);
+        bottom: -4px;
         content: "";
         height: 2px;
-        left: 100%;
-        margin-left: 10px;
+        left: 0px;
         position: absolute;
-        top: calc(50% - 0px);
-        transform: translateY(-50%);
         transition: all .3s ease;
         width: 0px;
       }
       a:hover:before {
-        width: 35px;
         background-color: var(--accent);
+        width: 100%;
       }
     }
   }
@@ -68,8 +67,7 @@
       position: fixed;
       width: var(--navwidth);
       z-index: 10;
-      /* Links sit side by side, wrapping when logged in adds more of them. The
-       * hover line is drawn under the link since there is no room beside it. */
+      /* Links sit side by side, wrapping when logged in adds more of them */
       .sitelinks {
         column-gap: 28px;
         flex-shrink: 0;
@@ -78,14 +76,6 @@
         margin: 212px 18px 34px 18px;
         row-gap: 12px;
         width: auto;
-        a:before {
-          bottom: -4px;
-          left: 0px;
-          margin-left: 0px;
-          top: auto;
-          transform: none;
-        }
-        a:hover:before { width: 100%; }
       }
     }
     #content {

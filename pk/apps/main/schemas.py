@@ -31,3 +31,9 @@ class AiPromptQuestionSchema(Schema):
 
 class AiPromptResponseSchema(Schema):
     response: str = Field(..., description='Text response from the AI provider')
+
+
+class BackgroundSchema(Schema):
+    name: str = Field(..., description='Filename of the background image')
+    url: str = Field(..., description='Url of the background image')
+    description: Optional[str] = Field(None, description='Where and when the image was taken')

@@ -1,5 +1,5 @@
 # encoding: utf-8
-import logging, requests
+import glob, logging, requests
 from django.conf import settings
 from django.contrib.auth import authenticate
 from django.contrib.auth import login as django_login
@@ -9,10 +9,12 @@ from django.shortcuts import get_object_or_404
 from ninja import Body, Router
 from ninja.errors import HttpError
 from ninja.security import django_auth
+from os.path import basename, getmtime, join, splitext
+from pk.utils import utils
 from pk.utils.django import cache_response
-from .schemas import GlobalVarsSchema, UserSchema, LoginSchema
+from .schemas import BackgroundSchema, GlobalVarsSchema, UserSchema, LoginSchema
 from .schemas import AiPromptQuestionSchema, AiPromptResponseSchema
-from typing import Optional
+from typing import List, Optional
 log = logging.getLogger(__name__)
 router = Router()
 
@@ -57,6 +59,29 @@ def get_global_vars(request):
     result = dict(**settings.GLOBALVARS)
     result['user'] = user
     return result
+
+
+@router.get('/backgrounds', response=List[BackgroundSchema])
+def list_backgrounds(request):
+    """ List the header background images with a description of where each was taken.
+        The description comes from the image metadata, or from the filename when the
+        image has none (china-2007-landscape.jpg becomes "2007 China").
+    """
+    items = []
+    for filepath in sorted(glob.glob(join(settings.BACKGROUNDS_DIR, '*'))):
+        name = basename(filepath)
+        if splitext(name)[1].lower() not in ('.jpg', '.jpeg', '.png', '.webp'): continue
+        description = utils.get_image_description(filepath, getmtime(filepath)) or _describe_filename(name)
+        items.append(dict(name=name, url=f'{settings.BACKGROUNDS_URL}/{name}', description=description))
+    return items
+
+
+def _describe_filename(name):
+    """ Build a description like "2007 China" from a place-year-subject filename. """
+    parts = splitext(name)[0].split('-')
+    if len(parts) >= 2 and parts[1].isdigit():
+        return f'{parts[1]} {parts[0].title()}'
+    return None
 
 
 @router.get('/glances', auth=django_auth)

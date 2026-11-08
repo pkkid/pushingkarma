@@ -21,6 +21,7 @@ export const Main = {
   aiPrompt(data, params, signal) { return axios.post(`/api/main/aiprompt`, data, {signal, params}) },
   getGlances(signal) { return axios.get(`/api/main/glances`, {signal}) },
   getGlobalVars(signal) { return axios.get(`/api/main/global_vars`, {signal}) },
+  listBackgrounds(signal) { return axios.get(`/api/main/backgrounds`, {signal}) },
   login(data, signal) { return axios.post(`/api/main/login`, data, {signal}) },
   logout(signal) { return axios.post(`/api/main/logout`, null, {signal}) },
 }

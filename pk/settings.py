@@ -182,6 +182,12 @@ REDDIT_AUTH = {
     'user_agent': platform.node()
 }
 
+# Background Images
+# Header images for the site and project pages. Each image's description (where it
+# was taken) is read from its EXIF/XMP metadata; see list_backgrounds in main/api.py.
+BACKGROUNDS_DIR = f'{BASE_DIR}/public/static/img/backgrounds'
+BACKGROUNDS_URL = '/static/img/backgrounds'
+
 # GitHub Projects
 # Repos synced hourly by the update_projects command (owner/repo). Display details for
 # each project (name, icon, banner, page content) live in vue/views/projects/projects.js.

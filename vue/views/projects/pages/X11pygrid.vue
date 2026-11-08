@@ -71,7 +71,7 @@ x11pygrid  <span class='comment'># runs in the background, then use Ctrl+Alt+Num
     }
     .desktop {
       aspect-ratio: 16 / 10;
-      background: #32302f url('/static/img/mtn-landscape.png') center / cover;
+      background: #32302f url('/static/img/backgrounds/china-2007-landscape.png') center / cover;
       border-radius: 6px;
       overflow: hidden;
       position: relative;

@@ -84,7 +84,7 @@ def list_notes(request,
                 ))
     items = [r for r in items if r['score'] > 0] if search != '' else items
     items = sorted(items, key=lambda r: (-r['score'],r['title']))
-    data = paginate(request, items, page=page, perpage=50)
+    data = paginate(request, items, page=page, perpage=500)
     return data
 
 

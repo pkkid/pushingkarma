@@ -2,10 +2,9 @@
   <div id='project' class='lightbg' v-if='project' :key='project.slug'>
     <!-- Banner header with name, GitHub stats and links -->
     <header class='banner'>
-      <div class='bgimg' :class='{placeholder:!project.banner}' :style='bannerStyle'/>
+      <div class='bgimg' :class='{placeholder:!project.banner}' :style='bannerStyle(project)'/>
       <div class='shade'/>
-      <div class='crumbs'><router-link to='/'>Home</router-link> / Projects / {{project.name}}</div>
-      <div class='credit' v-if='project.banner && project.credit'>{{project.credit}}</div>
+      <div class='credit' v-if='project.banner && describe(project.banner)'>{{describe(project.banner)}}</div>
       <div class='inner'>
         <div class='title'>
           <h1>{{project.name}}</h1>
@@ -15,7 +14,7 @@
             <span class='chip'><i class='mdi mdi-source-fork'/><b>{{utils.intComma(github.forks)}}</b> forks</span>
             <span class='chip'><i class='mdi mdi-record-circle-outline'/><b>{{utils.intComma(github.issues)}}</b> open issues</span>
             <span class='chip' v-if='github.language'><span class='dot' :style='{backgroundColor:languageColor}'/>{{github.language}}</span>
-            <span class='chip' v-if='github.pushed'><i class='mdi mdi-clock-outline'/>Updated {{utils.timeAgo(new Date(github.pushed).getTime())}}</span>
+            <span class='chip' v-if='recentlyUpdated'><i class='mdi mdi-clock-outline'/>Updated {{utils.timeAgo(new Date(github.pushed).getTime())}}</span>
           </div>
         </div>
         <div class='actions'>
@@ -70,12 +69,14 @@
   import {computed, defineAsyncComponent, onBeforeMount, ref, watch} from 'vue'
   import {useRoute} from 'vue-router'
   import {IconMessage} from '@/components'
-  import {useProjects} from '@/composables'
+  import {useBackgrounds, useProjects} from '@/composables'
   import {api, utils} from '@/utils'
-  import {CommitChart, LANGUAGE_COLORS} from '@/views/projects'
+  import {CommitChart, LANGUAGE_COLORS, bannerStyle} from '@/views/projects'
 
+  const RECENT_MS = 183 * 86400000          // Show the Updated pill for pushes within about six months
   const route = useRoute()
   const {projects} = useProjects()
+  const {describe} = useBackgrounds()
   const commits = ref(null)                 // Commit counts per day for this project
   const copied = ref(false)                 // True briefly after copying the install command
 
@@ -85,15 +86,10 @@
   const website = computed(() => project.value.website || github.value?.homepage)
   const websiteHost = computed(() => website.value ? new URL(website.value).hostname : null)
   const languageColor = computed(() => LANGUAGE_COLORS[github.value?.language] || 'var(--darkbg-fg4)')
+  const recentlyUpdated = computed(() => github.value?.pushed && Date.now() - new Date(github.value.pushed) <= RECENT_MS)
   const page = computed(() => project.value?.page ? defineAsyncComponent(project.value.page) : null)
 
   onBeforeMount(function() { utils.setNavPosition('left') })
-
-  // Banner Style
-  // Use the project's banner image when it has one, otherwise the striped placeholder
-  const bannerStyle = computed(function() {
-    return project.value.banner ? {backgroundImage:`url(${project.value.banner})`} : {}
-  })
 
   // Related
   // Up to four other projects written in the same language
@@ -147,26 +143,20 @@
         }
       }
       .shade { background: linear-gradient(0deg, #1d2021eb 0%, #1d202173 55%, #1d202126 100%); }
-      .crumbs {
-        color: var(--darkbg-fg3);
-        font-family: var(--fontfamily-article);
-        font-size: 12px;
-        left: 64px;
-        letter-spacing: 0.5px;
-        position: absolute;
-        top: 22px;
-        a { color:var(--darkbg-fg2); }
-      }
+      /* Where the banner photo was taken, styled like the footer map label on a dark
+       * semi-transparent tag so it stays readable over bright photos */
       .credit {
-        background-color: #1d202180;
-        border-radius: 4px;
-        color: #fbf1c799;
+        background-color: #0006;
+        border-radius: 3px;
+        color: var(--darkbg-fg2);
         font-family: var(--fontfamily-code);
-        font-size: 11px;
-        padding: 3px 8px;
+        font-size: 9px;
+        letter-spacing: 1px;
+        padding: 4px 8px;
         position: absolute;
-        right: 26px;
-        top: 22px;
+        right: 22px;
+        text-transform: uppercase;
+        top: 21px;
       }
       .inner {
         align-items: flex-end;
@@ -336,7 +326,6 @@
   @media (max-width: 1100px) {
     #project .body { grid-template-columns:1fr; padding:30px 20px 60px 20px; }
     #project .banner .inner { padding:0px 20px 30px 20px; }
-    #project .banner .crumbs { left:20px; }
     #project .banner h1 { font-size:38px; }
   }
 </style>
