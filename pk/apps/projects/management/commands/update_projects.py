@@ -13,6 +13,7 @@ from pk.utils.logging import update_logging_filepath
 log = logging.getLogger(__name__)
 
 GITHUB_API = 'https://api.github.com'
+MAX_CONTRIBUTORS = 10
 
 
 class Command(BaseCommand):
@@ -58,6 +59,7 @@ class Command(BaseCommand):
         commits.pop(since, None)
         commits.update(self.get_commit_counts(name, since))
         repo.commits = dict(sorted(commits.items()))
+        repo.contributors = self.get_contributors(name)
         repo.save()
         log.info(f'Updated {name}: {repo.stars} stars, {sum(repo.commits.values())} commits')
 
@@ -78,6 +80,18 @@ class Command(BaseCommand):
                 counts[item['commit']['committer']['date'][:10]] += 1
             url, params = response.links.get('next', {}).get('url'), None
         return dict(counts)
+
+    def get_contributors(self, name):
+        """ Return the top human contributors as [{login, avatar, commits}]. An empty
+            repo returns 204 No Content, and a very large one 403 when GitHub declines
+            to compute the list, so both are treated as no contributors.
+        """
+        response = self.get(f'/repos/{name}/contributors', {'per_page': 50}, allow=(204, 403))
+        if response.status_code != 200:
+            return []
+        humans = [c for c in response.json() if c['type'] == 'User']
+        return [{'login': c['login'], 'avatar': c['avatar_url'], 'commits': c['contributions']}
+            for c in humans[:MAX_CONTRIBUTORS]]
 
     def get(self, url, params=None, allow=()):
         """ GET a GitHub API url, raising on errors other than the allowed codes. """

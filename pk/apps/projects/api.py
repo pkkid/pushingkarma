@@ -12,7 +12,7 @@ router = Router()
 @router.get('/repos', response=List[RepoSchema])
 def list_repos(request):
     """ List GitHub stats for all synced project repos, without commit history. """
-    return GithubRepo.objects.defer('commits').order_by('-stars', 'name')
+    return GithubRepo.objects.defer('commits', 'contributors').order_by('-stars', 'name')
 
 
 @router.get('/repos/{owner}/{name}', response=RepoDetailSchema, url_name='repo')

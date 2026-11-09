@@ -20,16 +20,20 @@
     </div>
     <div class='caption'>Tap a key twice to cycle 1/2, 1/3 and 2/3 widths, like the real thing.</div>
     <h2>Getting started</h2>
-    <pre><span class='comment'># Needs python3-gi and python3-xlib</span>
-pip install x11pygrid
-x11pygrid  <span class='comment'># runs in the background, then use Ctrl+Alt+Numpad</span></pre>
+    <CodeEditor :value='INSTALL' language='bash' showlinenums readonly/>
   </div>
 </template>
 
 <script setup>
   import {computed, ref} from 'vue'
+  import {CodeEditor} from '@/components'
 
   defineProps({project:{type:Object, required:true}})
+  const INSTALL = [
+    '# Needs python3-gi and python3-xlib',
+    'pip install x11pygrid',
+    'x11pygrid  # runs in the background, then use Ctrl+Alt+Numpad',
+  ].join('\n')
   const KEYS = [7, 8, 9, 4, 5, 6, 1, 2, 3]  // Numpad layout, top row first
   const TASKBAR = 0.06                      // Fraction of the desktop height used by the taskbar
   const current = ref(5)                    // Last numpad key pressed

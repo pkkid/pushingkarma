@@ -13,6 +13,8 @@
 //   bannerY: Vertical position of the banner image, 0 (top) to 100 (bottom), default 50
 //   website: Link to a dedicated website for the project
 //   install: Install command shown in the project page side panel
+//   contributors: Number of top contributors to call out in the side panel (my own
+//     accounts are left out). Omit to hide the contributors card.
 //   page: Lazy import of a component with the writeup or demo. Projects without
 //     one get a short page built from the tagline and GitHub description.
 
@@ -36,8 +38,10 @@ export const PROJECTS = [
     banner:'thailand-2026-mtntemple.jpg',
     tagline:'A Claude Code mod that adds a slim bar showing usage and cost, plus task checklists and branch cleanup.'},
   {slug:'python-plexapi', name:'Python PlexAPI', repo:'pushingkarmaorg/python-plexapi', section:'recent', install:'pip install plexapi',
-    banner:'thailand-2026-temple.jpg',
-    tagline:'Python bindings for the Plex API. Navigate and manage your local or remote shared libraries.'},
+    contributors:5,
+    banner:'thailand-2026-temple.jpg', bannerY:15,
+    tagline:'Python bindings for the Plex API. Navigate and manage your local or remote shared libraries.',
+    page:() => import('./pages/PythonPlexapi.vue')},
   {slug:'django-dbbackup', name:'Django DBBackup', repo:'Archmonger/django-dbbackup', install:'pip install django-dbbackup',
     banner:'brazil-2009-mtns.jpg',
     tagline:'Management commands to backup and restore project database to AmazonS3, Dropbox or Local Disk.'},

@@ -21,6 +21,7 @@ class GithubRepo(TimeStampedModel):
     issues = models.IntegerField(default=0)
     pushed = models.DateTimeField(null=True, blank=True)
     commits = models.JSONField(default=dict, help_text='Commit counts per day {YYYY-MM-DD: count}')
+    contributors = models.JSONField(default=list, help_text='Top contributors [{login, avatar, commits}]')
     icon = models.TextField(null=True, blank=True, help_text='mdi icon class or raw <svg> markup')
     color = models.CharField(max_length=32, null=True, blank=True, help_text='CSS color for the icon')
 

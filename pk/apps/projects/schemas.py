@@ -22,3 +22,4 @@ class RepoSchema(Schema):
 
 class RepoDetailSchema(RepoSchema):
     commits: dict = Field(..., description='Commit counts per day {YYYY-MM-DD: count}')
+    contributors: list = Field(..., description='Top contributors [{login, avatar, commits}]')

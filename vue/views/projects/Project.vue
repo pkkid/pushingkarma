@@ -44,6 +44,13 @@
           </dl>
           <CommitChart :commits='commits'/>
         </div>
+        <div class='card contributors' v-if='contributors.length'>
+          <h4>Contributors</h4>
+          <a v-for='person in contributors' :key='person.login' :href='`https://github.com/${person.login}`'>
+            <img :src='`${person.avatar}&s=64`' alt='' loading='lazy'/>{{person.login}}
+            <span>{{utils.intComma(person.commits)}} commits</span>
+          </a>
+        </div>
         <div class='card' v-if='project.install'>
           <h4>Install</h4>
           <div class='install'>
@@ -77,7 +84,9 @@
   const route = useRoute()
   const {projects} = useProjects()
   const {describe} = useBackgrounds()
+  const OWN_ACCOUNTS = ['pkkid', 'mshepanski-nasuni']  // My accounts, left out of the contributors card
   const commits = ref(null)                 // Commit counts per day for this project
+  const people = ref([])                    // Top contributors for this project
   const copied = ref(false)                 // True briefly after copying the install command
 
   const project = computed(() => projects.value.find(p => p.slug == route.params.slug))
@@ -87,6 +96,7 @@
   const websiteHost = computed(() => website.value ? new URL(website.value).hostname : null)
   const languageColor = computed(() => LANGUAGE_COLORS[github.value?.language] || 'var(--darkbg-fg4)')
   const recentlyUpdated = computed(() => github.value?.pushed && Date.now() - new Date(github.value.pushed) <= RECENT_MS)
+  const contributors = computed(() => people.value.filter(p => !OWN_ACCOUNTS.includes(p.login)).slice(0, project.value.contributors))
   const page = computed(() => project.value?.page ? defineAsyncComponent(project.value.page) : null)
 
   onBeforeMount(function() { utils.setNavPosition('left') })
@@ -100,13 +110,17 @@
   })
 
   // Watch Project
-  // Fetch the commit history whenever the project changes
+  // Fetch the commit history and contributors whenever the project changes
   watch(() => project.value?.repo, async function(repo) {
     commits.value = null
+    people.value = []
     if (!repo) { return }
     try {
       var {data} = await api.Projects.getRepo(repo)
-      if (repo == project.value?.repo) { commits.value = data.commits }
+      if (repo == project.value?.repo) {
+        commits.value = data.commits
+        people.value = project.value.contributors ? data.contributors : []
+      }
     } catch (err) {
       console.error(`Unable to load commits for ${repo}`, err)
     }
@@ -232,19 +246,9 @@
       padding: 44px 64px 80px 64px;
     }
     article.writeup {
-      color: var(--lightbg-fg1);
-      font-size: 16px;
       padding: 0px;
       max-width: 720px;
-      h2:first-child { margin-top:0px; }
-      .lede {
-        color: var(--lightbg-fg0);
-        font-family: var(--fontfamily-title);
-        font-size: 19px;
-        font-weight: 300;
-        line-height: 1.75;
-        margin-top: 0px;
-      }
+      h2:first-child, .lede { margin-top:0px; }
       /* Placeholder prompts in writeups that have not been written yet */
       .draft {
         border: 1px dashed var(--lightbg-bg4);
@@ -253,18 +257,6 @@
         font-style: italic;
         padding: 12px 16px;
         &::before { content:'Draft: '; font-style:normal; font-weight:600; }
-      }
-      pre {
-        background-color: var(--darkbg-bgh);
-        border-radius: 10px;
-        color: var(--darkbg-fg1);
-        font-family: var(--fontfamily-code);
-        font-size: 13px;
-        line-height: 1.7;
-        margin: 10px 0px 20px 0px;
-        overflow-x: auto;
-        padding: 18px 20px;
-        .comment { color:var(--darkbg-gray); }
       }
     }
     .side .card {
@@ -308,6 +300,19 @@
           font-size: 16px;
           padding: 4px 8px;
         }
+      }
+      &.contributors a, &.contributors a:hover {
+        align-items: center;
+        border-bottom: 1px solid var(--lightbg-bg1);
+        color: var(--lightbg-fg1);
+        display: flex;
+        font-size: 14px;
+        gap: 10px;
+        padding: 6px 0px;
+        text-decoration: none;
+        &:last-child { border-bottom:0px; }
+        img { border-radius:50%; height:24px; width:24px; }
+        span { color:var(--lightbg-fg4); font-family:var(--fontfamily-code); font-size:12px; margin-left:auto; }
       }
       &.related a, &.related a:hover {
         text-decoration: none;
