@@ -1,8 +1,8 @@
 <template>
   <div v-if='ready'>
+    <Notifications ref='notifications'/>
     <router-view v-if='route.name == "newtab"'/>
     <template v-else>
-      <Notifications ref='notifications'/>
       <Navigation/>
       <div id='content' class='gridbgx'><router-view/></div>
       <Footer/>

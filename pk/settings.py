@@ -56,6 +56,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.staticfiles',
     'pk.apps.main',
+    'pk.apps.bookmarks',
     'pk.apps.obsidian',
     'pk.apps.budget',
     'pk.apps.stocks',

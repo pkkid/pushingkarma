@@ -10,6 +10,7 @@ from http import HTTPStatus
 from ninja import NinjaAPI
 from ninja.errors import HttpError, ValidationError
 from pk.apps.main.api import router as main_router
+from pk.apps.bookmarks.api import router as bookmarks_router
 from pk.apps.budget.api import router as budget_router
 from pk.apps.obsidian.api import router as obsidian_router
 from pk.apps.projects.api import router as projects_router
@@ -22,6 +23,7 @@ log = logging.getLogger(__name__)
 api = NinjaAPI(title='PushingKarma API', urls_namespace='api')
 api.add_router('/', root_router)
 api.add_router('/main', main_router)
+api.add_router('/bookmarks', bookmarks_router)
 api.add_router('/budget', budget_router)
 api.add_router('/obsidian', obsidian_router)
 api.add_router('/projects', projects_router)

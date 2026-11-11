@@ -1,6 +1,7 @@
 <template>
   <div id='newtab-wrapper' @dblclick='cycleLayout'>
-    <div id='newtab' :class='{fullscreen}'>
+    <BookmarksBar v-if='showBookmarks'/>
+    <div id='newtab' :class='{fullscreen, bookmarks:showBookmarks}'>
       <Transition name='layout-fade' mode='out-in'>
         <LayoutSimple v-if='layout === "simple"' key='simple' />
         <LayoutStats v-else-if='layout === "stats"' key='stats' :style='{zoom: statsZoom}' />
@@ -10,8 +11,9 @@
 </template>
 
 <script setup>
-  import {onMounted, ref} from 'vue'
+  import {computed, inject, onMounted, ref} from 'vue'
   import useStorage from '@/composables/useStorage'
+  import BookmarksBar from './BookmarksBar.vue'
   import LayoutSimple from './LayoutSimple.vue'
   import LayoutStats from './LayoutStats.vue'
 
@@ -19,6 +21,8 @@
   const layout = useStorage('newtab.layout', 'simple')  // Current active layout
   const fullscreen = ref(false)  // True when browser is in fullscreen
   const statsZoom = ref(1)  // CSS zoom applied to stats layout when not fullscreen
+  const {user} = inject('user')  // Current user, bookmarks require login
+  const showBookmarks = computed(() => !fullscreen.value && Boolean(user.value))  // Bookmarks bar when windowed
 
   // On Mounted
   // Initialize fullscreen status and update on resize
@@ -63,6 +67,7 @@
     cursor: default;
     user-select: none;
     display: flex;
+    flex-direction: column;
   }
 
   #newtab {
@@ -82,6 +87,7 @@
       text-decoration: none;
       &:hover { text-decoration: underline; }
     }
+    &.bookmarks { height: calc(100vh - 31px); }
     &.fullscreen {
       width: calc(100vw - 20px); height: calc(100vh - 20px);
       animation: square-move 240s linear infinite;

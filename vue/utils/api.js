@@ -25,6 +25,13 @@ export const Main = {
   login(data, signal) { return axios.post(`/api/main/login`, data, {signal}) },
   logout(signal) { return axios.post(`/api/main/logout`, null, {signal}) },
 }
+export const Bookmarks = {
+  createBookmark(data, signal) { return axios.post(`/api/bookmarks`, data, {signal}) },
+  deleteBookmark(pk, signal) { return axios.delete(`/api/bookmarks/${pk}`, {signal}) },
+  listBookmarks(signal) { return axios.get(`/api/bookmarks`, {signal}) },
+  moveBookmark(pk, data, signal) { return axios.post(`/api/bookmarks/${pk}/move`, data, {signal}) },
+  updateBookmark(pk, data, signal) { return axios.patch(`/api/bookmarks/${pk}`, data, {signal}) },
+}
 export const Budget = {
   createAccount(data, signal) { return axios.post(`/api/budget/accounts`, data, {signal}) },
   createCategory(data, signal) { return axios.post(`/api/budget/categories`, data, {signal}) },
