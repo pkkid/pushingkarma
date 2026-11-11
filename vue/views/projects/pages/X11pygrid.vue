@@ -1,6 +1,11 @@
 <template>
   <div id='x11pygrid'>
     <p class='lede'>
+      x11 PyGrid is a tiny tool for snapping windows into place on an X11 desktop. I wrote
+      it for myself, and it turned out to be one of my favorite exercises in keeping things
+      simple.
+    </p>
+    <p>
       Hold Ctrl+Alt and tap the numpad to throw the focused window into a slot on the
       grid. Tap the same key again to cycle through widths. Try it below.
     </p>
@@ -20,7 +25,43 @@
     </div>
     <div class='caption'>Tap a key twice to cycle 1/2, 1/3 and 2/3 widths, like the real thing.</div>
     <h2>Getting started</h2>
+    <p>On Ubuntu or Debian, in an X11 session:</p>
     <CodeEditor :value='INSTALL' language='bash' showlinenums readonly/>
+    <h2>How it started</h2>
+    <p>
+      I was looking for something to do simple window management on my PC. Nothing fancy,
+      just a quick way to push windows to the left or right half of the screen without
+      dragging their edges around. I came across
+      <a href='https://github.com/ssokolow/quicktile'>QuickTile</a>, which is a great tool,
+      but I wanted to change how a few things worked.
+    </p>
+    <p>
+      When I dug into the code, I realized the core of what it did was actually really
+      simple, and most of the repo was scaffolding built up around it. That scaffolding
+      just was not useful to me. So while I was adding the features I wanted, I also
+      updated it to use the newer GNOME and X11 libraries, and found that the whole thing
+      could be written in a couple hundred lines of code.
+    </p>
+    <h2>Keeping it small</h2>
+    <p>
+      I really liked the simplicity of that, so I scaled the code way back to a single file
+      that sits in the background and manages your windows. I put it online as a tool I
+      used myself, and a few other people found it useful too. Over the years there have
+      been a handful of contributions here and there, but for the most part it just quietly
+      worked for anyone running X11.
+    </p>
+    <h2>Where it is now</h2>
+    <p>
+      These days I do not use it much myself, because the Linux desktop has largely moved
+      on to Wayland. Wayland does not let an outside program move other applications'
+      windows around unless that code lives inside the desktop shell itself, so a small
+      background tool like this simply cannot work there.
+    </p>
+    <p>
+      If you are on GNOME with Wayland, there are better options now in the form of GNOME
+      Shell extensions. But if you are still on an X11 desktop like Xfce, MATE or Cinnamon,
+      x11 PyGrid still does its one job well, and I am happy it was useful in its time.
+    </p>
   </div>
 </template>
 
@@ -30,8 +71,8 @@
 
   defineProps({project:{type:Object, required:true}})
   const INSTALL = [
-    '# Needs python3-gi and python3-xlib',
-    'pip install x11pygrid',
+    'sudo apt install pipx python3-gi gir1.2-gtk-3.0',
+    'pipx install --system-site-packages x11pygrid',
     'x11pygrid  # runs in the background, then use Ctrl+Alt+Numpad',
   ].join('\n')
   const KEYS = [7, 8, 9, 4, 5, 6, 1, 2, 3]  // Numpad layout, top row first

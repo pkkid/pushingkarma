@@ -193,19 +193,20 @@ BACKGROUNDS_URL = '/static/img/backgrounds'
 # each project (name, icon, banner, page content) live in vue/views/projects/projects.js.
 GITHUB_TOKEN = os.getenv('GITHUB_TOKEN')
 PROJECTS_GITHUB_REPOS = [
-    'pkkid/dalica',
-    'pkkid/vowelit',
-    'pkkid/claude-aitools',
-    'pushingkarmaorg/python-plexapi',
-    'Archmonger/django-dbbackup',
-    'pkkid/x11pygrid',
-    'pkkid/pkmeter',
-    'pkkid/python-algorithmx',
-    'pkkid/link-manager',
-    'pkkid/colorpecker',
-    'pkkid/chrome-tools',
-    'pkkid/django-searchquery',
     'pkkid/conky-pkmeter',
+    'pkkid/dalica',
+    'pkkid/puzzle-a-day',
+    'pkkid/vowelit',
+    'pkkid/x11pygrid',
+    'pkkid/vscode-pksthemes',
+    'pkkid/claude-aitools',
+    'pkkid/django-searchquery',
+    'pkkid/chrome-newtab',
+    'pkkid/link-manager',
+    'pkkid/pks-movie-database',
+    'pkkid/colorpecker',
+    'Archmonger/django-dbbackup',
+    'pushingkarmaorg/python-plexapi',
     'pkkid/pushingkarma',
 ]
 

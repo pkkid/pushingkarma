@@ -51,6 +51,10 @@
             <span>{{utils.intComma(person.commits)}} commits</span>
           </a>
         </div>
+        <figure class='screenshot' v-if='project.screenshot'>
+          <img :src='`/static/img/projects/${project.screenshot.src}`' :alt='project.screenshot.caption'/>
+          <figcaption>{{project.screenshot.caption}}</figcaption>
+        </figure>
         <div class='card' v-if='project.install'>
           <h4>Install</h4>
           <div class='install'>
@@ -240,14 +244,13 @@
     .body {
       align-items: start;
       display: grid;
-      gap: 44px;
+      gap: 64px;
       grid-template-columns: minmax(0px, 1fr) 300px;
       max-width: 1260px;
       padding: 44px 64px 80px 64px;
     }
     article.writeup {
       padding: 0px;
-      max-width: 720px;
       h2:first-child, .lede { margin-top:0px; }
       /* Placeholder prompts in writeups that have not been written yet */
       .draft {
@@ -258,6 +261,15 @@
         padding: 12px 16px;
         &::before { content:'Draft: '; font-style:normal; font-weight:600; }
       }
+    }
+    .side .screenshot {
+      align-items: center;
+      display: flex;
+      flex-direction: column;
+      margin: 0px 0px 18px 0px;
+      text-align: center;
+      img { border-radius:6px; box-shadow:0 4px 18px #28282840; display:block; max-width:100%; }
+      figcaption { color:var(--lightbg-fg4); font-family:var(--fontfamily-article); font-size:12.5px; margin-top:10px; }
     }
     .side .card {
       background-color: #fff;
