@@ -10,24 +10,6 @@
       <i class='mdi mdi-chevron-double-right'/>
       <BookmarkMenu v-if='openPath[0] === "overflow"' :items='overflowItems' :level='1' :anchor='overflowEl'/>
     </div>
-    <!-- Search -->
-    <div ref='searchWrapEl' class='search'>
-      <i class='mdi mdi-magnify'/>
-      <input v-model='query' type='text' placeholder='Search bookmarks' spellcheck='false'
-        @focus='openSearch' @input='openSearch' @blur='searchOpen = false' @keydown='onSearchKeydown'/>
-    </div>
-    <div class='barbtn' title='Add bookmark or folder' @click='openEditor(null, null)'><i class='mdi mdi-plus'/></div>
-    <!-- Search results -->
-    <Teleport to='body'>
-      <div v-if='searchOpen && query.trim()' class='bookmark-menu bookmark-search' :style='searchStyle'>
-        <a v-for='(result, i) in results' :key='result.item.id' :href='result.item.url' class='bookmark link'
-          :class='{selected:i === selected}' @mouseenter='selected = i' @mousedown.prevent>
-          <div class='title'>{{result.item.title || result.item.url}}</div>
-          <div class='subtitle'>{{result.subtitle}}</div>
-        </a>
-        <div v-if='!results.length' class='empty'>No bookmarks found</div>
-      </div>
-    </Teleport>
     <!-- Context menu -->
     <Teleport to='body'>
       <div v-if='ctxmenu' class='bookmark-menu bookmark-ctxmenu' :style='ctxmenu.style' @contextmenu.prevent>
@@ -35,7 +17,7 @@
         <div v-if='["folder", "root"].includes(ctxmenu.item.kind)' class='bookmark' @click='openEditor(null, ctxmenu.item.id)'>Add item here...</div>
         <template v-if='ctxmenu.item.kind !== "root"'>
           <div v-if='ctxmenu.item.kind !== "separator"' class='bookmark' @click='openEditor(ctxmenu.item)'>Edit...</div>
-          <div class='bookmark' @click='deleteBookmark(ctxmenu.item)'>Delete</div>
+          <div class='bookmark' @click='deleteBookmark(ctxmenu.item)'>Delete...</div>
         </template>
       </div>
     </Teleport>
@@ -50,21 +32,16 @@
   import BookmarkEditor from './BookmarkEditor.vue'
   import BookmarkItem from './BookmarkItem.vue'
   import BookmarkMenu from './BookmarkMenu.vue'
+  import {askDelete, load, tree, walk} from './bookmarks'
 
   const {notify} = inject('notify')
-  const tree = ref([])                              // Nested bookmarks tree from the server
   const itemsEl = ref(null)                         // Bar items container element
   const overflowEl = ref(null)                      // Overflow (>>) button element
-  const searchWrapEl = ref(null)                    // Search input wrapper element
   const visibleCount = ref(999)                     // Number of bar items that fit in the bar
   const openPath = ref([])                          // Open folder ids by level ([barFolder, subFolder, ...])
   const drag = reactive({id:null, targetId:null, pos:null})  // Current drag and drop state
   const ctxmenu = ref(null)                         // Context menu {item, style}
   const editor = reactive({visible:false, item:null, parent:null})  // Add/edit modal state
-  const query = ref('')                             // Search input text
-  const searchOpen = ref(false)                     // True when the search results are displayed
-  const searchStyle = ref({})                       // Fixed position of the search results
-  const selected = ref(0)                           // Highlighted search result index
   var hoverTimer = null                             // Delay opening menus while hovering
   var resizeObserver = null                         // Recalculates overflow when the bar resizes
   const barRoot = {kind:'root', id:null}             // Stand-in for the bar itself in the context menu
@@ -89,13 +66,6 @@
     window.removeEventListener('blur', closeMenus)
   })
   watch(tree, () => nextTick(measure), {deep:true})
-
-  // Load
-  // Fetch the bookmarks tree from the server
-  const load = async function() {
-    const {data} = await api.Bookmarks.listBookmarks()
-    tree.value = data
-  }
 
   // Update
   // Run an api request returning the new tree. On failure notify and reload.
@@ -136,13 +106,6 @@
   // True if the folder contains the bookmark id at any depth
   const contains = function(folder, id) {
     return folder.children.some(child => child.id === id || (child.kind === 'folder' && contains(child, id)))
-  }
-
-  // Walk
-  // Flatten the tree into a list of {item, names, ancestors} for searching and the editor
-  const walk = function(items=tree.value, names=[], ancestors=[]) {
-    return items.flatMap(item => [{item, names, ancestors}].concat(item.kind === 'folder'
-      ? walk(item.children, [...names, item.title], [...ancestors, item.id]) : []))
   }
 
   // Folders
@@ -290,56 +253,6 @@
   }
 
   // ------------------------------
-  // Search
-  // ------------------------------
-
-  // Results
-  // Links matching every word of the query in their title, url or folder path
-  const results = computed(function() {
-    const words = query.value.toLowerCase().split(/\s+/).filter(Boolean)
-    if (!words.length) { return [] }
-    return walk().filter(n => n.item.kind === 'link').map(n => ({
-      item: n.item,
-      subtitle: [...n.names, hostname(n.item.url)].filter(Boolean).join(' › '),
-      text: [n.item.title, n.item.url, ...n.names].join(' ').toLowerCase(),
-    })).filter(r => words.every(word => r.text.includes(word))).slice(0, 20)
-  })
-
-  // Hostname
-  // Return the hostname of a url for search result subtitles
-  const hostname = function(url) {
-    try { return new URL(url).hostname.replace(/^www\./, '') } catch { return url }
-  }
-
-  // Open Search
-  // Show the results dropdown below the search input
-  const openSearch = function() {
-    closeMenus()
-    const rect = searchWrapEl.value.getBoundingClientRect()
-    searchStyle.value = {top:`${rect.bottom + 2}px`, right:`${window.innerWidth - rect.right}px`}
-    searchOpen.value = true
-    selected.value = 0
-  }
-
-  // On Search Keydown
-  // Arrow keys select a result, enter opens it (ctrl+enter in a new tab), escape clears
-  const onSearchKeydown = function(event) {
-    if (event.key === 'ArrowDown') {
-      event.preventDefault()
-      selected.value = Math.min(selected.value + 1, results.value.length - 1)
-    } else if (event.key === 'ArrowUp') {
-      event.preventDefault()
-      selected.value = Math.max(selected.value - 1, 0)
-    } else if (event.key === 'Enter' && results.value[selected.value]) {
-      const url = results.value[selected.value].item.url
-      if (event.ctrlKey || event.metaKey) { window.open(url, '_blank') } else { window.location.href = url }
-    } else if (event.key === 'Escape') {
-      query.value = ''
-      event.target.blur()
-    }
-  }
-
-  // ------------------------------
   // Add, Edit, Delete
   // ------------------------------
 
@@ -372,16 +285,10 @@
   }
 
   // Delete Bookmark
-  // Confirm, then delete the bookmark (and everything inside it for folders)
-  const deleteBookmark = async function(item) {
+  // Ask to confirm deleting the bookmark (and everything inside it for folders)
+  const deleteBookmark = function(item) {
     closeMenus()
-    const count = item.kind === 'folder' ? walk(item.children).length : 0
-    var message = `Delete the bookmark "${item.title || item.url}"?`
-    if (item.kind === 'separator') { message = 'Delete this separator?' }
-    if (item.kind === 'folder') { message = `Delete the folder "${item.title}"?` }
-    if (count) { message = `Delete the folder "${item.title}" and the ${count} items inside it?` }
-    if (!window.confirm(message)) { return }
-    await update(api.Bookmarks.deleteBookmark(item.id))
+    askDelete(item)
   }
 
   provide('bookmarks', {
@@ -392,7 +299,6 @@
 
 <style>
   .bookmarks-bar {
-    --bookmarks-accent: var(--darkbg-blue1);
     align-items: center;
     background-color: var(--darkbg-bgh);
     border-bottom: 1px solid #0006;
@@ -422,8 +328,8 @@
       &.hidden { visibility: hidden; }
       &.separator { width: 9px; }
       &.separator::after { left: 4px; top: 5px; height: 14px; width: 1px; }
-      &.drop-before { box-shadow: inset 2px 0px 0px var(--bookmarks-accent); }
-      &.drop-after { box-shadow: inset -2px 0px 0px var(--bookmarks-accent); }
+      &.drop-before { border-radius: 0px; box-shadow: inset 2px 0px 0px var(--bookmarks-accent); }
+      &.drop-after { border-radius: 0px; box-shadow: inset -2px 0px 0px var(--bookmarks-accent); }
     }
     .barbtn {
       align-items: center;
@@ -437,41 +343,23 @@
       width: 24px;
       &:hover, &.open { background-color: #fff2; color: var(--darkbg-fg0); }
     }
-    .search {
-      margin-left: 6px;
-      position: relative;
-      .mdi {
-        color: var(--darkbg-fg4);
-        font-size: 14px;
-        left: 6px;
-        line-height: 1;
-        position: absolute;
-        top: 50%;
-        transform: translateY(-50%);
-        &::before { line-height: 1; }
-      }
-      input {
-        background-color: #fff1;
-        border: 1px solid #fff1;
-        border-radius: 4px;
-        box-shadow: none;
-        color: var(--darkbg-fg1);
-        font-family: var(--fontfamily-article);
-        font-size: 11px;
-        height: 22px;
-        padding: 0px 8px 0px 24px;
-        transition: width 0.2s ease, border-color 0.2s ease;
-        width: 170px;
-        &::placeholder { color: var(--darkbg-fg4); }
-        &:focus { background-color: #fff1; border-color: var(--bookmarks-accent); box-shadow: none; width: 240px; }
-      }
-    }
   }
 
-  /* Bookmarks shared by the bar and dropdown menus */
+  /* Bookmarks shared by the bar and dropdown menus. Links are the <a> itself so
+   * the browser drags them natively, and text selection is disabled explicitly
+   * (not just inherited) so pressing a bookmark never selects its text. */
+  .bookmarks-bar, .bookmark-menu {
+    --bookmarks-accent: var(--darkbg-orange1);  /* Drop indicator, same orange accent as the home page */
+    -webkit-user-select: none;
+    user-select: none;
+  }
   .bookmarks-bar .bookmark, .bookmark-menu .bookmark {
+    -webkit-user-drag: element;
+    -webkit-user-select: none;
+    user-select: none;
     align-items: center;
     border-radius: 4px;
+    color: inherit;
     cursor: pointer;
     display: flex;
     flex: 0 0 auto;
@@ -481,28 +369,17 @@
     position: relative;
     white-space: nowrap;
     &:hover, &.open { background-color: #fff2; color: var(--darkbg-fg0); }
-    &.link { padding: 0px; }
-    a, a:visited {
-      color: inherit;
-      display: block;
-      height: 100%;
-      line-height: inherit;
-      overflow: hidden;
-      padding: 0px 8px;
-      text-decoration: none;
-      text-overflow: ellipsis;
-      width: 100%;
-    }
-    .title { overflow: hidden; text-overflow: ellipsis; }
+    text-decoration: none;
+    .title { overflow: hidden; text-overflow: ellipsis; -webkit-user-select: none; user-select: none; }
     .mdi { color: var(--darkbg-fg4); font-size: 14px; }
     &.separator { cursor: grab; padding: 0px; }
     &.separator:hover { background-color: transparent; }
     &.separator::after { background-color: #fff3; content: ''; position: absolute; }
     &.dragging { opacity: 0.4; }
-    &.drop-into { background-color: #83a59840; outline: 1px solid var(--darkbg-blue1); outline-offset: -1px; }
+    &.drop-into { background-color: #fe801926; outline: 1px solid var(--bookmarks-accent); outline-offset: -1px; }
   }
 
-  /* Dropdown menus (folders, overflow, search results and context menu) */
+  /* Dropdown menus (folders, overflow and context menu) */
   .bookmark-menu {
     background-color: var(--darkbg-bg0);
     border: 1px solid #fff2;
@@ -525,30 +402,11 @@
       line-height: 26px;
       &.separator { height: 9px; }
       &.separator::after { left: 6px; right: 6px; top: 4px; height: 1px; }
-      &.drop-before { box-shadow: inset 0px 2px 0px var(--darkbg-blue1); }
-      &.drop-after { box-shadow: inset 0px -2px 0px var(--darkbg-blue1); }
+      &.drop-before { border-radius: 0px; box-shadow: inset 0px 2px 0px var(--bookmarks-accent); }
+      &.drop-after { border-radius: 0px; box-shadow: inset 0px -2px 0px var(--bookmarks-accent); }
       .chevron { margin-left: auto; padding-left: 10px; }
     }
     .empty { color: var(--darkbg-fg4); font-style: italic; padding: 5px 8px; }
-  }
-  .bookmark-search {
-    max-height: 70vh;
-    width: 360px;
-    .bookmark.link, .bookmark.link:visited {
-      align-items: flex-start;
-      color: inherit;
-      line-height: 16px;
-      flex-direction: column;
-      gap: 0px;
-      height: auto;
-      justify-content: center;
-      padding: 4px 8px;
-      text-decoration: none;
-      &:hover { background-color: transparent; }
-      &.selected { background-color: #fff2; color: var(--darkbg-fg0); }
-      .title, .subtitle { max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
-      .subtitle { color: var(--darkbg-fg4); font-size: 10px; }
-    }
   }
   .bookmark-ctxmenu { min-width: 160px; z-index: 60; }
 </style>

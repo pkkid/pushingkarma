@@ -1,6 +1,8 @@
 <template>
   <div id='newtab-wrapper' @dblclick='cycleLayout'>
     <BookmarksBar v-if='showBookmarks'/>
+    <QuickSearch v-if='user'/>
+    <BookmarkDelete v-if='user'/>
     <div id='newtab' :class='{fullscreen, bookmarks:showBookmarks}'>
       <Transition name='layout-fade' mode='out-in'>
         <LayoutSimple v-if='layout === "simple"' key='simple' />
@@ -13,7 +15,9 @@
 <script setup>
   import {computed, inject, onMounted, ref} from 'vue'
   import useStorage from '@/composables/useStorage'
+  import BookmarkDelete from './BookmarkDelete.vue'
   import BookmarksBar from './BookmarksBar.vue'
+  import QuickSearch from './QuickSearch.vue'
   import LayoutSimple from './LayoutSimple.vue'
   import LayoutStats from './LayoutStats.vue'
 

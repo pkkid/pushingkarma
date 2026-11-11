@@ -13,10 +13,7 @@
     <!-- Sort Options -->
     <div class='sortbar'>
       <span class='label' id='notessortlabel'>Sort by</span>
-      <div class='sort' role='group' aria-labelledby='notessortlabel'>
-        <button v-for='option in SORTS' :key='option.id' type='button'
-          :class='{on:sortby == option.id}' @click='sortby = option.id'>{{option.label}}</button>
-      </div>
+      <PillSelect v-model='sortby' :options='SORTS' aria-labelledby='notessortlabel'/>
     </div>
     <!-- Search Results -->
     <div v-if='notes?.length > 0' ref='resultsdiv' class='results'>
@@ -47,6 +44,7 @@
 
 <script setup>
   import {computed, onBeforeMount, onBeforeUnmount, ref} from 'vue'
+  import {PillSelect} from '@/components'
   import {useStorage} from '@/composables'
   import {api, utils} from '@/utils'
   import hotkeys from 'hotkeys-js'
@@ -173,7 +171,7 @@
 <style>
   #notessearch {
     width: var(--sidepanel-width);
-    /* Sort pills, styled like the Popular/Recent toggle in the project list */
+    /* Sort bar: label and sort pills */
     .sortbar {
       align-items: center;
       display: flex;
@@ -187,25 +185,6 @@
         font-weight: 600;
         letter-spacing: 2.5px;
         text-transform: uppercase;
-      }
-    }
-    .sort {
-      background-color: var(--darkbg-bgh);
-      border-radius: 6px;
-      display: flex;
-      gap: 2px;
-      padding: 2px;
-      button {
-        background: none;
-        border: 0px;
-        border-radius: 4px;
-        color: var(--darkbg-fg3);
-        cursor: pointer;
-        font-family: var(--fontfamily-article);
-        font-size: 11px;
-        font-weight: 500;
-        padding: 4px 10px;
-        &.on { background-color:#3c3836; color:var(--darkbg-fg0); }
       }
     }
     .results {

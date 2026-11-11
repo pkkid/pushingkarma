@@ -1,17 +1,19 @@
 <template>
-  <div ref='self' class='bookmark' :class='classes' :title='tooltip' draggable='true'
+  <!-- Links render as the <a> itself so the browser drags the link natively -->
+  <component :is='item.kind === "link" ? "a" : "div"' ref='self' class='bookmark' :class='classes'
+    :href='item.kind === "link" ? item.url : null' :title='tooltip' draggable='true'
     @click='onClick' @contextmenu.prevent.stop='bm.showContextMenu($event, item)'
     @mouseenter='bm.hover(item, level)' @mouseleave='bm.unhover()'
     @dragstart='onDragStart' @dragover='onDragOver' @dragleave='onDragLeave'
     @drop.stop='onDrop' @dragend='bm.endDrag()'>
-    <a v-if='item.kind === "link"' :href='item.url' draggable='false'>{{item.title || item.url}}</a>
+    <span v-if='item.kind === "link"' class='title'>{{item.title || item.url}}</span>
     <template v-else-if='item.kind === "folder"'>
       <i class='mdi mdi-folder-outline'/>
       <span class='title'>{{item.title}}</span>
       <i v-if='level > 0' class='mdi mdi-chevron-right chevron'/>
     </template>
     <BookmarkMenu v-if='isOpen' :items='item.children' :level='level + 1' :anchor='self'/>
-  </div>
+  </component>
 </template>
 
 <script setup>

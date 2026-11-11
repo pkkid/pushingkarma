@@ -1,18 +1,15 @@
 <template>
-  <Modal id='bookmark-editor' :visible='visible' closeButton closeOnEsc @close='emit("close")'>
-    <form class='bookmark-editor' @submit.prevent='save'>
+  <Modal id='bookmark-editor' :visible='visible' theme='dark' closeButton closeOnEsc @close='emit("close")'>
+    <form class='bookmark-editor' autocomplete='off' @submit.prevent='save'>
       <h2>{{item ? `Edit ${item.kind === 'folder' ? 'Folder' : 'Bookmark'}` : 'Add to Bookmarks'}}</h2>
-      <div v-if='!item' class='kinds'>
-        <button v-for='kind in kinds' :key='kind.value' type='button' :class='{active:form.kind === kind.value}'
-          @click='form.kind = kind.value'>{{kind.label}}</button>
-      </div>
+      <PillSelect v-if='!item' v-model='form.kind' :options='kinds' class='kinds' aria-label='Item type'/>
       <template v-if='form.kind !== "separator"'>
         <label for='bookmark-title'>{{form.kind === 'folder' ? 'Folder name' : 'Title'}}</label>
-        <input id='bookmark-title' ref='titleEl' v-model='form.title' type='text' spellcheck='false'/>
+        <input id='bookmark-title' ref='titleEl' v-model='form.title' type='text' autocomplete='off' spellcheck='false'/>
       </template>
       <template v-if='form.kind === "link"'>
         <label for='bookmark-url'>URL</label>
-        <input id='bookmark-url' v-model='form.url' type='text' spellcheck='false'/>
+        <input id='bookmark-url' v-model='form.url' type='text' autocomplete='off' spellcheck='false'/>
       </template>
       <label for='bookmark-parent'>Folder</label>
       <select id='bookmark-parent' v-model='form.parent'>
@@ -30,13 +27,13 @@
 
 <script setup>
   import {computed, nextTick, ref, watch} from 'vue'
-  import {Modal} from '@/components'
+  import {Modal, PillSelect} from '@/components'
 
   const emit = defineEmits(['close', 'save'])
   const titleEl = ref(null)                         // Title input, focused when opened
   const form = ref({})                              // Values being edited {kind, title, url, parent}
   const error = ref(null)                           // Validation error message
-  const kinds = [{value:'link', label:'Bookmark'}, {value:'folder', label:'Folder'}, {value:'separator', label:'Separator'}]
+  const kinds = [{id:'link', label:'Bookmark'}, {id:'folder', label:'Folder'}, {id:'separator', label:'Separator'}]
   const props = defineProps({
     visible: {type:Boolean, required:true},         // Display the editor
     item: {type:Object, default:null},              // Bookmark to edit, null to add a new one
@@ -79,13 +76,14 @@
     display: flex;
     flex-direction: column;
     h2 { margin-top: 0px; }
+    /* Bigger pills with an input-like border so they line up with the fields below */
     .kinds {
-      display: flex;
-      gap: 4px;
-      margin-bottom: 5px;
-      button.active { background-color: var(--lightbg-blue1); color: #fff; }
+      align-self: flex-start;
+      border: 1px solid #fff1;
+      margin: 12px 0px 5px 0px;
+      button.pill { font-size: 13px; padding: 4px 14px; }
     }
-    .error { color: var(--lightbg-red0); font-size: 12px; margin-top: 10px; }
+    .error { color: var(--darkbg-red1); font-size: 12px; margin-top: 10px; }
     .buttons { display: flex; gap: 8px; margin-top: 20px; }
   }
 </style>

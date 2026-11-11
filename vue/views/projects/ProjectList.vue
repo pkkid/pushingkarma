@@ -2,10 +2,7 @@
   <div id='projectlist'>
     <div class='header'>
       <span>Projects</span>
-      <div class='sort' role='group' aria-label='Sort projects'>
-        <button type='button' :class='{on:sortby == "stars"}' @click='sortby = "stars"'>Popular</button>
-        <button type='button' :class='{on:sortby == "recent"}' @click='sortby = "recent"'>Recent</button>
-      </div>
+      <PillSelect v-model='sortby' :options='SORTS' aria-label='Sort projects'/>
     </div>
     <ul>
       <li v-for='project in sorted' :key='project.slug'>
@@ -22,6 +19,7 @@
 <script setup>
   import {computed} from 'vue'
   import {useRoute} from 'vue-router'
+  import {PillSelect} from '@/components'
   import {useProjects, useStorage} from '@/composables'
   import {utils} from '@/utils'
   import ProjectIcon from './ProjectIcon.vue'
@@ -29,6 +27,7 @@
   const route = useRoute()
   const {projects} = useProjects()
   const sortby = useStorage('projectlist.sortby', 'stars')   // Sort order {stars, recent}
+  const SORTS = [{id:'stars', label:'Popular'}, {id:'recent', label:'Recent'}]  // Sort pill options
 
   // Sorted
   // Projects by stars (then name), or by most recent push
@@ -72,25 +71,6 @@
         font-weight: 600;
         letter-spacing: 2.5px;
         text-transform: uppercase;
-      }
-    }
-    .sort {
-      background-color: var(--darkbg-bgh);
-      border-radius: 6px;
-      display: flex;
-      gap: 2px;
-      padding: 2px;
-      button {
-        background: none;
-        border: 0px;
-        border-radius: 4px;
-        color: var(--darkbg-fg3);
-        cursor: pointer;
-        font-family: var(--fontfamily-article);
-        font-size: 11px;
-        font-weight: 500;
-        padding: 4px 8px;
-        &.on { background-color:#3c3836; color:var(--darkbg-fg0); }
       }
     }
     ul {
