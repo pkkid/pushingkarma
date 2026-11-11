@@ -1,7 +1,7 @@
 <template>
   <div id='newtab-wrapper' @dblclick='cycleLayout'>
     <BookmarksBar v-if='showBookmarks'/>
-    <QuickSearch v-if='user'/>
+    <QuickSearch/>
     <BookmarkDelete v-if='user'/>
     <div id='newtab' :class='{fullscreen, bookmarks:showBookmarks}'>
       <Transition name='layout-fade' mode='out-in'>
