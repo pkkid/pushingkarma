@@ -17,7 +17,7 @@
 </template>
 
 <script setup>
-  import {onMounted, ref} from 'vue'
+  import {onMounted, onUnmounted, ref} from 'vue'
   import {api, utils} from '@/utils'
   import hotkeys from 'hotkeys-js'
 
@@ -27,6 +27,7 @@
   const news = ref(null)                          // List of news posts
   const newsindex = ref(0)                        // Index of the currently displayed news post
   const shownews = ref(true)                      // Show the news post (used for fade transition)
+  const intervals = []                            // Update and rotate intervals, cleared on unmount
   const reddit_queries = [
     {subreddit:'news', count:15, maxtitle:150, maxtext:100},
     {subreddit:'technology', count:15, maxtitle:150, maxtext:100},
@@ -62,15 +63,27 @@
     }
   }
 
-  // On Mounted
-  // Initialize news and set intervals for updates
+  // Show Previous / Next
+  // Hotkey handlers, named so they can be unbound on unmount
+  const showPrevious = () => showNextNewsPost(-1)
+  const showNext = () => showNextNewsPost()
+
+  // On Mounted / Unmounted
+  // Initialize news and set intervals for updates. Clear them, unbind the hotkeys
+  // and drop the posts when switching layouts so nothing keeps running.
   onMounted(function() {
     updateNews()
-    setInterval(updateNews, 900000)   // 15m
-    setInterval(showNextNewsPost, 60000)  // 60s
-    hotkeys('left', 'newtab', function() { showNextNewsPost(-1) })
-    hotkeys('right', 'newtab', function() { showNextNewsPost() })
+    intervals.push(setInterval(updateNews, 900000))   // 15m
+    intervals.push(setInterval(showNextNewsPost, 60000))  // 60s
+    hotkeys('left', 'newtab', showPrevious)
+    hotkeys('right', 'newtab', showNext)
     hotkeys.setScope('newtab')
+  })
+  onUnmounted(function() {
+    intervals.forEach(clearInterval)
+    hotkeys.unbind('left', 'newtab', showPrevious)
+    hotkeys.unbind('right', 'newtab', showNext)
+    news.value = null
   })
 </script>
 

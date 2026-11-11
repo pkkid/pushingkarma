@@ -5,8 +5,8 @@
     <BookmarkDelete v-if='user'/>
     <div id='newtab' :class='{fullscreen, bookmarks:showBookmarks}'>
       <Transition name='layout-fade' mode='out-in'>
-        <LayoutSimple v-if='layout === "simple"' key='simple' />
-        <LayoutStats v-else-if='layout === "stats"' key='stats' :style='{zoom: statsZoom}' />
+        <LayoutSimple v-if='activeLayout === "simple"' key='simple' />
+        <LayoutStats v-else-if='activeLayout === "stats"' key='stats' :style='{zoom: statsZoom}' />
       </Transition>
     </div>
   </div>
@@ -26,6 +26,7 @@
   const fullscreen = ref(false)  // True when browser is in fullscreen
   const statsZoom = ref(1)  // CSS zoom applied to stats layout when not fullscreen
   const {user} = inject('user')  // Current user, bookmarks require login
+  const activeLayout = computed(() => user.value ? layout.value : 'simple')  // Stats require login
   const showBookmarks = computed(() => !fullscreen.value && Boolean(user.value))  // Bookmarks bar when windowed
 
   // On Mounted
@@ -36,8 +37,10 @@
   })
 
   // Cycle Layout
-  // Advance to the next layout in the list
+  // Advance to the next layout in the list. The stats layout requires login, so
+  // logged out users stay on the simple layout.
   const cycleLayout = function() {
+    if (!user.value) { return }
     const next = (layouts.indexOf(layout.value) + 1) % layouts.length
     layout.value = layouts[next]
   }

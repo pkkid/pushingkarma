@@ -1,11 +1,16 @@
 <template>
   <Teleport to='body'>
     <Transition name='quicksearch-fade'>
-      <div v-if='visible' class='quicksearch-overlay' @mousedown.self='close'>
+      <!-- v-show (not v-if) keeps the search input on the page while hidden. Adding and removing it
+           confused Bitwarden when filling the login form opened from this panel. -->
+      <div v-show='visible' class='quicksearch-overlay' @mousedown.self='close'>
         <div class='quicksearch'>
           <div class='quicksearch-input'>
             <i class='mdi mdi-magnify'/>
+            <!-- data-bwignore and autocomplete=off keep password managers from treating this search box as
+                 a login field, which confused Bitwarden when filling the login form opened from this panel -->
             <input ref='inputEl' v-model='query' type='text' placeholder='Search bookmarks' spellcheck='false'
+              autocomplete='off' data-bwignore='true' data-1p-ignore data-lpignore='true'
               @input='resetSelection' @keydown='onKeydown'/>
           </div>
           <!-- Bookmarks and actions (log in when logged out, log out when logged in) -->

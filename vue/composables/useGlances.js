@@ -26,17 +26,27 @@ export default (function() {
   }
 
   // Stop Glances
-  // Stop polling the Glances API and clear stored data
+  // Stop polling the Glances API and clear stored data and history
   function stopGlances() {
     polling = false
     clearInterval(intervalid)
+    intervalid = null
+    for (const t of Object.values(trackers)) { t.history = [] }
     data.value = {history: {}}
   }
 
   // Update
   // Fetch latest data from Glances API
+  // Responses arriving after stopGlances are dropped so they don't refill memory
   async function update() {
-    const res = await Main.getGlances()
+    var res = null
+    try {
+      res = await Main.getGlances()
+    } catch (err) {
+      console.warn(`Glances update failed: ${err.message}`)
+      return
+    }
+    if (!polling) { return }
     const json = res.data
     const now = Date.now()
     const history = {}

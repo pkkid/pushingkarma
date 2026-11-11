@@ -15,7 +15,7 @@
 </template>
 
 <script setup>
-  import {onMounted, ref} from 'vue'
+  import {onMounted, onUnmounted, ref} from 'vue'
   import {utils} from '@/utils'
 
   const props = defineProps({
@@ -23,6 +23,7 @@
     compact: {type: Boolean, default: false},     // True in stats layout (no absolute centering)
   })
   const now = ref()                               // Current date and time
+  var intervalid = null                           // Clock update interval
 
   /// Update Time
   // Update the 'now' ref to the current date and time
@@ -30,12 +31,13 @@
     now.value = new Date()
   }
 
-  // On Mounted
-  // Initialize time and set interval for updates
+  // On Mounted / Unmounted
+  // Initialize time and set interval for updates, stop it when switching layouts
   onMounted(function() {
     updateTime()
-    setInterval(updateTime, 1000)  // 1s
+    intervalid = setInterval(updateTime, 1000)  // 1s
   })
+  onUnmounted(function() { clearInterval(intervalid) })
 </script>
 
 <style>
