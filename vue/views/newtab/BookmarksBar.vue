@@ -402,7 +402,7 @@
     font-family: var(--fontfamily-article);
     font-size: 11px;
     max-width: 340px;
-    min-width: 200px;
+    min-width: 100px;
     overflow-y: auto;
     padding: 4px;
     position: fixed;
@@ -411,6 +411,7 @@
     .bookmark {
       height: 26px;
       line-height: 26px;
+      .title { margin-right: 20px; }
       &.separator { height: 9px; }
       &.separator::after { left: 6px; right: 6px; top: 4px; height: 1px; }
       &.drop-before { border-radius: 0px; box-shadow: inset 0px 2px 0px var(--bookmarks-accent); }
