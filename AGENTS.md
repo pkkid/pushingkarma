@@ -82,8 +82,15 @@ uv run ruff check pk        # Lint Python (config in pyproject.toml, line-length
 
 ### Backend Conventions
 - Each app's router is mounted in `pk/urls.py` under `/api/<app>`. Routers that require
-  login are created with `Router(auth=django_auth)`, and querysets are scoped to
-  `request.user`.
+  login are created with `Router(auth=user_auth)` (from `pk/utils/ninja.py`), and querysets
+  are scoped to `request.user`.
+- `user_auth` accepts a session login or an api key. `ApiKeyMiddleware`
+  (`pk/apps/main/middleware.py`) reads the `apikey` url argument or `X-Apikey` header,
+  only over HTTPS unless `DEBUG`, and sets `request.user` and `request.apikey_auth`. Key
+  requests skip the session CSRF check. Each user has one key (`main.ApiKey`), shown and
+  regenerated from the account panel; regenerating requires a real login. The frontend
+  (`vue/utils/api.js`) moves an `?apikey=` url argument into the header and strips it from
+  the address bar, which lets the browser new tab extension (an iframe) stay signed in.
 - The `reddit` app has no models, so it is mounted as a router but is not listed in
   `INSTALLED_APPS`. Apps with models (or management commands) must be added there.
 - Shared API helpers are in `pk/utils/ninja.py`: `PageSchema()` builds paginated response

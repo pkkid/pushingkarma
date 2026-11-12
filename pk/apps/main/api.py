@@ -11,7 +11,9 @@ from ninja.errors import HttpError
 from ninja.security import django_auth
 from os.path import basename, getmtime, join, splitext
 from pk.utils import utils
+from pk.utils.ninja import user_auth
 from pk.utils.django import cache_response
+from .models import ApiKey
 from .schemas import BackgroundSchema, GlobalVarsSchema, UserSchema, LoginSchema
 from .schemas import AiPromptQuestionSchema, AiPromptResponseSchema
 from typing import List, Optional
@@ -58,7 +60,20 @@ def get_global_vars(request):
     user = request.user if request.user.is_authenticated else None
     result = dict(**settings.GLOBALVARS)
     result['user'] = user
+    result['apikey_auth'] = request.apikey_auth
     return result
+
+
+@router.post('/apikey', auth=django_auth, response=UserSchema)
+def generate_apikey(request):
+    """ Generate a new api key for the logged in user, revoking the previous key.
+        Requires a real login (not an api key) so a leaked key can't replace itself.
+    """
+    if request.apikey_auth:
+        raise HttpError(403, 'Log in with your password to generate a new api key.')
+    ApiKey.regenerate(request.user)
+    log.info(f'Generated new api key for {request.user.email}')
+    return User.objects.select_related('apikey').get(id=request.user.id)
 
 
 @router.get('/backgrounds', response=List[BackgroundSchema])
@@ -84,7 +99,7 @@ def _describe_filename(name):
     return None
 
 
-@router.get('/glances', auth=django_auth)
+@router.get('/glances', auth=user_auth)
 def glances(request):
     """ Proxy the Glances /api/4/all endpoint to avoid browser Private Network Access restrictions. """
     glances_url = getattr(settings, 'GLANCES_URL', 'http://192.168.4.253:61208')
@@ -92,7 +107,7 @@ def glances(request):
     return response.json()
 
 
-@router.post('/aiprompt', auth=django_auth, response=Optional[AiPromptResponseSchema])
+@router.post('/aiprompt', auth=user_auth, response=Optional[AiPromptResponseSchema])
 @cache_response(timeout=86400, prefix='aiprompt', peruser=False, bodyarg='data')
 def aiprompt(request, data:AiPromptQuestionSchema=Body(...), cache_only:bool=False):
     """ Ask Gemini a question. Pass cache_only=true to return null on a cache miss instead of

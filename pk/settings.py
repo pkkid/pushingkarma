@@ -68,6 +68,7 @@ MIDDLEWARE = (
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'pk.apps.main.middleware.ApiKeyMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'pk.utils.django.QueryCounterMiddleware',
@@ -98,6 +99,11 @@ if DEBUG is True:
     SESSION_COOKIE_SAMESITE = 'Lax'
     SESSION_COOKIE_SECURE = False
     
+# Proxy Settings
+# Cloudflare terminates HTTPS and nginx passes the original scheme on as X-Forwarded-Proto,
+# so request.is_secure() is accurate. Api keys are only accepted over HTTPS.
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
 # CSRF Settings
 # https://docs.djangoproject.com/en/5.0/ref/csrf/
 CSRF_COOKIE_SAMESITE = 'Strict'
@@ -113,7 +119,7 @@ CORS_ORIGIN_WHITELIST = CSRF_TRUSTED_ORIGINS
 CORS_ALLOW_METHODS = ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS']
 CORS_ALLOW_CREDENTIALS = True
 CORS_EXPOSE_HEADERS = ['Allow', 'Response-Time', 'Queries']
-CORS_ALLOW_HEADERS = list(default_headers) + ['Count-Queries', 'Log-Queries']
+CORS_ALLOW_HEADERS = list(default_headers) + ['Count-Queries', 'Log-Queries', 'X-Apikey']
 if DEBUG: CORS_ALLOW_ALL_ORIGINS = True
 
 # Query Counter

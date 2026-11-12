@@ -12,6 +12,12 @@ class UserSchema(Schema):
     email: Optional[str] = Field(..., description='User email address')
     date_joined: Optional[datetime] = Field(..., description='Datetime user joined the system')
     last_login: Optional[datetime] = Field(..., description='Datetime user last logged in')
+    apikey: Optional[str] = Field(None, description='Api key for this user (apikey url argument or X-Apikey header)')
+
+    @staticmethod
+    def resolve_apikey(obj):
+        apikey = getattr(obj, 'apikey', None)
+        return apikey.key if apikey else None
 
 
 class LoginSchema(Schema):
@@ -23,6 +29,7 @@ class GlobalVarsSchema(Schema):
     DEBUG: bool = Field(..., description='True if site running in debug mode')
     DOMAIN: str = Field(..., description='Domain the Django app is configured for')
     user: Optional[UserSchema] = Field(None, description='Currently logged in user')
+    apikey_auth: bool = Field(False, description='True if the user was authenticated with an api key')
 
 
 class AiPromptQuestionSchema(Schema):

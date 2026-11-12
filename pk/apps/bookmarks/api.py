@@ -8,12 +8,12 @@ from django.db import transaction
 from django.shortcuts import get_object_or_404
 from ninja import Body, Path, Router
 from ninja.errors import HttpError
-from ninja.security import django_auth
 from typing import List
+from pk.utils.ninja import user_auth
 from . import schemas
 from .models import Bookmark, FOLDER, LINK
 log = logging.getLogger(__name__)
-router = Router(auth=django_auth)
+router = Router(auth=user_auth)
 
 
 def get_tree(user):

@@ -12,17 +12,16 @@ from itertools import groupby
 from ninja import Body, File, Path, Query, Router
 from ninja.errors import HttpError
 from ninja.files import UploadedFile
-from ninja.security import django_auth
 from pk.utils.utils import Bunch, add_months, first_of_month
 from pk.utils.django import get_object_or_none
-from pk.utils.ninja import PageSchema, paginate, paginate_cursor
+from pk.utils.ninja import PageSchema, paginate, paginate_cursor, user_auth
 from typing import List
 from . import schemas, utils
 from .models import Account, Category, Transaction
 from .recurring import RecurringManager
 from .trxmanager import TransactionManager
 log = logging.getLogger(__name__)
-router = Router(auth=django_auth)
+router = Router(auth=user_auth)
 
 ACCOUNTSEARCHFIELDS = [
     sf.StrField('name', 'name', desc='Account name', generic=True),

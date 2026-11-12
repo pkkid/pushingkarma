@@ -7,6 +7,7 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from ninja import Router
 from ninja import Schema
+from ninja.security import SessionAuth
 from pydantic import create_model
 from typing import List, Type, Optional
 from urllib.parse import urlencode
@@ -25,6 +26,20 @@ ROOT_DESCRIPTION = """
 def api_root(request):
     """ Returns a list of all available endpoints in the API. """
     return root_router.api.get_openapi_schema()
+
+
+class SessionOrApiKeyAuth(SessionAuth):
+    """ Authenticate with the Django session (with its CSRF check), or with an api key
+        already validated by pk.apps.main.middleware.ApiKeyMiddleware. Key requests skip
+        the CSRF check since they don't rely on cookies.
+    """
+    def __call__(self, request):
+        if getattr(request, 'apikey_auth', False):
+            return request.user
+        return super().__call__(request)
+
+
+user_auth = SessionOrApiKeyAuth()  # Use in place of ninja.security.django_auth
 
 
 def PageSchema(itemschema:Type[Schema]):

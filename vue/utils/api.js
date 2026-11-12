@@ -15,10 +15,23 @@ axios.defaults.baseURL = process.env.NODE_ENV === 'development'
   : `${window.location.protocol}//${window.location.hostname}`
 console.info(`Axios.defaults.baseURL: ${axios.defaults.baseURL}`)
 
+// Api Key
+// An apikey url argument (ie: /newtab?apikey=<key>) authenticates as that user without
+// a login cookie, for pages shown in a frame such as the browser new tab extension. Send
+// it as the X-Apikey header on every request and remove it from the address bar.
+const urlparams = new URLSearchParams(window.location.search)
+if (urlparams.has('apikey')) {
+  axios.defaults.headers.common['X-Apikey'] = urlparams.get('apikey')
+  urlparams.delete('apikey')
+  const query = urlparams.toString()
+  window.history.replaceState(window.history.state, '', `${window.location.pathname}${query ? `?${query}` : ''}${window.location.hash}`)
+}
+
 // API Endpoints
 // Endpoints defined in the Django application
 export const Main = {
   aiPrompt(data, params, signal) { return axios.post(`/api/main/aiprompt`, data, {signal, params}) },
+  generateApikey(signal) { return axios.post(`/api/main/apikey`, null, {signal}) },
   getGlances(signal) { return axios.get(`/api/main/glances`, {signal}) },
   getGlobalVars(signal) { return axios.get(`/api/main/global_vars`, {signal}) },
   listBackgrounds(signal) { return axios.get(`/api/main/backgrounds`, {signal}) },

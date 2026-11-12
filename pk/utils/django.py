@@ -234,7 +234,7 @@ def vue_devserver_running(request):
         querystr = urlencode(request.GET)
         serverurl = f'http://{servername}:5173'
         serverurl += request.path if request.path else ''
-        serverurl += f'{querystr}' if querystr else ''
+        serverurl += f'?{querystr}' if querystr else ''
         requests.head(serverurl)
         return serverurl
     except Exception as err:

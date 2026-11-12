@@ -42,6 +42,7 @@
   const resultsEl = ref(null)                       // Results list element
   const showLogin = ref(false)                      // True when the login modal is displayed
   const {user, setUser} = inject('user')            // Current user, bookmarks require login
+  const {globalvars} = inject('globalvars')         // Global vars, apikey_auth is true when signed in by api key
 
   // Actions
   // Log in when logged out, log out when logged in. Keywords are what you can
@@ -51,6 +52,7 @@
       return [{key:'login', title:'Log in', subtitle:'Log in to see your bookmarks', icon:'mdi-login',
         keywords:'log in login sign in', run:() => login()}]
     }
+    if (globalvars.value?.apikey_auth) { return [] }  // Logging out does nothing when signed in by api key
     const name = `${user.value.first_name} ${user.value.last_name}`.trim() || user.value.email
     return [{key:'logout', title:'Log out', subtitle:`Logged in as ${name}`, icon:'mdi-logout',
       keywords:'log out logout sign out', run:() => logout()}]
