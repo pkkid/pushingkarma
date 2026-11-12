@@ -107,7 +107,8 @@
     &.bookmarks { height: calc(100vh - 31px); }
     &.fullscreen {
       width: calc(100vw - 20px); height: calc(100vh - 20px);
-      animation: square-move 240s linear infinite;
+      /* steps(20) per 60s side: 1px jump every 3s, full 20px square every 240s (OLED burn-in) */
+      animation: square-move 240s steps(20) infinite;
     }
   }
 
