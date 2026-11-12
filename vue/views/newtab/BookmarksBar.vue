@@ -284,13 +284,13 @@
   // Save Editor
   // Create or update the bookmark (only send parent when it changed so it isn't moved)
   const saveEditor = async function(data) {
-    var request = api.Bookmarks.createBookmark(data)
-    if (editor.item) {
-      const changes = {title:data.title, url:data.url}
-      if (data.parent !== editor.parent) { changes.parent = data.parent }
-      request = api.Bookmarks.updateBookmark(editor.item.id, changes)
+    if (!editor.item) {
+      if (await update(api.Bookmarks.createBookmark(data))) { editor.visible = false }
+      return
     }
-    if (await update(request)) { editor.visible = false }
+    const changes = {title:data.title, url:data.url}
+    if (data.parent !== editor.parent) { changes.parent = data.parent }
+    if (await update(api.Bookmarks.updateBookmark(editor.item.id, changes))) { editor.visible = false }
   }
 
   // Delete Bookmark
