@@ -37,10 +37,10 @@
   })
 
   // On Click
-  // Toggle folders, close menus when following a link in this tab
+  // Open folders, close menus when following a link in this tab
   const onClick = function(event) {
     if (props.item.kind === 'folder') {
-      bm.toggleFolder(props.item, props.level)
+      bm.openFolder(props.item, props.level)
     } else if (props.item.kind === 'link' && !event.ctrlKey && !event.metaKey && !event.shiftKey) {
       bm.closeMenus()
     }

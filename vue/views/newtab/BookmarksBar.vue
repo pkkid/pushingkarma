@@ -6,7 +6,7 @@
       <BookmarkItem v-for='(item, i) in tree' :key='item.id' :item='item' :level='0' :class='{hidden:i >= visibleCount}'/>
     </div>
     <div v-if='overflowItems.length' ref='overflowEl' class='barbtn' :class='{open:openPath[0] === "overflow"}'
-      title='More bookmarks' @click='toggleFolder({id:"overflow"}, 0)' @dragenter='drag.id && scheduleOpen(0, "overflow")'>
+      title='More bookmarks' @click='openFolder({id:"overflow"}, 0)' @dragenter='drag.id && scheduleOpen(0, "overflow")'>
       <i class='mdi mdi-chevron-double-right'/>
       <BookmarkMenu v-if='openPath[0] === "overflow"' :items='overflowItems' :level='1' :anchor='overflowEl'/>
     </div>
@@ -56,14 +56,14 @@
     document.addEventListener('mousedown', onDocumentMousedown)
     document.addEventListener('keydown', onDocumentKeydown)
     document.addEventListener('dragend', endDrag)
-    window.addEventListener('blur', closeMenus)
+    window.addEventListener('blur', onWindowBlur)
   })
   onBeforeUnmount(function() {
     resizeObserver.disconnect()
     document.removeEventListener('mousedown', onDocumentMousedown)
     document.removeEventListener('keydown', onDocumentKeydown)
     document.removeEventListener('dragend', endDrag)
-    window.removeEventListener('blur', closeMenus)
+    window.removeEventListener('blur', onWindowBlur)
   })
   watch(tree, () => nextTick(measure), {deep:true})
 
@@ -120,14 +120,13 @@
   // Menus
   // ------------------------------
 
-  // Toggle Folder
-  // Clicking a folder opens its menu, clicking it again closes it
-  const toggleFolder = function(item, level) {
+  // Open Folder
+  // Clicking a folder opens its menu. Clicking it again leaves it open, menus
+  // only close when clicking somewhere else.
+  const openFolder = function(item, level) {
     clearTimeout(hoverTimer)
     ctxmenu.value = null
-    openPath.value = openPath.value[level] === item.id
-      ? openPath.value.slice(0, level)
-      : [...openPath.value.slice(0, level), item.id]
+    openPath.value = [...openPath.value.slice(0, level), item.id]
   }
 
   // Hover
@@ -174,6 +173,14 @@
   }
   const onDocumentKeydown = function(event) {
     if (event.key === 'Escape') { closeMenus() }
+  }
+
+  // On Window Blur
+  // Close menus when focus leaves the page (clicks outside the new tab iframe), but
+  // not while dragging since starting a drag can blur the window and we want the
+  // open folder to stay open to drop inside it.
+  const onWindowBlur = function() {
+    if (!drag.id) { closeMenus() }
   }
 
   // ------------------------------
@@ -292,7 +299,7 @@
   }
 
   provide('bookmarks', {
-    openPath, drag, toggleFolder, hover, unhover, closeMenus, showContextMenu,
+    openPath, drag, openFolder, hover, unhover, closeMenus, showContextMenu,
     startDrag, endDrag, canDropOn, setDropTarget, clearDropTarget, drop,
   })
 </script>
