@@ -8,6 +8,7 @@ from django.core.cache import cache
 from django.core.exceptions import EmptyResultSet
 from django.db import connection, connections
 from django.db.models import Aggregate, CharField, DateTimeField, Model
+from django.http.request import split_domain_port
 from django.db.models.query import QuerySet
 from django.urls import reverse as django_reverse
 from django.utils import timezone
@@ -230,7 +231,7 @@ def vue_devserver_running(request):
     """ Return url if it looks like the Vue devserver is running. """
     try:
         if not settings.DEBUG: return None
-        servername = request.environ.get('SERVER_NAME', 'localhost')
+        servername = split_domain_port(request.get_host())[0] or 'localhost'
         querystr = urlencode(request.GET)
         serverurl = f'http://{servername}:5173'
         serverurl += request.path if request.path else ''

@@ -31,3 +31,7 @@ class BookmarkMoveSchema(Schema):
 
 
 BookmarkSchema.model_rebuild()
+
+
+class PageTitleSchema(Schema):
+    title: str = Field('', description='Title of the page, empty if it could not be read')

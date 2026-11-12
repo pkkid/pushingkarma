@@ -1,10 +1,11 @@
 <template>
-  <div class='bookmarks-bar' @dblclick.stop @contextmenu.self.prevent='showContextMenu($event, barRoot)'>
+  <div ref='barEl' class='bookmarks-bar' @dblclick.stop @contextmenu.self.prevent='showContextMenu($event, barRoot)'
+    @dragover='onBarDragOver' @drop='drop'>
     <!-- Bookmarks (items that don't fit are hidden and listed in the overflow menu) -->
-    <div ref='itemsEl' class='items' @dragover='onBarDragOver' @drop='drop'
-      @contextmenu.self.prevent='showContextMenu($event, barRoot)'>
+    <div ref='itemsEl' class='items' @contextmenu.self.prevent='showContextMenu($event, barRoot)'>
       <BookmarkItem v-for='(item, i) in tree' :key='item.id' :item='item' :level='0' :class='{hidden:i >= visibleCount}'/>
     </div>
+    <div class='barbtn addbtn' title='Add bookmark' @click='openEditor()'><i class='mdi mdi-plus'/></div>
     <div v-if='overflowItems.length' ref='overflowEl' class='barbtn' :class='{open:openPath[0] === "overflow"}'
       title='More bookmarks' @click='openFolder({id:"overflow"}, 0)' @dragenter='drag.id && scheduleOpen(0, "overflow")'>
       <i class='mdi mdi-chevron-double-right'/>
@@ -35,6 +36,7 @@
   import {askDelete, load, tree, walk} from './bookmarks'
 
   const {notify} = inject('notify')
+  const barEl = ref(null)                           // Bookmarks bar element
   const itemsEl = ref(null)                         // Bar items container element
   const overflowEl = ref(null)                      // Overflow (>>) button element
   const visibleCount = ref(999)                     // Number of bar items that fit in the bar
@@ -232,7 +234,7 @@
   // Dragging over the empty space at the end of the bar drops after the last item
   const onBarDragOver = function(event) {
     const last = tree.value[Math.min(visibleCount.value, tree.value.length) - 1]
-    if (event.target !== itemsEl.value || !last || !canDropOn(last)) { return }
+    if (![barEl.value, itemsEl.value].includes(event.target) || !last || !canDropOn(last)) { return }
     event.preventDefault()
     setDropTarget(last, 'after', 0)
   }
@@ -322,7 +324,7 @@
     .items {
       align-items: center;
       display: flex;
-      flex: 1;
+      flex: 0 1 auto;
       gap: 2px;
       height: 100%;
       min-width: 0px;
@@ -349,7 +351,9 @@
       justify-content: center;
       width: 24px;
       &:hover, &.open { background-color: #fff2; color: var(--darkbg-fg0); }
+      .mdi { line-height: 1; }
     }
+    .addbtn { color: var(--darkbg-fg4); font-size: 14px; margin-right: auto; }
   }
 
   /* Bookmarks shared by the bar and dropdown menus. Links are the <a> itself so

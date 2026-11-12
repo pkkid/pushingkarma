@@ -41,6 +41,7 @@ export const Main = {
 export const Bookmarks = {
   createBookmark(data, signal) { return axios.post(`/api/bookmarks`, data, {signal}) },
   deleteBookmark(pk, signal) { return axios.delete(`/api/bookmarks/${pk}`, {signal}) },
+  getPageTitle(url, signal) { return axios.get(`/api/bookmarks/title`, {params:{url}, signal}) },
   listBookmarks(signal) { return axios.get(`/api/bookmarks`, {signal}) },
   moveBookmark(pk, data, signal) { return axios.post(`/api/bookmarks/${pk}/move`, data, {signal}) },
   updateBookmark(pk, data, signal) { return axios.patch(`/api/bookmarks/${pk}`, data, {signal}) },

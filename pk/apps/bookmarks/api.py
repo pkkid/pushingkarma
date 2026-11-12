@@ -3,10 +3,10 @@
 Bookmarks API for the new tab bookmarks bar. Bookmarks are a small tree per user, so
 every endpoint returns the complete tree and the client simply replaces its copy.
 """
-import logging
+import html, logging, re, requests
 from django.db import transaction
 from django.shortcuts import get_object_or_404
-from ninja import Body, Path, Router
+from ninja import Body, Path, Query, Router
 from ninja.errors import HttpError
 from typing import List
 from pk.utils.ninja import user_auth
@@ -14,6 +14,9 @@ from . import schemas
 from .models import Bookmark, FOLDER, LINK
 log = logging.getLogger(__name__)
 router = Router(auth=user_auth)
+TITLE_REGEX = re.compile(rb'<title[^>]*>(.*?)</title>', re.IGNORECASE | re.DOTALL)
+TITLE_MAXBYTES = 512 * 1024
+TITLE_HEADERS = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0'}
 
 
 def get_tree(user):
@@ -58,6 +61,30 @@ def move_bookmark(item, parent, index=None):
 def list_bookmarks(request):
     """ List the bookmarks tree for the logged in user. """
     return get_tree(request.user)
+
+
+@router.get('/title', response=schemas.PageTitleSchema)
+def page_title(request, url: str=Query(..., description='Page url to read the title from')):
+    """ Fetch the url and return the contents of its <title> tag (empty if not found). The
+        browser can't read other sites directly, so the server looks it up for the editor.
+    """
+    if not re.match(r'^https?://', url, re.IGNORECASE):
+        raise HttpError(400, 'Only http and https urls are supported.')
+    try:
+        # Read only the start of the page, the title is near the top
+        content = b''
+        with requests.get(url, headers=TITLE_HEADERS, timeout=5, stream=True) as response:
+            for chunk in response.iter_content(16384):
+                content += chunk
+                if TITLE_REGEX.search(content) or len(content) >= TITLE_MAXBYTES: break
+            encoding = response.encoding if 'charset' in response.headers.get('content-type', '') else 'utf-8'
+        # Decode and clean up the title whitespace and html entities
+        match = TITLE_REGEX.search(content)
+        title = match.group(1).decode(encoding or 'utf-8', errors='replace') if match else ''
+        return {'title': ' '.join(html.unescape(title).split())}
+    except requests.RequestException as err:
+        log.info(f'Unable to read page title from {url}: {err}')
+        return {'title': ''}
 
 
 @router.post('', response=List[schemas.BookmarkSchema])

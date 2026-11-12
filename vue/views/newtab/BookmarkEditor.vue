@@ -5,11 +5,12 @@
       <PillSelect v-if='!item' v-model='form.kind' :options='kinds' class='kinds' aria-label='Item type'/>
       <template v-if='form.kind !== "separator"'>
         <label for='bookmark-title'>{{form.kind === 'folder' ? 'Folder name' : 'Title'}}</label>
-        <input id='bookmark-title' ref='titleEl' v-model='form.title' type='text' autocomplete='off' spellcheck='false'/>
+        <input id='bookmark-title' ref='titleEl' v-model='form.title' type='text' autocomplete='off' spellcheck='false'
+          :placeholder='lookingUp ? "Looking up title..." : ""'/>
       </template>
       <template v-if='form.kind === "link"'>
         <label for='bookmark-url'>URL</label>
-        <input id='bookmark-url' v-model='form.url' type='text' autocomplete='off' spellcheck='false'/>
+        <input id='bookmark-url' v-model='form.url' type='text' autocomplete='off' spellcheck='false' @change='lookupTitle'/>
       </template>
       <label for='bookmark-parent'>Folder</label>
       <select id='bookmark-parent' v-model='form.parent'>
@@ -28,11 +29,13 @@
 <script setup>
   import {computed, nextTick, ref, watch} from 'vue'
   import {Modal, PillSelect} from '@/components'
+  import {api} from '@/utils'
 
   const emit = defineEmits(['close', 'save'])
   const titleEl = ref(null)                         // Title input, focused when opened
   const form = ref({})                              // Values being edited {kind, title, url, parent}
   const error = ref(null)                           // Validation error message
+  const lookingUp = ref(false)                      // True while fetching the page title
   const kinds = [{id:'link', label:'Bookmark'}, {id:'folder', label:'Folder'}, {id:'separator', label:'Separator'}]
   const props = defineProps({
     visible: {type:Boolean, required:true},         // Display the editor
@@ -57,7 +60,35 @@
     error.value = null
     await nextTick()
     titleEl.value?.focus()
+    if (!props.item) { pasteClipboardUrl() }
   })
+
+  // Paste Clipboard Url
+  // When adding a bookmark, prefill the url from the clipboard if it holds one. Reading
+  // the clipboard can be blocked (permission denied or a frame without access), so
+  // failures are ignored.
+  const pasteClipboardUrl = async function() {
+    try {
+      const text = (await navigator.clipboard.readText()).trim()
+      if (!/^https?:\/\/\S+$/i.test(text) || form.value.url) { return }
+      form.value.url = text
+      lookupTitle()
+    } catch { /* clipboard not available */ }
+  }
+
+  // Lookup Title
+  // Fill in an empty title from the page at the url. The result is ignored if the
+  // user typed a title or changed the url while waiting.
+  const lookupTitle = async function() {
+    const url = form.value.url.trim()
+    if (form.value.kind !== 'link' || form.value.title.trim() || !/^https?:\/\//i.test(url)) { return }
+    lookingUp.value = true
+    try {
+      const {data} = await api.Bookmarks.getPageTitle(url)
+      if (data.title && !form.value.title.trim() && form.value.url.trim() === url) { form.value.title = data.title }
+    } catch { /* leave the title empty */ }
+    lookingUp.value = false
+  }
 
   // Save
   // Validate the form and emit the cleaned up values
