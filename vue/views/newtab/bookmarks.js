@@ -52,11 +52,12 @@ export const askDelete = function(item) {
 }
 
 // Open Url
-// Open a url in this tab, or a new tab when ctrl or cmd is held
+// Open a url in this tab, or a new tab when ctrl or cmd is held. Uses window.top so it
+// replaces the whole tab when the new tab page is shown in a frame.
 export const openUrl = function(url, event) {
   if (event?.ctrlKey || event?.metaKey) {
     window.open(url, '_blank')
   } else {
-    window.location.href = url
+    window.top.location.href = url
   }
 }

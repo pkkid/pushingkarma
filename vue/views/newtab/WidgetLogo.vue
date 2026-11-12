@@ -1,5 +1,5 @@
 <template>
-  <a id='logowidget' :class='{fullscreen}' href='/' aria-label='Go to homepage'/>
+  <a id='logowidget' :class='{fullscreen}' href='/' target='_top' aria-label='Go to homepage'/>
 </template>
 
 <script setup>

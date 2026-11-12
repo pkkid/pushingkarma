@@ -13,7 +13,7 @@
 </template>
 
 <script setup>
-  import {computed, inject, onMounted, ref} from 'vue'
+  import {computed, inject, onMounted, onUnmounted, ref} from 'vue'
   import useStorage from '@/composables/useStorage'
   import BookmarkDelete from './BookmarkDelete.vue'
   import BookmarksBar from './BookmarksBar.vue'
@@ -29,11 +29,21 @@
   const activeLayout = computed(() => user.value ? layout.value : 'simple')  // Stats require login
   const showBookmarks = computed(() => !fullscreen.value && Boolean(user.value))  // Bookmarks bar when windowed
 
-  // On Mounted
-  // Initialize fullscreen status and update on resize
+  // On Mounted / Unmounted
+  // Initialize fullscreen status and update on resize. Add <base target='_top'> so links
+  // open in the whole tab when this page is shown in a frame (the browser new tab
+  // extension) instead of inside the frame. Outside a frame _top is the page itself.
+  var base = null
   onMounted(function() {
     updateFullscreen()
     window.addEventListener('resize', updateFullscreen)
+    base = document.createElement('base')
+    base.target = '_top'
+    document.head.appendChild(base)
+  })
+  onUnmounted(function() {
+    window.removeEventListener('resize', updateFullscreen)
+    base?.remove()
   })
 
   // Cycle Layout
