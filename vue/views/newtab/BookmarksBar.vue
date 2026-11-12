@@ -15,6 +15,8 @@
     <Teleport to='body'>
       <div v-if='ctxmenu' class='bookmark-menu bookmark-ctxmenu' :style='ctxmenu.style' @contextmenu.prevent>
         <div v-if='ctxmenu.item.kind === "link"' class='bookmark' @click='openNewTab(ctxmenu.item)'>Open in new tab</div>
+        <div v-if='ctxmenu.item.kind === "folder" && folderLinks(ctxmenu.item).length' class='bookmark'
+          @click='openNewTab(ctxmenu.item)'>Open all in new tabs ({{folderLinks(ctxmenu.item).length}})</div>
         <div v-if='["folder", "root"].includes(ctxmenu.item.kind)' class='bookmark' @click='openEditor(null, ctxmenu.item.id)'>Add item here...</div>
         <template v-if='ctxmenu.item.kind !== "root"'>
           <div v-if='ctxmenu.item.kind !== "separator"' class='bookmark' @click='openEditor(ctxmenu.item)'>Edit...</div>
@@ -265,10 +267,17 @@
   // Add, Edit, Delete
   // ------------------------------
 
+  // Folder Links
+  // All links inside a folder, including those in its subfolders
+  const folderLinks = function(folder) {
+    return walk(folder.children).map(n => n.item).filter(item => item.kind === 'link')
+  }
+
   // Open New Tab
-  // Open a link from the context menu in a new tab
+  // Open a link from the context menu in a new tab, or every link in a folder
   const openNewTab = function(item) {
-    window.open(item.url, '_blank')
+    const links = item.kind === 'folder' ? folderLinks(item) : [item]
+    links.forEach(link => window.open(link.url, '_blank'))
     closeMenus()
   }
 
