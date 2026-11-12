@@ -115,6 +115,21 @@ uv run ruff check pk        # Lint Python (config in pyproject.toml, line-length
 - Database: SQLite file persisted via Docker volume mounts (the project dir is mounted at `/app`,
   the Obsidian notes read-only at `/notes`); deploy rsync skips `*.sqlite3` and `.env` files
 
+### Deploying as an agent
+- Deploy from the main checkout (`~/Projects/pushingkarma`), never from a git worktree. The
+  rsync copies the project directory by its own name, so a worktree would land in the wrong
+  remote directory instead of `~/pushingkarma`.
+- Run the deploy with a stdin that stays open but never sends EOF:
+  ```bash
+  uv run fab deploy < <(tail -f /dev/null --pid=$$ 2>/dev/null)
+  ```
+  Agent shells have no terminal, so stdin is empty and closes at once. Fabric forwards that EOF
+  to the remote `sudo`, which exits before the saved password (from the keyring) is sent,
+  failing with `OSError: Socket is closed`. `tail -f /dev/null` keeps stdin open, and `--pid=$$`
+  ends it with the shell, so the command exits as soon as the deploy prints `Done.`. Don't use
+  `< /dev/null` (fails as above) or a `sleep` pipe (keeps the command running long after the deploy).
+- The same stdin trick applies to any other Fabric task that uses `conn.sudo`.
+
 ## New Tab Page
 The new tab page (`vue/views/newtab/`) is a browser new-tab replacement that
 displays a dashboard of system stats widgets. Each widget is a standalone Vue
