@@ -1,6 +1,8 @@
 <template>
   <div id='newtab-wrapper' @dblclick='cycleLayout'>
-    <BookmarksBar v-if='showBookmarks'/>
+    <Transition name='bookmarks-fade' appear>
+      <BookmarksBar v-if='showBookmarks'/>
+    </Transition>
     <QuickSearch/>
     <BookmarkDelete v-if='user'/>
     <div id='newtab' :class='{fullscreen, bookmarks:showBookmarks}'>
@@ -104,7 +106,6 @@
       text-decoration: none;
       &:hover { text-decoration: underline; }
     }
-    &.bookmarks { height: calc(100vh - 31px); }
     &.fullscreen {
       width: calc(100vw - 20px); height: calc(100vh - 20px);
       /* steps(20) per 60s side: 1px jump every 3s, full 20px square every 240s (OLED burn-in) */
@@ -117,6 +118,8 @@
   /* ---------------------------- */
   .layout-fade-enter-active, .layout-fade-leave-active { transition: opacity 0.5s ease; }
   .layout-fade-enter-from, .layout-fade-leave-to { opacity: 0; }
+  .bookmarks-fade-enter-active, .bookmarks-fade-leave-active { transition: opacity 0.3s ease; }
+  .bookmarks-fade-enter-from, .bookmarks-fade-leave-to { opacity: 0; }
 
   @keyframes square-move {
     0% { transform: translate(0, 0); }

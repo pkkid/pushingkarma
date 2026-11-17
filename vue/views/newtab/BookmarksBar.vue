@@ -327,7 +327,10 @@
     font-size: 11px;
     gap: 2px;
     height: 30px;
+    left: 0px;
     padding: 0px 6px;
+    position: fixed;
+    top: 0px;
     width: 100vw;
     z-index: 20;
     .items {

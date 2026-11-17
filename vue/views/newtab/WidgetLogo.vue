@@ -15,7 +15,7 @@
     aspect-ratio: 1/1;
     background-color: var(--logo-color);
     mask: url('/static/img/pk.svg') no-repeat center/contain;
-    transition: filter 0.2s ease;
+    transition: filter 0.2s ease, top 0.3s ease;
     cursor: pointer;
     position: absolute;
     isolation: isolate;
@@ -26,6 +26,7 @@
     filter: brightness(1.08);
     &::before { opacity: 0.8; }
   }
+  #newtab.bookmarks #logowidget { top: 50px; }
   #newtab.fullscreen #logowidget {
     width: 100px;
     top: 40px;
