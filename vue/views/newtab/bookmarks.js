@@ -6,6 +6,7 @@ import * as cache from './cache'
 
 export const tree = ref(cache.get('newtab.bookmarks', []))  // Nested bookmarks tree, cached until the server responds
 export const confirming = ref(null)                 // Pending delete confirmation {item, title, message}
+export const adding = ref(false)                    // Set true to open the bookmark editor to add a new bookmark
 
 // Save the tree to the cache whenever it is replaced (every change replaces it
 // with the tree returned by the server, and logging out replaces it with [])

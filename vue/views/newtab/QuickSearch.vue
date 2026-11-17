@@ -33,7 +33,7 @@
   import {computed, inject, nextTick, onBeforeUnmount, onMounted, ref, watch} from 'vue'
   import {api} from '@/utils'
   import {Account} from '@/views/site'
-  import {askDelete, confirming, load, openUrl, search, tree} from './bookmarks'
+  import {adding, askDelete, confirming, load, openUrl, search, tree} from './bookmarks'
 
   const visible = ref(false)                        // True when the panel is displayed
   const query = ref('')                             // Search input text
@@ -45,16 +45,18 @@
   const {globalvars} = inject('globalvars')         // Global vars, apikey_auth is true when signed in by api key
 
   // Actions
-  // Log in when logged out, log out when logged in. Keywords are what you can
-  // type to find the action alongside bookmark results.
+  // Log in when logged out. When logged in, add a bookmark or log out. Keywords are
+  // what you can type to find the action alongside bookmark results.
   const actions = computed(function() {
     if (!user.value) {
       return [{key:'login', title:'Log in', subtitle:'Log in to see your bookmarks', icon:'mdi-login',
         keywords:'log in login sign in', run:() => login()}]
     }
-    if (globalvars.value?.apikey_auth) { return [] }  // Logging out does nothing when signed in by api key
+    const items = [{key:'add', title:'Add bookmark', subtitle:'Ctrl+D', icon:'mdi-bookmark-plus',
+      keywords:'add new create bookmark', run:() => addBookmark()}]
+    if (globalvars.value?.apikey_auth) { return items }  // Logging out does nothing when signed in by api key
     const name = `${user.value.first_name} ${user.value.last_name}`.trim() || user.value.email
-    return [{key:'logout', title:'Log out', subtitle:`Logged in as ${name}`, icon:'mdi-logout',
+    return [...items, {key:'logout', title:'Log out', subtitle:`Logged in as ${name}`, icon:'mdi-logout',
       keywords:'log out logout sign out', run:() => logout()}]
   })
 
@@ -114,12 +116,16 @@
     selected.value = user.value && !query.value.trim() ? -1 : 0
   }
 
-  // Login / Logout
-  // Login shows the same login modal used on the main site. Logout also clears
-  // the bookmarks from memory.
+  // Login / Add Bookmark / Logout
+  // Login shows the same login modal used on the main site. Add bookmark asks the
+  // bookmarks bar to open its editor. Logout also clears the bookmarks from memory.
   const login = function() {
     close()
     showLogin.value = true
+  }
+  const addBookmark = function() {
+    close()
+    adding.value = true
   }
   const logout = async function() {
     close()

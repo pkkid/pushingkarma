@@ -35,7 +35,7 @@
   import BookmarkEditor from './BookmarkEditor.vue'
   import BookmarkItem from './BookmarkItem.vue'
   import BookmarkMenu from './BookmarkMenu.vue'
-  import {askDelete, load, tree, walk} from './bookmarks'
+  import {adding, askDelete, load, tree, walk} from './bookmarks'
 
   const {notify} = inject('notify')
   const barEl = ref(null)                           // Bookmarks bar element
@@ -70,6 +70,14 @@
     window.removeEventListener('blur', onWindowBlur)
   })
   watch(tree, () => nextTick(measure), {deep:true})
+
+  // Watch Adding
+  // Open the editor when another component (the F1 quick search) asks to add a bookmark
+  watch(adding, function(value) {
+    if (!value) { return }
+    adding.value = false
+    openEditor()
+  })
 
   // Update
   // Run an api request returning the new tree. On failure notify and reload.
@@ -170,13 +178,24 @@
   }
 
   // On Document Mousedown / Keydown
-  // Close menus when clicking outside of them or pressing escape
+  // Close menus when clicking outside of them or pressing escape, and open the
+  // editor to add a bookmark on ctrl+d
   const onDocumentMousedown = function(event) {
     if (!event.target.closest('.bookmark-ctxmenu')) { ctxmenu.value = null }
     if (!event.target.closest('.bookmarks-bar, .bookmark-menu')) { closeMenus() }
   }
   const onDocumentKeydown = function(event) {
     if (event.key === 'Escape') { closeMenus() }
+    if (isAddHotkey(event) && !editor.visible) {
+      event.preventDefault()
+      openEditor()
+    }
+  }
+
+  // Is Add Hotkey
+  // Ctrl+D (Cmd+D on mac) adds a bookmark, like the browser bookmark shortcut
+  const isAddHotkey = function(event) {
+    return (event.ctrlKey || event.metaKey) && !event.shiftKey && !event.altKey && event.key.toLowerCase() === 'd'
   }
 
   // On Window Blur
