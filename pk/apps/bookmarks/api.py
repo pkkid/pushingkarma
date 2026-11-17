@@ -9,6 +9,7 @@ from django.shortcuts import get_object_or_404
 from ninja import Body, Path, Query, Router
 from ninja.errors import HttpError
 from typing import List
+from urllib.parse import unquote, urlparse
 from pk.utils.ninja import user_auth
 from . import schemas
 from .models import Bookmark, FOLDER, LINK
@@ -65,15 +66,24 @@ def list_bookmarks(request):
 
 @router.get('/title', response=schemas.PageTitleSchema)
 def page_title(request, url: str=Query(..., description='Page url to read the title from')):
-    """ Fetch the url and return the contents of its <title> tag (empty if not found). The
-        browser can't read other sites directly, so the server looks it up for the editor.
+    """ Return a title for the url. Reads the page <title> tag when the site can be reached,
+        otherwise builds one from the url slug, and finally falls back to the domain name.
+        The browser can't read other sites directly, so the server looks it up for the editor.
     """
     if not re.match(r'^https?://', url, re.IGNORECASE):
         raise HttpError(400, 'Only http and https urls are supported.')
+    return {'title': _fetch_title(url) or _slug_title(url) or _domain_title(url)}
+
+
+def _fetch_title(url):
+    """ Fetch the url and return the contents of its <title> tag, or '' when the site
+        can't be reached, returns an error page, or has no title.
+    """
     try:
         # Read only the start of the page, the title is near the top
         content = b''
         with requests.get(url, headers=TITLE_HEADERS, timeout=5, stream=True) as response:
+            response.raise_for_status()
             for chunk in response.iter_content(16384):
                 content += chunk
                 if TITLE_REGEX.search(content) or len(content) >= TITLE_MAXBYTES: break
@@ -81,10 +91,28 @@ def page_title(request, url: str=Query(..., description='Page url to read the ti
         # Decode and clean up the title whitespace and html entities
         match = TITLE_REGEX.search(content)
         title = match.group(1).decode(encoding or 'utf-8', errors='replace') if match else ''
-        return {'title': ' '.join(html.unescape(title).split())}
+        return ' '.join(html.unescape(title).split())
     except requests.RequestException as err:
         log.info(f'Unable to read page title from {url}: {err}')
-        return {'title': ''}
+        return ''
+
+
+def _slug_title(url):
+    """ Build a title from the last url path segment that reads like a slug (at least two
+        words with letters joined by dashes or underscores), ie: /posts/123/how-to-cook-rice.html
+        becomes "How To Cook Rice". Words with digits that look like ids are dropped.
+    """
+    for segment in reversed(unquote(urlparse(url).path).split('/')):
+        words = re.split(r'[-_+\s]+', re.sub(r'\.[a-z]{2,5}$', '', segment, flags=re.IGNORECASE))
+        words = [w for w in words if w and not (len(w) >= 6 and re.search(r'\d', w))]
+        if sum(bool(re.search(r'[^\W\d]', w)) for w in words) >= 2:
+            return ' '.join(w[:1].upper() + w[1:] for w in words)
+    return ''
+
+
+def _domain_title(url):
+    """ Return the url domain without www, ie: https://www.example.com/a becomes example.com. """
+    return re.sub(r'^www\.', '', urlparse(url).hostname or '')
 
 
 @router.post('', response=List[schemas.BookmarkSchema])
