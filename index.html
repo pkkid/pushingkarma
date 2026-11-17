@@ -6,17 +6,17 @@
   <head>
     <meta charset='UTF-8'>
     <link id='favicon' rel='icon' href='/static/img/favicon.ico'>
-    <link rel='preconnect' href='https://fonts.googleapis.com'>
-    <link rel='preconnect' href='https://fonts.gstatic.com' crossorigin>
-    <link rel='stylesheet' href='https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap'>
-    <link rel='stylesheet' href='https://fonts.googleapis.com/css2?family=Merriweather:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700;1,900&display=swap'>
-    <link rel='stylesheet' href='https://fonts.googleapis.com/css2?family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap'>
-    <link rel='preconnect' href='https://cdn.jsdelivr.net'>
-    <link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css'/>
     <meta name='viewport' content='width=device-width, initial-scale=1.0'>
     <title>PushingKarma</title>
   </head>
   <body class='leftnav' style='min-height:100vh; margin:0px; background-color:#111;'>
+    <script>
+      // Paint the cached new tab wallpaper before the app loads (see vue/views/newtab/cache.js)
+      try {
+        var wallpaper = location.pathname.startsWith('/newtab') && JSON.parse(localStorage.getItem('newtab.wallpaper'))
+        if (wallpaper) { document.body.style.background = `#000 url(${wallpaper}) no-repeat center / cover` }
+      } catch { /* storage unavailable */ }
+    </script>
     <div id='app'></div>
     <script type='module' src='/vue/main.js'></script>
   </body>

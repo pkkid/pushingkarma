@@ -1,16 +1,27 @@
 // Bookmarks
 // Shared bookmarks state for the bookmarks bar and the F1 quick search panel
-import {ref} from 'vue'
+import {ref, watch} from 'vue'
 import {api} from '@/utils'
+import * as cache from './cache'
 
-export const tree = ref([])                         // Nested bookmarks tree from the server
+export const tree = ref(cache.get('newtab.bookmarks', []))  // Nested bookmarks tree, cached until the server responds
 export const confirming = ref(null)                 // Pending delete confirmation {item, title, message}
 
+// Save the tree to the cache whenever it is replaced (every change replaces it
+// with the tree returned by the server, and logging out replaces it with [])
+watch(tree, value => cache.set('newtab.bookmarks', value))
+
 // Load
-// Fetch the bookmarks tree from the server
+// Fetch the bookmarks tree from the server. When no longer logged in, clear the
+// cached tree so the bar disappears.
 export const load = async function() {
-  const {data} = await api.Bookmarks.listBookmarks()
-  tree.value = data
+  try {
+    const {data} = await api.Bookmarks.listBookmarks()
+    tree.value = data
+  } catch (err) {
+    if (![401, 403].includes(err.response?.status)) { throw err }
+    tree.value = []
+  }
 }
 
 // Walk

@@ -23,6 +23,17 @@ hljs.registerLanguage('python', python)
 hljs.registerLanguage('sql', sql)
 app.use(hljsVuePlugin)
 
+// Fonts and Icons
+// Bundled with the app (instead of loaded from Google Fonts and jsdelivr) so they
+// get hashed file names and are cached by the browser forever.
+import '@fontsource-variable/inter/opsz.css'
+import '@fontsource-variable/inter/opsz-italic.css'
+import '@fontsource-variable/merriweather/wght.css'
+import '@fontsource-variable/merriweather/wght-italic.css'
+import '@fontsource-variable/roboto-mono/wght.css'
+import '@fontsource-variable/roboto-mono/wght-italic.css'
+import '@mdi/font/css/materialdesignicons.min.css'
+
 // Mount the App after waiting for all component promises to be met.
 import './assets/main.css'
 app.mount('#app')

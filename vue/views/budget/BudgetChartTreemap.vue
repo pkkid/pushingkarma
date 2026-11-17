@@ -219,7 +219,7 @@
     utils.rset(opts, 'plugins.title.align', 'start')
     utils.rset(opts, 'plugins.title.color', 'var(--lightbg-fg1)')
     utils.rset(opts, 'plugins.title.display', true)
-    utils.rset(opts, 'plugins.title.font.family', 'Merriweather')
+    utils.rset(opts, 'plugins.title.font.family', 'Merriweather Variable')
     utils.rset(opts, 'plugins.title.font.size', 14)
     utils.rset(opts, 'plugins.title.padding.bottom', 5)
     utils.rset(opts, 'plugins.title.text', singleCategory.value ? 'Amount By Payee' : 'Amount By Category')

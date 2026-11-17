@@ -18,7 +18,7 @@
 
   var chartColors = ['#cc241d','#98971a','#d79921','#458588','#b16286','#689d6a','#d65d0e']
   Chart.defaults.font.color = '#282828aa'
-  Chart.defaults.font.family = 'Inter'
+  Chart.defaults.font.family = 'Inter Variable'
   Chart.defaults.font.weight = 'bold'
   Chart.defaults.font.size = 10
 
@@ -82,7 +82,7 @@
     utils.rset(opts, 'plugins.title.align', 'start')
     utils.rset(opts, 'plugins.title.color', '#3c3836')
     utils.rset(opts, 'plugins.title.display', true)
-    utils.rset(opts, 'plugins.title.font.family', 'Merriweather')
+    utils.rset(opts, 'plugins.title.font.family', 'Merriweather Variable')
     utils.rset(opts, 'plugins.title.font.size', '16px')
     utils.rset(opts, 'plugins.title.text', props.title)
     // Legend
@@ -114,7 +114,7 @@
     // Tooltips
     utils.rset(opts, 'plugins.tooltip.backgroundColor', '#282828')
     utils.rset(opts, 'plugins.tooltip.bodyColor', '#fbf1c7')
-    utils.rset(opts, 'plugins.tooltip.bodyFont.family', 'Roboto Mono')
+    utils.rset(opts, 'plugins.tooltip.bodyFont.family', 'Roboto Mono Variable')
     utils.rset(opts, 'plugins.tooltip.bodyFont.size', 10)
     utils.rset(opts, 'plugins.tooltip.bodyFont.weight', 'bold')
     utils.rset(opts, 'plugins.tooltip.boxHeight', 7)
@@ -172,7 +172,7 @@
         const ctx = chart.ctx
         const xAxis = chart.scales['x']
         ctx.save()
-        ctx.font = 'bold 10px Inter'
+        ctx.font = 'bold 10px "Inter Variable"'
         ctx.fillStyle = '#28282877'
         ctx.textAlign = 'center'
         for (let i = 0; i < chart._labels.length; i++) {
@@ -186,7 +186,7 @@
           ctx.fillText(`${projected}%`, x, y)
         }
         // Draw the xAxis title
-        ctx.font = 'bold 12px Merriweather'
+        ctx.font = 'bold 12px "Merriweather Variable"'
         var cx = (chart.chartArea.left + chart.chartArea.right) / 2
         ctx.fillText(`${chart._ticker} Projected 52w Change`, cx, chart.height-3)
         ctx.restore()

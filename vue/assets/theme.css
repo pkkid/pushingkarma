@@ -6,11 +6,11 @@
  *--------------------------------------------------------------- */
 :root {
   /* Website Fonts */
-  --fontfamily-title: 'Merriweather', sans-serif;
-  --fontfamily-article: 'Inter', sans-serif;
+  --fontfamily-title: 'Merriweather Variable', sans-serif;
+  --fontfamily-article: 'Inter Variable', sans-serif;
   --fontfamily-subtext: 'Open Sans', sans-serif;
-  --fontfamily-artsy: 'Merriweather', sans-serif;
-  --fontfamily-code: 'Roboto Mono', monospace;
+  --fontfamily-artsy: 'Merriweather Variable', sans-serif;
+  --fontfamily-code: 'Roboto Mono Variable', monospace;
 
   /* Gruvbox Color Scheme
    * https://github.com/morhetz/gruvbox-contrib */

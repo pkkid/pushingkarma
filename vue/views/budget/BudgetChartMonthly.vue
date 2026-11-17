@@ -83,7 +83,7 @@
     utils.rset(opts, 'plugins.title.color', 'var(--lightbg-fg1)')
     utils.rset(opts, 'plugins.title.display', true)
     utils.rset(opts, 'plugins.title.font.size', 15)
-    utils.rset(opts, 'plugins.title.font.family', 'Merriweather')
+    utils.rset(opts, 'plugins.title.font.family', 'Merriweather Variable')
     utils.rset(opts, 'plugins.title.padding.bottom', 15)
     utils.rset(opts, 'plugins.title.text', 'By Month')
     utils.rset(opts, 'plugins.tooltip.callbacks.label', (ctx) => ` ${ctx.dataset.label}: ${utils.usd(ctx.parsed.y, 0)}`)
